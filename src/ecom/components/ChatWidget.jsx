@@ -79,7 +79,8 @@ export default function ChatWidget() {
   const inputRef = useRef(null);
   const pollRef = useRef(null);
   const lastMessageIdRef = useRef(null);
-  const token = localStorage.getItem('ecomToken');
+  // Guard SSR (Next) : lu au rendu — identique côté navigateur, null au prerender.
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('ecomToken') : null;
 
   const apiFetch = useCallback(async (path, options = {}) => {
     const { method = 'GET', body } = options;

@@ -142,7 +142,9 @@ const BOUTIQUE_NAV = [
 // ── Mobile bottom tabs (5 max) ───────────────────────────────────────────────
 const MOBILE_TABS = ['Dashboard', 'Commandes', 'Produits', 'Pages', 'Paramètres'];
 
-const BoutiqueLayoutInner = () => {
+// Next.js (App Router) : le layout reçoit `children` au lieu de rendre <Outlet/>.
+// (children ?? <Outlet/> conservé pour compat — Outlet jette une erreur explicite si utilisé.)
+const BoutiqueLayoutInner = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, workspace } = useEcomAuth();
@@ -405,7 +407,7 @@ const BoutiqueLayoutInner = () => {
         {/* Page content */}
         <main className={`flex-1 overflow-x-hidden pb-20 lg:pb-0 ${location.pathname.includes('/form-builder') ? 'pt-0' : 'pt-14 lg:pt-14'}`}
           style={{ WebkitOverflowScrolling: 'touch', minHeight: 0 }}>
-          <Outlet key={activeStore?._id || 'no-active-store'} />
+          <React.Fragment key={activeStore?._id || 'no-active-store'}>{children ?? <Outlet />}</React.Fragment>
         </main>
       </div>
 

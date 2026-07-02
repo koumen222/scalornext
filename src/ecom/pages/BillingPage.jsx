@@ -603,7 +603,7 @@ export default function BillingPage() {
   const [directCheckoutLoading, setDirectCheckoutLoading] = useState(false);
   const [directCheckoutError, setDirectCheckoutError] = useState('');
   const [isAnnual, setIsAnnual] = useState(false);
-  const [pendingToken, setPendingToken] = useState(() => sessionStorage.getItem('mf_pending_token') || null);
+  const [pendingToken, setPendingToken] = useState(() => (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mf_pending_token')) || null);
   const [trialLoading, setTrialLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [globalPromo, setGlobalPromo] = useState('');

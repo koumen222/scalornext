@@ -1,7 +1,9 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { safeHtml } from '../utils/sanitize';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+// react-quill → react-quill-new : fork drop-in requis par React 19 (findDOMNode retiré).
+// Validé le 02/07/2026 — seule page du projet utilisant Quill.
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import {
   Mail, Send, Eye, Edit3, Save, ArrowLeft, Users, Calendar,
   Clock, Sparkles, TrendingUp, AlertCircle, CheckCircle2, Copy,

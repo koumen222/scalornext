@@ -9,7 +9,10 @@ import {
   MessageSquare, Loader2
 } from 'lucide-react';
 import { marketingApi } from '../services/marketingApi.js';
-import MarketingCompose from './MarketingCompose.jsx';
+// Quill (react-quill-new) touche `document` à l'import → chargement client-only
+// (next/dynamic ssr:false), pattern standard Next pour les éditeurs riches.
+import dynamic from 'next/dynamic';
+const MarketingCompose = dynamic(() => import('./MarketingCompose.jsx'), { ssr: false });
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

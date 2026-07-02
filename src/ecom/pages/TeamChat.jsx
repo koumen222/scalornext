@@ -123,7 +123,8 @@ export default function TeamChat() {
   const fileInputRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimerRef = useRef(null);
-  const token = localStorage.getItem('ecomToken');
+  // Guard SSR (Next) : lu au rendu — identique côté navigateur, null au prerender.
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('ecomToken') : null;
 
   const { isRecording, formattedDuration, audioBlob, startRecording, stopRecording, cancelRecording, clearRecording } = useAudioRecorder();
   const { isUploading, progress: uploadProgress, uploadFile, uploadAudio, getMediaKind } = useMediaUpload();

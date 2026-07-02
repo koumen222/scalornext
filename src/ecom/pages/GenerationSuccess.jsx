@@ -5,7 +5,8 @@ const API_ORIGIN = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
 export default function GenerationSuccess() {
   const navigate = useNavigate();
-  const token = sessionStorage.getItem('mf_pending_generation_token');
+  // Guard SSR (Next) : lu au rendu — identique côté navigateur, null au prerender.
+  const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('mf_pending_generation_token') : null;
   const [status, setStatus] = useState('checking');
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState('');

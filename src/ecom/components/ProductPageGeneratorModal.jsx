@@ -787,7 +787,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
   const [paymentChecking, setPaymentChecking] = useState(false);
   const [paymentNotice, setPaymentNotice] = useState('');
   const [paymentStatusError, setPaymentStatusError] = useState('');
-  const [pendingGenerationToken, setPendingGenerationToken] = useState(() => sessionStorage.getItem(GENERATION_PAYMENT_TOKEN_KEY) || null);
+  const [pendingGenerationToken, setPendingGenerationToken] = useState(() => (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(GENERATION_PAYMENT_TOKEN_KEY)) || null);
   const [pendingGenerationPayment, setPendingGenerationPayment] = useState(() => {
     try {
       return JSON.parse(sessionStorage.getItem(GENERATION_PAYMENT_SESSION_KEY) || 'null');
