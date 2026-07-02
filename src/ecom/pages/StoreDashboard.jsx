@@ -250,6 +250,13 @@ export default function StoreDashboard() {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [periodLabel, setPeriodLabel] = useState('7 derniers jours');
   const isTodayActive = period === 'today' || dateRange?.period === 'today';
+  // Séries commandes/CA reconstruites depuis /store-orders pour la plage active :
+  //  - horaire si plage ≤ 48 h (Aujourd'hui/Hier/24h), journalière sinon
+  //  - counts : toutes commandes (iso dailyOrders de l'API)
+  //  - revenue : commandes non annulées — le dailyRevenue de l'API ne compte que
+  //    les LIVRÉES, d'où une courbe CA vide tant que rien n'est livré
+  //  - complete=false (plage non couverte par la pagination) → repli séries API
+  const [ordersSeries, setOrdersSeries] = useState(null);
 
   useEffect(() => {
     if (!resolvedWorkspaceId) return;
@@ -292,6 +299,77 @@ export default function StoreDashboard() {
       window.removeEventListener('focus', refreshTodayStats);
     };
   }, [isTodayActive, resolvedWorkspaceId, activeStore?._id, dateRange]);
+
+  // Reconstruction des séries commandes/CA via l'endpoint existant /store-orders
+  // (tri createdAt desc, pagination limit 100, cap 5 pages) — aucun changement backend.
+  useEffect(() => {
+    if (!resolvedWorkspaceId) {
+      setOrdersSeries(null);
+      return undefined;
+    }
+    const p = dateRange?.period || period;
+    let start;
+    let end;
+    if (dateRange?.start && dateRange?.end) {
+      start = new Date(dateRange.start);
+      end = new Date(dateRange.end);
+    } else {
+      const preset = getPresetSelection(p === '24h' ? 'today' : p);
+      if (p === '24h') {
+        end = new Date();
+        start = new Date(end.getTime() - 24 * 3600 * 1000);
+      } else if (preset) {
+        start = preset.start;
+        end = preset.end;
+      }
+    }
+    if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+      setOrdersSeries(null);
+      return undefined;
+    }
+
+    const hourly = end.getTime() - start.getTime() <= 48 * 3600 * 1000;
+    const pad2 = (v) => String(v).padStart(2, '0');
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const counts = {};
+        const revenue = {};
+        let page = 1;
+        let covered = false;
+
+        while (!covered && page <= 5) {
+          const res = await ecomApi.get('/store-orders', { params: { page, limit: 100 } });
+          const payload = res?.data?.data || res?.data || {};
+          const list = Array.isArray(payload.orders) ? payload.orders : [];
+          if (list.length === 0) { covered = true; break; }
+
+          for (const o of list) {
+            const created = new Date(o.createdAt);
+            if (Number.isNaN(created.getTime())) continue;
+            if (created > end) continue;
+            if (created < start) { covered = true; break; } // tri desc → le reste est plus ancien
+            const key = hourly
+              ? `${created.getFullYear()}-${pad2(created.getMonth() + 1)}-${pad2(created.getDate())}T${pad2(created.getHours())}`
+              : `${created.getFullYear()}-${pad2(created.getMonth() + 1)}-${pad2(created.getDate())}`;
+            counts[key] = (counts[key] || 0) + 1;
+            if (o.status !== 'cancelled') revenue[key] = (revenue[key] || 0) + (o.total || 0);
+          }
+
+          const totalPages = payload?.pagination?.pages || 1;
+          if (page >= totalPages) covered = true;
+          page += 1;
+        }
+
+        if (!cancelled) setOrdersSeries({ counts, revenue, hourly, complete: covered });
+      } catch {
+        if (!cancelled) setOrdersSeries(null); // repli : séries API (dailyOrders/dailyRevenue)
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [dateRange, period, resolvedWorkspaceId, activeStore?._id]);
 
   const loadDashboard = async (isInitial, options = {}) => {
     // When a specific store is active, always scope to that store.
@@ -441,18 +519,56 @@ export default function StoreDashboard() {
     { key: 'visites', label: 'Visiteurs', value: n(analytics.uniqueVisitors || 0), sub: `${n(analytics.visitsToday || 0)} aujourd'hui` },
     { key: 'revenus', label: 'Revenus', value: `${n(orders.totalRevenue || 0)} FCFA`, sub: `${n(orders.averageOrderValue || 0)} FCFA / commande` },
     { key: 'commandes', label: 'Commandes', value: n(orders.total || 0), sub: `${orders.delivered || 0} livrées` },
-    { key: 'visites', label: 'Conversion', value: `${analytics.conversionRate || 0}%`, sub: `${n(analytics.pageViews || 0)} pages vues` },
+    { key: 'conversion', label: 'Conversion', value: `${analytics.conversionRate || 0}%`, sub: `${n(analytics.pageViews || 0)} pages vues` },
   ];
 
-  const chartData = chartMetric === 'visites'
-    ? timeline
-    : chartMetric === 'commandes'
-      ? Object.entries(orders.dailyOrders || {}).map(([date, count]) => ({ date, total: count }))
+  // ── Séries du graphique ────────────────────────────────────────────────────
+  const effPeriodValue = dateRange?.period || period;
+  const hourlyMode = ['24h', 'today', 'yesterday'].includes(effPeriodValue);
+  // Séries /store-orders utilisables si la plage a été entièrement couverte
+  const ordersSeriesReady = !!ordersSeries?.complete;
+
+  // Série de la timeline pour un type d'événement (clés date identiques au backend)
+  const timelineSeries = (eventType) => {
+    const map = {};
+    (timeline || []).forEach((item) => {
+      const d = item?._id?.date;
+      if (!d || item?._id?.eventType !== eventType) return;
+      map[d] = (map[d] || 0) + (item.count || 0);
+    });
+    return map;
+  };
+
+  let chartData;
+  if (chartMetric === 'visites') {
+    chartData = timeline;
+  } else if (chartMetric === 'commandes') {
+    chartData = ordersSeriesReady
+      ? Object.entries(ordersSeries.counts).map(([date, total]) => ({ date, total }))
+      : Object.entries(orders.dailyOrders || {}).map(([date, count]) => ({ date, total: count }));
+  } else if (chartMetric === 'revenus') {
+    chartData = ordersSeriesReady
+      ? Object.entries(ordersSeries.revenue).map(([date, total]) => ({ date, total }))
       : Object.entries(orders.dailyRevenue || {}).map(([date, amount]) => ({ date, total: amount }));
+  } else {
+    // Conversion par bucket = commandes trackées / pages vues (timeline : clés alignées,
+    // horaire pour 24h/aujourd'hui/hier, journalier sinon)
+    const orderEvents = timelineSeries('order_placed');
+    const pageViews = timelineSeries('page_view');
+    chartData = Object.keys(pageViews)
+      .sort()
+      .map((date) => ({
+        date,
+        total: pageViews[date] > 0
+          ? +(((orderEvents[date] || 0) / pageViews[date]) * 100).toFixed(1)
+          : 0,
+      }));
+  }
   const chartMetricLabel = {
     visites: 'Visites',
     commandes: 'Commandes',
     revenus: 'Revenus',
+    conversion: 'Conversion',
   };
 
   const actions = [
@@ -570,16 +686,20 @@ export default function StoreDashboard() {
         {!isChartCollapsed && (chartData && chartData.length > 0 ? (
           <AreaChart
             data={chartData}
-            unit={chartMetric === 'visites' ? 'visites' : chartMetric === 'commandes' ? 'commandes' : 'FCFA'}
-            // Aligné sur la granularité renvoyée par l'API (StoreAnalytics.timeFormat) :
-            //  - timeline VISITES : horaire pour 24h/today/yesterday, journalière sinon
-            //  - commandes/revenus (dailyOrders/dailyRevenue) : horaire uniquement pour 24h
-            // Avant : hourly seulement si period==='24h' → buckets journaliers sur des clés
-            // horaires pour « Aujourd'hui »/« Hier » → courbe des visites à zéro.
+            unit={
+              chartMetric === 'visites' ? 'visites'
+                : chartMetric === 'commandes' ? 'commandes'
+                  : chartMetric === 'conversion' ? '%'
+                    : 'FCFA'
+            }
+            // Granularité alignée sur la source de chaque série :
+            //  - visites & conversion (timeline API) : horaire pour 24h/aujourd'hui/hier
+            //  - commandes/CA : granularité des séries /store-orders (horaire ≤ 48 h),
+            //    sinon repli API (journalier, sauf 24h horaire)
             hourly={
-              chartMetric === 'visites'
-                ? ['24h', 'today', 'yesterday'].includes(dateRange?.period || period)
-                : (dateRange?.period || period) === '24h'
+              chartMetric === 'visites' || chartMetric === 'conversion'
+                ? hourlyMode
+                : ordersSeriesReady ? !!ordersSeries.hourly : effPeriodValue === '24h'
             }
             rangeStart={dashboardData?.period?.start}
             rangeEnd={dashboardData?.period?.end}
@@ -627,6 +747,14 @@ export default function StoreDashboard() {
             valueKey: 'revenue',
             valueLabel: (p) => `${n(p.revenue)} FCFA`,
             subLabel: (p) => `${n(p.sold)} vendus`,
+          },
+          // Pas de classement produit propre à la conversion → produits les plus vendus
+          conversion: {
+            title: 'Produits les plus vendus',
+            data: dashboardData?.topProductsBySales || [],
+            valueKey: 'sold',
+            valueLabel: (p) => `${n(p.sold)} vendus`,
+            subLabel: (p) => `${n(p.revenue)} FCFA`,
           },
         };
         const cfg = configs[chartMetric];
@@ -773,9 +901,11 @@ const AreaChart = ({ data, unit, hourly, rangeStart, rangeEnd, respectSelectedRa
       : new Date(point.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }),
   }));
   const lineColor = '#28a8f5';
-  const formatValue = (value) => unit === 'FCFA'
-    ? `${new Intl.NumberFormat('fr-FR').format(value || 0)} FCFA`
-    : new Intl.NumberFormat('fr-FR').format(value || 0);
+  const formatValue = (value) => {
+    if (unit === 'FCFA') return `${new Intl.NumberFormat('fr-FR').format(value || 0)} FCFA`;
+    if (unit === '%') return `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(value || 0)} %`;
+    return new Intl.NumberFormat('fr-FR').format(value || 0);
+  };
   const formatAxisValue = (value) => new Intl.NumberFormat('fr-FR', {
     notation: 'compact',
     maximumFractionDigits: 1,
