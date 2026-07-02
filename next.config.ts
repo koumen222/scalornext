@@ -7,6 +7,27 @@ const nextConfig: NextConfig = {
   ...(process.env.NEXT_USE_WASM_SWC === '1'
     ? { experimental: { cpus: 1, workerThreads: false, useWasmBinary: true } }
     : {}),
+  // NEXT_SKIP_TYPECHECK=1 : saute le type-check pendant `next build` (sandbox CI
+  // à fenêtre courte uniquement — `npx tsc --noEmit` est alors exécuté à part).
+  // Ne JAMAIS activer pour un build de déploiement.
+  ...(process.env.NEXT_SKIP_TYPECHECK === '1'
+    ? { typescript: { ignoreBuildErrors: true } }
+    : {}),
+  // NEXT_SKIP_TRACING=1 : neutralise la collecte des traces de fichiers (sandbox CI
+  // uniquement — les traces réelles sont indispensables au build OpenNext de déploiement).
+  ...(process.env.NEXT_SKIP_TRACING === '1'
+    ? { outputFileTracingExcludes: { '*': ['**/*'] } }
+    : {}),
+  // NEXT_SKIP_MINIFY=1 : désactive la minification (sandbox CI uniquement,
+  // pour tenir dans la fenêtre d'exécution — jamais pour un build déployé).
+  ...(process.env.NEXT_SKIP_MINIFY === '1'
+    ? {
+        webpack: (config: any) => {
+          config.optimization = { ...config.optimization, minimize: false };
+          return config;
+        },
+      }
+    : {}),
   // Migration iso-fonctionnelle : on garde les <img> existants (pas de next/image imposé)
   images: {
     unoptimized: true,
