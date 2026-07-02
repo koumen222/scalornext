@@ -697,6 +697,14 @@ export default function StoreDashboard() {
 /* ─── Area Chart ─── */
 
 const AreaChart = ({ data, unit, hourly, rangeStart, rangeEnd, respectSelectedRange }) => {
+  // Garde-fou : jamais de buckets horaires sur une plage > 48 h. Évite labels/clés
+  // dupliqués ("21h" × N jours) si un état transitoire mélange période horaire
+  // et plage multi-jours (ex. refresh pendant un changement de période).
+  const _rs = rangeStart ? new Date(rangeStart) : null;
+  const _re = rangeEnd ? new Date(rangeEnd) : null;
+  const _spanValid = _rs && _re && !Number.isNaN(_rs.getTime()) && !Number.isNaN(_re.getTime());
+  const effectiveHourly = hourly && (!respectSelectedRange || (_spanValid && _re - _rs <= 48 * 3600 * 1000));
+
   const grouped = data.reduce((acc, item) => {
     const d = item._id?.date || item.date;
     if (!d) return acc;
@@ -714,7 +722,7 @@ const AreaChart = ({ data, unit, hourly, rangeStart, rangeEnd, respectSelectedRa
     const cursor = new Date(start);
     const buckets = [];
 
-    if (hourly) {
+    if (effectiveHourly) {
       cursor.setMinutes(0, 0, 0);
       end.setMinutes(59, 59, 999);
       while (cursor <= end) {
@@ -760,7 +768,7 @@ const AreaChart = ({ data, unit, hourly, rangeStart, rangeEnd, respectSelectedRa
 
   const chartPoints = pts.map((point) => ({
     ...point,
-    label: hourly
+    label: effectiveHourly
       ? `${point.date.split('T')[1] || ''}h`
       : new Date(point.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }),
   }));
