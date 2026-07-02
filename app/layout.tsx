@@ -61,7 +61,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
+    // suppressHydrationWarning : des extensions navigateur (Grammarly, launchers…)
+    // injectent des attributs sur <html> avant l'hydratation → faux positifs de mismatch.
+    // Ne concerne que les attributs de cet élément, pas son contenu.
+    <html lang="fr" suppressHydrationWarning>
       <body>
         {/* Préconnexions + fonts — reprises d'index.html (React 19 hoiste ces balises dans <head>) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
