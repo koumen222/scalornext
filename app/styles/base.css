@@ -1,0 +1,31 @@
+/* Repris du <style> inline d'index.html — adapté : #root n'existe plus en Next */
+
+/* Safe-area pour iPhone avec Dynamic Island / home indicator */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+}
+
+/* Fond neutre pour éviter l'écran noir sur tous les navigateurs */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Skeleton shimmer animation */
+@keyframes _skel-shine {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skel {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 800px 100%;
+  animation: _skel-shine 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
