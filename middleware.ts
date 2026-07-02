@@ -107,6 +107,9 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // Exclut _next et tout chemin de fichier statique (contenant un point)
-  matcher: ['/((?!_next/|.*\\..*).*)'],
+  // Exclut _next et tout chemin de fichier statique (contenant un point),
+  // SAUF sitemap.xml et robots.txt : sur un domaine boutique ils sont réécrits
+  // vers les handlers par-boutique (app/sites/[subdomain]/…), sur la plateforme
+  // le middleware laisse passer (next()) vers app/sitemap.ts / app/robots.ts.
+  matcher: ['/((?!_next/|.*\\..*).*)', '/sitemap.xml', '/robots.txt'],
 };
