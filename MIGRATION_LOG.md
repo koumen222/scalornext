@@ -21,7 +21,7 @@ Migration iso-fonctionnelle du frontend `ecomcookpit/` (Vite + React 18 + React 
 - 224 usages localStorage, 80 sessionStorage, 119 fichiers touchant `window`/`document`
 - Deps exclues du frontend Next : `sharp`, `ffmpeg-static`, `@anthropic-ai/claude-code` (outils backend/scripts)
 
-### 🔄 Phase 1 — Setup (en cours)
+### ✅ Phase 1 — Setup (terminé)
 - [x] Scaffold Next 15 App Router en JS (`app/`, `jsconfig.json` alias `@/`)
 - [x] Tailwind 3.4 : config reprise à l'identique (seul `content` change) + CSS globaux copiés (`tailwind-base.css`, `ecom.css` = ex-`index.css`, `base.css` = ex-styles inline d'index.html)
 - [x] Env : mapping `VITE_*` → `NEXT_PUBLIC_*` (voir `.env.example`)
@@ -31,7 +31,7 @@ Migration iso-fonctionnelle du frontend `ecomcookpit/` (Vite + React 18 + React 
 - [x] Layout racine : metadata + viewport (iso index.html), fonts Satoshi/Inter/Syne, GTM différé, enregistrement SW (même chemin `/sw.js`)
 - [x] `app/page.jsx` : RootRedirect iso (rôle → dashboard, sinon /ecom/landing)
 - [x] Redirections statiques dans `next.config.mjs` : `/scalor/*`, `/ecom/whatsapp/connexion`, `/ecom/data`, `/ecom/stats/rapports`
-- [ ] `npm install` + `npm run build` vert
+- [x] `npm install` + `npm run build` vert (validé le 02/07 — note : en sandbox/CI sans binaire SWC natif, builder avec `NEXT_USE_WASM_SWC=1`)
 
 ### ⏳ Phase 2a — Storefront multi-tenant (SSR + ISR)
 - [ ] `middleware.js` : Host → rewrite `/store/[subdomain]/...` (sous-domaines *.scalor.net + domaines custom via API)
