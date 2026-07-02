@@ -528,13 +528,25 @@ export default function StoreDashboard() {
   // Séries /store-orders utilisables si la plage a été entièrement couverte
   const ordersSeriesReady = !!ordersSeries?.complete;
 
-  // Série de la timeline pour un type d'événement (clés date identiques au backend)
-  const timelineSeries = (eventType) => {
+  // Clé horaire backend ($dateToString, UTC) → clé heure locale, pour aligner la
+  // timeline sur les buckets /store-orders (construits en heure locale)
+  const utcHourKeyToLocal = (key) => {
+    if (!key.includes('T')) return key;
+    const d = new Date(`${key}:00:00.000Z`);
+    if (Number.isNaN(d.getTime())) return key;
+    const p2 = (v) => String(v).padStart(2, '0');
+    return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}`;
+  };
+
+  // Série de la timeline pour un ou plusieurs types d'événements
+  const timelineSeries = (eventTypes, { toLocal = false } = {}) => {
+    const wanted = Array.isArray(eventTypes) ? eventTypes : [eventTypes];
     const map = {};
     (timeline || []).forEach((item) => {
       const d = item?._id?.date;
-      if (!d || item?._id?.eventType !== eventType) return;
-      map[d] = (map[d] || 0) + (item.count || 0);
+      if (!d || !wanted.includes(item?._id?.eventType)) return;
+      const key = toLocal ? utcHourKeyToLocal(d) : d;
+      map[key] = (map[key] || 0) + (item.count || 0);
     });
     return map;
   };
@@ -551,16 +563,19 @@ export default function StoreDashboard() {
       ? Object.entries(ordersSeries.revenue).map(([date, total]) => ({ date, total }))
       : Object.entries(orders.dailyRevenue || {}).map(([date, amount]) => ({ date, total: amount }));
   } else {
-    // Conversion par bucket = commandes trackées / pages vues (timeline : clés alignées,
-    // horaire pour 24h/aujourd'hui/hier, journalier sinon)
-    const orderEvents = timelineSeries('order_placed');
-    const pageViews = timelineSeries('page_view');
-    chartData = Object.keys(pageViews)
+    // Conversion par bucket = commandes / vues (pages + produits — le storefront
+    // tracke surtout des product_view, page_view est marginal).
+    //  - numérateur : vraies commandes (/store-orders) si dispo, sinon order_placed trackés
+    //  - clés horaires re-calées en heure locale pour s'aligner sur /store-orders
+    const views = timelineSeries(['page_view', 'product_view'], { toLocal: hourlyMode });
+    const trackedOrders = timelineSeries('order_placed', { toLocal: hourlyMode });
+    const orderCounts = ordersSeriesReady ? ordersSeries.counts : trackedOrders;
+    chartData = Object.keys(views)
       .sort()
       .map((date) => ({
         date,
-        total: pageViews[date] > 0
-          ? +(((orderEvents[date] || 0) / pageViews[date]) * 100).toFixed(1)
+        total: views[date] > 0
+          ? +((Math.min(orderCounts[date] || 0, views[date]) / views[date]) * 100).toFixed(1)
           : 0,
       }));
   }
