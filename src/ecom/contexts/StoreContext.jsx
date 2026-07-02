@@ -87,12 +87,12 @@ export const StoreProvider = ({ children }) => {
       } else {
         localStorage.removeItem(`activeStore:${wsId}`);
       }
-    } catch {
-      setStores([]);
-      setActiveStore(null);
-      lastKnownStoreRef.current = null;
-      window.__activeStoreId__ = null;
-      localStorage.removeItem(`activeStore:${wsId}`);
+    } catch (err) {
+      // Erreur réseau transitoire (timeout, proxy dev, coupure) : on CONSERVE
+      // l'état précédent. L'ancien comportement (vider stores/activeStore)
+      // faisait croire à RequireStore qu'il n'y avait aucune boutique →
+      // redirection intempestive vers le wizard à chaque échec de /stores.
+      console.warn('[StoreContext] /stores inaccessible — état précédent conservé :', err?.message || err);
     } finally {
       setLoading(false);
     }
