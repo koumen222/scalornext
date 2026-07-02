@@ -47,9 +47,15 @@ Migration iso-fonctionnelle du frontend `ecomcookpit/` (Vite + React 18 + React 
 - [x] Validé en local (build prod + `next start`) : Host boutique → 200 SSR (35 Ko HTML), `/store/demo` → 200, produit → 200, `/sites` direct → 404, plateforme → 200, 0 erreur serveur
 - [ ] À valider au déploiement (API joignable) : metadata réelles par boutique/produit (en sandbox l'API est injoignable → fallback plateforme, comportement prévu)
 
-### ⏳ Phase 2b — Pages publiques SaaS
-- [ ] Landing, why-scalor, tarifs, privacy, terms, formation, provider en Server Components
-- [ ] `sitemap.xml` dynamique + `robots.txt`
+### ✅ Phase 2b — Pages publiques SaaS + SEO — terminé le 02/07
+- [x] `app/(platform)/` : groupe de routes SaaS avec layout providers iso EcomApp (`lib/platform/providers.tsx` : ErrorBoundary > Auth > Currency > Theme > PlanGate + PageViewTracker + VersionWatcher). PlatformPageMeta non porté : titres/OG via exports `metadata` Next (`lib/platform/meta.ts`)
+- [x] Pages **statiques** (prerender build, HTML complet — vérifié : landing 155 Ko SSR avec h1) : landing, why-scalor, tarifs, privacy, terms, provider (+ `/ecom/provider`)
+- [x] Pages publiques sans SEO (Suspense — useSearchParams) : formation, login, register, forgot/reset-password, setup-admin, workspace-setup, invite/[token], affiliate login/register
+- [x] `/ecom` → RootRedirect ; catch-all plateforme (`not-found.tsx`) → `/ecom/login` (iso SPA)
+- [x] SEO : `app/robots.ts` + `app/sitemap.ts` (plateforme) ; **par boutique** : `/sitemap.xml` et `/robots.txt` réécrits par le middleware vers `app/sites/[subdomain]/…/route.ts` (URLs absolues depuis le Host — sous-domaine ou domaine custom ; produits via cache ISR 60s)
+- [x] Guards SSR : `LandingPage.jsx` (SupportChat sessionId), `providerApi.js` (providerStorage)
+- [x] Build vert (40 routes) + validations curl : titres par page ✓, robots/sitemap plateforme ✓, robots/sitemap boutique via Host ✓
+- Note : en sandbox l'API est injoignable → le sitemap boutique ne liste que home/products ; les URLs produits s'ajouteront automatiquement en prod
 
 ### ⏳ Phase 3 — Dashboard privé (~120 routes, "use client")
 - [ ] Copier `src/ecom/` (components, hooks, services, contexts, utils) avec guards SSR sur les accès module-scope à window/localStorage
