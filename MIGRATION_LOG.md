@@ -73,7 +73,13 @@ Migration iso-fonctionnelle du frontend `ecomcookpit/` (Vite + React 18 + React 
 - Login/logout : navigations via router-compat (`useNavigate` → router.push/replace) — inchangées dans les pages
 - Portail affilié : token séparé géré par les pages elles-mêmes (iso SPA, aucune route protégée côté App.jsx)
 
-### ⏳ Phase 5 — Validation finale (build complet, checklist routes vs audit, WebSocket, Lighthouse, doc déploiement)
+### ✅ Phase 5 — Validation — terminé le 02/07 (reste : vérifs post-déploiement)
+- [x] **Checklist routes vs audit Phase 0 : 100 %** (diff automatisé App.jsx ↔ arbre `app/`) : 161 routes en correspondance directe, 4 redirects `next.config.ts` (`/scalor/*`, `/ecom/whatsapp/connexion`, `/ecom/data`, `/ecom/stats/rapports`), catch-all `*` → not-found → `/ecom/login`, 7 routes storefront par domaine via middleware → `/sites/[subdomain]/…`
+- [x] Build : `next build` (compile + generate) vert, 170 routes, `tsc --noEmit` sans erreur
+- [x] Smoke tests HTTP (build prod, `next start`) : pages publiques (200 + HTML SSR complet, titres corrects), dashboard/boutique/livreur/super-admin/billing/affilié (200), storefront par Host (200), robots/sitemaps plateforme et par-boutique, 404 sur route inconnue, `/sites` direct bloqué, 0 erreur serveur
+- [x] WebSockets : connexion uniquement dans les hooks côté client (`useSocket` → `io()` dans connect/useEffect), URL `api.scalor.net` inchangée — test temps réel complet à faire en conditions réelles (API injoignable depuis la sandbox)
+- [x] Doc déploiement : voir `DEPLOYMENT.md` (Workers, R2/ISR, domaines wildcard + custom, env, CI)
+- [ ] Post-déploiement (API joignable requise) : login/commande/WebSocket/logout en réel, metadata boutiques réelles, web push, **Lighthouse SEO > 90** sur landing + boutique (pas de Chrome en sandbox ; prérequis structurels déjà vérifiés par curl)
 
 ## Points de vigilance
 
@@ -93,7 +99,7 @@ Migration iso-fonctionnelle du frontend `ecomcookpit/` (Vite + React 18 + React 
 - ISR avancé : `revalidateTag` par boutique lors des updates produits (webhook API → route handler)
 - Typage progressif de `src/` (legacy JS sous `allowJs` ; nouveau code déjà en TS strict)
 
-## Notes build (sandbox Cowork)
+## Notes build (sandbox Cowork uniquement — sans objet sur une machine normale)
 
-- Builder dans le clone local rapide `/sessions/<vm>/tmp/nb/` (le montage est lent) puis rsync vers le projet ; `npm install` sur le montage se corrompt (ENOTEMPTY) → installer dans le clone.
-- `next build` complet (typecheck inclus) ≈ 25-40 s une fois le cache chaud ; `NEXT_USE_WASM_SWC=1` inutile ici (binaire SWC natif arm64 fonctionnel).
+- Builder dans le clone local rapide `/sessions/<vm>/tmp/nb/` (le montage est lent) puis rsync ; `npm install` sur le montage se corrompt (ENOTEMPTY) → installer dans le clone.
+- Fenêtre d'exécution 45 s → build scindé : `next build --experimental-build-mode compile` puis `… generate`, avec `NEXT_SKIP_TYPECHECK=1 NEXT_SKIP_TRACING=1 NEXT_SKIP_MINIFY=1` (voir next.config.ts) et `npx tsc --noEmit` à part. **Jamais pour un build déployé** — sur une machine normale, `npm run build` tourne d'un bloc avec type-check, minification et traces.
