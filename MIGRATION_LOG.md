@@ -57,14 +57,23 @@ Migration iso-fonctionnelle du frontend `ecomcookpit/` (Vite + React 18 + React 
 - [x] Build vert (40 routes) + validations curl : titres par page ✓, robots/sitemap plateforme ✓, robots/sitemap boutique via Host ✓
 - Note : en sandbox l'API est injoignable → le sitemap boutique ne liste que home/products ; les URLs produits s'ajouteront automatiquement en prod
 
-### ⏳ Phase 3 — Dashboard privé (~120 routes, "use client")
-- [ ] Copier `src/ecom/` (components, hooks, services, contexts, utils) avec guards SSR sur les accès module-scope à window/localStorage
-- [ ] Compat router (`lib/router-compat`) : useNavigate/useParams/useLocation/Link → `next/navigation`
-- [ ] `app/(dashboard)/` par lots de modules, layout d'auth partagé
-- [ ] `react-quill` → `react-quill-new` (MarketingCompose uniquement, requis React 19)
-- [ ] `react-dnd` : vérifier peer deps React 19 à l'installation (PageBuilder, EnhancedVisualBuilder)
+### ✅ Phase 3 — Dashboard privé (113 routes, "use client") — terminé le 02/07
+- [x] Structure : `app/(platform)/ecom/(dash)/` (93 pages sous EcomLayout **persistant** entre navigations, iso StableLayout) ; `app/(platform)/ecom/boutique/` (33 pages : layout racine Protected(ecom_admin)+StoreProvider, sous-groupe `(chrome)` RequireStore+BoutiqueLayout keyé) ; billing ×3 et portail affilié ×4 hors chrome (iso SPA)
+- [x] Guards portés 1:1 (`lib/dashboard/guards.tsx`) : Protected/RequireRole (auth+rôle+Rita), RequireStore (redirect wizard + state `from`), DashboardRedirect. Nuance assumée : décision en useEffect → bref loader au lieu du <Navigate> immédiat (pas de mismatch d'hydratation)
+- [x] Rôles par route repris d'App.jsx dans chaque wrapper (`RequireRole requiredRole={...}`)
+- [x] `PlatformPageMeta` porté (PLATFORM_TITLE_RULES complet + matchPath) — titres du dashboard iso SPA à chaque navigation
+- [x] `BoutiqueLayout`/`StoreProvider` : `<Outlet/>` → `children` (App Router)
+- [x] `react-quill` → **react-quill-new@3.8.3** (React 19) + `MarketingCompose` en `next/dynamic ssr:false` (Quill touche `document` à l'import)
+- [x] `react-dnd` **non installé** : PageBuilder/PageBuilderFixed/EnhancedVisualBuilder sont du code mort (aucun import, aucune route) — décision : ne pas les porter
+- [x] Guards SSR au rendu : TeamChat, ChatWidget, BillingPage, GenerationSuccess, ProductPageGeneratorModal
+- [x] Build vert : **170 routes** (136 statiques + dynamiques), `tsc --noEmit` OK, smoke tests 200 sur login/dashboard/products/orders/boutique/super-admin/livreur/billing/affilié, 404+redirect login sur route inconnue, 0 erreur serveur
 
-### ⏳ Phase 4 — Auth / redirections. Phase 5 — Validation.
+### ✅ Phase 4 — Auth / redirections — couvert par la Phase 3
+- Auth localStorage conservée telle quelle (`ecomToken`/`ecomUser`/`ecomWorkspace`), contexte EcomAuthProvider monté sur tout (platform)
+- Login/logout : navigations via router-compat (`useNavigate` → router.push/replace) — inchangées dans les pages
+- Portail affilié : token séparé géré par les pages elles-mêmes (iso SPA, aucune route protégée côté App.jsx)
+
+### ⏳ Phase 5 — Validation finale (build complet, checklist routes vs audit, WebSocket, Lighthouse, doc déploiement)
 
 ## Points de vigilance
 
