@@ -42,21 +42,27 @@ const providerApi = axios.create({
   }
 });
 
+// Guard SSR (Next) : getToken/getProfile sont appelés dans des initialiseurs
+// useState → exécutés au rendu serveur, où localStorage n'existe pas.
+const _hasLs = () => typeof localStorage !== 'undefined';
+
 export const providerStorage = {
-  getToken: () => localStorage.getItem('providerToken') || '',
-  setToken: (token) => localStorage.setItem('providerToken', token),
+  getToken: () => (_hasLs() ? localStorage.getItem('providerToken') || '' : ''),
+  setToken: (token) => { if (_hasLs()) localStorage.setItem('providerToken', token); },
   clear: () => {
+    if (!_hasLs()) return;
     localStorage.removeItem('providerToken');
     localStorage.removeItem('providerProfile');
   },
   getProfile: () => {
+    if (!_hasLs()) return null;
     try {
       return JSON.parse(localStorage.getItem('providerProfile') || 'null');
     } catch {
       return null;
     }
   },
-  setProfile: (profile) => localStorage.setItem('providerProfile', JSON.stringify(profile || null))
+  setProfile: (profile) => { if (_hasLs()) localStorage.setItem('providerProfile', JSON.stringify(profile || null)); }
 };
 
 providerApi.interceptors.request.use((config) => {

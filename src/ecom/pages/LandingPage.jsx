@@ -37,6 +37,8 @@ const SupportChat = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const sessionId = useRef((() => {
+    // Guard SSR (Next) : l'initialiseur s'exécute au rendu serveur ; réévalué au premier rendu client.
+    if (typeof window === 'undefined') return null;
     const k = 'scalor_support_session';
     let sid = localStorage.getItem(k);
     if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10); localStorage.setItem(k, sid); }
