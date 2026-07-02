@@ -6,8 +6,8 @@
  *   AppErrorBoundary > EcomAuthProvider > CurrencyProvider > ThemeProvider > PlanGateProvider
  *   + PageViewTracker (analytics) + VersionWatcher.
  *
- * PlatformPageMeta n'est PAS porté : les titres/OG viennent des exports
- * `metadata` Next par page (voir lib/platform/meta.ts).
+ * Titres : metadata Next côté serveur pour les pages publiques (lib/platform/meta.ts)
+ * + PlatformPageMeta côté client à chaque navigation (iso SPA, couvre le dashboard).
  */
 
 import React, { Suspense, useEffect, type ComponentType, type ReactNode } from 'react';
@@ -19,6 +19,7 @@ import { ThemeProvider as ThemeProviderJs } from '@/src/ecom/contexts/ThemeConte
 import { PlanGateProvider as PlanGateProviderJs } from '@/src/ecom/contexts/PlanGateContext.jsx';
 import VersionWatcherJs from '@/src/ecom/components/VersionWatcher.jsx';
 import { usePosthogPageViews } from '@/src/ecom/hooks/usePosthogPageViews.js';
+import PlatformPageMeta from './page-meta';
 
 const EcomAuthProvider = EcomAuthProviderJs as ComponentType<{ children?: ReactNode }>;
 const CurrencyProvider = CurrencyProviderJs as ComponentType<{ children?: ReactNode }>;
@@ -126,6 +127,9 @@ export default function PlatformProviders({ children }: { children: ReactNode })
                 <Suspense fallback={null}>
                   <PageViewTracker />
                 </Suspense>
+                {/* Titres/OG côté client à chaque navigation — iso PlatformPageMeta (App.jsx).
+                    Valeurs identiques aux metadata Next des pages publiques. */}
+                <PlatformPageMeta />
                 {children}
                 <VersionWatcher />
               </div>
