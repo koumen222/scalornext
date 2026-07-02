@@ -47,14 +47,14 @@ function resolveEcomApiBaseUrl() {
   const envBackend = process.env.NEXT_PUBLIC_BACKEND_URL;
   const envApi = process.env.NEXT_PUBLIC_API_URL;
 
-  // In local Vite dev, prefer the same-origin proxy to avoid brittle direct
-  // cross-origin calls to localhost:8080 from the browser.
+  // En dev local, TOUJOURS préférer le proxy same-origin (rewrites /api/* de
+  // next.config.ts, équivalent du proxy Vite) : un appel direct cross-origin
+  // vers api.scalor.net depuis localhost bloque sur le préflight CORS.
+  // La cible du proxy suit NEXT_PUBLIC_API_URL — prod ou backend local.
   if (
     (process.env.NODE_ENV !== 'production')
     && typeof window !== 'undefined'
     && isLocalhostLike(window.location.origin)
-    && (!envApi || isLocalhostLike(envApi))
-    && (!envBackend || isLocalhostLike(envBackend))
   ) {
     return '/api/ecom';
   }
