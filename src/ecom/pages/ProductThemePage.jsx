@@ -1,0 +1,1396 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useNavigate, useLocation } from '@/lib/router-compat';
+import {
+  Save, Loader2, Check, Paintbrush, Eye, Palette, Type, Square, ChevronDown, ChevronUp,
+  Droplets, Layout, Zap, MousePointer2, Rows3, Image, ShoppingBag, ShoppingCart, Star, Truck, Shield,
+  MessageCircle, Heart, Share2, Minus, Plus, ChevronRight, Clock, Award, Flame, Rocket, Sparkles,
+  Layers, Crown, Wand2, ArrowRight
+} from 'lucide-react';
+import { storeManageApi } from '../services/storeApi';
+import { useStore } from '../contexts/StoreContext.jsx';
+import { applyFont } from '../hooks/useStoreData';
+import BuilderAIChatWidget from '../components/BuilderAIChatWidget.jsx';
+
+// ── 2 Layout Themes ───────────────────────────────────────────────────────────
+const THEMES = [
+  { id: 'classic', name: 'Classique', desc: 'Galerie à gauche, infos à droite — le standard e-commerce.', badge: 'Par défaut', icon: ShoppingBag },
+  { id: 'magazine', name: 'Premium', desc: 'Page longue avec carrousel, bénéfices, FAQ et preuves sociales.', badge: 'Premium', icon: Sparkles },
+];
+
+// ── Theme Previews ────────────────────────────────────────────────────────────
+const ClassicPreview = () => (
+  <div className="p-2 bg-white rounded-xl">
+    <div className="flex justify-between mb-2 pb-1.5 border-b border-gray-100">
+      <div className="w-7 h-1.5 rounded bg-violet-500" />
+      <div className="flex gap-1">{[1,2,3].map(i => <div key={i} className="w-1 h-1 rounded-full bg-gray-300" />)}</div>
+    </div>
+    <div className="grid grid-cols-2 gap-1.5">
+      <div>
+        <div className="pb-[75%] rounded bg-gradient-to-br from-gray-100 to-gray-50 relative">
+          <div className="absolute inset-0 flex items-center justify-center"><Image size={14} className="text-gray-300" /></div>
+        </div>
+        <div className="flex gap-1 mt-1">{[1,2,3,4].map(i => <div key={i} className={`flex-1 pb-[100%] rounded ${i===1?'bg-violet-100 border border-violet-300':'bg-gray-100'}`} />)}</div>
+      </div>
+      <div className="py-0.5 space-y-1">
+        <div className="w-[60%] h-1 rounded bg-violet-300/40" />
+        <div className="w-[90%] h-1.5 rounded bg-gray-700/60" />
+        <div className="w-[70%] h-1.5 rounded bg-gray-700/60" />
+        <div className="w-[40%] h-1 rounded bg-gray-400/40 mt-2" />
+        <div className="flex gap-1 items-center mt-2"><div className="w-8 h-2 rounded bg-violet-600" /><div className="w-5 h-1.5 rounded bg-gray-300" /></div>
+        <div className="w-full h-4 rounded-md bg-violet-600 mt-2" />
+      </div>
+    </div>
+  </div>
+);
+
+const LandingPreview = () => (
+  <div className="p-2 bg-white rounded-xl">
+    <div className="flex justify-between mb-2 pb-1.5 border-b border-gray-100">
+      <div className="w-7 h-1.5 rounded bg-violet-500" />
+      <div className="flex gap-1">{[1,2,3].map(i => <div key={i} className="w-1 h-1 rounded-full bg-gray-300" />)}</div>
+    </div>
+    <div className="pb-[35%] rounded-lg bg-gradient-to-br from-violet-50 to-violet-100 relative mb-1.5">
+      <div className="absolute inset-0 flex items-center justify-center"><Image size={16} className="text-violet-300" /></div>
+    </div>
+    <div className="text-center mb-2">
+      <div className="w-[70%] h-2 rounded bg-gray-700/60 mx-auto mb-1" />
+      <div className="w-[45%] h-1 rounded bg-gray-400/40 mx-auto mb-1.5" />
+      <div className="w-10 h-2 rounded bg-violet-600 mx-auto" />
+    </div>
+    <div className="w-full h-4 rounded-full bg-violet-600 mb-2" />
+    <div className="flex gap-1">{[1,2,3].map(i => <div key={i} className="flex-1 p-1.5 rounded bg-gray-50 text-center"><div className="w-2.5 h-2.5 rounded-full bg-violet-200 mx-auto mb-1" /><div className="w-[80%] h-1 rounded bg-gray-200 mx-auto" /></div>)}</div>
+  </div>
+);
+
+const MagazinePreview = () => (
+  <div className="p-2 bg-white rounded-xl">
+    {/* Header */}
+    <div className="flex justify-between items-center mb-2 pb-1.5 border-b border-gray-100">
+      <div className="w-7 h-1.5 rounded bg-gray-800/70" />
+      <div className="flex gap-1">{[1,2,3].map(i => <div key={i} className="w-1 h-1 rounded-full bg-gray-300" />)}</div>
+    </div>
+    {/* 2-col hero */}
+    <div className="grid grid-cols-2 gap-1.5">
+      {/* Image + thumbnails */}
+      <div>
+        <div className="pb-[90%] rounded-lg bg-gray-100 relative overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center"><Image size={12} className="text-gray-300" /></div>
+          <div className="absolute top-1 left-0"><div className="w-4 h-1.5 rounded-r" style={{ background: '#B42318' }} /></div>
+          <div className="absolute bottom-1.5 left-0 right-0 flex justify-center gap-0.5">
+            {[1,2,3].map(i => <div key={i} className="h-0.5 rounded-full" style={{ width: i===1?8:4, background: i===1?'#6d28d9':'rgba(15,23,42,0.2)' }} />)}
+          </div>
+        </div>
+        <div className="flex gap-0.5 mt-1">{[1,2,3].map(i => <div key={i} className="flex-1 pb-[100%] rounded" style={{ background: i===1?'#ede9fe':'#f3f4f6', border: i===1?'1px solid #7c3aed':undefined }} />)}</div>
+      </div>
+      {/* Info */}
+      <div className="space-y-1 py-0.5">
+        <div className="flex gap-0.5">{[1,2,3,4,5].map(i => <div key={i} className="w-1.5 h-1.5 rounded-sm bg-yellow-400" />)}</div>
+        <div className="w-[95%] h-1.5 rounded bg-gray-900/80" />
+        <div className="w-[80%] h-1 rounded bg-gray-900/60" />
+        <div className="w-[50%] h-1.5 rounded bg-gray-800 mt-0.5" />
+        {[1,2,3].map(i => (
+          <div key={i} className="flex items-center gap-0.5">
+            <div className="w-2 h-2 rounded-full bg-violet-600 flex-shrink-0" />
+            <div className="h-0.5 rounded bg-gray-300 flex-1" />
+          </div>
+        ))}
+        <div className="w-full h-3.5 rounded-md bg-violet-600 mt-1" />
+      </div>
+    </div>
+    {/* Authority strip */}
+    <div className="mt-1.5 rounded-md px-1.5 py-1 flex gap-2" style={{ background: '#EFF8F7' }}>
+      {[1,2,3].map(i => <div key={i} className="h-0.5 rounded flex-1 bg-emerald-500/60" />)}
+    </div>
+  </div>
+);
+
+const MinimalPreview = () => (
+  <div className="p-2 bg-white rounded-xl">
+    <div className="flex justify-between mb-3 pb-1.5 border-b border-gray-50">
+      <div className="w-7 h-1.5 rounded bg-gray-900" />
+      <div className="flex gap-1">{[1,2].map(i => <div key={i} className="w-1 h-1 rounded-full bg-gray-300" />)}</div>
+    </div>
+    <div className="pb-[50%] rounded-sm bg-gray-50 relative mb-3">
+      <div className="absolute inset-0 flex items-center justify-center"><Image size={16} className="text-gray-200" /></div>
+    </div>
+    <div className="space-y-1.5 px-1">
+      <div className="w-[50%] h-1 rounded bg-gray-300" />
+      <div className="w-[85%] h-2 rounded bg-gray-900/70" />
+      <div className="w-10 h-2 rounded bg-gray-900 mt-2" />
+      <div className="w-full h-[1px] bg-gray-100 my-2" />
+      <div className="w-full h-4 rounded-none bg-gray-900 border border-gray-900" />
+    </div>
+  </div>
+);
+
+const BoldPreview = () => (
+  <div className="p-2 bg-violet-600 rounded-xl">
+    <div className="flex justify-between mb-2 pb-1.5 border-b border-white/20">
+      <div className="w-7 h-1.5 rounded bg-yellow-400" />
+      <div className="flex gap-1">{[1,2,3].map(i => <div key={i} className="w-1 h-1 rounded-full bg-white/50" />)}</div>
+    </div>
+    <div className="pb-[40%] rounded-xl bg-white/10 relative mb-2 overflow-hidden">
+      <div className="absolute inset-0 flex items-center justify-center"><Flame size={16} className="text-yellow-400/60" /></div>
+      <div className="absolute top-1 left-1"><div className="px-1.5 py-0.5 rounded-full bg-red-500 text-[5px] text-white font-bold">-50%</div></div>
+    </div>
+    <div className="space-y-1 px-0.5">
+      <div className="w-[80%] h-2 rounded bg-white/90" />
+      <div className="w-[60%] h-1 rounded bg-white/40" />
+      <div className="flex gap-1 items-center mt-1"><div className="w-10 h-2.5 rounded bg-yellow-400" /><div className="w-6 h-1.5 rounded bg-white/30 line-through" /></div>
+      <div className="w-full h-5 rounded-xl bg-yellow-400 mt-1" />
+    </div>
+  </div>
+);
+
+const PREVIEW_MAP = { classic: ClassicPreview, magazine: MagazinePreview };
+// ── Store (homepage) previews ─────────────────────────────────────────────────
+const ClassicStorePreview = () => (
+  <div className="p-1.5 bg-white rounded-xl">
+    <div className="h-5 rounded bg-gray-50 flex items-center px-1.5 mb-1.5 gap-1">
+      <div className="w-3.5 h-1 rounded bg-violet-500" />
+      <div className="flex-1" />
+      <div className="flex gap-0.5">{[1,2,3].map(i => <div key={i} className="w-3 h-0.5 rounded bg-gray-200" />)}</div>
+    </div>
+    <div className="pb-[30%] rounded bg-gradient-to-br from-violet-100 to-violet-50 relative mb-1.5">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+        <div className="w-[50%] h-1.5 rounded bg-gray-700/50" />
+        <div className="w-[35%] h-1 rounded bg-gray-400/40" />
+        <div className="w-8 h-2.5 rounded-full bg-violet-600 mt-1" />
+      </div>
+    </div>
+    <div className="grid grid-cols-3 gap-1">
+      {[1,2,3].map(i => (
+        <div key={i} className="rounded bg-gray-50">
+          <div className="pb-[75%] rounded-t bg-gray-100 relative"><div className="absolute inset-0 flex items-center justify-center"><Image size={8} className="text-gray-300" /></div></div>
+          <div className="px-1 pb-1 pt-0.5"><div className="w-[70%] h-0.5 rounded bg-gray-300 mb-0.5" /><div className="w-[50%] h-0.5 rounded bg-violet-400" /></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const LandingStorePreview = () => (
+  <div className="p-1.5 bg-white rounded-xl">
+    <div className="h-5 rounded bg-gray-50 flex items-center px-1.5 mb-1.5 gap-1">
+      <div className="w-3.5 h-1 rounded bg-violet-500" />
+      <div className="flex-1" />
+      <div className="flex gap-0.5">{[1,2,3].map(i => <div key={i} className="w-3 h-0.5 rounded bg-gray-200" />)}</div>
+    </div>
+    <div className="pb-[40%] rounded-lg bg-gradient-to-br from-violet-600 to-violet-800 relative mb-1.5 overflow-hidden">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+        <div className="w-[60%] h-1.5 rounded bg-white/80" />
+        <div className="w-[40%] h-1 rounded bg-white/40" />
+        <div className="w-8 h-2.5 rounded-full bg-white mt-1" />
+      </div>
+    </div>
+    <div className="flex gap-1">
+      {[1,2,3].map(i => (
+        <div key={i} className="flex-1 rounded bg-gray-50 overflow-hidden">
+          <div className="pb-[100%] bg-gray-100 relative"><div className="absolute inset-0 flex items-center justify-center"><Image size={7} className="text-gray-300" /></div></div>
+          <div className="px-0.5 pb-0.5 pt-0.5"><div className="w-full h-0.5 rounded bg-gray-300 mb-0.5" /><div className="w-2/3 h-0.5 rounded bg-violet-400" /></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const MagazineStorePreview = () => (
+  <div className="p-1.5 bg-white rounded-xl">
+    <div className="pb-[50%] rounded-lg bg-gradient-to-b from-gray-800 to-gray-900 relative mb-1.5 overflow-hidden">
+      <div className="absolute top-1 left-1.5 right-1.5 flex justify-between z-10">
+        <div className="w-4 h-0.5 rounded bg-white/60" />
+        <div className="flex gap-0.5">{[1,2].map(i => <div key={i} className="w-1 h-1 rounded-full bg-white/40" />)}</div>
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center"><Image size={16} className="text-white/15" /></div>
+      <div className="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
+      <div className="absolute bottom-1.5 left-1.5 right-1.5">
+        <div className="w-[70%] h-1 rounded bg-white/80 mb-0.5" />
+        <div className="w-[45%] h-0.5 rounded bg-white/40" />
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-1">
+      {[1,2].map(i => (
+        <div key={i} className="rounded bg-gray-50 overflow-hidden">
+          <div className="pb-[65%] bg-gray-200 relative"><div className="absolute inset-0 flex items-center justify-center"><Image size={8} className="text-gray-400" /></div></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const MinimalStorePreview = () => (
+  <div className="p-1.5 bg-white rounded-xl">
+    <div className="h-5 flex items-center justify-between border-b border-gray-50 mb-2">
+      <div className="w-4 h-1 rounded bg-gray-800" />
+      <div className="flex gap-0.5">{[1,2].map(i => <div key={i} className="w-3 h-0.5 rounded bg-gray-200" />)}</div>
+    </div>
+    <div className="grid grid-cols-3 gap-1 mb-1.5">
+      {[1,2,3].map(i => (
+        <div key={i} className="rounded-sm bg-gray-50">
+          <div className="pb-[100%] bg-gray-100 relative"><div className="absolute inset-0 flex items-center justify-center"><Image size={7} className="text-gray-200" /></div></div>
+          <div className="px-0.5 pb-1 pt-0.5"><div className="w-full h-0.5 rounded bg-gray-200" /></div>
+        </div>
+      ))}
+    </div>
+    <div className="flex items-center justify-between px-0.5">
+      <div className="w-10 h-0.5 rounded bg-gray-700" />
+      <div className="w-6 h-2 rounded-none bg-gray-900 border border-gray-900" />
+    </div>
+  </div>
+);
+
+const BoldStorePreview = () => (
+  <div className="p-1.5 bg-violet-600 rounded-xl">
+    <div className="h-5 flex items-center justify-between border-b border-white/20 mb-1.5">
+      <div className="w-4 h-1 rounded bg-yellow-400" />
+      <div className="flex gap-0.5">{[1,2,3].map(i => <div key={i} className="w-1 h-1 rounded-full bg-white/40" />)}</div>
+    </div>
+    <div className="pb-[30%] rounded-lg bg-white/10 relative mb-1.5 overflow-hidden">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+        <div className="w-[55%] h-1.5 rounded bg-white/90" />
+        <div className="w-[35%] h-1 rounded bg-white/40" />
+        <div className="w-8 h-2.5 rounded-xl bg-yellow-400 mt-0.5" />
+      </div>
+    </div>
+    <div className="grid grid-cols-3 gap-1">
+      {[1,2,3].map(i => (
+        <div key={i} className="rounded-lg bg-white/10 overflow-hidden">
+          <div className="pb-[75%] relative"><div className="absolute inset-0 flex items-center justify-center"><Flame size={7} className="text-yellow-400/50" /></div></div>
+          <div className="px-0.5 pb-1"><div className="w-full h-0.5 rounded bg-white/60" /></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const STORE_PREVIEW_MAP = { classic: ClassicStorePreview, landing: LandingStorePreview, magazine: MagazineStorePreview, minimal: MinimalStorePreview, bold: BoldStorePreview };
+
+
+
+// ── Color presets ─────────────────────────────────────────────────────────────
+const COLOR_PRESETS = [
+  { id: 'emerald',    name: 'Émeraude',  accent: '#0F6B4F', bg: '#ffffff', text: '#1F2937', badge: '#EF4444', cta: '#0F6B4F' },
+  { id: 'coral',      name: 'Corail',     accent: '#D94A1F', bg: '#ffffff', text: '#1F2937', badge: '#EF4444', cta: '#D94A1F' },
+  { id: 'ocean',      name: 'Océan',      accent: '#1565C0', bg: '#ffffff', text: '#1F2937', badge: '#E53935', cta: '#1565C0' },
+  { id: 'rose',       name: 'Rose',       accent: '#C44569', bg: '#FFF5F5', text: '#3D1A2A', badge: '#E91E63', cta: '#C44569' },
+  { id: 'gold',       name: 'Or Luxe',    accent: '#C9A84C', bg: '#FAF7F2', text: '#2D1F0E', badge: '#D4845A', cta: '#B8941E' },
+  { id: 'nature',     name: 'Nature',     accent: '#2E7D32', bg: '#FFFDF9', text: '#0D2B14', badge: '#E65100', cta: '#2E7D32' },
+  { id: 'dark',       name: 'Sombre',     accent: '#0066FF', bg: '#0A0F1E', text: '#FFFFFF', badge: '#FF4444', cta: '#0066FF' },
+  { id: 'noir',       name: 'Noir',       accent: '#000000', bg: '#FFFFFF', text: '#000000', badge: '#EF4444', cta: '#000000' },
+  { id: 'terracotta', name: 'Terra',      accent: '#C0622A', bg: '#F5F0E8', text: '#2D1A0E', badge: '#D4845A', cta: '#C0622A' },
+  { id: 'violet',     name: 'Violet',     accent: '#7C3AED', bg: '#FFFFFF', text: '#1F2937', badge: '#EC4899', cta: '#7C3AED' },
+  { id: 'sky',        name: 'Ciel',       accent: '#0EA5E9', bg: '#F0F9FF', text: '#0C4A6E', badge: '#F97316', cta: '#0284C7' },
+  { id: 'wine',       name: 'Vin',        accent: '#881337', bg: '#FFF1F2', text: '#4C0519', badge: '#BE123C', cta: '#9F1239' },
+  { id: 'forest',     name: 'Forêt',      accent: '#14532D', bg: '#F0FDF4', text: '#052E16', badge: '#DC2626', cta: '#166534' },
+  { id: 'sunset',     name: 'Sunset',     accent: '#EA580C', bg: '#FFFBEB', text: '#431407', badge: '#DC2626', cta: '#C2410C' },
+  { id: 'slate',      name: 'Slate',      accent: '#475569', bg: '#F8FAFC', text: '#0F172A', badge: '#6366F1', cta: '#334155' },
+];
+
+const FONT_OPTIONS = [
+  { id: 'system',        name: 'Système',          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' },
+  { id: 'inter',         name: 'Inter',            family: '"Inter", sans-serif' },
+  { id: 'poppins',       name: 'Poppins',          family: '"Poppins", sans-serif' },
+  { id: 'montserrat',    name: 'Montserrat',       family: '"Montserrat", sans-serif' },
+  { id: 'nunito',        name: 'Nunito',           family: '"Nunito", sans-serif' },
+  { id: 'roboto',        name: 'Roboto',           family: '"Roboto", sans-serif' },
+  { id: 'raleway',       name: 'Raleway',          family: '"Raleway", sans-serif' },
+  { id: 'oswald',        name: 'Oswald',           family: '"Oswald", sans-serif' },
+  { id: 'open-sans',     name: 'Open Sans',        family: '"Open Sans", sans-serif' },
+  { id: 'geist',         name: 'Geist',            family: '"Geist", sans-serif' },
+  { id: 'plus-jakarta',  name: 'Plus Jakarta Sans',family: '"Plus Jakarta Sans", sans-serif' },
+  { id: 'urbanist',      name: 'Urbanist',         family: '"Urbanist", sans-serif' },
+  { id: 'syne',          name: 'Syne',             family: '"Syne", sans-serif' },
+  { id: 'josefin',       name: 'Josefin Sans',     family: '"Josefin Sans", sans-serif' },
+  { id: 'playfair',      name: 'Playfair Display', family: '"Playfair Display", serif' },
+  { id: 'lora',          name: 'Lora',             family: '"Lora", serif' },
+  { id: 'merriweather',  name: 'Merriweather',     family: '"Merriweather", serif' },
+  { id: 'cormorant',     name: 'Cormorant Garamond',family: '"Cormorant Garamond", serif' },
+  { id: 'dm-sans',       name: 'DM Sans',          family: '"DM Sans", sans-serif' },
+  { id: 'satoshi',       name: 'Satoshi',          family: '"Satoshi", sans-serif' },
+  { id: 'outfit',        name: 'Outfit',           family: '"Outfit", sans-serif' },
+  { id: 'space-grotesk', name: 'Space Grotesk',    family: '"Space Grotesk", sans-serif' },
+  { id: 'bebas',         name: 'Bebas Neue',       family: '"Bebas Neue", cursive' },
+  { id: 'archivo',       name: 'Archivo',          family: '"Archivo", sans-serif' },
+];
+
+const BORDER_STYLES = [
+  { id: 'rounded', name: 'Arrondi',  radius: '12px' },
+  { id: 'pill',    name: 'Capsule',  radius: '999px' },
+  { id: 'soft',    name: 'Doux',     radius: '8px' },
+  { id: 'square',  name: 'Carré',    radius: '4px' },
+  { id: 'none',    name: 'Aucun',    radius: '0px' },
+];
+
+const BUTTON_STYLES = [
+  { id: 'filled',   name: 'Rempli',   desc: 'Bouton plein coloré' },
+  { id: 'outline',  name: 'Contour',  desc: 'Bordure avec fond transparent' },
+  { id: 'soft',     name: 'Doux',     desc: 'Fond semi-transparent' },
+  { id: 'gradient', name: 'Dégradé',  desc: 'Dégradé moderne' },
+];
+
+const BADGE_STYLES = [
+  { id: 'filled',  name: 'Rempli' },
+  { id: 'outline', name: 'Contour' },
+  { id: 'soft',    name: 'Doux' },
+  { id: 'ribbon',  name: 'Ruban' },
+];
+
+const IMAGE_RATIOS = [
+  { id: 'square',    name: 'Carré',    ratio: '1:1' },
+  { id: 'portrait',  name: 'Portrait', ratio: '3:4' },
+  { id: 'landscape', name: 'Paysage',  ratio: '4:3' },
+  { id: 'wide',      name: 'Large',    ratio: '16:9' },
+];
+
+const SPACING_OPTIONS = [
+  { id: 'compact', name: 'Compact', value: 'compact' },
+  { id: 'normal',  name: 'Normal',  value: 'normal' },
+  { id: 'relaxed', name: 'Spacieux', value: 'relaxed' },
+];
+
+// ── Color input ───────────────────────────────────────────────────────────────
+const ColorInput = ({ label, value, onChange }) => (
+  <div>
+    <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{label}</label>
+    <div className="flex items-center gap-2">
+      <input type="color" value={value || '#000000'} onChange={e => onChange(e.target.value)}
+        className="w-9 h-9 rounded-lg border border-gray-200 cursor-pointer appearance-none bg-transparent p-0.5" />
+      <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
+        className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-xs font-mono focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-200" />
+    </div>
+  </div>
+);
+
+const withAlpha = (color, alpha) => {
+  if (!color) return `rgba(124, 58, 237, ${alpha})`;
+  if (color.startsWith('#')) {
+    let hex = color.slice(1);
+    if (hex.length === 3) hex = hex.split('').map(char => char + char).join('');
+    if (hex.length !== 6) return color;
+    const red = Number.parseInt(hex.slice(0, 2), 16);
+    const green = Number.parseInt(hex.slice(2, 4), 16);
+    const blue = Number.parseInt(hex.slice(4, 6), 16);
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  }
+  return color;
+};
+
+// ── Toggle ────────────────────────────────────────────────────────────────────
+const Toggle = ({ label, desc, value, onChange, accentColor = '#7C3AED' }) => {
+  const activeBg = withAlpha(accentColor, 0.1);
+  const activeBorder = withAlpha(accentColor, 0.24);
+  const activeShadow = withAlpha(accentColor, 0.28);
+
+  return (
+    <div
+      className={`flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 transition-all duration-200 ${
+        value ? 'bg-white shadow-sm' : 'bg-gray-50/80 hover:bg-white'
+      }`}
+      style={{
+        borderColor: value ? activeBorder : '#E5E7EB',
+        boxShadow: value ? `0 14px 30px -24px ${activeShadow}` : 'none',
+      }}
+    >
+      <div className="min-w-0 pr-2">
+        <div className="flex items-center gap-2">
+          <span className="truncate text-sm font-bold text-gray-900">{label}</span>
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] ${
+              value ? 'text-gray-900' : 'bg-gray-200 text-gray-500'
+            }`}
+            style={value ? { backgroundColor: activeBg } : undefined}
+          >
+            {value ? 'On' : 'Off'}
+          </span>
+        </div>
+        {desc && <p className="mt-1 text-[11px] leading-5 text-gray-500">{desc}</p>}
+      </div>
+
+      <button
+        type="button"
+        role="switch"
+        aria-checked={value}
+        aria-label={label}
+        onClick={() => onChange(!value)}
+        className="relative h-8 w-[60px] shrink-0 rounded-full border transition-all duration-200 focus:outline-none focus:ring-4"
+        style={{
+          backgroundColor: value ? accentColor : '#D1D5DB',
+          borderColor: value ? withAlpha(accentColor, 0.2) : '#D1D5DB',
+          boxShadow: value ? `inset 0 0 0 1px ${withAlpha('#FFFFFF', 0.18)}, 0 10px 24px -14px ${activeShadow}` : 'inset 0 1px 2px rgba(15, 23, 42, 0.08)',
+          outline: 'none',
+        }}
+      >
+        <span
+          className={`absolute inset-y-0.5 flex w-7 items-center justify-center rounded-full bg-white text-[10px] font-extrabold text-gray-700 shadow-[0_6px_14px_-8px_rgba(15,23,42,0.5)] transition-all duration-200 ${
+            value ? 'translate-x-[30px]' : 'translate-x-0.5'
+          }`}
+        >
+          {value ? <Check size={12} strokeWidth={3} color={accentColor} /> : <Minus size={12} strokeWidth={3} color="#94A3B8" />}
+        </span>
+      </button>
+    </div>
+  );
+};
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
+const DEFAULT_DESIGN = {
+  buttonColor: '#D94A1F', ctaButtonColor: '#D94A1F', formButtonColor: '#D94A1F', backgroundColor: '#ffffff', textColor: '#1F2937', badgeColor: '#EF4444',
+  fontFamily: 'system', fontBase: 14, fontWeight: '600',
+  borderRadius: '12px', shadow: true,
+  buttonStyle: 'filled', badgeStyle: 'filled',
+  imageRatio: 'square', spacing: 'normal',
+  showReviews: false, showTrustBadges: true, showShareButtons: false,
+  showRelatedProducts: true, showProductGallery: true, showQuantitySelector: true,
+  showDeliveryInfo: false, showSecureBadge: false,
+  showCountdown: false, showStockIndicator: false,
+  stickyAddToCart: true, imageZoom: true,
+};
+
+const DEFAULT_SECTION_COLORS = {
+  socialProof: '#7C3AED',
+  benefits: '#0F6B4F',
+  trust: '#2563EB',
+  problem: '#DC2626',
+  solution: '#059669',
+  faq: '#7C3AED',
+};
+
+const DEFAULT_INFOGRAPHICS_FORM = {
+  headline: 'Remplissez le formulaire, on vous appelle pour valider votre commande',
+  reassurance: 'Livraison gratuite. Paiement à la livraison.',
+  ctaLabel: 'CLIQUE POUR CONFIRMER TA COMMANDE',
+  stickyLabel: 'COMMANDEZ',
+  brandColor: '',
+  buttonColor: '',
+  buttonSize: 'medium',
+};
+
+const ProductThemePage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [currentTheme, setCurrentTheme] = useState('classic');
+  const [design, setDesign] = useState({ ...DEFAULT_DESIGN });
+  const [sectionColors, setSectionColors] = useState({ ...DEFAULT_SECTION_COLORS });
+  const [infographicsForm, setInfographicsForm] = useState({ ...DEFAULT_INFOGRAPHICS_FORM });
+  const [originalData, setOriginalData] = useState({ theme: 'classic', design: { ...DEFAULT_DESIGN }, sectionColors: { ...DEFAULT_SECTION_COLORS }, infographicsForm: { ...DEFAULT_INFOGRAPHICS_FORM } });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const loadedConfigRef = React.useRef({});   // full productPageConfig loaded from DB
+  const loadedThemeRef = React.useRef({});    // full storeTheme loaded from DB
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeSection, setActiveSection] = useState(searchParams.get('tab') || 'layout');
+  const [colorTab, setColorTab] = useState('presets');
+  const { activeStore, getActiveStorefrontUrl } = useStore();
+
+  // Sync tab with URL query param
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && ['layout','colors','typo','buttons','elements','infographics','preview'].includes(tab)) {
+      setActiveSection(tab);
+    }
+  }, [searchParams]);
+
+  const storeSubdomain = activeStore?.subdomain || activeStore?.storeSettings?.subdomain || '';
+
+  const SECTIONS = [
+    { id: 'layout', label: 'Mise en page', icon: Layout },
+    { id: 'colors', label: 'Couleurs', icon: Droplets },
+    { id: 'typo', label: 'Typographie', icon: Type },
+    { id: 'buttons', label: 'Boutons & Styles', icon: MousePointer2 },
+    { id: 'elements', label: 'Éléments', icon: Rows3 },
+    { id: 'infographics', label: 'Infographies', icon: Layers },
+    { id: 'preview', label: 'Aperçu', icon: Eye },
+  ];
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [configResult, themeResult] = await Promise.allSettled([
+          storeManageApi.getStoreConfig(),
+          storeManageApi.getTheme(),
+        ]);
+
+        // Extract config from storeSettings (primary source)
+        let config = {};
+        if (configResult.status === 'fulfilled') {
+          const raw = configResult.value?.data?.data || configResult.value?.data || {};
+          config = raw.storeSettings?.productPageConfig || raw.productPageConfig || {};
+        }
+
+        // Extract theme data
+        const themeData = themeResult.status === 'fulfilled'
+          ? (themeResult.value?.data?.data || {})
+          : {};
+
+        // Fallback: if config is empty, try reading productPageConfig from storeTheme
+        if (!config.design && themeData.productPageConfig) {
+          config = themeData.productPageConfig;
+        }
+
+        const savedTheme = themeData.template || 'classic';
+        const savedDesign = {
+          ...DEFAULT_DESIGN,
+          ...(config.design || {}),
+          showReviews: false,
+          showShareButtons: false,
+          showDeliveryInfo: false,
+          showSecureBadge: false,
+          showStockIndicator: false,
+        };
+        const savedSectionColors = { ...DEFAULT_SECTION_COLORS, ...(themeData.sectionColors || {}) };
+        const savedInfographicsForm = { ...DEFAULT_INFOGRAPHICS_FORM, ...(config.infographicsForm || {}) };
+        loadedConfigRef.current = config;
+        loadedThemeRef.current = themeData;
+        setCurrentTheme(savedTheme);
+        setDesign(savedDesign);
+        setSectionColors(savedSectionColors);
+        setInfographicsForm(savedInfographicsForm);
+        setOriginalData({ theme: savedTheme, design: { ...savedDesign }, sectionColors: { ...savedSectionColors }, infographicsForm: { ...savedInfographicsForm } });
+      } catch (e) {
+        console.error('Failed to load theme:', e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleSelect = useCallback((themeId) => { setCurrentTheme(themeId); setSaved(false); }, []);
+  const updateDesign = useCallback((key, value) => {
+    if (key === 'fontFamily') applyFont(value);
+    setDesign(prev => {
+      const next = { ...prev, [key]: value };
+      // keep all three button color fields in sync
+      if (key === 'buttonColor') { next.ctaButtonColor = value; next.formButtonColor = value; }
+      if (key === 'ctaButtonColor') { next.buttonColor = value; next.formButtonColor = value; }
+      if (key === 'formButtonColor') { next.buttonColor = value; next.ctaButtonColor = value; }
+      return next;
+    });
+    setSaved(false);
+  }, []);
+  const applyColorPreset = useCallback((preset) => {
+    setDesign(prev => ({ ...prev, buttonColor: preset.accent, ctaButtonColor: preset.cta || preset.accent, backgroundColor: preset.bg, textColor: preset.text, badgeColor: preset.badge }));
+    setSectionColors({
+      socialProof: preset.accent,
+      benefits: preset.cta || preset.accent,
+      trust: preset.accent,
+      problem: preset.badge,
+      solution: preset.cta || preset.accent,
+      faq: preset.accent,
+    });
+    setSaved(false);
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // Use in-memory config loaded at page init — avoids a redundant GET and race conditions
+      const existingConfig = loadedConfigRef.current || {};
+      const existingTheme = loadedThemeRef.current || {};
+
+      // Build the productPageConfig payload
+      const updatedProductPageConfig = {
+        ...existingConfig,
+        design: { ...existingConfig.design, ...design },
+        infographicsForm: { ...existingConfig.infographicsForm, ...infographicsForm },
+      };
+
+      // Save updates — allSettled so partial success still persists what it can
+      // Include productPageConfig in theme payload as fallback (always persisted)
+      const [themeUpdate, configUpdate] = await Promise.allSettled([
+        storeManageApi.updateTheme({ ...existingTheme, template: currentTheme, sectionColors, productPageConfig: updatedProductPageConfig }),
+        storeManageApi.updateStoreConfig({ productPageConfig: updatedProductPageConfig }),
+      ]);
+
+      if (themeUpdate.status === 'rejected') console.error('Theme update failed:', themeUpdate.reason?.message);
+      if (configUpdate.status === 'rejected') console.error('Config update failed:', configUpdate.reason?.message);
+
+      // Consider save successful if at least the theme was saved
+      if (themeUpdate.status === 'fulfilled') {
+        loadedConfigRef.current = updatedProductPageConfig;
+        loadedThemeRef.current = { ...existingTheme, template: currentTheme, sectionColors, productPageConfig: updatedProductPageConfig };
+        setOriginalData({ theme: currentTheme, design: { ...design }, sectionColors: { ...sectionColors }, infographicsForm: { ...infographicsForm } });
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      }
+    } catch (e) {
+      console.error('Failed to save theme:', e);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const hasChanges = currentTheme !== originalData.theme || JSON.stringify(design) !== JSON.stringify(originalData.design) || JSON.stringify(sectionColors) !== JSON.stringify(originalData.sectionColors) || JSON.stringify(infographicsForm) !== JSON.stringify(originalData.infographicsForm);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
+            <Loader2 size={28} className="animate-spin text-violet-500" />
+          </div>
+          <span className="text-sm font-medium text-gray-500">Chargement…</span>
+        </div>
+      </div>
+    );
+  }
+
+  const fontFamily = FONT_OPTIONS.find(f => f.id === design.fontFamily)?.family || 'sans-serif';
+
+  const renderButtonPreview = (style, color, radius) => {
+    const base = 'px-5 py-2.5 text-sm font-bold transition';
+    switch (style) {
+      case 'outline': return <button className={base} style={{ border: `2px solid ${color}`, color, borderRadius: radius, background: 'transparent' }}>Commander</button>;
+      case 'soft': return <button className={base} style={{ background: color + '18', color, borderRadius: radius }}>Commander</button>;
+      case 'gradient': return <button className={`${base} text-white`} style={{ background: `linear-gradient(135deg, ${color}, ${color}cc)`, borderRadius: radius }}>Commander</button>;
+      default: return <button className={`${base} text-white`} style={{ background: color, borderRadius: radius }}>Commander</button>;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-14 z-20 border-b border-gray-200 bg-white/95 backdrop-blur">
+        {/* Header */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary-100 bg-primary-50">
+                <Paintbrush size={18} className="text-primary-700" />
+              </div>
+              <div>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Thème Page Produit</h1>
+                <p className="text-[11px] sm:text-xs text-gray-500">Personnalisez l'apparence de vos pages produits</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {getActiveStorefrontUrl() && (
+                <a href={getActiveStorefrontUrl()} target="_blank" rel="noopener noreferrer"
+                  className="hidden sm:flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-500 transition hover:bg-gray-50">
+                  <Eye size={14} /> Voir ma boutique
+                </a>
+              )}
+              {hasChanges && (
+                <button
+                  onClick={() => { setCurrentTheme(originalData.theme); setDesign({ ...originalData.design }); setInfographicsForm({ ...originalData.infographicsForm }); setSaved(false); }}
+                  className="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                >
+                  Annuler
+                </button>
+              )}
+              <button onClick={handleSave} disabled={saving || !hasChanges}
+                className={`flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                  saved ? 'bg-primary-600' : hasChanges ? 'bg-primary-700 hover:bg-primary-800' : 'bg-gray-300'
+                }`}>
+                {saving ? <Loader2 size={15} className="animate-spin" /> : saved ? <Check size={15} /> : <Save size={15} />}
+                {saving ? 'Sauvegarde…' : saved ? 'Enregistré' : 'Enregistrer'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Section tabs */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex gap-2 overflow-x-auto py-2 scrollbar-none">
+            {SECTIONS.map(s => {
+              const Icon = s.icon;
+              const isActive = activeSection === s.id;
+              return (
+                <button key={s.id} onClick={() => { setActiveSection(s.id); setSearchParams({ tab: s.id }); }}
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition ${
+                    isActive ? 'bg-primary-50 text-primary-700' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                  }`}>
+                  <Icon size={14} /> {s.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+        {/* ═══ LAYOUT ═══ */}
+        {activeSection === 'layout' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="mb-1 text-base font-bold text-gray-900">Mise en page</h2>
+              <p className="text-sm text-gray-500">Choisissez le thème de votre boutique</p>
+            </div>
+            <div className="grid grid-cols-2 gap-6 max-w-xl">
+              {THEMES.map((theme) => {
+                const isSelected = currentTheme === theme.id;
+                const Preview = PREVIEW_MAP[theme.id];
+                const ThemeIcon = theme.icon;
+                return (
+                  <button key={theme.id} type="button" onClick={() => handleSelect(theme.id)}
+                    className={`group overflow-hidden rounded-[22px] border text-left transition-all duration-200 ${
+                      isSelected ? 'border-primary-500 bg-white shadow-[0_22px_44px_-26px_rgba(16,24,40,0.24)] ring-1 ring-primary-100' : 'border-gray-200 bg-white hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-[0_18px_34px_-26px_rgba(16,24,40,0.2)]'
+                    }`}>
+                    <div className={`relative px-2 pt-2 ${isSelected ? 'bg-gradient-to-b from-primary-50/70 to-white' : 'bg-gradient-to-b from-gray-50 to-white'}`}>
+                      {isSelected && (
+                        <div className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-primary-600 shadow-[0_10px_18px_-10px_rgba(5,150,105,0.7)]">
+                          <Check size={14} color="#fff" strokeWidth={3} />
+                        </div>
+                      )}
+                      <div className={`overflow-hidden rounded-2xl border ${isSelected ? 'border-primary-100 bg-white shadow-sm' : 'border-gray-100 bg-white'}`}>
+                        <Preview />
+                      </div>
+                    </div>
+                    <div className="bg-white px-4 pb-4 pt-3">
+                      <div className="mb-1 flex items-center gap-2">
+                        <span className={`flex h-7 w-7 items-center justify-center rounded-full ${isSelected ? 'bg-primary-50 text-primary-700' : 'bg-gray-50 text-gray-600'}`}>
+                          <ThemeIcon size={14} />
+                        </span>
+                        <span className={`text-[15px] font-semibold tracking-tight ${isSelected ? 'text-primary-700' : 'text-gray-900'}`}>{theme.name}</span>
+                      </div>
+                      <span className={`inline-flex rounded-full px-2 py-1 text-[9px] font-semibold uppercase tracking-wide ${isSelected ? 'bg-primary-50 text-primary-700' : 'bg-gray-100 text-gray-500'}`}>{theme.badge}</span>
+                      <p className="mt-2 text-[12px] leading-5 text-gray-500">{theme.desc}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* ── Bannière Pro Generator (visible uniquement avec thème Premium) ── */}
+            {currentTheme === 'magazine' && (
+              <div className="relative overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-50 p-6 shadow-sm">
+                {/* Background decoration */}
+                <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-amber-100/60 blur-2xl" />
+                <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-orange-100/40 blur-xl" />
+
+                <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-md">
+                      <Crown size={22} className="text-white" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-black text-gray-900">Générer une page Pro avec l'IA</h3>
+                        <span className="inline-flex items-center rounded-full bg-amber-500 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-white shadow-sm">NOUVEAU</span>
+                      </div>
+                      <p className="mt-1 max-w-md text-sm leading-5 text-gray-600">
+                        Tu as choisi le thème <strong>Premium</strong>. Génère automatiquement une page produit complète avec hero, preuves sociales, sections et témoignages grâce à l'IA.
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {['Hero split premium', 'Preuves sociales', 'Témoignages', 'Section science', 'Comparaison'].map((f) => (
+                          <span key={f} className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-white px-2.5 py-1 text-[10px] font-semibold text-amber-700">
+                            <Check size={9} strokeWidth={3} />
+                            {f}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/ecom/boutique/products/premium-generator', { state: { from: location.pathname + (location.search || '') } })}
+                    className="flex shrink-0 items-center gap-2 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 px-5 py-3 text-sm font-black text-white shadow-md transition hover:from-amber-600 hover:to-orange-600 hover:shadow-lg active:scale-95 sm:self-start"
+                  >
+                    <Wand2 size={16} />
+                    Générer une page Pro
+                    <ArrowRight size={15} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Image & Spacing */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900"><Image size={15} className="text-primary-600" /> Ratio des images</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {IMAGE_RATIOS.map(r => (
+                    <button key={r.id} onClick={() => updateDesign('imageRatio', r.id)}
+                      className={`rounded-xl border p-3 text-left transition ${design.imageRatio === r.id ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      <span className="text-xs font-semibold text-gray-800">{r.name}</span>
+                      <span className="block text-[10px] text-gray-400 mt-0.5">{r.ratio}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900"><Rows3 size={15} className="text-primary-600" /> Espacement</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {SPACING_OPTIONS.map(s => (
+                    <button key={s.id} onClick={() => updateDesign('spacing', s.value)}
+                      className={`rounded-xl border p-3 text-center transition ${design.spacing === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      <span className="text-xs font-semibold text-gray-800">{s.name}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <Toggle label="Zoom image" desc="Activer le zoom au survol des images" value={design.imageZoom} onChange={v => updateDesign('imageZoom', v)} accentColor={design.buttonColor || '#7C3AED'} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ COLORS ═══ */}
+        {activeSection === 'colors' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-extrabold text-gray-900 mb-1">Palette de couleurs</h2>
+              <p className="text-sm text-gray-500">Sélectionnez un preset ou personnalisez chaque couleur</p>
+            </div>
+
+            {/* Sub-tabs */}
+            <div className="flex gap-1 p-1 bg-gray-100 rounded-xl w-fit">
+              {[{ id: 'presets', label: 'Presets', icon: Palette }, { id: 'custom', label: 'Personnaliser', icon: Droplets }].map(t => {
+                const Icon = t.icon;
+                const isActive = colorTab === t.id;
+                return (
+                  <button key={t.id} onClick={() => setColorTab(t.id)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition ${isActive ? 'bg-white text-violet-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    <Icon size={13} /> {t.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {colorTab === 'presets' && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-5 gap-3">
+                  {COLOR_PRESETS.map(p => {
+                    const isActive = design.buttonColor === p.accent && design.backgroundColor === p.bg;
+                    return (
+                      <button key={p.id} type="button" onClick={() => applyColorPreset(p)}
+                        className={`flex items-center gap-3 p-3 rounded-xl border-2 transition text-left ${isActive ? 'border-violet-500 bg-violet-50 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'}`}>
+                        <div className={`w-10 h-10 rounded-full border-2 shrink-0 shadow-sm ${isActive ? 'border-violet-500 ring-2 ring-violet-200' : 'border-gray-200'}`}
+                          style={{ background: `linear-gradient(135deg, ${p.accent} 50%, ${p.bg} 50%)` }} />
+                        <div className="min-w-0">
+                          <span className={`block text-xs font-bold truncate ${isActive ? 'text-violet-700' : 'text-gray-800'}`}>{p.name}</span>
+                          <div className="flex gap-1 mt-1">
+                            <div className="w-3 h-3 rounded-full border border-gray-200" style={{ background: p.accent }} />
+                            <div className="w-3 h-3 rounded-full border border-gray-200" style={{ background: p.bg }} />
+                            <div className="w-3 h-3 rounded-full border border-gray-200" style={{ background: p.badge }} />
+                          </div>
+                        </div>
+                        {isActive && <Check size={14} className="text-violet-600 shrink-0 ml-auto" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {colorTab === 'custom' && (
+              <div className="space-y-5">
+                <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Couleurs globales</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <ColorInput label="Bouton principal" value={design.buttonColor} onChange={v => updateDesign('buttonColor', v)} />
+                    <ColorInput label="Bouton CTA" value={design.ctaButtonColor || design.buttonColor} onChange={v => updateDesign('ctaButtonColor', v)} />
+                    <ColorInput label="Fond de page" value={design.backgroundColor} onChange={v => updateDesign('backgroundColor', v)} />
+                    <ColorInput label="Texte principal" value={design.textColor} onChange={v => updateDesign('textColor', v)} />
+                    <ColorInput label="Badge promo" value={design.badgeColor} onChange={v => updateDesign('badgeColor', v)} />
+                  </div>
+                </div>
+                <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Couleurs des sections</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+                    <ColorInput label="Preuve sociale" value={sectionColors.socialProof} onChange={v => { setSectionColors(prev => ({ ...prev, socialProof: v })); setSaved(false); }} />
+                    <ColorInput label="Bénéfices" value={sectionColors.benefits} onChange={v => { setSectionColors(prev => ({ ...prev, benefits: v })); setSaved(false); }} />
+                    <ColorInput label="Réassurance" value={sectionColors.trust} onChange={v => { setSectionColors(prev => ({ ...prev, trust: v })); setSaved(false); }} />
+                    <ColorInput label="Problème" value={sectionColors.problem} onChange={v => { setSectionColors(prev => ({ ...prev, problem: v })); setSaved(false); }} />
+                    <ColorInput label="Solution" value={sectionColors.solution} onChange={v => { setSectionColors(prev => ({ ...prev, solution: v })); setSaved(false); }} />
+                    <ColorInput label="FAQ" value={sectionColors.faq} onChange={v => { setSectionColors(prev => ({ ...prev, faq: v })); setSaved(false); }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══ TYPO ═══ */}
+        {activeSection === 'typo' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-extrabold text-gray-900 mb-1">Typographie</h2>
+              <p className="text-sm text-gray-500">Police, taille et poids du texte</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Police</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                {FONT_OPTIONS.map(f => {
+                  const isActive = design.fontFamily === f.id;
+                  return (
+                    <button key={f.id} type="button" onClick={() => updateDesign('fontFamily', f.id)}
+                      className={`px-4 py-3 rounded-xl border-2 text-left transition ${
+                        isActive ? 'border-violet-500 bg-violet-50 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}>
+                      <span className="block text-base font-bold text-gray-900" style={{ fontFamily: f.family }}>{f.name}</span>
+                      <span className="block text-[11px] text-gray-400 mt-0.5" style={{ fontFamily: f.family }}>Aperçu du texte 123</span>
+                      {isActive && <span className="inline-flex items-center gap-1 mt-1.5 text-[9px] font-bold text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full"><Check size={9} /> Actif</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Taille de base</label>
+                <div className="flex items-center gap-3">
+                  <input type="range" min="12" max="18" value={design.fontBase} onChange={e => updateDesign('fontBase', Number(e.target.value))}
+                    className="flex-1 accent-violet-600 h-2" />
+                  <span className="text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1 rounded-lg">{design.fontBase}px</span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-2">Affecte la taille du texte de base</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-200 p-5">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Poids des boutons</label>
+                <select value={design.fontWeight} onChange={e => updateDesign('fontWeight', e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-200 bg-white">
+                  <option value="400">Normal (400)</option>
+                  <option value="500">Medium (500)</option>
+                  <option value="600">Semi-bold (600)</option>
+                  <option value="700">Bold (700)</option>
+                  <option value="800">Extra-bold (800)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ BUTTONS & STYLES ═══ */}
+        {activeSection === 'buttons' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-extrabold text-gray-900 mb-1">Boutons & Styles</h2>
+              <p className="text-sm text-gray-500">Forme, style et apparence des boutons et badges</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Style des boutons</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {BUTTON_STYLES.map(b => {
+                  const isActive = design.buttonStyle === b.id;
+                  return (
+                    <button key={b.id} onClick={() => updateDesign('buttonStyle', b.id)}
+                      className={`p-4 rounded-xl border-2 transition ${isActive ? 'border-violet-500 bg-violet-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      <div className="mb-2">{renderButtonPreview(b.id, design.buttonColor, design.borderRadius)}</div>
+                      <span className="text-xs font-bold text-gray-800">{b.name}</span>
+                      <span className="block text-[10px] text-gray-400 mt-0.5">{b.desc}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Bordures</h3>
+              <div className="flex flex-wrap gap-2">
+                {BORDER_STYLES.map(b => {
+                  const isActive = design.borderRadius === b.radius;
+                  return (
+                    <button key={b.id} type="button" onClick={() => updateDesign('borderRadius', b.radius)}
+                      className={`flex items-center gap-2 px-4 py-2.5 border-2 transition ${
+                        isActive ? 'border-violet-500 bg-violet-50 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`} style={{ borderRadius: b.radius }}>
+                      <div className="w-7 h-7 bg-violet-200" style={{ borderRadius: b.radius }} />
+                      <span className={`text-xs font-bold ${isActive ? 'text-violet-700' : 'text-gray-600'}`}>{b.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Style des badges promo</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {BADGE_STYLES.map(b => {
+                  const isActive = design.badgeStyle === b.id;
+                  const bdg = (() => {
+                    switch (b.id) {
+                      case 'outline': return <span className="text-xs font-bold px-3 py-1" style={{ border: `2px solid ${design.badgeColor}`, color: design.badgeColor, borderRadius: design.borderRadius }}>-30%</span>;
+                      case 'soft': return <span className="text-xs font-bold px-3 py-1" style={{ background: design.badgeColor + '20', color: design.badgeColor, borderRadius: design.borderRadius }}>-30%</span>;
+                      case 'ribbon': return <span className="text-xs font-bold text-white px-3 py-1" style={{ background: design.badgeColor, borderRadius: '0 8px 8px 0' }}>-30%</span>;
+                      default: return <span className="text-xs font-bold text-white px-3 py-1" style={{ background: design.badgeColor, borderRadius: design.borderRadius }}>-30%</span>;
+                    }
+                  })();
+                  return (
+                    <button key={b.id} onClick={() => updateDesign('badgeStyle', b.id)}
+                      className={`p-4 rounded-xl border-2 transition flex flex-col items-center gap-2 ${isActive ? 'border-violet-500 bg-violet-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      {bdg}
+                      <span className="text-xs font-bold text-gray-700">{b.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <Toggle label="Ombre portée" desc="Ajoute une ombre subtile aux boutons et éléments clés" value={design.shadow} onChange={v => updateDesign('shadow', v)} accentColor={design.buttonColor || '#7C3AED'} />
+            </div>
+          </div>
+        )}
+
+        {/* ═══ ELEMENTS ═══ */}
+        {activeSection === 'elements' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-extrabold text-gray-900 mb-1">Éléments de la page</h2>
+              <p className="text-sm text-gray-500">Activez ou désactivez les sections de votre page produit</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-3">
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2"><ShoppingBag size={14} /> Achat</h3>
+                <Toggle label="Sélecteur de quantité" desc="Permet de choisir la quantité avant l'ajout" value={design.showQuantitySelector} onChange={v => updateDesign('showQuantitySelector', v)} accentColor={design.buttonColor || '#7C3AED'} />
+                <Toggle label="Bouton ajout sticky" desc="Le bouton d'ajout reste visible en scrollant" value={design.stickyAddToCart} onChange={v => updateDesign('stickyAddToCart', v)} accentColor={design.buttonColor || '#7C3AED'} />
+                <Toggle label="Compte à rebours" desc="Timer d'urgence pour les offres limitées" value={design.showCountdown} onChange={v => updateDesign('showCountdown', v)} accentColor={design.buttonColor || '#7C3AED'} />
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-3">
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2"><Shield size={14} /> Confiance</h3>
+                <Toggle label="Badges de confiance" desc="Sécurité, garantie, retours" value={design.showTrustBadges} onChange={v => updateDesign('showTrustBadges', v)} accentColor={design.buttonColor || '#7C3AED'} />
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-3">
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2"><Layout size={14} /> Contenu</h3>
+                <Toggle label="Photos du produit" desc="Affiche la galerie visuelle sous le bloc d'achat" value={design.showProductGallery} onChange={v => updateDesign('showProductGallery', v)} accentColor={design.buttonColor || '#7C3AED'} />
+                <Toggle label="Produits similaires" desc="Affiche des produits recommandés en bas" value={design.showRelatedProducts} onChange={v => updateDesign('showRelatedProducts', v)} accentColor={design.buttonColor || '#7C3AED'} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ INFOGRAPHICS ═══ */}
+        {activeSection === 'infographics' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-extrabold text-gray-900 mb-1">Page Infographies</h2>
+              <p className="text-sm text-gray-500">Personnalisez l'apparence et les textes du template Infographies (thème "infographics")</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-5">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2"><Layers size={14} /> Couleurs du bouton sticky</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <ColorInput
+                  label="Couleur de marque (bandeau + boutons)"
+                  value={infographicsForm.brandColor || design.ctaButtonColor || design.buttonColor || '#1E3A8A'}
+                  onChange={v => { setInfographicsForm(p => ({ ...p, brandColor: v })); setSaved(false); }}
+                />
+                <ColorInput
+                  label="Couleur du bouton sticky (remplace la couleur de marque)"
+                  value={infographicsForm.buttonColor || infographicsForm.brandColor || design.ctaButtonColor || design.buttonColor || '#1E3A8A'}
+                  onChange={v => { setInfographicsForm(p => ({ ...p, buttonColor: v })); setSaved(false); }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-semibold text-gray-500 mb-2 uppercase tracking-wider">Taille du bouton sticky</label>
+                <div className="flex gap-2">
+                  {[{ id: 'small', label: 'Petit' }, { id: 'medium', label: 'Moyen' }, { id: 'large', label: 'Grand' }].map(opt => (
+                    <button key={opt.id} type="button"
+                      onClick={() => { setInfographicsForm(p => ({ ...p, buttonSize: opt.id })); setSaved(false); }}
+                      className={`flex-1 py-2.5 rounded-xl border-2 text-xs font-bold transition ${infographicsForm.buttonSize === opt.id ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2"><MessageCircle size={14} /> Textes du formulaire</h3>
+              {[
+                { key: 'headline', label: 'Titre du formulaire', placeholder: 'Remplissez le formulaire, on vous appelle…' },
+                { key: 'ctaLabel', label: 'Texte du bouton de commande', placeholder: 'CLIQUE POUR CONFIRMER TA COMMANDE' },
+                { key: 'stickyLabel', label: 'Texte du bouton sticky', placeholder: 'COMMANDEZ' },
+                { key: 'reassurance', label: 'Texte de réassurance', placeholder: 'Livraison gratuite. Paiement à la livraison.' },
+              ].map(field => (
+                <div key={field.key}>
+                  <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{field.label}</label>
+                  <input
+                    type="text"
+                    value={infographicsForm[field.key] || ''}
+                    placeholder={field.placeholder}
+                    onChange={e => { setInfographicsForm(p => ({ ...p, [field.key]: e.target.value })); setSaved(false); }}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+              <Layers size={16} className="text-amber-600 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-700 leading-relaxed">
+                Ces réglages s'appliquent uniquement aux pages produits configurées avec le thème <strong>Infographies</strong>. Pour activer ce thème sur un produit, modifiez le champ "Thème" dans les paramètres du produit.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ PREVIEW ═══ */}
+        {activeSection === 'preview' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-extrabold text-gray-900 mb-1">Aperçu en direct</h2>
+              <p className="text-sm text-gray-500">Visualisez le rendu de votre page produit</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              {/* Browser chrome */}
+              <div className="px-3 py-2 bg-gray-100 border-b border-gray-200 flex items-center gap-2">
+                <div className="flex gap-1.5">{['bg-red-400','bg-yellow-400','bg-green-400'].map(c => <div key={c} className={`w-2.5 h-2.5 rounded-full ${c}`} />)}</div>
+                <div className="flex-1 mx-8 bg-white rounded-md px-3 py-1 text-[10px] text-gray-400 text-center border border-gray-200">
+                  {storeSubdomain ? `${storeSubdomain}.scalor.net/product/exemple` : 'votre-boutique.scalor.net/product/exemple'}
+                </div>
+              </div>
+
+              {currentTheme === 'magazine' ? (
+                /* ── PREMIUM layout — fidèle à StoreProductPagePremium ────── */
+                <div style={{ backgroundColor: '#fff', fontFamily }}>
+                  {/* Header premium */}
+                  <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+                    <div className="w-16 h-2 rounded bg-gray-900/70" />
+                    <div className="flex items-center gap-3 text-xs font-bold text-gray-500">
+                      <span>Contact</span>
+                      <div className="relative">
+                        <ShoppingCart size={18} className="text-gray-700" />
+                        <span className="absolute -top-1.5 -right-2 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-white" style={{ background: design.buttonColor }}>2</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Hero 2 colonnes */}
+                  <div className="grid grid-cols-2 gap-6 p-5 sm:p-7" style={{ alignItems: 'start' }}>
+                    {/* Gauche : carrousel image */}
+                    <div>
+                      <div className="relative rounded-xl overflow-hidden bg-gray-50" style={{ paddingBottom: '100%' }}>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Image size={40} className="text-gray-200" />
+                        </div>
+                        <div className="absolute top-3 left-0">
+                          <span className="text-[10px] font-extrabold text-white px-2.5 py-1" style={{ background: '#B42318', borderRadius: '0 6px 6px 0' }}>-30%</span>
+                        </div>
+                        <div className="absolute bottom-2.5 left-0 right-0 flex justify-center gap-1.5">
+                          {[1,2,3].map(i => (
+                            <div key={i} className="h-1.5 rounded-full" style={{ width: i===1 ? 16 : 6, background: i===1 ? design.buttonColor : 'rgba(15,23,42,0.2)' }} />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex gap-1.5 mt-2">
+                        {[1,2,3,4].map(i => (
+                          <div key={i} className="flex-1 rounded-lg bg-gray-100" style={{ paddingBottom: '100%', border: i===1 ? `2px solid ${design.buttonColor}` : '2px solid transparent' }} />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Droite : infos premium */}
+                    <div>
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <div className="flex gap-0.5">
+                          {[1,2,3,4,5].map(i => <Star key={i} size={13} className="fill-yellow-400 text-yellow-400" />)}
+                        </div>
+                        <span className="text-xs font-bold text-gray-600">4,9/5 · +1 000 clients</span>
+                      </div>
+
+                      <h1 className="font-black mb-2 leading-tight uppercase" style={{ color: '#05070a', fontSize: design.fontBase + 6 }}>
+                        Sneakers Premium<br />Edition Limitee
+                      </h1>
+
+                      <p className="text-sm mb-3" style={{ color: '#42464d', fontSize: design.fontBase }}>
+                        Confort ultime, design moderne et materiaux premium.
+                      </p>
+
+                      <div className="flex items-baseline gap-2 mb-3">
+                        <span className="text-xl font-black" style={{ color: '#1f2933' }}>29 900 FCFA</span>
+                        <span className="text-sm line-through text-gray-400">42 000 FCFA</span>
+                      </div>
+
+                      <ul className="space-y-1.5 mb-4">
+                        {[
+                          'Resultats visibles en 7 jours',
+                          'Formule 100% naturelle',
+                          'Paiement a la livraison',
+                          'Support WhatsApp reactif',
+                        ].map((b, i) => (
+                          <li key={i} className="flex items-start gap-2 text-xs font-semibold" style={{ color: '#3d424b' }}>
+                            <span className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5" style={{ background: design.buttonColor }}>
+                              <Check size={9} color="#fff" strokeWidth={3} />
+                            </span>
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm text-white mb-3" style={{ background: design.buttonColor }}>
+                        <ShoppingCart size={15} />
+                        Commander maintenant
+                      </button>
+
+                      <div className="flex flex-wrap gap-x-3 gap-y-1">
+                        {['Paiement livraison', 'Livraison rapide', 'WhatsApp'].map((r, i) => (
+                          <span key={i} className="flex items-center gap-1 text-[10px] font-bold text-gray-500">
+                            {i===0 ? <Truck size={10} /> : i===1 ? <Shield size={10} /> : <Award size={10} />}
+                            {r}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-3 space-y-1.5">
+                        {['Comment ca marche ?', 'Ingredients cles', 'Garantie satisfait'].map((acc, i) => (
+                          <div key={i} className="border border-gray-100 rounded-xl overflow-hidden">
+                            <div className="flex items-center justify-between px-3 py-2.5 text-xs font-extrabold text-gray-800">
+                              <span>{acc}</span>
+                              <ChevronDown size={13} className="text-gray-400" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="px-5 py-3 border-t border-gray-100 flex gap-6 overflow-hidden" style={{ background: '#EFF8F7' }}>
+                    {['Clients verifies', 'Qualite controlee', 'Livraison assuree'].map((s, i) => (
+                      <span key={i} className="text-xs font-black whitespace-nowrap" style={{ color: design.buttonColor }}>{s}</span>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                /* ── CLASSIQUE layout ─────────────────────────────────────── */
+                <div className="p-6 sm:p-8" style={{ backgroundColor: design.backgroundColor, fontFamily }}>
+                  {/* Breadcrumb */}
+                  <div className="flex items-center gap-1.5 mb-6 text-xs" style={{ color: design.textColor + '80' }}>
+                    <span>Accueil</span><ChevronRight size={12} /><span>Produits</span><ChevronRight size={12} /><span style={{ color: design.buttonColor }}>Sneakers Premium</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    {/* Image + thumbnails */}
+                    <div>
+                      <div className="pb-[100%] rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden"
+                        style={{ borderRadius: design.borderRadius }}>
+                        <div className="absolute inset-0 flex items-center justify-center"><Image size={48} className="text-gray-200" /></div>
+                        <div className="absolute top-3 left-0">
+                          <span className="text-xs font-bold text-white px-3 py-1" style={{ background: design.badgeColor, borderRadius: design.badgeStyle === 'ribbon' ? '0 8px 8px 0' : design.borderRadius }}>-30%</span>
+                        </div>
+                        {design.showStockIndicator && (
+                          <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-white/90 backdrop-blur px-2.5 py-1 rounded-full">
+                            <Flame size={12} className="text-orange-500" />
+                            <span className="text-[10px] font-bold text-orange-600">Plus que 3 en stock</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        {[1,2,3,4].map(i => (
+                          <div key={i} className="flex-1 pb-[100%] bg-gray-100"
+                            style={{ borderRadius: design.borderRadius, ...(i===1 ? { border: `2px solid ${design.buttonColor}` } : {}) }} />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Info */}
+                    <div>
+                      {design.showReviews && (
+                        <div className="flex items-center gap-1 mb-2">
+                          {[1,2,3,4,5].map(i => <Star key={i} size={14} className="fill-yellow-400 text-yellow-400" />)}
+                          <span className="text-xs ml-1" style={{ color: design.textColor + '80' }}>(127 avis)</span>
+                        </div>
+                      )}
+                      <h1 className="text-xl sm:text-2xl font-extrabold mb-2" style={{ color: design.textColor, fontSize: design.fontBase + 8 }}>
+                        Sneakers Premium Édition Limitée
+                      </h1>
+                      <p className="text-sm mb-4" style={{ color: design.textColor + '99', fontSize: design.fontBase }}>
+                        Confort ultime, design moderne et matériaux premium pour un style incomparable.
+                      </p>
+                      <div className="flex items-center gap-3 mb-5">
+                        <span className="text-2xl font-extrabold" style={{ color: design.buttonColor }}>29 900 FCFA</span>
+                        <span className="text-sm line-through" style={{ color: design.textColor + '50' }}>42 000 FCFA</span>
+                      </div>
+
+                      {design.showCountdown && (
+                        <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg" style={{ background: design.badgeColor + '10' }}>
+                          <Clock size={14} style={{ color: design.badgeColor }} />
+                          <span className="text-xs font-bold" style={{ color: design.badgeColor }}>Offre expire dans 02:45:30</span>
+                        </div>
+                      )}
+
+                      {design.showQuantitySelector && (
+                        <div className="flex items-center gap-3 mb-5">
+                          <span className="text-xs font-semibold" style={{ color: design.textColor }}>Quantité</span>
+                          <div className="flex items-center border rounded-lg" style={{ borderRadius: design.borderRadius, borderColor: design.textColor + '20' }}>
+                            <button className="px-2.5 py-1.5"><Minus size={14} style={{ color: design.textColor }} /></button>
+                            <span className="px-3 text-sm font-bold" style={{ color: design.textColor }}>1</span>
+                            <button className="px-2.5 py-1.5"><Plus size={14} style={{ color: design.textColor }} /></button>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-2 mb-5">
+                        {renderButtonPreview(design.buttonStyle, design.ctaButtonColor || design.buttonColor, design.borderRadius)}
+                      </div>
+
+                      {design.showShareButtons && (
+                        <div className="flex items-center gap-3 mb-5">
+                          <button className="p-2 rounded-lg border" style={{ borderColor: design.textColor + '15' }}><Heart size={16} style={{ color: design.textColor + '60' }} /></button>
+                          <button className="p-2 rounded-lg border" style={{ borderColor: design.textColor + '15' }}><Share2 size={16} style={{ color: design.textColor + '60' }} /></button>
+                          <button className="p-2 rounded-lg border" style={{ borderColor: design.textColor + '15' }}><MessageCircle size={16} style={{ color: design.textColor + '60' }} /></button>
+                        </div>
+                      )}
+
+                      {design.showTrustBadges && (
+                        <div className="grid grid-cols-3 gap-2 mb-4">
+                          {[
+                            { icon: <Truck size={16} />, label: 'Livraison rapide' },
+                            { icon: <Shield size={16} />, label: 'Paiement sécurisé' },
+                            { icon: <Award size={16} />, label: 'Garantie qualité' },
+                          ].map((t, i) => (
+                            <div key={i} className="flex flex-col items-center gap-1 p-2 rounded-lg" style={{ background: design.buttonColor + '08' }}>
+                              <span style={{ color: design.buttonColor }}>{t.icon}</span>
+                              <span className="text-[10px] font-semibold text-center" style={{ color: design.textColor + '80' }}>{t.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {design.showDeliveryInfo && (
+                        <div className="flex items-center gap-2 p-3 rounded-lg border" style={{ borderColor: design.textColor + '10', borderRadius: design.borderRadius }}>
+                          <Truck size={16} style={{ color: design.buttonColor }} />
+                          <div>
+                            <span className="text-xs font-bold" style={{ color: design.textColor }}>Livraison estimée : 2-4 jours</span>
+                            <span className="block text-[10px]" style={{ color: design.textColor + '60' }}>Livraison gratuite à partir de 25 000 FCFA</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <BuilderAIChatWidget
+        productPageConfig={null}
+        theme={{ template: currentTheme, ...design, sectionColors }}
+        productName=""
+        onApplyChanges={() => {}}
+        onApplyTheme={(patch) => {
+          if (patch.template && patch.template !== currentTheme) {
+            setCurrentTheme(patch.template);
+          }
+          const designKeys = Object.keys(DEFAULT_DESIGN);
+          const designPatch = {};
+          const colorPatch = {};
+          Object.entries(patch).forEach(([k, v]) => {
+            if (k === 'template') return;
+            if (k === 'sectionColors' && typeof v === 'object') {
+              Object.assign(colorPatch, v);
+            } else if (designKeys.includes(k)) {
+              designPatch[k] = v;
+            }
+          });
+          if (Object.keys(designPatch).length) setDesign(prev => ({ ...prev, ...designPatch }));
+          if (Object.keys(colorPatch).length) setSectionColors(prev => ({ ...prev, ...colorPatch }));
+        }}
+      />
+    </div>
+  );
+};
+
+export default ProductThemePage;

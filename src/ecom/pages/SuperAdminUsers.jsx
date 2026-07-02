@@ -1,0 +1,336 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from '@/lib/router-compat';
+import {
+  Users, Search, Filter, Crown, Briefcase, Package,
+  Calculator, Truck, CheckCircle2, XCircle, Trash2,
+  Clock, Building2, Loader2, UserX, ChevronRight
+} from 'lucide-react';
+import { useEcomAuth } from '../hooks/useEcomAuth';
+import ecomApi from '../services/ecommApi.js';
+import { CenteredSpinner } from '../components/Skeleton.jsx';
+import { getContextualError } from '../utils/errorMessages';
+import SuperAdminShell from '../components/SuperAdminShell.jsx';
+
+const roleLabels = {
+  super_admin: 'Super Admin',
+  ecom_admin: 'Admin',
+  ecom_closeuse: 'Closeuse',
+  ecom_compta: 'Comptable',
+  ecom_livreur: 'Livreur'
+};
+
+const roleConfig = {
+  super_admin: {
+    bg: 'bg-amber-50',
+    text: 'text-amber-700',
+    ring: 'ring-amber-600/20',
+    icon: Crown,
+    gradient: 'from-amber-500 to-amber-500'
+  },
+  ecom_admin: {
+    bg: 'bg-primary-50',
+    text: 'text-primary-800',
+    ring: 'ring-primary-700/20',
+    icon: Briefcase,
+    gradient: 'from-primary-600 to-primary-600'
+  },
+  ecom_closeuse: {
+    bg: 'bg-sky-50',
+    text: 'text-sky-700',
+    ring: 'ring-teal-600/20',
+    icon: Package,
+    gradient: 'from-teal-500 to-primary-600'
+  },
+  ecom_compta: {
+    bg: 'bg-primary-50',
+    text: 'text-primary-700',
+    ring: 'ring-primary-600/20',
+    icon: Calculator,
+    gradient: 'from-primary-500 to-teal-500'
+  },
+  ecom_livreur: {
+    bg: 'bg-amber-50',
+    text: 'text-amber-700',
+    ring: 'ring-amber-600/20',
+    icon: Truck,
+    gradient: 'from-amber-500 to-orange-500'
+  },
+};
+
+const SuperAdminUsers = () => {
+  const navigate = useNavigate();
+  const { user: currentUser } = useEcomAuth();
+  const [users, setUsers] = useState([]);
+  const [workspaces, setWorkspaces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterRole, setFilterRole] = useState('');
+  const [filterWorkspace, setFilterWorkspace] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+
+  const fetchUsers = async () => {
+    try {
+      const params = {};
+      if (search) params.search = search;
+      if (filterRole) params.role = filterRole;
+      if (filterWorkspace) params.workspaceId = filterWorkspace;
+      if (filterStatus) params.isActive = filterStatus;
+      const res = await ecomApi.get('/super-admin/users', { params });
+      setUsers(res.data.data.users);
+    } catch (err) { setError(getContextualError(err, 'load_users')); }
+  };
+
+  const fetchWorkspaces = async () => {
+    try {
+      const res = await ecomApi.get('/super-admin/workspaces');
+      setWorkspaces(res.data.data.workspaces);
+    } catch { }
+  };
+
+  useEffect(() => {
+    const load = async () => { setLoading(true); await Promise.all([fetchUsers(), fetchWorkspaces()]); setLoading(false); };
+    load();
+  }, []);
+
+  useEffect(() => { if (!loading) fetchUsers(); }, [search, filterRole, filterWorkspace, filterStatus]);
+
+  const handleToggleUser = async (userId) => {
+    try { const res = await ecomApi.put(`/super-admin/users/${userId}/toggle`); setSuccess(res.data.message); fetchUsers(); }
+    catch (err) { setError(getContextualError(err, 'save_user')); }
+  };
+
+  const handleChangeRole = async (userId, newRole) => {
+    try { const res = await ecomApi.put(`/super-admin/users/${userId}/role`, { role: newRole }); setSuccess(res.data.message); fetchUsers(); }
+    catch (err) { setError(getContextualError(err, 'save_user')); }
+  };
+
+  const handleSetPlan = async (workspaceId, plan) => {
+    if (!workspaceId) return;
+    try {
+      await ecomApi.patch(`/super-admin/workspaces/${workspaceId}/plan`, { plan, durationMonths: 1 });
+      setSuccess(`Plan mis à jour : ${plan}`);
+      fetchWorkspaces();
+    } catch (err) { setError(getContextualError(err, 'save_user')); }
+  };
+
+  const handleDeleteUser = async (userId, email) => {
+    if (!confirm(`Supprimer définitivement ${email} ?`)) return;
+    try { await ecomApi.delete(`/super-admin/users/${userId}`); setSuccess('Utilisateur supprimé'); fetchUsers(); }
+    catch (err) { setError(getContextualError(err, 'delete_user')); }
+  };
+
+  useEffect(() => { if (success) { const t = setTimeout(() => setSuccess(''), 3000); return () => clearTimeout(t); } }, [success]);
+  useEffect(() => { if (error) { const t = setTimeout(() => setError(''), 4000); return () => clearTimeout(t); } }, [error]);
+
+  if (loading) return <CenteredSpinner message="Chargement des utilisateurs…" />;
+
+  const blocked = users.filter(u => !u.isActive).length;
+  const activeUsers = users.filter(u => u.isActive).length;
+
+  return (
+    <SuperAdminShell
+      title="Gestion des utilisateurs"
+      subtitle={`${users.length} utilisateurs · ${activeUsers} actifs · ${blocked} bloqués`}
+      icon={Users}
+      success={success}
+      error={error}
+      refreshing={loading}
+      onRefresh={() => fetchUsers()}
+    >
+      <div className="space-y-5">
+        {/* KPI row */}
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          {[
+            { label: 'Total', value: users.length, icon: Users, accent: '#059669', accentLight: '#d1fae5' },
+            { label: 'Actifs', value: activeUsers, icon: CheckCircle2, accent: '#2563eb', accentLight: '#dbeafe' },
+            { label: 'Bloqués', value: blocked, icon: XCircle, accent: '#f59e0b', accentLight: '#fef3c7' },
+          ].map(k => (
+            <div key={k.label} className="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-lg transition-all">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-2" style={{ backgroundColor: k.accentLight }}>
+                <k.icon className="w-4 h-4" style={{ color: k.accent }} />
+              </div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">{k.label}</p>
+              <p className="text-2xl font-extrabold text-slate-900">{k.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="w-4 h-4 text-slate-500" />
+            <h3 className="text-sm font-black text-slate-700 uppercase tracking-wider">Filtres</h3>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <div className="relative flex-1 min-w-[220px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Rechercher par email..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all"
+              />
+            </div>
+            <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="px-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all cursor-pointer">
+              <option value="">Tous les rôles</option>
+              <option value="super_admin">Super Admin</option>
+              <option value="ecom_admin">Admin</option>
+              <option value="ecom_closeuse">Closeuse</option>
+              <option value="ecom_compta">Comptable</option>
+              <option value="ecom_livreur">Livreur</option>
+            </select>
+            <select value={filterWorkspace} onChange={(e) => setFilterWorkspace(e.target.value)} className="px-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all cursor-pointer">
+              <option value="">Tous les espaces</option>
+              {workspaces.map(ws => <option key={ws._id} value={ws._id}>{ws.name}</option>)}
+            </select>
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="px-4 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all cursor-pointer">
+              <option value="">Tous les statuts</option>
+              <option value="true">Actifs</option>
+              <option value="false">Bloqués</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Users list */}
+        <div className="space-y-3">
+          {users.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-20 text-center shadow-sm">
+              <UserX className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+              <p className="text-lg font-black text-slate-400">Aucun utilisateur trouvé</p>
+              <p className="text-sm text-slate-400 mt-2">Essayez de modifier vos filtres</p>
+            </div>
+          ) : users.map(u => {
+            const config = roleConfig[u.role] || roleConfig.ecom_admin;
+            const RoleIcon = config.icon;
+            return (
+              <div key={u._id} className={`group bg-white rounded-2xl border overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 ${!u.isActive ? 'opacity-70 border-amber-200' : 'border-slate-200'}`}>
+                {/* Accent bar */}
+                <div className={`h-1 bg-gradient-to-r ${u.isActive ? config.gradient : 'from-amber-500 to-red-500'}`} />
+
+                <div className="p-5 sm:p-6 flex items-center gap-4">
+                  {/* Avatar */}
+                  <div
+                    onClick={() => navigate(`/ecom/super-admin/users/${u._id}`)}
+                    className="cursor-pointer"
+                  >
+                    <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-black flex-shrink-0 ring-2 ring-inset ${u.isActive ? `${config.bg} ${config.text} ${config.ring}` : 'bg-amber-50 text-amber-600 ring-amber-200'} transition-all duration-300 group-hover:scale-110`}>
+                      {u.email?.charAt(0).toUpperCase()}
+                      <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full ${u.isActive ? 'bg-primary-500' : 'bg-amber-500'} ring-2 ring-white flex items-center justify-center`}>
+                        {u.isActive ? <CheckCircle2 className="w-3 h-3 text-white" /> : <XCircle className="w-3 h-3 text-white" />}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <div
+                    onClick={() => navigate(`/ecom/super-admin/users/${u._id}`)}
+                    className="flex-1 min-w-0 cursor-pointer">
+                    <div className="flex items-center gap-2 flex-wrap mb-2">
+                      <p className="text-base font-black text-slate-900 truncate">{u.email}</p>
+                      {!u.isActive && (
+                        <span className="inline-flex items-center gap-1 text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-black ring-2 ring-inset ring-amber-600/20">
+                          <XCircle className="w-3 h-3" />
+                          BLOQUÉ
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ring-2 ring-inset ${config.bg} ${config.text} ${config.ring}`}>
+                        <RoleIcon className="w-3 h-3" />
+                        {roleLabels[u.role] || u.role}
+                      </span>
+                      {u.workspaceId?.name && (
+                        <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-medium">
+                          <Building2 className="w-3 h-3" />
+                          {u.workspaceId.name}
+                        </span>
+                      )}
+                      {(() => {
+                        const ws = workspaces.find(w => w._id === (u.workspaceId?._id || u.workspaceId));
+                        const plan = ws?.plan || 'free';
+                        const planColors = { free: 'bg-slate-100 text-slate-500', pro: 'bg-primary-100 text-primary-700', ultra: 'bg-amber-100 text-amber-700' };
+                        const planLabels = { free: 'Gratuit', pro: 'Pro', ultra: 'Ultra' };
+                        return (
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${planColors[plan]}`}>
+                            <Crown className="w-3 h-3" />
+                            {planLabels[plan]}
+                          </span>
+                        );
+                      })()}
+                      <span className="text-slate-300 hidden sm:inline">·</span>
+                      <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-medium hidden sm:flex">
+                        <Clock className="w-3 h-3" />
+                        {u.lastLogin ? `${new Date(u.lastLogin).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}` : 'Jamais connecté'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* View detail indicator */}
+                  <div
+                    onClick={() => navigate(`/ecom/super-admin/users/${u._id}`)}
+                    className="flex-shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <ChevronRight className="w-5 h-5 text-slate-400" />
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <select
+                      value={u.role}
+                      onChange={(e) => handleChangeRole(u._id, e.target.value)}
+                      disabled={u._id === currentUser?.id}
+                      className="text-xs font-bold px-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl disabled:opacity-30 disabled:cursor-not-allowed hidden sm:block cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all"
+                    >
+                      <option value="ecom_admin">Admin</option>
+                      <option value="ecom_closeuse">Closeuse</option>
+                      <option value="ecom_compta">Comptable</option>
+                      <option value="ecom_livreur">Livreur</option>
+                    </select>
+                    {u.role === 'ecom_admin' && (() => {
+                      const wsId = u.workspaceId?._id || u.workspaceId;
+                      const ws = workspaces.find(w => w._id === wsId);
+                      const plan = ws?.plan || 'free';
+                      return (
+                        <select
+                          value={plan}
+                          onChange={(e) => handleSetPlan(wsId, e.target.value)}
+                          disabled={!wsId}
+                          className="text-xs font-bold px-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all"
+                          title="Changer le plan"
+                        >
+                          <option value="free">Gratuit</option>
+                          <option value="pro">Pro</option>
+                          <option value="ultra">Ultra</option>
+                        </select>
+                      );
+                    })()}
+                    <button
+                      onClick={() => handleToggleUser(u._id)}
+                      disabled={u._id === currentUser?.id}
+                      className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs rounded-xl font-bold transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed ring-2 ring-inset ${u.isActive ? 'text-amber-700 bg-amber-50 hover:bg-amber-100 hover:shadow-md ring-amber-600/20' : 'text-primary-700 bg-primary-50 hover:bg-primary-100 hover:shadow-md ring-primary-600/20'}`}
+                    >
+                      {u.isActive ? <><XCircle className="w-3.5 h-3.5" /> Bloquer</> : <><CheckCircle2 className="w-3.5 h-3.5" /> Activer</>}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(u._id, u.email)}
+                      disabled={u._id === currentUser?.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-2.5 text-xs rounded-xl font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 hover:shadow-md ring-2 ring-inset ring-amber-600/20 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Suppr.</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </SuperAdminShell>
+  );
+};
+
+export default SuperAdminUsers;

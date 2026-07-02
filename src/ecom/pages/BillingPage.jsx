@@ -1,0 +1,1239 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useLocation, Link } from '@/lib/router-compat';
+import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
+import { getCurrentPlan, createCheckout, getPaymentStatus, getPaymentHistory, activateTrial, validatePromoCode, checkGlobalPromoCode, getPublicPlans } from '../services/billingApi.js';
+import { Package, Bot, Zap, Clock, CheckCircle2, CalendarDays, CreditCard, Shield, RefreshCw, MessageCircle, AlertTriangle, Lock, Gift, Globe } from 'lucide-react';
+import PaymentModalFrame from '../components/PaymentModalFrame.jsx';
+import { PAYMENT_COUNTRY_CODES } from '../constants/paymentCountryCodes.js';
+import { clearPendingPlanSelection, getPendingPlanSelection } from '../utils/pendingPlanFlow.js';
+
+// ─── Plan definitions (static template — prices overridden at runtime from DB) ────────────
+const BASE_PLAN_TIERS = [
+  {
+    id: 'free',
+    name: 'Gratuit',
+    tagline: 'Démarrez sans frais',
+    icon: <Gift className="w-full h-full" />,
+    gradient: 'from-gray-400 to-gray-500',
+    accent: 'gray',
+    ring: 'ring-gray-300/20',
+    btnClass: 'bg-gray-600 hover:bg-gray-700 shadow-gray-500/25',
+    free: true,
+    features: [
+      { text: '100 commandes gratuites / mois', included: true },
+      { text: '50 clients max', included: true },
+      { text: '10 produits max', included: true },
+      { text: '1 crédit page produit IA offert', included: true },
+      { text: 'Tableau de bord basique', included: true },
+      { text: '1 boutique en ligne', included: true },
+      { text: '1 utilisateur', included: true },
+      { text: 'Agent IA WhatsApp', included: false },
+      { text: 'Crédits IA supplémentaires', included: false },
+      { text: 'Support prioritaire', included: false },
+    ],
+    durations: [
+      { id: 'free', label: 'Gratuit', price: 0, months: 1, saving: null, perMonth: 0 },
+    ],
+  },
+  {
+    id: 'starter',
+    name: 'Scalor',
+    tagline: 'Gestion complète de vos commandes',
+    icon: <Package className="w-full h-full" />,
+    gradient: 'from-primary-500 to-teal-600',
+    accent: 'emerald',
+    ring: 'ring-primary-500/20',
+    btnClass: 'bg-primary-600 hover:bg-primary-700 shadow-primary-500/25',
+    features: [
+      { text: 'Commandes illimitées', included: true },
+      { text: 'Gestion clients complète', included: true },
+      { text: 'Catalogue produits illimité', included: true },
+      { text: 'Tableau de bord analytique', included: true },
+      { text: 'Boutique en ligne personnalisée', included: true },
+      { text: 'Notifications & suivi livraisons', included: true },
+      { text: 'Agent IA WhatsApp', included: false },
+      { text: 'Génération de pages IA', included: false },
+    ],
+    durations: [
+      { id: 'starter_1',  label: 'Mensuel',  price: 6900,  months: 1,  saving: null, perMonth: 6900 },
+      { id: 'starter_12', label: 'Annuel',   price: 62100, months: 12, saving: 25,   perMonth: 5175 },
+    ],
+  },
+  {
+    id: 'pro',
+    name: 'Scalor + IA',
+    tagline: 'Vendez automatiquement sur WhatsApp',
+    icon: <Bot className="w-full h-full" />,
+    gradient: 'from-blue-600 to-indigo-700',
+    accent: 'blue',
+    ring: 'ring-blue-500/20',
+    btnClass: 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/25',
+    popular: true,
+    features: [
+      { text: 'Tout Scalor inclus', included: true },
+      { text: '1 agent IA commercial WhatsApp', included: true, highlight: true },
+      { text: '1 numéro WhatsApp connecté', included: true, highlight: true },
+      { text: '1 000 messages / jour', included: true },
+      { text: '50 000 messages / mois', included: true },
+      { text: 'Réponses automatiques 24h/7j', included: true },
+      { text: 'Support prioritaire', included: true },
+      { text: '10 crédits page produit IA / mois', included: true, highlight: true },
+    ],
+    durations: [
+      { id: 'pro_1',  label: 'Mensuel',  price: 14900,  months: 1,  saving: null, perMonth: 14900 },
+      { id: 'pro_12', label: 'Annuel',   price: 134100, months: 12, saving: 25,   perMonth: 11175 },
+    ],
+  },
+  {
+    id: 'ultra',
+    name: 'Scalor IA Pro',
+    tagline: 'La puissance maximale pour scaler',
+    icon: <Zap className="w-full h-full" />,
+    gradient: 'from-slate-800 to-slate-950',
+    accent: 'slate',
+    ring: 'ring-slate-500/20',
+    btnClass: 'bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-slate-950 shadow-slate-500/25',
+    features: [
+      { text: 'Tout Scalor + IA inclus', included: true },
+      { text: '5 agents IA actifs simultanés', included: true, highlight: true },
+      { text: '5 numéros WhatsApp connectés', included: true, highlight: true },
+      { text: 'Messages illimités', included: true, highlight: true },
+      { text: '20 crédits page produit IA / mois', included: true, highlight: true },
+      { text: 'Gestion multi-boutiques', included: true },
+      { text: 'Support 24/7 dédié', included: true },
+      { text: 'API & webhooks', included: true },
+      { text: 'Formation complète E-commerce Afrique', included: true },
+      { text: '50 générations de créatives images', included: true },
+    ],
+    durations: [
+      { id: 'ultra_1',  label: 'Mensuel',  price: 29899,  months: 1,  saving: null, perMonth: 29899 },
+      { id: 'ultra_12', label: 'Annuel',   price: 269100, months: 12, saving: 25,   perMonth: 22425 },
+    ],
+  },
+];
+
+/**
+ * Merges dynamic prices from /billing/plans/public into the static tier templates.
+ * Only the monthly price and derived annual price are updated; all UI metadata
+ * (gradient, icon, features list, etc.) stays from BASE_PLAN_TIERS.
+ */
+function applyPublicPrices(baseTiers, publicPlans) {
+  if (!Array.isArray(publicPlans)) return baseTiers;
+  return baseTiers.map(tier => {
+    const apiPlan = publicPlans.find(p => p.key === tier.id);
+    if (!apiPlan) return tier;
+    const originalMonthlyDuration = tier.durations.find(d => d.months === 1);
+    const originalMonthlyPrice = originalMonthlyDuration?.price || 1;
+    // Use effectivePrice (promo applied if active) for the displayed/checkout monthly price
+    const effectiveMonthly = apiPlan.effectivePrice ?? apiPlan.priceRegular ?? originalMonthlyPrice;
+    return {
+      ...tier,
+      priceRegular: apiPlan.priceRegular ?? originalMonthlyPrice,
+      pricePromo: apiPlan.pricePromo ?? null,
+      promoActive: !!apiPlan.promoActive,
+      durations: tier.durations.map(d => {
+        if (d.months === 1) {
+          return { ...d, price: effectiveMonthly, perMonth: effectiveMonthly };
+        }
+        // Multi-month: maintain the same price ratio relative to monthly
+        const ratio = d.price / originalMonthlyPrice;
+        const newPrice = Math.round(effectiveMonthly * ratio / 100) * 100;
+        return { ...d, price: newPrice, perMonth: Math.round(newPrice / d.months) };
+      }),
+    };
+  });
+}
+
+// Helpers
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+function formatAmount(n) {
+  return new Intl.NumberFormat('fr-FR').format(n);
+}
+function daysLeft(dateStr) {
+  if (!dateStr) return 0;
+  return Math.max(0, Math.ceil((new Date(dateStr) - new Date()) / 86400000));
+}
+
+// SVG icons
+const CheckIcon = ({ className = '' }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+const XIcon = ({ className = '' }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+const ArrowLeftIcon = ({ className = '' }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+  </svg>
+);
+
+// CheckoutModal
+function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, userCountry, initialPromo = '' }) {
+  const [country, setCountry] = useState(
+    PAYMENT_COUNTRY_CODES.find(c => c.country === userCountry) ? userCountry : 'Cameroun'
+  );
+  const [phoneLocal, setPhoneLocal] = useState('');
+  const [clientName, setClientName] = useState(userName || '');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [promoInput, setPromoInput] = useState(initialPromo);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null); // { code, discountAmount, finalAmount }
+
+  const selectedCode = PAYMENT_COUNTRY_CODES.find(c => c.country === country);
+  const dialCode = selectedCode?.code || '+237';
+  const flag = selectedCode?.flag || '🌍'; // flags stay as emoji (country flags)
+  const fullPhone = phoneLocal ? `${dialCode}${phoneLocal.replace(/^0+/, '')}` : '';
+
+  const finalPrice = appliedPromo ? appliedPromo.finalAmount : plan.price;
+  const summaryBeforeValue = appliedPromo
+    ? `${formatAmount(plan.price)} FCFA`
+    : plan.oldPrice
+      ? `${formatAmount(plan.oldPrice)} FCFA`
+      : null;
+  const summaryMeta = appliedPromo
+    ? `Code ${appliedPromo.code} applique · -${formatAmount(appliedPromo.discountAmount)} FCFA`
+    : plan.saving
+      ? `Soit ${formatAmount(plan.perMonth)} FCFA/mois · -${plan.saving}%`
+      : 'Paiement mobile money avec activation immediate';
+  const summaryBadge = appliedPromo
+    ? 'Code promo'
+    : plan.oldPrice
+      ? 'Promo'
+      : plan.saving
+        ? `-${plan.saving}%`
+        : null;
+  const inputClassName = 'w-full rounded-[18px] border border-[#D7E3DA] bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-[0_10px_30px_rgba(15,107,79,0.04)] outline-none transition placeholder:text-slate-300 focus:border-[#0F6B4F]/35 focus:ring-4 focus:ring-[#0F6B4F]/10';
+  const labelClassName = 'mb-2 block text-[11px] font-black uppercase tracking-[0.16em] text-[#6A776F]';
+
+  async function handleApplyPromo(codeToApply) {
+    const code = typeof codeToApply === 'string' ? codeToApply : promoInput;
+    setPromoError('');
+    if (!code.trim()) { setPromoError('Entrez un code'); return; }
+    setPromoLoading(true);
+    try {
+      const result = await validatePromoCode({ code: code.trim(), plan: plan.id, workspaceId });
+      if (!result.success) { setPromoError(result.message || 'Code invalide'); setPromoLoading(false); return; }
+      setAppliedPromo({
+        code: result.code,
+        discountType: result.discountType,
+        discountValue: result.discountValue,
+        discountAmount: result.discountAmount,
+        finalAmount: result.finalAmount,
+        originalAmount: result.originalAmount
+      });
+      setPromoLoading(false);
+    } catch (err) {
+      console.error('handleApplyPromo err:', err, err.response?.data);
+      const msg = err?.response?.data?.message || err?.userMessage || err?.message || 'Erreur de validation';
+      setPromoError(msg);
+      setPromoLoading(false);
+    }
+  }
+
+  // Auto-apply initial promo if passed
+  useEffect(() => {
+    if (initialPromo && initialPromo.trim() !== '') {
+      handleApplyPromo(initialPromo.trim());
+    }
+  }, []);
+
+  function handleRemovePromo() {
+    setAppliedPromo(null);
+    setPromoInput('');
+    setPromoError('');
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+    if (!clientName.trim() || clientName.trim().length < 2) { setError('Nom complet requis (min. 2 caractères).'); return; }
+    if (!phoneLocal.trim() || phoneLocal.trim().length < 7) { setError('Numéro valide requis (min. 7 chiffres).'); return; }
+
+    setLoading(true);
+    try {
+      const result = await createCheckout({
+        plan: plan.id,
+        phone: fullPhone,
+        clientName: clientName.trim(),
+        workspaceId,
+        promoCode: appliedPromo?.code || null
+      });
+      if (!result.success) { setError(result.message || "Erreur lors de l'initialisation."); setLoading(false); return; }
+      if (result.paymentUrl) { onSuccess(result.mfToken); window.location.href = result.paymentUrl; }
+      else { setError('URL de paiement manquante.'); setLoading(false); }
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Une erreur est survenue.');
+      setLoading(false);
+    }
+  }
+
+  return (
+    <PaymentModalFrame
+      onClose={onClose}
+      eyebrow="Abonnement"
+      title={`${tier.name} — ${plan.label}`}
+      subtitle="Finalisez votre abonnement en quelques secondes avec votre numero Mobile Money."
+      icon={tier.icon}
+      headerClassName={`bg-gradient-to-br ${tier.gradient}`}
+      summary={{
+        label: 'Total a payer',
+        value: `${formatAmount(finalPrice)} FCFA`,
+        beforeValue: summaryBeforeValue,
+        meta: summaryMeta,
+        badge: summaryBadge,
+      }}
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid gap-4 rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
+          <div>
+            <label className={labelClassName}>Nom complet</label>
+            <input
+              type="text"
+              value={clientName}
+              onChange={e => setClientName(e.target.value)}
+              placeholder="Votre nom complet"
+              className={inputClassName}
+              required
+            />
+          </div>
+
+          <div>
+            <label className={labelClassName}>Numero Mobile Money</label>
+            <select
+              value={country}
+              onChange={e => setCountry(e.target.value)}
+              className={`${inputClassName} mb-3 appearance-none`}
+            >
+              {PAYMENT_COUNTRY_CODES.map((c, i) => <option key={i} value={c.country}>{c.flag} {c.country} ({c.code})</option>)}
+            </select>
+            <div className="flex gap-2">
+              <div className="flex flex-shrink-0 items-center gap-1.5 rounded-[18px] border border-[#D7E3DA] bg-[#F5FAF7] px-3 py-3 text-sm font-bold text-[#355646]">
+                <span>{flag}</span>
+                <span>{dialCode}</span>
+              </div>
+              <input
+                type="tel"
+                inputMode="numeric"
+                value={phoneLocal}
+                onChange={e => setPhoneLocal(e.target.value.replace(/\D/g, ''))}
+                placeholder="6 XX XX XX XX"
+                className={`flex-1 ${inputClassName}`}
+                required
+              />
+            </div>
+            {fullPhone && (
+              <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary-700">
+                <CheckIcon className="w-3.5 h-3.5" />
+                {fullPhone}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
+          <label className={labelClassName}>Code promo (optionnel)</label>
+          {appliedPromo ? (
+            <div className="flex items-center justify-between rounded-[18px] border border-primary-200 bg-primary-50 p-3.5">
+              <div>
+                <p className="flex items-center gap-1.5 text-sm font-bold text-primary-700">
+                  <CheckIcon className="w-4 h-4" /> {appliedPromo.code}
+                </p>
+                <p className="mt-1 text-xs text-primary-600">
+                  -{formatAmount(appliedPromo.discountAmount)} FCFA appliqué
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemovePromo}
+                className="text-xs font-semibold text-primary-700 hover:text-primary-900"
+              >
+                Retirer
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoInput}
+                  onChange={e => setPromoInput(e.target.value.toUpperCase())}
+                  placeholder="CODEPROMO"
+                  className={`flex-1 font-mono uppercase ${inputClassName}`}
+                />
+                <button
+                  type="button"
+                  onClick={handleApplyPromo}
+                  disabled={promoLoading || !promoInput.trim()}
+                  className="rounded-[18px] bg-[#EEF4EF] px-4 py-3 text-sm font-black text-[#355646] transition hover:bg-[#E4EEE6] disabled:opacity-50"
+                >
+                  {promoLoading ? '…' : 'Appliquer'}
+                </button>
+              </div>
+              {promoError && <p className="mt-2 text-xs font-medium text-red-600">{promoError}</p>}
+            </>
+          )}
+        </div>
+
+        {appliedPromo && (
+          <div className="space-y-1 rounded-[20px] border border-[#E2EAE4] bg-[#F7FBF8] p-4 text-sm shadow-[0_16px_40px_rgba(15,107,79,0.05)]">
+            <div className="flex justify-between text-gray-500">
+              <span>Sous-total</span>
+              <span className="line-through">{formatAmount(plan.price)} FCFA</span>
+            </div>
+            <div className="flex justify-between font-medium text-primary-600">
+              <span>Réduction ({appliedPromo.code})</span>
+              <span>-{formatAmount(appliedPromo.discountAmount)} FCFA</span>
+            </div>
+            <div className="flex justify-between border-t border-[#DDE6DF] pt-2 font-bold text-gray-900">
+              <span>Total</span>
+              <span>{formatAmount(finalPrice)} FCFA</span>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-start gap-2 rounded-[18px] border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading || !phoneLocal || !clientName}
+          className={`w-full rounded-[18px] py-4 text-sm font-black text-white transition-all shadow-[0_20px_45px_rgba(15,107,79,0.18)] disabled:cursor-not-allowed disabled:opacity-50 ${tier.btnClass}`}
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+              Redirection…
+            </span>
+          ) : `Payer ${formatAmount(finalPrice)} FCFA`}
+        </button>
+      </form>
+    </PaymentModalFrame>
+  );
+}
+
+// PlanCard — Shopify style
+function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPromoData }) {
+  const duration = tier.free
+    ? tier.durations[0]
+    : (isAnnual ? (tier.durations[1] ?? tier.durations[0]) : tier.durations[0]);
+  const isCurrentPlan = tier.free
+    ? (currentPlan === 'free' || (!isActive && !['starter','pro','ultra'].includes(currentPlan)))
+    : (currentPlan === tier.id && isActive);
+
+  let displayPrice = duration.price;
+  let originalPrice = duration.oldPrice || null;
+  let displayPerMonth = duration.perMonth;
+  let isPromoApplied = false;
+
+  if (globalPromoData) {
+    const { discountType, discountValue, applicablePlans, applicableDurations, minAmount } = globalPromoData;
+    const matchesPlan = !applicablePlans?.length || applicablePlans.includes(tier.id);
+    const matchesDuration = !applicableDurations?.length || applicableDurations.includes(duration.months);
+    const matchesAmount = duration.price >= (minAmount || 0);
+
+    if (matchesPlan && matchesDuration && matchesAmount) {
+      isPromoApplied = true;
+      if (!originalPrice) originalPrice = duration.price;
+      const discountAmount = discountType === 'percentage'
+        ? Math.round((duration.price * discountValue) / 100)
+        : Math.min(duration.price, discountValue);
+      displayPrice = Math.max(0, duration.price - discountAmount);
+      displayPerMonth = Math.round(displayPrice / duration.months);
+    }
+  }
+
+  const includedFeatures = tier.features.filter(f => f.included);
+
+  const isPopular = tier.popular;
+
+  return (
+    <div className={`relative flex flex-col h-full transition-all duration-200
+      ${isPopular
+        ? 'rounded-2xl bg-gradient-to-b from-primary-600 to-primary-700 shadow-2xl shadow-primary-500/30 ring-1 ring-inset ring-white/10'
+        : 'rounded-2xl bg-white border border-gray-200 hover:border-gray-400 hover:shadow-md'
+      }`}>
+
+      {/* Top banner */}
+      <div className={`rounded-t-2xl px-6 py-2.5 text-center text-[11px] font-black tracking-widest uppercase
+        ${isPopular ? 'bg-primary-500 text-white' : 'bg-gray-50 text-gray-400 border-b border-gray-200'}`}>
+        {isPopular ? '⭐  Le plus populaire' : tier.free ? 'Gratuit pour toujours' : `${isAnnual && duration.saving ? `-${duration.saving}% en annuel` : 'Mensuel ou annuel'}`}
+      </div>
+
+      <div className="p-7 flex-1 flex flex-col">
+
+        {/* Name */}
+        <div className="mb-6">
+          <h3 className={`text-2xl font-black mb-1 ${isPopular ? 'text-white' : 'text-gray-900'}`}>
+            {tier.name}
+          </h3>
+          <p className={`text-sm ${isPopular ? 'text-primary-100' : 'text-gray-500'}`}>{tier.tagline}</p>
+        </div>
+
+        {/* Price block */}
+        <div className="mb-6">
+          {tier.free ? (
+            <>
+              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>À partir de</p>
+              <div className="flex items-end gap-1.5">
+                <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-gray-900'}`}>0</span>
+                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>FCFA</span>
+              </div>
+              <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>Sans carte bancaire requise</p>
+            </>
+          ) : (
+            <>
+              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>À partir de</p>
+              <div className="flex items-end gap-2">
+                {originalPrice && (
+                  <span className={`text-xl font-bold line-through mb-0.5 ${isPopular ? 'text-primary-300' : 'text-gray-300'}`}>
+                    {formatAmount(isAnnual ? Math.round(originalPrice / duration.months) : originalPrice)}
+                  </span>
+                )}
+                <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-gray-900'}`}>
+                  {formatAmount(displayPerMonth)}
+                </span>
+                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>FCFA/mois</span>
+              </div>
+              {isPromoApplied && (
+                <p className={`text-xs font-bold mt-1.5 ${isPopular ? 'text-white' : 'text-primary-600'}`}>
+                  ✨ Code {globalPromoData.code} appliqué
+                </p>
+              )}
+              {isAnnual && duration.saving && !isPromoApplied && (
+                <p className={`text-xs font-semibold mt-1.5 ${isPopular ? 'text-primary-200' : 'text-primary-600'}`}>
+                  {formatAmount(displayPrice)} FCFA facturé annuellement
+                </p>
+              )}
+              {!isAnnual && !isPromoApplied && (
+                <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>
+                  Facturation mensuelle, sans engagement
+                </p>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* CTA */}
+        <div className="mb-7">
+          {isCurrentPlan ? (
+            <div className={`w-full py-3 rounded-xl text-center text-sm font-bold border
+              ${isPopular ? 'bg-white/10 text-white border-white/20' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
+              Plan actuel
+            </div>
+          ) : tier.free ? (
+            <div className={`w-full py-3 rounded-xl text-center text-sm font-semibold border
+              ${isPopular ? 'bg-white/10 text-white border-white/20' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+              Commencer gratuitement
+            </div>
+          ) : (
+            <button
+              onClick={() => onCheckout(duration)}
+              className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
+                ${isPopular
+                  ? 'bg-primary-500 text-white hover:bg-primary-400'
+                  : 'bg-gray-900 text-white hover:bg-gray-700'}`}>
+              Commencer avec {tier.name}
+            </button>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className={`h-px mb-5 ${isPopular ? 'bg-white/20' : 'bg-gray-100'}`} />
+
+        {/* Features */}
+        <div>
+          <p className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>
+            Fonctionnalités clés
+          </p>
+          <ul className="space-y-3">
+            {includedFeatures.map((f, i) => (
+              <li key={i} className="flex items-start gap-2.5">
+                <CheckIcon className={`w-4 h-4 flex-shrink-0 mt-0.5 ${isPopular ? 'text-primary-400' : 'text-primary-500'}`} />
+                <span className={`text-[13px] leading-snug ${isPopular ? (f.highlight ? 'text-white font-semibold' : 'text-primary-100') : (f.highlight ? 'text-gray-900 font-semibold' : 'text-gray-600')}`}>
+                  {f.text}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// StatusBadge
+function StatusBadge({ status }) {
+  const cfg = {
+    paid:      { label: 'Payé',       cls: 'bg-primary-50 text-primary-700' },
+    pending:   { label: 'En attente', cls: 'bg-amber-50 text-amber-700' },
+    failure:   { label: 'Échoué',     cls: 'bg-red-50 text-red-700' },
+    'no paid': { label: 'Non payé',   cls: 'bg-gray-100 text-gray-600' },
+  }[status] || { label: status, cls: 'bg-gray-100 text-gray-600' };
+  return <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold ${cfg.cls}`}>{cfg.label}</span>;
+}
+
+// Main BillingPage
+export default function BillingPage() {
+  const { user } = useEcomAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const workspace = (() => { try { return JSON.parse(localStorage.getItem('ecomWorkspace') || 'null'); } catch { return null; } })();
+  const workspaceId = workspace?._id || workspace?.id;
+  const userCountry = workspace?.country || 'Cameroun';
+
+  const [planInfo, setPlanInfo] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [checkout, setCheckout] = useState(null);
+  const [directCheckoutLoading, setDirectCheckoutLoading] = useState(false);
+  const [directCheckoutError, setDirectCheckoutError] = useState('');
+  const [isAnnual, setIsAnnual] = useState(false);
+  const [pendingToken, setPendingToken] = useState(() => sessionStorage.getItem('mf_pending_token') || null);
+  const [trialLoading, setTrialLoading] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [globalPromo, setGlobalPromo] = useState('');
+  const [globalPromoData, setGlobalPromoData] = useState(null);
+  const [globalPromoLoading, setGlobalPromoLoading] = useState(false);
+  const [globalPromoError, setGlobalPromoError] = useState('');
+  const queuedSelectedPlan = getPendingPlanSelection();
+  const [planTiers, setPlanTiers] = useState(BASE_PLAN_TIERS);
+  const allPlans = planTiers.flatMap(tier => tier.durations.map(d => ({ ...d, tier: tier.id })));
+  const autoCheckoutStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (autoCheckoutStartedRef.current || !workspaceId) return;
+    const incoming = location.state?.selectedPlan || queuedSelectedPlan;
+    if (!incoming) return;
+
+    autoCheckoutStartedRef.current = true;
+    clearPendingPlanSelection();
+    const tierName = incoming.includes('ultra') ? 'ultra' : incoming.includes('pro') ? 'pro' : 'starter';
+    const tier = planTiers.find(t => t.id === tierName);
+    const plan = allPlans.find(p => p.id === incoming) || tier?.durations[0];
+    if (tier && plan) handleDirectCheckout({ ...plan, tier: tierName });
+  }, [location.state, queuedSelectedPlan, workspaceId]);
+
+  const load = useCallback(async () => {
+    try {
+      const publicPlansRes = await getPublicPlans().catch(() => ({ success: false }));
+      if (publicPlansRes.success && Array.isArray(publicPlansRes.plans)) {
+        setPlanTiers(applyPublicPrices(BASE_PLAN_TIERS, publicPlansRes.plans));
+      }
+      if (!workspaceId) return;
+      const [planRes, histRes] = await Promise.all([
+        getCurrentPlan(workspaceId),
+        getPaymentHistory(workspaceId),
+      ]);
+      if (planRes.success) setPlanInfo(planRes);
+      if (histRes.success) setHistory(histRes.payments || []);
+    } catch (e) { console.error('[billing] load error:', e); }
+    finally { setLoading(false); }
+  }, [workspaceId]);
+
+  useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    if (!pendingToken) return;
+    const interval = setInterval(async () => {
+      try {
+        const res = await getPaymentStatus(pendingToken);
+        if (res.status === 'paid') { clearInterval(interval); sessionStorage.removeItem('mf_pending_token'); setPendingToken(null); await load(); navigate('/ecom/agent-ia'); }
+        else if (res.status === 'failure' || res.status === 'no paid') { clearInterval(interval); sessionStorage.removeItem('mf_pending_token'); setPendingToken(null); load(); }
+      } catch { /* ignore */ }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [pendingToken, load, navigate]);
+
+  async function handleActivateTrial() {
+    setTrialLoading(true);
+    try { await activateTrial(workspaceId); window.location.reload(); }
+    catch { setTrialLoading(false); }
+  }
+
+  async function handleCheckGlobalPromo(e) {
+    if (e) e.preventDefault();
+    setGlobalPromoError('');
+    if (!globalPromo.trim()) { setGlobalPromoError('Entrez un code'); return; }
+    setGlobalPromoLoading(true);
+    try {
+      const res = await checkGlobalPromoCode(globalPromo.trim());
+      if (res.success && res.promo) {
+        setGlobalPromoData(res.promo);
+      } else {
+        setGlobalPromoError('Code invalide');
+        setGlobalPromoData(null);
+      }
+    } catch (err) {
+      setGlobalPromoError(err?.response?.data?.message || err?.userMessage || err?.message || 'Erreur de validation');
+      setGlobalPromoData(null);
+    } finally {
+      setGlobalPromoLoading(false);
+    }
+  }
+
+  function handleClearGlobalPromo() {
+    setGlobalPromo('');
+    setGlobalPromoData(null);
+    setGlobalPromoError('');
+  }
+
+  // Direct checkout — skip modal, use user phone/name
+  const handleDirectCheckout = useCallback(async (duration) => {
+    if (!duration?.id || duration?.id === 'free') {
+      setDirectCheckoutError('Ce plan ne nécessite pas de paiement.');
+      return;
+    }
+    const phone = user?.phone?.trim();
+    const name = user?.name?.trim() || user?.email?.split('@')[0] || 'Client';
+    if (!phone || phone.length < 7 || globalPromo.trim() !== '') {
+      // Fallback: show modal if no phone on profile, OR if user wants to use a promo code
+      const tier = planTiers.find(t => t.id === (duration.tier || duration.id?.split('_')[0]));
+      setCheckout({ plan: { ...duration, tier: duration.tier || tier?.id }, tier, initialPromo: globalPromo.trim() });
+      return;
+    }
+    setDirectCheckoutLoading(true);
+    setDirectCheckoutError('');
+    try {
+      const result = await createCheckout({ plan: duration.id, phone, clientName: name, workspaceId });
+      if (!result.success) { setDirectCheckoutError(result.message || 'Erreur'); setDirectCheckoutLoading(false); return; }
+      if (result.paymentUrl) {
+        sessionStorage.setItem('mf_pending_token', result.mfToken);
+        setPendingToken(result.mfToken);
+        window.location.href = result.paymentUrl;
+      } else { setDirectCheckoutError('URL de paiement manquante.'); setDirectCheckoutLoading(false); }
+    } catch (err) {
+      setDirectCheckoutError(err?.response?.data?.message || 'Erreur de paiement.');
+      setDirectCheckoutLoading(false);
+    }
+  }, [user, workspaceId, globalPromo, planTiers]);
+
+  const fallbackTrialActive = !!workspace?.trialEndsAt && new Date(workspace.trialEndsAt) > new Date();
+  const fallbackPaidPlan = ['starter', 'pro', 'ultra'].includes(workspace?.plan) ? workspace.plan : 'free';
+  const fallbackPaidActive = Boolean(
+    fallbackPaidPlan !== 'free' &&
+    workspace?.planExpiresAt &&
+    new Date(workspace.planExpiresAt) > new Date()
+  );
+
+  const fallbackTrialEndsAt = workspace?.trialEndsAt || null;
+  const currentPlan = planInfo?.plan || (fallbackTrialActive ? 'pro' : fallbackPaidPlan);
+  const isActivePaid = Boolean(
+    (planInfo?.isActive && ['starter', 'pro', 'ultra'].includes(planInfo?.plan)) ||
+    (!planInfo && fallbackPaidActive)
+  );
+  const isTrial = Boolean(planInfo?.trial?.active || (!planInfo && fallbackTrialActive));
+  const trialDays = isTrial ? daysLeft(planInfo?.trial?.endsAt || fallbackTrialEndsAt) : 0;
+  const trialUsed = planInfo?.trial?.used ?? workspace?.trialUsed;
+
+  return (
+    <div className="min-h-screen bg-[#fafbfc]">
+
+      {/* Navbar */}
+      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/ecom/dashboard" className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition">
+              <ArrowLeftIcon />
+              <span className="text-sm font-medium hidden sm:inline">Retour</span>
+            </Link>
+            <div className="h-6 w-px bg-gray-200 hidden sm:block" />
+            <div className="flex items-center">
+              <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {history.length > 0 && (
+              <button onClick={() => setShowHistory(!showHistory)} className="text-xs font-semibold text-gray-500 hover:text-gray-900 transition px-3 py-2 rounded-lg hover:bg-gray-100">
+                Historique
+              </button>
+            )}
+            {isActivePaid && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-50 border border-primary-200">
+                <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
+                <span className="text-[11px] font-bold text-primary-700">{planTiers.find(t => t.id === currentPlan)?.name || 'Actif'}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* Pending Payment Banner */}
+      {pendingToken && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3 text-sm text-amber-800">
+            <svg className="animate-spin w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+            <span><strong>Vérification du paiement en cours…</strong> Votre plan sera activé automatiquement.</span>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════
+           VIEW A: Subscribed / Trial user → "Mon abonnement" dashboard
+           ══════════════════════════════════════════════════════════════════ */}
+      {false && (isActivePaid || isTrial) && !loading ? (() => {
+        const activeTier = planTiers.find(t => t.id === currentPlan) || planTiers[1];
+        const remainingDays = isActivePaid ? daysLeft(planInfo?.planExpiresAt) : trialDays;
+        const expiryDate = isActivePaid ? (planInfo?.planExpiresAt || workspace?.planExpiresAt) : (planInfo?.trial?.endsAt || fallbackTrialEndsAt);
+        const upgradeTiers = planTiers.filter(t => t.id !== currentPlan);
+
+        return (
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-20">
+
+            {/* Current plan compact card */}
+            <div className={`relative rounded-2xl overflow-hidden bg-gradient-to-r ${activeTier.gradient} px-5 py-4 text-white shadow-lg mb-8`}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center p-2 flex-shrink-0">{activeTier.icon}</div>
+                  <div className="min-w-0">
+                    <h2 className="text-base font-black truncate">{activeTier.name}</h2>
+                    <p className="text-white/60 text-[11px]">{isTrial ? `Essai · ${trialDays}j restant${trialDays > 1 ? 's' : ''}` : `Expire ${formatDate(expiryDate)}`}</p>
+                  </div>
+                </div>
+                {isTrial ? (
+                  <button onClick={() => document.getElementById('upgrade-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="px-4 py-1.5 bg-white text-gray-900 font-bold text-xs rounded-lg hover:bg-white/90 transition flex-shrink-0">
+                    Choisir un plan →
+                  </button>
+                ) : (
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-lg font-black">{remainingDays}j</p>
+                    <p className="text-white/50 text-[10px]">restants</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Quick stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+              {[
+                { label: 'Plan', value: activeTier.name, icon: <span className="w-5 h-5 text-slate-500">{activeTier.icon}</span> },
+                { label: 'Statut', value: isTrial ? 'Essai' : 'Actif', icon: isTrial ? <Clock className="w-5 h-5 text-slate-500" /> : <CheckCircle2 className="w-5 h-5 text-slate-500" /> },
+                { label: 'Jours restants', value: String(remainingDays), icon: <CalendarDays className="w-5 h-5 text-slate-500" /> },
+                { label: 'Paiements', value: String(history.length), icon: <CreditCard className="w-5 h-5 text-slate-500" /> },
+              ].map(s => (
+                <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+                  <div>{s.icon}</div>
+                  <div>
+                    <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">{s.label}</p>
+                    <p className="text-lg font-black text-gray-900">{s.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Upgrade section */}
+            <div id="upgrade-section" className="pt-6">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-black text-gray-900">{isTrial ? 'Choisissez votre plan' : 'Changer de plan'}</h2>
+                <p className="text-gray-500 text-sm mt-2">{isTrial ? 'Votre essai gratuit prend fin bientôt. Choisissez un plan pour continuer.' : 'Passez à un plan supérieur ou changez d\'offre à tout moment.'}</p>
+              </div>
+
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <span className={`text-sm font-semibold transition ${!isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>Mensuel</span>
+                <button onClick={() => setIsAnnual(!isAnnual)}
+                  className={`relative w-14 h-7 rounded-full transition-colors ${isAnnual ? 'bg-blue-600' : 'bg-gray-300'}`}>
+                  <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${isAnnual ? 'translate-x-7' : ''}`} />
+                </button>
+                <span className={`text-sm font-semibold transition ${isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>Annuel</span>
+                {isAnnual && <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-full">Jusqu'à -25%</span>}
+              </div>
+
+              {/* Promo code input (global) */}
+              <div className="flex flex-col items-center mb-10">
+                <form onSubmit={handleCheckGlobalPromo} className="relative w-full max-w-sm transition-all hover:scale-[1.02]">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <Gift className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={globalPromo}
+                    onChange={e => setGlobalPromo(e.target.value.toUpperCase())}
+                    disabled={globalPromoData !== null}
+                    placeholder="Avez-vous un code promo ?"
+                    className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition shadow-sm uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
+                  />
+                  {!globalPromoData ? (
+                    <button type="submit" disabled={globalPromoLoading || !globalPromo.trim()}
+                      className="absolute inset-y-1 right-1 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full text-xs font-bold transition disabled:opacity-50">
+                      {globalPromoLoading ? '…' : 'Appliquer'}
+                    </button>
+                  ) : (
+                    <button type="button" onClick={handleClearGlobalPromo}
+                      className="absolute inset-y-1 right-1 px-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full text-xs font-bold transition">
+                      Retirer
+                    </button>
+                  )}
+                </form>
+                {globalPromoError && <p className="text-red-500 text-[11px] font-bold mt-2">{globalPromoError}</p>}
+                {globalPromoData && <p className="text-primary-600 text-[11px] font-bold mt-2">Code {globalPromoData.code} validé !</p>}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
+                {planTiers.map(tier => (
+                  <PlanCard
+                    key={tier.id}
+                    tier={tier}
+                    isAnnual={isAnnual}
+                    currentPlan={currentPlan}
+                    isActive={isActivePaid}
+                    globalPromoData={globalPromoData}
+                    onCheckout={duration => handleDirectCheckout({ ...duration, tier: tier.id })}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Full features list */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 mt-10">
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">Fonctionnalités incluses</h3>
+              <div className="grid sm:grid-cols-2 gap-2.5">
+                {activeTier.features.map((f, i) => (
+                  <div key={i} className={`flex items-center gap-2.5 text-[13px] ${f.included ? 'text-gray-700' : 'text-gray-300'}`}>
+                    {f.included
+                      ? <div className="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0"><CheckIcon className="w-3 h-3 text-primary-600" /></div>
+                      : <div className="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0"><XIcon className="w-3 h-3 text-gray-300" /></div>
+                    }
+                    <span className={f.highlight ? 'font-semibold' : ''}>{f.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Payment history inline */}
+            {history.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 mt-4">
+                <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">Derniers paiements</h3>
+                <div className="space-y-3">
+                  {history.slice(0, 3).map(p => (
+                    <div key={p._id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900 capitalize">{p.plan} — {p.durationMonths} mois</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{formatDate(p.createdAt)}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <p className="text-sm font-black text-gray-900">{formatAmount(p.amount)} FCFA</p>
+                        <StatusBadge status={p.status} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {history.length > 3 && (
+                  <button onClick={() => setShowHistory(true)} className="mt-3 text-xs font-bold text-blue-600 hover:text-blue-700 transition">
+                    Voir tout l'historique ({history.length})
+                  </button>
+                )}
+              </div>
+            )}
+
+          </div>
+        );
+      })()
+
+      /* ══════════════════════════════════════════════════════════════════
+         VIEW B: Non-subscribed user → Full landing / pricing page
+         ══════════════════════════════════════════════════════════════════ */
+      : (
+        <>
+          {/* Hero — Shopify style: minimal, centered, toggle prominent */}
+          <div className="bg-white border-b border-gray-100">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-14 pb-10 text-center">
+
+              {/* Plan actuel banner (connecté + abonné) */}
+              {!loading && isActivePaid && (
+                <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-full px-4 py-1.5 mb-6">
+                  <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
+                  <span className="text-xs font-bold text-primary-700">
+                    Plan actuel : {planTiers.find(t => t.id === currentPlan)?.name || currentPlan}
+                  </span>
+                  <span className="text-xs text-primary-600 ml-1">— Actif</span>
+                </div>
+              )}
+
+              {/* Trial banner */}
+              {!loading && !isActivePaid && isTrial && (
+                <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-1.5 mb-6">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                  <span className="text-xs font-bold text-blue-700">Essai gratuit en cours — {trialDays}j restants</span>
+                </div>
+              )}
+
+              {/* Activer essai */}
+              {!loading && !isActivePaid && !isTrial && !trialUsed && (
+                <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-full px-4 py-1.5 mb-6">
+                  <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
+                  <span className="text-xs font-bold text-primary-700">Essai gratuit 7 jours disponible</span>
+                  <button onClick={handleActivateTrial} disabled={trialLoading}
+                    className="text-xs font-black text-primary-600 hover:text-primary-800 transition disabled:opacity-50 ml-1">
+                    {trialLoading ? '…' : 'Activer →'}
+                  </button>
+                </div>
+              )}
+
+              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight mb-4">
+                Des tarifs simples,<br/>sans surprises
+              </h1>
+              <p className="text-gray-500 text-lg max-w-xl mx-auto mb-10">
+                Commencez gratuitement. Passez à l'échelle quand vous êtes prêt.
+              </p>
+
+              {/* Toggle mensuel / annuel — style pill Shopify */}
+              <div className="inline-flex items-center bg-gray-100 rounded-full p-1 gap-1">
+                <button
+                  onClick={() => setIsAnnual(false)}
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                  Mensuel
+                </button>
+                <button
+                  onClick={() => setIsAnnual(true)}
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                  Annuel
+                  <span className="text-[10px] font-black bg-primary-500 text-white px-1.5 py-0.5 rounded-full">-25%</span>
+                </button>
+              </div>
+
+              {/* Promo code */}
+              <div className="mt-6 flex flex-col items-center">
+                <form onSubmit={handleCheckGlobalPromo} className="relative w-full max-w-xs">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <Gift className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={globalPromo}
+                    onChange={e => setGlobalPromo(e.target.value.toUpperCase())}
+                    disabled={globalPromoData !== null}
+                    placeholder="Code promo ?"
+                    className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
+                  />
+                  {!globalPromoData ? (
+                    <button type="submit" disabled={globalPromoLoading || !globalPromo.trim()}
+                      className="absolute inset-y-1 right-1 px-4 bg-gray-900 hover:bg-gray-700 text-white rounded-full text-xs font-bold transition disabled:opacity-40">
+                      {globalPromoLoading ? '…' : 'Appliquer'}
+                    </button>
+                  ) : (
+                    <button type="button" onClick={handleClearGlobalPromo}
+                      className="absolute inset-y-1 right-1 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full text-xs font-bold transition">
+                      Retirer
+                    </button>
+                  )}
+                </form>
+                {globalPromoError && <p className="text-red-500 text-[11px] font-bold mt-2">{globalPromoError}</p>}
+                {globalPromoData && <p className="text-primary-600 text-[11px] font-bold mt-2">✓ Code {globalPromoData.code} appliqué</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12 py-12 pb-24">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+              {planTiers.map(tier => (
+                <PlanCard
+                  key={tier.id}
+                  tier={tier}
+                  isAnnual={isAnnual}
+                  currentPlan={currentPlan}
+                  isActive={isActivePaid}
+                  globalPromoData={globalPromoData}
+                  onCheckout={duration => handleDirectCheckout({ ...duration, tier: tier.id })}
+                />
+              ))}
+            </div>
+
+            {/* Comparison table (desktop) */}
+            <div className="hidden lg:block mt-20">
+              <h2 className="text-2xl font-black text-gray-900 text-center mb-10">Comparaison détaillée</h2>
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100">
+                      <th className="text-left px-6 py-5 text-gray-500 font-medium w-[40%]">Fonctionnalité</th>
+                      {planTiers.map(t => (
+                        <th key={t.id} className="px-4 py-5 text-center">
+                          <span className="text-base font-black text-gray-900">{t.name}</span>
+                          <p className="text-xs text-gray-400 font-normal mt-0.5">{formatAmount((isAnnual ? (t.durations[1] ?? t.durations[0]) : t.durations[0]).perMonth)} FCFA/mois</p>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {[
+                      { label: 'Commandes', values: ['Illimitées', 'Illimitées', 'Illimitées'] },
+                      { label: 'Produits', values: ['Illimités', 'Illimités', 'Illimités'] },
+                      { label: 'Boutique en ligne', values: [true, true, true] },
+                      { label: 'Tableau de bord', values: [true, true, true] },
+                      { label: 'Agent IA WhatsApp', values: [false, '1 agent', '5 agents'] },
+                      { label: 'Numéros WhatsApp', values: [false, '1', '5'] },
+                      { label: 'Messages / jour', values: ['—', '1 000', '∞'] },
+                      { label: 'Messages / mois', values: ['—', '50 000', '∞'] },
+                      { label: 'Génération pages IA', values: [false, false, '10/mois'] },
+                      { label: 'Multi-boutiques', values: [false, false, true] },
+                      { label: 'Support', values: ['Standard', 'Prioritaire', '24/7 dédié'] },
+                    ].map((row, i) => (
+                      <tr key={i} className="hover:bg-gray-50/50 transition">
+                        <td className="px-6 py-3.5 text-gray-700 font-medium">{row.label}</td>
+                        {row.values.map((val, j) => (
+                          <td key={j} className="px-4 py-3.5 text-center">
+                            {val === true ? <CheckIcon className="w-5 h-5 text-primary-500 mx-auto" />
+                              : val === false ? <span className="text-gray-300">—</span>
+                              : <span className="text-gray-700 font-semibold text-sm">{val}</span>}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Trust / Reassurance */}
+            <div className="mt-20 grid sm:grid-cols-4 gap-6">
+              {[
+                { icon: <Zap className="w-7 h-7 text-amber-500" />, title: 'Activation instantanée', desc: 'Votre plan est actif dès confirmation du paiement Mobile Money.' },
+                { icon: <Shield className="w-7 h-7 text-primary-500" />, title: 'Paiement 100% sécurisé', desc: 'Orange Money, MTN MoMo, Wave, Flooz via MoneyFusion.' },
+                { icon: <RefreshCw className="w-7 h-7 text-blue-500" />, title: 'Sans engagement', desc: 'Changez ou annulez votre plan à tout moment, sans frais cachés.' },
+                { icon: <MessageCircle className="w-7 h-7 text-violet-500" />, title: 'Support réactif', desc: 'Notre équipe répond en moins de 24h à toutes vos questions.' },
+              ].map(item => (
+                <div key={item.title} className="text-center">
+                  <div className="mb-3 flex justify-center">{item.icon}</div>
+                  <h3 className="font-bold text-gray-900 text-sm">{item.title}</h3>
+                  <p className="text-gray-500 text-xs mt-1 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* FAQ */}
+            <div className="mt-20 max-w-3xl mx-auto">
+              <h2 className="text-2xl font-black text-gray-900 text-center mb-8">Questions fréquentes</h2>
+              <div className="space-y-4">
+                {[
+                  { q: 'Puis-je changer de plan à tout moment ?', a: "Oui. Votre plan actuel reste actif jusqu'à expiration, et le nouveau plan prend le relais. Pas de frais de changement." },
+                  { q: 'Quels moyens de paiement acceptez-vous ?', a: 'Nous acceptons Orange Money, MTN Mobile Money, Wave, Flooz et tous les opérateurs pris en charge par MoneyFusion dans plus de 15 pays africains.' },
+                  { q: "L'essai gratuit est-il sans engagement ?", a: "Absolument. L'essai de 7 jours vous donne accès aux fonctionnalités Pro sans entrer de numéro de paiement. Aucun prélèvement automatique." },
+                  { q: "Qu'est-ce que les crédits de génération de pages IA ?", a: "Avec le plan Scalor IA Pro, vous recevez 10 crédits par mois pour générer des pages produit professionnelles avec l'IA. Chaque crédit = 1 page complète avec images, textes et formulaire." },
+                  { q: "Que se passe-t-il quand mon abonnement expire ?", a: 'Vous repassez automatiquement au plan gratuit. Vos données sont conservées et vous pouvez réactiver votre plan à tout moment.' },
+                ].map(({ q, a }) => (
+                  <details key={q} className="group bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <summary className="flex items-center justify-between px-6 py-4 cursor-pointer select-none hover:bg-gray-50 transition">
+                      <span className="font-semibold text-gray-900 text-sm pr-4">{q}</span>
+                      <span className="text-gray-400 group-open:rotate-45 transition-transform text-xl font-light flex-shrink-0">+</span>
+                    </summary>
+                    <div className="px-6 pb-4 text-sm text-gray-600 leading-relaxed">{a}</div>
+                  </details>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA bottom */}
+            <div className="mt-20 text-center bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-12 sm:p-16 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.15),transparent_70%)] pointer-events-none" />
+              <div className="relative">
+                <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Prêt à scaler votre business ?</h2>
+                <p className="text-gray-400 text-base mb-8 max-w-lg mx-auto">Rejoignez les entrepreneurs qui automatisent leurs ventes avec Scalor. Commencez votre essai gratuit aujourd'hui.</p>
+                {!trialUsed && (
+                  <button onClick={handleActivateTrial} disabled={trialLoading}
+                    className="px-8 py-4 bg-white text-gray-900 font-black text-sm rounded-xl hover:bg-gray-100 transition shadow-xl disabled:opacity-50">
+                    {trialLoading ? 'Activation…' : <span className="flex items-center gap-2"><Gift className="w-4 h-4" /> Commencer l'essai gratuit — 7 jours</span>}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-xs text-gray-400">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary-500 to-teal-600 flex items-center justify-center">
+              <span className="text-white font-black text-[10px]">S</span>
+            </div>
+            <span className="font-semibold text-gray-500">Scalor</span>
+            <span>© 2025</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>Paiements sécurisés par MoneyFusion</span>
+          </div>
+        </div>
+      </footer>
+
+      {/* Payment History Drawer */}
+      {showHistory && (
+        <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setShowHistory(false)}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="relative w-full max-w-lg bg-white shadow-2xl overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
+              <h3 className="font-black text-gray-900">Historique des paiements</h3>
+              <button onClick={() => setShowHistory(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition"><XIcon className="w-5 h-5 text-gray-500" /></button>
+            </div>
+            <div className="p-6 space-y-3">
+              {history.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-12">Aucun paiement</p>
+              ) : history.map(p => (
+                <div key={p._id} className="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-gray-900 capitalize">{p.plan} — {p.durationMonths} mois</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{formatDate(p.createdAt)} · {p.paymentMethod || '—'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-black text-gray-900">{formatAmount(p.amount)} FCFA</p>
+                    <div className="mt-1"><StatusBadge status={p.status} /></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Checkout Modal — fallback si pas de téléphone */}
+      {checkout && (
+        <CheckoutModal
+          plan={checkout.plan}
+          tier={checkout.tier}
+          workspaceId={workspaceId}
+          userName={user?.name || ''}
+          userCountry={userCountry}
+          initialPromo={checkout.initialPromo}
+          onClose={() => setCheckout(null)}
+          onSuccess={token => { sessionStorage.setItem('mf_pending_token', token); setPendingToken(token); }}
+        />
+      )}
+
+      {/* Direct checkout loading overlay */}
+      {directCheckoutLoading && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4">
+            <div className="w-12 h-12 border-4 border-gray-200 rounded-full animate-spin mx-auto mb-4" style={{ borderTopColor: '#0F6B4F' }} />
+            <p className="text-sm font-semibold text-gray-900">Redirection vers le paiement...</p>
+            <p className="text-xs text-gray-500 mt-1">Veuillez patienter</p>
+          </div>
+        </div>
+      )}
+
+      {/* Direct checkout error toast */}
+      {directCheckoutError && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-semibold flex items-center gap-3 max-w-md">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+          <span>{directCheckoutError}</span>
+          <button onClick={() => setDirectCheckoutError('')} className="ml-2 text-white/70 hover:text-white">✕</button>
+        </div>
+      )}
+    </div>
+  );
+}

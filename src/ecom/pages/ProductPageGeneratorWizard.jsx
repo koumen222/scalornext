@@ -1,0 +1,37 @@
+import React from 'react';
+import { useLocation, useNavigate } from '@/lib/router-compat';
+import ProductPageGeneratorModal from '../components/ProductPageGeneratorModal.jsx';
+
+const ProductPageGeneratorWizard = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/ecom/boutique') ? '/ecom/boutique' : '/ecom/store';
+  const returnTo = location.state?.from || `${basePath}/product-page-studio/generations`;
+  const loadTaskId = location.state?.loadTaskId || null;
+  const initialPageStyle = location.state?.pageStyle || 'classic';
+
+  const handleClose = () => {
+    navigate(returnTo);
+  };
+
+  const handleApply = (productData) => {
+    navigate(`${basePath}/products/new`, {
+      state: {
+        prefill: productData,
+        fromGenerator: true,
+      },
+    });
+  };
+
+  return (
+    <ProductPageGeneratorModal
+      onClose={handleClose}
+      onApply={handleApply}
+      pageMode
+      initialTaskId={loadTaskId}
+      initialPageStyle={initialPageStyle}
+    />
+  );
+};
+
+export default ProductPageGeneratorWizard;
