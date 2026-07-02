@@ -1,10 +1,12 @@
+import type { Metadata, Viewport } from 'next';
+import type { ReactNode } from 'react';
 import Script from 'next/script';
 import './styles/tailwind-base.css';
 import './styles/ecom.css';
 import './styles/base.css';
 
 // Métadonnées par défaut — reprises d'index.html (surchargées par generateMetadata en aval)
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL('https://scalor.net'),
   title: 'Scalor — The Operating System for African Ecommerce',
   description: 'Scalor — Growth. Structure. Intelligence. The Operating System for African Ecommerce.',
@@ -47,7 +49,7 @@ export const metadata = {
   },
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -57,7 +59,7 @@ export const viewport = {
   ],
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <body>

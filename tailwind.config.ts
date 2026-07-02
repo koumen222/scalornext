@@ -1,9 +1,10 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from 'tailwindcss';
+
 // Config reprise à l'identique d'ecomcookpit/tailwind.config.js — seul `content` change.
-export default {
+const config: Config = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    './app/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -40,13 +41,15 @@ export default {
           warning: '#f59e0b',
           info: '#0F6B4F',
           success: '#22c55e',
-        }
+        },
       },
       fontFamily: {
-        'sans': ['Satoshi', 'Inter', 'system-ui', 'sans-serif'],
-        'satoshi': ['Satoshi', 'Inter', 'system-ui', 'sans-serif'],
-      }
+        sans: ['Satoshi', 'Inter', 'system-ui', 'sans-serif'],
+        satoshi: ['Satoshi', 'Inter', 'system-ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],
-}
+};
+
+export default config;

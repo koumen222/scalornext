@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   reactStrictMode: true,
   // NEXT_USE_WASM_SWC=1 : force le binding SWC WASM (utile en CI/sandbox où le
   // binaire natif n'est pas utilisable). Sans effet en usage normal.
@@ -23,7 +24,7 @@ const nextConfig = {
       { source: '/scalor/login', destination: '/ecom/developer', permanent: false },
       { source: '/scalor/register', destination: '/ecom/developer', permanent: false },
       { source: '/scalor/dashboard', destination: '/ecom/developer', permanent: false },
-      // Alias WhatsApp (iso App.jsx)
+      // Alias (iso App.jsx)
       { source: '/ecom/whatsapp/connexion', destination: '/ecom/whatsapp/service', permanent: false },
       { source: '/ecom/data', destination: '/ecom/dashboard', permanent: false },
       { source: '/ecom/stats/rapports', destination: '/ecom/reports', permanent: false },

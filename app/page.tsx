@@ -8,7 +8,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const ROLE_DASHBOARD_MAP = {
+const ROLE_DASHBOARD_MAP: Record<string, string> = {
   super_admin: '/ecom/super-admin',
   ecom_admin: '/ecom/dashboard/admin',
   ecom_closeuse: '/ecom/dashboard/closeuse',
@@ -21,7 +21,7 @@ export default function RootRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    let user = null;
+    let user: { role?: string } | null = null;
     try {
       user = JSON.parse(localStorage.getItem('ecomUser') || 'null');
     } catch {
@@ -33,7 +33,7 @@ export default function RootRedirect() {
       router.replace('/ecom/landing');
       return;
     }
-    router.replace(ROLE_DASHBOARD_MAP[user?.role] || '/ecom/dashboard');
+    router.replace((user?.role && ROLE_DASHBOARD_MAP[user.role]) || '/ecom/dashboard');
   }, [router]);
 
   // Loader identique au PageLoader de la SPA
