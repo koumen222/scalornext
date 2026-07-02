@@ -571,7 +571,16 @@ export default function StoreDashboard() {
           <AreaChart
             data={chartData}
             unit={chartMetric === 'visites' ? 'visites' : chartMetric === 'commandes' ? 'commandes' : 'FCFA'}
-            hourly={period === '24h'}
+            // Aligné sur la granularité renvoyée par l'API (StoreAnalytics.timeFormat) :
+            //  - timeline VISITES : horaire pour 24h/today/yesterday, journalière sinon
+            //  - commandes/revenus (dailyOrders/dailyRevenue) : horaire uniquement pour 24h
+            // Avant : hourly seulement si period==='24h' → buckets journaliers sur des clés
+            // horaires pour « Aujourd'hui »/« Hier » → courbe des visites à zéro.
+            hourly={
+              chartMetric === 'visites'
+                ? ['24h', 'today', 'yesterday'].includes(dateRange?.period || period)
+                : (dateRange?.period || period) === '24h'
+            }
             rangeStart={dashboardData?.period?.start}
             rangeEnd={dashboardData?.period?.end}
             respectSelectedRange={Boolean(dashboardData?.period?.start && dashboardData?.period?.end)}
