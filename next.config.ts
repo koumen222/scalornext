@@ -39,6 +39,23 @@ const nextConfig: NextConfig = {
       process.env.WORKERS_CI_COMMIT_SHA ||
       String(Date.now()),
   },
+  // Équivalent du proxy dev de vite.config.js : certains services legacy utilisent
+  // une base RELATIVE « /api/ecom » en développement. On forwarde vers l'API
+  // (NEXT_PUBLIC_API_URL) — en dev uniquement, la prod appelle l'API en direct.
+  async rewrites() {
+    if (process.env.NODE_ENV !== 'development') return [];
+    const raw =
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      'http://localhost:8080';
+    let origin = 'http://localhost:8080';
+    try {
+      origin = new URL(raw).origin;
+    } catch {
+      /* valeur env malformée → fallback localhost */
+    }
+    return [{ source: '/api/:path*', destination: `${origin}/api/:path*` }];
+  },
   async redirects() {
     return [
       // Scalor standalone → section Développeur (iso App.jsx)
