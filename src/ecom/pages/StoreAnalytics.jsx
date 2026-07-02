@@ -105,6 +105,8 @@ export default function StoreAnalytics() {
   const [data, setData]           = useState(null);
   const [salesDetails, setSalesDetails] = useState(null);
   const [boutiqueSalesDetails, setBoutiqueSalesDetails] = useState(null);
+  // Liste clients agrégée depuis les commandes de la période (fetch /orders existant)
+  const [customers, setCustomers] = useState({ list: [], truncated: false });
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const pickerRef = useRef(null);
   const isTodayActive = presetKey === 'today';
@@ -199,12 +201,14 @@ export default function StoreAnalytics() {
         setData(normalizedPayload);
         setSalesDetails(salesRes?.data?.data || null);
         setBoutiqueSalesDetails(buildBoutiqueSalesDetails(boutiqueOrdersRes?.data?.data || null));
+        setCustomers(buildCustomersList(boutiqueOrdersRes?.data?.data || null));
       } catch (err) {
         if (cancelled) return;
         console.error('Analytics load error', err);
         setData({ analytics: { overview: {}, timeline: [], deviceStats: [], visitsPerProduct: [], topProducts: [] }, orders: {} });
         setSalesDetails(null);
         setBoutiqueSalesDetails(null);
+        setCustomers({ list: [], truncated: false });
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -449,7 +453,7 @@ export default function StoreAnalytics() {
           {activeTab === 'orders'    && <OrdersTab kpi={kpi} />}
           {activeTab === 'delivery'  && <DeliveryTab kpi={kpi} fmtCurrency={fmtCurrency} />}
           {activeTab === 'visits'    && <VisitsTab kpi={kpi} daily={daily} />}
-          {activeTab === 'customers' && <CustomersTab kpi={kpi} fmtCurrency={fmtCurrency} />}
+          {activeTab === 'customers' && <CustomersTab kpi={kpi} customers={customers} fmtCurrency={fmtCurrency} />}
         </>
       )}
     </div>
@@ -994,14 +998,29 @@ function formatChannelLabel(channel) {
 /* ═══════════════════════════════════════════════════════════════
  *  Clients tab — COD customer loyalty
  * ═══════════════════════════════════════════════════════════════ */
-function CustomersTab({ kpi, fmtCurrency }) {
+function CustomersTab({ kpi, customers, fmtCurrency }) {
   const [sub, setSub] = useState('all');
+  const [search, setSearch] = useState('');
   const subs = [
     { key: 'all',       label: 'Tous les clients' },
     { key: 'new',       label: 'Nouveaux' },
     { key: 'returning', label: 'Récurrents' },
   ];
   const newCustomers = Math.max(0, kpi.uniqueCustomers - kpi.repeatCustomers);
+
+  const allCustomers = customers?.list || [];
+  const query = search.trim().toLowerCase();
+  const filtered = allCustomers.filter((c) => {
+    if (sub === 'new' && c.ordersCount !== 1) return false;
+    if (sub === 'returning' && c.ordersCount < 2) return false;
+    if (!query) return true;
+    return c.name.toLowerCase().includes(query)
+      || c.phone.toLowerCase().includes(query)
+      || c.city.toLowerCase().includes(query);
+  });
+  const MAX_ROWS = 100;
+  const rows = filtered.slice(0, MAX_ROWS);
+  const fmtDate = (ts) => (ts ? new Date(ts).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 
   return (
     <div className="space-y-6">
@@ -1012,7 +1031,7 @@ function CustomersTab({ kpi, fmtCurrency }) {
         <Card value={fmtPct(kpi.repeatRate)}         label="Taux de fidélité" />
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {subs.map(s => (
           <button
             key={s.key}
@@ -1026,8 +1045,58 @@ function CustomersTab({ kpi, fmtCurrency }) {
             {s.label}
           </button>
         ))}
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Rechercher (nom, téléphone, ville)…"
+          className="ml-auto w-full sm:w-64 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-700 outline-none transition focus:border-gray-400"
+        />
       </div>
-      <EmptyRow text="La liste détaillée des clients sera disponible prochainement" />
+
+      {rows.length === 0 ? (
+        <EmptyRow text={query ? 'Aucun client ne correspond à la recherche' : 'Aucun client sur la période'} />
+      ) : (
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 text-left text-[11px] uppercase tracking-wide text-gray-400">
+                  <th className="px-4 py-2.5 font-medium">Client</th>
+                  <th className="px-4 py-2.5 font-medium">Téléphone</th>
+                  <th className="px-4 py-2.5 font-medium">Ville</th>
+                  <th className="px-4 py-2.5 font-medium text-right">Commandes</th>
+                  <th className="px-4 py-2.5 font-medium text-right">Total dépensé</th>
+                  <th className="px-4 py-2.5 font-medium text-right">Dernière commande</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {rows.map((c) => (
+                  <tr key={c.key} className="hover:bg-gray-50 transition">
+                    <td className="px-4 py-2.5">
+                      <span className="font-medium text-gray-800">{c.name}</span>
+                      {c.ordersCount >= 2 && (
+                        <span className="ml-2 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">Récurrent</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5 text-gray-600 tabular-nums">{c.phone || '—'}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{c.city || '—'}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-gray-800">{fmtNumber(c.ordersCount)}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums font-medium text-gray-900">{fmtCurrency(c.totalSpent)}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-500">{fmtDate(c.lastOrderAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {(filtered.length > MAX_ROWS || customers?.truncated) && (
+            <div className="border-t border-gray-100 px-4 py-2 text-[11px] text-gray-400">
+              {filtered.length > MAX_ROWS && `${MAX_ROWS} premiers clients affichés sur ${fmtNumber(filtered.length)}. `}
+              {customers?.truncated && 'Basé sur les 1 000 dernières commandes de la période.'}
+            </div>
+          )}
+        </div>
+      )}
 
       <section className="space-y-3">
         <SectionTitle>Meilleures villes</SectionTitle>
@@ -1257,6 +1326,55 @@ function buildDailySeries(timeline, startDate, endDate, dailyVisits = [], orders
   const series = Array.from(bucketMap.values()).map(({ label, value, orders }) => ({ label, value, orders }));
   const visitSeries = Array.from(bucketMap.values()).map(({ label, visits }) => ({ label, value: visits }));
   return { series, visitSeries };
+}
+
+/**
+ * Agrège les commandes de la période en liste clients (clé : téléphone normalisé,
+ * repli nom). Nouveaux = 1 commande, récurrents = 2+ (même définition que le
+ * backend : phoneCounts > 1). Total dépensé : commandes non annulées.
+ */
+function buildCustomersList(payload) {
+  const orders = Array.isArray(payload?.orders) ? payload.orders : [];
+  if (orders.length === 0) return { list: [], truncated: false };
+
+  const isCancelled = (status) => {
+    const raw = String(status || '').toLowerCase();
+    return raw.includes('annul') || raw.includes('cancel') || raw.includes('refus') || raw.includes('rejet');
+  };
+
+  const byKey = new Map();
+  for (const order of orders) {
+    const phoneRaw = String(order.clientPhone || '').trim();
+    const phoneKey = String(order.clientPhoneNormalized || phoneRaw).replace(/\D/g, '');
+    const name = String(order.clientName || '').trim();
+    const key = phoneKey || (name ? `name:${name.toLowerCase()}` : '');
+    if (!key) continue;
+
+    const quantity = Number(order.quantity || 1);
+    const total = Number(order.price || 0) * quantity;
+    const when = new Date(order.date || order.createdAt || 0).getTime() || 0;
+
+    let c = byKey.get(key);
+    if (!c) {
+      c = { key, name: name || 'Client', phone: phoneRaw, city: String(order.city || '').trim(), ordersCount: 0, cancelledCount: 0, totalSpent: 0, lastOrderAt: 0 };
+      byKey.set(key, c);
+    }
+    c.ordersCount += 1;
+    if (isCancelled(order.status)) c.cancelledCount += 1;
+    else c.totalSpent += total;
+    if (when >= c.lastOrderAt) {
+      c.lastOrderAt = when;
+      if (name) c.name = name;
+      if (order.city) c.city = String(order.city).trim();
+      if (phoneRaw) c.phone = phoneRaw;
+    }
+  }
+
+  const list = Array.from(byKey.values())
+    .sort((a, b) => b.totalSpent - a.totalSpent || b.ordersCount - a.ordersCount || b.lastOrderAt - a.lastOrderAt);
+
+  // /orders est plafonné à 1000 commandes : au-delà, la liste est partielle
+  return { list, truncated: orders.length >= 1000 };
 }
 
 function buildBoutiqueSalesDetails(payload) {
