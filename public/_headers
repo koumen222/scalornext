@@ -1,0 +1,21 @@
+# Cache immuable des assets Next (requis OpenNext)
+/_next/static/*
+  Cache-Control: public,max-age=31536000,immutable
+
+# Sécurité — repris de l'app Vite
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Assets statiques repris
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Service worker : toujours revalidé
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+/manifest.json
+  Cache-Control: public, max-age=3600

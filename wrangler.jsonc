@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "scalor-next",
+  "compatibility_date": "2025-06-01",
+  "compatibility_flags": [
+    // API Node.js (requis par @opennextjs/cloudflare)
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "scalor-next"
+    }
+  ],
+  "r2_buckets": [
+    // Décommenter après avoir créé le bucket R2 (cache ISR durable) :
+    // { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "scalor-next-cache" }
+  ]
+  // Domaines : à rattacher dans le dashboard Cloudflare (Workers → scalor-next → Domains & Routes)
+  // scalor.net, www.scalor.net et le wildcard *.scalor.net (boutiques marchands)
+}
