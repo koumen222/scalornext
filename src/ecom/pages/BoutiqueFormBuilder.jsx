@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { safeHtml } from '../utils/sanitize';
 import { Save, Loader2, Check, GripVertical, Eye, EyeOff, Plus, ChevronUp, ChevronDown, Settings2, ShoppingCart, Layers, Phone, User, MapPin, Trash2, Mail, FileText, Hash, Calendar, Type, Image, Minus, Shield, CheckCircle, Clock, PhoneCall, MessageSquare, ListOrdered, CheckSquare, Link2, Globe, Star, ChevronLeft, ChevronRight, Upload, X, MousePointerClick } from 'lucide-react';
-import { storeManageApi, storeProductsApi } from '../services/storeApi';
+import { storeManageApi, storeProductsApi, storeDeliveryZonesApi } from '../services/storeApi';
 import { useStore } from '../contexts/StoreContext.jsx';
 import defaultConfig from '../components/productSettings/defaultConfig.js';
 import FormThemePicker from '../components/productSettings/FormThemeSelector.jsx';
@@ -16,6 +16,7 @@ import { PHONE_CODES } from '../utils/phoneCodes.js';
 import { formatMoney } from '../utils/currency.js';
 import {
   getCountryFormPlaceholders,
+  getPopularCitiesForCountries,
   resolveFormCountries,
   resolvePopularCitiesMap,
   resolveStoreCountry,
@@ -311,7 +312,7 @@ const TestimonialAvatarCard = ({ t, ti, inputCls, onUpdateTestimonials, testimon
   );
 };
 
-const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, shopColor, onDragStart, onDragOver, onDrop, onDragEnd, isDragOver, isDragging }) => {
+const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, availableCities = [], shopColor, onDragStart, onDragOver, onDrop, onDragEnd, isDragOver, isDragging }) => {
   const [expanded, setExpanded] = useState(false);
   const isSpecial = false; // All fields are now editable
   const FieldIcon = field.icon ? FIELD_ICON_MAP[field.icon] : null;
@@ -832,6 +833,55 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                   onChange={() => onChange(index, 'cityAuto', false)} />
                 <span className="text-[11px] text-gray-700 font-medium">Manuel (saisie libre)</span>
               </label>
+            </div>
+          )}
+
+          {/* Villes affichées en mode Auto — vide/tout coché = toutes les villes */}
+          {field.type === 'city_select' && field.cityAuto !== false && (
+            <div className="p-2 rounded-lg bg-blue-50/60 border border-blue-100 space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[11px] text-blue-700 font-semibold">Villes affichées :</span>
+                {availableCities.length > 0 && (
+                  <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                    <input type="checkbox" className="accent-primary-600 w-3.5 h-3.5"
+                      checked={!Array.isArray(field.cityAllowed) || field.cityAllowed.length === 0}
+                      onChange={(e) => onChange(index, 'cityAllowed', e.target.checked ? [] : [...availableCities])} />
+                    <span className="text-[11px] text-gray-600 font-medium">Toutes</span>
+                  </label>
+                )}
+              </div>
+              {availableCities.length === 0 ? (
+                <p className="text-[10px] text-gray-500 m-0">
+                  Aucune ville disponible — ajoutez des zones de livraison ou des pays au formulaire.
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-2 gap-y-1 max-h-36 overflow-y-auto pr-1">
+                  {availableCities.map((city) => {
+                    const allowAll = !Array.isArray(field.cityAllowed) || field.cityAllowed.length === 0;
+                    const checked = allowAll || field.cityAllowed.includes(city);
+                    return (
+                      <label key={city} className="flex items-center gap-1.5 cursor-pointer select-none min-w-0">
+                        <input type="checkbox" className="accent-primary-600 w-3.5 h-3.5 flex-shrink-0"
+                          checked={checked}
+                          onChange={(e) => {
+                            const current = allowAll ? [...availableCities] : [...field.cityAllowed];
+                            const next = e.target.checked
+                              ? [...new Set([...current, city])]
+                              : current.filter((c) => c !== city);
+                            // Tout coché → [] (= toutes, y compris les futures villes)
+                            onChange(index, 'cityAllowed', next.length >= availableCities.length ? [] : next);
+                          }} />
+                        <span className="text-[11px] text-gray-700 truncate">{city}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+              {Array.isArray(field.cityAllowed) && field.cityAllowed.length > 0 && (
+                <p className="text-[10px] text-gray-400 m-0">
+                  {field.cityAllowed.length} ville{field.cityAllowed.length > 1 ? 's' : ''} sélectionnée{field.cityAllowed.length > 1 ? 's' : ''} — les autres ne seront pas proposées sur la boutique.
+                </p>
+              )}
             </div>
           )}
 
@@ -1427,6 +1477,25 @@ const BoutiqueFormBuilder = () => {
   const storeSubdomain = activeStore?.subdomain || '';
   const storefrontUrl = getActiveStorefrontUrl() || (storeSubdomain ? `https://${storeSubdomain}.scalor.net` : '');
 
+  // Villes issues des zones de livraison (source du mode ville « Auto », comme le storefront)
+  const [zoneCities, setZoneCities] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    setZoneCities([]);
+    (async () => {
+      try {
+        const res = await storeDeliveryZonesApi.getZones();
+        const zones = res?.data?.data?.zones || res?.data?.zones || [];
+        if (cancelled) return;
+        const cities = zones
+          .map((z) => String(z?.city || '').split(',')[0].trim())
+          .filter(Boolean);
+        setZoneCities([...new Set(cities)]);
+      } catch { /* pas de zones → repli villes populaires */ }
+    })();
+    return () => { cancelled = true; };
+  }, [activeStore]);
+
   useEffect(() => {
     // Clean reset: clear previous store's data immediately so no residual config bleeds through
     setConfig(null);
@@ -1863,6 +1932,13 @@ const BoutiqueFormBuilder = () => {
                 {config.form.fields.map((field, idx) => {
                   // CTA button is handled in its own dedicated section below
                   if (field.type === 'cta_button' || field.name === 'cta_button') return null;
+                  // Villes du mode Auto : zones de livraison, sinon villes populaires des pays du formulaire
+                  const availableAutoCities = zoneCities.length
+                    ? zoneCities
+                    : getPopularCitiesForCountries(
+                        config?.general?.countries || [],
+                        resolvePopularCitiesMap(config?.general?.popularCities, config?.general?.countries || [])
+                      );
                   return (
                     <FieldCard
                       key={field.name + idx}
@@ -1873,6 +1949,7 @@ const BoutiqueFormBuilder = () => {
                       onToggle={toggleField}
                       onChange={changeField}
                       onRemove={removeField}
+                      availableCities={availableAutoCities}
                       shopColor={shopColor}
                       onDragStart={handleDragStart}
                       onDragOver={handleDragOver}

@@ -714,18 +714,24 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
 
             case 'city_select': {
               const showCitySelect = deliveryZoneOptions.length > 0 || (field.cityAuto !== false && cityOptions.length > 0);
+              // Sous-ensemble choisi dans le form builder (mode Auto) — vide = toutes.
+              // Si l'intersection est vide (villes renommées…), on retombe sur la liste complète.
+              const allowedCities = Array.isArray(field.cityAllowed) && field.cityAllowed.length
+                ? cityOptions.filter((c) => field.cityAllowed.includes(c))
+                : cityOptions;
+              const fieldCityOptions = allowedCities.length ? allowedCities : cityOptions;
               return (
                 <div key={field.name}>
                   {field.showLabel === true && field.label && <label style={{ fontSize: 12, fontWeight: 600, color: labelColorResolved, display: 'block', marginBottom: 4 }}>{field.label}</label>}
                   <div style={{ position: 'relative' }}>
                   {IconComp && <span style={iconStyle}><IconComp size={15} /></span>}
-                  {showCitySelect && cityOptions.length > 0 ? (<>
+                  {showCitySelect && fieldCityOptions.length > 0 ? (<>
                     <select value={form[formKey] || ''} onChange={e => set(formKey, e.target.value)} required={field.required !== false}
                       style={{ ...inputStyle, paddingRight: 32, appearance: 'none', WebkitAppearance: 'none', cursor: 'pointer', color: form[formKey] ? inputTextColor : labelColorResolved }}
                       onFocus={e => e.currentTarget.style.borderColor = effectiveBtnColor}
                       onBlur={e => e.currentTarget.style.borderColor = fieldBorderColor}>
                       <option value="" disabled>{ph}</option>
-                      {cityOptions.map(c => <option key={c} value={c}>{c}</option>)}
+                      {fieldCityOptions.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <span style={{ position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)', color: labelColorResolved, display: 'flex', pointerEvents: 'none' }}><ChevronDown size={15} /></span>
                   </>) : (
