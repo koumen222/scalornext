@@ -162,7 +162,10 @@ function PremiumPreview({ product, accent }) {
 const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initialTaskId = null }) => {
   // Langue de la boutique → langue du contenu généré (cf. BACKEND_PATCH_I18N.md)
   const { activeStore } = useStore();
-  const generationLanguage = ({ fr: 'français', en: 'english', es: 'español' })[activeStore?.storeSettings?.language] || 'français';
+  const storeLanguageCode = activeStore?.storeSettings?.language || 'fr';
+  const [genLanguage, setGenLanguage] = useState(null); // null = langue de la boutique
+  const effectiveLanguageCode = genLanguage || storeLanguageCode;
+  const generationLanguage = ({ fr: 'français', en: 'english', es: 'español' })[effectiveLanguageCode] || 'français';
   const fileInputRef = useRef(null);
   const abortRef = useRef(null);
   const [phase, setPhase] = useState(initialTaskId ? 'loading' : 'input');
@@ -635,6 +638,14 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                         <option value="female">Femme</option>
                         <option value="male">Homme</option>
                         <option value="mixed">Mixte</option>
+                      </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">Langue du contenu</span>
+                      <select value={effectiveLanguageCode} onChange={(event) => setGenLanguage(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-slate-400">
+                        <option value="fr">Français{storeLanguageCode === 'fr' ? ' (boutique)' : ''}</option>
+                        <option value="en">English{storeLanguageCode === 'en' ? ' (boutique)' : ''}</option>
+                        <option value="es">Español{storeLanguageCode === 'es' ? ' (boutique)' : ''}</option>
                       </select>
                     </label>
                     <label className="block">

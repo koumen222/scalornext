@@ -708,7 +708,10 @@ const IMAGE_GENERATION_MODES = [
 const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initialTaskId = null, initialPageStyle = 'classic' }) => {
   // Langue de la boutique → langue du contenu généré par l'IA (cf. BACKEND_PATCH_I18N.md)
   const { activeStore } = useStore();
-  const generationLanguage = ({ fr: 'français', en: 'english', es: 'español' })[activeStore?.storeSettings?.language] || 'français';
+  const storeLanguageCode = activeStore?.storeSettings?.language || 'fr';
+  const [genLanguage, setGenLanguage] = useState(null); // null = langue de la boutique
+  const effectiveLanguageCode = genLanguage || storeLanguageCode;
+  const generationLanguage = ({ fr: 'français', en: 'english', es: 'español' })[effectiveLanguageCode] || 'français';
   const normalizedInitialPageStyle = ['classic', 'infographics', 'hero_page', 'hero'].includes(initialPageStyle)
     ? initialPageStyle
     : 'classic';
@@ -3038,6 +3041,35 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         Le modèle gardera une composition verticale 4:5 sur les visuels générés pour le hero, les affiches et les images marketing.
                       </div>
                     )}
+                  </div>
+
+                  {/* Langue du contenu généré */}
+                  <div className="space-y-3 rounded-[28px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1.5">Langue du contenu généré</label>
+                      <p className="text-xs text-gray-500">Par défaut : la langue de la boutique. Tu peux la changer pour cette génération.</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { code: 'fr', label: 'Français', flag: '🇫🇷' },
+                        { code: 'en', label: 'English', flag: '🇬🇧' },
+                        { code: 'es', label: 'Español', flag: '🇪🇸' },
+                      ].map((l) => {
+                        const isActive = effectiveLanguageCode === l.code;
+                        return (
+                          <button
+                            key={l.code}
+                            type="button"
+                            onClick={() => setGenLanguage(l.code)}
+                            className={`rounded-[16px] border px-3 py-2.5 text-center transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-gray-200 bg-white hover:border-[#96C7B5]'}`}
+                          >
+                            <span className="text-base leading-none">{l.flag}</span>
+                            <p className={`mt-1 text-xs font-semibold ${isActive ? 'text-[#0F6B4F]' : 'text-slate-900'}`}>{l.label}</p>
+                            {l.code === storeLanguageCode && <p className="text-[10px] text-gray-400">boutique</p>}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Avatar cible */}
