@@ -492,6 +492,7 @@ const StoreCreationWizard = ({ onComplete }) => {
     city: '',
     country: '',
     storeCurrency: 'XAF',
+    language: 'fr',
     storeDescription: '',
     tone: 'premium',
     logoVariant: 'wordmark',
@@ -575,6 +576,7 @@ const StoreCreationWizard = ({ onComplete }) => {
             city: s.city || '',
             country: s.country || 'Cameroun',
             storeCurrency: s.storeCurrency || 'XAF',
+            language: s.language || 'fr',
             storeDescription: s.storeDescription || '',
             tone: s.tone || 'premium',
             logoVariant: s.logoVariant || 'wordmark',
@@ -804,6 +806,7 @@ const StoreCreationWizard = ({ onComplete }) => {
       // Étape 2 : Config boutique
       setGenerationStep('config');
       await storeManageApi.updateStoreConfig({
+        language: form.language,
         storeName: form.storeName,
         storeDescription: form.storeDescription,
         storeLogo: form.storeLogo,
@@ -838,6 +841,7 @@ const StoreCreationWizard = ({ onComplete }) => {
         setGenerationStep('homepage');
         try {
           await storeManageApi.generateHomepage({
+            language: form.language,
             storeName: form.storeName,
             storeDescription: form.storeDescription,
             productType: form.productType,
@@ -1643,6 +1647,41 @@ const StoreCreationWizard = ({ onComplete }) => {
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+
+
+            {/* Langue de la boutique */}
+            <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Langue</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">Langue de la boutique</p>
+              </div>
+              <div className="px-5 py-5">
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+                    { code: 'en', label: 'English', flag: '🇬🇧' },
+                    { code: 'es', label: 'Español', flag: '🇪🇸' },
+                  ].map(l => (
+                    <button
+                      key={l.code}
+                      type="button"
+                      onClick={() => set('language', l.code)}
+                      className={`flex flex-col items-center justify-center p-3 rounded-lg border text-center transition-all ${
+                        form.language === l.code
+                          ? 'border-primary-700 bg-primary-700 text-white'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <p className="text-lg leading-none">{l.flag}</p>
+                      <p className={`text-[12px] font-bold mt-1 ${form.language === l.code ? 'text-white' : 'text-gray-900'}`}>{l.label}</p>
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-3 text-[11px] text-gray-400">
+                  Toute la boutique sera dans cette langue : textes générés par l'IA (accueil, pages légales, pages produit), boutons et formulaire de commande.
+                </p>
               </div>
             </div>
 
