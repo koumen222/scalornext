@@ -10,6 +10,7 @@ import PaymentModalFrame from './PaymentModalFrame.jsx';
 import InfographicsGeneratorPanel from './InfographicsGeneratorPanel.jsx';
 import ErrorBanner from './ErrorBanner.jsx';
 import DigitalProductEbookModal from './DigitalProductEbookModal.jsx';
+import { useStore } from '../contexts/StoreContext.jsx';
 
 // Product-generator is mounted at /api/ai/product-generator (outside /api/ecom).
 // We must always use API origin only, never a base path like /api/ecom.
@@ -705,6 +706,9 @@ const IMAGE_GENERATION_MODES = [
 ];
 
 const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initialTaskId = null, initialPageStyle = 'classic' }) => {
+  // Langue de la boutique → langue du contenu généré par l'IA (cf. BACKEND_PATCH_I18N.md)
+  const { activeStore } = useStore();
+  const generationLanguage = ({ fr: 'français', en: 'english', es: 'español' })[activeStore?.storeSettings?.language] || 'français';
   const normalizedInitialPageStyle = ['classic', 'infographics', 'hero_page', 'hero'].includes(initialPageStyle)
     ? initialPageStyle
     : 'classic';
@@ -1530,7 +1534,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
     if (decorationDirection.trim()) formData.append('decorationDirection', decorationDirection.trim());
     // Paramètres copywriting simplifiés
     formData.append('tone', tone);
-    formData.append('language', 'français');
+    formData.append('language', generationLanguage);
     if (targetAvatarSummary) formData.append('targetAvatar', targetAvatarSummary);
     formData.append('targetGender', targetGender);
     formData.append('targetAgeRange', targetAgeRange);

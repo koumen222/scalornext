@@ -219,6 +219,7 @@ function settingsToForm(s, workspaceName) {
     storeWhatsApp:       s.storeWhatsApp       || '',
     storeCountry:        s.storeCountry        || 'Cameroun',
     storeCurrency:       s.storeCurrency       || 'XAF',
+    language:            s.language            || 'fr',
     isStoreEnabled:      s.isStoreEnabled      ?? true,
     primaryColor:        s.primaryColor        || s.storeThemeColor || '#0F6B4F',
     accentColor:         s.accentColor         || '#059669',
@@ -247,6 +248,7 @@ const BoutiqueSettings = () => {
     return {
       storeName: '', storeDescription: '', storeLogo: '', storeFavicon: '',
       storePhone: '', storeWhatsApp: '', storeCountry: 'Cameroun', storeCurrency: 'XAF',
+      language: 'fr',
       isStoreEnabled: true, primaryColor: '#0F6B4F', accentColor: '#059669',
       backgroundColor: '#FFFFFF', textColor: '#111827', font: 'inter',
       announcement: '', announcementEnabled: false,
@@ -289,6 +291,7 @@ const BoutiqueSettings = () => {
           storeWhatsApp:       form.storeWhatsApp,
           storeCountry:        form.storeCountry,
           storeCurrency:       form.storeCurrency,
+          language:            form.language,
           isStoreEnabled:      form.isStoreEnabled,
           storeThemeColor:     form.primaryColor,
           primaryColor:        form.primaryColor,
@@ -541,6 +544,20 @@ const BoutiqueSettings = () => {
                     className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-white"
                   >
                     {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+                  </select>
+                </Field>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Langue de la boutique" hint="Boutons, formulaire de commande et messages affichés aux clients. Vos textes (produits, descriptions) restent tels que vous les écrivez.">
+                  <select
+                    value={form.language}
+                    onChange={(e) => set('language', e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-white"
+                  >
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
                   </select>
                 </Field>
               </div>

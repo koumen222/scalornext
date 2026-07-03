@@ -11,6 +11,7 @@
 
 import type { ReactNode } from 'react';
 import { getStorePayload } from './api';
+import StoreHtmlLang from './lang';
 import {
   EcomAuthProvider,
   ThemeProvider,
@@ -42,6 +43,8 @@ export default async function StorefrontShell({
         <SubdomainProvider value={subdomainValue}>
           <StorefrontSSRProvider value={payload}>
             <div className="min-h-screen">
+              {/* Langue de la boutique (storeSettings.language, exposé par l'API publique) */}
+              <StoreHtmlLang lang={(payload?.store as Record<string, any> | undefined)?.language} />
               {children}
               <VersionWatcher />
             </div>

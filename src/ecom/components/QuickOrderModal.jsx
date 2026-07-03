@@ -14,6 +14,7 @@ import {
   findMatchingCountryOption,
 } from '../utils/storeCountryConfig.js';
 import { getIconComponent, getAnimationClass, ANIMATION_CSS } from './productSettings/ButtonEditor.jsx';
+import { getStorefrontT } from '../i18n/storefront.js';
 
 const fmt = (n, cur = 'XAF') => `${new Intl.NumberFormat('fr-FR').format(n)} ${cur === 'XAF' || cur === 'XOF' ? 'FCFA' : cur}`;
 const getImgSrc = (img) => (img && typeof img === 'object' ? img.url : img) || null;
@@ -39,6 +40,8 @@ const isMeaningfulPlaceholder = (value, ignoredPatterns = []) => {
  * Accepts productPageConfig to apply design, field visibility, and quantity options.
  */
 const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, productPageConfig, selectedVariants = {} }) => {
+  // Langue de la boutique (réglage marchand) — chrome uniquement
+  const t = getStorefrontT(store?.language);
   const [form, setForm] = useState({ customerName: '', phone: '', city: '', address: '', notes: '', quantity: 1 });
   const [phoneCode, setPhoneCode] = useState(() => getDefaultPhoneCodeFromConfig(productPageConfig?.general?.countries, store?.currency));
   const phoneCodeUserSet = useRef(false);
@@ -102,7 +105,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
   // Discount chip
   const offerDiscBg = od.discountBg || '#FEE2E2';
   const offerDiscText = od.discountTextColor || '#EF4444';
-  const offerSectionLabel = od.sectionLabel || 'Choisissez votre offre';
+  const offerSectionLabel = od.sectionLabel || t('offer.chooseYours');
   const offerDisplayType = od.displayType || 'radio';
   const urgencyConfig = {
     ...(defaultConfig.urgency || {}),
@@ -294,10 +297,10 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
       if (f.type === 'phone' && val) {
         const digits = val.replace(/[^0-9]/g, '');
         const expected = getPhoneLength(phoneCode);
-        if (digits.length !== expected) { setError(`Numéro invalide — ${expected} chiffres requis pour ${phoneCode}`); return; }
+        if (digits.length !== expected) { setError(t('error.phoneInvalid', { n: expected, code: phoneCode })); return; }
       }
       if (f.type === 'email' && val) {
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)) { setError('Adresse e-mail invalide'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)) { setError(t('error.emailInvalid')); return; }
       }
     }
 
@@ -364,7 +367,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
         eventId: purchaseEventId,
       });
     } catch (err) {
-      setError(err.response?.data?.message || 'Erreur lors de la commande. Réessayez.');
+      setError(err.response?.data?.message || t('error.orderFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -475,7 +478,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
     const finalAddress = getFieldValue('address', ['address', 'text']);
     const finalNotes = getFieldValue('notes', ['textarea', 'text']);
 
-    const firstName = finalCustomerName.split(' ')[0] || 'Client';
+    const firstName = finalCustomerName.split(' ')[0] || t('customer.fallback');
     const displayPhone = buildFullPhone(phoneCode, finalPhone);
     const waMsg = buildStorefrontOrderWhatsappMessage({
       storeName: store?.name || '',
@@ -504,24 +507,24 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
 
             {/* Thank you */}
             <h2 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>
-              Merci {firstName} !
+              {t('success.thanks', { name: firstName })}
             </h2>
             <p style={{ fontSize: 13.5, color: '#6B7280', margin: '0 0 24px', lineHeight: 1.6 }}>
-              Votre commande a été enregistrée avec succès.<br/>
-              Confirmez-la sur WhatsApp pour un traitement rapide.
+              {t('success.recorded')}<br/>
+              {t('success.confirmWhatsappHint')}
             </p>
 
             {/* Order recap */}
             <div style={{ backgroundColor: inputBgColor, borderRadius: 16, padding: '16px 20px', marginBottom: 24, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
-                ['Référence', orderResult.orderNumber],
-                ['Produit', `${product?.name} x${form.quantity}`],
-                ['Total', fmt(orderResult.total, orderResult.currency)],
-                ['Statut', 'En attente de confirmation'],
+                [t('success.reference'), orderResult.orderNumber],
+                [t('success.product'), `${product?.name} x${form.quantity}`],
+                [t('success.total'), fmt(orderResult.total, orderResult.currency)],
+                [t('success.status'), t('success.pendingConfirmation')],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
                   <span style={{ color: '#6B7280' }}>{label}</span>
-                  <span style={{ fontWeight: 700, color: label === 'Statut' ? btnColor : '#111827' }}>{value}</span>
+                  <span style={{ fontWeight: 700, color: label === t('success.status') ? btnColor : '#111827' }}>{value}</span>
                 </div>
               ))}
             </div>
@@ -531,7 +534,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
               <a href={waLink} target="_blank" rel="noopener noreferrer"
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, width: '100%', padding: '14px 20px', borderRadius: 14, backgroundColor: '#25D366', color: '#fff', fontWeight: 700, fontSize: 15, textDecoration: 'none', border: 'none', cursor: 'pointer', marginBottom: 12, boxSizing: 'border-box' }}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                Confirmer sur WhatsApp
+                {t('success.confirmOnWhatsapp')}
               </a>
             )}
 
@@ -539,7 +542,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={() => { setSuccess(false); setOrderResult(null); setForm({ customerName: '', phone: '', city: '', address: '', notes: '', quantity: 1 }); }}
                 style={{ flex: 1, padding: '11px 16px', borderRadius: 14, border: '1.5px solid #E5E7EB', backgroundColor: 'transparent', color: '#6B7280', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>
-                Commander à nouveau
+                {t('success.orderAgain')}
               </button>
               <button onClick={handleClose}
                 style={{ flex: 1, padding: '11px 16px', borderRadius: 14, border: '1.5px solid #E5E7EB', backgroundColor: 'transparent', color: '#6B7280', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>
@@ -602,7 +605,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
         {/* Header */}
         <div style={{ position: 'sticky', top: 0, backgroundColor: bgColor, borderBottom: `1px solid ${inputBorderColor}`, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: `${design.formBorderRadius || '20px'} ${design.formBorderRadius || '20px'} 0 0` }}>
           <h2 style={{ fontSize: 16, fontWeight: 800, color: textColor, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <ShoppingCart size={18} color={effectiveBtnColor} /> {productPageConfig?.button?.text || 'Commander maintenant'}
+            <ShoppingCart size={18} color={effectiveBtnColor} /> {productPageConfig?.button?.text || t('cta.orderNow')}
           </h2>
           <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#9CA3AF', display: 'flex' }}>
             <X size={20} />
@@ -665,7 +668,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
                 return (
                   <div key={field.name}>
                     <label style={{ fontSize: 12.5, fontWeight: 600, color: labelColorResolved, display: 'block', marginBottom: 6 }}>
-                      {offersEnabled ? offerSectionLabel : 'Quantité'}
+                      {offersEnabled ? offerSectionLabel : t('quantity')}
                     </label>
                     {offersEnabled ? (
                       <div style={offerDisplayType === 'grid' ? { display: 'grid', gridTemplateColumns: `repeat(${offers.length}, 1fr)`, gap: 6 } : { display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -924,8 +927,8 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
                 return (
                   <div key={field.name} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', backgroundColor: field.bgColor || '#F0FDF4', borderRadius: 10, fontSize: 13, color: field.textColor || '#166534' }}>
                     <Truck size={14} style={{ color: field.iconColor || field.textColor || '#166534' }} />
-                    <strong>{field.label || 'Paiement à la livraison'}</strong>
-                    <span style={{ color: field.subtextColor || '#6b7280' }}>— {field.shippingNote || 'vous payez à la réception'}</span>
+                    <strong>{field.label || t('shipping.codTitle')}</strong>
+                    <span style={{ color: field.subtextColor || '#6b7280' }}>— {field.shippingNote || t('shipping.payOnReceipt')}</span>
                   </div>
                 );
 
@@ -964,7 +967,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
                     }}>
                       <p style={{ margin: 0 }}>
                         {urgIconEmoji && <span style={{ marginRight: 5 }}>{urgIconEmoji}</span>}
-                        {field.urgencyText || urgencyConfig.text || 'Stock presque épuisé. La promotion se termine bientôt.'}
+                        {field.urgencyText || urgencyConfig.text || t('urgency.lowStock')}
                       </p>
                       {showCd && (() => {
                         const d = Math.floor(displaySecs / 86400);
@@ -1169,7 +1172,7 @@ const QuickOrderModal = ({ isOpen, onClose, product, subdomain, pixels, store, p
                 );
 
               case 'cta_button': {
-                const ctaLabel = (field.label || 'ACHETER MAINTENANT - {total}').replace('{total}', fmt(total, currency));
+                const ctaLabel = (field.label || t('cta.buyNow')).replace('{total}', fmt(total, currency));
                 const CtaIcon = getIconComponent(field.icon) || ICON_MAP[field.icon] || ShoppingCart;
                 // formButtonColor owns the form CTA; field.bgColor only used when neither is set
                 const ctaBgColor = design.formButtonColor || field.bgColor || effectiveBtnColor;

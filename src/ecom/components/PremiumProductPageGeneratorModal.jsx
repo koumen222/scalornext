@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useStore } from '../contexts/StoreContext.jsx';
 import {
   AlertCircle,
   ArrowLeft,
@@ -159,6 +160,9 @@ function PremiumPreview({ product, accent }) {
 }
 
 const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initialTaskId = null }) => {
+  // Langue de la boutique → langue du contenu généré (cf. BACKEND_PATCH_I18N.md)
+  const { activeStore } = useStore();
+  const generationLanguage = ({ fr: 'français', en: 'english', es: 'español' })[activeStore?.storeSettings?.language] || 'français';
   const fileInputRef = useRef(null);
   const abortRef = useRef(null);
   const [phase, setPhase] = useState(initialTaskId ? 'loading' : 'input');
@@ -205,7 +209,10 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
   const isUrlValid = url.trim().length > 10 && /^https?:\/\//i.test(url.trim());
   const isDescriptionValid = description.trim().length >= 20;
   const canGenerate = photos.length > 0 && (inputMode === 'url' ? isUrlValid : isDescriptionValid);
-  const hasNoCredits = creditsInfo !== null && Number(creditsInfo.remaining || 0) <= 0;
+  // Une génération de page produit premium coûte 2 crédits.
+  const PREMIUM_PAGE_COST = 2;
+  const creditsRemaining = Number(creditsInfo?.remaining || 0);
+  const hasNoCredits = creditsInfo !== null && creditsRemaining < PREMIUM_PAGE_COST;
 
   const photoPreviews = useMemo(() => photos.map((file) => ({
     file,
@@ -345,7 +352,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
   const handleGenerate = async () => {
     if (!canGenerate) return;
     if (hasNoCredits) {
-      setError('Tu n’as plus de crédits pour générer une page premium.');
+      setError(`Une génération de page premium coûte ${PREMIUM_PAGE_COST} crédits. Il t’en reste ${creditsRemaining}.`);
       return;
     }
 
@@ -366,7 +373,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
     formData.append('withImages', 'true');
     formData.append('themeColor', themeColor);
     formData.append('tone', 'premium');
-    formData.append('language', 'français');
+    formData.append('language', generationLanguage);
     formData.append('targetGender', targetGender);
     formData.append('targetProfile', targetProfile);
     if (mainProblem.trim()) formData.append('mainProblem', mainProblem.trim());
@@ -539,8 +546,8 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
             </div>
             {creditsInfo && (
               <div className="hidden rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-right sm:block">
-                <p className="text-xs font-black text-amber-700">{creditsInfo.remaining || 0} crédit{(creditsInfo.remaining || 0) > 1 ? 's' : ''}</p>
-                <p className="text-[11px] text-amber-600">disponible{(creditsInfo.remaining || 0) > 1 ? 's' : ''}</p>
+                <p className="text-xs font-black text-amber-700">{creditsRemaining} crédit{creditsRemaining > 1 ? 's' : ''}</p>
+                <p className="text-[11px] text-amber-600">{PREMIUM_PAGE_COST} crédits / génération</p>
               </div>
             )}
           </div>
@@ -710,11 +717,13 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                 <button
                   type="button"
                   onClick={handleGenerate}
-                  disabled={!canGenerate}
+                  disabled={!canGenerate || hasNoCredits}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 text-sm font-black text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
                   <Wand2 className="h-4 w-4" />
-                  Générer la page produit premium
+                  {hasNoCredits
+                    ? `Crédits insuffisants (${PREMIUM_PAGE_COST} requis)`
+                    : `Générer la page produit premium · ${PREMIUM_PAGE_COST} crédits`}
                 </button>
               </div>
             </div>
