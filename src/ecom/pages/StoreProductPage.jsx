@@ -18,6 +18,7 @@ const QuickOrderModal = lazy(() => import('../components/QuickOrderModal'));
 const EmbeddedOrderForm = lazy(() => import('../components/EmbeddedOrderForm'));
 const StoreProductPageInfographics = lazy(() => import('../components/StoreProductPageInfographics'));
 const StoreProductPagePremium = lazy(() => import('../components/StoreProductPagePremium'));
+import { useStorefrontT, useMerchantTextLocalizer } from '../i18n/storefront.js';
 // socket.io-client chargé dynamiquement pour ne pas bloquer le rendu initial
 import { setDocumentMeta } from '../utils/pageMeta';
 import { trackStorefrontEvent } from '../utils/pixelTracking';
@@ -297,6 +298,7 @@ const MediaThumb = ({ src, active, borderRadius, onClick }) => {
   );
 };
 const ImageGallery = ({ images = [], design = {} }) => {
+  const t = useStorefrontT();
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState(false);
   const [ratios, setRatios] = useState({});
@@ -449,10 +451,12 @@ const ImageGallery = ({ images = [], design = {} }) => {
 };
 
 const InlinePhotoCarousel = ({ images = [], accentColor = 'var(--s-primary)', config = {} }) => {
+  const t = useStorefrontT();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [ratios, setRatios] = useState({});
-  const gallery = { ...PRODUCT_GALLERY_DEFAULTS, ...config };
+  const lm = useMerchantTextLocalizer();
+  const gallery = { ...PRODUCT_GALLERY_DEFAULTS, ...config, title: lm(({ ...PRODUCT_GALLERY_DEFAULTS, ...config }).title), subtitle: lm(({ ...PRODUCT_GALLERY_DEFAULTS, ...config }).subtitle) };
   const mainImageHeight = Math.max(220, Number.parseInt(gallery.mainImageHeight, 10) || 420);
 
   const canNavigate = images.length > 1;
@@ -531,7 +535,7 @@ const InlinePhotoCarousel = ({ images = [], accentColor = 'var(--s-primary)', co
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
               <button
                 type="button"
-                aria-label="Image précédente"
+                aria-label={t('store.prevImage')}
                 onClick={() => pauseAndGo(activeIndex - 1)}
                 style={navButtonStyle}
               >
@@ -539,7 +543,7 @@ const InlinePhotoCarousel = ({ images = [], accentColor = 'var(--s-primary)', co
               </button>
               <button
                 type="button"
-                aria-label="Image suivante"
+                aria-label={t('store.nextImage')}
                 onClick={() => pauseAndGo(activeIndex + 1)}
                 style={navButtonStyle}
               >
@@ -573,7 +577,7 @@ const InlinePhotoCarousel = ({ images = [], accentColor = 'var(--s-primary)', co
             <img
               key={`${activeSrc}-${activeIndex}`}
               src={activeSrc}
-              alt={activeImage.alt || 'Client satisfait'}
+              alt={activeImage.alt || t('store.happyCustomer')}
               loading={activeIndex === 0 ? 'eager' : 'lazy'}
               onLoad={(event) => {
                 const img = event.currentTarget;
@@ -1068,6 +1072,7 @@ const SolutionSection = ({ section, visualTheme = null }) => {
 
 // ── Raisons d'acheter ─────────────────────────────────────────────────────────
 const RaisonsAcheter = ({ raisons = [], visualTheme = null }) => {
+  const t = useStorefrontT();
   if (!raisons.length) return null;
   const bg = visualTheme?.primary || 'var(--s-section-benefits, var(--s-primary))';
   return (
@@ -1078,7 +1083,7 @@ const RaisonsAcheter = ({ raisons = [], visualTheme = null }) => {
         .ra-row { opacity: 0; animation: ra-slide-in 0.45s cubic-bezier(0.22,1,0.36,1) forwards; }
         .ra-check { animation: ra-check-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; animation-delay: inherit; }
       `}</style>
-      <h3 style={{ ...mkTitle, marginBottom: 20 }}>Pourquoi choisir ce produit ?</h3>
+      <h3 style={{ ...mkTitle, marginBottom: 20 }}>{t('store.whyChooseProduct')}</h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {raisons.map((r, i) => {
           const delay = `${i * 0.1}s`;
@@ -1096,11 +1101,12 @@ const RaisonsAcheter = ({ raisons = [], visualTheme = null }) => {
 
 // ── Guide d'utilisation ───────────────────────────────────────────────────────
 const GuideUtilisation = ({ guide, visualTheme = null }) => {
+  const t = useStorefrontT();
   if (!guide?.applicable || !guide?.etapes?.length) return null;
   const bg = visualTheme?.primary || 'var(--s-section-solution, var(--s-primary))';
   return (
     <div style={{ ...mkBlock(bg), padding: '28px 28px' }}>
-      <h3 style={mkTitle}>{guide.titre || 'Comment utiliser ce produit'}</h3>
+      <h3 style={mkTitle}>{guide.titre || t('store.howToUse')}</h3>
       <div style={mkRows}>
         {guide.etapes.map((e, i) => (
           <div key={i} style={mkRow}>
@@ -1118,12 +1124,13 @@ const GuideUtilisation = ({ guide, visualTheme = null }) => {
 
 // ── Offer / Guarantee Block ────────────────────────────────────────────────────
 const OfferBlock = ({ block, visualTheme = null }) => {
+  const t = useStorefrontT();
   const items = [block?.guarantee_text, block?.hook].filter(Boolean);
   if (!items.length) return null;
   const bg = visualTheme?.primary || 'var(--s-section-trust, #a06800)';
   return (
     <div style={mkBlock(bg)}>
-      <h3 style={mkTitle}>Notre garantie</h3>
+      <h3 style={mkTitle}>{t('store.ourGuarantee')}</h3>
       <div style={mkRows}>
         {items.map((text, i) => (
           <div key={i} style={mkRow}>
@@ -1137,6 +1144,7 @@ const OfferBlock = ({ block, visualTheme = null }) => {
 };
 
 const ProductFaqAccordion = ({ items = [], primaryColor = 'var(--s-primary)' }) => {
+  const t = useStorefrontT();
   const [openIndex, setOpenIndex] = useState(null);
   if (!items.length) return null;
   return (
@@ -1149,7 +1157,7 @@ const ProductFaqAccordion = ({ items = [], primaryColor = 'var(--s-primary)' }) 
       {/* Title with animated underline bar */}
       <div style={{ marginBottom: 18, position: 'relative', paddingBottom: 14, overflow: 'hidden' }}>
         <h2 style={{ margin: 0, fontSize: '1.2em', fontWeight: 900, color: 'var(--s-text)', fontFamily: 'var(--s-font)', letterSpacing: '-0.01em' }}>
-          Questions fréquentes
+          {t('store.faq')}
         </h2>
         <div style={{ position: 'absolute', bottom: 0, left: 0, height: 3, borderRadius: 99, background: primaryColor, width: '100%', opacity: 0.25 }} />
         <div style={{ position: 'absolute', bottom: 0, left: 0, height: 3, borderRadius: 99, background: primaryColor, animation: 'faq-bar 0.8s cubic-bezier(0.22,1,0.36,1) forwards' }} />
@@ -1233,6 +1241,7 @@ const buildFallbackComparisonRows = ({ sectionContentMap = {}, product = null })
 };
 // ── Comparison Table ─────────────────────────────────────────────────────────
 const ComparisonTable = ({ rows = [], productName = '', primaryColor = 'var(--s-primary)', note = '' }) => {
+  const t = useStorefrontT();
   if (!rows || rows.length === 0) return null;
   return (
     <div style={{ margin: '16px 0', overflowX: 'auto' }}>
@@ -1240,7 +1249,7 @@ const ComparisonTable = ({ rows = [], productName = '', primaryColor = 'var(--s-
         <thead>
           <tr>
             <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: 'var(--s-text2)', background: '#f9fafb', borderBottom: '1px solid var(--s-border)', width: '50%' }}>
-              Critères
+              {t('store.criteria')}
             </th>
             <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: 13, fontWeight: 800, color: '#fff', background: primaryColor, borderBottom: `1px solid ${primaryColor}`, width: '25%' }}>
               {productName || 'Notre produit'}
@@ -1294,21 +1303,22 @@ const ComparisonTable = ({ rows = [], productName = '', primaryColor = 'var(--s-
 
 // ── Trust Badges ─────────────────────────────────────────────────────────────
 const TrustBadges = ({ compact = false, accentColor = 'var(--s-section-trust, var(--s-primary))' }) => {
+  const t = useStorefrontT();
   const sections = [
     {
       icon: <Truck size={16} />,
-      title: 'Livraison rapide',
-      content: 'Votre commande est expédiée sous 24 à 48 h ouvrées. Livraison suivie directement chez vous.',
+      title: t('store.fastDelivery'),
+      content: t('trust.fastDeliveryDesc'),
     },
     {
       icon: <Shield size={16} />,
-      title: 'Paiement à la livraison',
-      content: 'Réglez votre commande en espèces directement à la réception. Aucun paiement en avance requis.',
+      title: t('shipping.codTitle'),
+      content: t('trust.codDesc'),
     },
     {
       icon: <RotateCcw size={16} />,
-      title: 'Retours acceptés',
-      content: 'Vous disposez de 14 jours pour retourner votre article. Remboursement complet garanti.',
+      title: t('store.returnsAccepted'),
+      content: t('trust.returnsDesc'),
     },
   ];
 
@@ -1331,10 +1341,11 @@ const TrustBadges = ({ compact = false, accentColor = 'var(--s-section-trust, va
 };
 
 const ProductBonusEbook = ({ ebook, onOrder, accentColor = 'var(--s-primary)', ctaLabel = 'Commander' }) => {
+  const t = useStorefrontT();
   if (!ebook || typeof ebook !== 'object') return null;
   const sales = ebook.sales_section || {};
   const cover = ebook.cover || {};
-  const title = normalizeMetaText(ebook.title || cover.cover_title || 'Guide bonus offert');
+  const title = normalizeMetaText(ebook.title || cover.cover_title || t('store.bonusGuide'));
   const subtitle = normalizeMetaText(ebook.subtitle || ebook.short_description || sales.bonus_text || '').slice(0, 72);
   const buttonText = normalizeMetaText(sales.cta_text || ctaLabel || 'Commander');
   const coverImg = ebook.cover?.generatedImageUrl || ebook.pdf?.coverImageUrl || '';
@@ -1352,7 +1363,7 @@ const ProductBonusEbook = ({ ebook, onOrder, accentColor = 'var(--s-primary)', c
     }}>
       {/* badge */}
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 10, color: accentColor, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-        <Gift size={13} /> {normalizeMetaText(cover.badge_text || 'Bonus offert')}
+        <Gift size={13} /> {normalizeMetaText(cover.badge_text || t('store.bonus'))}
       </div>
 
       {/* title + subtitle */}
@@ -1541,6 +1552,8 @@ const RelatedCard = ({ product, prefix, store, subdomain }) => {
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 const StoreProductPage = () => {
+  const t = useStorefrontT();
+  const lm = useMerchantTextLocalizer();
   const { subdomain: paramSubdomain, slug } = useParams();
   const location = useLocation();
   const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
@@ -2104,7 +2117,12 @@ const StoreProductPage = () => {
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareText = product?.name ? `${product.name} - ${shareUrl}` : shareUrl;
   const rawEbook = product?._pageData?.ebook || product?.ebook || productPageConfig?.ebook || null;
-  const bonusEbook = rawEbook && rawEbook.addAsOffer !== false ? rawEbook : null;
+  // Produit digital masqué dès qu'il est explicitement désactivé (bouton « Désactiver le
+  // produit digital » côté admin) : soit via le flag d'offre de la page, soit via addAsOffer.
+  const digitalProductDisabled = product?._pageData?.digitalProductOfferEnabled === false
+    || productPageConfig?.digitalProductOfferEnabled === false
+    || rawEbook?.addAsOffer === false;
+  const bonusEbook = rawEbook && !digitalProductDisabled ? rawEbook : null;
 
   const handleShare = async () => {
     if (!shareUrl || typeof navigator === 'undefined') return;
@@ -2205,9 +2223,9 @@ const StoreProductPage = () => {
       <div style={{ textAlign: 'center', padding: 40 }}>
         <p style={{ fontSize: 42, margin: '0 0 12px' }}>📶</p>
         <h2 style={{ color: '#111', fontWeight: 700, margin: '0 0 8px', fontSize: 18 }}>Chargement lent</h2>
-        <p style={{ color: '#6B7280', fontSize: 14, marginBottom: 20 }}>Vérifiez votre connexion internet</p>
+        <p style={{ color: '#6B7280', fontSize: 14, marginBottom: 20 }}>{t('store.checkConnection')}</p>
         <button onClick={() => window.location.reload()} style={{ padding: '12px 24px', borderRadius: 12, background: 'var(--s-primary, #0f6b4f)', color: '#fff', border: 'none', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
-          Réessayer
+          {t('store.retry')}
         </button>
       </div>
     </div>
@@ -2720,10 +2738,10 @@ const StoreProductPage = () => {
                               style={resolveCtaStyle(inStock)}
                             >
                               <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                                <CtaIcon size={18} /> {ppButton.text || 'Commander maintenant'}
+                                <CtaIcon size={18} /> {lm(ppButton.text) || t('cta.orderNow')}
                               </div>
                               <span style={{ fontSize: '12px', opacity: 0.9, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Truck size={10} /> {ppButton.subtext || 'Paiement à la livraison'}
+                                <Truck size={10} /> {lm(ppButton.subtext) || t('shipping.codTitle')}
                               </span>
                             </button>
                           )}
@@ -2789,7 +2807,7 @@ const StoreProductPage = () => {
                       return (
                         <div key={sectionId} style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
                           <Truck size={12} color={trustTheme.primary} style={{ flexShrink: 0 }} />
-                          <span style={{ fontSize: 11.5, color: 'var(--s-text2)', fontFamily: 'var(--s-font)' }}>Livraison 2–4 jours · Paiement à la livraison</span>
+                          <span style={{ fontSize: 11.5, color: 'var(--s-text2)', fontFamily: 'var(--s-font)' }}>{t('store.deliveryCodLine')}</span>
                         </div>
                       );
 
@@ -2837,12 +2855,12 @@ const StoreProductPage = () => {
                       {
                         const stockTone = !inStock ? 'danger' : lowStock ? 'warning' : 'success';
                         const stockCardStyle = resolveThemeInfoCardStyle(stockTone);
-                        const stockTitle = !inStock ? 'Rupture de stock' : lowStock ? `Plus que ${product.stock} en stock` : 'En stock';
+                        const stockTitle = !inStock ? t('store.outOfStock') : lowStock ? t('store.unitsLeft', { n: product.stock }) : t('store.inStock');
                         const stockSubtitle = !inStock
-                          ? 'Ce produit est temporairement indisponible.'
+                          ? t('store.tempUnavailable')
                           : lowStock
-                            ? 'Les dernières unités sont disponibles.'
-                            : 'Produit disponible immédiatement.';
+                            ? t('store.lastUnits')
+                            : t('store.availableNow');
 
                         return (
                           <div key={sectionId} style={{ marginBottom: 10 }}>
@@ -2926,7 +2944,7 @@ const StoreProductPage = () => {
                       const aiSection = product._pageData?.problem_section;
                       const customPainPoints = sc.painPoints?.filter(Boolean);
                       const mergedSection = (aiSection || sc.title || customPainPoints?.length > 0) ? {
-                        title: sc.title || aiSection?.title || 'Le problème',
+                        title: sc.title || aiSection?.title || t('store.problem'),
                         pain_points: customPainPoints?.length > 0 ? customPainPoints : aiSection?.pain_points,
                       } : null;
                       return mergedSection ? <ProblemSection key={sectionId} section={mergedSection} visualTheme={problemTheme} /> : null;
@@ -2936,7 +2954,7 @@ const StoreProductPage = () => {
                       const sc = sectionContentMap.solutionSection || {};
                       const aiSection = product._pageData?.solution_section;
                       const mergedSection = (aiSection || sc.title || sc.description) ? {
-                        title: sc.title || aiSection?.title || 'La solution',
+                        title: sc.title || aiSection?.title || t('store.solution'),
                         description: sc.description || aiSection?.description,
                       } : null;
                       return mergedSection ? <SolutionSection key={sectionId} section={mergedSection} visualTheme={solutionTheme} /> : null;

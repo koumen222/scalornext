@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useSubdomain } from '../hooks/useSubdomain';
 import { prefetchStoreProduct, useStoreData } from '../hooks/useStoreData';
+import { useStorefrontT, useMerchantTextLocalizer } from '../i18n/storefront.js';
 import { useStoreCart } from '../hooks/useStoreCart';
 import { setDocumentMeta } from '../utils/pageMeta';
 import { preloadStoreCheckoutRoute, preloadStoreProductRoute } from '../utils/routePrefetch';
@@ -437,6 +438,8 @@ const AnnouncementBar = ({ store }) => {
 const HOMEPAGE_HERO_CTA_BLUE = '#2563EB';
 
 const AiHeroSection = ({ cfg, store, prefix, products }) => {
+  const t = useStorefrontT();
+  const lm = useMerchantTextLocalizer();
   const heroImg = cfg.backgroundImage || null;
   const featuredProduct = products?.find(p => p.image) || null;
   const isSplit = !heroImg && featuredProduct;
@@ -497,7 +500,7 @@ const AiHeroSection = ({ cfg, store, prefix, products }) => {
               }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 18px 40px rgba(15, 23, 42, 0.18)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--sf-hero-cta-shadow)'; }}
-            >{cfg.ctaText || 'Découvrir nos produits'} <ArrowRight size={17} /></Link>
+            >{lm(cfg.ctaText) || t('store.discoverProducts')} <ArrowRight size={17} /></Link>
           </div>
           {/* Product image */}
           <div style={{ flex: '1 1 260px', maxWidth: 420, margin: '0 auto' }}>
@@ -734,6 +737,8 @@ const AiBadgesSection = ({ cfg }) => {
 
 // ─── PRODUCTS (homepage: min 6 + see all) ─────────────────────────────────────
 const AiProductsSection = ({ cfg, products, prefix, store }) => {
+  const t = useStorefrontT();
+  const lm = useMerchantTextLocalizer();
   const limit = Math.max(6, cfg.homepageLimit || 6);
   const displayed = products.slice(0, limit);
   const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
@@ -749,7 +754,7 @@ const AiProductsSection = ({ cfg, products, prefix, store }) => {
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 34px)', fontWeight: 900, color: 'var(--s-text)', margin: '0 0 10px', letterSpacing: '-0.025em', fontFamily: 'var(--s-font)' }}>
-            {cfg.title || 'Nos Produits'}
+            {lm(cfg.title) || t('store.ourProducts')}
           </h2>
           {cfg.subtitle && <p style={{ fontSize: 15, color: 'var(--s-text2)', margin: 0, fontFamily: 'var(--s-font)' }}>{cfg.subtitle}</p>}
         </div>
@@ -801,7 +806,7 @@ const AiProductsSection = ({ cfg, products, prefix, store }) => {
           {displayed.length === 0 ? (
             <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '64px 20px', color: 'var(--s-text2)' }}>
               <ShoppingBag size={40} style={{ marginBottom: 12, opacity: 0.3 }} />
-              <p style={{ margin: 0, fontSize: 15 }}>Aucun produit pour l'instant.</p>
+              <p style={{ margin: 0, fontSize: 15 }}>{t('store.noProductsNow')}</p>
             </div>
           ) : displayed.map(p => <MemoizedProductCard key={p._id} product={p} prefix={prefix} store={store} subdomain={store?.subdomain} />)}
         </div>
@@ -818,7 +823,7 @@ const AiProductsSection = ({ cfg, products, prefix, store }) => {
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
             >
-              Voir tous les produits ({products.length}) <ChevronRight size={16} />
+              {t('store.viewAllProducts')} ({products.length}) <ChevronRight size={16} />
             </Link>
           </div>
         )}
@@ -893,6 +898,7 @@ const AiTestimonialsSection = ({ cfg }) => {
 
 // ─── FAQ ──────────────────────────────────────────────────────────────────────
 const AiFaqSection = ({ cfg }) => {
+  const t = useStorefrontT();
   const [open, setOpen] = useState(null);
   const [heights, setHeights] = useState({});
   
@@ -1060,7 +1066,7 @@ const AiFaqSection = ({ cfg }) => {
               margin: '0 0 16px',
               fontFamily: 'var(--s-font)',
             }}>
-              Vous ne trouvez pas votre réponse ?
+              {t('store.faqNoAnswer')}
             </p>
             <p style={{ 
               fontSize: 15, 
@@ -1081,6 +1087,7 @@ const AiFaqSection = ({ cfg }) => {
 
 // ─── CONTACT CTA ──────────────────────────────────────────────────────────────
 const AiContactSection = ({ cfg, store }) => {
+  const t = useStorefrontT();
   const whatsapp = (cfg.whatsapp || store?.whatsapp || '').replace(/\D/g, '');
   const phone = cfg.phone || store?.phone || '';
   const email = cfg.email || store?.email || '';
@@ -1187,7 +1194,7 @@ const AiContactSection = ({ cfg, store }) => {
             }}
           >
             <MessageCircle size={24} strokeWidth={2.5} />
-            <span>Discuter sur WhatsApp</span>
+            <span>{t('store.chatWhatsapp')}</span>
           </a>
         )}
         
@@ -1440,6 +1447,8 @@ const AiGallerySection = ({ cfg }) => {
 
 // ─── NEWSLETTER ───────────────────────────────────────────────────────────────
 const AiNewsletterSection = ({ cfg, store }) => {
+  const t = useStorefrontT();
+  const lm = useMerchantTextLocalizer();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState(null); // 'success' | 'error'
   const [loading, setLoading] = useState(false);
@@ -1470,10 +1479,10 @@ const AiNewsletterSection = ({ cfg, store }) => {
         {cfg.title && <h2 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, color: 'var(--s-text)', margin: '0 0 12px', fontFamily: 'var(--s-font)' }}>{cfg.title}</h2>}
         {cfg.subtitle && <p style={{ fontSize: 14.5, color: 'var(--s-text2)', margin: '0 0 24px', lineHeight: 1.6, fontFamily: 'var(--s-font)' }}>{cfg.subtitle}</p>}
         {status === 'success' ? (
-          <p style={{ fontSize: 15, color: 'var(--s-primary)', fontWeight: 600, fontFamily: 'var(--s-font)' }}>Merci pour votre inscription !</p>
+          <p style={{ fontSize: 15, color: 'var(--s-primary)', fontWeight: 600, fontFamily: 'var(--s-font)' }}>{t('store.newsletterThanks')}</p>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 10, maxWidth: 440, margin: '0 auto' }}>
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder={cfg.placeholder || 'Votre adresse email'} style={{
+            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder={lm(cfg.placeholder) || t('store.newsletterPlaceholder')} style={{
               flex: 1, padding: '14px 18px', borderRadius: 'var(--sf-radius, 12px)',
               border: '2px solid #E5E7EB', fontSize: 14, fontFamily: 'var(--s-font)',
               outline: 'none',
@@ -1483,10 +1492,10 @@ const AiNewsletterSection = ({ cfg, store }) => {
               backgroundColor: 'var(--s-primary)', color: 'var(--sf-cta-text, #fff)',
               fontSize: 14, fontWeight: 700, cursor: loading ? 'wait' : 'pointer', fontFamily: 'var(--s-font)',
               whiteSpace: 'nowrap', opacity: loading ? 0.7 : 1,
-            }}>{loading ? '...' : (cfg.buttonText || "S'inscrire")}</button>
+            }}>{loading ? '...' : (lm(cfg.buttonText) || t('store.newsletterSubscribe'))}</button>
           </form>
         )}
-        {status === 'error' && <p style={{ fontSize: 13, color: '#EF4444', marginTop: 10, fontFamily: 'var(--s-font)' }}>Une erreur est survenue, réessayez.</p>}
+        {status === 'error' && <p style={{ fontSize: 13, color: '#EF4444', marginTop: 10, fontFamily: 'var(--s-font)' }}>{t('store.newsletterError')}</p>}
       </div>
     </section>
   );
@@ -2126,6 +2135,7 @@ const StorefrontHeader = ({ store, cartCount, prefix }) => {
 
 // ── Product Card ──────────────────────────────────────────────────────────────
 const ProductCard = ({ product, prefix, store, subdomain }) => {
+  const t = useStorefrontT();
   const [hovered, setHovered] = useState(false);
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
   const pct = hasDiscount ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0;
@@ -2277,7 +2287,7 @@ const ProductCard = ({ product, prefix, store, subdomain }) => {
                 padding: '6px 16px', 
                 borderRadius: 25 
               }}>
-                Rupture de stock
+                {t('store.outOfStock')}
               </span>
             </div>
           )}
@@ -2285,7 +2295,7 @@ const ProductCard = ({ product, prefix, store, subdomain }) => {
           {/* Quick view button */}
           {product.stock > 0 && (
             <div style={quickViewStyle}>
-              Voir le produit
+              {t('store.viewProduct')}
             </div>
           )}
         </div>
@@ -2369,6 +2379,7 @@ const ProductCard = ({ product, prefix, store, subdomain }) => {
 const MemoizedProductCard = React.memo(ProductCard);
 
 const CollectionProductCard = React.memo(({ product, prefix, store, subdomain }) => {
+  const t = useStorefrontT();
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
   const discountPercent = hasDiscount ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0;
   const productImage = product.image || product.images?.[0]?.url || '';
@@ -2478,10 +2489,10 @@ const CollectionProductCard = React.memo(({ product, prefix, store, subdomain })
               backgroundColor: Number(product.stock || 0) > 0 ? 'color-mix(in srgb, var(--s-primary) 10%, white)' : '#FEF2F2',
               color: Number(product.stock || 0) > 0 ? 'var(--s-primary)' : '#DC2626',
             }}>
-              {Number(product.stock || 0) > 0 ? 'En stock' : 'Rupture'}
+              {Number(product.stock || 0) > 0 ? t('store.inStock') : t('store.outOfStock')}
             </span>
             <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--s-primary)' }}>
-              Voir le produit
+              {t('store.viewProduct')}
             </span>
           </div>
         </div>
@@ -2710,9 +2721,10 @@ const FloatingWhatsAppButton = ({ store }) => {
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 const StorefrontFooter = ({ store, prefix }) => {
+  const t = useStorefrontT();
   const navigationLinks = [
     { label: 'Accueil', href: `${prefix}/` },
-    { label: 'Tous nos produits', href: `${prefix}/products` },
+    { label: t('store.allOurProducts'), href: `${prefix}/products` },
   ];
   
   const whatsapp = store?.whatsapp?.replace(/\D/g, '');
@@ -2798,7 +2810,7 @@ const StorefrontFooter = ({ store, prefix }) => {
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
             }}>
-              Paiement sécurisé
+              {t('store.securePayment')}
             </p>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {[
@@ -3043,6 +3055,7 @@ const StorefrontFooter = ({ store, prefix }) => {
 };
 
 export const StoreAllProducts = () => {
+  const t = useStorefrontT();
   const { subdomain: paramSubdomain } = useParams();
   const [searchParams] = useSearchParams();
   const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
@@ -3072,10 +3085,10 @@ export const StoreAllProducts = () => {
   const minAvailablePrice = allPrices.length ? Math.min(...allPrices) : 0;
   const maxAvailablePrice = allPrices.length ? Math.max(...allPrices) : 0;
   const priceRanges = [
-    { value: 'all', label: 'Tous les prix', matches: () => true },
-    { value: 'under-10000', label: 'Moins de 10 000', matches: (price) => price < 10000 },
+    { value: 'all', label: t('store.allPrices'), matches: () => true },
+    { value: 'under-10000', label: t('store.under10k'), matches: (price) => price < 10000 },
     { value: '10000-20000', label: '10 000 - 20 000', matches: (price) => price >= 10000 && price <= 20000 },
-    { value: 'over-20000', label: 'Plus de 20 000', matches: (price) => price > 20000 },
+    { value: 'over-20000', label: t('store.over20k'), matches: (price) => price > 20000 },
   ];
   const activePriceFilter = priceRanges.find((range) => range.value === priceRange) || priceRanges[0];
   const filtered = products.filter(p => {
@@ -3241,7 +3254,7 @@ export const StoreAllProducts = () => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, color: 'var(--s-text)', margin: 0, letterSpacing: '-0.04em', lineHeight: 0.98, fontFamily: 'var(--s-font)' }}>
-              Tous nos produits
+              {t('store.allOurProducts')}
             </h1>
             <p style={{ fontSize: 15, color: 'var(--s-text2)', margin: 0, maxWidth: 760 }}>
               Une vraie page collection e-commerce avec filtres, tri et grille produit plus proche d'une boutique Shopify.
@@ -3270,7 +3283,7 @@ export const StoreAllProducts = () => {
                 <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>Recherche</div>
                 <input
                   type="text"
-                  placeholder="Rechercher un produit"
+                  placeholder={t('store.searchProduct')}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   className="store-search-input"
@@ -3279,7 +3292,7 @@ export const StoreAllProducts = () => {
               </div>
 
               <div style={{ marginBottom: 18 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>Catégories</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>{t('store.categories')}</div>
                 <div className="store-filter-list">
                   <button
                     type="button"
@@ -3304,11 +3317,11 @@ export const StoreAllProducts = () => {
               </div>
 
               <div style={{ marginBottom: 18 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>Disponibilité</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>{t('store.availability')}</div>
                 <div className="store-filter-list">
                   {[
                     { value: 'all', label: 'Tout afficher' },
-                    { value: 'in-stock', label: 'En stock' },
+                    { value: 'in-stock', label: t('store.inStock') },
                     { value: 'out-of-stock', label: 'Rupture' },
                   ].map((option) => (
                     <button
@@ -3360,11 +3373,11 @@ export const StoreAllProducts = () => {
                   {sortedProducts.length} article{sortedProducts.length !== 1 ? 's' : ''}
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--s-text2)' }}>
-                  {activeCategory === 'all' ? 'Toute la collection' : activeCategory}
+                  {activeCategory === 'all' ? t('store.wholeCollection') : activeCategory}
                 </div>
                 {(availability !== 'all' || priceRange !== 'all' || search) && (
                   <div style={{ fontSize: 12, color: 'var(--s-text2)' }}>
-                    {availability === 'in-stock' ? 'En stock uniquement' : availability === 'out-of-stock' ? 'Produits en rupture' : 'Tous statuts'}
+                    {availability === 'in-stock' ? t('store.inStock') : availability === 'out-of-stock' ? t('store.outOfStock') : t('store.allStatuses')}
                     {priceRange !== 'all' ? ` · ${activePriceFilter.label}` : ''}
                     {search ? ` · Recherche: ${search}` : ''}
                   </div>
@@ -3385,9 +3398,9 @@ export const StoreAllProducts = () => {
                   onChange={(e) => setSortBy(e.target.value)}
                   style={{ padding: '11px 14px', borderRadius: 12, border: '1px solid #E5E7EB', backgroundColor: '#fff', color: 'var(--s-text)', fontSize: 14, fontWeight: 600, outline: 'none', minWidth: 190 }}
                 >
-                  <option value="featured">Mis en avant</option>
-                  <option value="price-asc">Prix croissant</option>
-                  <option value="price-desc">Prix décroissant</option>
+                  <option value="featured">{t('store.featured')}</option>
+                  <option value="price-asc">{t('store.priceAsc')}</option>
+                  <option value="price-desc">{t('store.priceDesc')}</option>
                   <option value="name-asc">Nom A-Z</option>
                   <option value="name-desc">Nom Z-A</option>
                 </select>
@@ -3402,7 +3415,7 @@ export const StoreAllProducts = () => {
                     }}
                     style={{ padding: '11px 14px', borderRadius: 12, border: '1px solid #E5E7EB', backgroundColor: '#fff', color: 'var(--s-text2)', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
                   >
-                    Réinitialiser
+                    {t('store.reset')}
                   </button>
                 )}
               </div>
@@ -3411,13 +3424,13 @@ export const StoreAllProducts = () => {
             {sortedProducts.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '80px 20px' }}>
                 <ShoppingBag size={48} style={{ color: '#D1D5DB', marginBottom: 16 }} />
-                <p style={{ fontSize: 16, color: 'var(--s-text2)' }}>Aucun produit trouvé.</p>
+                <p style={{ fontSize: 16, color: 'var(--s-text2)' }}>{t('store.noProductsFound')}</p>
                 {(activeCategory !== 'all' || search) && (
                   <button onClick={() => { setActiveCategory('all'); setSearch(''); }} style={{
                     marginTop: 12, padding: '10px 24px', borderRadius: 40, border: 'none',
                     backgroundColor: 'var(--s-primary)', color: '#fff', fontSize: 14,
                     fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--s-font)',
-                  }}>Réinitialiser</button>
+                  }}>{t('store.reset')}</button>
                 )}
               </div>
             ) : (
@@ -3438,6 +3451,7 @@ export const StoreAllProducts = () => {
 
 // ── Main Storefront ───────────────────────────────────────────────────────────
 const PublicStorefrontInner = () => {
+  const t = useStorefrontT();
   const { subdomain: paramSubdomain } = useParams();
   const [searchParams] = useSearchParams();
   const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
@@ -3627,7 +3641,7 @@ const PublicStorefrontInner = () => {
               <h1 style={{ fontSize: 'clamp(36px, 7vw, 60px)', fontWeight: 900, lineHeight: 1.08, color: '#fff', margin: '0 0 18px', letterSpacing: '-0.03em', fontFamily: 'var(--s-font)' }}>{store?.name}</h1>
               {store?.description && <p style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'rgba(255,255,255,0.85)', lineHeight: 1.65, margin: '0 0 40px', fontFamily: 'var(--s-font)' }}>{store.description}</p>}
               <Link to={`${prefix}/products`} style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '15px 34px', borderRadius: '999px', background: HOMEPAGE_HERO_CTA_BLUE, backgroundColor: HOMEPAGE_HERO_CTA_BLUE, color: '#ffffff', border: `1px solid ${HOMEPAGE_HERO_CTA_BLUE}`, fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: 'var(--sf-hero-cta-shadow)' }}>
-                Découvrir nos produits <ArrowRight size={17} />
+                {t('store.discoverProducts')} <ArrowRight size={17} />
               </Link>
             </div>
           </section>
@@ -3635,7 +3649,7 @@ const PublicStorefrontInner = () => {
           {/* Fallback products — 3 max */}
           <section id="products" style={{ maxWidth: 1200, margin: '0 auto', padding: '56px 24px 80px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
-              <h2 style={{ fontSize: 'clamp(22px, 3.5vw, 30px)', fontWeight: 800, color: 'var(--s-text)', margin: 0, letterSpacing: '-0.02em', fontFamily: 'var(--s-font)' }}>Nos Produits</h2>
+              <h2 style={{ fontSize: 'clamp(22px, 3.5vw, 30px)', fontWeight: 800, color: 'var(--s-text)', margin: 0, letterSpacing: '-0.02em', fontFamily: 'var(--s-font)' }}>{t('store.ourProducts')}</h2>
               {categories.length > 1 && (
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {['all', ...categories].map(cat => (
@@ -3654,13 +3668,13 @@ const PublicStorefrontInner = () => {
                 <div style={{ width: 56, height: 56, borderRadius: 14, backgroundColor: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
                   <ShoppingBag size={28} color="#9CA3AF" />
                 </div>
-                <p style={{ color: 'var(--s-text2)', fontSize: 16 }}>Aucun produit disponible pour l'instant.</p>
+                <p style={{ color: 'var(--s-text2)', fontSize: 16 }}>{t('store.noProductsYet')}</p>
               </div>
             )}
             {filtered.length > 3 && (
               <div style={{ textAlign: 'center', marginTop: 32 }}>
                 <Link to={`${prefix}/products`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 28px', borderRadius: '999px', border: '1px solid var(--sf-cta-border)', background: 'var(--sf-cta-bg)', color: 'var(--sf-cta-text)', fontWeight: 700, fontSize: 14, textDecoration: 'none', fontFamily: 'var(--s-font)', boxShadow: 'var(--sf-shadow)' }}>
-                  Voir tous les produits <ChevronRight size={16} />
+                  {t('store.viewAllProducts')} <ChevronRight size={16} />
                 </Link>
               </div>
             )}
@@ -3715,6 +3729,7 @@ const PublicStorefront = () => {
 
 // ── Legal Page Component ─────────────────────────────────────────────────────
 export const StoreLegalPage = () => {
+  const t = useStorefrontT();
   const { subdomain: paramSubdomain, pageType } = useParams();
   const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
   const subdomain = paramSubdomain || detectedSubdomain;
@@ -3751,9 +3766,9 @@ export const StoreLegalPage = () => {
         ) : (
           <div style={{ textAlign: 'center', padding: '80px 20px' }}>
             <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>Page introuvable</h1>
-            <p style={{ color: '#6B7280', marginBottom: 24 }}>Cette page légale n'est pas disponible.</p>
+            <p style={{ color: '#6B7280', marginBottom: 24 }}>{t('store.legalUnavailable')}</p>
             <Link to={`${prefix}/`} style={{ color: 'var(--s-primary)', fontWeight: 600, textDecoration: 'none' }}>
-              Retour à l'accueil
+              {t('store.backHome')}
             </Link>
           </div>
         )}
