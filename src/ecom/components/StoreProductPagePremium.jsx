@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import { useStorefrontT } from '../i18n/storefront.js';
 import {
   Award,
   BadgeCheck,
@@ -226,6 +227,7 @@ const PremiumBonusEbook = ({ ebook, accent, onOrder, ctaLabel = 'Commander', pro
 };
 
 const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain, pixels, prefix = '' }) => {
+  const t = useStorefrontT();
   const formType = productPageConfig?.general?.formType || 'popup';
   const isEmbeddedForm = formType === 'embedded';
   const ctaRef = useRef(null);
@@ -297,7 +299,12 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
   const heroImage = sectionImage('hero', 0);
   const productName = textValue(premium.brandName, product?.name || store?.name || 'Produit');
   const rawEbook = pageData.ebook || product?.ebook || productPageConfig?.ebook || null;
-  const bonusEbook = rawEbook && rawEbook.addAsOffer !== false ? rawEbook : null;
+  // Produit digital masqué dès qu'il est explicitement désactivé (bouton « Désactiver le
+  // produit digital » côté admin) : soit via le flag d'offre de la page, soit via addAsOffer.
+  const digitalProductDisabled = pageData?.digitalProductOfferEnabled === false
+    || productPageConfig?.digitalProductOfferEnabled === false
+    || rawEbook?.addAsOffer === false;
+  const bonusEbook = rawEbook && !digitalProductDisabled ? rawEbook : null;
 
   // Devise: priorité à la boutique, jamais USD/$. Repli FCFA (XAF).
   const resolveCurrency = (code) => (code && String(code).toUpperCase() !== 'USD' ? code : null);
@@ -792,7 +799,7 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
                         </div>
                         <div className="premium-review-stars">{[1, 2, 3, 4, 5].map((i) => <Star key={i} size={17} fill="currentColor" />)}</div>
                         <p className="premium-testimonial-text">{textValue(item.text)}</p>
-                        <div className="premium-verified"><strong>{textValue(item.name, 'Client vérifié')}</strong><CheckCircle size={16} color={accent} fill={accent} stroke="white" /> Acheteur Vérifié</div>
+                        <div className="premium-verified"><strong>{textValue(item.name, t('store.verifiedCustomer'))}</strong><CheckCircle size={16} color={accent} fill={accent} stroke="white" /> {t('store.verifiedBuyer')}</div>
                       </article>
                     ))}
                   </div>

@@ -1302,7 +1302,7 @@ const AiContactSection = ({ cfg, store }) => {
                   letterSpacing: '0.05em',
                   fontWeight: 600,
                 }}>
-                  Adresse
+                  {t('store.addressLabel')}
                 </p>
                 <p style={{ 
                   margin: 0, 
@@ -1791,6 +1791,7 @@ const SectionRenderer = ({ section, store, products, prefix }) => {
 
 // ── Header Premium avec Glassmorphism ─────────────────────────────────────────
 const StorefrontHeader = ({ store, cartCount, prefix }) => {
+  const t = useStorefrontT();
   const { isEditMode, canEdit, toggleEditMode } = useEditMode();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1817,8 +1818,8 @@ const StorefrontHeader = ({ store, cartCount, prefix }) => {
   }, [cartCount]);
 
   const navLinks = [
-    { label: 'Accueil', href: `${prefix}/` },
-    { label: 'Produits', href: `${prefix}/products` },
+    { label: t('store.breadcrumbHome'), href: `${prefix}/` },
+    { label: t('store.breadcrumbProducts'), href: `${prefix}/products` },
   ];
 
   return (
@@ -2723,7 +2724,7 @@ const FloatingWhatsAppButton = ({ store }) => {
 const StorefrontFooter = ({ store, prefix }) => {
   const t = useStorefrontT();
   const navigationLinks = [
-    { label: 'Accueil', href: `${prefix}/` },
+    { label: t('store.breadcrumbHome'), href: `${prefix}/` },
     { label: t('store.allOurProducts'), href: `${prefix}/products` },
   ];
   
@@ -2848,7 +2849,7 @@ const StorefrontFooter = ({ store, prefix }) => {
             textTransform: 'uppercase', 
             letterSpacing: '0.08em',
           }}>
-            Navigation
+            {t('store.navigation')}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {navigationLinks.map(link => (
@@ -2890,7 +2891,7 @@ const StorefrontFooter = ({ store, prefix }) => {
             textTransform: 'uppercase', 
             letterSpacing: '0.08em',
           }}>
-            Contact
+            {t('store.contact')}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {store?.city && (
@@ -3002,7 +3003,7 @@ const StorefrontFooter = ({ store, prefix }) => {
             fontSize: 13, 
             color: 'rgba(255,255,255,0.5)',
           }}>
-            © {new Date().getFullYear()} {store?.name}. Tous droits réservés.
+            © {new Date().getFullYear()} {store?.name}. {t('store.allRightsReserved')}.
           </p>
           
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -3030,7 +3031,7 @@ const StorefrontFooter = ({ store, prefix }) => {
               fontSize: 13, 
               color: 'rgba(255,255,255,0.4)',
             }}>
-              Propulsé par{' '}
+              {t('store.poweredBy')}{' '}
               <a 
                 href="https://scalor.net" 
                 target="_blank" 
@@ -3250,14 +3251,14 @@ export const StoreAllProducts = () => {
       <div className="store-products-shell">
         <div style={{ marginBottom: 28, display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--s-text2)' }}>
-            Accueil / Produits
+            {t('store.breadcrumbHome')} / {t('store.breadcrumbProducts')}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, color: 'var(--s-text)', margin: 0, letterSpacing: '-0.04em', lineHeight: 0.98, fontFamily: 'var(--s-font)' }}>
               {t('store.allOurProducts')}
             </h1>
             <p style={{ fontSize: 15, color: 'var(--s-text2)', margin: 0, maxWidth: 760 }}>
-              Une vraie page collection e-commerce avec filtres, tri et grille produit plus proche d'une boutique Shopify.
+              {t('store.collectionSubtitle')}
             </p>
           </div>
         </div>
@@ -3267,8 +3268,8 @@ export const StoreAllProducts = () => {
             <div className="store-filter-panel">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--s-text2)' }}>Filtres</div>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--s-text)', marginTop: 4 }}>Collection</div>
+                  <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--s-text2)' }}>{t('store.filters')}</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--s-text)', marginTop: 4 }}>{t('store.collection')}</div>
                 </div>
                 <button
                   type="button"
@@ -3280,7 +3281,7 @@ export const StoreAllProducts = () => {
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>Recherche</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>{t('store.search')}</div>
                 <input
                   type="text"
                   placeholder={t('store.searchProduct')}
@@ -3320,9 +3321,9 @@ export const StoreAllProducts = () => {
                 <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>{t('store.availability')}</div>
                 <div className="store-filter-list">
                   {[
-                    { value: 'all', label: 'Tout afficher' },
+                    { value: 'all', label: t('store.showAll') },
                     { value: 'in-stock', label: t('store.inStock') },
-                    { value: 'out-of-stock', label: 'Rupture' },
+                    { value: 'out-of-stock', label: t('store.outOfStockShort') },
                   ].map((option) => (
                     <button
                       key={option.value}
@@ -3337,7 +3338,7 @@ export const StoreAllProducts = () => {
               </div>
 
               <div style={{ marginBottom: 18 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>Prix</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--s-text)', marginBottom: 8 }}>{t('store.price')}</div>
                 <div className="store-filter-list">
                   {priceRanges.map((range) => (
                     <button
@@ -3351,16 +3352,16 @@ export const StoreAllProducts = () => {
                   ))}
                 </div>
                 <div className="store-filter-note" style={{ marginTop: 10 }}>
-                  Fourchette actuelle: {fmt(minAvailablePrice, store?.currency || 'XAF')} - {fmt(maxAvailablePrice, store?.currency || 'XAF')}
+                  {t('store.currentRange')}: {fmt(minAvailablePrice, store?.currency || 'XAF')} - {fmt(maxAvailablePrice, store?.currency || 'XAF')}
                 </div>
               </div>
 
               <div style={{ padding: 14, borderRadius: 16, background: 'linear-gradient(180deg, color-mix(in srgb, var(--s-primary) 8%, white), #fff)' }}>
-                <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--s-text)', marginBottom: 6 }}>Pourquoi acheter ici</div>
+                <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--s-text)', marginBottom: 6 }}>{t('store.whyBuyHere')}</div>
                 <div style={{ display: 'grid', gap: 8, fontSize: 13, color: 'var(--s-text2)' }}>
-                  <div>Paiement flexible</div>
-                  <div>Livraison suivie</div>
-                  <div>Support boutique disponible</div>
+                  <div>{t('store.flexPayment')}</div>
+                  <div>{t('store.trackedDelivery')}</div>
+                  <div>{t('store.storeSupport')}</div>
                 </div>
               </div>
             </div>
@@ -3391,7 +3392,7 @@ export const StoreAllProducts = () => {
                   style={{ padding: '11px 14px', borderRadius: 12, border: '1px solid #E5E7EB', backgroundColor: '#fff', color: 'var(--s-text)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}
                 >
                   <Menu size={16} />
-                  Filtres
+                  {t('store.filters')}
                 </button>
                 <select
                   value={sortBy}
@@ -3401,8 +3402,8 @@ export const StoreAllProducts = () => {
                   <option value="featured">{t('store.featured')}</option>
                   <option value="price-asc">{t('store.priceAsc')}</option>
                   <option value="price-desc">{t('store.priceDesc')}</option>
-                  <option value="name-asc">Nom A-Z</option>
-                  <option value="name-desc">Nom Z-A</option>
+                  <option value="name-asc">{t('store.nameAsc')}</option>
+                  <option value="name-desc">{t('store.nameDesc')}</option>
                 </select>
                 {(activeCategory !== 'all' || availability !== 'all' || priceRange !== 'all' || search) && (
                   <button

@@ -148,6 +148,30 @@ const MESSAGES = {
     'trust.fastDeliveryDesc': 'Votre commande est expédiée sous 24 à 48 h ouvrées. Livraison suivie directement chez vous.',
     'trust.codDesc': 'Réglez votre commande en espèces directement à la réception. Aucun paiement en avance requis.',
     'trust.returnsDesc': 'Vous disposez de 14 jours pour retourner votre article. Remboursement complet garanti.',
+    'store.breadcrumbHome': 'Accueil',
+    'store.breadcrumbProducts': 'Produits',
+    'store.collectionSubtitle': "Une vraie page collection e-commerce avec filtres, tri et grille produit plus proche d'une boutique Shopify.",
+    'store.filters': 'Filtres',
+    'store.collection': 'Collection',
+    'store.search': 'Recherche',
+    'store.showAll': 'Tout afficher',
+    'store.outOfStockShort': 'Rupture',
+    'store.price': 'Prix',
+    'store.currentRange': 'Fourchette actuelle',
+    'store.whyBuyHere': 'Pourquoi acheter ici',
+    'store.flexPayment': 'Paiement flexible',
+    'store.trackedDelivery': 'Livraison suivie',
+    'store.storeSupport': 'Support boutique disponible',
+    'store.nameAsc': 'Nom A-Z',
+    'store.nameDesc': 'Nom Z-A',
+    'store.allRightsReserved': 'Tous droits réservés',
+    'store.poweredBy': 'Propulsé par',
+    'store.verifiedBuyer': 'Acheteur Vérifié',
+    'store.verifiedCustomer': 'Client vérifié',
+    'store.navigation': 'Navigation',
+    'store.contact': 'Contact',
+    'store.information': 'Informations',
+    'store.addressLabel': 'Adresse',
   },
   en: {
     'offer.chooseYours': 'Choose your offer',
@@ -260,6 +284,30 @@ const MESSAGES = {
     'trust.fastDeliveryDesc': 'Your order ships within 24–48 business hours. Tracked delivery straight to your door.',
     'trust.codDesc': 'Pay for your order in cash upon receipt. No advance payment required.',
     'trust.returnsDesc': 'You have 14 days to return your item. Full refund guaranteed.',
+    'store.breadcrumbHome': 'Home',
+    'store.breadcrumbProducts': 'Products',
+    'store.collectionSubtitle': 'A real e-commerce collection page with filters, sorting and a product grid, close to a Shopify store.',
+    'store.filters': 'Filters',
+    'store.collection': 'Collection',
+    'store.search': 'Search',
+    'store.showAll': 'Show all',
+    'store.outOfStockShort': 'Out of stock',
+    'store.price': 'Price',
+    'store.currentRange': 'Current range',
+    'store.whyBuyHere': 'Why buy here',
+    'store.flexPayment': 'Flexible payment',
+    'store.trackedDelivery': 'Tracked delivery',
+    'store.storeSupport': 'Store support available',
+    'store.nameAsc': 'Name A-Z',
+    'store.nameDesc': 'Name Z-A',
+    'store.allRightsReserved': 'All rights reserved',
+    'store.poweredBy': 'Powered by',
+    'store.verifiedBuyer': 'Verified Buyer',
+    'store.verifiedCustomer': 'Verified customer',
+    'store.navigation': 'Navigation',
+    'store.contact': 'Contact',
+    'store.information': 'Information',
+    'store.addressLabel': 'Address',
   },
   es: {
     'offer.chooseYours': 'Elige tu oferta',
@@ -372,6 +420,30 @@ const MESSAGES = {
     'trust.fastDeliveryDesc': 'Tu pedido se envía en 24–48 h laborables. Entrega con seguimiento hasta tu puerta.',
     'trust.codDesc': 'Paga tu pedido en efectivo al recibirlo. Sin pago por adelantado.',
     'trust.returnsDesc': 'Tienes 14 días para devolver tu artículo. Reembolso completo garantizado.',
+    'store.breadcrumbHome': 'Inicio',
+    'store.breadcrumbProducts': 'Productos',
+    'store.collectionSubtitle': 'Una página de colección e-commerce real con filtros, orden y cuadrícula de productos, al estilo de una tienda Shopify.',
+    'store.filters': 'Filtros',
+    'store.collection': 'Colección',
+    'store.search': 'Búsqueda',
+    'store.showAll': 'Mostrar todo',
+    'store.outOfStockShort': 'Agotado',
+    'store.price': 'Precio',
+    'store.currentRange': 'Rango actual',
+    'store.whyBuyHere': 'Por qué comprar aquí',
+    'store.flexPayment': 'Pago flexible',
+    'store.trackedDelivery': 'Envío con seguimiento',
+    'store.storeSupport': 'Soporte de la tienda disponible',
+    'store.nameAsc': 'Nombre A-Z',
+    'store.nameDesc': 'Nombre Z-A',
+    'store.allRightsReserved': 'Todos los derechos reservados',
+    'store.poweredBy': 'Desarrollado por',
+    'store.verifiedBuyer': 'Comprador verificado',
+    'store.verifiedCustomer': 'Cliente verificado',
+    'store.navigation': 'Navegación',
+    'store.contact': 'Contacto',
+    'store.information': 'Información',
+    'store.addressLabel': 'Dirección',
   },
 };
 
@@ -395,6 +467,8 @@ const DEFAULT_TEXTS = [
   ['ACHETER MAINTENANT - {total}', 'BUY NOW - {total}', 'COMPRAR AHORA - {total}'],
   ['Commander - {total}', 'Order - {total}', 'Pedir - {total}'],
   ['Commander maintenant', 'Order now', 'Pedir ahora'],
+  ['ACHETER MAINTENANT', 'BUY NOW', 'COMPRAR AHORA'],
+  ['Découvrir nos produits', 'Discover our products', 'Descubre nuestros productos'],
   ['Commander', 'Order', 'Pedir'],
   ['Paiement à la livraison', 'Cash on delivery', 'Pago contra entrega'],
   ['vous payez à la réception', 'you pay upon receipt', 'pagas al recibir'],
@@ -404,9 +478,10 @@ const DEFAULT_TEXTS = [
   ['Ces clients nous ont fait confiance', 'These customers trusted us', 'Estos clientes confiaron en nosotros'],
 ];
 
+const _normalizeDefaultKey = (v) => String(v).trim().toLowerCase().replace(/\s+/g, ' ');
 const _defaultTextIndex = new Map();
 DEFAULT_TEXTS.forEach((row) => {
-  row.forEach((variant) => _defaultTextIndex.set(variant.trim().toLowerCase(), row));
+  row.forEach((variant) => _defaultTextIndex.set(_normalizeDefaultKey(variant), row));
 });
 
 /**
@@ -415,7 +490,7 @@ DEFAULT_TEXTS.forEach((row) => {
  */
 export function localizeMerchantDefault(language, value) {
   if (typeof value !== 'string' || !value.trim()) return value;
-  const row = _defaultTextIndex.get(value.trim().toLowerCase());
+  const row = _defaultTextIndex.get(_normalizeDefaultKey(value));
   if (!row) return value;
   const idx = { fr: 0, en: 1, es: 2 }[normalizeStoreLanguage(language)] ?? 0;
   return row[idx] ?? value;

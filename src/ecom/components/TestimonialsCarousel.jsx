@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useStorefrontT } from '../i18n/storefront.js';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 
 /**
@@ -6,6 +7,7 @@ import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
  * Support témoignages automatiques (IA) et manuels (images uploadées)
  */
 export default function TestimonialsCarousel({ testimonials = [], autoPlay = true }) {
+  const t = useStorefrontT();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(autoPlay);
   const [touchStart, setTouchStart] = useState(null);
