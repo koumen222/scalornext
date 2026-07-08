@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 const API_ORIGIN = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
@@ -106,8 +107,8 @@ export default function GenerationSuccess() {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Vérification du paiement…</h1>
-            <p className="text-gray-500 text-sm">Tes crédits seront ajoutés automatiquement dès confirmation.</p>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Vérification du paiement…')}</h1>
+            <p className="text-gray-500 text-sm">{tp('Tes crédits seront ajoutés automatiquement dès confirmation.')}</p>
           </>
         )}
 
@@ -118,7 +119,7 @@ export default function GenerationSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Crédits ajoutés !</h1>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Crédits ajoutés !')}</h1>
             <p className="text-gray-600 text-sm mb-6">
               Tes crédits de génération ont bien été ajoutés à ton compte. Tu peux maintenant générer tes pages produit.
             </p>
@@ -126,7 +127,7 @@ export default function GenerationSuccess() {
               onClick={() => navigate('/ecom/products')}
               className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition"
             >
-              Générer mes pages produit
+              {tp('Générer mes pages produit')}
             </button>
           </>
         )}
@@ -138,7 +139,7 @@ export default function GenerationSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Paiement échoué</h1>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Paiement échoué')}</h1>
             <p className="text-gray-600 text-sm mb-6">
               La transaction n'a pas abouti. Vérifiez votre solde Mobile Money et réessayez.
             </p>
@@ -146,7 +147,7 @@ export default function GenerationSuccess() {
               onClick={() => navigate('/ecom/products')}
               className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition"
             >
-              Réessayer
+              {tp('Réessayer')}
             </button>
           </>
         )}
@@ -158,7 +159,7 @@ export default function GenerationSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Paiement en attente</h1>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Paiement en attente')}</h1>
             <p className="text-gray-600 text-sm mb-4">
               Ton paiement est en cours de traitement. Tes crédits seront ajoutés automatiquement dès confirmation.
             </p>
@@ -171,7 +172,7 @@ export default function GenerationSuccess() {
               className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition mb-3 disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {syncing ? (
-                <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Vérification…</>
+                <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>{tp('Vérification…')}</>
               ) : 'J\'ai payé — Vérifier mes crédits'}
             </button>
             {syncMsg && (
@@ -181,7 +182,7 @@ export default function GenerationSuccess() {
               onClick={() => navigate('/ecom/products')}
               className="w-full py-2.5 border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold rounded-xl transition text-sm"
             >
-              Retour aux produits
+              {tp('Retour aux produits')}
             </button>
           </>
         )}

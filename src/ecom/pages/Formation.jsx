@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 const S = (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p} />;
 
@@ -59,7 +60,7 @@ export default function Formation() {
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="font-black text-gray-900" style={{ fontSize: 'clamp(22px, 5vw, 32px)', letterSpacing: '-0.5px', lineHeight: 1 }}>
-              FORMATION <span style={{ color: '#16a34a' }}>OFFERTE</span>
+              {tp('FORMATION')} <span style={{ color: '#16a34a' }}>OFFERTE</span>
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-white flex-shrink-0" style={{ background: '#0f4c2a' }}>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -69,7 +70,7 @@ export default function Formation() {
             </span>
           </div>
           <p className="text-sm font-semibold text-gray-600 whitespace-nowrap">
-            Incluse <span className="text-primary-600 font-bold">gratuitement</span> dans votre compte Scalor
+            Incluse <span className="text-primary-600 font-bold">{tp('gratuitement')}</span> dans votre compte Scalor
           </p>
         </div>
       </div>
@@ -78,15 +79,15 @@ export default function Formation() {
         <div className="border-b border-primary-100 bg-primary-50">
           <div className="max-w-2xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <p className="text-sm font-bold text-gray-900">Bienvenue sur Scalor</p>
-              <p className="text-xs text-gray-600 mt-0.5">Regardez la formation offerte, puis continuez la configuration de votre espace.</p>
+              <p className="text-sm font-bold text-gray-900">{tp('Bienvenue sur Scalor')}</p>
+              <p className="text-xs text-gray-600 mt-0.5">{tp('Regardez la formation offerte, puis continuez la configuration de votre espace.')}</p>
             </div>
             <button
               type="button"
               onClick={() => navigate(onboardingNextPath)}
               className="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 transition shadow-sm"
             >
-              Continuer vers mon espace
+              {tp('Continuer vers mon espace')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
             </button>
           </div>
@@ -95,8 +96,8 @@ export default function Formation() {
 
       {/* PROGRAMME */}
       <div className="max-w-2xl mx-auto px-4 py-10">
-        <h2 className="text-xl font-black text-gray-900 mb-1">Programme — Module 7</h2>
-        <p className="text-sm text-gray-400 mb-8">17 chapitres · 6h+ de contenu · Accès à vie</p>
+        <h2 className="text-xl font-black text-gray-900 mb-1">{tp('Programme — Module 7')}</h2>
+        <p className="text-sm text-gray-400 mb-8">{tp('17 chapitres · 6h+ de contenu · Accès à vie')}</p>
 
         <div className="space-y-2">
           {chapters.map((ch) => {

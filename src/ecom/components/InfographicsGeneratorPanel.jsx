@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle, GripVertical, ImagePlus, Loader2, Sparkles, Upload, X } from 'lucide-react';
 import { storeProductsApi } from '../services/storeApi.js';
+import { tp } from '../i18n/platform.js';
 
 const API_ORIGIN = (() => {
   const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || '').trim();
@@ -86,7 +87,7 @@ const normalizeInfographicsResult = (payload, fallbackForm = DEFAULT_FORM) => {
   };
 };
 
-const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackground, initialResult = null, onResetPreview }) => {
+const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackground, initialResult = null, onResetPreview, language = 'français' }) => {
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState('');
   const [productName, setProductName] = useState('');
@@ -192,7 +193,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
   const onPickPhoto = (file) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setError('Le fichier doit être une image.');
+      setError(tp('Le fichier doit être une image.'));
       return;
     }
     setPhoto(file);
@@ -346,6 +347,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
     fd.append('phCity', form.placeholders.city);
     fd.append('brandColor', brandColor);
     fd.append('colorStyle', colorStyle);
+    fd.append('language', language);
 
     try {
       const resp = await fetch(`${API_ORIGIN}/api/ai/product-generator/infographics`, {
@@ -405,18 +407,18 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Generation en cours</p>
-              <h3 className="mt-1 text-xl font-black text-black">Creation des infographies 9:16</h3>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">{tp('Generation en cours')}</p>
+              <h3 className="mt-1 text-xl font-black text-black">{tp('Creation des infographies 9:16')}</h3>
             </div>
           </div>
 
           <p className="mt-5 min-h-[20px] text-sm text-gray-600">
-            {currentStepLabel || 'Preparation des infographies...'}
+            {currentStepLabel || tp('Preparation des infographies...')}
           </p>
 
           <div className="mt-5">
             <div className="mb-2 flex items-center justify-between text-xs font-medium text-gray-500">
-              <span>Progression</span>
+              <span>{tp('Progression')}</span>
               <span>{Math.round(progressPercent)}%</span>
             </div>
             <div className="h-3 overflow-hidden rounded-full bg-gray-200">
@@ -450,14 +452,14 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
               onClick={handleContinueBackgroundClick}
               className="rounded-lg bg-[#0F6B4F] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0A5740]"
             >
-              Continuer en arriere-plan
+              {tp('Continuer en arriere-plan')}
             </button>
             <button
               type="button"
               onClick={resetToForm}
               className="text-sm text-gray-500 underline transition hover:text-gray-800"
             >
-              Revenir au formulaire
+              {tp('Revenir au formulaire')}
             </button>
           </div>
         </div>
@@ -474,9 +476,9 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
               <CheckCircle className="h-6 w-6 text-white" />
             </div>
             <div>
-              <p className="text-sm font-bold text-[#0A5740]">Infographies pretes</p>
+              <p className="text-sm font-bold text-[#0A5740]">{tp('Infographies pretes')}</p>
               <p className="mt-1 text-xs text-[#0A5740]">
-                {result.productName || productName || 'Produit'} · {result.infographics.length} slide(s) generee(s)
+                {result.productName || productName || tp('Produit')} · {result.infographics.length} slide(s) generee(s)
               </p>
             </div>
           </div>
@@ -491,8 +493,8 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
 
         <div className="rounded-2xl border border-gray-200 bg-white p-5">
           <div className="mb-4">
-            <p className="text-sm font-bold text-gray-900">Apercu des slides</p>
-            <p className="text-xs text-gray-500">Tu peux revoir le resultat avant application.</p>
+            <p className="text-sm font-bold text-gray-900">{tp('Apercu des slides')}</p>
+            <p className="text-xs text-gray-500">{tp('Tu peux revoir le resultat avant application.')}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 xl:grid-cols-3">
@@ -504,7 +506,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
                     {slide.url ? (
                       <img src={slide.url} alt={slideMeta?.label || `Slide ${index + 1}`} className="h-full w-full object-cover" />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-xs text-gray-400">Image indisponible</div>
+                      <div className="flex h-full items-center justify-center text-xs text-gray-400">{tp('Image indisponible')}</div>
                     )}
                   </div>
                   <div className="border-t border-gray-200 px-3 py-2">
@@ -522,7 +524,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             onClick={resetToForm}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
-            Nouvelle generation
+            {tp('Nouvelle generation')}
           </button>
           <button
             type="button"
@@ -542,8 +544,8 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         <div className="flex items-start gap-3">
           <Sparkles className="h-5 w-5 text-blue-600 mt-0.5" />
           <div>
-            <p className="text-sm font-bold text-blue-900">Mode Infographies 9:16</p>
-            <p className="text-xs text-blue-800 mt-1">Génère une suite d'infographies verticales mobile-first. La page produit publique affichera uniquement ces visuels empilés + un formulaire de commande minimal.</p>
+            <p className="text-sm font-bold text-blue-900">{tp('Mode Infographies 9:16')}</p>
+            <p className="text-xs text-blue-800 mt-1">{tp('Génère une suite d\'infographies verticales mobile-first. La page produit publique affichera uniquement ces visuels empilés + un formulaire de commande minimal.')}</p>
           </div>
         </div>
       </div>
@@ -575,8 +577,8 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
       {/* Photo du produit — IA seulement */}
       {mode === 'ai' && (
       <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <label className="text-sm font-bold text-gray-900 mb-1 block">Photo du produit <span className="text-red-500">*</span></label>
-        <p className="text-xs text-gray-500 mb-3">Le même packaging apparaîtra dans chaque infographie (image-to-image).</p>
+        <label className="text-sm font-bold text-gray-900 mb-1 block">{tp('Photo du produit')} <span className="text-red-500">*</span></label>
+        <p className="text-xs text-gray-500 mb-3">{tp('Le même packaging apparaîtra dans chaque infographie (image-to-image).')}</p>
         {photoPreview ? (
           <div className="relative inline-block">
             <img src={photoPreview} alt="Produit" className="h-40 w-40 object-cover rounded-xl border border-gray-200" />
@@ -595,7 +597,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             className="flex items-center justify-center gap-2 w-full h-32 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition text-gray-600"
           >
             <ImagePlus className="h-5 w-5" />
-            <span className="text-sm font-semibold">Uploader la photo produit</span>
+            <span className="text-sm font-semibold">{tp('Uploader la photo produit')}</span>
           </button>
         )}
         <input
@@ -611,75 +613,75 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
       {/* Infos produit — IA seulement */}
       {mode === 'ai' && (
       <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3">
-        <label className="text-sm font-bold text-gray-900 block">Informations produit</label>
+        <label className="text-sm font-bold text-gray-900 block">{tp('Informations produit')}</label>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">Nom du produit <span className="text-red-500">*</span></label>
+          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Nom du produit')} <span className="text-red-500">*</span></label>
           <input
             type="text"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            placeholder="ex: GlucoControl"
+            placeholder={tp('ex: GlucoControl')}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">Description courte</label>
+          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Description courte')}</label>
           <textarea
             value={productDescription}
             onChange={(e) => setProductDescription(e.target.value)}
             rows={2}
-            placeholder="ex: Solution naturelle pour réguler la glycémie."
+            placeholder={tp('ex: Solution naturelle pour réguler la glycémie.')}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">Pays cible</label>
+            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Pays cible')}</label>
             <input
               type="text"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              placeholder="ex: Cameroun, Sénégal, Côte d'Ivoire"
+              placeholder={tp('ex: Cameroun, Sénégal, Côte d\'Ivoire')}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">Cible</label>
+            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Cible')}</label>
             <input
               type="text"
               value={targetAudience}
               onChange={(e) => setTargetAudience(e.target.value)}
-              placeholder="ex: femmes africaines 35-55 ans"
+              placeholder={tp('ex: femmes africaines 35-55 ans')}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">Zone corporelle</label>
+            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Zone corporelle')}</label>
             <input
               type="text"
               value={bodyZone}
               onChange={(e) => setBodyZone(e.target.value)}
-              placeholder="ex: visage, cheveux, ventre"
+              placeholder={tp('ex: visage, cheveux, ventre')}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">Problème principal</label>
+            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Problème principal')}</label>
             <input
               type="text"
               value={painPoint}
               onChange={(e) => setPainPoint(e.target.value)}
-              placeholder="ex: pics de sucre, fatigue, fringales"
+              placeholder={tp('ex: pics de sucre, fatigue, fringales')}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">Bénéfice principal</label>
+            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Bénéfice principal')}</label>
             <input
               type="text"
               value={mainBenefit}
               onChange={(e) => setMainBenefit(e.target.value)}
-              placeholder="ex: Équilibrez votre glycémie, retrouvez votre vitalité"
+              placeholder={tp('ex: Équilibrez votre glycémie, retrouvez votre vitalité')}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
@@ -715,7 +717,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             className="flex items-center justify-center gap-2 w-full h-24 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition text-gray-600"
           >
             <ImagePlus className="h-5 w-5" />
-            <span className="text-sm font-semibold">Ajouter des images</span>
+            <span className="text-sm font-semibold">{tp('Ajouter des images')}</span>
           </button>
           <input
             ref={manualFileInputRef}
@@ -730,7 +732,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
 
       <div className="rounded-2xl border border-gray-200 bg-white p-5">
         <label className="text-sm font-bold text-gray-900 mb-1 block">Couleurs & style</label>
-        <p className="text-xs text-gray-500 mb-3">La palette choisie sera appliquée à toutes les slides générées.</p>
+        <p className="text-xs text-gray-500 mb-3">{tp('La palette choisie sera appliquée à toutes les slides générées.')}</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {COLOR_PRESETS.map(preset => (
             <button
@@ -765,7 +767,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
       {mode === 'ai' && (
       <div className="rounded-2xl border border-gray-200 bg-white p-5">
         <label className="text-sm font-bold text-gray-900 mb-1 block">Types d'infographies ({selectedSlides.length})</label>
-        <p className="text-xs text-gray-500 mb-3">Coche/décoche et réordonne. Chaque slide génère une image 9:16 dédiée.</p>
+        <p className="text-xs text-gray-500 mb-3">{tp('Coche/décoche et réordonne. Chaque slide génère une image 9:16 dédiée.')}</p>
 
         <div className="space-y-2 mb-3">
           {selectedSlides.map((id, idx) => {
@@ -790,7 +792,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
 
         {SLIDE_CATALOG.filter(s => !selectedSlides.includes(s.id)).length > 0 && (
           <div className="border-t border-gray-100 pt-3">
-            <p className="text-xs font-semibold text-gray-500 mb-2">Ajouter une slide</p>
+            <p className="text-xs font-semibold text-gray-500 mb-2">{tp('Ajouter une slide')}</p>
             <div className="flex flex-wrap gap-2">
               {SLIDE_CATALOG.filter(s => !selectedSlides.includes(s.id)).map(slide => (
                 <button
@@ -809,9 +811,9 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
       )}
 
       <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3">
-        <label className="text-sm font-bold text-gray-900 block">Textes du formulaire de commande</label>
+        <label className="text-sm font-bold text-gray-900 block">{tp('Textes du formulaire de commande')}</label>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">Accroche</label>
+          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Accroche')}</label>
           <textarea
             value={form.headline}
             onChange={(e) => setForm(f => ({ ...f, headline: e.target.value }))}
@@ -821,7 +823,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">Bouton principal</label>
+            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Bouton principal')}</label>
             <input
               type="text"
               value={form.ctaLabel}
@@ -830,7 +832,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">Bouton sticky</label>
+            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Bouton sticky')}</label>
             <input
               type="text"
               value={form.stickyLabel}
@@ -840,7 +842,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           </div>
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">Ligne de réassurance</label>
+          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Ligne de réassurance')}</label>
           <input
             type="text"
             value={form.reassurance}
@@ -878,7 +880,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
             disabled={phase === 'loading' || manualUploading}
           >
-            Annuler
+            {tp('Annuler')}
           </button>
         )}
         {mode === 'manual' ? (
@@ -888,7 +890,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             disabled={!manualSlides.length || manualUploading}
             className="ml-auto flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {manualUploading ? <><Loader2 className="h-4 w-4 animate-spin" /> Upload en cours...</> : <><Upload className="h-4 w-4" /> Appliquer {manualSlides.length > 0 ? `${manualSlides.length} image${manualSlides.length > 1 ? 's' : ''}` : ''}</>}
+            {manualUploading ? <><Loader2 className="h-4 w-4 animate-spin" /> {tp('Upload en cours...')}</> : <><Upload className="h-4 w-4" /> Appliquer {manualSlides.length > 0 ? `${manualSlides.length} image${manualSlides.length > 1 ? 's' : ''}` : ''}</>}
           </button>
         ) : (
           <button

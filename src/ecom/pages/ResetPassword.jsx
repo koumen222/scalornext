@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -30,8 +31,8 @@ const ResetPassword = () => {
       setError('Veuillez remplir tous les champs');
       return;
     }
-    if (newPassword.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
+      setError(tp('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'));
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -62,14 +63,14 @@ const ResetPassword = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Lien invalide</h1>
-            <p className="text-gray-500 text-sm mb-6">Ce lien de réinitialisation est invalide ou a expiré.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{tp('Lien invalide')}</h1>
+            <p className="text-gray-500 text-sm mb-6">{tp('Ce lien de réinitialisation est invalide ou a expiré.')}</p>
             <div className="space-y-3">
               <Link to="/ecom/forgot-password" className="block w-full py-2.5 px-4 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition text-sm">
-                Demander un nouveau lien
+                {tp('Demander un nouveau lien')}
               </Link>
               <Link to="/ecom/login" className="block w-full py-2.5 px-4 text-primary-600 font-medium hover:text-primary-700 transition text-sm">
-                Retour ù  la connexion
+                {tp('Retour ù  la connexion')}
               </Link>
             </div>
           </div>
@@ -88,10 +89,10 @@ const ResetPassword = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Mot de passe réinitialisé</h1>
-            <p className="text-gray-500 text-sm mb-6">Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{tp('Mot de passe réinitialisé')}</h1>
+            <p className="text-gray-500 text-sm mb-6">{tp('Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter.')}</p>
             <Link to="/ecom/login" className="block w-full py-3 px-4 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition text-sm">
-              Se connecter
+              {tp('Se connecter')}
             </Link>
           </div>
         </div>
@@ -109,8 +110,8 @@ const ResetPassword = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Nouveau mot de passe</h1>
-            <p className="text-gray-500 text-sm">Choisissez votre nouveau mot de passe</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{tp('Nouveau mot de passe')}</h1>
+            <p className="text-gray-500 text-sm">{tp('Choisissez votre nouveau mot de passe')}</p>
           </div>
 
           {error && (
@@ -124,15 +125,15 @@ const ResetPassword = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nouveau mot de passe</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nouveau mot de passe')}</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
-                  minLength={6}
-                  placeholder="Minimum 6 caractères"
+                  minLength={8}
+                  placeholder={tp('Minimum 8 caractères')}
                   disabled={loading}
                   className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent disabled:opacity-50 text-sm"
                 />
@@ -152,24 +153,24 @@ const ResetPassword = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirmer le mot de passe</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Confirmer le mot de passe')}</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                minLength={6}
-                placeholder="Retapez le mot de passe"
+                minLength={8}
+                placeholder={tp('Retapez le mot de passe')}
                 disabled={loading}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent disabled:opacity-50 text-sm"
               />
               {confirmPassword && newPassword !== confirmPassword && (
-                <p className="mt-1 text-xs text-red-500">Les mots de passe ne correspondent pas</p>
+                <p className="mt-1 text-xs text-red-500">{tp('Les mots de passe ne correspondent pas')}</p>
               )}
-              {confirmPassword && newPassword === confirmPassword && confirmPassword.length >= 6 && (
+              {confirmPassword && newPassword === confirmPassword && confirmPassword.length >= 8 && (
                 <p className="mt-1 text-xs text-green-600 flex items-center gap-1">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  Les mots de passe correspondent
+                  {tp('Les mots de passe correspondent')}
                 </p>
               )}
             </div>
@@ -182,7 +183,7 @@ const ResetPassword = () => {
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Réinitialisation...
+                  {tp('Réinitialisation...')}
                 </>
               ) : (
                 'Réinitialiser le mot de passe'
@@ -192,7 +193,7 @@ const ResetPassword = () => {
 
           <div className="mt-6 text-center">
             <Link to="/ecom/login" className="text-sm text-primary-600 hover:text-primary-700 font-medium transition">
-              Retour ù  la connexion
+              {tp('Retour ù  la connexion')}
             </Link>
           </div>
         </div>

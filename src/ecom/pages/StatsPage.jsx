@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
@@ -141,8 +142,8 @@ const StatsPage = () => {
           <ArrowLeft size={20} className="text-gray-600" />
         </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Statistiques globales</h1>
-            <p className="text-sm text-gray-500">Vue d'ensemble de votre activité e-commerce</p>
+            <h1 className="text-2xl font-bold text-gray-900">{tp('Statistiques globales')}</h1>
+            <p className="text-sm text-gray-500">{tp('Vue d\'ensemble de votre activité e-commerce')}</p>
           </div>
         </div>
         
@@ -151,15 +152,15 @@ const StatsPage = () => {
           <button onClick={() => navigate('/ecom/reports')}
             className="flex items-center gap-2 px-4 py-2 bg-primary-700 text-white rounded-xl hover:bg-primary-800 transition shadow-sm text-sm font-medium">
             <BarChart3 size={16} />
-            Stats Rapports
+            {tp('Stats Rapports')}
           </button>
           <select value={dateRange} onChange={(e) => setDateRange(e.target.value)}
             className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-transparent">
-            <option value="all">Tout le temps</option>
-            <option value="7d">7 derniers jours</option>
-            <option value="30d">30 derniers jours</option>
-            <option value="90d">90 derniers jours</option>
-            <option value="custom">Personnalisé</option>
+            <option value="all">{tp('Tout le temps')}</option>
+            <option value="7d">{tp('7 derniers jours')}</option>
+            <option value="30d">{tp('30 derniers jours')}</option>
+            <option value="90d">{tp('90 derniers jours')}</option>
+            <option value="custom">{tp('Personnalisé')}</option>
           </select>
           {dateRange === 'custom' && (
             <>
@@ -177,72 +178,29 @@ const StatsPage = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200 p-4 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">Revenu total</span>
-            <IconCard icon={Wallet} color="text-green-600" bgColor="bg-white" />
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
+        {[
+          { label: tp('Revenu total'), value: fmt(stats?.orderStats?.totalRevenue || 0), sub: `${stats?.orderStats?.delivered || 0} ${tp('livrées')}`, icon: Wallet, tint: 'text-emerald-600', chip: 'bg-emerald-50' },
+          { label: tp('Commandes'), value: stats?.orderStats?.total || 0, sub: `${stats?.orderStats?.pending || 0} ${tp('en attente')}`, icon: ShoppingCart, tint: 'text-primary-600', chip: 'bg-primary-50' },
+          { label: tp('Taux livraison'), value: `${deliveryRate}%`, bar: { pct: deliveryRate, color: 'bg-primary-600' }, icon: TrendingUp, tint: 'text-primary-700', chip: 'bg-primary-50' },
+          { label: tp('Taux retour'), value: `${returnRate}%`, bar: { pct: returnRate, color: 'bg-orange-500' }, icon: RotateCcw, tint: 'text-orange-600', chip: 'bg-orange-50' },
+          { label: tp('Clients'), value: stats?.clientStats?.total || 0, sub: `${stats?.clientStats?.delivered || 0} ${tp('livrés')}`, icon: Users, tint: 'text-sky-600', chip: 'bg-sky-50' },
+          { label: tp('Panier moyen'), value: fmt(stats?.orderStats?.avgOrderValue || 0), sub: tp('par cmd livrée'), icon: CreditCard, tint: 'text-violet-600', chip: 'bg-violet-50' },
+        ].map((k, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${k.chip}`}>
+              <k.icon size={16} className={k.tint} strokeWidth={2.2} />
+            </div>
+            <p className="text-xl font-extrabold text-gray-900 tracking-tight tabular-nums leading-none truncate" title={String(k.value)}>{k.value}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mt-1.5">{k.label}</p>
+            {k.sub && <p className="text-xs text-gray-500 mt-1 truncate">{k.sub}</p>}
+            {k.bar && (
+              <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2 overflow-hidden">
+                <div className={`${k.bar.color} h-1.5 rounded-full transition-all`} style={{ width: `${Math.min(k.bar.pct, 100)}%` }} />
+              </div>
+            )}
           </div>
-          <p className="text-2xl font-bold text-gray-900">{fmt(stats?.orderStats?.totalRevenue || 0)}</p>
-          <p className="text-xs text-green-600 flex items-center gap-1 mt-1">
-            <CheckCircle size={12} /> {stats?.orderStats?.delivered || 0} livrées
-          </p>
-        </div>
-
-        <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-200 p-4 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-primary-700 uppercase tracking-wide">Commandes</span>
-            <IconCard icon={ShoppingCart} color="text-primary-600" bgColor="bg-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{stats?.orderStats?.total || 0}</p>
-          <p className="text-xs text-primary-600 flex items-center gap-1 mt-1">
-            <Package size={12} /> {stats?.orderStats?.pending || 0} en attente
-          </p>
-        </div>
-
-        <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-200 p-4 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-primary-800 uppercase tracking-wide">Taux livraison</span>
-            <IconCard icon={TrendingUp} color="text-primary-700" bgColor="bg-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{deliveryRate}%</p>
-          <div className="w-full bg-primary-100 rounded-full h-2 mt-2">
-            <div className="bg-primary-600 h-2 rounded-full" style={{ width: `${Math.min(deliveryRate, 100)}%` }}></div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border border-orange-200 p-4 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Taux retour</span>
-            <IconCard icon={RotateCcw} color="text-orange-600" bgColor="bg-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{returnRate}%</p>
-          <div className="w-full bg-orange-100 rounded-full h-2 mt-2">
-            <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${Math.min(returnRate, 100)}%` }}></div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-200 p-4 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-primary-800 uppercase tracking-wide">Clients</span>
-            <IconCard icon={Users} color="text-primary-700" bgColor="bg-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{stats?.clientStats?.total || 0}</p>
-          <p className="text-xs text-primary-700 flex items-center gap-1 mt-1">
-            <CheckCircle size={12} /> {stats?.clientStats?.delivered || 0} livrés
-          </p>
-        </div>
-
-        <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-200 p-4 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-primary-700 uppercase tracking-wide">Panier moyen</span>
-            <IconCard icon={CreditCard} color="text-primary-600" bgColor="bg-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{fmt(stats?.orderStats?.avgOrderValue || 0)}</p>
-          <p className="text-xs text-primary-600 flex items-center gap-1 mt-1">
-            <DollarSign size={12} /> par cmd livrée
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* Status Distribution */}
@@ -250,22 +208,26 @@ const StatsPage = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
             <BarChart3 size={18} className="text-gray-500" />
-            Répartition par statut
+            {tp('Répartition par statut')}
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-1">
             {Object.entries(SL).map(([key, label]) => {
               const count = stats?.orderStats?.[key] || 0;
-              const percent = stats?.orderStats?.total ? ((count / stats.orderStats.total) * 100).toFixed(1) : 0;
+              const percent = stats?.orderStats?.total ? ((count / stats.orderStats.total) * 100) : 0;
               return (
-                <div key={key} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${SC[key].light}`}>
-                    {React.createElement(SC[key].icon, { size: 16, className: SC[key].text })}
+                <div key={key} className="group px-2 py-2 rounded-xl hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="flex items-center gap-2 text-sm text-gray-700">
+                      <span className={`w-2 h-2 rounded-full ${SC[key].bg}`} />
+                      {tp(label)}
+                    </span>
+                    <span className="flex items-baseline gap-2">
+                      <span className="text-sm font-bold text-gray-900 tabular-nums">{count}</span>
+                      <span className="text-[11px] text-gray-400 tabular-nums w-11 text-right">{percent.toFixed(1)}%</span>
+                    </span>
                   </div>
-                  <span className="text-sm text-gray-600 flex-1">{label}</span>
-                  <span className="text-sm font-semibold text-gray-900">{count}</span>
-                  <span className="text-xs text-gray-400 w-12 text-right">{percent}%</span>
-                  <div className="w-24 bg-gray-100 rounded-full h-2 overflow-hidden">
-                    <div className={`${SC[key].bg} h-2 rounded-full transition-all`} style={{ width: `${percent}%` }}></div>
+                  <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div className={`${SC[key].bg} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${percent}%` }} />
                   </div>
                 </div>
               );
@@ -277,19 +239,23 @@ const StatsPage = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
             <Package size={18} className="text-gray-500" />
-            Produits les plus vendus
+            {tp('Produits les plus vendus')}
           </h3>
-          <div className="space-y-3">
+          <div className="divide-y divide-gray-50">
             {(stats?.topProducts || []).slice(0, 8).map((p, i) => (
-              <div key={i} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                <RankBadge rank={i + 1} />
-                <span className="text-sm text-gray-700 flex-1 truncate" title={p._id}>{p._id || 'Non spécifié'}</span>
-                <span className="text-sm font-semibold text-gray-900">{p.count}</span>
-                <span className="text-xs text-green-600 font-medium">{fmt(p.revenue)}</span>
+              <div key={i} className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-gray-50 transition-colors">
+                <span className={`w-7 h-7 shrink-0 rounded-lg flex items-center justify-center text-xs font-bold tabular-nums ${i === 0 ? 'bg-yellow-100 text-yellow-700' : i === 1 ? 'bg-gray-200 text-gray-600' : i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-400'}`}>
+                  {i + 1}
+                </span>
+                <span className="text-sm text-gray-800 font-medium flex-1 truncate" title={p._id}>{p._id || tp('Non spécifié')}</span>
+                <span className="shrink-0 text-right">
+                  <span className="block text-sm font-bold text-gray-900 tabular-nums">×{p.count}</span>
+                  <span className="block text-[11px] text-emerald-600 font-semibold tabular-nums">{fmt(p.revenue)}</span>
+                </span>
               </div>
             ))}
             {(!stats?.topProducts || stats.topProducts.length === 0) && (
-              <p className="text-sm text-gray-400 text-center py-4">Aucun produit</p>
+              <p className="text-sm text-gray-400 text-center py-6">{tp('Aucun produit')}</p>
             )}
           </div>
         </div>
@@ -301,7 +267,7 @@ const StatsPage = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
             <MapPin size={18} className="text-gray-500" />
-            Villes principales
+            {tp('Villes principales')}
           </h3>
           <div className="space-y-3">
             {(stats?.topCities || []).slice(0, 10).map((c, i) => {
@@ -309,7 +275,7 @@ const StatsPage = () => {
               return (
                 <div key={i} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
                   <RankBadge rank={i + 1} />
-                  <span className="text-sm text-gray-700 flex-1 truncate">{c._id || 'Non spécifié'}</span>
+                  <span className="text-sm text-gray-700 flex-1 truncate">{c._id || tp('Non spécifié')}</span>
                   <span className="text-sm font-semibold text-gray-900">{c.count}</span>
                   <span className="text-xs text-gray-400 w-12 text-right">{percent}%</span>
                   <div className="w-20 bg-gray-100 rounded-full h-2">
@@ -319,7 +285,7 @@ const StatsPage = () => {
               );
             })}
             {(!stats?.topCities || stats.topCities.length === 0) && (
-              <p className="text-sm text-gray-400 text-center py-4">Aucune ville</p>
+              <p className="text-sm text-gray-400 text-center py-4">{tp('Aucune ville')}</p>
             )}
           </div>
         </div>
@@ -328,22 +294,22 @@ const StatsPage = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
             <Users size={18} className="text-gray-500" />
-            Meilleurs clients
+            {tp('Meilleurs clients')}
           </h3>
           <div className="space-y-3">
             {(stats?.topClients || []).slice(0, 8).map((c, i) => (
               <div key={i} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
                 <RankBadge rank={i + 1} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">{c.clientName || 'Client'}</p>
+                  <p className="text-sm font-medium text-gray-800 truncate">{c.clientName || tp('Client')}</p>
                   <p className="text-xs text-gray-400">{c.phone}</p>
                 </div>
-                <span className="text-sm font-semibold text-gray-900">{c.orderCount} cmd</span>
+                <span className="text-sm font-semibold text-gray-900 tabular-nums">{c.orderCount} {tp('cmd')}</span>
                 <span className="text-xs text-green-600 font-medium">{fmt(c.totalSpent)}</span>
               </div>
             ))}
             {(!stats?.topClients || stats.topClients.length === 0) && (
-              <p className="text-sm text-gray-400 text-center py-4">Aucun client</p>
+              <p className="text-sm text-gray-400 text-center py-4">{tp('Aucun client')}</p>
             )}
           </div>
         </div>
@@ -353,19 +319,19 @@ const StatsPage = () => {
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow mb-6">
         <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
           <Package size={18} className="text-gray-500" />
-          Produits vendus par client et ville
+          {tp('Produits vendus par client et ville')}
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[600px]">
             <thead>
               <tr className="text-xs text-gray-500 uppercase tracking-wide border-b border-gray-100">
                 <th className="text-left py-2 px-2 w-8">#</th>
-                <th className="text-left py-2 px-2">Client</th>
-                <th className="text-left py-2 px-2">Produit</th>
-                <th className="text-left py-2 px-2">Ville</th>
-                <th className="text-right py-2 px-2">Qté</th>
-                <th className="text-right py-2 px-2">Revenu</th>
-                <th className="text-right py-2 px-2">Cmd</th>
+                <th className="text-left py-2 px-2">{tp('Client')}</th>
+                <th className="text-left py-2 px-2">{tp('Produit')}</th>
+                <th className="text-left py-2 px-2">{tp('Ville')}</th>
+                <th className="text-right py-2 px-2">{tp('Qté')}</th>
+                <th className="text-right py-2 px-2">{tp('Revenu')}</th>
+                <th className="text-right py-2 px-2">{tp('Cmd')}</th>
               </tr>
             </thead>
             <tbody>
@@ -374,19 +340,19 @@ const StatsPage = () => {
                   <td className="py-2.5 px-2"><RankBadge rank={i + 1} /></td>
                   <td className="py-2.5 px-2">
                     <p className="text-sm font-medium text-gray-800 truncate max-w-[160px]" title={item._id?.client}>
-                      {item._id?.client || 'Client inconnu'}
+                      {item._id?.client || tp('Client inconnu')}
                     </p>
-                    <p className="text-xs text-gray-400">{item.phone || 'N/A'}</p>
+                    <p className="text-xs text-gray-400">{item.phone || tp('N/A')}</p>
                   </td>
                   <td className="py-2.5 px-2">
                     <p className="text-sm text-gray-700 font-medium truncate max-w-[180px]" title={item._id?.product}>
-                      {item._id?.product || 'Produit inconnu'}
+                      {item._id?.product || tp('Produit inconnu')}
                     </p>
                   </td>
                   <td className="py-2.5 px-2">
                     <p className="text-sm text-gray-600 truncate max-w-[120px] flex items-center gap-1" title={item._id?.city}>
                       <MapPin size={12} className="shrink-0" />
-                      {item._id?.city || 'Ville inconnue'}
+                      {item._id?.city || tp('Ville inconnue')}
                     </p>
                   </td>
                   <td className="py-2.5 px-2 text-right">
@@ -403,7 +369,7 @@ const StatsPage = () => {
             </tbody>
           </table>
           {(!stats?.productsByClientCity || stats.productsByClientCity.length === 0) && (
-            <p className="text-sm text-gray-400 text-center py-8">Aucune donnée disponible</p>
+            <p className="text-sm text-gray-400 text-center py-8">{tp('Aucune donnée disponible')}</p>
           )}
         </div>
       </div>
@@ -413,7 +379,7 @@ const StatsPage = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
             <TrendingUp size={18} className="text-gray-500" />
-            Évolution quotidienne (30 derniers jours)
+            {tp('Évolution quotidienne (30 derniers jours)')}
           </h3>
           <div className="overflow-x-auto">
             <div className="flex items-end gap-1 h-40 min-w-[600px]">

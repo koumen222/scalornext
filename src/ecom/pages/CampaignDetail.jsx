@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
 import CampaignCountryModal from '../components/CampaignCountryModal.jsx';
 import ErrorBanner from '../components/ErrorBanner.jsx';
+import { tp } from '../i18n/platform.js';
 
 const CampaignDetail = () => {
   const { id } = useParams();
@@ -40,8 +41,8 @@ const CampaignDetail = () => {
   }) : '-';
 
   const statusConfig = {
-    sent: { label: 'Envoyé', color: 'bg-green-100 text-green-700', icon: '✅' },
-    failed: { label: 'Échoué', color: 'bg-red-100 text-red-700', icon: '❌' },
+    sent: { get label() { return tp('Envoyé'); }, color: 'bg-green-100 text-green-700', icon: '✅' },
+    failed: { get label() { return tp('Échoué'); }, color: 'bg-red-100 text-red-700', icon: '❌' },
     pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-700', icon: '⏳' }
   };
 
@@ -144,7 +145,7 @@ const CampaignDetail = () => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
               </svg>
-              Envoyer par pays
+              {tp('Envoyer par pays')}
             </button>
           )}
           <Link 
@@ -154,7 +155,7 @@ const CampaignDetail = () => {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
             </svg>
-            Modifier
+            {tp('Modifier')}
           </Link>
         </div>
       </div>
@@ -163,26 +164,26 @@ const CampaignDetail = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-gray-900">{campaign.stats?.targeted || 0}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Ciblés</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Ciblés')}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-green-600">{sentCount}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Envoyés</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Envoyés')}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-red-600">{failedCount}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Échecs</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Échecs')}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-primary-600">{successRate}%</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Taux succès</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Taux succès')}</div>
         </div>
       </div>
 
       {/* Message template */}
       {campaign.messageTemplate && (
         <div className="bg-white rounded-xl shadow-sm border p-5 mb-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-3">📝 Message envoyé</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-3">{tp('📝 Message envoyé')}</h2>
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <p className="text-sm text-gray-800 whitespace-pre-wrap">{campaign.messageTemplate}</p>
           </div>
@@ -239,7 +240,7 @@ const CampaignDetail = () => {
           <div className="relative w-full sm:w-64">
             <input
               type="text"
-              placeholder="Rechercher par nom ou téléphone..."
+              placeholder={tp('Rechercher par nom ou téléphone...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
@@ -266,18 +267,18 @@ const CampaignDetail = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
               </svg>
             </div>
-            <p className="text-sm text-gray-500">Aucun résultat trouvé</p>
+            <p className="text-sm text-gray-500">{tp('Aucun résultat trouvé')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Statut</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Client</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Téléphone</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Erreur</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Statut')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Client')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Téléphone')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Date')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Erreur')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -292,7 +293,7 @@ const CampaignDetail = () => {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-sm font-medium text-gray-900">{result.clientName || 'Inconnu'}</div>
+                        <div className="text-sm font-medium text-gray-900">{result.clientName || tp('Inconnu')}</div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="text-sm text-gray-600 font-mono">{result.phone || '-'}</div>

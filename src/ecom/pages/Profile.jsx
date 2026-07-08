@@ -5,6 +5,7 @@ import { useWorkspaceSwitch, SwitchOverlay } from '../hooks/useWorkspaceSwitch.j
 import { useMoney } from '../hooks/useMoney.js';
 import { usePushNotifications } from '../hooks/usePushNotifications.jsx';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const PushSection = () => {
   const { isSupported, isSubscribed, permission, loading, error, subscribeToPush, unsubscribeFromPush, sendTestNotification } = usePushNotifications();
@@ -38,19 +39,19 @@ const PushSection = () => {
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">Notifications push</p>
+            <p className="text-sm font-semibold text-gray-900">{tp('Notifications push')}</p>
             <p className="text-xs text-gray-500">
               {permission === 'denied' ? '🚫 Bloquées dans le navigateur' :
                isSubscribed ? '✅ Activées sur cet appareil' :
                '⬜ Désactivées sur cet appareil'}
             </p>
-            {testSent && <p className="text-xs text-primary-600 font-medium mt-0.5">✅ Notification de test envoyée !</p>}
+            {testSent && <p className="text-xs text-primary-600 font-medium mt-0.5">{tp('✅ Notification de test envoyée !')}</p>}
             {error && <p className="text-xs text-red-500 mt-0.5">{error}</p>}
           </div>
         </div>
 
         {permission === 'denied' ? (
-          <span className="text-xs text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg">Bloquer</span>
+          <span className="text-xs text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg">{tp('Bloquer')}</span>
         ) : (
           <button
             onClick={handleToggle}
@@ -183,7 +184,7 @@ const Profile = () => {
   };
 
   const handleDisconnectSession = async (sessionId) => {
-    if (!window.confirm('Déconnecter cette session ?')) return;
+    if (!window.confirm(tp('Déconnecter cette session ?'))) return;
     try {
       setDisconnectingSession(sessionId);
       await authApi.disconnectSession(sessionId);
@@ -196,7 +197,7 @@ const Profile = () => {
   };
 
   const handleDisconnectAllSessions = async () => {
-    if (!window.confirm('Déconnecter toutes les autres sessions ? Vous resterez connecté sur cet appareil.')) return;
+    if (!window.confirm(tp('Déconnecter toutes les autres sessions ? Vous resterez connecté sur cet appareil.'))) return;
     try {
       setDisconnectingAll(true);
       const res = await authApi.disconnectAllSessions();
@@ -319,8 +320,8 @@ const Profile = () => {
       setPwdMsg({ type: 'error', text: 'Les mots de passe ne correspondent pas' });
       return;
     }
-    if (newPassword.length < 6) {
-      setPwdMsg({ type: 'error', text: 'Le mot de passe doit contenir au moins 6 caractères' });
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
+      setPwdMsg({ type: 'error', text: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre' });
       return;
     }
     setChangingPwd(true);
@@ -361,12 +362,12 @@ const Profile = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Utilisateur non trouvé</p>
+          <p className="text-gray-600 mb-4">{tp('Utilisateur non trouvé')}</p>
           <button
             onClick={() => window.location.href = '/ecom/login'}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
           >
-            Se connecter
+            {tp('Se connecter')}
           </button>
         </div>
       </div>
@@ -385,7 +386,7 @@ const Profile = () => {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="relative w-24 h-24 bg-white rounded-2xl shadow-lg border-4 border-white group cursor-pointer"
-              title="Changer la photo de profil"
+              title={tp('Changer la photo de profil')}
             >
               {avatarPreview ? (
                 <img src={avatarPreview} alt="Avatar" className="w-full h-full rounded-xl object-cover" />
@@ -432,8 +433,8 @@ const Profile = () => {
       <div className="ecom-mobile-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="ecom-mobile-text text-base font-semibold text-gray-900">Informations personnelles</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Modifiez votre nom et numéro de téléphone</p>
+            <h2 className="ecom-mobile-text text-base font-semibold text-gray-900">{tp('Informations personnelles')}</h2>
+            <p className="text-xs text-gray-500 mt-0.5">{tp('Modifiez votre nom et numéro de téléphone')}</p>
           </div>
           {profileMsg && (
             <span className={`text-xs font-medium px-3 py-1 rounded-full ${profileMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -444,17 +445,17 @@ const Profile = () => {
         <form onSubmit={handleSaveProfile} className="p-6">
           <div className="ecom-mobile-grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nom complet</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom complet')}</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Votre nom"
+                placeholder={tp('Votre nom')}
                 className="ecom-mobile-input w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Téléphone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Téléphone')}</label>
               <input
                 type="tel"
                 value={phone}
@@ -471,10 +472,10 @@ const Profile = () => {
                 disabled
                 className="ecom-mobile-input w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
               />
-              <p className="text-[11px] text-gray-400 mt-1">L'email ne peut pas être modifié</p>
+              <p className="text-[11px] text-gray-400 mt-1">{tp('L\'email ne peut pas être modifié')}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Rôle</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Rôle')}</label>
               <input
                 type="text"
                 value={roleLabels[user?.role] || user?.role || ''}
@@ -505,8 +506,8 @@ const Profile = () => {
       {workspace && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
           <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-base font-semibold text-gray-900">Espace de travail</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Votre espace de travail actuel</p>
+            <h2 className="text-base font-semibold text-gray-900">{tp('Espace de travail')}</h2>
+            <p className="text-xs text-gray-500 mt-0.5">{tp('Votre espace de travail actuel')}</p>
           </div>
           <div className="p-6">
             <div className="flex items-center gap-4 mb-4">
@@ -522,7 +523,7 @@ const Profile = () => {
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Code d'invitation</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{tp('Code d\'invitation')}</p>
                     <p className="text-lg font-mono font-bold text-gray-900 tracking-widest mt-1">{workspace.inviteCode}</p>
                   </div>
                   <button
@@ -532,10 +533,10 @@ const Profile = () => {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
-                    Copier
+                    {tp('Copier')}
                   </button>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">Partagez ce code pour inviter des membres dans votre espace.</p>
+                <p className="text-xs text-gray-400 mt-2">{tp('Partagez ce code pour inviter des membres dans votre espace.')}</p>
               </div>
             )}
           </div>
@@ -546,8 +547,8 @@ const Profile = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Sécurité</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Gérez votre mot de passe</p>
+            <h2 className="text-base font-semibold text-gray-900">{tp('Sécurité')}</h2>
+            <p className="text-xs text-gray-500 mt-0.5">{tp('Gérez votre mot de passe')}</p>
           </div>
           {pwdMsg && (
             <span className={`text-xs font-medium px-3 py-1 rounded-full ${pwdMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -565,21 +566,21 @@ const Profile = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Mot de passe</p>
-                  <p className="text-xs text-gray-500">Changez votre mot de passe pour sécuriser votre compte</p>
+                  <p className="text-sm font-medium text-gray-900">{tp('Mot de passe')}</p>
+                  <p className="text-xs text-gray-500">{tp('Changez votre mot de passe pour sécuriser votre compte')}</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowPwdForm(true)}
                 className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-xl hover:bg-primary-100 transition"
               >
-                Modifier
+                {tp('Modifier')}
               </button>
             </div>
           ) : (
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe actuel</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Mot de passe actuel')}</label>
                 <input
                   type="password"
                   value={currentPassword}
@@ -590,24 +591,24 @@ const Profile = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Nouveau mot de passe</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nouveau mot de passe')}</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirmer</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Confirmer')}</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition outline-none"
                   />
                 </div>
@@ -618,7 +619,7 @@ const Profile = () => {
                   onClick={() => { setShowPwdForm(false); setCurrentPassword(''); setNewPassword(''); setConfirmPassword(''); }}
                   className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition"
                 >
-                  Annuler
+                  {tp('Annuler')}
                 </button>
                 <button
                   type="submit"
@@ -642,27 +643,27 @@ const Profile = () => {
       {/* Infos compte */}
       <div className="ecom-mobile-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="ecom-mobile-text text-base font-semibold text-gray-900">Informations du compte</h2>
+          <h2 className="ecom-mobile-text text-base font-semibold text-gray-900">{tp('Informations du compte')}</h2>
         </div>
         <div className="p-6">
           <div className="ecom-mobile-grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Membre depuis</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{tp('Membre depuis')}</p>
               <p className="ecom-mobile-text text-sm font-semibold text-gray-900">
                 {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
               </p>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Dernière connexion</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{tp('Dernière connexion')}</p>
               <p className="ecom-mobile-text text-sm font-semibold text-gray-900">
                 {user?.lastLogin ? new Date(user.lastLogin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
               </p>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Statut</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{tp('Statut')}</p>
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-green-700">
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                Actif
+                {tp('Actif')}
               </span>
             </div>
           </div>
@@ -689,8 +690,8 @@ const Profile = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Mes workspaces</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Basculer entre vos espaces (rôle différent selon l'espace).</p>
+              <h2 className="text-base font-semibold text-gray-900">{tp('Mes workspaces')}</h2>
+              <p className="text-xs text-gray-500 mt-0.5">{tp('Basculer entre vos espaces (rôle différent selon l\'espace).')}</p>
             </div>
             {loadingWorkspaces && (
               <div className="w-4 h-4 rounded-full border-2 border-gray-200 border-t-primary-600 animate-spin" />
@@ -707,7 +708,7 @@ const Profile = () => {
                     <p className="text-xs text-gray-500 mt-0.5">Rôle: {roleLabels[ws.role] || ws.role}</p>
                   </div>
                   {active ? (
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">Actif</span>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">{tp('Actif')}</span>
                   ) : (
                     <button
                       type="button"
@@ -715,7 +716,7 @@ const Profile = () => {
                       disabled={!!switchingWsId}
                       className="px-3 py-2 rounded-xl text-xs font-semibold bg-primary-600 text-white hover:bg-primary-700 transition disabled:opacity-50"
                     >
-                      {switchingWsId === id ? 'Switch…' : 'Basculer'}
+                      {switchingWsId === id ? 'Switch…' : tp('Basculer')}
                     </button>
                   )}
                 </div>
@@ -728,15 +729,15 @@ const Profile = () => {
       {/* Rejoindre un espace par code */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">Rejoindre un espace</h2>
-          <p className="text-xs text-gray-500 mt-0.5">Entrez un code d'invitation pour rejoindre un nouvel espace de travail.</p>
+          <h2 className="text-base font-semibold text-gray-900">{tp('Rejoindre un espace')}</h2>
+          <p className="text-xs text-gray-500 mt-0.5">{tp('Entrez un code d\'invitation pour rejoindre un nouvel espace de travail.')}</p>
         </div>
         <form onSubmit={handleJoinWorkspace} className="px-6 py-4 flex gap-3">
           <input
             type="text"
             value={joinCode}
             onChange={e => { setJoinCode(e.target.value); setJoinMsg(null); }}
-            placeholder="Code d'invitation (ex: ABC123)"
+            placeholder={tp('Code d\'invitation (ex: ABC123)')}
             className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 font-mono uppercase placeholder-normal"
             style={{ textTransform: 'none' }}
             maxLength={32}
@@ -747,7 +748,7 @@ const Profile = () => {
             disabled={joiningWorkspace || !joinCode.trim()}
             className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-primary-600 text-white hover:bg-primary-700 transition disabled:opacity-50 flex-shrink-0"
           >
-            {joiningWorkspace ? 'Envoi…' : 'Rejoindre'}
+            {joiningWorkspace ? 'Envoi…' : tp('Rejoindre')}
           </button>
         </form>
         {joinMsg && (
@@ -764,8 +765,8 @@ const Profile = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-bold text-gray-800">Sessions actives</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Gérez vos appareils connectés</p>
+            <h2 className="text-sm font-bold text-gray-800">{tp('Sessions actives')}</h2>
+            <p className="text-xs text-gray-400 mt-0.5">{tp('Gérez vos appareils connectés')}</p>
           </div>
           {sessions.length > 1 && (
             <button
@@ -773,7 +774,7 @@ const Profile = () => {
               disabled={disconnectingAll}
               className="px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition disabled:opacity-50"
             >
-              {disconnectingAll ? 'Déconnexion...' : 'Déconnecter tout'}
+              {disconnectingAll ? 'Déconnexion...' : tp('Déconnecter tout')}
             </button>
           )}
         </div>
@@ -791,7 +792,7 @@ const Profile = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <p className="text-sm text-gray-500">Aucune session active</p>
+              <p className="text-sm text-gray-500">{tp('Aucune session active')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -818,18 +819,18 @@ const Profile = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <p className="text-sm font-semibold text-gray-900 truncate">
-                            {session.browser || 'Navigateur inconnu'} · {session.os || session.device || 'Appareil inconnu'}
+                            {session.browser || tp('Navigateur inconnu')} · {session.os || session.device || tp('Appareil inconnu')}
                           </p>
                           {session.isCurrent && (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-100 text-primary-700 flex-shrink-0">
                               <span className="w-1.5 h-1.5 bg-primary-600 rounded-full"></span>
-                              Session actuelle
+                              {tp('Session actuelle')}
                             </span>
                           )}
                           {!session.isCurrent && isRecent && (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-100 text-primary-700 flex-shrink-0">
                               <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse"></span>
-                              Active
+                              {tp('Active')}
                             </span>
                           )}
                         </div>
@@ -886,7 +887,7 @@ const Profile = () => {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          Se déconnecter
+          {tp('Se déconnecter')}
         </button>
       </div>
     </div>

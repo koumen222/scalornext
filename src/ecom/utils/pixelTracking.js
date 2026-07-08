@@ -94,6 +94,11 @@ export function injectPixelScripts(pixels) {
   const { metaPixelId, tiktokPixelId, googleTagId, snapchatPixelId } = pixels;
   _pixels = pixels;
 
+  // IDs déjà initialisés par plateforme — permet la ré-init si le marchand
+  // change d'ID sans recharger (avant : guard `if (!window.fbq)` = no-op silencieux)
+  window.__scalorPixelInit = window.__scalorPixelInit || { meta: new Set(), tiktok: new Set(), google: new Set(), snap: new Set() };
+  const inited = window.__scalorPixelInit;
+
   // ─── Meta Pixel ──────────────────────────────────────────────────────────────
   if (metaPixelId && typeof window !== 'undefined') {
     if (!window.fbq) {
@@ -113,7 +118,14 @@ export function injectPixelScripts(pixels) {
         s = b.getElementsByTagName(e)[0];
         s.parentNode.insertBefore(t, s);
       })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    }
+    if (!inited.meta.has(metaPixelId)) {
+      inited.meta.add(metaPixelId);
       window.fbq('init', metaPixelId);
+      // Code de base Meta officiel : init DOIT être suivi d'un PageView.
+      // Sans lui, Events Manager considère le pixel inactif ("le pixel ne donne pas").
+      window.fbq('track', 'PageView');
+      window.__scalorLastPV = window.location.href; // évite le doublon avec le PageView explicite
     }
   }
 
@@ -153,6 +165,10 @@ export function injectPixelScripts(pixels) {
         ttq.load(tiktokPixelId);
         ttq.page();
       })(window, document, 'ttq');
+      inited.tiktok.add(tiktokPixelId);
+    } else if (!inited.tiktok.has(tiktokPixelId)) {
+      inited.tiktok.add(tiktokPixelId);
+      try { window.ttq.load(tiktokPixelId); window.ttq.page(); } catch { /* noop */ }
     }
   }
 
@@ -167,13 +183,16 @@ export function injectPixelScripts(pixels) {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function() { window.dataLayer.push(arguments); };
       window.gtag('js', new Date());
+    }
+    if (!inited.google.has(googleTagId)) {
+      inited.google.add(googleTagId);
       window.gtag('config', googleTagId);
-
-      // Google Ads conversion tracking if configured
-      const { googleAdsId } = pixels;
-      if (googleAdsId) {
-        window.gtag('config', googleAdsId);
-      }
+    }
+    // Google Ads conversion tracking if configured
+    const { googleAdsId } = pixels;
+    if (googleAdsId && !inited.google.has(googleAdsId)) {
+      inited.google.add(googleAdsId);
+      window.gtag('config', googleAdsId);
     }
   }
 
@@ -193,6 +212,9 @@ export function injectPixelScripts(pixels) {
         var u = t.getElementsByTagName(s)[0];
         u.parentNode.insertBefore(r, u);
       })(window, document, 'https://sc-static.net/scevent.min.js');
+    }
+    if (!inited.snap.has(snapchatPixelId)) {
+      inited.snap.add(snapchatPixelId);
       window.snaptr('init', snapchatPixelId);
       window.snaptr('track', 'PAGE_VIEW');
     }
@@ -218,6 +240,24 @@ export function firePixelEvent(eventName, params = {}) {
     eventID,
   } = params;
   const resolvedEventId = eventId || eventID;
+
+  // ─── PageView : traitement unifié toutes plateformes ─────────────────────
+  // - anti-doublon par URL (l'injection envoie déjà le PageView du code de base)
+  // - navigations SPA : nouvelle URL → PageView renvoyé partout (TikTok/Snap
+  //   ne recevaient AUCUN page view après la première page avant ce fix)
+  if (eventName === 'PageView') {
+    const href = window.location.href;
+    if (window.__scalorLastPV === href) return;
+    window.__scalorLastPV = href;
+    if (window.fbq) {
+      if (resolvedEventId) window.fbq('track', 'PageView', {}, { eventID: resolvedEventId });
+      else window.fbq('track', 'PageView');
+    }
+    if (window.ttq) { try { window.ttq.page(); } catch { /* noop */ } }
+    if (window.gtag) window.gtag('event', 'page_view');
+    if (window.snaptr) window.snaptr('track', 'PAGE_VIEW');
+    return;
+  }
 
   // ─── Meta Pixel ──────────────────────────────────────────────────────────
   if (window.fbq) {

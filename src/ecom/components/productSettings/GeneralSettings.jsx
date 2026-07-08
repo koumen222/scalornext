@@ -2,6 +2,7 @@ import React from 'react';
 import { Settings } from 'lucide-react';
 import SectionCard from './SectionCard';
 import ToggleSwitch from './ToggleSwitch';
+import { tp } from '../../i18n/platform.js';
 
 const GeneralSettings = ({ config, onChange }) => {
   const update = (key, value) => {
@@ -10,7 +11,7 @@ const GeneralSettings = ({ config, onChange }) => {
 
   return (
     <div className="space-y-5">
-      <SectionCard icon={<Settings size={18} />} title="General Settings" description="Control which sections appear on your product page.">
+      <SectionCard icon={<Settings size={18} />} title={tp('General Settings')} description="Control which sections appear on your product page.">
         <ToggleSwitch
           label="Customer Reviews"
           description="Show a reviews section on the product page"
@@ -31,7 +32,7 @@ const GeneralSettings = ({ config, onChange }) => {
         />
 
         <div className="pt-3 border-t border-gray-100 mt-3">
-          <label className="block text-xs font-semibold text-gray-700 mb-2">Form Display Type</label>
+          <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Form Display Type')}</label>
           <div className="flex gap-3">
             {['embedded', 'popup'].map((type) => (
               <button
@@ -43,7 +44,7 @@ const GeneralSettings = ({ config, onChange }) => {
                     : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                 }`}
               >
-                {type === 'embedded' ? 'Embedded' : 'Popup'}
+                {type === 'embedded' ? 'Embedded' : tp('Popup')}
               </button>
             ))}
           </div>

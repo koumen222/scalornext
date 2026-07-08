@@ -4,6 +4,7 @@ import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } 
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Eye, EyeOff, ChevronDown, ChevronUp, Plus, Trash2, Star, Upload, Loader2, AlertCircle, X, Image } from 'lucide-react';
 import { storeProductsApi } from '../../services/storeApi.js';
+import { tp } from '../../i18n/platform.js';
 
 const SECTION_META = {
   heroSlogan:       { icon: '✍️', desc: 'Sous-titre marketing généré par IA' },
@@ -106,16 +107,16 @@ const BlocksTestimonialCard = ({ t, i, updateT, removeT }) => {
         )}
         <label className="flex items-center gap-1 px-2 py-1 text-[10px] bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition">
           {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
-          <span>{t.image ? 'Changer' : 'Photo'}</span>
+          <span>{t.image ? 'Changer' : tp('Photo')}</span>
           <input type="file" accept="image/*" className="hidden"
             onChange={e => handleUpload(e.target.files?.[0])} />
         </label>
       </div>
       <div className="grid grid-cols-2 gap-1.5">
-        <input className={inputCls} value={t.name} onChange={e => updateT(i, 'name', e.target.value)} placeholder="Prénom Nom" />
-        <input className={inputCls} value={t.location || ''} onChange={e => updateT(i, 'location', e.target.value)} placeholder="Ville" />
+        <input className={inputCls} value={t.name} onChange={e => updateT(i, 'name', e.target.value)} placeholder={tp('Prénom Nom')} />
+        <input className={inputCls} value={t.location || ''} onChange={e => updateT(i, 'location', e.target.value)} placeholder={tp('Ville')} />
       </div>
-      <textarea className={inputCls + ' resize-none'} rows={2} value={t.text} onChange={e => updateT(i, 'text', e.target.value)} placeholder="Texte du témoignage…" />
+      <textarea className={inputCls + ' resize-none'} rows={2} value={t.text} onChange={e => updateT(i, 'text', e.target.value)} placeholder={tp('Texte du témoignage…')} />
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           {[1,2,3,4,5].map(n => (
@@ -125,14 +126,14 @@ const BlocksTestimonialCard = ({ t, i, updateT, removeT }) => {
             </button>
           ))}
         </div>
-        <input className={inputCls + ' flex-1'} value={t.date || ''} onChange={e => updateT(i, 'date', e.target.value)} placeholder="Ex: Il y a 2 jours" />
+        <input className={inputCls + ' flex-1'} value={t.date || ''} onChange={e => updateT(i, 'date', e.target.value)} placeholder={tp('Ex: Il y a 2 jours')} />
       </div>
     </div>
   );
 };
 const PRODUCT_GALLERY_DEFAULTS = {
   title: 'Photos du produit',
-  subtitle: 'Faites défiler les visuels avant de commander',
+  get subtitle() { return tp('Faites défiler les visuels avant de commander'); },
   showHeader: true,
   useProductImages: true,
   images: [],
@@ -157,7 +158,7 @@ const SectionContentEditor = ({ section, onChange }) => {
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [galleryUploadError, setGalleryUploadError] = useState('');
   if (!schema) return (
-    <div className="text-[11px] text-gray-400 italic py-1">Contenu généré automatiquement par l'IA</div>
+    <div className="text-[11px] text-gray-400 italic py-1">{tp('Contenu généré automatiquement par l\'IA')}</div>
   );
 
   const content = section.content || {};
@@ -173,16 +174,16 @@ const SectionContentEditor = ({ section, onChange }) => {
     };
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">Statistiques (3 max)</div>
+        <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Statistiques (3 max)')}</div>
         {stats.slice(0, 3).map((st, i) => (
           <div key={i} className="flex gap-2">
             <input className={inputCls + " w-20 shrink-0"} value={st.value} onChange={e => updateStat(i, 'value', e.target.value)}
               placeholder="1200+" />
             <input className={inputCls + " flex-1"} value={st.label} onChange={e => updateStat(i, 'label', e.target.value)}
-              placeholder="Clients satisfaits" />
+              placeholder={tp('Clients satisfaits')} />
           </div>
         ))}
-        <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA</div>
+        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
       </div>
     );
   }
@@ -195,7 +196,7 @@ const SectionContentEditor = ({ section, onChange }) => {
     const removeItem = (i) => update('items', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-1.5">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || 'Éléments'}</div>
+        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || tp('Éléments')}</div>
         {items.map((item, i) => (
           <div key={i} className="flex gap-1.5 items-center">
             <input className={inputCls + " flex-1"} value={item} onChange={e => updateItem(i, e.target.value)}
@@ -208,7 +209,7 @@ const SectionContentEditor = ({ section, onChange }) => {
         <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1">
           <Plus size={12} /> Ajouter
         </button>
-        <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA</div>
+        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
       </div>
     );
   }
@@ -221,24 +222,24 @@ const SectionContentEditor = ({ section, onChange }) => {
     const removeFaq = (i) => update('faqItems', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">Questions fréquentes</div>
+        <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Questions fréquentes')}</div>
         {items.map((item, i) => (
           <div key={i} className="rounded-lg border border-gray-100 p-2 bg-gray-50/50 space-y-1.5">
             <div className="flex gap-1.5 items-center">
               <input className={inputCls + " flex-1"} value={item.question} onChange={e => updateFaq(i, 'question', e.target.value)}
-                placeholder="Question…" />
+                placeholder={tp('Question…')} />
               {items.length > 1 && (
                 <button onClick={() => removeFaq(i)} className="p-1 text-gray-300 hover:text-red-400 transition-colors shrink-0"><Trash2 size={12} /></button>
               )}
             </div>
             <textarea className={inputCls + " resize-none"} rows={2} value={item.answer} onChange={e => updateFaq(i, 'answer', e.target.value)}
-              placeholder="Réponse…" />
+              placeholder={tp('Réponse…')} />
           </div>
         ))}
         <button onClick={addFaq} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1">
           <Plus size={12} /> Ajouter une question
         </button>
-        <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA / produit</div>
+        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA / produit')}</div>
       </div>
     );
   }
@@ -252,7 +253,7 @@ const SectionContentEditor = ({ section, onChange }) => {
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] font-semibold text-gray-500">Témoignages clients</span>
+          <span className="text-[11px] font-semibold text-gray-500">{tp('Témoignages clients')}</span>
           <span className="text-[10px] text-gray-400">{items.length} ajouté{items.length !== 1 ? 's' : ''}</span>
         </div>
         {items.length === 0 && (
@@ -324,21 +325,21 @@ const SectionContentEditor = ({ section, onChange }) => {
       <div className="space-y-3">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" checked={gallery.showHeader !== false} onChange={e => update('showHeader', e.target.checked)} className="w-4 h-4 accent-primary-500" />
-          <span className="text-[12px] text-gray-600">Afficher le titre de la section</span>
+          <span className="text-[12px] text-gray-600">{tp('Afficher le titre de la section')}</span>
         </label>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Titre</div>
-            <input className={inputCls} value={gallery.title || ''} onChange={e => update('title', e.target.value)} placeholder="Photos du produit" />
+            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Titre')}</div>
+            <input className={inputCls} value={gallery.title || ''} onChange={e => update('title', e.target.value)} placeholder={tp('Photos du produit')} />
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Sous-titre</div>
-            <input className={inputCls} value={gallery.subtitle || ''} onChange={e => update('subtitle', e.target.value)} placeholder="Faites défiler les visuels..." />
+            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Sous-titre')}</div>
+            <input className={inputCls} value={gallery.subtitle || ''} onChange={e => update('subtitle', e.target.value)} placeholder={tp('Faites défiler les visuels...')} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Hauteur image principale</div>
+            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Hauteur image principale')}</div>
             <select className={inputCls} value={mainImageHeight} onChange={e => update('mainImageHeight', Number.parseInt(e.target.value, 10))}>
               {MAIN_IMAGE_HEIGHT_OPTIONS.map((size) => (
                 <option key={size} value={size}>{size}px</option>
@@ -346,7 +347,7 @@ const SectionContentEditor = ({ section, onChange }) => {
             </select>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Taille miniatures</div>
+            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Taille miniatures')}</div>
             <select className={inputCls} value={thumbnailSize} onChange={e => update('thumbnailSize', Number.parseInt(e.target.value, 10))}>
               {THUMBNAIL_SIZE_OPTIONS.map((size) => (
                 <option key={size} value={size}>{size}px</option>
@@ -356,11 +357,11 @@ const SectionContentEditor = ({ section, onChange }) => {
         </div>
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" checked={gallery.useProductImages !== false} onChange={e => update('useProductImages', e.target.checked)} className="w-4 h-4 accent-primary-500" />
-          <span className="text-[12px] text-gray-600">Utiliser aussi les photos natives du produit</span>
+          <span className="text-[12px] text-gray-600">{tp('Utiliser aussi les photos natives du produit')}</span>
         </label>
         <div className="space-y-2 rounded-xl border border-gray-200 bg-gray-50/60 p-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-gray-700">Photos personnalisées</span>
+            <span className="text-[11px] font-semibold text-gray-700">{tp('Photos personnalisées')}</span>
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-primary-200 bg-primary-50 text-[11px] font-semibold text-primary-700 cursor-pointer hover:bg-primary-100 transition">
                 {galleryUploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
@@ -390,7 +391,7 @@ const SectionContentEditor = ({ section, onChange }) => {
             </div>
           )}
           {images.length === 0 && (
-            <div className="text-[10px] text-gray-400">Uploadez vos images ou collez une URL. Si l'option ci-dessus est activée, elles seront ajoutées au carrousel; sinon elles remplaceront les photos produit.</div>
+            <div className="text-[10px] text-gray-400">{tp('Uploadez vos images ou collez une URL. Si l\'option ci-dessus est activée, elles seront ajoutées au carrousel; sinon elles remplaceront les photos produit.')}</div>
           )}
           {images.map((image, index) => (
             <div key={index} className="rounded-lg border border-gray-200 bg-white p-2 space-y-2">
@@ -426,7 +427,7 @@ const SectionContentEditor = ({ section, onChange }) => {
                   }}
                 />
               </label>
-              <input className={inputCls} value={image.alt || ''} onChange={e => updateImage(index, 'alt', e.target.value)} placeholder="Texte alternatif (optionnel)" />
+              <input className={inputCls} value={image.alt || ''} onChange={e => updateImage(index, 'alt', e.target.value)} placeholder={tp('Texte alternatif (optionnel)')} />
             </div>
           ))}
         </div>
@@ -444,16 +445,16 @@ const SectionContentEditor = ({ section, onChange }) => {
     const removeItem = (i) => update('items', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || 'Éléments'}</div>
+        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || tp('Éléments')}</div>
         {items.map((item, i) => (
           <div key={i} className="flex gap-1.5 items-center">
             <input className={inputCls + " w-12 text-center shrink-0"} value={item.icon || ''} onChange={e => updateItem(i, 'icon', e.target.value)} placeholder={schema.iconPlaceholder || '🚚'} />
-            <input className={inputCls + " flex-1"} value={item.text || ''} onChange={e => updateItem(i, 'text', e.target.value)} placeholder={schema.textPlaceholder || 'Texte'} />
+            <input className={inputCls + " flex-1"} value={item.text || ''} onChange={e => updateItem(i, 'text', e.target.value)} placeholder={schema.textPlaceholder || tp('Texte')} />
             {items.length > 1 && <button onClick={() => removeItem(i)} className="p-1 text-gray-300 hover:text-red-400 transition-colors shrink-0"><Trash2 size={12} /></button>}
           </div>
         ))}
-        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1"><Plus size={12} /> Ajouter</button>
-        <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA</div>
+        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1"><Plus size={12} /> {tp('Ajouter')}</button>
+        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
       </div>
     );
   }
@@ -517,7 +518,7 @@ const SectionContentEditor = ({ section, onChange }) => {
           </div>
         );
       })}
-      <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA</div>
+      <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
     </div>
   );
 };

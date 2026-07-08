@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, AlertCircle, Zap } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
 
 const PlanLimitsDisplay = ({ plan, limits }) => {
   if (!limits || !limits.label) {
@@ -18,13 +19,13 @@ const PlanLimitsDisplay = ({ plan, limits }) => {
           <p className="font-semibold text-gray-900 text-sm">Plan {limits.label}</p>
           <div className="grid grid-cols-2 gap-3 mt-2">
             <div>
-              <p className="text-xs text-gray-600">Messages/jour</p>
+              <p className="text-xs text-gray-600">{tp('Messages/jour')}</p>
               <p className="text-lg font-bold text-gray-900">
                 {isUnlimited ? '∞' : messagesPerDay?.toLocaleString('fr-FR')}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-600">Messages/mois</p>
+              <p className="text-xs text-gray-600">{tp('Messages/mois')}</p>
               <p className="text-lg font-bold text-gray-900">
                 {isUnlimited ? '∞' : messagesPerMonth?.toLocaleString('fr-FR')}
               </p>

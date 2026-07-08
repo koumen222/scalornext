@@ -6,6 +6,7 @@ import { Package, Bot, Zap, Clock, CheckCircle2, CalendarDays, CreditCard, Shiel
 import PaymentModalFrame from '../components/PaymentModalFrame.jsx';
 import { PAYMENT_COUNTRY_CODES } from '../constants/paymentCountryCodes.js';
 import { clearPendingPlanSelection, getPendingPlanSelection } from '../utils/pendingPlanFlow.js';
+import { tp } from '../i18n/platform.js';
 
 // ─── Plan definitions (static template — prices overridden at runtime from DB) ────────────
 const BASE_PLAN_TIERS = [
@@ -255,8 +256,8 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    if (!clientName.trim() || clientName.trim().length < 2) { setError('Nom complet requis (min. 2 caractères).'); return; }
-    if (!phoneLocal.trim() || phoneLocal.trim().length < 7) { setError('Numéro valide requis (min. 7 chiffres).'); return; }
+    if (!clientName.trim() || clientName.trim().length < 2) { setError(tp('Nom complet requis (min. 2 caractères).')); return; }
+    if (!phoneLocal.trim() || phoneLocal.trim().length < 7) { setError(tp('Numéro valide requis (min. 7 chiffres).')); return; }
 
     setLoading(true);
     try {
@@ -295,19 +296,19 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid gap-4 rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
           <div>
-            <label className={labelClassName}>Nom complet</label>
+            <label className={labelClassName}>{tp('Nom complet')}</label>
             <input
               type="text"
               value={clientName}
               onChange={e => setClientName(e.target.value)}
-              placeholder="Votre nom complet"
+              placeholder={tp('Votre nom complet')}
               className={inputClassName}
               required
             />
           </div>
 
           <div>
-            <label className={labelClassName}>Numero Mobile Money</label>
+            <label className={labelClassName}>{tp('Numero Mobile Money')}</label>
             <select
               value={country}
               onChange={e => setCountry(e.target.value)}
@@ -340,7 +341,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
         </div>
 
         <div className="rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
-          <label className={labelClassName}>Code promo (optionnel)</label>
+          <label className={labelClassName}>{tp('Code promo (optionnel)')}</label>
           {appliedPromo ? (
             <div className="flex items-center justify-between rounded-[18px] border border-primary-200 bg-primary-50 p-3.5">
               <div>
@@ -356,7 +357,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
                 onClick={handleRemovePromo}
                 className="text-xs font-semibold text-primary-700 hover:text-primary-900"
               >
-                Retirer
+                {tp('Retirer')}
               </button>
             </div>
           ) : (
@@ -375,7 +376,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
                   disabled={promoLoading || !promoInput.trim()}
                   className="rounded-[18px] bg-[#EEF4EF] px-4 py-3 text-sm font-black text-[#355646] transition hover:bg-[#E4EEE6] disabled:opacity-50"
                 >
-                  {promoLoading ? '…' : 'Appliquer'}
+                  {promoLoading ? '…' : tp('Appliquer')}
                 </button>
               </div>
               {promoError && <p className="mt-2 text-xs font-medium text-red-600">{promoError}</p>}
@@ -386,7 +387,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
         {appliedPromo && (
           <div className="space-y-1 rounded-[20px] border border-[#E2EAE4] bg-[#F7FBF8] p-4 text-sm shadow-[0_16px_40px_rgba(15,107,79,0.05)]">
             <div className="flex justify-between text-gray-500">
-              <span>Sous-total</span>
+              <span>{tp('Sous-total')}</span>
               <span className="line-through">{formatAmount(plan.price)} FCFA</span>
             </div>
             <div className="flex justify-between font-medium text-primary-600">
@@ -394,7 +395,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
               <span>-{formatAmount(appliedPromo.discountAmount)} FCFA</span>
             </div>
             <div className="flex justify-between border-t border-[#DDE6DF] pt-2 font-bold text-gray-900">
-              <span>Total</span>
+              <span>{tp('Total')}</span>
               <span>{formatAmount(finalPrice)} FCFA</span>
             </div>
           </div>
@@ -486,16 +487,16 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
         <div className="mb-6">
           {tier.free ? (
             <>
-              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>À partir de</p>
+              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('À partir de')}</p>
               <div className="flex items-end gap-1.5">
                 <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-gray-900'}`}>0</span>
                 <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>FCFA</span>
               </div>
-              <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>Sans carte bancaire requise</p>
+              <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('Sans carte bancaire requise')}</p>
             </>
           ) : (
             <>
-              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>À partir de</p>
+              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('À partir de')}</p>
               <div className="flex items-end gap-2">
                 {originalPrice && (
                   <span className={`text-xl font-bold line-through mb-0.5 ${isPopular ? 'text-primary-300' : 'text-gray-300'}`}>
@@ -505,7 +506,7 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
                 <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-gray-900'}`}>
                   {formatAmount(displayPerMonth)}
                 </span>
-                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>FCFA/mois</span>
+                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('FCFA/mois')}</span>
               </div>
               {isPromoApplied && (
                 <p className={`text-xs font-bold mt-1.5 ${isPopular ? 'text-white' : 'text-primary-600'}`}>
@@ -519,7 +520,7 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
               )}
               {!isAnnual && !isPromoApplied && (
                 <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>
-                  Facturation mensuelle, sans engagement
+                  {tp('Facturation mensuelle, sans engagement')}
                 </p>
               )}
             </>
@@ -531,12 +532,12 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
           {isCurrentPlan ? (
             <div className={`w-full py-3 rounded-xl text-center text-sm font-bold border
               ${isPopular ? 'bg-white/10 text-white border-white/20' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
-              Plan actuel
+              {tp('Plan actuel')}
             </div>
           ) : tier.free ? (
             <div className={`w-full py-3 rounded-xl text-center text-sm font-semibold border
               ${isPopular ? 'bg-white/10 text-white border-white/20' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-              Commencer gratuitement
+              {tp('Commencer gratuitement')}
             </div>
           ) : (
             <button
@@ -556,7 +557,7 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
         {/* Features */}
         <div>
           <p className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>
-            Fonctionnalités clés
+            {tp('Fonctionnalités clés')}
           </p>
           <ul className="space-y-3">
             {includedFeatures.map((f, i) => (
@@ -578,10 +579,10 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
 // StatusBadge
 function StatusBadge({ status }) {
   const cfg = {
-    paid:      { label: 'Payé',       cls: 'bg-primary-50 text-primary-700' },
+    paid:      { get label() { return tp('Payé'); },       cls: 'bg-primary-50 text-primary-700' },
     pending:   { label: 'En attente', cls: 'bg-amber-50 text-amber-700' },
-    failure:   { label: 'Échoué',     cls: 'bg-red-50 text-red-700' },
-    'no paid': { label: 'Non payé',   cls: 'bg-gray-100 text-gray-600' },
+    failure:   { get label() { return tp('Échoué'); },     cls: 'bg-red-50 text-red-700' },
+    'no paid': { get label() { return tp('Non payé'); },   cls: 'bg-gray-100 text-gray-600' },
   }[status] || { label: status, cls: 'bg-gray-100 text-gray-600' };
   return <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold ${cfg.cls}`}>{cfg.label}</span>;
 }
@@ -749,7 +750,7 @@ export default function BillingPage() {
           <div className="flex items-center gap-4">
             <Link to="/ecom/dashboard" className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition">
               <ArrowLeftIcon />
-              <span className="text-sm font-medium hidden sm:inline">Retour</span>
+              <span className="text-sm font-medium hidden sm:inline">{tp('Retour')}</span>
             </Link>
             <div className="h-6 w-px bg-gray-200 hidden sm:block" />
             <div className="flex items-center">
@@ -759,13 +760,13 @@ export default function BillingPage() {
           <div className="flex items-center gap-3">
             {history.length > 0 && (
               <button onClick={() => setShowHistory(!showHistory)} className="text-xs font-semibold text-gray-500 hover:text-gray-900 transition px-3 py-2 rounded-lg hover:bg-gray-100">
-                Historique
+                {tp('Historique')}
               </button>
             )}
             {isActivePaid && (
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-50 border border-primary-200">
                 <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
-                <span className="text-[11px] font-bold text-primary-700">{planTiers.find(t => t.id === currentPlan)?.name || 'Actif'}</span>
+                <span className="text-[11px] font-bold text-primary-700">{planTiers.find(t => t.id === currentPlan)?.name || tp('Actif')}</span>
               </div>
             )}
           </div>
@@ -777,7 +778,7 @@ export default function BillingPage() {
         <div className="bg-amber-50 border-b border-amber-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3 text-sm text-amber-800">
             <svg className="animate-spin w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-            <span><strong>Vérification du paiement en cours…</strong> Votre plan sera activé automatiquement.</span>
+            <span><strong>{tp('Vérification du paiement en cours…')}</strong> {tp('Votre plan sera activé automatiquement.')}</span>
           </div>
         </div>
       )}
@@ -812,7 +813,7 @@ export default function BillingPage() {
                 ) : (
                   <div className="text-right flex-shrink-0">
                     <p className="text-lg font-black">{remainingDays}j</p>
-                    <p className="text-white/50 text-[10px]">restants</p>
+                    <p className="text-white/50 text-[10px]">{tp('restants')}</p>
                   </div>
                 )}
               </div>
@@ -839,18 +840,18 @@ export default function BillingPage() {
             {/* Upgrade section */}
             <div id="upgrade-section" className="pt-6">
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-black text-gray-900">{isTrial ? 'Choisissez votre plan' : 'Changer de plan'}</h2>
+                <h2 className="text-2xl font-black text-gray-900">{isTrial ? 'Choisissez votre plan' : tp('Changer de plan')}</h2>
                 <p className="text-gray-500 text-sm mt-2">{isTrial ? 'Votre essai gratuit prend fin bientôt. Choisissez un plan pour continuer.' : 'Passez à un plan supérieur ou changez d\'offre à tout moment.'}</p>
               </div>
 
               <div className="flex items-center justify-center gap-3 mb-6">
-                <span className={`text-sm font-semibold transition ${!isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>Mensuel</span>
+                <span className={`text-sm font-semibold transition ${!isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>{tp('Mensuel')}</span>
                 <button onClick={() => setIsAnnual(!isAnnual)}
                   className={`relative w-14 h-7 rounded-full transition-colors ${isAnnual ? 'bg-blue-600' : 'bg-gray-300'}`}>
                   <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${isAnnual ? 'translate-x-7' : ''}`} />
                 </button>
-                <span className={`text-sm font-semibold transition ${isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>Annuel</span>
-                {isAnnual && <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-full">Jusqu'à -25%</span>}
+                <span className={`text-sm font-semibold transition ${isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>{tp('Annuel')}</span>
+                {isAnnual && <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-full">{tp('Jusqu\'à -25%')}</span>}
               </div>
 
               {/* Promo code input (global) */}
@@ -864,18 +865,18 @@ export default function BillingPage() {
                     value={globalPromo}
                     onChange={e => setGlobalPromo(e.target.value.toUpperCase())}
                     disabled={globalPromoData !== null}
-                    placeholder="Avez-vous un code promo ?"
+                    placeholder={tp('Avez-vous un code promo ?')}
                     className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition shadow-sm uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
                   />
                   {!globalPromoData ? (
                     <button type="submit" disabled={globalPromoLoading || !globalPromo.trim()}
                       className="absolute inset-y-1 right-1 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full text-xs font-bold transition disabled:opacity-50">
-                      {globalPromoLoading ? '…' : 'Appliquer'}
+                      {globalPromoLoading ? '…' : tp('Appliquer')}
                     </button>
                   ) : (
                     <button type="button" onClick={handleClearGlobalPromo}
                       className="absolute inset-y-1 right-1 px-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full text-xs font-bold transition">
-                      Retirer
+                      {tp('Retirer')}
                     </button>
                   )}
                 </form>
@@ -900,7 +901,7 @@ export default function BillingPage() {
 
             {/* Full features list */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6 mt-10">
-              <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">Fonctionnalités incluses</h3>
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">{tp('Fonctionnalités incluses')}</h3>
               <div className="grid sm:grid-cols-2 gap-2.5">
                 {activeTier.features.map((f, i) => (
                   <div key={i} className={`flex items-center gap-2.5 text-[13px] ${f.included ? 'text-gray-700' : 'text-gray-300'}`}>
@@ -917,7 +918,7 @@ export default function BillingPage() {
             {/* Payment history inline */}
             {history.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-200 p-6 mt-4">
-                <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">Derniers paiements</h3>
+                <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">{tp('Derniers paiements')}</h3>
                 <div className="space-y-3">
                   {history.slice(0, 3).map(p => (
                     <div key={p._id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
@@ -960,7 +961,7 @@ export default function BillingPage() {
                   <span className="text-xs font-bold text-primary-700">
                     Plan actuel : {planTiers.find(t => t.id === currentPlan)?.name || currentPlan}
                   </span>
-                  <span className="text-xs text-primary-600 ml-1">— Actif</span>
+                  <span className="text-xs text-primary-600 ml-1">{tp('— Actif')}</span>
                 </div>
               )}
 
@@ -976,7 +977,7 @@ export default function BillingPage() {
               {!loading && !isActivePaid && !isTrial && !trialUsed && (
                 <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-full px-4 py-1.5 mb-6">
                   <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
-                  <span className="text-xs font-bold text-primary-700">Essai gratuit 7 jours disponible</span>
+                  <span className="text-xs font-bold text-primary-700">{tp('Essai gratuit 7 jours disponible')}</span>
                   <button onClick={handleActivateTrial} disabled={trialLoading}
                     className="text-xs font-black text-primary-600 hover:text-primary-800 transition disabled:opacity-50 ml-1">
                     {trialLoading ? '…' : 'Activer →'}
@@ -996,12 +997,12 @@ export default function BillingPage() {
                 <button
                   onClick={() => setIsAnnual(false)}
                   className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                  Mensuel
+                  {tp('Mensuel')}
                 </button>
                 <button
                   onClick={() => setIsAnnual(true)}
                   className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                  Annuel
+                  {tp('Annuel')}
                   <span className="text-[10px] font-black bg-primary-500 text-white px-1.5 py-0.5 rounded-full">-25%</span>
                 </button>
               </div>
@@ -1017,18 +1018,18 @@ export default function BillingPage() {
                     value={globalPromo}
                     onChange={e => setGlobalPromo(e.target.value.toUpperCase())}
                     disabled={globalPromoData !== null}
-                    placeholder="Code promo ?"
+                    placeholder={tp('Code promo ?')}
                     className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
                   />
                   {!globalPromoData ? (
                     <button type="submit" disabled={globalPromoLoading || !globalPromo.trim()}
                       className="absolute inset-y-1 right-1 px-4 bg-gray-900 hover:bg-gray-700 text-white rounded-full text-xs font-bold transition disabled:opacity-40">
-                      {globalPromoLoading ? '…' : 'Appliquer'}
+                      {globalPromoLoading ? '…' : tp('Appliquer')}
                     </button>
                   ) : (
                     <button type="button" onClick={handleClearGlobalPromo}
                       className="absolute inset-y-1 right-1 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full text-xs font-bold transition">
-                      Retirer
+                      {tp('Retirer')}
                     </button>
                   )}
                 </form>
@@ -1056,12 +1057,12 @@ export default function BillingPage() {
 
             {/* Comparison table (desktop) */}
             <div className="hidden lg:block mt-20">
-              <h2 className="text-2xl font-black text-gray-900 text-center mb-10">Comparaison détaillée</h2>
+              <h2 className="text-2xl font-black text-gray-900 text-center mb-10">{tp('Comparaison détaillée')}</h2>
               <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-100">
-                      <th className="text-left px-6 py-5 text-gray-500 font-medium w-[40%]">Fonctionnalité</th>
+                      <th className="text-left px-6 py-5 text-gray-500 font-medium w-[40%]">{tp('Fonctionnalité')}</th>
                       {planTiers.map(t => (
                         <th key={t.id} className="px-4 py-5 text-center">
                           <span className="text-base font-black text-gray-900">{t.name}</span>
@@ -1077,10 +1078,10 @@ export default function BillingPage() {
                       { label: 'Boutique en ligne', values: [true, true, true] },
                       { label: 'Tableau de bord', values: [true, true, true] },
                       { label: 'Agent IA WhatsApp', values: [false, '1 agent', '5 agents'] },
-                      { label: 'Numéros WhatsApp', values: [false, '1', '5'] },
+                      { get label() { return tp('Numéros WhatsApp'); }, values: [false, '1', '5'] },
                       { label: 'Messages / jour', values: ['—', '1 000', '∞'] },
                       { label: 'Messages / mois', values: ['—', '50 000', '∞'] },
-                      { label: 'Génération pages IA', values: [false, false, '10/mois'] },
+                      { get label() { return tp('Génération pages IA'); }, values: [false, false, '10/mois'] },
                       { label: 'Multi-boutiques', values: [false, false, true] },
                       { label: 'Support', values: ['Standard', 'Prioritaire', '24/7 dédié'] },
                     ].map((row, i) => (
@@ -1103,10 +1104,10 @@ export default function BillingPage() {
             {/* Trust / Reassurance */}
             <div className="mt-20 grid sm:grid-cols-4 gap-6">
               {[
-                { icon: <Zap className="w-7 h-7 text-amber-500" />, title: 'Activation instantanée', desc: 'Votre plan est actif dès confirmation du paiement Mobile Money.' },
+                { icon: <Zap className="w-7 h-7 text-amber-500" />, title: 'Activation instantanée', get desc() { return tp('Votre plan est actif dès confirmation du paiement Mobile Money.'); } },
                 { icon: <Shield className="w-7 h-7 text-primary-500" />, title: 'Paiement 100% sécurisé', desc: 'Orange Money, MTN MoMo, Wave, Flooz via MoneyFusion.' },
-                { icon: <RefreshCw className="w-7 h-7 text-blue-500" />, title: 'Sans engagement', desc: 'Changez ou annulez votre plan à tout moment, sans frais cachés.' },
-                { icon: <MessageCircle className="w-7 h-7 text-violet-500" />, title: 'Support réactif', desc: 'Notre équipe répond en moins de 24h à toutes vos questions.' },
+                { icon: <RefreshCw className="w-7 h-7 text-blue-500" />, title: 'Sans engagement', get desc() { return tp('Changez ou annulez votre plan à tout moment, sans frais cachés.'); } },
+                { icon: <MessageCircle className="w-7 h-7 text-violet-500" />, title: 'Support réactif', get desc() { return tp('Notre équipe répond en moins de 24h à toutes vos questions.'); } },
               ].map(item => (
                 <div key={item.title} className="text-center">
                   <div className="mb-3 flex justify-center">{item.icon}</div>
@@ -1118,7 +1119,7 @@ export default function BillingPage() {
 
             {/* FAQ */}
             <div className="mt-20 max-w-3xl mx-auto">
-              <h2 className="text-2xl font-black text-gray-900 text-center mb-8">Questions fréquentes</h2>
+              <h2 className="text-2xl font-black text-gray-900 text-center mb-8">{tp('Questions fréquentes')}</h2>
               <div className="space-y-4">
                 {[
                   { q: 'Puis-je changer de plan à tout moment ?', a: "Oui. Votre plan actuel reste actif jusqu'à expiration, et le nouveau plan prend le relais. Pas de frais de changement." },
@@ -1142,12 +1143,12 @@ export default function BillingPage() {
             <div className="mt-20 text-center bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-12 sm:p-16 relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.15),transparent_70%)] pointer-events-none" />
               <div className="relative">
-                <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Prêt à scaler votre business ?</h2>
-                <p className="text-gray-400 text-base mb-8 max-w-lg mx-auto">Rejoignez les entrepreneurs qui automatisent leurs ventes avec Scalor. Commencez votre essai gratuit aujourd'hui.</p>
+                <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">{tp('Prêt à scaler votre business ?')}</h2>
+                <p className="text-gray-400 text-base mb-8 max-w-lg mx-auto">{tp('Rejoignez les entrepreneurs qui automatisent leurs ventes avec Scalor. Commencez votre essai gratuit aujourd\'hui.')}</p>
                 {!trialUsed && (
                   <button onClick={handleActivateTrial} disabled={trialLoading}
                     className="px-8 py-4 bg-white text-gray-900 font-black text-sm rounded-xl hover:bg-gray-100 transition shadow-xl disabled:opacity-50">
-                    {trialLoading ? 'Activation…' : <span className="flex items-center gap-2"><Gift className="w-4 h-4" /> Commencer l'essai gratuit — 7 jours</span>}
+                    {trialLoading ? 'Activation…' : <span className="flex items-center gap-2"><Gift className="w-4 h-4" /> {tp('Commencer l\'essai gratuit — 7 jours')}</span>}
                   </button>
                 )}
               </div>
@@ -1167,7 +1168,7 @@ export default function BillingPage() {
             <span>© 2025</span>
           </div>
           <div className="flex items-center gap-4">
-            <span>Paiements sécurisés par MoneyFusion</span>
+            <span>{tp('Paiements sécurisés par MoneyFusion')}</span>
           </div>
         </div>
       </footer>
@@ -1178,12 +1179,12 @@ export default function BillingPage() {
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
           <div className="relative w-full max-w-lg bg-white shadow-2xl overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
-              <h3 className="font-black text-gray-900">Historique des paiements</h3>
+              <h3 className="font-black text-gray-900">{tp('Historique des paiements')}</h3>
               <button onClick={() => setShowHistory(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition"><XIcon className="w-5 h-5 text-gray-500" /></button>
             </div>
             <div className="p-6 space-y-3">
               {history.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-12">Aucun paiement</p>
+                <p className="text-sm text-gray-400 text-center py-12">{tp('Aucun paiement')}</p>
               ) : history.map(p => (
                 <div key={p._id} className="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
                   <div>
@@ -1220,8 +1221,8 @@ export default function BillingPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4">
             <div className="w-12 h-12 border-4 border-gray-200 rounded-full animate-spin mx-auto mb-4" style={{ borderTopColor: '#0F6B4F' }} />
-            <p className="text-sm font-semibold text-gray-900">Redirection vers le paiement...</p>
-            <p className="text-xs text-gray-500 mt-1">Veuillez patienter</p>
+            <p className="text-sm font-semibold text-gray-900">{tp('Redirection vers le paiement...')}</p>
+            <p className="text-xs text-gray-500 mt-1">{tp('Veuillez patienter')}</p>
           </div>
         </div>
       )}

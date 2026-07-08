@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
   const { fmt } = useMoney();
@@ -51,7 +52,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">Résumé Financier</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{tp('Résumé Financier')}</h3>
       </div>
       
       <div className="p-6">
@@ -59,14 +60,14 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">{fmt(data.totalRevenue)}</div>
-            <p className="text-sm text-gray-500">Chiffre d'Affaires</p>
+            <p className="text-sm text-gray-500">{tp('Chiffre d\'Affaires')}</p>
           </div>
           
           <div className="text-center">
             <div className={`text-2xl font-bold mb-1 ${getProfitColor(data.totalProfit)}`}>
               {fmt(data.totalProfit)}
             </div>
-            <p className="text-sm text-gray-500">Bénéfice Net</p>
+            <p className="text-sm text-gray-500">{tp('Bénéfice Net')}</p>
           </div>
         </div>
 
@@ -74,13 +75,13 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
         {showDetails && (
           <>
             <div className="border-t border-gray-100 pt-6 mb-6">
-              <h4 className="text-md font-medium text-gray-900 mb-4">Détail des Coûts</h4>
+              <h4 className="text-md font-medium text-gray-900 mb-4">{tp('Détail des Coûts')}</h4>
               
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-gray-700">Coûts Produits</span>
+                    <span className="text-gray-700">{tp('Coûts Produits')}</span>
                   </div>
                   <span className="font-semibold text-gray-900">
                     {fmt(data.totalProductCost)}
@@ -90,7 +91,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
-                    <span className="text-gray-700">Coûts Livraison</span>
+                    <span className="text-gray-700">{tp('Coûts Livraison')}</span>
                   </div>
                   <span className="font-semibold text-gray-900">
                     {fmt(data.totalDeliveryCost)}
@@ -100,7 +101,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-primary-600 rounded-full mr-2"></div>
-                    <span className="text-gray-700">Dépenses Pub</span>
+                    <span className="text-gray-700">{tp('Dépenses Pub')}</span>
                   </div>
                   <span className="font-semibold text-gray-900">
                     {fmt(data.totalAdSpend)}
@@ -109,7 +110,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
 
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-900">Coûts Totaux</span>
+                    <span className="font-medium text-gray-900">{tp('Coûts Totaux')}</span>
                     <span className="font-bold text-red-600">
                       {fmt(data.totalCost)}
                     </span>
@@ -125,24 +126,24 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
                       <div 
                         className="bg-red-500"
                         style={{ width: `${(data.totalProductCost / data.totalCost) * 100}%` }}
-                        title="Coûts Produits"
+                        title={tp('Coûts Produits')}
                       ></div>
                       <div 
                         className="bg-yellow-500"
                         style={{ width: `${(data.totalDeliveryCost / data.totalCost) * 100}%` }}
-                        title="Coûts Livraison"
+                        title={tp('Coûts Livraison')}
                       ></div>
                       <div 
                         className="bg-primary-600"
                         style={{ width: `${(data.totalAdSpend / data.totalCost) * 100}%` }}
-                        title="Dépenses Pub"
+                        title={tp('Dépenses Pub')}
                       ></div>
                     </div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>Produits</span>
-                    <span>Livraison</span>
-                    <span>Pub</span>
+                    <span>{tp('Produits')}</span>
+                    <span>{tp('Livraison')}</span>
+                    <span>{tp('Pub')}</span>
                   </div>
                 </div>
               )}
@@ -150,7 +151,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
 
             {/* Indicateurs de performance */}
             <div className="border-t border-gray-100 pt-6">
-              <h4 className="text-md font-medium text-gray-900 mb-4">Indicateurs de Performance</h4>
+              <h4 className="text-md font-medium text-gray-900 mb-4">{tp('Indicateurs de Performance')}</h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gray-50 rounded-lg p-4">
@@ -169,7 +170,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
 
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">Marge Nette</span>
+                    <span className="text-gray-600">{tp('Marge Nette')}</span>
                     <span className={`font-bold ${getMarginColor(profitMargin)}`}>
                       {formatPercent(profitMargin)}
                     </span>
@@ -183,7 +184,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
 
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">Taux de Livraison</span>
+                    <span className="text-gray-600">{tp('Taux de Livraison')}</span>
                     <span className={`font-bold ${data.deliveryRate >= 0.7 ? 'text-green-600' : 'text-red-600'}`}>
                       {formatPercent(data.deliveryRate)}
                     </span>
@@ -196,7 +197,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
 
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">Panier Moyen</span>
+                    <span className="text-gray-600">{tp('Panier Moyen')}</span>
                     <span className="font-bold text-gray-900">
                       {fmt(data.totalOrdersDelivered > 0 ? data.totalRevenue / data.totalOrdersDelivered : 0)}
                     </span>
@@ -213,7 +214,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
         {/* Recommandations */}
         {showDetails && (
           <div className="border-t border-gray-100 pt-6 mt-6">
-            <h4 className="text-md font-medium text-gray-900 mb-3">💡 Recommandations</h4>
+            <h4 className="text-md font-medium text-gray-900 mb-3">{tp('💡 Recommandations')}</h4>
             <div className="space-y-2 text-sm">
               {data.roas < 2 && (
                 <div className="flex items-start">
@@ -242,7 +243,7 @@ const FinancialSummary = ({ data, loading = false, showDetails = true }) => {
               {data.roas >= 3 && data.deliveryRate >= 0.8 && profitMargin >= 0.2 && (
                 <div className="flex items-start">
                   <span className="text-green-600 mr-2">✓</span>
-                  <span className="text-gray-700">Excellentes performances! Considérez le scaling.</span>
+                  <span className="text-gray-700">{tp('Excellentes performances! Considérez le scaling.')}</span>
                 </div>
               )}
             </div>

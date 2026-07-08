@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Smartphone, Plus, Settings, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 import { useNavigate } from '@/lib/router-compat';
 import WhatsAppInstanceSelector from '../components/WhatsAppInstanceSelector.jsx';
+import { tp } from '../i18n/platform.js';
 
 const API_BASE = (() => {
   const url = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
@@ -76,11 +77,11 @@ const WhatsAppInstancesList = () => {
             className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition"
           >
             <ArrowLeft className="h-4 w-4" />
-            Retour
+            {tp('Retour')}
           </button>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Smartphone className="h-6 w-6" />
-            Instances WhatsApp
+            {tp('Instances WhatsApp')}
           </h1>
         </div>
         <button
@@ -88,7 +89,7 @@ const WhatsAppInstancesList = () => {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm font-medium"
         >
           <Plus className="h-4 w-4" />
-          Nouvelle instance
+          {tp('Nouvelle instance')}
         </button>
       </div>
 
@@ -97,7 +98,7 @@ const WhatsAppInstancesList = () => {
           <div className="p-6 border-b">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Gestion des instances WhatsApp
+              {tp('Gestion des instances WhatsApp')}
             </h3>
           </div>
           <div className="p-6">
@@ -111,7 +112,7 @@ const WhatsAppInstancesList = () => {
                 <div className="mt-4 space-y-3">
                   <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                     <p className="text-green-800">
-                      Instance sélectionnée : <strong>{selectedInstance.instanceName || selectedInstance.customName || selectedInstance.name}</strong>
+                      {tp('Instance sélectionnée :')} <strong>{selectedInstance.instanceName || selectedInstance.customName || selectedInstance.name}</strong>
                     </p>
                   </div>
                   
@@ -121,7 +122,7 @@ const WhatsAppInstancesList = () => {
                       disabled={loading}
                       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition text-sm font-medium"
                     >
-                      {loading ? 'Test...' : 'Tester la connexion'}
+                      {loading ? 'Test...' : tp('Tester la connexion')}
                       <CheckCircle className="h-4 w-4" />
                     </button>
                   </div>
@@ -156,7 +157,7 @@ const WhatsAppInstancesList = () => {
 
         <div className="bg-white rounded-lg border shadow-sm">
           <div className="p-6 border-b">
-            <h3 className="text-lg font-semibold">Actions rapides</h3>
+            <h3 className="text-lg font-semibold">{tp('Actions rapides')}</h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -165,14 +166,14 @@ const WhatsAppInstancesList = () => {
                 className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition text-sm font-medium"
               >
                 <Settings className="h-4 w-4" />
-                Configurer une nouvelle instance
+                {tp('Configurer une nouvelle instance')}
               </button>
               <button
                 onClick={() => navigate('/ecom/whatsapp-postulation')}
                 className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition text-sm font-medium"
               >
                 <Smartphone className="h-4 w-4" />
-                Postuler pour WhatsApp Business
+                {tp('Postuler pour WhatsApp Business')}
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from '@/lib/router-compat';
 import { scalorLogin } from '../services/scalorApi';
+import { tp } from '../i18n/platform.js';
 
 export default function ScalorLogin() {
   const [email, setEmail] = useState('');
@@ -31,12 +32,12 @@ export default function ScalorLogin() {
           <h1 className="text-4xl font-bold text-white">
             <span className="text-green-400">Scalor</span> API
           </h1>
-          <p className="text-gray-400 mt-2">WhatsApp Business API Platform</p>
+          <p className="text-gray-400 mt-2">{tp('WhatsApp Business API Platform')}</p>
         </div>
 
         {/* Form */}
         <div className="bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-700">
-          <h2 className="text-xl font-semibold text-white mb-6">Se connecter</h2>
+          <h2 className="text-xl font-semibold text-white mb-6">{tp('Se connecter')}</h2>
 
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
@@ -53,12 +54,12 @@ export default function ScalorLogin() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
-                placeholder="votre@email.com"
+                placeholder={tp('votre@email.com')}
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Mot de passe</label>
+              <label className="block text-sm text-gray-400 mb-1">{tp('Mot de passe')}</label>
               <input
                 type="password"
                 required
@@ -74,14 +75,14 @@ export default function ScalorLogin() {
               disabled={loading}
               className="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
-              {loading ? 'Connexion...' : 'Se connecter'}
+              {loading ? 'Connexion...' : tp('Se connecter')}
             </button>
           </form>
 
           <p className="text-center text-gray-500 text-sm mt-6">
             Pas encore de compte ?{' '}
             <Link to="/scalor/register" className="text-green-400 hover:text-green-300">
-              Créer un compte
+              {tp('Créer un compte')}
             </Link>
           </p>
         </div>

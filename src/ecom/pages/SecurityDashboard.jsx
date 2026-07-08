@@ -3,6 +3,7 @@ import { useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
+import { tp } from '../i18n/platform.js';
 
 const SecurityDashboard = () => {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ const SecurityDashboard = () => {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Sécurité & Protection des Données</h1>
-            <p className="text-sm text-gray-500">Mesures de sécurité actives et journal d'audit</p>
+            <p className="text-sm text-gray-500">{tp('Mesures de sécurité actives et journal d\'audit')}</p>
           </div>
         </div>
       </div>
@@ -115,19 +116,19 @@ const SecurityDashboard = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
             <p className="text-2xl font-bold text-primary-600">{securityInfo.stats.totalAuditLogs}</p>
-            <p className="text-xs text-gray-500 mt-1">Actions tracées</p>
+            <p className="text-xs text-gray-500 mt-1">{tp('Actions tracées')}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
             <p className="text-2xl font-bold text-primary-600">{securityInfo.stats.last24hActions}</p>
-            <p className="text-xs text-gray-500 mt-1">Actions (24h)</p>
+            <p className="text-xs text-gray-500 mt-1">{tp('Actions (24h)')}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
             <p className="text-2xl font-bold text-red-600">{securityInfo.stats.failedLoginsLast24h}</p>
-            <p className="text-xs text-gray-500 mt-1">Tentatives échouées (24h)</p>
+            <p className="text-xs text-gray-500 mt-1">{tp('Tentatives échouées (24h)')}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
             <p className="text-2xl font-bold text-gray-900">10</p>
-            <p className="text-xs text-gray-500 mt-1">Mesures actives</p>
+            <p className="text-xs text-gray-500 mt-1">{tp('Mesures actives')}</p>
           </div>
         </div>
       )}
@@ -139,7 +140,7 @@ const SecurityDashboard = () => {
             <svg className="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-            Mesures de sécurité en place
+            {tp('Mesures de sécurité en place')}
           </h2>
         </div>
         <div className="divide-y divide-gray-50">
@@ -162,7 +163,7 @@ const SecurityDashboard = () => {
               <div className="flex-shrink-0">
                 <span className="inline-flex items-center gap-1 text-xs font-medium text-primary-600">
                   <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
-                  Actif
+                  {tp('Actif')}
                 </span>
               </div>
             </div>
@@ -172,7 +173,7 @@ const SecurityDashboard = () => {
 
       {/* Ce que cela signifie pour vous */}
       <div className="bg-gradient-to-br from-primary-50 to-cyan-50 rounded-xl border border-primary-200 p-5 mb-6">
-        <h3 className="text-base font-semibold text-primary-900 mb-3">Ce que cela signifie concrètement pour vous :</h3>
+        <h3 className="text-base font-semibold text-primary-900 mb-3">{tp('Ce que cela signifie concrètement pour vous :')}</h3>
         <div className="grid sm:grid-cols-2 gap-3">
           {[
             { icon: '🔒', text: 'Personne ne peut lire votre mot de passe — ni l\'admin, ni le propriétaire, ni les développeurs' },
@@ -194,7 +195,7 @@ const SecurityDashboard = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            Politique de confidentialité complète
+            {tp('Politique de confidentialité complète')}
           </button>
         </div>
       </div>
@@ -208,7 +209,7 @@ const SecurityDashboard = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
               Journal d'audit immuable
-              <span className="text-xs font-normal text-gray-400">(impossible à modifier/supprimer)</span>
+              <span className="text-xs font-normal text-gray-400">{tp('(impossible à modifier/supprimer)')}</span>
             </h2>
             <div className="flex items-center gap-2">
               <select
@@ -216,19 +217,19 @@ const SecurityDashboard = () => {
                 onChange={(e) => setFilterAction(e.target.value)}
                 className="text-xs px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
-                <option value="">Toutes les actions</option>
-                <option value="LOGIN">Connexions</option>
-                <option value="LOGIN_FAILED">Connexions échouées</option>
-                <option value="VIEW_USERS">Consultation utilisateurs</option>
-                <option value="CHANGE_ROLE">Changements de rôle</option>
-                <option value="DELETE_USER">Suppressions</option>
-                <option value="TOGGLE_USER">Activations/Désactivations</option>
-                <option value="VIEW_SENSITIVE_DATA">Accès données sensibles</option>
+                <option value="">{tp('Toutes les actions')}</option>
+                <option value="LOGIN">{tp('Connexions')}</option>
+                <option value="LOGIN_FAILED">{tp('Connexions échouées')}</option>
+                <option value="VIEW_USERS">{tp('Consultation utilisateurs')}</option>
+                <option value="CHANGE_ROLE">{tp('Changements de rôle')}</option>
+                <option value="DELETE_USER">{tp('Suppressions')}</option>
+                <option value="TOGGLE_USER">{tp('Activations/Désactivations')}</option>
+                <option value="VIEW_SENSITIVE_DATA">{tp('Accès données sensibles')}</option>
               </select>
               <button
                 onClick={() => fetchAuditLogs(logsPage)}
                 className="p-1.5 text-gray-400 hover:text-primary-600 transition"
-                title="Rafraîchir"
+                title={tp('Rafraîchir')}
               >
                 <svg className={`w-4 h-4 ${logsLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -264,11 +265,11 @@ const SecurityDashboard = () => {
               <table className="min-w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase">Date</th>
-                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase">Action</th>
-                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase">Utilisateur</th>
-                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase hidden sm:table-cell">Rôle</th>
-                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase hidden md:table-cell">Détails</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase">{tp('Date')}</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase">{tp('Action')}</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase">{tp('Utilisateur')}</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase hidden sm:table-cell">{tp('Rôle')}</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase hidden md:table-cell">{tp('Détails')}</th>
                     <th className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase hidden lg:table-cell">IP</th>
                   </tr>
                 </thead>
@@ -304,7 +305,7 @@ const SecurityDashboard = () => {
                   disabled={logsPage <= 1}
                   className="px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-50 disabled:opacity-30 transition"
                 >
-                  Préc.
+                  {tp('Préc.')}
                 </button>
                 <span className="text-xs text-gray-600 px-2">{logsPage}/{logsPagination.pages}</span>
                 <button
@@ -312,7 +313,7 @@ const SecurityDashboard = () => {
                   disabled={logsPage >= logsPagination.pages}
                   className="px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-50 disabled:opacity-30 transition"
                 >
-                  Suiv.
+                  {tp('Suiv.')}
                 </button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { tp } from '../i18n/platform.js';
 import { useNavigate } from '@/lib/router-compat';
 import api from '../../lib/api';
 import { useBroadcastTheme } from '../hooks/useThemeSocket';
@@ -13,7 +14,7 @@ import {
 const TEMPLATES = [
   { id: 'classic',  name: 'Classique', desc: 'Standard e-commerce' },
   { id: 'premium',  name: 'Premium',   desc: 'Haut-de-gamme' },
-  { id: 'minimal',  name: 'Minimal',   desc: 'Épuré et rapide' },
+  { id: 'minimal',  name: 'Minimal',   get desc() { return tp('Épuré et rapide'); } },
 ];
 
 const SECTION_FIELD_SCHEMAS = {
@@ -168,7 +169,7 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
       return (
         <div className="space-y-2">
           {list.length === 0 && (
-            <p className="text-[11px] text-gray-400">Aucune sous-section.</p>
+            <p className="text-[11px] text-gray-400">{tp('Aucune sous-section.')}</p>
           )}
 
           {list.map((item, idx) => (
@@ -180,7 +181,7 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
                   onClick={() => removeArrayItem(key, idx)}
                   className="text-[11px] text-red-500 hover:text-red-600"
                 >
-                  Supprimer
+                  {tp('Supprimer')}
                 </button>
               </div>
 
@@ -295,20 +296,20 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
             </div>
           ))}
           {fields.length === 0 && (
-            <p className="text-xs text-gray-400">Aucun champ éditable pour cette section.</p>
+            <p className="text-xs text-gray-400">{tp('Aucun champ éditable pour cette section.')}</p>
           )}
         </div>
         <div className="px-4 py-3 border-t border-gray-100 flex gap-2">
           <button
             onClick={() => { onDelete(); onClose(); }}
             className="px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition"
-            title="Supprimer cette section"
+            title={tp('Supprimer cette section')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
-          <button onClick={onClose} className="flex-1 py-2 text-xs font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">Annuler</button>
+          <button onClick={onClose} className="flex-1 py-2 text-xs font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">{tp('Annuler')}</button>
           <button onClick={() => { onSave({ ...section, config }); onClose(); }}
-            className="flex-1 py-2 text-xs font-bold text-white bg-[#0F6B4F] rounded-xl hover:bg-[#0A5740] transition">Enregistrer</button>
+            className="flex-1 py-2 text-xs font-bold text-white bg-[#0F6B4F] rounded-xl hover:bg-[#0A5740] transition">{tp('Enregistrer')}</button>
         </div>
       </div>
     </div>
@@ -317,8 +318,8 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
 
 const NEW_SECTION_TEMPLATES = {
   hero: {
-    label: 'Hero / Bannière',
-    config: { title: 'Bienvenue', subtitle: 'Découvrez nos nouveautés', ctaText: 'Voir les produits', bgImage: '' },
+    get label() { return tp('Hero / Bannière'); },
+    config: { title: 'Bienvenue', get subtitle() { return tp('Découvrez nos nouveautés'); }, ctaText: 'Voir les produits', bgImage: '' },
   },
   featured_products: {
     label: 'Produits vedettes',
@@ -345,7 +346,7 @@ const NEW_SECTION_TEMPLATES = {
     config: { title: 'Recevez nos offres' },
   },
   custom: {
-    label: 'Section personnalisée',
+    get label() { return tp('Section personnalisée'); },
     config: { title: 'Nouveau bloc', content: '', image: '' },
   },
 };
@@ -380,7 +381,7 @@ const FONT_OPTIONS = [
 
 const RADIUS_OPTIONS = [
   { id: 'none', label: 'Aucun',    px: '0px' },
-  { id: 'sm',   label: 'Léger',   px: '6px' },
+  { id: 'sm',   get label() { return tp('Léger'); },   px: '6px' },
   { id: 'md',   label: 'Moyen',   px: '12px' },
   { id: 'lg',   label: 'Large',   px: '16px' },
   { id: 'xl',   label: 'Extra',   px: '24px' },
@@ -411,13 +412,13 @@ const DEFAULT_THEME = {
 const getSectionToggleDefault = (key) => (key === 'showWhatsappButton' ? false : true);
 
 const PRODUCT_PAGE_TOGGLES = [
-  { key: 'showReviews',         label: 'Avis clients',         desc: 'Section témoignages' },
-  { key: 'showFaq',             label: 'FAQ',                  desc: 'Questions fréquentes' },
-  { key: 'showStockCounter',    label: 'Compteur de stock',    desc: 'Pièces restantes' },
+  { key: 'showReviews',         label: 'Avis clients',         get desc() { return tp('Section témoignages'); } },
+  { key: 'showFaq',             label: 'FAQ',                  get desc() { return tp('Questions fréquentes'); } },
+  { key: 'showStockCounter',    label: 'Compteur de stock',    get desc() { return tp('Pièces restantes'); } },
   { key: 'showPromoBanner',     label: 'Bandeau promo',        desc: 'Promo en haut' },
   { key: 'showTrustBadges',     label: 'Badges confiance',     desc: 'Livraison, retours...' },
   { key: 'showRelatedProducts', label: 'Produits similaires',  desc: 'Recommandations' },
-  { key: 'showBenefits',        label: 'Bénéfices produit',    desc: 'Points forts' },
+  { key: 'showBenefits',        get label() { return tp('Bénéfices produit'); },    desc: 'Points forts' },
   { key: 'showWhatsappButton',  label: 'Bouton WhatsApp',      desc: 'Commander via WA' },
   { key: 'showNewsletter',      label: 'Newsletter',           desc: 'Abonnement email' },
 ];
@@ -439,8 +440,8 @@ function IframePreview({ subdomain, device, iframeKey, onLoad }) {
       <div className="flex-1 bg-gray-100 flex items-center justify-center">
         <div className="text-center text-gray-400">
           <div className="text-4xl mb-3">🏪</div>
-          <p className="text-sm font-medium">Boutique introuvable</p>
-          <p className="text-xs mt-1">Configurez un sous-domaine dans les paramètres</p>
+          <p className="text-sm font-medium">{tp('Boutique introuvable')}</p>
+          <p className="text-xs mt-1">{tp('Configurez un sous-domaine dans les paramètres')}</p>
         </div>
       </div>
     );
@@ -480,7 +481,7 @@ function IframePreview({ subdomain, device, iframeKey, onLoad }) {
           <iframe
             key={iframeKey}
             src={iframeSrc}
-            title="Store Preview"
+            title={tp('Store Preview')}
             onLoad={onLoad}
             className="block w-full border-0"
             style={{ height: device === 'mobile' ? '780px' : '860px' }}
@@ -777,7 +778,7 @@ const VisualBuilder = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-7 h-7 animate-spin text-gray-400" />
-          <p className="text-sm text-gray-500">Chargement du builder…</p>
+          <p className="text-sm text-gray-500">{tp('Chargement du builder…')}</p>
         </div>
       </div>
     );
@@ -794,23 +795,23 @@ const VisualBuilder = () => {
             className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline text-xs font-medium">Retour</span>
+            <span className="hidden sm:inline text-xs font-medium">{tp('Retour')}</span>
           </button>
           <div className="w-px h-5 bg-gray-200" />
-          <h1 className="text-sm font-bold text-gray-800 tracking-tight">Site Builder</h1>
+          <h1 className="text-sm font-bold text-gray-800 tracking-tight">{tp('Site Builder')}</h1>
           <div 
             className={`flex items-center gap-1 px-2 py-0.5 rounded-full transition-all ${
               isConnected 
                 ? 'bg-primary-50 border border-primary-200' 
                 : 'bg-orange-50 border border-orange-200'
             }`}
-            title={isConnected ? 'Aperçu en temps réel actif' : 'Connexion au serveur...'}
+            title={isConnected ? 'Aperçu en temps réel actif' : tp('Connexion au serveur...')}
           >
             <Zap className={`w-3 h-3 ${isConnected ? 'text-primary-600' : 'text-orange-500 animate-pulse'}`} />
             <span className={`text-[10px] font-bold uppercase tracking-wide ${
               isConnected ? 'text-primary-700' : 'text-orange-600'
             }`}>
-              {isConnected ? 'Live' : 'Connexion...'}
+              {isConnected ? 'Live' : tp('Connexion...')}
             </span>
             {lastBroadcast && isConnected && (
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-ping" />
@@ -820,11 +821,11 @@ const VisualBuilder = () => {
 
         <div className="flex items-center gap-1.5">
           {/* Undo / Redo */}
-          <button onClick={undo} disabled={!canUndo} title="Annuler (Ctrl+Z)"
+          <button onClick={undo} disabled={!canUndo} title={tp('Annuler (Ctrl+Z)')}
             className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-25 transition text-gray-500">
             <RotateCcw className="w-4 h-4" />
           </button>
-          <button onClick={redo} disabled={!canRedo} title="Rétablir"
+          <button onClick={redo} disabled={!canRedo} title={tp('Rétablir')}
             className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-25 transition text-gray-500"
             style={{ transform: 'scaleX(-1)' }}>
             <RotateCcw className="w-4 h-4" />
@@ -849,7 +850,7 @@ const VisualBuilder = () => {
 
           {/* Reload iframe */}
           <button onClick={() => { setIframeLoaded(false); setIframeKey(k => k + 1); }}
-            title="Recharger l'aperçu"
+            title={tp('Recharger l\'aperçu')}
             className="p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-500">
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
@@ -857,7 +858,7 @@ const VisualBuilder = () => {
           {/* Open in new tab */}
           {subdomain && (
             <a href={`https://${subdomain}.scalor.net`} target="_blank" rel="noopener noreferrer"
-              title="Ouvrir la boutique"
+              title={tp('Ouvrir la boutique')}
               className="p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-500">
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
@@ -873,7 +874,7 @@ const VisualBuilder = () => {
               : saved
               ? <Check className="w-3.5 h-3.5" />
               : <Save className="w-3.5 h-3.5" />}
-            {saved ? 'Publié !' : 'Publier'}
+            {saved ? 'Publié !' : tp('Publier')}
           </button>
         </div>
       </header>
@@ -887,7 +888,7 @@ const VisualBuilder = () => {
           {/* Tabs */}
           <div className="flex border-b border-gray-100 flex-shrink-0">
             {[
-              { id: 'theme',    label: 'Thème',    icon: <Palette className="w-3.5 h-3.5" /> },
+              { id: 'theme',    get label() { return tp('Thème'); },    icon: <Palette className="w-3.5 h-3.5" /> },
               { id: 'sections', label: 'Sections', icon: <LayoutGrid className="w-3.5 h-3.5" /> },
             ].map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
@@ -910,7 +911,7 @@ const VisualBuilder = () => {
               <>
                 {/* Template */}
                 <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Template</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Template')}</p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {TEMPLATES.map(t => (
                       <button key={t.id} onClick={() => updateTheme({ template: t.id })}
@@ -926,7 +927,7 @@ const VisualBuilder = () => {
                   </div>
                 </div>
 
-                <AccordionSection title="Couleurs" icon={<Palette className="w-4 h-4" />} defaultOpen>
+                <AccordionSection title={tp('Couleurs')} icon={<Palette className="w-4 h-4" />} defaultOpen>
                   <ColorRow label="Couleur principale"
                     value={theme.primaryColor}
                     onChange={v => updateTheme({ primaryColor: v })} />
@@ -946,14 +947,14 @@ const VisualBuilder = () => {
                       <div className="flex-1 h-1.5 rounded" style={{ backgroundColor: theme.ctaColor }} />
                     </div>
                     <button className="w-full py-1 text-[10px] font-bold text-white rounded-lg" style={{ backgroundColor: theme.ctaColor }}>
-                      Aperçu bouton
+                      {tp('Aperçu bouton')}
                     </button>
                   </div>
                 </AccordionSection>
 
-                <AccordionSection title="Typographie" icon={<Type className="w-4 h-4" />} defaultOpen>
+                <AccordionSection title={tp('Typographie')} icon={<Type className="w-4 h-4" />} defaultOpen>
                   <div className="space-y-2 pt-1">
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block">Police</label>
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block">{tp('Police')}</label>
                     <div className="grid grid-cols-2 gap-1.5">
                       {FONT_OPTIONS.map(f => (
                         <button key={f.id} onClick={() => updateTheme({ font: f.id })}
@@ -970,7 +971,7 @@ const VisualBuilder = () => {
                   </div>
                 </AccordionSection>
 
-                <AccordionSection title="Formes" icon={<Square className="w-4 h-4" />} defaultOpen>
+                <AccordionSection title={tp('Formes')} icon={<Square className="w-4 h-4" />} defaultOpen>
                   <div className="space-y-2 pt-1">
                     <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block">Arrondi des boutons & cartes</label>
                     <div className="grid grid-cols-3 gap-1.5">
@@ -998,7 +999,7 @@ const VisualBuilder = () => {
                 {sections.length === 0 && (
                   <div className="text-center py-6 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl">
                     <LayoutGrid className="w-7 h-7 mx-auto mb-2 opacity-30" />
-                    <p className="text-xs">Aucune section configurée</p>
+                    <p className="text-xs">{tp('Aucune section configurée')}</p>
                   </div>
                 )}
 
@@ -1009,7 +1010,7 @@ const VisualBuilder = () => {
                     </div>
                     <div className="p-2 space-y-1.5">
                       {group.items.length === 0 && (
-                        <p className="text-[11px] text-gray-400 px-1 py-2">Aucune section</p>
+                        <p className="text-[11px] text-gray-400 px-1 py-2">{tp('Aucune section')}</p>
                       )}
 
                       {group.items.map(({ section, idx }) => {
@@ -1045,14 +1046,14 @@ const VisualBuilder = () => {
                               <button
                                 onClick={() => setEditingIdx(idx)}
                                 className="p-1 rounded hover:bg-gray-100 text-gray-500 text-[10px]"
-                                title="Modifier"
+                                title={tp('Modifier')}
                               >
                                 ✏️
                               </button>
                               <button
                                 onClick={() => removeSection(idx)}
                                 className="p-1 rounded hover:bg-red-50 text-red-500"
-                                title="Supprimer"
+                                title={tp('Supprimer')}
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -1068,7 +1069,7 @@ const VisualBuilder = () => {
                       })}
 
                       <div className="pt-1">
-                        <label className="text-[10px] text-gray-400 font-semibold uppercase tracking-wide px-1 block mb-1">Ajouter une section</label>
+                        <label className="text-[10px] text-gray-400 font-semibold uppercase tracking-wide px-1 block mb-1">{tp('Ajouter une section')}</label>
                         <select
                           onChange={(e) => {
                             if (!e.target.value) return;
@@ -1078,7 +1079,7 @@ const VisualBuilder = () => {
                           defaultValue=""
                           className="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                         >
-                          <option value="" disabled>Choisir...</option>
+                          <option value="" disabled>{tp('Choisir...')}</option>
                           {Object.entries(NEW_SECTION_TEMPLATES).map(([type, tpl]) => (
                             <option key={type} value={type}>{tpl.label}</option>
                           ))}
@@ -1090,7 +1091,7 @@ const VisualBuilder = () => {
 
                 {/* Product page toggles */}
                 <div className="pt-1">
-                  <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wide px-1 pb-2">Page Produit</p>
+                  <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wide px-1 pb-2">{tp('Page Produit')}</p>
                   {PRODUCT_PAGE_TOGGLES.map(({ key, label, desc }) => (
                     <div key={key} className="flex items-center justify-between py-1.5">
                       <div className="flex-1 min-w-0 mr-2">
@@ -1108,7 +1109,7 @@ const VisualBuilder = () => {
                 </div>
 
                 {sections.length > 0 && (
-                  <p className="text-[10px] text-gray-400 text-center pt-1">Publiez pour appliquer les changements live</p>
+                  <p className="text-[10px] text-gray-400 text-center pt-1">{tp('Publiez pour appliquer les changements live')}</p>
                 )}
               </div>
             )}
@@ -1128,7 +1129,7 @@ const VisualBuilder = () => {
           <div className="flex-shrink-0 px-4 py-2.5 border-t border-gray-100 bg-gray-50">
             <p className="text-[10px] text-gray-400 flex items-center gap-1.5">
               <Zap className="w-3 h-3 text-primary-500" />
-              Thème appliqué en temps réel aux visiteurs
+              {tp('Thème appliqué en temps réel aux visiteurs')}
             </p>
           </div>
         </aside>
@@ -1140,7 +1141,7 @@ const VisualBuilder = () => {
             <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="w-7 h-7 animate-spin text-[#0F6B4F]" />
-                <p className="text-sm text-gray-500 font-medium">Chargement de la boutique…</p>
+                <p className="text-sm text-gray-500 font-medium">{tp('Chargement de la boutique…')}</p>
               </div>
             </div>
           )}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../i18n/platform.js';
 import { useNavigate } from '@/lib/router-compat';
 
 const WhyScalor = () => {
@@ -22,7 +23,7 @@ const WhyScalor = () => {
         </svg>
       ),
       title: 'Gestion des finances',
-      description: 'Suivez vos revenus, dépenses et bénéfices en temps réel. Rapports financiers détaillés, calcul automatique des marges et du ROAS. Tableau de bord financier complet.',
+      get description() { return tp('Suivez vos revenus, dépenses et bénéfices en temps réel. Rapports financiers détaillés, calcul automatique des marges et du ROAS. Tableau de bord financier complet.'); },
       tags: ['Revenus', 'Dépenses', 'Bénéfices', 'ROAS']
     },
     {
@@ -32,7 +33,7 @@ const WhyScalor = () => {
         </svg>
       ),
       title: 'Recherche de produits',
-      description: 'Trouvez les produits gagnants pour votre boutique. Analysez les tendances du marché, évaluez la concurrence et identifiez les opportunités. Base de données de produits mise à jour.',
+      get description() { return tp('Trouvez les produits gagnants pour votre boutique. Analysez les tendances du marché, évaluez la concurrence et identifiez les opportunités. Base de données de produits mise à jour.'); },
       tags: ['Tendances', 'Analyse marché', 'Produits gagnants']
     },
     {
@@ -42,7 +43,7 @@ const WhyScalor = () => {
         </svg>
       ),
       title: 'Gestion de stock',
-      description: 'Gérez votre inventaire en temps réel. Alertes de stock bas, commandes fournisseurs, suivi des arrivages. Historique complet des mouvements de stock pour une gestion optimale.',
+      get description() { return tp('Gérez votre inventaire en temps réel. Alertes de stock bas, commandes fournisseurs, suivi des arrivages. Historique complet des mouvements de stock pour une gestion optimale.'); },
       tags: ['Inventaire', 'Alertes', 'Fournisseurs', 'Mouvements']
     },
     {
@@ -52,7 +53,7 @@ const WhyScalor = () => {
         </svg>
       ),
       title: 'Analyse business',
-      description: 'Tableaux de bord avec tous vos KPIs clés. Analyse des performances par produit, par période, par source. Rapports détaillés pour prendre les meilleures décisions stratégiques.',
+      get description() { return tp('Tableaux de bord avec tous vos KPIs clés. Analyse des performances par produit, par période, par source. Rapports détaillés pour prendre les meilleures décisions stratégiques.'); },
       tags: ['KPIs', 'Rapports', 'Performance', 'Décisions']
     }
   ];
@@ -74,19 +75,19 @@ const WhyScalor = () => {
                 onClick={() => navigate('/ecom/why-scalor')}
                 className="px-4 py-2 text-sm font-medium text-gray-900 hover:text-primary-600 transition"
               >
-                Pourquoi choisir Scalor ?
+                {tp('Pourquoi choisir Scalor ?')}
               </button>
               <button 
                 onClick={() => navigate('/ecom')}
                 className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
               >
-                Fonctionnalités
+                {tp('Fonctionnalités')}
               </button>
               <button 
                 onClick={() => navigate('/ecom')}
                 className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
               >
-                Tarifs
+                {tp('Tarifs')}
               </button>
             </div>
 
@@ -96,13 +97,13 @@ const WhyScalor = () => {
                 onClick={() => navigate('/ecom/login')}
                 className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
               >
-                Connexion
+                {tp('Connexion')}
               </button>
               <button 
                 onClick={() => navigate('/ecom/register')}
                 className="px-6 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition shadow-sm"
               >
-                Commencer
+                {tp('Commencer')}
               </button>
             </div>
           </div>
@@ -113,10 +114,10 @@ const WhyScalor = () => {
       <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-primary-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
-            Pourquoi choisir <span className="text-primary-600">Scalor</span> ?
+            {tp('Pourquoi choisir')} <span className="text-primary-600">Scalor</span> ?
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            La plateforme tout-en-un conçue spécialement pour le e-commerce COD en Afrique. 
+            {tp('La plateforme tout-en-un conçue spécialement pour le e-commerce COD en Afrique.')} 
             Découvrez pourquoi des centaines d'e-commerçants nous font confiance.
           </p>
         </div>
@@ -179,10 +180,10 @@ const WhyScalor = () => {
       <section className="py-16 sm:py-20 px-4 bg-gradient-to-br from-primary-600 to-primary-700">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-6">
-            Prêt à transformer votre business ?
+            {tp('Prêt à transformer votre business ?')}
           </h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Rejoignez les e-commerçants qui utilisent Scalor pour gérer leur activité. 
+            {tp('Rejoignez les e-commerçants qui utilisent Scalor pour gérer leur activité.')} 
             Créez votre espace en 30 secondes.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -190,13 +191,13 @@ const WhyScalor = () => {
               onClick={() => navigate('/ecom/register')}
               className="w-full sm:w-auto px-8 py-4 bg-white text-primary-700 hover:bg-primary-50 rounded-xl font-bold text-lg transition shadow-xl"
             >
-              Créer mon espace gratuit
+              {tp('Créer mon espace gratuit')}
             </button>
             <button 
               onClick={() => navigate('/ecom/login')}
               className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white border-2 border-white/30 rounded-xl font-semibold text-lg transition backdrop-blur-sm"
             >
-              Se connecter
+              {tp('Se connecter')}
             </button>
           </div>
         </div>
@@ -209,13 +210,13 @@ const WhyScalor = () => {
             <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
             <div className="flex items-center gap-6">
               <button onClick={() => navigate('/ecom/privacy')} className="text-sm text-gray-600 hover:text-gray-900 transition">
-                Confidentialité
+                {tp('Confidentialité')}
               </button>
               <button onClick={() => navigate('/ecom/terms')} className="text-sm text-gray-600 hover:text-gray-900 transition">
-                Conditions
+                {tp('Conditions')}
               </button>
               <button onClick={() => navigate('/ecom')} className="text-sm text-gray-600 hover:text-gray-900 transition">
-                Accueil
+                {tp('Accueil')}
               </button>
             </div>
           </div>

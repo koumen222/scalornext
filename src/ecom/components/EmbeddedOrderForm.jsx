@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useContext } from 'react';
 import { safeHtml } from '../utils/sanitize';
 import { ShoppingCart, User, Phone, MapPin, Loader2, CheckCircle, Truck, Plus, Minus, AlertCircle, ChevronDown, Mail, FileText, Hash, Calendar, Clock, Shield, Globe, Star, ShoppingBag, ArrowRight, Check, CreditCard, Rocket, Gift, Sparkles, Zap, Flame, Crown, Gem, Trophy, Lock, BadgeCheck, Tag, Send, Bell, ThumbsUp, Wallet, Package } from 'lucide-react';
 import { publicStoreApi } from '../services/storeApi.js';
 import defaultConfig from './productSettings/defaultConfig.js';
 import { createMetaEventId, injectPixelScripts, safeFirePixelEvent } from '../utils/pixelTracking';
-import { PHONE_CODES, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, buildFullPhone, getCurrencyByPhoneCode, getPhoneLength } from '../utils/phoneCodes.js';
+import { PHONE_CODES, buildFullPhone, findCountryPhoneOptionByName, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, getPhoneLength } from '../utils/phoneCodes.js';
 import {
   buildStorefrontOrderWhatsappMessage,
   getPopularCitiesForCountries,
@@ -14,7 +14,7 @@ import {
   findMatchingCountryOption,
 } from '../utils/storeCountryConfig.js';
 import { getIconComponent, getAnimationClass, ANIMATION_CSS } from './productSettings/ButtonEditor.jsx';
-import { getStorefrontT } from '../i18n/storefront.js';
+import { getStorefrontT, localizeMerchantDefault, StorefrontLangContext } from '../i18n/storefront.js';
 
 const fmt = (n, cur = 'XAF') => `${new Intl.NumberFormat('fr-FR').format(n)} ${cur === 'XAF' || cur === 'XOF' ? 'FCFA' : cur}`;
 const getImgSrc = (img) => (img && typeof img === 'object' ? img.url : img) || null;
@@ -40,7 +40,11 @@ const isMeaningfulPlaceholder = (value, ignoredPatterns = []) => {
  */
 const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfig }) => {
   // Langue de la boutique (réglage marchand) — chrome uniquement, contenus marchands intacts
-  const t = getStorefrontT(store?.language);
+  // Langue : prop store.language (payload public) > storeSettings.language (objet admin) > contexte du shell storefront
+  const ctxLang = useContext(StorefrontLangContext);
+  const storeLang = store?.language || store?.storeSettings?.language || ctxLang;
+  const t = getStorefrontT(storeLang);
+  const lmd = (v) => localizeMerchantDefault(storeLang, v);
   const [form, setForm] = useState({ customerName: '', phone: '', city: '', address: '', notes: '', quantity: 1 });
   const [phoneCode, setPhoneCode] = useState(() => getDefaultPhoneCodeFromConfig(productPageConfig?.general?.countries, store?.currency));
   const phoneCodeUserSet = useRef(false);
@@ -51,9 +55,10 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
   const [deliveryZoneOptions, setDeliveryZoneOptions] = useState([]);
   const [countdownSecs, setCountdownSecs] = useState(null);
 
-  const baseCurrency = product?.currency || store?.currency || 'XAF';
-  const [displayCurrency, setDisplayCurrency] = useState(baseCurrency);
-  const currency = displayCurrency;
+  // Devise = uniquement celle configurée sur la boutique (jamais la devise du produit,
+  // ni l'indicatif téléphonique choisi par le client).
+  const resolveCurrency = (code) => (code && String(code).toUpperCase() !== 'USD' ? code : null);
+  const currency = resolveCurrency(store?.currency) || 'XAF';
 
   const design = productPageConfig?.design || {};
   const formConfig = productPageConfig?.form || {};
@@ -122,7 +127,15 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
   const showQuantitySelector = design.showQuantitySelector !== false;
 
   const configFields = formConfig.fields || [];
-  const effectiveFields = configFields.length ? configFields : defaultConfig.form.fields;
+  const rawEffectiveFields = configFields.length ? configFields : defaultConfig.form.fields;
+  // Localise les textes PAR DÉFAUT du form builder selon la langue de la boutique
+  // (un label/placeholder personnalisé par le marchand ne matche pas → affiché tel quel)
+  const effectiveFields = rawEffectiveFields.map((f) => ({
+    ...f,
+    label: lmd(f.label),
+    placeholder: lmd(f.placeholder),
+    shippingNote: lmd(f.shippingNote),
+  }));
   const generalConfig = productPageConfig?.general || {};
   const orderFormContext = useMemo(() => resolveOrderFormContext({ store, generalConfig }), [store, generalConfig]);
   const formCountries = orderFormContext.countries;
@@ -215,8 +228,9 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
 
   const availablePhoneCodes = useMemo(() => {
     if (!formCountries.length) return PHONE_CODES;
+    const countryOptions = formCountries.map(c => findCountryPhoneOptionByName(c)).filter(Boolean);
+    if (countryOptions.length > 0) return countryOptions;
     const configCodes = formCountries.map(c => getPhoneCodeByCountryName(c)).filter(Boolean);
-    if (!configCodes.length) return PHONE_CODES;
     const filtered = PHONE_CODES.filter(c => configCodes.includes(c.code));
     return filtered.length > 0 ? filtered : PHONE_CODES;
   }, [formCountries]);
@@ -482,8 +496,8 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
         gap: 8,
         fontFamily: 'var(--s-font)',
       }}>
-        {isPremiumTheme ? (btnCfg.text || t('cta.orderNow')) : (
-          <><ShoppingCart size={18} color={effectiveBtnColor} /> {btnCfg.text || 'Commander maintenant'}</>
+        {isPremiumTheme ? (lmd(btnCfg.text) || t('cta.orderNow')) : (
+          <><ShoppingCart size={18} color={effectiveBtnColor} /> {lmd(btnCfg.text) || t('cta.orderNow')}</>
         )}
       </h3>
       {isPremiumTheme && (
@@ -676,9 +690,9 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
                   {field.showLabel === true && field.label && <label style={{ fontSize: 12, fontWeight: 600, color: labelColorResolved, display: 'block', marginBottom: 4 }}>{field.label}</label>}
                   <div style={{ display: 'flex', gap: 0 }}>
                   <div style={{ position: 'relative', flexShrink: 0 }}>
-                    <select value={phoneCode} onChange={e => { phoneCodeUserSet.current = true; setPhoneCode(e.target.value); setDisplayCurrency(getCurrencyByPhoneCode(e.target.value) || baseCurrency); }}
+                    <select value={phoneCode} onChange={e => { phoneCodeUserSet.current = true; setPhoneCode(e.target.value); }}
                       style={{ appearance: 'none', WebkitAppearance: 'none', padding: '11px 28px 11px 10px', borderRadius: `${borderRadius} 0 0 ${borderRadius}`, border: `1.5px solid ${fieldBorderColor}`, borderRight: 'none', backgroundColor: inputBgColor, fontSize: 13, fontWeight: 700, color: inputTextColor, cursor: 'pointer', outline: 'none', minWidth: 90 }}>
-                      {availablePhoneCodes.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+                      {availablePhoneCodes.map(c => <option key={`${c.country}-${c.code}`} value={c.code}>{c.label}</option>)}
                     </select>
                     <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: labelColorResolved, display: 'flex' }}><ChevronDown size={13} /></span>
                   </div>

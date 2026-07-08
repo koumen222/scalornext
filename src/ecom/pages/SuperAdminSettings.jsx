@@ -5,6 +5,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import SuperAdminShell from '../components/SuperAdminShell.jsx';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
+import { tp } from '../i18n/platform.js';
 
 const SuperAdminSettings = () => {
   const { user } = useEcomAuth();
@@ -49,8 +50,8 @@ const SuperAdminSettings = () => {
       setError('Les mots de passe ne correspondent pas');
       return;
     }
-    if (passwordData.newPassword.length < 6) {
-      setError('Le nouveau mot de passe doit contenir au moins 6 caractères');
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(passwordData.newPassword)) {
+      setError(tp('Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'));
       return;
     }
     setPwLoading(true);
@@ -59,7 +60,7 @@ const SuperAdminSettings = () => {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-      setSuccess('Mot de passe modifié avec succès');
+      setSuccess(tp('Mot de passe modifié avec succès'));
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur changement de mot de passe');
@@ -80,7 +81,7 @@ const SuperAdminSettings = () => {
         supportNotificationEnabled: res.data?.data?.supportNotificationEnabled === true,
       });
       setSupportInstances(res.data?.data?.availableInstances || []);
-      setSuccess('Configuration WhatsApp support mise à jour');
+      setSuccess(tp('Configuration WhatsApp support mise à jour'));
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur mise a jour WhatsApp support');
     } finally {
@@ -95,7 +96,7 @@ const SuperAdminSettings = () => {
 
   return (
     <SuperAdminShell
-      title="Paramètres"
+      title={tp('Paramètres')}
       subtitle="Configuration du compte Super Admin"
       icon={Settings}
       success={success}
@@ -119,7 +120,7 @@ const SuperAdminSettings = () => {
         {/* Mon compte */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-900">Mon compte</h2>
+            <h2 className="text-sm font-semibold text-gray-900">{tp('Mon compte')}</h2>
           </div>
           <div className="p-5 space-y-4">
             <div className="flex items-center justify-between">
@@ -127,8 +128,8 @@ const SuperAdminSettings = () => {
               <span className="text-sm font-medium text-gray-900">{user?.email}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">Rôle</span>
-              <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/10">Super Admin</span>
+              <span className="text-sm text-gray-500">{tp('Rôle')}</span>
+              <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/10">{tp('Super Admin')}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">ID</span>
@@ -140,20 +141,20 @@ const SuperAdminSettings = () => {
         {/* Notifications WhatsApp support */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-900">Notifications WhatsApp support</h2>
+            <h2 className="text-sm font-semibold text-gray-900">{tp('Notifications WhatsApp support')}</h2>
           </div>
           <form onSubmit={handleSupportConfigSave} className="p-5 space-y-4">
             <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-xs text-sky-700">
               Ce numero recoit uniquement les alertes d'escalade support. Les reponses restent dans l'application, jamais dans WhatsApp.
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Instance WhatsApp dédiée au support</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">{tp('Instance WhatsApp dédiée au support')}</label>
               <select
                 value={supportConfig.supportNotificationInstanceId}
                 onChange={(e) => setSupportConfig((prev) => ({ ...prev, supportNotificationInstanceId: e.target.value }))}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
               >
-                <option value="">Sélectionner une instance</option>
+                <option value="">{tp('Sélectionner une instance')}</option>
                 {supportInstances.map((instance) => (
                   <option key={instance._id} value={instance._id}>
                     {(instance.customName || instance.instanceName)} · {instance.status}
@@ -161,19 +162,19 @@ const SuperAdminSettings = () => {
                 ))}
               </select>
               <div className="mt-2 flex items-center justify-between gap-3 text-xs">
-                <p className="text-gray-500">Crée ou connecte une instance dédiée pour le support avant d'activer les alertes.</p>
+                <p className="text-gray-500">{tp('Crée ou connecte une instance dédiée pour le support avant d\'activer les alertes.')}</p>
                 <Link to="/ecom/whatsapp/service" className="font-semibold text-primary-700 hover:text-primary-800">
-                  Créer / connecter une instance
+                  {tp('Créer / connecter une instance')}
                 </Link>
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Numero WhatsApp du super admin</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">{tp('Numero WhatsApp du super admin')}</label>
               <input
                 type="text"
                 value={supportConfig.supportNotificationPhone}
                 onChange={(e) => setSupportConfig((prev) => ({ ...prev, supportNotificationPhone: e.target.value }))}
-                placeholder="Ex: +237612345678"
+                placeholder={tp('Ex: +237612345678')}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
               />
             </div>
@@ -185,8 +186,8 @@ const SuperAdminSettings = () => {
                 className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
               <div>
-                <p className="text-sm font-medium text-gray-900">Activer les alertes WhatsApp</p>
-                <p className="text-xs text-gray-500">Nouvelle question non resolue par l'IA → notification WhatsApp via l'instance dédiée, avec lien vers la conversation.</p>
+                <p className="text-sm font-medium text-gray-900">{tp('Activer les alertes WhatsApp')}</p>
+                <p className="text-xs text-gray-500">{tp('Nouvelle question non resolue par l\'IA → notification WhatsApp via l\'instance dédiée, avec lien vers la conversation.')}</p>
               </div>
             </label>
             <button
@@ -194,7 +195,7 @@ const SuperAdminSettings = () => {
               disabled={supportSaving}
               className="w-full py-2.5 text-sm font-medium text-white bg-slate-900 hover:bg-slate-700 rounded-xl transition-colors disabled:opacity-50 shadow-sm"
             >
-              {supportSaving ? 'Enregistrement...' : 'Enregistrer la configuration support'}
+              {supportSaving ? 'Enregistrement...' : tp('Enregistrer la configuration support')}
             </button>
           </form>
         </div>
@@ -202,11 +203,11 @@ const SuperAdminSettings = () => {
         {/* Changer mot de passe */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-900">Changer le mot de passe</h2>
+            <h2 className="text-sm font-semibold text-gray-900">{tp('Changer le mot de passe')}</h2>
           </div>
           <form onSubmit={handlePasswordChange} className="p-5 space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Mot de passe actuel</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">{tp('Mot de passe actuel')}</label>
               <input
                 type="password"
                 value={passwordData.currentPassword}
@@ -216,18 +217,18 @@ const SuperAdminSettings = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Nouveau mot de passe</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">{tp('Nouveau mot de passe')}</label>
               <input
                 type="password"
                 value={passwordData.newPassword}
                 onChange={(e) => setPasswordData(p => ({ ...p, newPassword: e.target.value }))}
                 required
-                placeholder="Min. 6 caractères"
+                placeholder={tp('Min. 8 caractères')}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Confirmer</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">{tp('Confirmer')}</label>
               <input
                 type="password"
                 value={passwordData.confirmPassword}
@@ -241,7 +242,7 @@ const SuperAdminSettings = () => {
               disabled={pwLoading}
               className="w-full py-2.5 text-sm font-medium text-white bg-slate-900 hover:bg-slate-700 rounded-xl transition-colors disabled:opacity-50 shadow-sm"
             >
-              {pwLoading ? 'Modification...' : 'Modifier le mot de passe'}
+              {pwLoading ? 'Modification...' : tp('Modifier le mot de passe')}
             </button>
           </form>
         </div>
@@ -249,15 +250,15 @@ const SuperAdminSettings = () => {
         {/* Zone de danger */}
         <div className="bg-white rounded-2xl border border-amber-200/60 overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-amber-100 bg-amber-50/30">
-            <h2 className="text-sm font-semibold text-amber-800">Zone de danger</h2>
+            <h2 className="text-sm font-semibold text-amber-800">{tp('Zone de danger')}</h2>
           </div>
           <div className="p-5">
-            <p className="text-xs text-gray-500 mb-3">Le compte Super Admin ne peut pas être supprimé depuis l'interface. Contactez le développeur pour toute modification critique.</p>
+            <p className="text-xs text-gray-500 mb-3">{tp('Le compte Super Admin ne peut pas être supprimé depuis l\'interface. Contactez le développeur pour toute modification critique.')}</p>
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              <span>Protégé par le système</span>
+              <span>{tp('Protégé par le système')}</span>
             </div>
           </div>
         </div>

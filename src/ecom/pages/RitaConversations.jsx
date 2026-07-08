@@ -3,6 +3,7 @@ import { useParams } from '@/lib/router-compat';
 import { MessageCircle, Phone, MapPin, Package, RefreshCw, Wifi, WifiOff, User, Bot } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
 import { useSocket } from '../hooks/useSocket.js';
+import { tp } from '../i18n/platform.js';
 
 const STATE_COLORS = {
   pending:   'bg-yellow-100 text-yellow-800',
@@ -102,12 +103,12 @@ export default function RitaConversations() {
                   <Bot className="w-4 h-4 text-primary-400" />
                   {agentName}
                 </span>
-              ) : 'Conversations Rita'}
+              ) : tp('Conversations Rita')}
             </h1>
             <div className="flex items-center gap-2">
               {isConnected
-                ? <Wifi className="w-4 h-4 text-primary-500" title="Connecté" />
-                : <WifiOff className="w-4 h-4 text-gray-400" title="Déconnecté" />
+                ? <Wifi className="w-4 h-4 text-primary-500" title={tp('Connecté')} />
+                : <WifiOff className="w-4 h-4 text-gray-400" title={tp('Déconnecté')} />
               }
               <button onClick={fetchConversations} className="text-gray-400 hover:text-gray-600">
                 <RefreshCw className="w-4 h-4" />
@@ -123,7 +124,7 @@ export default function RitaConversations() {
         {/* Liste */}
         <div className="flex-1 overflow-y-auto">
           {loading && (
-            <div className="p-6 text-center text-gray-400 text-sm">Chargement…</div>
+            <div className="p-6 text-center text-gray-400 text-sm">{tp('Chargement…')}</div>
           )}
           {!loading && conversations.length === 0 && (
             <div className="p-6 text-center text-gray-400 text-sm">
@@ -169,7 +170,7 @@ export default function RitaConversations() {
         <div className="flex-1 flex items-center justify-center text-gray-400">
           <div className="text-center">
             <MessageCircle className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p>Sélectionnez une conversation</p>
+            <p>{tp('Sélectionnez une conversation')}</p>
           </div>
         </div>
       ) : (
@@ -180,7 +181,7 @@ export default function RitaConversations() {
               <div>
                 <h2 className="font-semibold text-gray-900 flex items-center gap-2">
                   <User className="w-4 h-4 text-gray-400" />
-                  {selectedConv.state?.nom || 'Client inconnu'}
+                  {selectedConv.state?.nom || tp('Client inconnu')}
                 </h2>
                 <div className="flex flex-wrap gap-3 mt-2">
                   {selectedConv.phone && (
@@ -217,7 +218,7 @@ export default function RitaConversations() {
               <div className="flex flex-col items-end gap-1">
                 {selectedConv.tracker?.ordered && (
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATE_COLORS.confirmed}`}>
-                    Commande validée
+                    {tp('Commande validée')}
                   </span>
                 )}
                 {selectedConv.state?.statut && (

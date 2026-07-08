@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
 import SuperAdminShell from '../components/SuperAdminShell';
+import { tp } from '../i18n/platform.js';
 
 const STATUS_CONFIG = {
     pending: {
@@ -121,7 +122,7 @@ const SuperAdminWhatsAppPostulations = () => {
 
     return (
         <SuperAdminShell
-            title="Postulations WhatsApp"
+            title={tp('Postulations WhatsApp')}
             subtitle="Gérez les demandes d'activation de numéro WhatsApp personnel"
             icon={Users}
             error={error}
@@ -144,8 +145,8 @@ const SuperAdminWhatsAppPostulations = () => {
                 {[
                     { label: 'Total', value: stats.total, icon: MessageSquare, color: 'text-slate-600', bg: 'bg-slate-100' },
                     { label: 'En attente', value: stats.pending, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-                    { label: 'Approuvées', value: stats.active, icon: CheckCircle2, color: 'text-primary-600', bg: 'bg-primary-50' },
-                    { label: 'Rejetées', value: stats.rejected, icon: XCircle, color: 'text-red-600', bg: 'bg-red-50' },
+                    { get label() { return tp('Approuvées'); }, value: stats.active, icon: CheckCircle2, color: 'text-primary-600', bg: 'bg-primary-50' },
+                    { get label() { return tp('Rejetées'); }, value: stats.rejected, icon: XCircle, color: 'text-red-600', bg: 'bg-red-50' },
                 ].map(s => (
                     <div key={s.label} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center flex-shrink-0`}>
@@ -165,7 +166,7 @@ const SuperAdminWhatsAppPostulations = () => {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                         type="text"
-                        placeholder="Rechercher par nom, email, téléphone..."
+                        placeholder={tp('Rechercher par nom, email, téléphone...')}
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 transition"
@@ -202,8 +203,8 @@ const SuperAdminWhatsAppPostulations = () => {
                     <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
                         <MessageSquare className="w-6 h-6 text-slate-400" />
                     </div>
-                    <p className="text-slate-700 font-semibold">Aucune postulation trouvée</p>
-                    <p className="text-sm text-slate-400 mt-1">Les demandes d'activation WhatsApp apparaîtront ici</p>
+                    <p className="text-slate-700 font-semibold">{tp('Aucune postulation trouvée')}</p>
+                    <p className="text-sm text-slate-400 mt-1">{tp('Les demandes d\'activation WhatsApp apparaîtront ici')}</p>
                 </div>
             )}
 
@@ -276,15 +277,15 @@ const SuperAdminWhatsAppPostulations = () => {
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Nom</p>
+                                                        <p className="text-xs text-slate-400">{tp('Nom')}</p>
                                                         <p className="text-sm text-slate-800 font-medium">{p.businessName || '—'}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Type d'activité</p>
+                                                        <p className="text-xs text-slate-400">{tp('Type d\'activité')}</p>
                                                         <p className="text-sm text-slate-700">{BUSINESS_TYPE_LABELS[p.businessType] || p.businessType || '—'}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Workspace</p>
+                                                        <p className="text-xs text-slate-400">{tp('Workspace')}</p>
                                                         <p className="text-sm text-primary-600 font-medium">{p.workspaceName}</p>
                                                     </div>
                                                 </div>
@@ -297,7 +298,7 @@ const SuperAdminWhatsAppPostulations = () => {
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Nom complet</p>
+                                                        <p className="text-xs text-slate-400">{tp('Nom complet')}</p>
                                                         <p className="text-sm text-slate-800 font-medium">{p.contactName || '—'}</p>
                                                     </div>
                                                     <div>
@@ -305,7 +306,7 @@ const SuperAdminWhatsAppPostulations = () => {
                                                         <p className="text-sm text-slate-700">{p.email || '—'}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Demandé par</p>
+                                                        <p className="text-xs text-slate-400">{tp('Demandé par')}</p>
                                                         <p className="text-sm text-slate-700">{p.requestedBy?.name || p.requestedBy?.email || '—'}</p>
                                                     </div>
                                                 </div>
@@ -318,15 +319,15 @@ const SuperAdminWhatsAppPostulations = () => {
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Numero à configurer</p>
+                                                        <p className="text-xs text-slate-400">{tp('Numero à configurer')}</p>
                                                         <p className="text-sm text-primary-600 font-mono font-medium">{fmtPhone(p.phoneNumber)}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Numéro actuel</p>
+                                                        <p className="text-xs text-slate-400">{tp('Numéro actuel')}</p>
                                                         <p className="text-sm text-slate-700 font-mono">{p.currentWhatsappNumber || '—'}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Volume mensuel</p>
+                                                        <p className="text-xs text-slate-400">{tp('Volume mensuel')}</p>
                                                         <p className="text-sm text-slate-700">{p.monthlyMessages || '—'} messages</p>
                                                     </div>
                                                 </div>
@@ -350,18 +351,18 @@ const SuperAdminWhatsAppPostulations = () => {
                                             </div>
                                             <div className="flex items-center gap-6 text-sm flex-wrap">
                                                 <div>
-                                                    <p className="text-xs text-slate-400">Demandé le</p>
+                                                    <p className="text-xs text-slate-400">{tp('Demandé le')}</p>
                                                     <p className="text-slate-800">{fmtDate(p.requestedAt)}</p>
                                                 </div>
                                                 {p.activatedAt && (
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Activé le</p>
+                                                        <p className="text-xs text-slate-400">{tp('Activé le')}</p>
                                                         <p className="text-primary-600">{fmtDate(p.activatedAt)}</p>
                                                     </div>
                                                 )}
                                                 {p.note && (
                                                     <div className="flex-1">
-                                                        <p className="text-xs text-slate-400">Note</p>
+                                                        <p className="text-xs text-slate-400">{tp('Note')}</p>
                                                         <p className="text-slate-600 italic">{p.note}</p>
                                                     </div>
                                                 )}
@@ -376,7 +377,7 @@ const SuperAdminWhatsAppPostulations = () => {
                                             <div className="flex flex-col sm:flex-row gap-3">
                                                 <input
                                                     type="text"
-                                                    placeholder="Note optionnelle..."
+                                                    placeholder={tp('Note optionnelle...')}
                                                     value={noteInput[p._id] || ''}
                                                     onChange={e => setNoteInput(prev => ({ ...prev, [p._id]: e.target.value }))}
                                                     className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 transition"
@@ -389,7 +390,7 @@ const SuperAdminWhatsAppPostulations = () => {
                                                             className="flex items-center gap-1.5 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition shadow-sm disabled:opacity-50"
                                                         >
                                                             <CheckCircle2 className="w-4 h-4" />
-                                                            Approuver
+                                                            {tp('Approuver')}
                                                         </button>
                                                     )}
                                                     {p.status !== 'rejected' && (
@@ -399,7 +400,7 @@ const SuperAdminWhatsAppPostulations = () => {
                                                             className="flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition shadow-sm disabled:opacity-50"
                                                         >
                                                             <XCircle className="w-4 h-4" />
-                                                            Rejeter
+                                                            {tp('Rejeter')}
                                                         </button>
                                                     )}
                                                     {p.status !== 'pending' && (
@@ -409,7 +410,7 @@ const SuperAdminWhatsAppPostulations = () => {
                                                             className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition disabled:opacity-50"
                                                         >
                                                             <RefreshCcw className="w-4 h-4" />
-                                                            Remettre en attente
+                                                            {tp('Remettre en attente')}
                                                         </button>
                                                     )}
                                                 </div>

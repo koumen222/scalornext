@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from '@/lib/router-compat';
 import { affiliatePortalApi, setAffiliateToken, getAffiliateToken } from '../services/affiliatePortalApi.js';
 import { loadGsi, renderGsiButton } from '../utils/googleGsi.js';
+import { tp } from '../i18n/platform.js';
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '559924689181-rpkv8ji3029kvrtsvt3qceusmsh1i4p2.apps.googleusercontent.com';
 
@@ -21,7 +22,7 @@ export default function AffiliateLogin() {
   // Google Sign-In
   const handleGoogleCallback = useCallback(async (response) => {
     if (!response?.credential) {
-      setError('Erreur Google : aucun token reçu');
+      setError(tp('Erreur Google : aucun token reçu'));
       return;
     }
     setLoading(true);
@@ -85,14 +86,14 @@ export default function AffiliateLogin() {
           <Link to="/ecom" className="group flex items-center gap-3">
             <img src="/logo.png" alt="Scalor" className="h-10 object-contain" />
             <div>
-              <span className="text-[9px] font-medium text-gray-500 uppercase tracking-[0.2em]">Programme d'affiliation</span>
+              <span className="text-[9px] font-medium text-gray-500 uppercase tracking-[0.2em]">{tp('Programme d\'affiliation')}</span>
             </div>
           </Link>
         </div>
         <div className="relative">
           <h2 className="text-4xl font-black text-gray-900 leading-tight mb-4">
             Gagnez des commissions<br />
-            <span className="text-[#0F6B4F]">sur chaque vente.</span>
+            <span className="text-[#0F6B4F]">{tp('sur chaque vente.')}</span>
           </h2>
           <p className="text-gray-600 text-base leading-relaxed max-w-sm mb-8">
             Partagez votre lien unique, suivez vos conversions en temps réel et recevez vos commissions via Mobile Money.
@@ -100,7 +101,7 @@ export default function AffiliateLogin() {
           <div className="flex items-center gap-6">
             {[
               { number: '300F', label: 'Par inscription' },
-              { number: '30%', label: 'Commission récurrente' },
+              { number: '30%', get label() { return tp('Commission récurrente'); } },
               { number: '∞', label: 'Pas de limite' },
             ].map((stat, i) => (
               <div key={i} className="text-center">
@@ -113,10 +114,10 @@ export default function AffiliateLogin() {
         <div className="relative flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-xs text-primary-600">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-            Connexion sécurisée
+            {tp('Connexion sécurisée')}
           </div>
           <span className="text-gray-300">•</span>
-          <span className="text-xs text-gray-500">Paiements Mobile Money</span>
+          <span className="text-xs text-gray-500">{tp('Paiements Mobile Money')}</span>
         </div>
       </div>
 
@@ -132,8 +133,8 @@ export default function AffiliateLogin() {
 
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Portail Affilié</h1>
-            <p className="mt-1 text-gray-600 text-sm">Connectez-vous pour gérer vos liens et commissions.</p>
+            <h1 className="text-2xl font-bold text-gray-900">{tp('Portail Affilié')}</h1>
+            <p className="mt-1 text-gray-600 text-sm">{tp('Connectez-vous pour gérer vos liens et commissions.')}</p>
           </div>
 
           {/* Form card */}
@@ -148,7 +149,7 @@ export default function AffiliateLogin() {
                 }`}
               >
                 <img src="/logo.png" alt="" className="w-4 h-4 object-contain" />
-                Compte Scalor
+                {tp('Compte Scalor')}
               </button>
               <button
                 type="button"
@@ -158,7 +159,7 @@ export default function AffiliateLogin() {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                Compte affilié
+                {tp('Compte affilié')}
               </button>
             </div>
 
@@ -177,18 +178,18 @@ export default function AffiliateLogin() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Adresse email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Adresse email')}</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                   </span>
-                  <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="votre@email.com" autoComplete="email"
+                  <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required placeholder={tp('votre@email.com')} autoComplete="email"
                     className="block w-full pl-10 pr-3.5 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Mot de passe')}</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -211,11 +212,11 @@ export default function AffiliateLogin() {
                   : 'bg-gray-900 hover:bg-gray-800 text-white shadow-gray-900/20'
               }`}>
                 {loading ? (
-                  <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> Connexion...</>
+                  <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> {tp('Connexion...')}</>
                 ) : mode === 'scalor' ? (
-                  <><img src="/logo.png" alt="" className="w-4 h-4 object-contain brightness-0 invert" /> Se connecter avec Scalor</>
+                  <><img src="/logo.png" alt="" className="w-4 h-4 object-contain brightness-0 invert" /> {tp('Se connecter avec Scalor')}</>
                 ) : (
-                  <><span>Se connecter</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>
+                  <><span>{tp('Se connecter')}</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>
                 )}
               </button>
             </form>
@@ -242,7 +243,7 @@ export default function AffiliateLogin() {
           {/* Register link */}
           <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-xs text-gray-500">Pas encore affilié ?</span>
+            <span className="text-xs text-gray-500">{tp('Pas encore affilié ?')}</span>
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
@@ -251,14 +252,14 @@ export default function AffiliateLogin() {
             className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-xl text-sm font-medium text-gray-700 transition text-center flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-            Créer un compte affilié
+            {tp('Créer un compte affilié')}
           </Link>
 
           {/* Footer */}
           <div className="mt-6 flex items-center justify-center gap-3 text-xs text-gray-500">
             <span>&copy; {new Date().getFullYear()} Scalor</span>
             <span>•</span>
-            <Link to="/ecom/privacy" className="text-gray-500 hover:text-gray-700 transition">Confidentialité</Link>
+            <Link to="/ecom/privacy" className="text-gray-500 hover:text-gray-700 transition">{tp('Confidentialité')}</Link>
           </div>
         </div>
       </div>

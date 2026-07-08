@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "@/lib/router-compat";
 import ecomApi from "../services/ecommApi.js";
 import { useMoney } from '../hooks/useMoney.js';
 import ErrorBanner from '../components/ErrorBanner.jsx';
+import { tp } from '../i18n/platform.js';
 
 const TEMPLATES = [
   { id: "relance_pending", label: "En attente", name: "Relance commandes en attente", orderStatus: ["pending"], message: "Bonjour {firstName},\n\nNous avons bien reçu votre commande et elle est actuellement en attente de confirmation.\n\nPour finaliser votre livraison, notre équipe a besoin de valider quelques informations.\n\nPouvez-vous confirmer que vous êtes toujours intéressé(e) ?\n\nRépondez OUI et nous nous occupons du reste.\n\nCordialement,\nL'équipe Scalor" },
@@ -342,15 +343,15 @@ const CampaignForm = () => {
         {(!isEdit && step===1) && (
           <div className="space-y-5">
             <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-              <label className="block text-sm font-semibold text-gray-900 mb-1.5">Nom de la campagne <span className="text-red-500">*</span></label>
-              <input type="text" value={formData.name} onChange={e => setFormData(p=>({...p,name:e.target.value}))} className={inp} placeholder="Ex : Relance injoignables  mars 2026" />
-              <p className="text-xs text-gray-400 mt-1.5">Donnez un nom clair pour identifier cette campagne dans votre liste</p>
+              <label className="block text-sm font-semibold text-gray-900 mb-1.5">{tp('Nom de la campagne')} <span className="text-red-500">*</span></label>
+              <input type="text" value={formData.name} onChange={e => setFormData(p=>({...p,name:e.target.value}))} className={inp} placeholder={tp('Ex : Relance injoignables  mars 2026')} />
+              <p className="text-xs text-gray-400 mt-1.5">{tp('Donnez un nom clair pour identifier cette campagne dans votre liste')}</p>
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="px-5 pt-5 pb-3 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-900">Choisissez un template de message</h2>
-                <p className="text-xs text-gray-400 mt-0.5">Le template applique automatiquement le ciblage correspondant. Vous pourrez ajuster les filtres à l'étape suivante.</p>
+                <h2 className="text-sm font-semibold text-gray-900">{tp('Choisissez un template de message')}</h2>
+                <p className="text-xs text-gray-400 mt-0.5">{tp('Le template applique automatiquement le ciblage correspondant. Vous pourrez ajuster les filtres à l\'étape suivante.')}</p>
               </div>
               <div className="p-5">
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -386,7 +387,7 @@ const CampaignForm = () => {
                         </div>
                         <button type="button" onClick={() => setStep(2)}
                           className="flex-shrink-0 px-4 py-2 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition">
-                          Continuer
+                          {tp('Continuer')}
                         </button>
                       </div>
                     </div>
@@ -396,10 +397,10 @@ const CampaignForm = () => {
             </div>
 
             <div className="flex justify-between items-center">
-              <button type="button" onClick={() => navigate("/ecom/campaigns")} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition">Annuler</button>
+              <button type="button" onClick={() => navigate("/ecom/campaigns")} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition">{tp('Annuler')}</button>
               <button type="button" onClick={() => setStep(2)} disabled={!formData.name.trim()}
                 className="px-5 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
-                Suivant  Ciblage
+                {tp('Suivant  Ciblage')}
               </button>
             </div>
           </div>
@@ -410,14 +411,14 @@ const CampaignForm = () => {
           <div className="space-y-5">
             {isEdit && (
               <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                <h2 className="text-sm font-semibold text-gray-900 mb-3">Informations</h2>
+                <h2 className="text-sm font-semibold text-gray-900 mb-3">{tp('Informations')}</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Nom de la campagne <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Nom de la campagne')} <span className="text-red-500">*</span></label>
                     <input type="text" value={formData.name} onChange={e=>setFormData(p=>({...p,name:e.target.value}))} className={inp} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Programmer l'envoi</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Programmer l\'envoi')}</label>
                     <input type="datetime-local" value={formData.scheduledAt} onChange={e=>setFormData(p=>({...p,scheduledAt:e.target.value}))} className={inp} />
                   </div>
                 </div>
@@ -427,14 +428,14 @@ const CampaignForm = () => {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="px-5 pt-5 pb-3 border-b border-gray-100 flex items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-gray-900">Ciblage des clients</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">Définissez quels clients recevront ce message</p>
+                  <h2 className="text-sm font-semibold text-gray-900">{tp('Ciblage des clients')}</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">{tp('Définissez quels clients recevront ce message')}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {hasAnyFilter()&&<button type="button" onClick={resetFilters} className="text-xs text-red-500 hover:text-red-700 underline">Réinitialiser</button>}
+                  {hasAnyFilter()&&<button type="button" onClick={resetFilters} className="text-xs text-red-500 hover:text-red-700 underline">{tp('Réinitialiser')}</button>}
                   <button type="button" onClick={handlePreview} disabled={previewLoading}
                     className="flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition disabled:opacity-50">
-                    {previewLoading?<><IconSpinner/>Calcul...</>:"Voir l'audience"}
+                    {previewLoading?<><IconSpinner/>{tp('Calcul...')}</>:"Voir l'audience"}
                   </button>
                 </div>
               </div>
@@ -445,17 +446,17 @@ const CampaignForm = () => {
                   <div className="flex items-start gap-2.5 p-3 bg-primary-50 border border-primary-200 rounded-lg">
                     <svg className="w-4 h-4 text-primary-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-primary-800">Filtre appliqué depuis le template</p>
-                      <p className="text-xs text-primary-600 mt-0.5">Statuts : <strong>{activeStatusLabels.join(", ")}</strong>. Vous pouvez modifier ou ajouter d'autres statuts ci-dessous.</p>
+                      <p className="text-xs font-semibold text-primary-800">{tp('Filtre appliqué depuis le template')}</p>
+                      <p className="text-xs text-primary-600 mt-0.5">{tp('Statuts :')} <strong>{activeStatusLabels.join(", ")}</strong>{tp('. Vous pouvez modifier ou ajouter d\'autres statuts ci-dessous.')}</p>
                     </div>
-                    <button type="button" onClick={() => setStep(1)} className="flex-shrink-0 text-[10px] text-primary-700 underline hover:text-primary-900">Changer</button>
+                    <button type="button" onClick={() => setStep(1)} className="flex-shrink-0 text-[10px] text-primary-700 underline hover:text-primary-900">{tp('Changer')}</button>
                   </div>
                 )}
 
                 {/* Status groups */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold text-gray-700">Statut des commandes</p>
+                    <p className="text-xs font-semibold text-gray-700">{tp('Statut des commandes')}</p>
                     {statusCount>0&&<span className="text-[10px] font-medium text-primary-700 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-200">{statusCount} sélectionné{statusCount>1?"s":""}</span>}
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -473,7 +474,7 @@ const CampaignForm = () => {
                       );
                     })}
                   </div>
-                  <p className="text-[10px] text-gray-400 mt-1.5">Survolez un statut pour voir sa description. Vous pouvez en sélectionner plusieurs.</p>
+                  <p className="text-[10px] text-gray-400 mt-1.5">{tp('Survolez un statut pour voir sa description. Vous pouvez en sélectionner plusieurs.')}</p>
                 </div>
 
                 {/* Cities + Products */}
@@ -485,10 +486,10 @@ const CampaignForm = () => {
                     </div>
                     <div className="border border-gray-200 rounded-lg overflow-hidden">
                       <div className="px-3 py-2 bg-gray-50 border-b border-gray-100">
-                        <input type="text" value={citySearch} onChange={e=>setCitySearch(e.target.value)} placeholder="Rechercher..." className="w-full text-xs bg-transparent outline-none placeholder-gray-400" />
+                        <input type="text" value={citySearch} onChange={e=>setCitySearch(e.target.value)} placeholder={tp('Rechercher...')} className="w-full text-xs bg-transparent outline-none placeholder-gray-400" />
                       </div>
                       <div className="max-h-40 overflow-y-auto">
-                        {filteredCities.length===0&&<p className="text-xs text-gray-400 p-3 text-center">Aucune ville</p>}
+                        {filteredCities.length===0&&<p className="text-xs text-gray-400 p-3 text-center">{tp('Aucune ville')}</p>}
                         {filteredCities.map(c=>{const sel=(formData.targetFilters.orderCity||[]).includes(c);return(
                           <label key={c} className={`flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-gray-50 transition ${sel?"bg-primary-50":""}`}>
                             <input type="checkbox" checked={sel} onChange={()=>{toggleArrayFilter("orderCity",c);setTimeout(handlePreview,300);}} className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 flex-shrink-0" />
@@ -506,10 +507,10 @@ const CampaignForm = () => {
                     </div>
                     <div className="border border-gray-200 rounded-lg overflow-hidden">
                       <div className="px-3 py-2 bg-gray-50 border-b border-gray-100">
-                        <input type="text" value={productSearch} onChange={e=>setProductSearch(e.target.value)} placeholder="Rechercher..." className="w-full text-xs bg-transparent outline-none placeholder-gray-400" />
+                        <input type="text" value={productSearch} onChange={e=>setProductSearch(e.target.value)} placeholder={tp('Rechercher...')} className="w-full text-xs bg-transparent outline-none placeholder-gray-400" />
                       </div>
                       <div className="max-h-40 overflow-y-auto">
-                        {filteredProducts.length===0&&<p className="text-xs text-gray-400 p-3 text-center">Aucun produit</p>}
+                        {filteredProducts.length===0&&<p className="text-xs text-gray-400 p-3 text-center">{tp('Aucun produit')}</p>}
                         {filteredProducts.map(p=>{const sel=(formData.targetFilters.orderProduct||[]).includes(p);return(
                           <label key={p} className={`flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-gray-50 transition ${sel?"bg-purple-50":""}`}>
                             <input type="checkbox" checked={sel} onChange={()=>{toggleArrayFilter("orderProduct",p);setTimeout(handlePreview,300);}} className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 flex-shrink-0" />
@@ -523,8 +524,8 @@ const CampaignForm = () => {
 
                 {/* Date + price */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div><label className="block text-xs font-medium text-gray-600 mb-1">Date début</label><input type="date" value={formData.targetFilters.orderDateFrom} onChange={e=>{updateFilter("orderDateFrom",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
-                  <div><label className="block text-xs font-medium text-gray-600 mb-1">Date fin</label><input type="date" value={formData.targetFilters.orderDateTo} onChange={e=>{updateFilter("orderDateTo",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
+                  <div><label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date début')}</label><input type="date" value={formData.targetFilters.orderDateFrom} onChange={e=>{updateFilter("orderDateFrom",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
+                  <div><label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date fin')}</label><input type="date" value={formData.targetFilters.orderDateTo} onChange={e=>{updateFilter("orderDateTo",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
                   <div><label className="block text-xs font-medium text-gray-600 mb-1">Prix min ({symbol})</label><input type="number" min="0" value={formData.targetFilters.orderMinPrice||""} placeholder="0" onChange={e=>updateFilter("orderMinPrice",parseInt(e.target.value)||0)} className={inp}/></div>
                   <div><label className="block text-xs font-medium text-gray-600 mb-1">Prix max ({symbol})</label><input type="number" min="0" value={formData.targetFilters.orderMaxPrice||""} placeholder="0" onChange={e=>updateFilter("orderMaxPrice",parseInt(e.target.value)||0)} className={inp}/></div>
                 </div>
@@ -533,9 +534,9 @@ const CampaignForm = () => {
                 {preview && (
                   <div className={`rounded-xl border p-4 ${preview.empty?"bg-gray-50 border-gray-200":preview.count===0?"bg-red-50 border-red-200":"bg-primary-50 border-primary-200"}`}>
                     {preview.empty ? (
-                      <p className="text-sm text-gray-500 text-center">Sélectionnez au moins un filtre pour calculer l'audience</p>
+                      <p className="text-sm text-gray-500 text-center">{tp('Sélectionnez au moins un filtre pour calculer l\'audience')}</p>
                     ) : preview.count===0 ? (
-                      <p className="text-sm text-red-600 text-center font-medium">Aucun client trouvé avec ces filtres</p>
+                      <p className="text-sm text-red-600 text-center font-medium">{tp('Aucun client trouvé avec ces filtres')}</p>
                     ) : (
                       <>
                         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
@@ -575,9 +576,9 @@ const CampaignForm = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              {!isEdit&&<button type="button" onClick={()=>setStep(1)} className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition"><IconChevronLeft/>Retour</button>}
+              {!isEdit&&<button type="button" onClick={()=>setStep(1)} className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition"><IconChevronLeft/>{tp('Retour')}</button>}
               <button type="button" onClick={()=>setStep(3)} className="ml-auto px-5 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition">
-                Suivant  Message
+                {tp('Suivant  Message')}
               </button>
             </div>
           </div>
@@ -588,8 +589,8 @@ const CampaignForm = () => {
           <div className="space-y-5">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="px-5 pt-4 pb-3 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-900">Message WhatsApp</h2>
-                <p className="text-xs text-gray-400 mt-0.5">Utilisez *texte* pour le gras et _texte_ pour l'italique dans WhatsApp</p>
+                <h2 className="text-sm font-semibold text-gray-900">{tp('Message WhatsApp')}</h2>
+                <p className="text-xs text-gray-400 mt-0.5">{tp('Utilisez *texte* pour le gras et _texte_ pour l\'italique dans WhatsApp')}</p>
               </div>
               <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex flex-wrap gap-1.5">
                 {VARIABLES.map(v => (
@@ -601,7 +602,7 @@ const CampaignForm = () => {
               </div>
               <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
                 <div className="p-5">
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">Rédaction</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Rédaction')}</label>
                   <textarea ref={textareaRef} rows={11} value={formData.messageTemplate}
                     onChange={e=>setFormData(p=>({...p,messageTemplate:e.target.value}))}
                     className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-mono resize-none bg-gray-50"
@@ -610,7 +611,7 @@ const CampaignForm = () => {
                   <p className="text-[10px] text-gray-400 mt-1.5">{formData.messageTemplate.length} caractère{formData.messageTemplate.length>1?"s":""}{formData.messageTemplate.length>500&&"  message long"}</p>
                 </div>
                 <div className="p-5 bg-gray-50">
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">Aperçu (client exemple : Aminata  Douala)</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Aperçu (client exemple : Aminata  Douala)')}</label>
                   <div className="bg-[#ece5dd] rounded-xl p-3 min-h-[200px] flex flex-col justify-end">
                     {formData.messageTemplate ? (
                       <div className="bg-white rounded-xl rounded-tl-sm px-3 py-2 shadow-sm max-w-[85%] self-end">
@@ -618,7 +619,7 @@ const CampaignForm = () => {
                         <p className="text-[9px] text-gray-400 text-right mt-1">12:34 </p>
                       </div>
                     ) : (
-                      <p className="text-xs text-gray-400 text-center py-8">L'aperçu apparaîtra ici</p>
+                      <p className="text-xs text-gray-400 text-center py-8">{tp('L\'aperçu apparaîtra ici')}</p>
                     )}
                   </div>
                 </div>
@@ -628,8 +629,8 @@ const CampaignForm = () => {
             {/* Media Upload Section */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="px-5 pt-4 pb-3 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-900">Médias (optionnel)</h2>
-                <p className="text-xs text-gray-400 mt-0.5">Ajoutez une image, une vidéo ou un message vocal à votre campagne</p>
+                <h2 className="text-sm font-semibold text-gray-900">{tp('Médias (optionnel)')}</h2>
+                <p className="text-xs text-gray-400 mt-0.5">{tp('Ajoutez une image, une vidéo ou un message vocal à votre campagne')}</p>
               </div>
               <div className="p-5">
                 <input
@@ -649,13 +650,13 @@ const CampaignForm = () => {
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition text-sm font-medium text-gray-600 hover:text-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {mediaUploading ? (
-                        <><IconSpinner /><span>Upload en cours...</span></>
+                        <><IconSpinner /><span>{tp('Upload en cours...')}</span></>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
-                          <span>Image</span>
+                          <span>{tp('Image')}</span>
                         </>
                       )}
                     </button>
@@ -666,13 +667,13 @@ const CampaignForm = () => {
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-sm font-medium text-gray-600 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {mediaUploading ? (
-                        <><IconSpinner /><span>Upload en cours...</span></>
+                        <><IconSpinner /><span>{tp('Upload en cours...')}</span></>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.259a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
                           </svg>
-                          <span>Vidéo</span>
+                          <span>{tp('Vidéo')}</span>
                         </>
                       )}
                     </button>
@@ -683,13 +684,13 @@ const CampaignForm = () => {
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition text-sm font-medium text-gray-600 hover:text-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {mediaUploading ? (
-                        <><IconSpinner /><span>Upload en cours...</span></>
+                        <><IconSpinner /><span>{tp('Upload en cours...')}</span></>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                           </svg>
-                          <span>Vocal</span>
+                          <span>{tp('Vocal')}</span>
                         </>
                       )}
                     </button>
@@ -708,9 +709,9 @@ const CampaignForm = () => {
                               <img src={formData.media.url} alt="Preview" className="w-full h-full object-cover" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-primary-800">Image ajoutée</p>
+                              <p className="text-sm font-semibold text-primary-800">{tp('Image ajoutée')}</p>
                               <p className="text-xs text-primary-600 truncate">{formData.media.fileName}</p>
-                              <p className="text-[10px] text-primary-500 mt-1">Le texte sera envoyé en premier, puis l'image</p>
+                              <p className="text-[10px] text-primary-500 mt-1">{tp('Le texte sera envoyé en premier, puis l\'image')}</p>
                             </div>
                           </>
                         ) : formData.media.type === 'video' ? (
@@ -719,9 +720,9 @@ const CampaignForm = () => {
                               <video src={formData.media.url} className="w-full h-full object-cover" muted />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-blue-800">Vidéo ajoutée</p>
+                              <p className="text-sm font-semibold text-blue-800">{tp('Vidéo ajoutée')}</p>
                               <p className="text-xs text-blue-600 truncate">{formData.media.fileName}</p>
-                              <p className="text-[10px] text-blue-500 mt-1">Le texte sera envoyé en premier, puis la vidéo</p>
+                              <p className="text-[10px] text-blue-500 mt-1">{tp('Le texte sera envoyé en premier, puis la vidéo')}</p>
                             </div>
                           </>
                         ) : (
@@ -732,9 +733,9 @@ const CampaignForm = () => {
                               </svg>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-purple-800">Message vocal ajouté</p>
+                              <p className="text-sm font-semibold text-purple-800">{tp('Message vocal ajouté')}</p>
                               <p className="text-xs text-purple-600 truncate">{formData.media.fileName}</p>
-                              <p className="text-[10px] text-purple-500 mt-1">Le vocal sera envoyé, suivi du message texte</p>
+                              <p className="text-[10px] text-purple-500 mt-1">{tp('Le vocal sera envoyé, suivi du message texte')}</p>
                             </div>
                           </>
                         )}
@@ -743,7 +744,7 @@ const CampaignForm = () => {
                         type="button"
                         onClick={handleRemoveMedia}
                         className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                        title="Supprimer"
+                        title={tp('Supprimer')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -752,21 +753,21 @@ const CampaignForm = () => {
                     </div>
                   </div>
                 )}
-                <p className="text-[10px] text-gray-400 mt-2">Images (JPG, PNG, WebP) • Vidéo (MP4, MOV, WebM, max 50 MB) • Audio (MP3, OGG, WAV, max 10 MB)</p>
+                <p className="text-[10px] text-gray-400 mt-2">{tp('Images (JPG, PNG, WebP) • Vidéo (MP4, MOV, WebM, max 50 MB) • Audio (MP3, OGG, WAV, max 10 MB)')}</p>
               </div>
             </div>
 
             {!isEdit && (
               <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3">Options</h3>
+                <h3 className="text-sm font-semibold text-gray-800 mb-3">{tp('Options')}</h3>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Programmer l'envoi (facultatif)</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Programmer l\'envoi (facultatif)')}</label>
                     <input type="datetime-local" value={formData.scheduledAt} onChange={e=>setFormData(p=>({...p,scheduledAt:e.target.value}))} className={inp} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Tags (facultatif)</label>
-                    <input type="text" value={formData.tags} onChange={e=>setFormData(p=>({...p,tags:e.target.value}))} className={inp} placeholder="relance, janvier..." />
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Tags (facultatif)')}</label>
+                    <input type="text" value={formData.tags} onChange={e=>setFormData(p=>({...p,tags:e.target.value}))} className={inp} placeholder={tp('relance, janvier...')} />
                   </div>
                 </div>
               </div>
@@ -785,10 +786,10 @@ const CampaignForm = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  {!isEdit&&<button type="button" onClick={()=>setStep(2)} className="px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 transition flex items-center gap-1.5"><IconChevronLeft/>Retour</button>}
+                  {!isEdit&&<button type="button" onClick={()=>setStep(2)} className="px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 transition flex items-center gap-1.5"><IconChevronLeft/>{tp('Retour')}</button>}
                   <button type="submit" disabled={loading||!formData.name.trim()||!formData.messageTemplate.trim()}
                     className="px-6 py-2 bg-primary-500 text-white text-sm font-bold rounded-lg hover:bg-primary-400 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
-                    {loading?<><IconSpinner/>Enregistrement...</>:<>{isEdit?"Enregistrer":"Créer la campagne"}</>}
+                    {loading?<><IconSpinner/>{tp('Enregistrement...')}</>:<>{isEdit?"Enregistrer":"Créer la campagne"}</>}
                   </button>
                 </div>
               </div>

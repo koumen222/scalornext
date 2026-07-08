@@ -4,6 +4,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { useMoney } from '../hooks/useMoney.js';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
+import { tp } from '../i18n/platform.js';
 
 const COST_PER_KM = 500;
 
@@ -102,9 +103,9 @@ const MiniMap = ({ startLat, startLng, destLat, destLng, currentLat, currentLng 
         </div>
       )}
       <div className="absolute bottom-2 left-2 flex gap-2 text-[10px]">
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#22c55e' }}>● Départ</span>
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#ef4444' }}>● Arrivée</span>
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#3b82f6' }}>● Vous</span>
+        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#22c55e' }}>{tp('● Départ')}</span>
+        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#ef4444' }}>{tp('● Arrivée')}</span>
+        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#3b82f6' }}>{tp('● Vous')}</span>
       </div>
     </div>
   );
@@ -209,7 +210,7 @@ const LivreurDeliveryDetail = () => {
       return;
     }
     if (!destination.trim()) {
-      setError('Entrez la destination (adresse d\'arrivée).');
+      setError(tp('Entrez la destination (adresse d\'arrivée).'));
       return;
     }
 
@@ -219,7 +220,7 @@ const LivreurDeliveryDetail = () => {
       // Geocode destination
       const geo = await geocodeDestination(destination);
       if (!geo) {
-        setError('Adresse de destination introuvable. Essayez avec plus de détails.');
+        setError(tp('Adresse de destination introuvable. Essayez avec plus de détails.'));
         setActing(false);
         return;
       }
@@ -242,7 +243,7 @@ const LivreurDeliveryDetail = () => {
       });
 
       setCourseStarted(true);
-      setSuccess('Course démarrée !');
+      setSuccess(tp('Course démarrée !'));
       loadOrder(true);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -279,14 +280,14 @@ const LivreurDeliveryDetail = () => {
   return (
     <div className="flex flex-col items-center justify-center h-64 gap-3">
       <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-      <p className="text-sm text-gray-400">Chargement…</p>
+      <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
     </div>
   );
 
   if (!order) return (
     <div className="p-6 text-center">
-      <p className="text-gray-500">Commande introuvable</p>
-      <button onClick={() => navigate(-1)} className="text-sm text-[#0F6B4F] font-medium mt-3 inline-block">← Retour</button>
+      <p className="text-gray-500">{tp('Commande introuvable')}</p>
+      <button onClick={() => navigate(-1)} className="text-sm text-[#0F6B4F] font-medium mt-3 inline-block">{tp('← Retour')}</button>
     </div>
   );
 
@@ -308,7 +309,7 @@ const LivreurDeliveryDetail = () => {
           <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         </button>
         <div className="flex-1">
-          <h1 className="text-lg sm:text-xl font-bold text-gray-900">Détail de la course</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-gray-900">{tp('Détail de la course')}</h1>
           <p className="text-xs text-gray-400">#{order.orderId || id.slice(-8)}</p>
         </div>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ background: sm.bg, color: sm.text }}>
@@ -347,11 +348,11 @@ const LivreurDeliveryDetail = () => {
             {/* Destination input + Start button */}
             {isConfirmed && !isStarted && order.status !== 'delivered' && (
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
-                <p className="text-sm font-semibold text-amber-800">🚀 Commencer la course</p>
-                <p className="text-xs text-amber-700">Entrez l'adresse d'arrivée pour calculer le trajet et le coût.</p>
+                <p className="text-sm font-semibold text-amber-800">{tp('🚀 Commencer la course')}</p>
+                <p className="text-xs text-amber-700">{tp('Entrez l\'adresse d\'arrivée pour calculer le trajet et le coût.')}</p>
                 <input
                   type="text"
-                  placeholder="Ex: Marché central, Douala"
+                  placeholder={tp('Ex: Marché central, Douala')}
                   value={destination}
                   onChange={e => setDestination(e.target.value)}
                   className="w-full px-4 py-3 text-sm border border-amber-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/40 bg-white"
@@ -362,9 +363,9 @@ const LivreurDeliveryDetail = () => {
                   className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-sm transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {acting ? (
-                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Calcul en cours…</>
+                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> {tp('Calcul en cours…')}</>
                   ) : (
-                    <>📍 Commencer la course</>
+                    <>{tp('📍 Commencer la course')}</>
                   )}
                 </button>
               </div>
@@ -374,13 +375,13 @@ const LivreurDeliveryDetail = () => {
             {isStarted && !isDelivered && (
               <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-bold text-indigo-800">🗺️ Course en cours</p>
+                  <p className="text-sm font-bold text-indigo-800">{tp('🗺️ Course en cours')}</p>
                   <span className="flex h-2.5 w-2.5"><span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-green-400 opacity-75" /><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" /></span>
                 </div>
 
                 {(order.deliveryEndAddress || destination) && (
                   <div className="text-xs text-indigo-700">
-                    <span className="font-medium">Destination :</span> {order.deliveryEndAddress || destination}
+                    <span className="font-medium">{tp('Destination :')}</span> {order.deliveryEndAddress || destination}
                   </div>
                 )}
 
@@ -415,7 +416,7 @@ const LivreurDeliveryDetail = () => {
                     {savedDistance && liveDistance != null && (
                       <div>
                         <div className="flex justify-between text-[10px] text-indigo-600 font-medium mb-1">
-                          <span>Progression</span>
+                          <span>{tp('Progression')}</span>
                           <span>{Math.max(0, Math.min(100, Math.round(((savedDistance - liveDistance) / savedDistance) * 100)))}%</span>
                         </div>
                         <div className="w-full bg-indigo-200 rounded-full h-2.5">
@@ -455,7 +456,7 @@ const LivreurDeliveryDetail = () => {
             {/* Delivered summary */}
             {isDelivered && savedDistance && (
               <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 space-y-2">
-                <p className="text-sm font-bold text-primary-800">✅ Livraison terminée</p>
+                <p className="text-sm font-bold text-primary-800">{tp('✅ Livraison terminée')}</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-white rounded-xl p-3 text-center shadow-sm">
                     <p className="text-xl font-black text-primary-700">{savedDistance.toFixed(1)} km</p>
@@ -463,7 +464,7 @@ const LivreurDeliveryDetail = () => {
                   </div>
                   <div className="bg-white rounded-xl p-3 text-center shadow-sm">
                     <p className="text-xl font-black text-primary-700">{fmt(deliveryCost || 0)}</p>
-                    <p className="text-[10px] text-gray-400">COÛT LIVRAISON</p>
+                    <p className="text-[10px] text-gray-400">{tp('COÛT LIVRAISON')}</p>
                   </div>
                 </div>
               </div>
@@ -474,14 +475,14 @@ const LivreurDeliveryDetail = () => {
 
       {/* Client Info */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">👤 Client</h2>
+        <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">{tp('👤 Client')}</h2>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">Nom</span>
+            <span className="text-xs text-gray-400">{tp('Nom')}</span>
             <span className="text-sm font-semibold text-gray-900">{order.clientName || '—'}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">Téléphone</span>
+            <span className="text-xs text-gray-400">{tp('Téléphone')}</span>
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-gray-900">{order.clientPhone || '—'}</span>
               {order.clientPhone && (
@@ -490,12 +491,12 @@ const LivreurDeliveryDetail = () => {
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">Ville</span>
+            <span className="text-xs text-gray-400">{tp('Ville')}</span>
             <span className="text-sm text-gray-700">{order.city || '—'}</span>
           </div>
           {order.address && (
             <div className="flex items-start justify-between">
-              <span className="text-xs text-gray-400">Adresse</span>
+              <span className="text-xs text-gray-400">{tp('Adresse')}</span>
               <span className="text-sm text-gray-700 text-right max-w-[60%]">{order.address}</span>
             </div>
           )}
@@ -504,18 +505,18 @@ const LivreurDeliveryDetail = () => {
 
       {/* Produit */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">📦 Produit</h2>
+        <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">{tp('📦 Produit')}</h2>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">Article</span>
+            <span className="text-xs text-gray-400">{tp('Article')}</span>
             <span className="text-sm font-semibold text-gray-900">{order.product || '—'}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">Quantité</span>
+            <span className="text-xs text-gray-400">{tp('Quantité')}</span>
             <span className="text-sm text-gray-700">{order.quantity || 1}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">Prix</span>
+            <span className="text-xs text-gray-400">{tp('Prix')}</span>
             <span className="text-sm font-bold text-[#0F6B4F]">{order.price ? fmt(order.price) : '—'}</span>
           </div>
         </div>
@@ -523,33 +524,33 @@ const LivreurDeliveryDetail = () => {
 
       {/* Dates */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">📅 Chronologie</h2>
+        <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">{tp('📅 Chronologie')}</h2>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">Créée le</span>
+            <span className="text-xs text-gray-400">{tp('Créée le')}</span>
             <span className="text-xs text-gray-600">{fmtDate(order.date || order.createdAt)}</span>
           </div>
           {order.confirmedAt && (
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">Confirmée le</span>
+              <span className="text-xs text-gray-400">{tp('Confirmée le')}</span>
               <span className="text-xs text-gray-600">{fmtDate(order.confirmedAt)}</span>
             </div>
           )}
           {order.deliveryStartedAt && (
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">Course démarrée</span>
+              <span className="text-xs text-gray-400">{tp('Course démarrée')}</span>
               <span className="text-xs text-indigo-600 font-medium">{fmtDate(order.deliveryStartedAt)}</span>
             </div>
           )}
           {order.shippedAt && (
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">Expédiée le</span>
+              <span className="text-xs text-gray-400">{tp('Expédiée le')}</span>
               <span className="text-xs text-gray-600">{fmtDate(order.shippedAt)}</span>
             </div>
           )}
           {order.deliveredAt && (
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">Livrée le</span>
+              <span className="text-xs text-gray-400">{tp('Livrée le')}</span>
               <span className="text-xs text-primary-600 font-medium">{fmtDate(order.deliveredAt)}</span>
             </div>
           )}
@@ -559,7 +560,7 @@ const LivreurDeliveryDetail = () => {
       {/* Notes */}
       {order.notes && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">📝 Notes</h2>
+          <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">{tp('📝 Notes')}</h2>
           <p className="text-sm text-gray-600 whitespace-pre-wrap">{order.notes}</p>
         </div>
       )}
@@ -567,7 +568,7 @@ const LivreurDeliveryDetail = () => {
       {/* Actions */}
       {isMyOrder && ['confirmed', 'shipped'].includes(order.status) && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
-          <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">⚡ Actions</h2>
+          <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">{tp('⚡ Actions')}</h2>
           {order.status === 'confirmed' && !isStarted && (
             <button onClick={() => handleAction('pickup_confirmed')} disabled={acting} className="w-full py-3 bg-amber-500 text-white rounded-xl font-semibold text-sm hover:bg-amber-600 transition disabled:opacity-50">
               {acting ? 'Traitement…' : '📦 Confirmer la récupération'}
@@ -595,7 +596,7 @@ const LivreurDeliveryDetail = () => {
           rel="noopener noreferrer"
           className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition text-center"
         >
-          <p className="text-sm font-semibold text-[#0F6B4F]">🗺️ {destCoords ? 'Naviguer vers la destination' : 'Ouvrir dans Google Maps'}</p>
+          <p className="text-sm font-semibold text-[#0F6B4F]">🗺️ {destCoords ? 'Naviguer vers la destination' : tp('Ouvrir dans Google Maps')}</p>
           <p className="text-xs text-gray-400 mt-0.5">{order.deliveryEndAddress || destination || `${order.address || ''}, ${order.city || ''}`}</p>
         </a>
       )}

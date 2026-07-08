@@ -3,6 +3,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useTheme } from '../contexts/ThemeContext';
 import api from '../../lib/api';
 import BuilderAIChatWidget from '../components/BuilderAIChatWidget.jsx';
+import { tp } from '../i18n/platform.js';
 
 // ── Template previews ────────────────────────────────────────────────────────
 const TEMPLATE_ICONS = {
@@ -20,7 +21,7 @@ const TEMPLATE_ICONS = {
 const TEMPLATES = [
   { id: 'classic', name: 'Classique', desc: 'Layout standard e-commerce, fiable et professionnel' },
   { id: 'premium', name: 'Premium', desc: 'Design haut-de-gamme avec grandes images et espacement' },
-  { id: 'minimal', name: 'Minimal', desc: 'Design épuré, focalisé sur les produits' },
+  { id: 'minimal', name: 'Minimal', get desc() { return tp('Design épuré, focalisé sur les produits'); } },
 ];
 
 const FONTS = [
@@ -42,14 +43,14 @@ const RADIUS_OPTIONS = [
 ];
 
 const SECTION_TOGGLES = [
-  { key: 'showReviews', label: 'Avis clients', desc: 'Section témoignages et étoiles' },
-  { key: 'showFaq', label: 'Section FAQ', desc: 'Questions fréquentes sur la page produit' },
-  { key: 'showStockCounter', label: 'Compteur de stock', desc: 'Afficher le nombre de pièces restantes' },
-  { key: 'showPromoBanner', label: 'Bannière promo', desc: 'Bandeau promotionnel en haut de page' },
-  { key: 'showTrustBadges', label: 'Badges de confiance', desc: 'Livraison, retour, paiement sécurisé' },
+  { key: 'showReviews', label: 'Avis clients', get desc() { return tp('Section témoignages et étoiles'); } },
+  { key: 'showFaq', label: 'Section FAQ', get desc() { return tp('Questions fréquentes sur la page produit'); } },
+  { key: 'showStockCounter', label: 'Compteur de stock', get desc() { return tp('Afficher le nombre de pièces restantes'); } },
+  { key: 'showPromoBanner', get label() { return tp('Bannière promo'); }, desc: 'Bandeau promotionnel en haut de page' },
+  { key: 'showTrustBadges', label: 'Badges de confiance', get desc() { return tp('Livraison, retour, paiement sécurisé'); } },
   { key: 'showRelatedProducts', label: 'Produits similaires', desc: 'Recommandations en bas de page produit' },
   { key: 'showWhatsappButton', label: 'Bouton WhatsApp', desc: 'Commander via WhatsApp' },
-  { key: 'showBenefits', label: 'Liste bénéfices', desc: 'Points forts du produit en vert' },
+  { key: 'showBenefits', get label() { return tp('Liste bénéfices'); }, desc: 'Points forts du produit en vert' },
 ];
 
 const getSectionToggleDefault = (key) => (key === 'showWhatsappButton' ? false : true);
@@ -148,14 +149,14 @@ const BoutiqueTheme = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Thème & Apparence</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Les modifications s'appliquent et se sauvegardent automatiquement</p>
+          <p className="text-sm text-gray-500 mt-0.5">{tp('Les modifications s\'appliquent et se sauvegardent automatiquement')}</p>
         </div>
         {/* Auto-save indicator */}
         <div className="flex items-center gap-2 h-10 px-1">
           {autoSave === 'saving' && (
             <span className="flex items-center gap-1.5 text-xs text-gray-400">
               <span className="w-3 h-3 rounded-full border-2 border-gray-200 border-t-[#0F6B4F] animate-spin inline-block flex-shrink-0" />
-              Sauvegarde...
+              {tp('Sauvegarde...')}
             </span>
           )}
           {autoSave === 'saved' && (
@@ -163,7 +164,7 @@ const BoutiqueTheme = () => {
               <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
-              Sauvegardé
+              {tp('Sauvegardé')}
             </span>
           )}
           {autoSave === 'error' && (
@@ -176,7 +177,7 @@ const BoutiqueTheme = () => {
 
       {/* ── 1. Template Selection ──────────────────────────────────────────── */}
       <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">Template</h2>
+        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Template')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TEMPLATES.map(t => (
             <button
@@ -201,7 +202,7 @@ const BoutiqueTheme = () => {
 
       {/* ── 2. Colors ─────────────────────────────────────────────────────── */}
       <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">Couleurs</h2>
+        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Couleurs')}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <ColorPicker label="Couleur principale" value={localTheme.primaryColor} onChange={(v) => updateTheme('primaryColor', v)} />
           <ColorPicker label="Couleur CTA" value={localTheme.ctaColor} onChange={(v) => updateTheme('ctaColor', v)} />
@@ -212,17 +213,17 @@ const BoutiqueTheme = () => {
         {/* Live preview bar */}
         <div className="mt-5 p-4 rounded-xl border border-gray-200" style={{ backgroundColor: localTheme.backgroundColor }}>
           <p className="text-sm font-bold mb-2" style={{ color: localTheme.textColor, fontFamily: FONTS.find(f => f.id === localTheme.font)?.family }}>
-            Aperçu en temps réel
+            {tp('Aperçu en temps réel')}
           </p>
           <p className="text-xs mb-3" style={{ color: localTheme.textColor + 'AA' }}>
-            Voici à quoi ressemblera votre texte sur votre boutique.
+            {tp('Voici à quoi ressemblera votre texte sur votre boutique.')}
           </p>
           <div className="flex gap-2">
             <button className="px-4 py-2 text-xs font-bold text-white rounded-lg" style={{ backgroundColor: localTheme.primaryColor, borderRadius: RADIUS_OPTIONS.find(r => r.id === localTheme.borderRadius)?.value }}>
-              Bouton principal
+              {tp('Bouton principal')}
             </button>
             <button className="px-4 py-2 text-xs font-bold text-white rounded-lg" style={{ backgroundColor: localTheme.ctaColor, borderRadius: RADIUS_OPTIONS.find(r => r.id === localTheme.borderRadius)?.value }}>
-              Acheter
+              {tp('Acheter')}
             </button>
           </div>
         </div>
@@ -230,7 +231,7 @@ const BoutiqueTheme = () => {
 
       {/* ── 3. Typography ─────────────────────────────────────────────────── */}
       <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">Typographie</h2>
+        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Typographie')}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {FONTS.map(f => (
             <button
@@ -243,7 +244,7 @@ const BoutiqueTheme = () => {
               }`}
             >
               <p className="text-lg font-bold text-gray-900 mb-0.5" style={{ fontFamily: f.family }}>{f.name}</p>
-              <p className="text-xs text-gray-500" style={{ fontFamily: f.family }}>Aa Bb Cc 123</p>
+              <p className="text-xs text-gray-500" style={{ fontFamily: f.family }}>{tp('Aa Bb Cc 123')}</p>
             </button>
           ))}
         </div>
@@ -251,7 +252,7 @@ const BoutiqueTheme = () => {
 
       {/* ── 4. Border Radius ──────────────────────────────────────────────── */}
       <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">Coins arrondis (Border Radius)</h2>
+        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Coins arrondis (Border Radius)')}</h2>
         <div className="flex flex-wrap gap-3">
           {RADIUS_OPTIONS.map(r => (
             <button
@@ -275,8 +276,8 @@ const BoutiqueTheme = () => {
 
       {/* ── 5. Sections Toggle ────────────────────────────────────────────── */}
       <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-2">Sections de la boutique</h2>
-        <p className="text-xs text-gray-500 mb-4">Activez ou désactivez les sections visibles sur votre boutique</p>
+        <h2 className="text-sm font-bold text-gray-900 mb-2">{tp('Sections de la boutique')}</h2>
+        <p className="text-xs text-gray-500 mb-4">{tp('Activez ou désactivez les sections visibles sur votre boutique')}</p>
         <div className="divide-y divide-gray-100">
           {SECTION_TOGGLES.map(s => (
             <Toggle

@@ -3,6 +3,7 @@ import { useNavigate } from '@/lib/router-compat';
 import { Store, Globe, Palette, Phone, Save, CheckCircle, AlertCircle, ExternalLink, Loader2, Zap } from 'lucide-react';
 import { storeManageApi } from '../services/storeApi.js';
 import api from '../../lib/api';
+import { tp } from '../i18n/platform.js';
 
 /**
  * StoreSetup — Dashboard page for creating/configuring the public store.
@@ -147,7 +148,7 @@ const StoreSetup = () => {
         isStoreEnabled: config.isStoreEnabled
       });
 
-      setSuccess('Configuration sauvegardée avec succès');
+      setSuccess(tp('Configuration sauvegardée avec succès'));
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur lors de la sauvegarde');
     } finally {
@@ -172,10 +173,10 @@ const StoreSetup = () => {
         <div>
           <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <Store className="w-6 h-6 text-primary-600" />
-            Ma Boutique en Ligne
+            {tp('Ma Boutique en Ligne')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Configurez votre boutique publique accessible par vos clients
+            {tp('Configurez votre boutique publique accessible par vos clients')}
           </p>
         </div>
         {storeUrl && config.isStoreEnabled && (
@@ -186,7 +187,7 @@ const StoreSetup = () => {
             className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-primary-700 bg-primary-50 rounded-lg hover:bg-primary-100 transition"
           >
             <ExternalLink className="w-4 h-4" />
-            Voir la boutique
+            {tp('Voir la boutique')}
           </a>
         )}
       </div>
@@ -209,9 +210,9 @@ const StoreSetup = () => {
       <div className="bg-white border border-gray-200 rounded-xl p-5">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Activer la boutique</h2>
+            <h2 className="text-base font-semibold text-gray-900">{tp('Activer la boutique')}</h2>
             <p className="text-sm text-gray-500 mt-0.5">
-              Rendez votre boutique visible aux clients
+              {tp('Rendez votre boutique visible aux clients')}
             </p>
           </div>
           <button
@@ -233,11 +234,11 @@ const StoreSetup = () => {
       <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Globe className="w-5 h-5 text-primary-600" />
-          <h2 className="text-base font-semibold text-gray-900">Adresse de la boutique</h2>
+          <h2 className="text-base font-semibold text-gray-900">{tp('Adresse de la boutique')}</h2>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">Sous-domaine</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Sous-domaine')}</label>
           <div className="space-y-2">
             <div className="flex items-center gap-0">
               <input
@@ -247,7 +248,7 @@ const StoreSetup = () => {
                   const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
                   setSubdomainInput(val);
                 }}
-                placeholder="ma-boutique"
+                placeholder={tp('ma-boutique')}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 maxLength={30}
               />
@@ -264,12 +265,12 @@ const StoreSetup = () => {
               {generatingSubdomain ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Génération en cours...
+                  {tp('Génération en cours...')}
                 </>
               ) : (
                 <>
                   <Zap className="w-4 h-4" />
-                  Générer depuis le nom de la boutique
+                  {tp('Générer depuis le nom de la boutique')}
                 </>
               )}
             </button>
@@ -277,7 +278,7 @@ const StoreSetup = () => {
 
           <div className="mt-2 flex items-center gap-2">
             {checkingSubdomain && (
-              <span className="text-xs text-gray-400">Vérification...</span>
+              <span className="text-xs text-gray-400">{tp('Vérification...')}</span>
             )}
             {!checkingSubdomain && subdomainAvailable === true && (
               <span className="text-xs text-primary-600 flex items-center gap-1">
@@ -290,7 +291,7 @@ const StoreSetup = () => {
               </span>
             )}
             {subdomainInput === existingSubdomain && existingSubdomain && (
-              <span className="text-xs text-gray-400">Votre sous-domaine actuel</span>
+              <span className="text-xs text-gray-400">{tp('Votre sous-domaine actuel')}</span>
             )}
           </div>
         </div>
@@ -300,46 +301,46 @@ const StoreSetup = () => {
       <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Palette className="w-5 h-5 text-primary-600" />
-          <h2 className="text-base font-semibold text-gray-900">Identité de la boutique</h2>
+          <h2 className="text-base font-semibold text-gray-900">{tp('Identité de la boutique')}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nom de la boutique</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Nom de la boutique')}</label>
             <input
               type="text"
               value={config.storeName}
               onChange={(e) => handleChange('storeName', e.target.value)}
-              placeholder="Ma Super Boutique"
+              placeholder={tp('Ma Super Boutique')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Devise</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Devise')}</label>
             <select
               value={config.storeCurrency}
               onChange={(e) => handleChange('storeCurrency', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="XAF">XAF (Franc CFA - CEMAC)</option>
-              <option value="XOF">XOF (Franc CFA - UEMOA)</option>
-              <option value="NGN">NGN (Naira)</option>
-              <option value="GHS">GHS (Cedi)</option>
-              <option value="KES">KES (Shilling kenyan)</option>
-              <option value="ZAR">ZAR (Rand)</option>
-              <option value="MAD">MAD (Dirham)</option>
-              <option value="USD">USD (Dollar)</option>
-              <option value="EUR">EUR (Euro)</option>
+              <option value="XAF">{tp('XAF (Franc CFA - CEMAC)')}</option>
+              <option value="XOF">{tp('XOF (Franc CFA - UEMOA)')}</option>
+              <option value="NGN">{tp('NGN (Naira)')}</option>
+              <option value="GHS">{tp('GHS (Cedi)')}</option>
+              <option value="KES">{tp('KES (Shilling kenyan)')}</option>
+              <option value="ZAR">{tp('ZAR (Rand)')}</option>
+              <option value="MAD">{tp('MAD (Dirham)')}</option>
+              <option value="USD">{tp('USD (Dollar)')}</option>
+              <option value="EUR">{tp('EUR (Euro)')}</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Description')}</label>
           <textarea
             value={config.storeDescription}
             onChange={(e) => handleChange('storeDescription', e.target.value)}
-            placeholder="Décrivez votre boutique en quelques mots..."
+            placeholder={tp('Décrivez votre boutique en quelques mots...')}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
           />
@@ -347,7 +348,7 @@ const StoreSetup = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">URL du logo</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('URL du logo')}</label>
             <input
               type="url"
               value={config.storeLogo}
@@ -357,7 +358,7 @@ const StoreSetup = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">URL de la bannière</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('URL de la bannière')}</label>
             <input
               type="url"
               value={config.storeBanner}
@@ -369,7 +370,7 @@ const StoreSetup = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Couleur du thème</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Couleur du thème')}</label>
           <div className="flex items-center gap-3">
             <input
               type="color"
@@ -386,12 +387,12 @@ const StoreSetup = () => {
       <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Phone className="w-5 h-5 text-primary-600" />
-          <h2 className="text-base font-semibold text-gray-900">Contact</h2>
+          <h2 className="text-base font-semibold text-gray-900">{tp('Contact')}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Téléphone')}</label>
             <input
               type="tel"
               value={config.storePhone}
@@ -421,7 +422,7 @@ const StoreSetup = () => {
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white rounded-lg font-medium text-sm hover:bg-primary-700 disabled:opacity-50 transition"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+          {saving ? 'Sauvegarde...' : tp('Sauvegarder')}
         </button>
       </div>
     </div>

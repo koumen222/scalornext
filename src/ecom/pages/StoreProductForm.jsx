@@ -5,7 +5,7 @@ import {
   Search, PackageSearch, Link, Sparkles, Globe, FileText, ChevronDown,
   ChevronUp, ShoppingBag, Layers, ChevronRight, Target, Lightbulb,
   BarChart3, Star, Shield, Zap, BookOpen, Type, Trash2, Download,
-  Upload, ExternalLink, HelpCircle
+  Upload, ExternalLink, HelpCircle, Film
 } from 'lucide-react';
 import { storeProductsApi, storeManageApi } from '../services/storeApi.js';
 import AlibabaImportModal from '../components/AlibabaImportModal.jsx';
@@ -15,6 +15,7 @@ import ReviewGenerator from '../components/ReviewGenerator.jsx';
 import DigitalProductEbookModal from '../components/DigitalProductEbookModal.jsx';
 import { getErrorMessage } from '../utils/errorMessages.js';
 import { invalidateProductPageCache } from '../hooks/useStoreData.js';
+import { tp } from '../i18n/platform.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -158,6 +159,11 @@ const StoreProductForm = () => {
   const [dragOver, setDragOver] = useState(false);
   const [imageUrlInput, setImageUrlInput] = useState('');
 
+  // ── GIF state ────────────────────────────────────────────────────────────────
+  const [gifDragOver, setGifDragOver] = useState(false);
+  const [gifUrlInput, setGifUrlInput] = useState('');
+  const [uploadingGif, setUploadingGif] = useState(false);
+
   // ── Picker state ─────────────────────────────────────────────────────────────
   const [showPicker, setShowPicker] = useState(false);
   const [pickerProducts, setPickerProducts] = useState([]);
@@ -193,6 +199,7 @@ const StoreProductForm = () => {
     country: navState?.country || '',
     city: navState?.city || '',
     locale: navState?.locale || '',
+    pageLanguage: navState?.pageLanguage || '',
     stock: fromGenerator ? '1000' : '0',
     category: navState?.category || '',
     tags: navState?.tags || '',
@@ -237,6 +244,7 @@ const StoreProductForm = () => {
             country: p.country || '',
             city: p.city || '',
             locale: p.locale || '',
+            pageLanguage: p.pageLanguage || '',
             stock: String(p.stock ?? '0'),
             category: p.category || '',
             tags: (p.tags || []).join(', '),
@@ -361,6 +369,66 @@ const StoreProductForm = () => {
       images: [...prev.images, { url: imageUrlInput.trim(), alt: prev.name, order: prev.images.length }],
     }));
     setImageUrlInput('');
+  };
+
+  // ── GIF handlers (stockés dans _pageData.descriptionGifs, affichés sur la page produit) ──
+  const gifUrlOf = (g) => (typeof g === 'string' ? g : g?.url || '');
+  const productGifs = (Array.isArray(form._pageData?.descriptionGifs) ? form._pageData.descriptionGifs : [])
+    .map(gifUrlOf).filter(Boolean);
+
+  const updateGifs = (updater) =>
+    setForm(prev => {
+      const current = (Array.isArray(prev._pageData?.descriptionGifs) ? prev._pageData.descriptionGifs : [])
+        .map(gifUrlOf).filter(Boolean);
+      return { ...prev, _pageData: { ...(prev._pageData || {}), descriptionGifs: updater(current) } };
+    });
+
+  const addGifs = async (fileList) => {
+    const files = Array.from(fileList || []).filter(f =>
+      f.type === 'image/gif' || f.type === 'image/webp' || /\.(gif|webp)$/i.test(f.name));
+    if (!files.length) { showToast('error', tp('Sélectionnez un fichier GIF (.gif ou .webp animé)')); return; }
+    setUploadingGif(true);
+    const errors = [];
+    for (const file of files) {
+      if (file.size > 15 * 1024 * 1024) {
+        errors.push(tp('{name} dépasse 15 MB', { name: file.name }));
+        continue;
+      }
+      try {
+        const res = await storeProductsApi.uploadImages([file]);
+        const uploaded = res.data?.data?.[0];
+        if (!uploaded?.url) throw new Error('URL manquante dans la réponse');
+        updateGifs(current => [...current, uploaded.url]);
+      } catch (err) {
+        errors.push(`${file.name} : ${err?.response?.data?.message || err.message || 'Erreur upload'}`);
+      }
+    }
+    setUploadingGif(false);
+    if (errors.length) showToast('error', errors.join(' — '));
+  };
+
+  const handleGifDrop = (e) => {
+    e.preventDefault();
+    setGifDragOver(false);
+    addGifs(e.dataTransfer.files);
+  };
+
+  const handleRemoveGif = (index) => updateGifs(current => current.filter((_, i) => i !== index));
+
+  const handleMoveGif = (index, direction) =>
+    updateGifs(current => {
+      const next = [...current];
+      const target = index + direction;
+      if (target < 0 || target >= next.length) return current;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+
+  const handleAddGifUrl = () => {
+    const url = gifUrlInput.trim();
+    if (!url) return;
+    updateGifs(current => [...current, url]);
+    setGifUrlInput('');
   };
 
   // ── Picker ────────────────────────────────────────────────────────────────
@@ -518,7 +586,7 @@ const StoreProductForm = () => {
 
   const handleDisableDigitalProduct = async () => {
     if (!isEdit || !id) return;
-    if (!window.confirm('Désactiver le produit digital de cette page ? Il ne sera plus affiché aux clients.')) return;
+    if (!window.confirm(tp('Désactiver le produit digital de cette page ? Il ne sera plus affiché aux clients.'))) return;
     setSaving(true);
     try {
       const res = await storeProductsApi.disableDigitalProduct(id);
@@ -568,6 +636,7 @@ const StoreProductForm = () => {
       country: form.country.trim(),
       city: form.city.trim(),
       locale: form.locale.trim(),
+      pageLanguage: form.pageLanguage || null,
       stock: parseInt(form.stock) || 0,
       category: form.category.trim(),
       tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
@@ -639,9 +708,9 @@ const StoreProductForm = () => {
           </button>
 
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-gray-400 hidden sm:block">Produits boutique</p>
+            <p className="text-xs text-gray-400 hidden sm:block">{tp('Produits boutique')}</p>
             <h1 className="text-sm font-semibold text-gray-900 truncate leading-tight">
-              {isEdit ? (form.name || 'Modifier le produit') : 'Nouveau produit'}
+              {isEdit ? (form.name || 'Modifier le produit') : tp('Nouveau produit')}
             </h1>
           </div>
 
@@ -656,7 +725,7 @@ const StoreProductForm = () => {
             }`}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${form.isPublished ? 'bg-primary-500' : 'bg-gray-400'}`} />
-            {form.isPublished ? 'Actif' : 'Brouillon'}
+            {form.isPublished ? 'Actif' : tp('Brouillon')}
           </button>
 
           <div className="flex items-center gap-2">
@@ -679,7 +748,7 @@ const StoreProductForm = () => {
               className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 disabled:opacity-60 transition shadow-sm"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              <span className="hidden sm:inline">{saving ? 'Enregistrement...' : 'Enregistrer'}</span>
+              <span className="hidden sm:inline">{saving ? 'Enregistrement...' : tp('Enregistrer')}</span>
             </button>
           </div>
         </div>
@@ -699,7 +768,7 @@ const StoreProductForm = () => {
                   type="text"
                   value={form.name}
                   onChange={(e) => handleChange('name', e.target.value)}
-                  placeholder="Nom du produit"
+                  placeholder={tp('Nom du produit')}
                   className="w-full text-xl font-bold text-gray-900 placeholder-gray-300 border-0 outline-none focus:ring-0 p-0 bg-transparent"
                   required
                 />
@@ -707,7 +776,7 @@ const StoreProductForm = () => {
                   <RichTextEditor
                     value={form.description}
                     onChange={(html) => handleChange('description', html)}
-                    placeholder="Décrivez votre produit : avantages, matière, utilisation…"
+                    placeholder={tp('Décrivez votre produit : avantages, matière, utilisation…')}
                     minHeight={160}
                     maxHeight={500}
                   />
@@ -719,7 +788,7 @@ const StoreProductForm = () => {
                 <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">
                   <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                     <Image className="w-4 h-4 text-gray-400" />
-                    Images
+                    {tp('Images')}
                     {form.images.length > 0 && (
                       <span className="text-xs text-gray-400 font-normal">
                         {form.images.length} photo{form.images.length !== 1 ? 's' : ''}
@@ -756,13 +825,13 @@ const StoreProductForm = () => {
                         </div>
                         <div className="text-center">
                           <p className="text-sm font-semibold text-gray-700">
-                            {dragOver ? 'Déposez vos images ici' : 'Glissez-déposez vos images'}
+                            {dragOver ? 'Déposez vos images ici' : tp('Glissez-déposez vos images')}
                           </p>
-                          <p className="text-xs text-gray-400 mt-0.5">ou cliquez pour parcourir · JPG, PNG, WebP · max 5 MB</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{tp('ou cliquez pour parcourir · JPG, PNG, WebP · max 5 MB')}</p>
                         </div>
                         {!dragOver && (
                           <span className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 shadow-sm">
-                            Sélectionner des fichiers
+                            {tp('Sélectionner des fichiers')}
                           </span>
                         )}
                       </div>
@@ -790,30 +859,30 @@ const StoreProductForm = () => {
                           {/* Main badge */}
                           {i === 0 && (
                             <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-primary-600 text-white text-[9px] font-bold rounded-md leading-none">
-                              PRINCIPALE
+                              {tp('PRINCIPALE')}
                             </span>
                           )}
                           {/* Hover overlay */}
                           <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
                             {i !== 0 && (
-                              <button type="button" onClick={() => handleSetHero(i)} title="Définir comme principale"
+                              <button type="button" onClick={() => handleSetHero(i)} title={tp('Définir comme principale')}
                                 className="p-1.5 bg-white/95 rounded-lg text-amber-600 hover:bg-white transition text-sm font-bold leading-none shadow-sm">
                                 ★
                               </button>
                             )}
                             {i > 0 && (
-                              <button type="button" onClick={() => handleMoveImage(i, -1)} title="Déplacer à gauche"
+                              <button type="button" onClick={() => handleMoveImage(i, -1)} title={tp('Déplacer à gauche')}
                                 className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
                                 <ChevronUp className="w-3.5 h-3.5 -rotate-90" />
                               </button>
                             )}
                             {i < form.images.length - 1 && (
-                              <button type="button" onClick={() => handleMoveImage(i, 1)} title="Déplacer à droite"
+                              <button type="button" onClick={() => handleMoveImage(i, 1)} title={tp('Déplacer à droite')}
                                 className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
                                 <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
                               </button>
                             )}
-                            <button type="button" onClick={() => handleRemoveImage(i)} title="Supprimer"
+                            <button type="button" onClick={() => handleRemoveImage(i)} title={tp('Supprimer')}
                               className="p-1.5 bg-red-500 rounded-lg text-white hover:bg-red-600 transition shadow-sm">
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -828,7 +897,7 @@ const StoreProductForm = () => {
                         ) : (
                           <>
                             <Plus className="w-5 h-5 text-gray-300 group-hover:text-primary-500 transition" />
-                            <span className="text-[10px] text-gray-300 group-hover:text-primary-500 mt-1 transition font-medium">Ajouter</span>
+                            <span className="text-[10px] text-gray-300 group-hover:text-primary-500 mt-1 transition font-medium">{tp('Ajouter')}</span>
                           </>
                         )}
                       </label>
@@ -842,12 +911,126 @@ const StoreProductForm = () => {
                       value={imageUrlInput}
                       onChange={(e) => setImageUrlInput(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddImageUrl(); } }}
-                      placeholder="Ou collez une URL d'image..."
+                      placeholder={tp('Ou collez une URL d\'image...')}
                       className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-300"
                     />
                     <button type="button" onClick={handleAddImageUrl} disabled={!imageUrlInput.trim()}
                       className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition font-medium whitespace-nowrap">
-                      Ajouter
+                      {tp('Ajouter')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── GIFs ─────────────────────────────────────────────────── */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">
+                  <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                    <Film className="w-4 h-4 text-gray-400" />
+                    {tp('GIFs animés')}
+                    {productGifs.length > 0 && (
+                      <span className="text-xs text-gray-400 font-normal">{productGifs.length}</span>
+                    )}
+                  </h2>
+                  {uploadingGif && (
+                    <span className="flex items-center gap-1.5 text-xs text-primary-600 font-medium">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" /> {tp('Upload en cours...')}
+                    </span>
+                  )}
+                </div>
+
+                <div className="p-5">
+                  <p className="text-xs text-gray-400 mb-3">{tp('Affichés dans la description de la page produit (démo du produit en action).')}</p>
+                  {productGifs.length === 0 ? (
+                    <label
+                      className={`flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                        gifDragOver
+                          ? 'border-primary-400 bg-primary-50 scale-[1.01]'
+                          : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
+                      }`}
+                      onDragOver={(e) => { e.preventDefault(); setGifDragOver(true); }}
+                      onDragLeave={() => setGifDragOver(false)}
+                      onDrop={handleGifDrop}
+                    >
+                      <input
+                        type="file" accept="image/gif,image/webp" multiple className="hidden"
+                        onChange={(e) => { addGifs(e.target.files); e.target.value = ''; }} disabled={uploadingGif}
+                      />
+                      <div className={`flex flex-col items-center gap-2 pointer-events-none ${gifDragOver ? 'text-primary-600' : 'text-gray-400'}`}>
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${gifDragOver ? 'bg-primary-100' : 'bg-gray-100'}`}>
+                          <Film className="w-5 h-5" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-semibold text-gray-700">
+                            {gifDragOver ? tp('Déposez vos GIFs ici') : tp('Glissez-déposez vos GIFs')}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">{tp('ou cliquez pour parcourir · GIF, WebP animé · max 15 MB')}</p>
+                        </div>
+                      </div>
+                    </label>
+                  ) : (
+                    <div
+                      className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-1 rounded-xl transition ${gifDragOver ? 'ring-2 ring-primary-400 ring-inset bg-primary-50/50' : ''}`}
+                      onDragOver={(e) => { e.preventDefault(); setGifDragOver(true); }}
+                      onDragLeave={() => setGifDragOver(false)}
+                      onDrop={handleGifDrop}
+                    >
+                      {productGifs.map((url, i) => (
+                        <div key={`${url}-${i}`} className="relative group aspect-video">
+                          <img
+                            src={url}
+                            alt={`GIF ${i + 1}`}
+                            className="w-full h-full rounded-xl object-cover ring-1 ring-gray-200 bg-black"
+                            loading="lazy"
+                          />
+                          <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-black/60 text-white text-[9px] font-bold rounded-md leading-none">GIF</span>
+                          <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
+                            {i > 0 && (
+                              <button type="button" onClick={() => handleMoveGif(i, -1)} title={tp('Déplacer à gauche')}
+                                className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
+                                <ChevronUp className="w-3.5 h-3.5 -rotate-90" />
+                              </button>
+                            )}
+                            {i < productGifs.length - 1 && (
+                              <button type="button" onClick={() => handleMoveGif(i, 1)} title={tp('Déplacer à droite')}
+                                className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
+                                <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
+                              </button>
+                            )}
+                            <button type="button" onClick={() => handleRemoveGif(i)} title={tp('Supprimer')}
+                              className="p-1.5 bg-red-500 rounded-lg text-white hover:bg-red-600 transition shadow-sm">
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      <label className="aspect-video rounded-xl border-2 border-dashed border-gray-200 hover:border-primary-300 hover:bg-primary-50 flex flex-col items-center justify-center cursor-pointer transition group">
+                        <input type="file" accept="image/gif,image/webp" multiple className="hidden" onChange={(e) => { addGifs(e.target.files); e.target.value = ''; }} disabled={uploadingGif} />
+                        {uploadingGif ? (
+                          <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
+                        ) : (
+                          <>
+                            <Plus className="w-5 h-5 text-gray-300 group-hover:text-primary-500 transition" />
+                            <span className="text-[10px] text-gray-300 group-hover:text-primary-500 mt-1 transition font-medium">{tp('Ajouter')}</span>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  )}
+
+                  {/* URL input */}
+                  <div className="flex gap-2 mt-4">
+                    <input
+                      type="url"
+                      value={gifUrlInput}
+                      onChange={(e) => setGifUrlInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddGifUrl(); } }}
+                      placeholder={tp('Ou collez une URL de GIF...')}
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-300"
+                    />
+                    <button type="button" onClick={handleAddGifUrl} disabled={!gifUrlInput.trim()}
+                      className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition font-medium whitespace-nowrap">
+                      {tp('Ajouter')}
                     </button>
                   </div>
                 </div>
@@ -858,33 +1041,33 @@ const StoreProductForm = () => {
                 <h2 className="text-sm font-semibold text-gray-900 mb-4">Prix & Stock</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Prix *</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Prix *')}</label>
                     <div className="relative">
                       <input type="number" value={form.price} onChange={(e) => handleChange('price', e.target.value)}
                         placeholder="15000" min="0" step="any" required
                         className="w-full px-3 py-2.5 pr-14 border border-gray-200 rounded-lg text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium pointer-events-none">
-                        {form.currency || 'FCFA'}
+                        {form.currency || tp('FCFA')}
                       </span>
                     </div>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Ancien prix</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Ancien prix')}</label>
                     <input type="number" value={form.compareAtPrice} onChange={(e) => handleChange('compareAtPrice', e.target.value)}
                       placeholder="20000" min="0" step="any" className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Devise</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Devise')}</label>
                     <select value={form.currency} onChange={(e) => handleChange('currency', e.target.value.toUpperCase())}
                       className={`${inputCls} bg-white`}>
-                      <option value="">Boutique</option>
+                      <option value="">{tp('Boutique')}</option>
                       {[...new Set([...(form.currency && !MARKET_CURRENCY_SUGGESTIONS.includes(form.currency) ? [form.currency] : []), ...MARKET_CURRENCY_SUGGESTIONS])].map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Stock</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Stock')}</label>
                     <input type="number" value={form.stock} onChange={(e) => handleChange('stock', e.target.value)}
                       min="0" className={inputCls} />
                   </div>
@@ -893,14 +1076,24 @@ const StoreProductForm = () => {
                 {/* Marché */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Marché cible</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Marché cible')}</label>
                     <input type="text" value={form.targetMarket} onChange={(e) => handleChange('targetMarket', e.target.value)}
-                      placeholder="Ex: Afrique francophone" className={inputCls} />
+                      placeholder={tp('Ex: Afrique francophone')} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Pays cible</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Langue de la page produit')}</label>
+                    <select value={form.pageLanguage} onChange={(e) => handleChange('pageLanguage', e.target.value)} className={`${inputCls} bg-white`}>
+                      <option value="">{tp('Auto — langue de la boutique')}</option>
+                      <option value="fr">Français</option>
+                      <option value="en">English</option>
+                      <option value="es">Español</option>
+                    </select>
+                    <p className="mt-1 text-[11px] text-gray-400">{tp('Le contenu de la page est traduit automatiquement dans cette langue.')}</p>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Pays cible')}</label>
                     <select value={form.country} onChange={(e) => handleChange('country', e.target.value)} className={`${inputCls} bg-white`}>
-                      <option value="">Choisir un pays</option>
+                      <option value="">{tp('Choisir un pays')}</option>
                       {[...new Set([...(form.country && !MARKET_COUNTRY_SUGGESTIONS.includes(form.country) ? [form.country] : []), ...MARKET_COUNTRY_SUGGESTIONS])].map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
@@ -911,18 +1104,18 @@ const StoreProductForm = () => {
 
               {/* ── Organisation ─────────────────────────────────────────── */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                <h2 className="text-sm font-semibold text-gray-900 mb-4">Organisation</h2>
+                <h2 className="text-sm font-semibold text-gray-900 mb-4">{tp('Organisation')}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Catégorie</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Catégorie')}</label>
                     <input type="text" value={form.category} onChange={(e) => handleChange('category', e.target.value)}
-                      placeholder="Ex: Vêtements, Beauté…" className={inputCls} />
+                      placeholder={tp('Ex: Vêtements, Beauté…')} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Tags</label>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Tags')}</label>
                     <input type="text" value={form.tags} onChange={(e) => handleChange('tags', e.target.value)}
-                      placeholder="promo, nouveau, bestseller" className={inputCls} />
-                    <p className="text-[11px] text-gray-400 mt-1">Séparez par des virgules</p>
+                      placeholder={tp('promo, nouveau, bestseller')} className={inputCls} />
+                    <p className="text-[11px] text-gray-400 mt-1">{tp('Séparez par des virgules')}</p>
                   </div>
                 </div>
               </div>
@@ -931,22 +1124,22 @@ const StoreProductForm = () => {
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
                   <Layers className="w-4 h-4 text-violet-500" />
-                  <h2 className="text-sm font-semibold text-gray-900">Sections de la page produit</h2>
-                  <span className="ml-auto text-[11px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">Contenu marketing avancé</span>
+                  <h2 className="text-sm font-semibold text-gray-900">{tp('Sections de la page produit')}</h2>
+                  <span className="ml-auto text-[11px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">{tp('Contenu marketing avancé')}</span>
                 </div>
 
                 <SectionRow icon={<Type className="w-4 h-4 text-violet-500" />} label="Hero (Accroche)" open={openSections.hero} onToggle={() => toggleSection('hero')}>
                   <Field label="Slogan">
-                    <input type="text" value={getPageData('hero_slogan', '')} onChange={(e) => setPageData('hero_slogan', e.target.value)} placeholder="La solution naturelle pour votre peau" className={inputCls} />
+                    <input type="text" value={getPageData('hero_slogan', '')} onChange={(e) => setPageData('hero_slogan', e.target.value)} placeholder={tp('La solution naturelle pour votre peau')} className={inputCls} />
                   </Field>
                   <Field label="Baseline (message de confiance)">
-                    <input type="text" value={getPageData('hero_baseline', '')} onChange={(e) => setPageData('hero_baseline', e.target.value)} placeholder="✅ Livraison gratuite · Satisfait ou remboursé" className={inputCls} />
+                    <input type="text" value={getPageData('hero_baseline', '')} onChange={(e) => setPageData('hero_baseline', e.target.value)} placeholder={tp('✅ Livraison gratuite · Satisfait ou remboursé')} className={inputCls} />
                   </Field>
                 </SectionRow>
 
                 <SectionRow icon={<Target className="w-4 h-4 text-red-500" />} label="Problème" open={openSections.problem} onToggle={() => toggleSection('problem')}>
                   <Field label="Titre">
-                    <input type="text" value={getPageData('problem_section', {})?.title || ''} onChange={(e) => setPageData('problem_section', { ...getPageData('problem_section', {}), title: e.target.value })} placeholder="Le problème" className={inputCls} />
+                    <input type="text" value={getPageData('problem_section', {})?.title || ''} onChange={(e) => setPageData('problem_section', { ...getPageData('problem_section', {}), title: e.target.value })} placeholder={tp('Le problème')} className={inputCls} />
                   </Field>
                   <Field label="Points de douleur (un par ligne)">
                     <textarea value={(getPageData('problem_section', {})?.pain_points || []).join('\n')} onChange={(e) => setPageData('problem_section', { ...getPageData('problem_section', {}), pain_points: e.target.value.split('\n').filter(l => l.trim()) })} placeholder={"Peau sèche et irritée\nProduits chimiques inefficaces"} rows={4} className={textareaCls} />
@@ -955,7 +1148,7 @@ const StoreProductForm = () => {
 
                 <SectionRow icon={<Lightbulb className="w-4 h-4 text-primary-500" />} label="Solution" open={openSections.solution} onToggle={() => toggleSection('solution')}>
                   <Field label="Titre">
-                    <input type="text" value={getPageData('solution_section', {})?.title || ''} onChange={(e) => setPageData('solution_section', { ...getPageData('solution_section', {}), title: e.target.value })} placeholder="La solution" className={inputCls} />
+                    <input type="text" value={getPageData('solution_section', {})?.title || ''} onChange={(e) => setPageData('solution_section', { ...getPageData('solution_section', {}), title: e.target.value })} placeholder={tp('La solution')} className={inputCls} />
                   </Field>
                   <Field label="Description">
                     <textarea value={getPageData('solution_section', {})?.description || ''} onChange={(e) => setPageData('solution_section', { ...getPageData('solution_section', {}), description: e.target.value })} rows={3} className={textareaCls} />
@@ -966,11 +1159,11 @@ const StoreProductForm = () => {
                   {(getPageData('stats_bar', []) || []).map((stat, i) => (
                     <div key={i} className="flex items-center gap-2">
                       <input type="text" value={stat.value || ''} onChange={(e) => { const arr = [...(getPageData('stats_bar', []))]; arr[i] = { ...arr[i], value: e.target.value }; setPageData('stats_bar', arr); }} placeholder="1000+" className="w-24 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-                      <input type="text" value={stat.label || ''} onChange={(e) => { const arr = [...(getPageData('stats_bar', []))]; arr[i] = { ...arr[i], label: e.target.value }; setPageData('stats_bar', arr); }} placeholder="Clients satisfaits" className={`flex-1 ${inputCls}`} />
+                      <input type="text" value={stat.label || ''} onChange={(e) => { const arr = [...(getPageData('stats_bar', []))]; arr[i] = { ...arr[i], label: e.target.value }; setPageData('stats_bar', arr); }} placeholder={tp('Clients satisfaits')} className={`flex-1 ${inputCls}`} />
                       <button type="button" onClick={() => setPageData('stats_bar', getPageData('stats_bar', []).filter((_, j) => j !== i))} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setPageData('stats_bar', [...(getPageData('stats_bar', []) || []), { value: '', label: '' }])} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> Ajouter une stat</button>
+                  <button type="button" onClick={() => setPageData('stats_bar', [...(getPageData('stats_bar', []) || []), { value: '', label: '' }])} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> {tp('Ajouter une stat')}</button>
                 </SectionRow>
 
                 <SectionRow icon={<Star className="w-4 h-4 text-yellow-500" />} label="Avantages clés" open={openSections.benefits} onToggle={() => toggleSection('benefits')}>
@@ -983,42 +1176,42 @@ const StoreProductForm = () => {
                   {(getPageData('conversion_blocks', []) || []).map((block, i) => (
                     <div key={i} className="flex items-center gap-2">
                       <input type="text" value={block.icon || ''} onChange={(e) => { const arr = [...(getPageData('conversion_blocks', []))]; arr[i] = { ...arr[i], icon: e.target.value }; setPageData('conversion_blocks', arr); }} placeholder="🚚" className="w-14 px-2 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary-500" />
-                      <input type="text" value={block.text || ''} onChange={(e) => { const arr = [...(getPageData('conversion_blocks', []))]; arr[i] = { ...arr[i], text: e.target.value }; setPageData('conversion_blocks', arr); }} placeholder="Livraison gratuite" className={`flex-1 ${inputCls}`} />
+                      <input type="text" value={block.text || ''} onChange={(e) => { const arr = [...(getPageData('conversion_blocks', []))]; arr[i] = { ...arr[i], text: e.target.value }; setPageData('conversion_blocks', arr); }} placeholder={tp('Livraison gratuite')} className={`flex-1 ${inputCls}`} />
                       <button type="button" onClick={() => setPageData('conversion_blocks', getPageData('conversion_blocks', []).filter((_, j) => j !== i))} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setPageData('conversion_blocks', [...(getPageData('conversion_blocks', []) || []), { icon: '', text: '' }])} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> Ajouter un bloc</button>
+                  <button type="button" onClick={() => setPageData('conversion_blocks', [...(getPageData('conversion_blocks', []) || []), { icon: '', text: '' }])} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> {tp('Ajouter un bloc')}</button>
                 </SectionRow>
 
                 <SectionRow icon={<Shield className="w-4 h-4 text-primary-500" />} label="Offre & Garantie" open={openSections.offer} onToggle={() => toggleSection('offer')}>
                   <Field label="Label de l'offre">
-                    <input type="text" value={getPageData('offer_block', {})?.offer_label || ''} onChange={(e) => setPageData('offer_block', { ...getPageData('offer_block', {}), offer_label: e.target.value })} placeholder="Offre spéciale" className={inputCls} />
+                    <input type="text" value={getPageData('offer_block', {})?.offer_label || ''} onChange={(e) => setPageData('offer_block', { ...getPageData('offer_block', {}), offer_label: e.target.value })} placeholder={tp('Offre spéciale')} className={inputCls} />
                   </Field>
                   <Field label="Texte de garantie">
-                    <input type="text" value={getPageData('offer_block', {})?.guarantee_text || ''} onChange={(e) => setPageData('offer_block', { ...getPageData('offer_block', {}), guarantee_text: e.target.value })} placeholder="Satisfait ou remboursé sous 30 jours" className={inputCls} />
+                    <input type="text" value={getPageData('offer_block', {})?.guarantee_text || ''} onChange={(e) => setPageData('offer_block', { ...getPageData('offer_block', {}), guarantee_text: e.target.value })} placeholder={tp('Satisfait ou remboursé sous 30 jours')} className={inputCls} />
                   </Field>
                 </SectionRow>
 
                 <SectionRow icon={<AlertCircle className="w-4 h-4 text-red-500" />} label="Urgence" open={openSections.urgency} onToggle={() => toggleSection('urgency')}>
                   <Field label="Badge d'urgence">
-                    <input type="text" value={getPageData('urgency_badge', '')} onChange={(e) => setPageData('urgency_badge', e.target.value)} placeholder="🔥 Plus que 3 en stock !" className={inputCls} />
+                    <input type="text" value={getPageData('urgency_badge', '')} onChange={(e) => setPageData('urgency_badge', e.target.value)} placeholder={tp('🔥 Plus que 3 en stock !')} className={inputCls} />
                   </Field>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                       <input type="checkbox" checked={getPageData('urgency_elements', {})?.stock_limited || false} onChange={(e) => setPageData('urgency_elements', { ...getPageData('urgency_elements', {}), stock_limited: e.target.checked })} className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500" />
-                      Stock limité
+                      {tp('Stock limité')}
                     </label>
                     <Field label="Preuve sociale">
                       <input type="number" min="0" value={getPageData('urgency_elements', {})?.social_proof_count || ''} onChange={(e) => setPageData('urgency_elements', { ...getPageData('urgency_elements', {}), social_proof_count: parseInt(e.target.value) || 0 })} placeholder="42" className={inputCls} />
                     </Field>
                     <Field label="Résultat rapide">
-                      <input type="text" value={getPageData('urgency_elements', {})?.quick_result || ''} onChange={(e) => setPageData('urgency_elements', { ...getPageData('urgency_elements', {}), quick_result: e.target.value })} placeholder="7 jours" className={inputCls} />
+                      <input type="text" value={getPageData('urgency_elements', {})?.quick_result || ''} onChange={(e) => setPageData('urgency_elements', { ...getPageData('urgency_elements', {}), quick_result: e.target.value })} placeholder={tp('7 jours')} className={inputCls} />
                     </Field>
                   </div>
                 </SectionRow>
 
                 <SectionRow icon={<BookOpen className="w-4 h-4 text-indigo-500" />} label="Guide d'utilisation" open={openSections.guide} onToggle={() => toggleSection('guide')}>
-                  <textarea value={getPageData('guide_utilisation', '')} onChange={(e) => setPageData('guide_utilisation', e.target.value)} placeholder="Expliquez comment utiliser le produit étape par étape..." rows={4} className={textareaCls} />
+                  <textarea value={getPageData('guide_utilisation', '')} onChange={(e) => setPageData('guide_utilisation', e.target.value)} placeholder={tp('Expliquez comment utiliser le produit étape par étape...')} rows={4} className={textareaCls} />
                 </SectionRow>
 
                 {/* ── Premium: Accordéons Hero + FAQ ──────────────────── */}
@@ -1037,14 +1230,14 @@ const StoreProductForm = () => {
                               setForm(f => ({ ...f, productPageConfig: next }));
                             }} className="p-1 text-red-400 hover:text-red-600 rounded"><Trash2 className="w-3.5 h-3.5" /></button>
                           </div>
-                          <input type="text" value={acc.title || ''} placeholder="Titre" className={inputCls} onChange={(e) => {
+                          <input type="text" value={acc.title || ''} placeholder={tp('Titre')} className={inputCls} onChange={(e) => {
                             const next = { ...form.productPageConfig };
                             const accordions = [...(next.premiumPage?.hero?.accordions || [])];
                             accordions[i] = { ...accordions[i], title: e.target.value };
                             next.premiumPage = { ...next.premiumPage, hero: { ...next.premiumPage?.hero, accordions } };
                             setForm(f => ({ ...f, productPageConfig: next }));
                           }} />
-                          <textarea value={acc.content || ''} placeholder="Contenu" rows={3} className={textareaCls} onChange={(e) => {
+                          <textarea value={acc.content || ''} placeholder={tp('Contenu')} rows={3} className={textareaCls} onChange={(e) => {
                             const next = { ...form.productPageConfig };
                             const accordions = [...(next.premiumPage?.hero?.accordions || [])];
                             accordions[i] = { ...accordions[i], content: e.target.value };
@@ -1058,12 +1251,12 @@ const StoreProductForm = () => {
                         const accordions = [...(next.premiumPage?.hero?.accordions || []), { title: '', content: '' }];
                         next.premiumPage = { ...next.premiumPage, hero: { ...next.premiumPage?.hero, accordions } };
                         setForm(f => ({ ...f, productPageConfig: next }));
-                      }} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> Ajouter une barre</button>
+                      }} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> {tp('Ajouter une barre')}</button>
                     </SectionRow>
 
                     <SectionRow icon={<HelpCircle className="w-4 h-4 text-orange-500" />} label="FAQ Premium" open={openSections.premiumFaq} onToggle={() => toggleSection('premiumFaq')}>
                       <Field label="Titre de la section">
-                        <input type="text" value={form.productPageConfig?.premiumPage?.faq?.headline || ''} className={inputCls} placeholder="Questions fréquentes" onChange={(e) => {
+                        <input type="text" value={form.productPageConfig?.premiumPage?.faq?.headline || ''} className={inputCls} placeholder={tp('Questions fréquentes')} onChange={(e) => {
                           const next = { ...form.productPageConfig };
                           next.premiumPage = { ...next.premiumPage, faq: { ...next.premiumPage?.faq, headline: e.target.value } };
                           setForm(f => ({ ...f, productPageConfig: next }));
@@ -1081,14 +1274,14 @@ const StoreProductForm = () => {
                               setForm(f => ({ ...f, productPageConfig: next }));
                             }} className="p-1 text-red-400 hover:text-red-600 rounded"><Trash2 className="w-3.5 h-3.5" /></button>
                           </div>
-                          <input type="text" value={item.question || ''} placeholder="Question" className={inputCls} onChange={(e) => {
+                          <input type="text" value={item.question || ''} placeholder={tp('Question')} className={inputCls} onChange={(e) => {
                             const next = { ...form.productPageConfig };
                             const items = [...(next.premiumPage?.faq?.items || [])];
                             items[i] = { ...items[i], question: e.target.value };
                             next.premiumPage = { ...next.premiumPage, faq: { ...next.premiumPage?.faq, items } };
                             setForm(f => ({ ...f, productPageConfig: next }));
                           }} />
-                          <textarea value={item.answer || ''} placeholder="Réponse" rows={2} className={textareaCls} onChange={(e) => {
+                          <textarea value={item.answer || ''} placeholder={tp('Réponse')} rows={2} className={textareaCls} onChange={(e) => {
                             const next = { ...form.productPageConfig };
                             const items = [...(next.premiumPage?.faq?.items || [])];
                             items[i] = { ...items[i], answer: e.target.value };
@@ -1102,7 +1295,7 @@ const StoreProductForm = () => {
                         const items = [...(next.premiumPage?.faq?.items || []), { question: '', answer: '' }];
                         next.premiumPage = { ...next.premiumPage, faq: { ...next.premiumPage?.faq, items } };
                         setForm(f => ({ ...f, productPageConfig: next }));
-                      }} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> Ajouter une question</button>
+                      }} className="text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1.5"><Plus className="w-3.5 h-3.5" /> {tp('Ajouter une question')}</button>
                     </SectionRow>
                   </>
                 )}
@@ -1124,14 +1317,14 @@ const StoreProductForm = () => {
 
               {/* ── SEO ─────────────────────────────────────────────────── */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 space-y-4">
-                <h2 className="text-sm font-semibold text-gray-900">Référencement (SEO)</h2>
+                <h2 className="text-sm font-semibold text-gray-900">{tp('Référencement (SEO)')}</h2>
                 <Field label="Titre SEO" hint={`${(form.seoTitle || form.name).length}/70 caractères`}>
                   <input type="text" value={form.seoTitle} onChange={(e) => handleChange('seoTitle', e.target.value)}
-                    placeholder={form.name || 'Titre pour les moteurs de recherche'} maxLength={70} className={inputCls} />
+                    placeholder={form.name || tp('Titre pour les moteurs de recherche')} maxLength={70} className={inputCls} />
                 </Field>
                 <Field label="Description SEO" hint={`${form.seoDescription.length}/160 caractères`}>
                   <textarea value={form.seoDescription} onChange={(e) => handleChange('seoDescription', e.target.value)}
-                    placeholder="Description courte pour Google..." rows={2} maxLength={160} className={textareaCls} />
+                    placeholder={tp('Description courte pour Google...')} rows={2} maxLength={160} className={textareaCls} />
                 </Field>
               </div>
 
@@ -1140,7 +1333,7 @@ const StoreProductForm = () => {
                 <button type="submit" disabled={saving}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 disabled:opacity-60 transition shadow-md">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? 'Enregistrement...' : 'Enregistrer le produit'}
+                  {saving ? 'Enregistrement...' : tp('Enregistrer le produit')}
                 </button>
               </div>
             </div>
@@ -1150,7 +1343,7 @@ const StoreProductForm = () => {
 
               {/* Status + Save */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-3">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Statut</h3>
+                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">{tp('Statut')}</h3>
                 <button
                   type="button"
                   onClick={() => handleChange('isPublished', !form.isPublished)}
@@ -1162,16 +1355,16 @@ const StoreProductForm = () => {
                 >
                   <div className="flex items-center gap-2.5">
                     <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${form.isPublished ? 'bg-primary-500' : 'bg-gray-300'}`} />
-                    <span className="text-sm font-semibold text-gray-800">{form.isPublished ? 'Actif' : 'Brouillon'}</span>
+                    <span className="text-sm font-semibold text-gray-800">{form.isPublished ? 'Actif' : tp('Brouillon')}</span>
                   </div>
                   <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
                     form.isPublished ? 'bg-primary-100 text-primary-700' : 'bg-gray-200 text-gray-500'
                   }`}>
-                    {form.isPublished ? 'Visible' : 'Masqué'}
+                    {form.isPublished ? 'Visible' : tp('Masqué')}
                   </span>
                 </button>
                 <p className="text-[11px] text-gray-400 text-center">
-                  {form.isPublished ? 'Visible sur votre boutique' : 'Cliquez pour rendre visible'}
+                  {form.isPublished ? 'Visible sur votre boutique' : tp('Cliquez pour rendre visible')}
                 </p>
                 <button
                   type="submit"
@@ -1180,13 +1373,13 @@ const StoreProductForm = () => {
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 disabled:opacity-60 transition shadow-md"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? 'Enregistrement...' : 'Enregistrer'}
+                  {saving ? 'Enregistrement...' : tp('Enregistrer')}
                 </button>
               </div>
 
               {/* Actions rapides */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-2">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">Actions rapides</h3>
+                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">{tp('Actions rapides')}</h3>
                 <button type="button" onClick={() => setShowAiModal(true)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-100 text-sm font-semibold text-violet-700 hover:from-violet-100 hover:to-indigo-100 transition">
                   <Sparkles className="w-4 h-4 flex-shrink-0" /> Générer avec l'IA
@@ -1211,7 +1404,7 @@ const StoreProductForm = () => {
                         <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-emerald-800 leading-snug truncate">
-                            {(form._pageData?.ebook?.title || form.productPageConfig?.ebook?.title) || 'Ebook généré'}
+                            {(form._pageData?.ebook?.title || form.productPageConfig?.ebook?.title) || tp('Ebook généré')}
                           </p>
                           {(form._pageData?.ebook?.pdf?.url || form.productPageConfig?.ebook?.pdf?.url) && (
                             <a
@@ -1220,11 +1413,11 @@ const StoreProductForm = () => {
                               rel="noopener noreferrer"
                               className="text-[11px] text-emerald-600 font-semibold hover:underline"
                             >
-                              Voir le PDF
+                              {tp('Voir le PDF')}
                             </a>
                           )}
                         </div>
-                        <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-full flex-shrink-0">Actif</span>
+                        <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-full flex-shrink-0">{tp('Actif')}</span>
                       </div>
                       <button
                         type="button"
@@ -1234,7 +1427,7 @@ const StoreProductForm = () => {
                       >
                         {digitalProductLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
                         Régénérer
-                        <span className="ml-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-black rounded-full leading-none">3 crédits</span>
+                        <span className="ml-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-black rounded-full leading-none">{tp('3 crédits')}</span>
                       </button>
                       <button
                         type="button"
@@ -1255,7 +1448,7 @@ const StoreProductForm = () => {
                     >
                       {digitalProductLoading ? <Loader2 className="w-4 h-4 flex-shrink-0 animate-spin" /> : <FileText className="w-4 h-4 flex-shrink-0" />}
                       Produit digital
-                      <span className="ml-auto px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-black rounded-full leading-none">3 crédits</span>
+                      <span className="ml-auto px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-black rounded-full leading-none">{tp('3 crédits')}</span>
                     </button>
                   )
                 )}
@@ -1263,7 +1456,7 @@ const StoreProductForm = () => {
 
               {/* Lier au catalogue */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">Catalogue</h3>
+                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">{tp('Catalogue')}</h3>
                 {linkedProduct ? (
                   <div className="flex items-center gap-2 p-3 bg-primary-50 border border-primary-200 rounded-xl">
                     <Link className="w-3.5 h-3.5 text-primary-600 flex-shrink-0" />
@@ -1284,14 +1477,14 @@ const StoreProductForm = () => {
                   </button>
                 )}
                 <p className="text-[11px] text-gray-400 mt-2 text-center leading-tight">
-                  Synchronise les commandes avec votre catalogue
+                  {tp('Synchronise les commandes avec votre catalogue')}
                 </p>
               </div>
 
               {/* Export */}
               {isEdit && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                  <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">Export</h3>
+                  <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">{tp('Export')}</h3>
                   <button type="button" onClick={handleExportProductCsv} disabled={csvBusy}
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition disabled:opacity-50 font-medium">
                     {csvBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
@@ -1381,8 +1574,8 @@ const StoreProductForm = () => {
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">Générer avec l'IA</h3>
-                  <p className="text-[11px] text-gray-400">Fiche produit complète en quelques secondes</p>
+                  <h3 className="text-sm font-bold text-gray-900">{tp('Générer avec l\'IA')}</h3>
+                  <p className="text-[11px] text-gray-400">{tp('Fiche produit complète en quelques secondes')}</p>
                 </div>
               </div>
               <button type="button" onClick={() => { setShowAiModal(false); setAiGenerated(null); setAiError(''); }}
@@ -1407,17 +1600,17 @@ const StoreProductForm = () => {
 
               {aiInputType === 'description' ? (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-2">Décrivez votre produit</label>
+                  <label className="block text-xs font-semibold text-gray-600 mb-2">{tp('Décrivez votre produit')}</label>
                   <textarea autoFocus value={aiInput} onChange={(e) => setAiInput(e.target.value)}
-                    placeholder="Ex: Robe en wax africain 100% coton, taille 38-42, disponible en rouge/bleu/vert, produite artisanalement au Cameroun…"
+                    placeholder={tp('Ex: Robe en wax africain 100% coton, taille 38-42, disponible en rouge/bleu/vert, produite artisanalement au Cameroun…')}
                     rows={5} className={textareaCls} />
                 </div>
               ) : (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-2">URL de la source produit</label>
+                  <label className="block text-xs font-semibold text-gray-600 mb-2">{tp('URL de la source produit')}</label>
                   <input autoFocus type="url" value={aiInput} onChange={(e) => setAiInput(e.target.value)}
                     placeholder="https://www.alibaba.com/product/..." className={inputCls} />
-                  <p className="text-[11px] text-gray-400 mt-1">Alibaba, Amazon, AliExpress, site fournisseur…</p>
+                  <p className="text-[11px] text-gray-400 mt-1">{tp('Alibaba, Amazon, AliExpress, site fournisseur…')}</p>
                 </div>
               )}
 
@@ -1429,11 +1622,11 @@ const StoreProductForm = () => {
 
               {aiGenerated && (
                 <div className="border border-violet-200 bg-violet-50 rounded-xl p-4 space-y-3">
-                  <p className="text-[11px] font-bold text-violet-600 uppercase tracking-wide">Prévisualisation</p>
-                  <div><p className="text-[11px] text-gray-400 mb-0.5">Nom</p><p className="text-sm font-bold text-gray-900">{aiGenerated.name}</p></div>
-                  {aiGenerated.category && <div><p className="text-[11px] text-gray-400 mb-0.5">Catégorie</p><p className="text-sm text-gray-700">{aiGenerated.category}</p></div>}
-                  {aiGenerated.suggestedPrice > 0 && <div><p className="text-[11px] text-gray-400 mb-0.5">Prix suggéré</p><p className="text-sm font-bold text-primary-700">{aiGenerated.suggestedPrice.toLocaleString()} XAF</p></div>}
-                  <div><p className="text-[11px] text-gray-400 mb-0.5">Description</p><p className="text-sm text-gray-600 line-clamp-3">{aiGenerated.description}</p></div>
+                  <p className="text-[11px] font-bold text-violet-600 uppercase tracking-wide">{tp('Prévisualisation')}</p>
+                  <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Nom')}</p><p className="text-sm font-bold text-gray-900">{aiGenerated.name}</p></div>
+                  {aiGenerated.category && <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Catégorie')}</p><p className="text-sm text-gray-700">{aiGenerated.category}</p></div>}
+                  {aiGenerated.suggestedPrice > 0 && <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Prix suggéré')}</p><p className="text-sm font-bold text-primary-700">{aiGenerated.suggestedPrice.toLocaleString()} XAF</p></div>}
+                  <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Description')}</p><p className="text-sm text-gray-600 line-clamp-3">{aiGenerated.description}</p></div>
                   {aiGenerated.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {aiGenerated.tags.map((t, i) => <span key={i} className="px-2 py-0.5 bg-white border border-violet-200 text-violet-700 text-[11px] rounded-full font-medium">{t}</span>)}
@@ -1447,13 +1640,13 @@ const StoreProductForm = () => {
               {!aiGenerated ? (
                 <button type="button" onClick={handleAiGenerate} disabled={!aiInput.trim() || aiGenerating}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-bold rounded-xl hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 transition shadow-sm">
-                  {aiGenerating ? <><Loader2 className="w-4 h-4 animate-spin" /> Génération…</> : <><Sparkles className="w-4 h-4" /> Générer</>}
+                  {aiGenerating ? <><Loader2 className="w-4 h-4 animate-spin" /> {tp('Génération…')}</> : <><Sparkles className="w-4 h-4" /> {tp('Générer')}</>}
                 </button>
               ) : (
                 <>
                   <button type="button" onClick={() => { setAiGenerated(null); setAiError(''); }}
                     className="px-4 py-2.5 border border-gray-200 text-sm font-semibold text-gray-600 rounded-xl hover:bg-gray-50 transition">
-                    Regénérer
+                    {tp('Regénérer')}
                   </button>
                   <button type="button" onClick={applyAiGenerated}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition shadow-sm">
@@ -1471,7 +1664,7 @@ const StoreProductForm = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-gray-900">Choisir un produit du catalogue</h3>
+              <h3 className="text-sm font-bold text-gray-900">{tp('Choisir un produit du catalogue')}</h3>
               <button type="button" onClick={() => setShowPicker(false)} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
@@ -1480,7 +1673,7 @@ const StoreProductForm = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input type="text" autoFocus value={pickerSearch} onChange={(e) => setPickerSearch(e.target.value)}
-                  placeholder="Rechercher un produit…"
+                  placeholder={tp('Rechercher un produit…')}
                   className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
             </div>
@@ -1491,7 +1684,7 @@ const StoreProductForm = () => {
                 </div>
               ) : pickerProducts.length === 0 ? (
                 <div className="py-10 text-center text-sm text-gray-400">
-                  {pickerSearch ? 'Aucun produit trouvé' : 'Aucun produit dans le catalogue'}
+                  {pickerSearch ? 'Aucun produit trouvé' : tp('Aucun produit dans le catalogue')}
                 </div>
               ) : (
                 <ul className="divide-y divide-gray-100">

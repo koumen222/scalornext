@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const SectionCard = ({ icon, title, badge, children }) => (
   <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
@@ -135,7 +136,7 @@ const ProductFinderEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!product.name.trim()) return setError('Le nom du produit est requis');
-    if (!product.sourcingPrice || parseFloat(product.sourcingPrice) <= 0) return setError('Le prix sourcing doit être supérieur à 0');
+    if (!product.sourcingPrice || parseFloat(product.sourcingPrice) <= 0) return setError(tp('Le prix sourcing doit être supérieur à 0'));
     if (product.sourcingType === 'china' && (!product.weight || parseFloat(product.weight) <= 0)) return setError('Le poids est requis pour un sourcing Chine');
     if (!product.sellingPrice || parseFloat(product.sellingPrice) <= 0) return setError('Le prix de vente est requis');
 
@@ -159,10 +160,10 @@ const ProductFinderEdit = () => {
       };
       const res = await ecomApi.put(`/products-research/research/${id}`, payload);
       if (res.data.success) {
-        setSuccess('Produit mis à jour !');
+        setSuccess(tp('Produit mis à jour !'));
         setTimeout(() => navigate('/ecom/product-research'), 1500);
       }
-    } catch { setError('Erreur lors de la mise à jour'); }
+    } catch { setError(tp('Erreur lors de la mise à jour')); }
     setSaving(false);
   };
 
@@ -188,14 +189,14 @@ const ProductFinderEdit = () => {
             </svg>
           </button>
           <div className="min-w-0">
-            <h1 className="text-sm font-bold text-gray-900 truncate">Modifier le produit</h1>
-            <p className="text-[11px] text-gray-400">Mise à jour de la veille</p>
+            <h1 className="text-sm font-bold text-gray-900 truncate">{tp('Modifier le produit')}</h1>
+            <p className="text-[11px] text-gray-400">{tp('Mise à jour de la veille')}</p>
           </div>
           <button type="submit" form="edit-form" disabled={saving}
             className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#0F6B4F] hover:bg-[#0a5740] disabled:opacity-50 text-white text-xs font-bold rounded-xl transition shadow-sm flex-shrink-0">
             {saving
-              ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />Sauvegarde…</>
-              : <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Sauvegarder</>
+              ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{tp('Sauvegarde…')}</>
+              : <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{tp('Sauvegarder')}</>
             }
           </button>
         </div>
@@ -219,35 +220,35 @@ const ProductFinderEdit = () => {
         <form id="edit-form" onSubmit={handleSubmit} className="space-y-4">
 
           {/* ── Produit ── */}
-          <SectionCard icon="📦" title="Informations produit" badge="Veille">
+          <SectionCard icon="📦" title={tp('Informations produit')} badge="Veille">
             <div>
-              <Label required>Nom du produit</Label>
+              <Label required>{tp('Nom du produit')}</Label>
               <TextInput type="text" value={product.name} onChange={e => set('name', e.target.value)}
-                placeholder="Ex: Drain Stick, Correcteur Blancheur…" />
+                placeholder={tp('Ex: Drain Stick, Correcteur Blancheur…')} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <Label>Image apparente</Label>
+                <Label>{tp('Image apparente')}</Label>
                 <TextInput type="url" value={product.imageUrl} onChange={e => set('imageUrl', e.target.value)}
                   placeholder="https://drive.google.com/…" />
               </div>
               <div>
-                <Label>Creative (Ads / Vidéo)</Label>
+                <Label>{tp('Creative (Ads / Vidéo)')}</Label>
                 <TextInput type="url" value={product.creative} onChange={e => set('creative', e.target.value)}
-                  placeholder="Lien vers la publicité" />
+                  placeholder={tp('Lien vers la publicité')} />
               </div>
               <div>
-                <Label>Lien Alibaba</Label>
+                <Label>{tp('Lien Alibaba')}</Label>
                 <TextInput type="url" value={product.alibabaLink} onChange={e => set('alibabaLink', e.target.value)}
                   placeholder="https://www.alibaba.com/…" />
               </div>
               <div>
-                <Label>Lien Recherche</Label>
+                <Label>{tp('Lien Recherche')}</Label>
                 <TextInput type="url" value={product.researchLink} onChange={e => set('researchLink', e.target.value)}
-                  placeholder="Facebook Ads, TikTok…" />
+                  placeholder={tp('Facebook Ads, TikTok…')} />
               </div>
               <div className="sm:col-span-2">
-                <Label>Site web concurrent</Label>
+                <Label>{tp('Site web concurrent')}</Label>
                 <TextInput type="url" value={product.websiteUrl} onChange={e => set('websiteUrl', e.target.value)}
                   placeholder="https://example.com/…" />
               </div>
@@ -255,10 +256,10 @@ const ProductFinderEdit = () => {
           </SectionCard>
 
           {/* ── Finances ── */}
-          <SectionCard icon="💰" title="Analyse financière" badge="Excel">
+          <SectionCard icon="💰" title={tp('Analyse financière')} badge="Excel">
 
             <div>
-              <Label>Type de sourcing</Label>
+              <Label>{tp('Type de sourcing')}</Label>
               <div className="flex gap-2">
                 {[{v:'local',l:'🏠 Local'},{v:'china',l:'🇨🇳 Chine'}].map(({v,l}) => (
                   <button key={v} type="button" onClick={() => set('sourcingType',v)}
@@ -274,26 +275,26 @@ const ProductFinderEdit = () => {
             </div>
 
             <div>
-              <Label required>Prix sourcing brut (FCFA)</Label>
+              <Label required>{tp('Prix sourcing brut (FCFA)')}</Label>
               <TextInput type="number" value={product.sourcingPrice} onChange={e => set('sourcingPrice',e.target.value)}
-                placeholder="Ex: 360" min="0" step="10" />
+                placeholder={tp('Ex: 360')} min="0" step="10" />
             </div>
 
             {isCN && (
               <div className="grid grid-cols-2 gap-3 p-3.5 bg-sky-50/60 rounded-xl border border-sky-100">
                 <div>
-                  <Label>Poids (kg)</Label>
+                  <Label>{tp('Poids (kg)')}</Label>
                   <TextInput type="number" value={product.weight} onChange={e => set('weight',e.target.value)}
                     placeholder="0.10" min="0" step="0.01" />
                 </div>
                 <div>
-                  <Label>Prix du kilo (FCFA)</Label>
+                  <Label>{tp('Prix du kilo (FCFA)')}</Label>
                   <TextInput type="number" value={product.pricePerKg} onChange={e => set('pricePerKg',e.target.value)}
                     placeholder="12 000" min="0" step="10" />
                 </div>
                 {product.shippingUnitCost && (
                   <div className="col-span-2 flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-sky-100 text-xs">
-                    <span className="text-gray-500">Frais de livraison calculés</span>
+                    <span className="text-gray-500">{tp('Frais de livraison calculés')}</span>
                     <span className="font-bold text-sky-700">{parseInt(product.shippingUnitCost).toLocaleString('fr-FR')} FCFA</span>
                   </div>
                 )}
@@ -301,7 +302,7 @@ const ProductFinderEdit = () => {
             )}
 
             <div>
-              <Label>Coût d'achat final (FCFA)</Label>
+              <Label>{tp('Coût d\'achat final (FCFA)')}</Label>
               <div className="relative">
                 <input type="number" value={product.cogs} onChange={e => set('cogs',e.target.value)}
                   placeholder={calcCOGS()||'0'} min="0" step="10"
@@ -309,27 +310,27 @@ const ProductFinderEdit = () => {
                 />
                 <button type="button" onClick={() => set('cogs',calcCOGS())}
                   className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[11px] font-bold bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition">
-                  Auto
+                  {tp('Auto')}
                 </button>
               </div>
             </div>
 
             <div>
-              <Label required>Prix de vente (FCFA)</Label>
+              <Label required>{tp('Prix de vente (FCFA)')}</Label>
               <div className="relative">
                 <input type="number" value={product.sellingPrice} onChange={e => set('sellingPrice',e.target.value)}
-                  placeholder="Ex: 1 560" min="0" step="10" required
+                  placeholder={tp('Ex: 1 560')} min="0" step="10" required
                   className="w-full px-3.5 py-2.5 pr-24 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
                 />
                 <button type="button" onClick={() => set('sellingPrice',suggested())}
                   className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[11px] font-bold bg-[#0F6B4F]/10 text-[#0F6B4F] rounded-lg hover:bg-[#0F6B4F]/20 transition">
-                  Suggérer
+                  {tp('Suggérer')}
                 </button>
               </div>
               <p className="mt-1 text-[11px] text-gray-400">
                 {product.sourcingPrice && parseFloat(product.sourcingPrice) > 0
                   ? `Prix suggéré : ${suggested().toLocaleString('fr-FR')} FCFA`
-                  : 'Saisissez un prix sourcing pour voir la suggestion'}
+                  : tp('Saisissez un prix sourcing pour voir la suggestion')}
               </p>
             </div>
 
@@ -339,7 +340,7 @@ const ProductFinderEdit = () => {
                 <KpiPill label="Bénéfice" value={`${parseInt(profit).toLocaleString('fr-FR')} F`} color="text-primary-600" />
                 <KpiPill label="ROI" value={roi ? `${roi}%` : '—'} color="text-[#0F6B4F]" />
                 <div className="flex-1 min-w-0 bg-gray-50 rounded-xl px-3 py-3 border border-gray-100">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest text-center">Ventes/mois</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest text-center">{tp('Ventes/mois')}</p>
                   <input type="number" value={product.monthlyEstimate} onChange={e => set('monthlyEstimate',e.target.value)}
                     className="w-full mt-0.5 text-sm font-bold text-center bg-transparent outline-none border-0 focus:ring-0 placeholder-gray-300"
                     placeholder="0" min="0"
@@ -350,30 +351,30 @@ const ProductFinderEdit = () => {
           </SectionCard>
 
           {/* ── Marché ── */}
-          <SectionCard icon="📊" title="Analyse marché">
+          <SectionCard icon="📊" title={tp('Analyse marché')}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">Demande</span>
+                <span className="text-xs font-semibold text-gray-500">{tp('Demande')}</span>
                 <Chips value={product.demand} onChange={v=>set('demand',v)}
-                  options={[{v:'low',l:'Faible'},{v:'medium',l:'Moyenne'},{v:'high',l:'Élevée'}]} />
+                  options={[{v:'low',l: tp('Faible')},{v:'medium',l: tp('Moyenne')},{v:'high',l: tp('Élevée')}]} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">Concurrence</span>
+                <span className="text-xs font-semibold text-gray-500">{tp('Concurrence')}</span>
                 <Chips value={product.competition} onChange={v=>set('competition',v)}
-                  options={[{v:'low',l:'Faible'},{v:'medium',l:'Moyenne'},{v:'high',l:'Élevée'}]} />
+                  options={[{v:'low',l: tp('Faible')},{v:'medium',l: tp('Moyenne')},{v:'high',l: tp('Élevée')}]} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">Tendance</span>
+                <span className="text-xs font-semibold text-gray-500">{tp('Tendance')}</span>
                 <Chips value={product.trend} onChange={v=>set('trend',v)}
                   options={[{v:'rising',l:'📈'},{v:'stable',l:'➡️'},{v:'falling',l:'📉'}]} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">Fiabilité fourn.</span>
+                <span className="text-xs font-semibold text-gray-500">{tp('Fiabilité fourn.')}</span>
                 <Chips value={product.supplierReliability} onChange={v=>set('supplierReliability',v)}
-                  options={[{v:'low',l:'Faible'},{v:'medium',l:'Moyenne'},{v:'high',l:'Élevée'}]} />
+                  options={[{v:'low',l: tp('Faible')},{v:'medium',l: tp('Moyenne')},{v:'high',l: tp('Élevée')}]} />
               </div>
               <div className="flex items-center gap-3 pt-1">
-                <span className="text-xs font-semibold text-gray-500 flex-shrink-0">Nb fournisseurs</span>
+                <span className="text-xs font-semibold text-gray-500 flex-shrink-0">{tp('Nb fournisseurs')}</span>
                 <input type="number" value={product.supplierCount} onChange={e=>set('supplierCount',e.target.value)}
                   placeholder="0" min="0"
                   className="w-20 px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none"
@@ -382,7 +383,7 @@ const ProductFinderEdit = () => {
             </div>
 
             <div className="pt-2 border-t border-gray-100">
-              <p className="text-xs font-semibold text-gray-500 mb-2">Score d'opportunité</p>
+              <p className="text-xs font-semibold text-gray-500 mb-2">{tp('Score d\'opportunité')}</p>
               <div className="flex items-center gap-1.5">
                 {[1,2,3,4,5].map(n => (
                   <button key={n} type="button" onClick={() => set('opportunityScore',n)}
@@ -403,11 +404,11 @@ const ProductFinderEdit = () => {
           <SectionCard icon="⚡" title="Forces & Faiblesses">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <p className="text-[11px] font-bold text-primary-600 uppercase tracking-widest">✓ Avantages</p>
+                <p className="text-[11px] font-bold text-primary-600 uppercase tracking-widest">{tp('✓ Avantages')}</p>
                 {product.pros.map((p,i) => (
                   <div key={i} className="flex items-center gap-1.5">
                     <input type="text" value={p} onChange={e=>updateList('pros',i,e.target.value)}
-                      placeholder="Ex: Forte marge…"
+                      placeholder={tp('Ex: Forte marge…')}
                       className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 outline-none transition placeholder-gray-300"
                     />
                     {product.pros.length > 1 && (
@@ -429,11 +430,11 @@ const ProductFinderEdit = () => {
               </div>
 
               <div className="space-y-2">
-                <p className="text-[11px] font-bold text-red-500 uppercase tracking-widest">✗ Inconvénients</p>
+                <p className="text-[11px] font-bold text-red-500 uppercase tracking-widest">{tp('✗ Inconvénients')}</p>
                 {product.cons.map((c,i) => (
                   <div key={i} className="flex items-center gap-1.5">
                     <input type="text" value={c} onChange={e=>updateList('cons',i,e.target.value)}
-                      placeholder="Ex: Forte concurrence…"
+                      placeholder={tp('Ex: Forte concurrence…')}
                       className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-400 outline-none transition placeholder-gray-300"
                     />
                     {product.cons.length > 1 && (
@@ -457,9 +458,9 @@ const ProductFinderEdit = () => {
           </SectionCard>
 
           {/* ── Notes ── */}
-          <SectionCard icon="📝" title="Notes">
+          <SectionCard icon="📝" title={tp('Notes')}>
             <textarea value={product.notes} onChange={e=>set('notes',e.target.value)} rows={3}
-              placeholder="Observations, idées marketing, notes importantes…"
+              placeholder={tp('Observations, idées marketing, notes importantes…')}
               className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition resize-none placeholder-gray-300"
             />
           </SectionCard>
@@ -468,13 +469,13 @@ const ProductFinderEdit = () => {
           <div className="flex items-center justify-between gap-3 pb-8">
             <button type="button" onClick={() => navigate('/ecom/product-research')}
               className="px-5 py-2.5 text-sm font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
-              Annuler
+              {tp('Annuler')}
             </button>
             <button type="submit" disabled={saving}
               className="flex items-center gap-2 px-6 py-2.5 bg-[#0F6B4F] hover:bg-[#0a5740] disabled:opacity-50 text-white text-sm font-bold rounded-xl transition shadow-sm">
               {saving
-                ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Sauvegarde…</>
-                : <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Sauvegarder</>
+                ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{tp('Sauvegarde…')}</>
+                : <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{tp('Sauvegarder')}</>
               }
             </button>
           </div>

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import ecomApi, { superAdminPushApi } from '../services/ecommApi.js';
 import SuperAdminShell from '../components/SuperAdminShell';
+import { tp } from '../i18n/platform.js';
 
 /* ── tiny helpers ── */
 const Inp = ({ value, onChange, placeholder, type = 'text', disabled, className = '' }) => (
@@ -47,10 +48,10 @@ const CardHeader = ({ title, subtitle, right }) => (
 );
 
 const STATUS_META = {
-  scheduled: { label: 'Programmée', cls: 'bg-blue-100 text-blue-700'   },
-  sent:      { label: 'Envoyée',    cls: 'bg-primary-100 text-primary-700' },
-  failed:    { label: 'Échouée',    cls: 'bg-red-100 text-red-600'      },
-  cancelled: { label: 'Annulée',    cls: 'bg-slate-100 text-slate-500'  },
+  scheduled: { get label() { return tp('Programmée'); }, cls: 'bg-blue-100 text-blue-700'   },
+  sent:      { get label() { return tp('Envoyée'); },    cls: 'bg-primary-100 text-primary-700' },
+  failed:    { get label() { return tp('Échouée'); },    cls: 'bg-red-100 text-red-600'      },
+  cancelled: { get label() { return tp('Annulée'); },    cls: 'bg-slate-100 text-slate-500'  },
 };
 
 /* ── component ── */
@@ -172,7 +173,7 @@ const SuperAdminPushCenter = () => {
   const TABS = [
     { k: 'send',        label: 'Envoyer maintenant', icon: Send       },
     { k: 'schedule',    label: 'Programmer',          icon: Calendar   },
-    { k: 'scheduled',   label: 'Programmées',         icon: Clock,  count: scheduled.length   },
+    { k: 'scheduled',   get label() { return tp('Programmées'); },         icon: Clock,  count: scheduled.length   },
     { k: 'automations', label: 'Automations',         icon: Zap,    count: automations.length },
   ];
 
@@ -181,7 +182,7 @@ const SuperAdminPushCenter = () => {
 
   return (
     <SuperAdminShell
-      title="Push Center"
+      title={tp('Push Center')}
       subtitle={subtitle}
       icon={Bell}
       refreshing={loading}
@@ -250,37 +251,37 @@ const SuperAdminPushCenter = () => {
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label>Ciblage</Label>
+                  <Label>{tp('Ciblage')}</Label>
                   <Sel value={scope} onChange={e => setScope(e.target.value)}>
-                    <option value="global">Tous les utilisateurs</option>
-                    <option value="workspace">Une workspace</option>
+                    <option value="global">{tp('Tous les utilisateurs')}</option>
+                    <option value="workspace">{tp('Une workspace')}</option>
                   </Sel>
                 </div>
                 <div>
-                  <Label>Workspace</Label>
+                  <Label>{tp('Workspace')}</Label>
                   <Sel value={workspaceId} onChange={e => setWorkspaceId(e.target.value)} disabled={scope !== 'workspace'}>
-                    <option value="">Sélectionner…</option>
+                    <option value="">{tp('Sélectionner…')}</option>
                     {wsOptions.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
                   </Sel>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <Label>Titre *</Label>
-                  <Inp value={title} onChange={e => setTitle(e.target.value)} placeholder="Ex : Mise à jour importante" />
+                  <Label>{tp('Titre *')}</Label>
+                  <Inp value={title} onChange={e => setTitle(e.target.value)} placeholder={tp('Ex : Mise à jour importante')} />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <Label>Message *</Label>
+                  <Label>{tp('Message *')}</Label>
                   <textarea
                     value={body} onChange={e => setBody(e.target.value)} rows={4}
-                    placeholder="Ex : Une nouvelle fonctionnalité est disponible…"
+                    placeholder={tp('Ex : Une nouvelle fonctionnalité est disponible…')}
                     className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 placeholder:text-slate-400 resize-y transition-colors"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <Label>URL (optionnel)</Label>
-                  <Inp value={url} onChange={e => setUrl(e.target.value)} placeholder="Ex : /ecom/dashboard" />
+                  <Label>{tp('URL (optionnel)')}</Label>
+                  <Inp value={url} onChange={e => setUrl(e.target.value)} placeholder={tp('Ex : /ecom/dashboard')} />
                 </div>
 
                 {tab === 'schedule' && (
@@ -300,7 +301,7 @@ const SuperAdminPushCenter = () => {
                   ? 'Envoi à tous les utilisateurs de toutes les workspaces'
                   : workspaceId
                     ? `Envoi aux utilisateurs de la workspace sélectionnée`
-                    : 'Sélectionnez une workspace ci-dessus'}
+                    : tp('Sélectionnez une workspace ci-dessus')}
               </div>
 
               <div className="flex justify-end">
@@ -330,7 +331,7 @@ const SuperAdminPushCenter = () => {
           {/* ── SCHEDULED list ── */}
           {tab === 'scheduled' && (
             scheduled.length === 0 ? (
-              <div className="py-16 text-center text-sm text-slate-400">Aucune notification programmée</div>
+              <div className="py-16 text-center text-sm text-slate-400">{tp('Aucune notification programmée')}</div>
             ) : (
               <div className="divide-y divide-slate-100">
                 {scheduled.map(s => {
@@ -347,7 +348,7 @@ const SuperAdminPushCenter = () => {
                           <div className="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
                             <span className="flex items-center gap-1">
                               {s.scope === 'global' ? <Globe className="w-3 h-3" /> : <Building2 className="w-3 h-3" />}
-                              {s.scope === 'global' ? 'Global' : 'Workspace'}
+                              {s.scope === 'global' ? 'Global' : tp('Workspace')}
                             </span>
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
@@ -362,7 +363,7 @@ const SuperAdminPushCenter = () => {
                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-red-200 text-red-600 rounded-xl hover:bg-red-50 disabled:opacity-50 transition-colors flex-shrink-0"
                           >
                             <X className="w-3.5 h-3.5" />
-                            Annuler
+                            {tp('Annuler')}
                           </button>
                         )}
                       </div>
@@ -377,18 +378,18 @@ const SuperAdminPushCenter = () => {
           {tab === 'automations' && (
             <div>
               <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between gap-3">
-                <p className="text-xs text-slate-500">Préconfigurations à heures fixes — activables / désactivables</p>
+                <p className="text-xs text-slate-500">{tp('Préconfigurations à heures fixes — activables / désactivables')}</p>
                 <button
                   onClick={bootstrap}
                   disabled={busy}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 disabled:opacity-50 transition-colors flex-shrink-0"
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  Créer les préconfigs
+                  {tp('Créer les préconfigs')}
                 </button>
               </div>
               {automations.length === 0 ? (
-                <div className="py-16 text-center text-sm text-slate-400">Aucune automation configurée</div>
+                <div className="py-16 text-center text-sm text-slate-400">{tp('Aucune automation configurée')}</div>
               ) : (
                 <div className="divide-y divide-slate-100">
                   {automations.map(a => (
@@ -397,13 +398,13 @@ const SuperAdminPushCenter = () => {
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <p className="text-sm font-bold text-slate-900">{a.name}</p>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${a.enabled ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'}`}>
-                            {a.enabled ? 'Active' : 'Inactive'}
+                            {a.enabled ? 'Active' : tp('Inactive')}
                           </span>
                         </div>
                         <p className="text-xs text-slate-500 mb-1">{a.payload?.title} — {a.payload?.body}</p>
                         <div className="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
-                          <span>Cron : <span className="font-mono font-semibold text-slate-600">{a.cron}</span></span>
-                          <span>TZ : {a.timezone || 'Africa/Abidjan'}</span>
+                          <span>{tp('Cron :')} <span className="font-mono font-semibold text-slate-600">{a.cron}</span></span>
+                          <span>TZ : {a.timezone || tp('Africa/Abidjan')}</span>
                           {a.lastRunAt && <span>Dernier run : {new Date(a.lastRunAt).toLocaleString('fr-FR')}</span>}
                         </div>
                       </div>
@@ -417,7 +418,7 @@ const SuperAdminPushCenter = () => {
                         }`}
                       >
                         {a.enabled ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
-                        {a.enabled ? 'Désactiver' : 'Activer'}
+                        {a.enabled ? 'Désactiver' : tp('Activer')}
                       </button>
                     </div>
                   ))}

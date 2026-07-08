@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat';
 import { storeManageApi } from '../services/storeApi.js';
 import RichTextEditor from '../components/RichTextEditor.jsx';
 import { normalizeHomepageSections } from '../utils/homepageSections.js';
+import { tp } from '../i18n/platform.js';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ICÔNES DISPONIBLES
@@ -91,7 +92,7 @@ const Field = ({ label, value, onChange, multiline, rich, type = 'text', placeho
 
 const IconSelect = ({ value, onChange }) => (
   <div>
-    <label className="text-xs font-semibold text-gray-600 mb-1 block">Icône</label>
+    <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Icône')}</label>
     <select
       value={value || 'star'}
       onChange={e => onChange(e.target.value)}
@@ -141,7 +142,7 @@ const ItemsEditor = ({ items = [], onChange, renderItem, newItem, label = 'Élé
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            Ajouter
+            {tp('Ajouter')}
           </button>
         )}
       </div>
@@ -240,7 +241,7 @@ const SectionCard = ({
             <p className="text-[12px] font-semibold text-gray-900 truncate">{title}</p>
             {section.visible === false && (
               <span className="inline-flex rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-500 flex-shrink-0">
-                Masquée
+                {tp('Masquée')}
               </span>
             )}
           </div>
@@ -254,7 +255,7 @@ const SectionCard = ({
             onClick={(e) => { e.stopPropagation(); onMove(index, -1); }}
             disabled={index === 0}
             className="hidden group-hover:inline-flex p-1 rounded-md hover:bg-gray-100 disabled:opacity-30 transition"
-            title="Monter"
+            title={tp('Monter')}
           >
             <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
           </button>
@@ -262,21 +263,21 @@ const SectionCard = ({
             onClick={(e) => { e.stopPropagation(); onMove(index, 1); }}
             disabled={index === total - 1}
             className="hidden group-hover:inline-flex p-1 rounded-md hover:bg-gray-100 disabled:opacity-30 transition"
-            title="Descendre"
+            title={tp('Descendre')}
           >
             <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onToggle(section.id); }}
             className={`relative w-9 h-5 rounded-full transition-colors ${section.visible !== false ? 'bg-[#111827]' : 'bg-gray-300'}`}
-            title={section.visible !== false ? 'Masquer' : 'Afficher'}
+            title={section.visible !== false ? 'Masquer' : tp('Afficher')}
           >
             <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${section.visible !== false ? 'translate-x-4' : ''}`} />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(section.id); }}
             className="hidden group-hover:inline-flex p-1 rounded-md hover:bg-red-50 transition"
-            title="Supprimer"
+            title={tp('Supprimer')}
           >
             <svg className="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
           </button>
@@ -307,24 +308,24 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Hero ──────────────────────────────────────────────────────────────
   const renderHero = () => (
     <>
-      <Field label="Titre principal" value={config.title} onChange={v => updateField('title', v)} placeholder="Ex: Bienvenue chez Ma Boutique" />
+      <Field label="Titre principal" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Ex: Bienvenue chez Ma Boutique')} />
       <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} rich />
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder="Voir nos produits" />
+        <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder={tp('Voir nos produits')} />
         <Field label="Lien du bouton" value={config.ctaLink} onChange={v => updateField('ctaLink', v)} placeholder="/products" />
       </div>
       <Field label="Image de fond (URL)" value={config.backgroundImage} onChange={v => updateField('backgroundImage', v)} placeholder="https://..." hint="Laissez vide pour le dégradé par défaut" />
       {config.backgroundImage && (
         <div className="rounded-xl overflow-hidden border border-gray-200 h-32">
-          <img src={config.backgroundImage} alt="Aperçu" className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
+          <img src={config.backgroundImage} alt={tp('Aperçu')} className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
         </div>
       )}
       <div>
-        <label className="text-xs font-semibold text-gray-600 mb-1 block">Alignement du texte</label>
+        <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Alignement du texte')}</label>
         <div className="flex gap-2">
           {['left', 'center', 'right'].map(a => (
             <button key={a} onClick={() => updateField('alignment', a)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${config.alignment === a ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
-              {a === 'left' ? 'Gauche' : a === 'center' ? 'Centre' : 'Droite'}
+              {a === 'left' ? 'Gauche' : a === 'center' ? 'Centre' : tp('Droite')}
             </button>
           ))}
         </div>
@@ -343,8 +344,8 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
       renderItem={(item, idx, update) => (
         <div className="space-y-2">
           <IconSelect value={item.icon} onChange={v => update({ icon: v })} />
-          <Field label="Titre" value={item.title} onChange={v => update({ title: v })} placeholder="Ex: Livraison rapide" />
-          <Field label="Description" value={item.desc} onChange={v => update({ desc: v })} placeholder="Ex: Livré en 24-48h" />
+          <Field label="Titre" value={item.title} onChange={v => update({ title: v })} placeholder={tp('Ex: Livraison rapide')} />
+          <Field label="Description" value={item.desc} onChange={v => update({ desc: v })} placeholder={tp('Ex: Livré en 24-48h')} />
         </div>
       )}
     />
@@ -353,8 +354,8 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Products ──────────────────────────────────────────────────────────
   const renderProducts = () => (
     <>
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="Nos Produits" />
-      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder="Découvrez notre sélection" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Nos Produits')} />
+      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder={tp('Découvrez notre sélection')} />
       <Field label="Nombre de produits affichés" type="number" value={config.homepageLimit || config.limit || 6} onChange={v => { updateField('homepageLimit', v); updateField('limit', v); }} hint="Nombre maximum de produits sur la page d'accueil" />
     </>
   );
@@ -362,8 +363,8 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Features ──────────────────────────────────────────────────────────
   const renderFeatures = () => (
     <>
-      <Field label="Titre de la section" value={config.title} onChange={v => updateField('title', v)} placeholder="Pourquoi nous choisir ?" />
-      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder="Des avantages uniques" />
+      <Field label="Titre de la section" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Pourquoi nous choisir ?')} />
+      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder={tp('Des avantages uniques')} />
       <ItemsEditor
         items={config.items || []}
         onChange={updateItems}
@@ -384,7 +385,7 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Testimonials ─────────────────────────────────────────────────────
   const renderTestimonials = () => (
     <>
-      <Field label="Titre de la section" value={config.title} onChange={v => updateField('title', v)} placeholder="Ce que disent nos clients" />
+      <Field label="Titre de la section" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Ce que disent nos clients')} />
       <ItemsEditor
         items={config.items || []}
         onChange={updateItems}
@@ -394,12 +395,12 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
         renderItem={(item, idx, update) => (
           <div className="space-y-2">
             <div className="grid grid-cols-2 gap-2">
-              <Field label="Nom" value={item.name} onChange={v => update({ name: v })} placeholder="Nom du client" />
-              <Field label="Ville / Pays" value={item.location} onChange={v => update({ location: v })} placeholder="Ex: Abidjan, CI" />
+              <Field label="Nom" value={item.name} onChange={v => update({ name: v })} placeholder={tp('Nom du client')} />
+              <Field label="Ville / Pays" value={item.location} onChange={v => update({ location: v })} placeholder={tp('Ex: Abidjan, CI')} />
             </div>
-            <Field label="Avis" value={item.content} onChange={v => update({ content: v })} multiline placeholder="Le témoignage du client..." />
+            <Field label="Avis" value={item.content} onChange={v => update({ content: v })} multiline placeholder={tp('Le témoignage du client...')} />
             <div>
-              <label className="text-xs font-semibold text-gray-600 mb-1 block">Note</label>
+              <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Note')}</label>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map(star => (
                   <button key={star} onClick={() => update({ rating: star })} className={`text-xl transition ${(item.rating || 5) >= star ? 'text-yellow-400' : 'text-gray-300'}`}>
@@ -418,8 +419,8 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── FAQ ───────────────────────────────────────────────────────────────
   const renderFaq = () => (
     <>
-      <Field label="Titre de la section" value={config.title} onChange={v => updateField('title', v)} placeholder="Questions fréquentes" />
-      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder="Tout ce que vous devez savoir" />
+      <Field label="Titre de la section" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Questions fréquentes')} />
+      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder={tp('Tout ce que vous devez savoir')} />
       <ItemsEditor
         items={config.items || []}
         onChange={updateItems}
@@ -428,8 +429,8 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
         newItem={{ question: '', answer: '' }}
         renderItem={(item, idx, update) => (
           <div className="space-y-2">
-            <Field label="Question" value={item.question} onChange={v => update({ question: v })} placeholder="Ex: Quels sont les délais de livraison ?" />
-            <Field label="Réponse" value={item.answer || item.reponse} onChange={v => update({ answer: v })} multiline placeholder="La réponse à cette question..." />
+            <Field label="Question" value={item.question} onChange={v => update({ question: v })} placeholder={tp('Ex: Quels sont les délais de livraison ?')} />
+            <Field label="Réponse" value={item.answer || item.reponse} onChange={v => update({ answer: v })} multiline placeholder={tp('La réponse à cette question...')} />
           </div>
         )}
       />
@@ -439,23 +440,23 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Contact ───────────────────────────────────────────────────────────
   const renderContact = () => (
     <>
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="Contactez-nous" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Contactez-nous')} />
       <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} rich />
       <div className="grid grid-cols-2 gap-3">
         <Field label="WhatsApp" value={config.whatsapp} onChange={v => updateField('whatsapp', v)} placeholder="+225 07 XX XX XX XX" hint="Numéro avec indicatif pays" />
         <Field label="Téléphone" value={config.phone} onChange={v => updateField('phone', v)} placeholder="+225 07 XX XX XX XX" />
       </div>
-      <Field label="Email" value={config.email} onChange={v => updateField('email', v)} placeholder="contact@maboutique.com" />
-      <Field label="Adresse" value={config.address} onChange={v => updateField('address', v)} placeholder="Abidjan, Côte d'Ivoire" />
+      <Field label="Email" value={config.email} onChange={v => updateField('email', v)} placeholder={tp('contact@maboutique.com')} />
+      <Field label="Adresse" value={config.address} onChange={v => updateField('address', v)} placeholder={tp('Abidjan, Côte d\'Ivoire')} />
     </>
   );
 
   // ─── CTA ───────────────────────────────────────────────────────────────
   const renderCta = () => (
     <>
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="Prêt à commander ?" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Prêt à commander ?')} />
       <Field label="Contenu" value={config.content} onChange={v => updateField('content', v)} rich />
-      <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder="Commander maintenant" />
+      <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder={tp('Commander maintenant')} />
       <Field label="Lien" value={config.link || config.ctaLink} onChange={v => { updateField('link', v); updateField('ctaLink', v); }} placeholder="/products" />
     </>
   );
@@ -463,15 +464,15 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Text ──────────────────────────────────────────────────────────────
   const renderText = () => (
     <>
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="Titre de la section" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Titre de la section')} />
       <Field label="Contenu" value={config.content} onChange={v => updateField('content', v)} rich />
       <Field label="Couleur de fond" value={config.backgroundColor} onChange={v => updateField('backgroundColor', v)} placeholder="#ffffff" hint="Code hex (ex: #f3f4f6)" />
       <div>
-        <label className="text-xs font-semibold text-gray-600 mb-1 block">Alignement</label>
+        <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Alignement')}</label>
         <div className="flex gap-2">
           {['left', 'center', 'right'].map(a => (
             <button key={a} onClick={() => updateField('alignment', a)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${(config.alignment || 'left') === a ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
-              {a === 'left' ? 'Gauche' : a === 'center' ? 'Centre' : 'Droite'}
+              {a === 'left' ? 'Gauche' : a === 'center' ? 'Centre' : tp('Droite')}
             </button>
           ))}
         </div>
@@ -483,7 +484,7 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   const renderImageText = () => (
     <>
       <div>
-        <label className="text-xs font-semibold text-gray-600 mb-1 block">Disposition</label>
+        <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Disposition')}</label>
         <div className="flex gap-2">
           {[{ v: 'text_left', l: '📝 Texte à gauche' }, { v: 'text_right', l: '🖼️ Image à gauche' }].map(o => (
             <button key={o.v} onClick={() => updateField('layout', o.v)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${(config.layout || 'text_left') === o.v ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
@@ -493,16 +494,16 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
         </div>
       </div>
       <Field label="Sur-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder="EX: QUI SOMMES-NOUS" hint="Petit texte au-dessus du titre (optionnel)" />
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="Notre Histoire" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Notre Histoire')} />
       <Field label="Contenu" value={config.content} onChange={v => updateField('content', v)} rich />
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder="En savoir plus" />
+        <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder={tp('En savoir plus')} />
         <Field label="Lien du bouton" value={config.ctaLink} onChange={v => updateField('ctaLink', v)} placeholder="/products" />
       </div>
       <Field label="Image (URL)" value={config.image} onChange={v => updateField('image', v)} placeholder="https://..." hint="L'image affichée à côté du texte" />
       {config.image && (
         <div className="rounded-xl overflow-hidden border border-gray-200 h-32">
-          <img src={config.image} alt="Aperçu" className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
+          <img src={config.image} alt={tp('Aperçu')} className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
         </div>
       )}
       <ItemsEditor
@@ -524,10 +525,10 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Banner Promo ──────────────────────────────────────────────────────
   const renderBanner = () => (
     <>
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="🔥 Offre spéciale — Livraison GRATUITE !" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('🔥 Offre spéciale — Livraison GRATUITE !')} />
       <Field label="Contenu" value={config.content} onChange={v => updateField('content', v)} rich />
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder="En profiter" />
+        <Field label="Texte du bouton" value={config.ctaText} onChange={v => updateField('ctaText', v)} placeholder={tp('En profiter')} />
         <Field label="Lien du bouton" value={config.ctaLink} onChange={v => updateField('ctaLink', v)} placeholder="/products" />
       </div>
       <Field label="Image de fond (URL)" value={config.backgroundImage} onChange={v => updateField('backgroundImage', v)} placeholder="https://... (optionnel)" hint="Laissez vide pour le dégradé par défaut" />
@@ -537,8 +538,8 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Gallery ───────────────────────────────────────────────────────────
   const renderGallery = () => (
     <>
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="Notre galerie" />
-      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder="Découvrez nos produits en images" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Notre galerie')} />
+      <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} placeholder={tp('Découvrez nos produits en images')} />
       <ItemsEditor
         items={config.images || []}
         onChange={imgs => setConfig(prev => ({ ...prev, images: imgs }))}
@@ -548,7 +549,7 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
         renderItem={(item, idx, update) => (
           <div className="space-y-2">
             <Field label="URL de l'image" value={item.url} onChange={v => update({ url: v })} placeholder="https://..." />
-            <Field label="Légende" value={item.alt} onChange={v => update({ alt: v })} placeholder="Description de l'image" />
+            <Field label="Légende" value={item.alt} onChange={v => update({ alt: v })} placeholder={tp('Description de l\'image')} />
             {item.url && (
               <div className="rounded-lg overflow-hidden border border-gray-200 h-20">
                 <img src={item.url} alt={item.alt || ''} className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
@@ -563,11 +564,11 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   // ─── Newsletter ────────────────────────────────────────────────────────
   const renderNewsletter = () => (
     <>
-      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder="Restez informé(e) !" />
+      <Field label="Titre" value={config.title} onChange={v => updateField('title', v)} placeholder={tp('Restez informé(e) !')} />
       <Field label="Sous-titre" value={config.subtitle} onChange={v => updateField('subtitle', v)} rich />
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Placeholder email" value={config.placeholder} onChange={v => updateField('placeholder', v)} placeholder="Votre adresse email" />
-        <Field label="Texte du bouton" value={config.buttonText} onChange={v => updateField('buttonText', v)} placeholder="S'inscrire" />
+        <Field label="Placeholder email" value={config.placeholder} onChange={v => updateField('placeholder', v)} placeholder={tp('Votre adresse email')} />
+        <Field label="Texte du bouton" value={config.buttonText} onChange={v => updateField('buttonText', v)} placeholder={tp('S\'inscrire')} />
       </div>
     </>
   );
@@ -576,7 +577,7 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   const renderSpacer = () => (
     <>
       <Field label="Hauteur (px)" type="number" value={config.height || 40} onChange={v => updateField('height', v)} hint="Hauteur de l'espacement en pixels" />
-      <Field label="Couleur de fond" value={config.backgroundColor} onChange={v => updateField('backgroundColor', v)} placeholder="transparent" hint="Code hex ou 'transparent'" />
+      <Field label="Couleur de fond" value={config.backgroundColor} onChange={v => updateField('backgroundColor', v)} placeholder={tp('transparent')} hint="Code hex ou 'transparent'" />
     </>
   );
 
@@ -635,15 +636,15 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
         <div className="px-5 py-4 border-t border-gray-100 flex gap-3 flex-shrink-0">
           {onClose ? (
             <button onClick={onClose} className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
-              Annuler
+              {tp('Annuler')}
             </button>
           ) : (
             <div className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-400 bg-gray-50 rounded-xl text-center">
-              Sauvegarde automatique active
+              {tp('Sauvegarde automatique active')}
             </div>
           )}
           <button onClick={handleSave} className="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-[#0F6B4F] rounded-xl hover:bg-[#0A5740] transition">
-            {inline ? 'Appliquer' : 'Enregistrer'}
+            {inline ? 'Appliquer' : tp('Enregistrer')}
           </button>
         </div>
       </div>
@@ -666,7 +667,7 @@ const AddSectionModal = ({ onAdd, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md" onClick={e => e.stopPropagation()}>
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-gray-900">Ajouter une section</h3>
+          <h3 className="text-sm font-bold text-gray-900">{tp('Ajouter une section')}</h3>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 transition">
             <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -913,9 +914,9 @@ const BoutiquePages = () => {
     const typeInfo = SECTION_TYPES[type];
     const defaults = {
       hero: { title: 'Bienvenue', subtitle: '', ctaText: 'Voir nos produits', ctaLink: '/products', backgroundImage: '', alignment: 'center' },
-      badges: { items: [{ icon: 'truck', title: 'Livraison rapide', desc: 'Livré en 24-48h' }, { icon: 'shield', title: 'Paiement sécurisé', desc: '100% sécurisé' }, { icon: 'rotate-ccw', title: 'Retours faciles', desc: 'Satisfait ou remboursé' }] },
+      badges: { items: [{ icon: 'truck', title: 'Livraison rapide', get desc() { return tp('Livré en 24-48h'); } }, { icon: 'shield', title: 'Paiement sécurisé', get desc() { return tp('100% sécurisé'); } }, { icon: 'rotate-ccw', title: 'Retours faciles', get desc() { return tp('Satisfait ou remboursé'); } }] },
       products: { title: 'Nos Produits', subtitle: '', homepageLimit: 6, limit: 6 },
-      features: { title: 'Pourquoi nous choisir ?', subtitle: '', items: [{ icon: 'star', title: 'Qualité Premium', desc: 'Des produits de qualité' }] },
+      features: { title: 'Pourquoi nous choisir ?', subtitle: '', items: [{ icon: 'star', title: 'Qualité Premium', get desc() { return tp('Des produits de qualité'); } }] },
       testimonials: { title: 'Avis clients', items: [{ name: '', location: '', content: '', rating: 5 }] },
       faq: { title: 'Questions fréquentes', subtitle: '', items: [{ question: '', answer: '' }] },
       contact: { title: 'Contactez-nous', subtitle: '', whatsapp: '', phone: '', email: '', address: '' },
@@ -985,7 +986,7 @@ const BoutiquePages = () => {
 
   // Regenerate with AI
   const handleRegenerate = async () => {
-    if (!confirm('Régénérer la page d\'accueil avec l\'IA ? Cela remplacera les sections actuelles.')) return;
+    if (!confirm(tp('Régénérer la page d\'accueil avec l\'IA ? Cela remplacera les sections actuelles.'))) return;
     setRegenerating(true);
     try {
       const res = await storeManageApi.regenerateHomepage();
@@ -1003,7 +1004,7 @@ const BoutiquePages = () => {
         setSidebarOpen(false);
       }
     } catch (err) {
-      alert('Erreur lors de la régénération');
+      alert(tp('Erreur lors de la régénération'));
     } finally {
       setRegenerating(false);
     }
@@ -1081,7 +1082,7 @@ const BoutiquePages = () => {
           <Link
             to="/ecom/boutique"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50"
-            title="Retour au dashboard boutique"
+            title={tp('Retour au dashboard boutique')}
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1091,10 +1092,10 @@ const BoutiquePages = () => {
             <button
               onClick={() => setSidebarOpen((current) => !current)}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50"
-              title={sidebarOpen ? 'Fermer le panneau' : 'Ouvrir le panneau'}
+              title={sidebarOpen ? 'Fermer le panneau' : tp('Ouvrir le panneau')}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={sidebarOpen ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={sidebarOpen ? 'M15 19l-7-7 7-7' : tp('M9 5l7 7-7 7')} />
               </svg>
             </button>
             <div className="h-9 w-px bg-gray-200" />
@@ -1102,7 +1103,7 @@ const BoutiquePages = () => {
               onClick={handleUndo}
               disabled={undoStack.length === 0}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-              title="Retour en arrière"
+              title={tp('Retour en arrière')}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14l-4-4m0 0l4-4m-4 4h11a4 4 0 110 8h-1" />
@@ -1112,7 +1113,7 @@ const BoutiquePages = () => {
               onClick={handleRedo}
               disabled={redoStack.length === 0}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-              title="Aller en avant"
+              title={tp('Aller en avant')}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 14l4-4m0 0l-4-4m4 4H8a4 4 0 100 8h1" />
@@ -1121,8 +1122,8 @@ const BoutiquePages = () => {
             <div className="h-9 w-px bg-gray-200" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-gray-900 truncate">Page d'accueil</p>
-            <p className="text-[11px] text-gray-400 truncate">Builder boutique style Shopify</p>
+            <p className="text-sm font-semibold text-gray-900 truncate">{tp('Page d\'accueil')}</p>
+            <p className="text-[11px] text-gray-400 truncate">{tp('Builder boutique style Shopify')}</p>
           </div>
         </div>
 
@@ -1134,7 +1135,7 @@ const BoutiquePages = () => {
                   onClick={() => setPreviewDevice(device)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${previewDevice === device ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
                 >
-                  {device === 'desktop' ? 'Desktop' : device === 'tablet' ? 'Tablette' : 'Mobile'}
+                  {device === 'desktop' ? 'Desktop' : device === 'tablet' ? 'Tablette' : tp('Mobile')}
                 </button>
               ))}
           </div>
@@ -1149,7 +1150,7 @@ const BoutiquePages = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-              Voir
+              {tp('Voir')}
             </a>
           )}
           <button
@@ -1159,7 +1160,7 @@ const BoutiquePages = () => {
             }}
             className="px-3 py-2 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
           >
-            Recharger
+            {tp('Recharger')}
           </button>
           <button
             onClick={handleSave}
@@ -1173,17 +1174,17 @@ const BoutiquePages = () => {
                 <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Enregistrement...
+                {tp('Enregistrement...')}
               </>
             ) : saveStatus === 'saved' ? (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Sauvegardé
+                {tp('Sauvegardé')}
               </>
             ) : (
-              <>Sauvegarder</>
+              <>{tp('Sauvegarder')}</>
             )}
           </button>
         </div>
@@ -1203,9 +1204,9 @@ const BoutiquePages = () => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
-                      Sections
+                      {tp('Sections')}
                     </button>
-                    <p className="text-xs font-bold text-gray-800 truncate">{SECTION_TYPES[activeSection.type]?.label || 'Section'}</p>
+                    <p className="text-xs font-bold text-gray-800 truncate">{SECTION_TYPES[activeSection.type]?.label || tp('Section')}</p>
                     <button
                       onClick={() => setSidebarOpen(false)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 transition"
@@ -1234,9 +1235,9 @@ const BoutiquePages = () => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
-                      Retour
+                      {tp('Retour')}
                     </button>
-                    <p className="text-xs font-bold text-gray-800">Bibliothèque de sections</p>
+                    <p className="text-xs font-bold text-gray-800">{tp('Bibliothèque de sections')}</p>
                     <button
                       onClick={() => setSidebarOpen(false)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 transition"
@@ -1251,7 +1252,7 @@ const BoutiquePages = () => {
                       <svg className="w-4 h-4 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <p className="text-[11px] text-amber-800">Ajoutez les sections dans le modèle de votre page d'accueil puis réorganisez-les dans la liste.</p>
+                      <p className="text-[11px] text-amber-800">{tp('Ajoutez les sections dans le modèle de votre page d\'accueil puis réorganisez-les dans la liste.')}</p>
                     </div>
                     <div className="grid grid-cols-1 gap-2.5">
                       {Object.entries(SECTION_TYPES).map(([type, info]) => (
@@ -1274,7 +1275,7 @@ const BoutiquePages = () => {
                 <>
                   <div className="border-b border-gray-200 bg-white flex-shrink-0">
                     <div className="px-4 py-3">
-                      <p className="text-sm font-semibold text-gray-900">Page d'accueil</p>
+                      <p className="text-sm font-semibold text-gray-900">{tp('Page d\'accueil')}</p>
                     </div>
                   </div>
 
@@ -1284,12 +1285,12 @@ const BoutiquePages = () => {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
-                        En-tête
+                        {tp('En-tête')}
                       </div>
                       <div className="rounded-lg border border-gray-200 bg-gray-50/80">
                         <div className="flex items-center justify-between px-2.5 py-2 border-b border-gray-200/80">
                           <div>
-                            <p className="text-[12px] font-semibold text-gray-800">Modèle</p>
+                            <p className="text-[12px] font-semibold text-gray-800">{tp('Modèle')}</p>
                             <p className="text-[10px] text-gray-400">{sections.length} sections</p>
                           </div>
                           <button
@@ -1299,13 +1300,13 @@ const BoutiquePages = () => {
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
-                            Ajouter une section
+                            {tp('Ajouter une section')}
                           </button>
                         </div>
                         <div className="p-2 space-y-1.5">
                           {sections.length === 0 ? (
                             <div className="rounded-lg border border-dashed border-gray-200 bg-white px-3 py-5 text-center text-xs text-gray-400">
-                              Aucune section dans le modèle.
+                              {tp('Aucune section dans le modèle.')}
                             </div>
                           ) : (
                             sections.map((section, idx) => (
@@ -1334,7 +1335,7 @@ const BoutiquePages = () => {
                             className="w-full flex items-center gap-2 rounded-lg border border-dashed border-gray-200 bg-white px-3 py-3 text-[12px] font-medium text-[#2563eb] hover:bg-blue-50 hover:border-blue-200 transition"
                           >
                             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-current">+</span>
-                            Ajouter une section
+                            {tp('Ajouter une section')}
                           </button>
                         </div>
                       </div>
@@ -1342,12 +1343,12 @@ const BoutiquePages = () => {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M6 10h12M8 14h8M10 18h4" />
                         </svg>
-                        Pied de page
+                        {tp('Pied de page')}
                       </div>
                     </div>
                     <div className="px-2 pt-3 border-t border-gray-100 flex items-center justify-between gap-3 sticky bottom-0 bg-white/95 backdrop-blur">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Actions</p>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{tp('Actions')}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
@@ -1385,7 +1386,7 @@ const BoutiquePages = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-                Ouvrir le panneau
+                {tp('Ouvrir le panneau')}
               </button>
             )}
 
@@ -1417,8 +1418,8 @@ const BoutiquePages = () => {
                           <div className="flex flex-col items-center gap-3 text-center px-6">
                             <div className="h-10 w-10 rounded-full border-4 border-gray-200 border-t-[#0F6B4F] animate-spin" />
                             <div>
-                              <p className="text-sm font-semibold text-gray-900">Chargement de l'aperçu</p>
-                              <p className="text-xs text-gray-500 mt-1">La page d'accueil se charge dans le canvas builder.</p>
+                              <p className="text-sm font-semibold text-gray-900">{tp('Chargement de l\'aperçu')}</p>
+                              <p className="text-xs text-gray-500 mt-1">{tp('La page d\'accueil se charge dans le canvas builder.')}</p>
                             </div>
                           </div>
                         </div>
@@ -1435,7 +1436,7 @@ const BoutiquePages = () => {
                           ref={previewIframeRef}
                           key={iframeKey}
                           src={previewSrc}
-                          title="Aperçu boutique"
+                          title={tp('Aperçu boutique')}
                           onLoad={() => {
                             setPreviewLoading(false);
                             pushPreviewSections(sections);
@@ -1454,8 +1455,8 @@ const BoutiquePages = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5h18M7 3v4m10-4v4M6 9h12a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2z" />
                         </svg>
                       </div>
-                      <p className="text-base font-semibold text-gray-900">Aperçu indisponible</p>
-                      <p className="mt-2 text-sm text-gray-500">Configurez d'abord un sous-domaine pour afficher votre page d'accueil dans un canvas professionnel.</p>
+                      <p className="text-base font-semibold text-gray-900">{tp('Aperçu indisponible')}</p>
+                      <p className="mt-2 text-sm text-gray-500">{tp('Configurez d\'abord un sous-domaine pour afficher votre page d\'accueil dans un canvas professionnel.')}</p>
                     </div>
                   </div>
                 )}

@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const COST_PER_KM = 500;
 
@@ -78,9 +79,9 @@ const MiniMap = ({ startLat, startLng, destLat, destLng, currentLat, currentLng,
         </div>
       )}
       <div className="absolute bottom-2 left-2 flex gap-2 text-[10px]">
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#22c55e' }}>● Départ</span>
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#ef4444' }}>● Arrivée</span>
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#3b82f6' }}>● Vous</span>
+        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#22c55e' }}>{tp('● Départ')}</span>
+        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#ef4444' }}>{tp('● Arrivée')}</span>
+        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#3b82f6' }}>{tp('● Vous')}</span>
       </div>
     </div>
   );
@@ -101,7 +102,7 @@ const STATUS_META = {
 
 const TABS = [
   { key: 'all', label: 'Tout' },
-  { key: 'confirmed', label: 'Acceptées' },
+  { key: 'confirmed', get label() { return tp('Acceptées'); } },
   { key: 'shipped', label: 'En transit' },
 ];
 
@@ -275,7 +276,7 @@ const LivreurDeliveries = () => {
   const submitNonDelivery = async () => {
     const orderId = deliveryModal.orderId;
     const reason = nonDeliveredReason === 'autre' ? nonDeliveredCustom.trim() : nonDeliveredReason;
-    if (!reason) { setError('Veuillez préciser la raison.'); return; }
+    if (!reason) { setError(tp('Veuillez préciser la raison.')); return; }
     await handleAction(orderId, 'issue', { nonDeliveryReason: reason });
     setDeliveryModal(null);
     if (fullTrack?.orderId === orderId) setFullTrack(null);
@@ -334,11 +335,11 @@ const LivreurDeliveries = () => {
             <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-indigo-600 to-indigo-800 flex-shrink-0">
               <div className="flex-1 min-w-0 mr-3">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-white font-bold text-lg">📍 Course en cours</h2>
+                  <h2 className="text-white font-bold text-lg">{tp('📍 Course en cours')}</h2>
                   <span className="flex h-2.5 w-2.5 relative flex-shrink-0"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"/><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"/></span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: trackSm.bg, color: trackSm.text }}>{STATUS_LABELS[trackStatus] || trackStatus}</span>
                 </div>
-                <p className="text-indigo-200 text-xs mt-0.5 truncate">{trackOrder?.clientName || 'Client'} — {destAddr}</p>
+                <p className="text-indigo-200 text-xs mt-0.5 truncate">{trackOrder?.clientName || tp('Client')} — {destAddr}</p>
               </div>
             </div>
             {/* Map */}
@@ -365,7 +366,7 @@ const LivreurDeliveries = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Progression</span><span className="font-bold">{pct}%</span>
+                  <span>{tp('Progression')}</span><span className="font-bold">{pct}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div className="bg-gradient-to-r from-amber-400 to-primary-500 h-2.5 rounded-full transition-all duration-1000" style={{ width: `${pct}%` }} />
@@ -428,7 +429,7 @@ const LivreurDeliveries = () => {
             <div className="p-5 space-y-4">
               {/* Header */}
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">📋 Confirmer la livraison</h2>
+                <h2 className="text-lg font-bold text-gray-900">{tp('📋 Confirmer la livraison')}</h2>
                 <button onClick={() => setDeliveryModal(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200">✕</button>
               </div>
 
@@ -446,10 +447,10 @@ const LivreurDeliveries = () => {
               {deliveryTab === 'livré' && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Précisions sur la course (optionnel)</label>
+                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{tp('Précisions sur la course (optionnel)')}</label>
                     <textarea
                       rows={3}
-                      placeholder="Ex: Livré en main propre, client satisfait, code d'entrée B12…"
+                      placeholder={tp('Ex: Livré en main propre, client satisfait, code d\'entrée B12…')}
                       value={deliveryNote}
                       onChange={e => setDeliveryNote(e.target.value)}
                       className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-400 resize-none"
@@ -461,8 +462,8 @@ const LivreurDeliveries = () => {
                     className="w-full py-3.5 bg-gradient-to-r from-green-500 to-primary-600 text-white rounded-xl font-bold text-sm hover:from-green-600 hover:to-primary-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {assigning[deliveryModal.orderId] ? (
-                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Enregistrement…</>
-                    ) : <>✅ On livre !</>}
+                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{tp('Enregistrement…')}</>
+                    ) : <>{tp('✅ On livre !')}</>}
                   </button>
                 </div>
               )}
@@ -471,7 +472,7 @@ const LivreurDeliveries = () => {
               {deliveryTab === 'non-livré' && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Raison de non-livraison</label>
+                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{tp('Raison de non-livraison')}</label>
                     <div className="grid grid-cols-2 gap-2">
                       {['Client absent', 'Mauvaise adresse', 'Colis refusé', 'Zone inaccessible', 'Client injoignable', 'Autre'].map(r => (
                         <button
@@ -487,7 +488,7 @@ const LivreurDeliveries = () => {
                     {nonDeliveredReason === 'autre' && (
                       <textarea
                         rows={2}
-                        placeholder="Précisez la raison…"
+                        placeholder={tp('Précisez la raison…')}
                         value={nonDeliveredCustom}
                         onChange={e => setNonDeliveredCustom(e.target.value)}
                         className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-400 resize-none mt-2"
@@ -501,8 +502,8 @@ const LivreurDeliveries = () => {
                     className="w-full py-3.5 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-bold text-sm hover:from-red-600 hover:to-rose-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {assigning[deliveryModal.orderId] ? (
-                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Enregistrement…</>
-                    ) : <>❌ Marquer non livré</>}
+                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{tp('Enregistrement…')}</>
+                    ) : <>{tp('❌ Marquer non livré')}</>}
                   </button>
                 </div>
               )}
@@ -520,25 +521,25 @@ const LivreurDeliveries = () => {
             {courseModal.phase === 'input' && (
               <div className="p-6 space-y-5">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-gray-900">🚀 Commencer la course</h2>
+                  <h2 className="text-lg font-bold text-gray-900">{tp('🚀 Commencer la course')}</h2>
                   <button onClick={closeCourseModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200">✕</button>
                 </div>
                 {/* GPS status */}
                 <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm ${courseGps ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>
                   {courseGps ? (
-                    <><span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" /><span className="font-medium">GPS actif</span><span className="text-green-600 text-xs ml-1">{courseGps.lat.toFixed(4)}, {courseGps.lng.toFixed(4)}</span></>
+                    <><span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" /><span className="font-medium">{tp('GPS actif')}</span><span className="text-green-600 text-xs ml-1">{courseGps.lat.toFixed(4)}, {courseGps.lng.toFixed(4)}</span></>
                   ) : (
-                    <><div className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin flex-shrink-0" /><span>Localisation en cours…</span></>
+                    <><div className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin flex-shrink-0" /><span>{tp('Localisation en cours…')}</span></>
                   )}
                 </div>
                 {courseGpsErr && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">{courseGpsErr}</p>}
                 {/* Destination */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Adresse de destination</label>
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{tp('Adresse de destination')}</label>
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="Ex: Marché central, Douala"
+                      placeholder={tp('Ex: Marché central, Douala')}
                       value={courseAddr}
                       onChange={e => { setCourseAddr(e.target.value); fetchSuggestions(e.target.value); }}
                       onKeyDown={e => e.key === 'Enter' && courseGps && selectedDest && submitCourse()}
@@ -577,8 +578,8 @@ const LivreurDeliveries = () => {
                   className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold text-sm hover:from-amber-600 hover:to-orange-600 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {courseSaving ? (
-                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Calcul en cours…</>
-                  ) : !courseGps ? <>⏳ En attente du GPS</> : <>🚀 Lancer la course</>}
+                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{tp('Calcul en cours…')}</>
+                  ) : !courseGps ? <>{tp('⏳ En attente du GPS')}</> : <>{tp('🚀 Lancer la course')}</>}
                 </button>
                 <p className="text-center text-[10px] text-gray-400">Coût calculé à {COST_PER_KM} {symbol} / km</p>
               </div>
@@ -588,10 +589,10 @@ const LivreurDeliveries = () => {
       )}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">🚚 Mes livraisons</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('🚚 Mes livraisons')}</h1>
           <p className="text-sm text-gray-400 mt-0.5">{orders.length} livraison{orders.length !== 1 ? 's' : ''} active{orders.length !== 1 ? 's' : ''}</p>
         </div>
-        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">↻ Actualiser</button>
+        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">{tp('↻ Actualiser')}</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}<button onClick={() => setError('')} className="float-right font-bold">&times;</button></div>}
@@ -609,12 +610,12 @@ const LivreurDeliveries = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center h-48 gap-3">
           <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-          <p className="text-sm text-gray-400">Chargement…</p>
+          <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
-          <p className="text-gray-500 font-medium">Aucune livraison active</p>
-          <Link to="/ecom/livreur/available" className="text-xs text-[#0F6B4F] font-medium mt-2 inline-block">Accepter une course →</Link>
+          <p className="text-gray-500 font-medium">{tp('Aucune livraison active')}</p>
+          <Link to="/ecom/livreur/available" className="text-xs text-[#0F6B4F] font-medium mt-2 inline-block">{tp('Accepter une course →')}</Link>
         </div>
       ) : (
         <div className="space-y-3">
@@ -623,7 +624,7 @@ const LivreurDeliveries = () => {
             return (
               <div key={order._id} className={`bg-white rounded-2xl border shadow-sm p-4 hover:shadow-md transition ${order.deliveryStartedAt && order.deliveryEndLat ? 'border-indigo-200' : 'border-gray-100'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-gray-900">{order.clientName || order.clientPhone || 'Client'}</span>
+                  <span className="text-sm font-semibold text-gray-900">{order.clientName || order.clientPhone || tp('Client')}</span>
                   <div className="flex items-center gap-2">
                     {order.deliveryStartedAt && order.deliveryEndLat && (
                       <span className="flex h-2 w-2 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"/><span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"/></span>
@@ -675,7 +676,7 @@ const LivreurDeliveries = () => {
                     </button>
                   )}
                   <Link to={`/ecom/livreur/delivery/${order._id}`} className="text-xs px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-lg font-medium hover:bg-gray-100 transition">
-                    Détails
+                    {tp('Détails')}
                   </Link>
                   {order.clientPhone && (
                     <a href={`tel:${order.clientPhone}`} className="text-xs px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg font-medium hover:bg-blue-100 transition">

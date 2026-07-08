@@ -2,6 +2,7 @@
 import { Link } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const CloseuseProduits = () => {
   const { fmt } = useMoney();
@@ -80,9 +81,9 @@ const CloseuseProduits = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Mes Produits Affectés</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{tp('Mes Produits Affectés')}</h1>
         <p className="text-gray-600 mt-1">
-          Produits que vous êtes autorisée à gérer
+          {tp('Produits que vous êtes autorisée à gérer')}
         </p>
       </div>
 
@@ -95,7 +96,7 @@ const CloseuseProduits = () => {
       {/* Affichage des sources affectées */}
       {myAssignments.productAssignments && myAssignments.productAssignments.length > 0 && (
         <div className="mb-6 bg-primary-50 rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-primary-900 mb-2">📦 Vos affectations par source</h3>
+          <h3 className="text-sm font-semibold text-primary-900 mb-2">{tp('📦 Vos affectations par source')}</h3>
           <div className="space-y-2">
             {myAssignments.productAssignments.map((pa, paIdx) => {
               const totalProducts = (pa.productIds?.length || 0) + (pa.sheetProductNames?.length || 0);
@@ -135,7 +136,7 @@ const CloseuseProduits = () => {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            Aucun produit affecté
+            {tp('Aucun produit affecté')}
           </h3>
           <p className="text-gray-600">
             Contactez votre administrateur pour qu'il vous affecte des produits à gérer.
@@ -164,18 +165,18 @@ const CloseuseProduits = () => {
 
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Prix de vente:</span>
+                    <span className="text-gray-500">{tp('Prix de vente:')}</span>
                     <span className="font-medium text-gray-900">{fmt(product.sellingPrice)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Stock disponible:</span>
+                    <span className="text-gray-500">{tp('Stock disponible:')}</span>
                     <span className={`font-medium ${product.stock < 10 ? 'text-red-600' : 'text-green-600'}`}>
                       {product.stock} unités
                     </span>
                   </div>
                   {product.supplier && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Fournisseur:</span>
+                      <span className="text-gray-500">{tp('Fournisseur:')}</span>
                       <span className="font-medium text-gray-900">{product.supplier}</span>
                     </div>
                   )}
@@ -186,7 +187,7 @@ const CloseuseProduits = () => {
                     to={`/ecom/products/${product._id}`}
                     className="block w-full text-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                   >
-                    Voir les détails
+                    {tp('Voir les détails')}
                   </Link>
                 </div>
               </div>
@@ -203,7 +204,7 @@ const CloseuseProduits = () => {
           </svg>
           <div className="flex-1">
             <h4 className="text-sm font-semibold text-yellow-900 mb-1">
-              Information importante
+              {tp('Information importante')}
             </h4>
             <p className="text-sm text-yellow-800">
               Vous ne pouvez gérer que les produits qui vous sont affectés par l'administrateur. 

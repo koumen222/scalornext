@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { getPendingPlanSelection } from '../utils/pendingPlanFlow.js';
+import { tp } from '../i18n/platform.js';
 
 const WorkspaceSetup = () => {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ const WorkspaceSetup = () => {
   );
 
   const roles = [
-    { value: 'ecom_admin', label: 'E-commerçant', desc: 'Accès complet à toutes les fonctionnalités' },
+    { value: 'ecom_admin', get label() { return tp('E-commerçant'); }, get desc() { return tp('Accès complet à toutes les fonctionnalités'); } },
     { value: 'ecom_closeuse', label: 'Closeuse', desc: 'Commandes & ventes' },
     { value: 'ecom_compta', label: 'Comptable', desc: 'Finances & rapports' },
     { value: 'ecom_livreur', label: 'Livreur', desc: 'Livraisons' },
@@ -135,10 +136,10 @@ const WorkspaceSetup = () => {
             )}
           </div>
           <h1 className="text-xl font-bold text-gray-900">
-            {step === 1 ? 'Créez votre espace' : 'Parlez-nous de vous'}
+            {step === 1 ? 'Créez votre espace' : tp('Parlez-nous de vous')}
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            {step === 1 ? 'Optionnel — vous pouvez le faire plus tard' : 'Pour personnaliser votre expérience'}
+            {step === 1 ? 'Optionnel — vous pouvez le faire plus tard' : tp('Pour personnaliser votre expérience')}
           </p>
         </div>
 
@@ -153,12 +154,12 @@ const WorkspaceSetup = () => {
           {step === 1 ? (
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Nom de votre espace</label>
-                <input type="text" required placeholder="Ex: Ma Boutique, Mon Business..." value={workspaceName} onChange={e => setWorkspaceName(e.target.value)}
+                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Nom de votre espace')}</label>
+                <input type="text" required placeholder={tp('Ex: Ma Boutique, Mon Business...')} value={workspaceName} onChange={e => setWorkspaceName(e.target.value)}
                   className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">Votre rôle dans cet espace</label>
+                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">{tp('Votre rôle dans cet espace')}</label>
                 <div className="grid grid-cols-2 gap-2">
                   {roles.map(r => (
                     <button key={r.value} type="button" onClick={() => setSelectedRole(r.value)}
@@ -176,42 +177,42 @@ const WorkspaceSetup = () => {
               </div>
               <button type="submit" disabled={loading || workspaceName.trim().length < 2}
                 className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20">
-                {loading ? <Spinner /> : <><span>Créer mon espace</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg></>}
+                {loading ? <Spinner /> : <><span>{tp('Créer mon espace')}</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg></>}
               </button>
             </form>
           ) : (
             <form onSubmit={handleOnboarding} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Numéro WhatsApp / Téléphone</label>
+                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Numéro WhatsApp / Téléphone')}</label>
                 <input type="tel" placeholder="+237 6XX XX XX XX" value={phone} onChange={e => setPhone(e.target.value)}
                   className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Que vendez-vous ?</label>
+                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Que vendez-vous ?')}</label>
                 <select value={businessType} onChange={e => setBusinessType(e.target.value)}
                   className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm">
-                  <option value="">Sélectionnez une catégorie...</option>
-                  <option value="vetements">Vêtements mode et Beauté</option>
-                  <option value="electronique">Électronique et Gadgets</option>
-                  <option value="sante_beaute">Santé et Beauté</option>
-                  <option value="maison">Maison et Décoration</option>
-                  <option value="digital">Produits digitaux ou Services</option>
-                  <option value="autre">Autre chose</option>
+                  <option value="">{tp('Sélectionnez une catégorie...')}</option>
+                  <option value="vetements">{tp('Vêtements mode et Beauté')}</option>
+                  <option value="electronique">{tp('Électronique et Gadgets')}</option>
+                  <option value="sante_beaute">{tp('Santé et Beauté')}</option>
+                  <option value="maison">{tp('Maison et Décoration')}</option>
+                  <option value="digital">{tp('Produits digitaux ou Services')}</option>
+                  <option value="autre">{tp('Autre chose')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">Commandes générées par mois</label>
+                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Commandes générées par mois')}</label>
                 <select value={ordersPerMonth} onChange={e => setOrdersPerMonth(e.target.value)}
                   className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm">
-                  <option value="">Sélectionnez un volume...</option>
-                  <option value="0-50">0 à 50 commandes</option>
-                  <option value="50-500">50 à 500 commandes</option>
-                  <option value="500+">Plus de 500 commandes</option>
+                  <option value="">{tp('Sélectionnez un volume...')}</option>
+                  <option value="0-50">{tp('0 à 50 commandes')}</option>
+                  <option value="50-500">{tp('50 à 500 commandes')}</option>
+                  <option value="500+">{tp('Plus de 500 commandes')}</option>
                 </select>
               </div>
               <button type="submit" disabled={loading}
                 className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 disabled:opacity-40 transition flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20">
-                {loading ? <Spinner /> : <><span>Terminer l'inscription</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg></>}
+                {loading ? <Spinner /> : <><span>{tp('Terminer l\'inscription')}</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg></>}
               </button>
             </form>
           )}
@@ -220,13 +221,13 @@ const WorkspaceSetup = () => {
         <button onClick={step === 1 ? () => navigate('/ecom/landing') : skipOnboarding}
           className="mt-4 w-full py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 border border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-          Passer cette étape
+          {tp('Passer cette étape')}
         </button>
 
         <div className="mt-6 flex items-center justify-center gap-4 text-xs font-medium text-gray-400">
-          <button onClick={logout} className="hover:text-gray-700 transition">Se déconnecter</button>
+          <button onClick={logout} className="hover:text-gray-700 transition">{tp('Se déconnecter')}</button>
           <span>·</span>
-          <button onClick={() => navigate('/ecom/privacy')} className="hover:text-gray-700 transition">Confidentialité</button>
+          <button onClick={() => navigate('/ecom/privacy')} className="hover:text-gray-700 transition">{tp('Confidentialité')}</button>
           <span>·</span>
           <span>&copy; {new Date().getFullYear()} Scalor</span>
         </div>

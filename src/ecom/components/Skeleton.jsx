@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { tp } from '../i18n/platform.js';
 
 // ── Primitive shimmer box ──────────────────────────────────────────────────────
 export const Shimmer = ({ className = '', style = {} }) => (
@@ -287,7 +288,7 @@ export const SectionError = ({ message = 'Erreur de chargement', onRetry }) => (
         onClick={onRetry}
         className="text-xs font-bold text-primary-600 hover:text-primary-700 underline transition-colors"
       >
-        Réessayer
+        {tp('Réessayer')}
       </button>
     )}
   </div>

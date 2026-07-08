@@ -4,6 +4,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { playConfirmSound } from '../services/soundService.js';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const formatRemaining = (deadline) => {
   if (!deadline) return null;
@@ -54,7 +55,7 @@ const LivreurAvailable = () => {
     setSuccess('');
     try {
       await ecomApi.post(`/orders/${orderId}/refuse`);
-      setSuccess('Course refusée.');
+      setSuccess(tp('Course refusée.'));
       setOrders((prev) => prev.filter((order) => order._id !== orderId));
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -103,10 +104,10 @@ const LivreurAvailable = () => {
     <div className="p-3 sm:p-6 max-w-[900px] mx-auto space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">📦 Courses disponibles</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('📦 Courses disponibles')}</h1>
           <p className="text-sm text-gray-400 mt-0.5">{orders.length} course{orders.length !== 1 ? 's' : ''} en attente</p>
         </div>
-        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">↻ Actualiser</button>
+        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">{tp('↻ Actualiser')}</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}<button onClick={() => setError('')} className="float-right font-bold">&times;</button></div>}
@@ -118,7 +119,7 @@ const LivreurAvailable = () => {
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Rechercher par nom, téléphone, ville, produit…"
+          placeholder={tp('Rechercher par nom, téléphone, ville, produit…')}
           className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
         />
       </div>
@@ -126,13 +127,13 @@ const LivreurAvailable = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center h-48 gap-3">
           <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-          <p className="text-sm text-gray-400">Chargement…</p>
+          <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
           <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4 text-2xl">📦</div>
-          <p className="text-gray-500 font-medium">Aucune course disponible</p>
-          <p className="text-xs text-gray-400 mt-1">{search ? 'Essayez un autre terme de recherche' : 'Revenez dans quelques instants'}</p>
+          <p className="text-gray-500 font-medium">{tp('Aucune course disponible')}</p>
+          <p className="text-xs text-gray-400 mt-1">{search ? 'Essayez un autre terme de recherche' : tp('Revenez dans quelques instants')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -144,9 +145,9 @@ const LivreurAvailable = () => {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm font-semibold text-gray-900">{order.clientName || 'Client'}</span>
+                    <span className="text-sm font-semibold text-gray-900">{order.clientName || tp('Client')}</span>
                     {order.orderId && <span className="text-xs font-mono text-gray-300 bg-gray-50 px-1.5 py-0.5 rounded">#{order.orderId}</span>}
-                    {meta.isTargeted && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Ciblée</span>}
+                    {meta.isTargeted && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">{tp('Ciblée')}</span>}
                     {remaining && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">{remaining}</span>}
                   </div>
                   <div className="space-y-1 text-xs text-gray-500">
@@ -155,7 +156,7 @@ const LivreurAvailable = () => {
                     {order.product && <p>📦 {order.product}{order.quantity > 1 ? ` × ${order.quantity}` : ''}</p>}
                     {meta.pickupLocation && <p>🏪 Récupération: {meta.pickupLocation}</p>}
                     {meta.destination && <p>🎯 Destination: {meta.destination}</p>}
-                    {(meta.gainLabel || meta.estimatedDistanceLabel) && <p>💸 Montant : {meta.gainLabel || '—'} · 📏 {meta.estimatedDistanceLabel || 'À estimer'}</p>}
+                    {(meta.gainLabel || meta.estimatedDistanceLabel) && <p>💸 Montant : {meta.gainLabel || '—'} · 📏 {meta.estimatedDistanceLabel || tp('À estimer')}</p>}
                   </div>
                   {order.price && (
                     <p className="text-sm font-bold text-[#0F6B4F] mt-2">{fmt(order.price)}</p>

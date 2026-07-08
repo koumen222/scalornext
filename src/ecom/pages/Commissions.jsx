@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const SL = { pending:'En attente', confirmed:'Confirmé', shipped:'Expédié', delivered:'Livré', returned:'Retour', cancelled:'Annulé', unreachable:'Injoignable', called:'Appelé', postponed:'Reporté' };
 
@@ -19,7 +20,7 @@ const STATUS_META = {
 };
 
 const MONTH_NAMES = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-const PERIODS = [{v:'today',l:"Aujourd'hui"},{v:'week',l:'7 jours'},{v:'month',l:'Ce mois'},{v:'year',l:'Cette année'}];
+const PERIODS = [{v:'today',l:"Aujourd'hui"},{v:'week',l:'7 jours'},{v:'month',l: tp('Ce mois')},{v:'year',l: tp('Cette année')}];
 
 const Commissions = () => {
   const { user } = useEcomAuth();
@@ -79,7 +80,7 @@ const Commissions = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-[#0F6B4F] animate-spin" />
-          <p className="text-sm text-gray-400">Chargement…</p>
+          <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
         </div>
       </div>
     );
@@ -98,7 +99,7 @@ const Commissions = () => {
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Retour
+            {tp('Retour')}
           </Link>
           <h1 className="text-2xl font-black text-gray-900 leading-tight">
             Mes Commissions 💰
@@ -134,7 +135,7 @@ const Commissions = () => {
                 style={{ background: 'linear-gradient(135deg,#065f46 0%,#047857 100%)', borderColor: '#047857' }}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold text-primary-200 uppercase tracking-wide">Gains Totaux</span>
+                  <span className="text-[10px] font-bold text-primary-200 uppercase tracking-wide">{tp('Gains Totaux')}</span>
                   <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-300 opacity-75" />
                     <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-200" />
@@ -151,7 +152,7 @@ const Commissions = () => {
               {/* Livrées */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Livrées</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Livrées')}</span>
                   <div className="w-7 h-7 rounded-lg bg-primary-50 flex items-center justify-center">
                     <svg className="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -159,13 +160,13 @@ const Commissions = () => {
                   </div>
                 </div>
                 <p className="text-3xl font-black text-gray-900 leading-none">{data?.deliveredCount || 0}</p>
-                <p className="text-xs text-gray-400 mt-1">commandes livrées</p>
+                <p className="text-xs text-gray-400 mt-1">{tp('commandes livrées')}</p>
               </div>
 
               {/* Total */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Total</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Total')}</span>
                   <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
                     <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -173,7 +174,7 @@ const Commissions = () => {
                   </div>
                 </div>
                 <p className="text-3xl font-black text-gray-900 leading-none">{data?.totalOrders || 0}</p>
-                <p className="text-xs text-gray-400 mt-1">toutes commandes</p>
+                <p className="text-xs text-gray-400 mt-1">{tp('toutes commandes')}</p>
               </div>
             </div>
 
@@ -182,8 +183,8 @@ const Commissions = () => {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-gray-800">Taux de Succès</h3>
-                    <p className="text-xs text-gray-400">Commandes livrées / total</p>
+                    <h3 className="text-sm font-bold text-gray-800">{tp('Taux de Succès')}</h3>
+                    <p className="text-xs text-gray-400">{tp('Commandes livrées / total')}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-black leading-none text-primary-500">
@@ -214,7 +215,7 @@ const Commissions = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
                     </svg>
-                    Répartition
+                    {tp('Répartition')}
                   </h3>
                   <div className="space-y-2.5">
                     {Object.entries(data.byStatus)
@@ -298,8 +299,8 @@ const Commissions = () => {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-gray-800">CA Livré</h3>
-                    <p className="text-xs text-gray-400">Chiffre d'affaires des commandes livrées</p>
+                    <h3 className="text-sm font-bold text-gray-800">{tp('CA Livré')}</h3>
+                    <p className="text-xs text-gray-400">{tp('Chiffre d\'affaires des commandes livrées')}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-black text-gray-900">{fmt(data.deliveredRevenue)}</p>
@@ -323,8 +324,8 @@ const Commissions = () => {
                     </svg>
                   </div>
                   <div className="text-left">
-                    <h3 className="text-sm font-bold text-gray-800 leading-tight">Détails des Livraisons</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">Consultez chaque commande</p>
+                    <h3 className="text-sm font-bold text-gray-800 leading-tight">{tp('Détails des Livraisons')}</h3>
+                    <p className="text-xs text-gray-400 mt-0.5">{tp('Consultez chaque commande')}</p>
                   </div>
                 </div>
                 <div className={`w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-transform duration-300 flex-shrink-0 ${
@@ -341,10 +342,10 @@ const Commissions = () => {
                   {loadingOrders ? (
                     <div className="flex flex-col items-center justify-center py-10 gap-2 text-[#0F6B4F]">
                       <div className="w-7 h-7 border-3 border-gray-200 border-t-[#0F6B4F] rounded-full animate-spin" />
-                      <span className="text-xs font-semibold">Chargement…</span>
+                      <span className="text-xs font-semibold">{tp('Chargement…')}</span>
                     </div>
                   ) : deliveredOrders.length === 0 ? (
-                    <p className="text-sm text-gray-400 text-center py-10">Aucune commande livrée.</p>
+                    <p className="text-sm text-gray-400 text-center py-10">{tp('Aucune commande livrée.')}</p>
                   ) : (
                     <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
                       {deliveredOrders.map((order, idx) => (
@@ -354,10 +355,10 @@ const Commissions = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-gray-900 truncate leading-tight">
-                              {order.clientName || order.clientPhone || 'Client inconnu'}
+                              {order.clientName || order.clientPhone || tp('Client inconnu')}
                             </p>
                             <p className="text-xs text-gray-400 truncate flex items-center gap-1.5">
-                              <span className="bg-gray-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">{order.product || 'Produit'}</span>
+                              <span className="bg-gray-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">{order.product || tp('Produit')}</span>
                               {order.city && <span>📍 {order.city}</span>}
                             </p>
                           </div>
@@ -417,9 +418,9 @@ const Commissions = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-base font-bold text-gray-800 mb-1">Aucune donnée</h3>
+            <h3 className="text-base font-bold text-gray-800 mb-1">{tp('Aucune donnée')}</h3>
             <p className="text-sm text-gray-500 max-w-xs">
-              Vérifiez avec votre administrateur que des sources vous ont bien été assignées.
+              {tp('Vérifiez avec votre administrateur que des sources vous ont bien été assignées.')}
             </p>
           </div>
         )}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../i18n/platform.js';
 import { AlertCircle, Zap, Users, Crown } from 'lucide-react';
 
 /**
@@ -24,7 +25,7 @@ const PlanLimitAlert = ({ type, planType, currentCount, limit, onUpgrade, onRene
         const nextLimit = (planType === 'free' || planType === 'starter') ? 1 : (limit === 1 ? 5 : 10);
         return `Vous avez créé ${limit} agent${limit > 1 ? 's' : ''} maximum sur votre plan ${planLabels[planType] || planType}. Passez à ${nextPlan} pour créer jusqu'à ${nextLimit} agents.`;
       },
-      button: { label: 'Passer au plan supérieur', icon: Zap, onClick: 'upgrade' }
+      button: { get label() { return tp('Passer au plan supérieur'); }, icon: Zap, onClick: 'upgrade' }
     },
     plan_expired: {
       icon: AlertCircle,
@@ -38,7 +39,7 @@ const PlanLimitAlert = ({ type, planType, currentCount, limit, onUpgrade, onRene
       title: '⚠️ Limite de messages atteinte',
       severity: 'orange',
       getMessage: (limit, planType) => `Vous avez atteint la limite de ${limit} messages par jour sur votre plan ${planType}. Passez à Scalor IA Pro pour des messages illimités.`,
-      button: { label: 'Passer à Scalor IA Pro', icon: Zap, onClick: 'upgrade' }
+      button: { get label() { return tp('Passer à Scalor IA Pro'); }, icon: Zap, onClick: 'upgrade' }
     },
     instance_limit: {
       icon: AlertCircle,

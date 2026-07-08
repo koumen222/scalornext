@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { tp } from '../i18n/platform.js';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { BLOCK_TYPES, BLOCK_CATEGORIES, DEFAULT_EMPTY_SECTIONS } from '../data/exampleSections';
@@ -108,21 +109,21 @@ function SectionItem({ section, index, moveSection, onToggleVisibility, onEdit, 
           <button
             onClick={() => onEdit(index)}
             className="p-1.5 hover:bg-gray-100 rounded transition"
-            title="Modifier"
+            title={tp('Modifier')}
           >
             <Edit3 className="w-4 h-4" />
           </button>
           <button
             onClick={() => onDuplicate(index)}
             className="p-1.5 hover:bg-gray-100 rounded transition"
-            title="Dupliquer"
+            title={tp('Dupliquer')}
           >
             <Copy className="w-4 h-4" />
           </button>
           <button
             onClick={() => onDelete(index)}
             className="p-1.5 hover:bg-red-100 text-red-600 rounded transition"
-            title="Supprimer"
+            title={tp('Supprimer')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -161,7 +162,7 @@ function SectionPreview({ section }) {
               <div key={i} className="bg-white border border-gray-200 rounded p-2">
                 <div className="bg-gray-200 h-12 mb-1 rounded"></div>
                 <p className="text-xs font-medium">Produit {i}</p>
-                <p className="text-xs text-gray-500">Prix</p>
+                <p className="text-xs text-gray-500">{tp('Prix')}</p>
               </div>
             ))}
           </div>
@@ -184,8 +185,8 @@ function SectionPreview({ section }) {
             <div className="flex items-center gap-1 mb-1">
               {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />)}
             </div>
-            <p className="text-xs text-gray-600">Excellent service !</p>
-            <p className="text-xs font-medium mt-1">Client satisfait</p>
+            <p className="text-xs text-gray-600">{tp('Excellent service !')}</p>
+            <p className="text-xs font-medium mt-1">{tp('Client satisfait')}</p>
           </div>
         </div>
       );
@@ -195,8 +196,8 @@ function SectionPreview({ section }) {
           <h4 className="font-medium mb-2">{config?.title || 'Questions fréquentes'}</h4>
           <div className="space-y-1">
             <div className="bg-white border border-gray-200 rounded p-2">
-              <p className="text-xs font-medium">Question exemple ?</p>
-              <p className="text-xs text-gray-500 mt-1">Réponse à la question...</p>
+              <p className="text-xs font-medium">{tp('Question exemple ?')}</p>
+              <p className="text-xs text-gray-500 mt-1">{tp('Réponse à la question...')}</p>
             </div>
           </div>
         </div>
@@ -245,7 +246,7 @@ function DropZone({ onDrop, isEmpty = false }) {
       >
         <div className="text-center">
           <div className="text-4xl mb-3">🎨</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Page vide</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{tp('Page vide')}</h3>
           <p className="text-sm text-gray-500 mb-4">
             Faites glisser des blocs depuis la sidebar pour commencer à construire votre page
           </p>
@@ -267,7 +268,7 @@ function DropZone({ onDrop, isEmpty = false }) {
       }`}
     >
       {isActive ? (
-        <span className="text-sm font-medium text-blue-600">Relâchez pour ajouter</span>
+        <span className="text-sm font-medium text-blue-600">{tp('Relâchez pour ajouter')}</span>
       ) : (
         <Plus className="w-4 h-4 text-gray-400" />
       )}
@@ -302,7 +303,7 @@ function SectionEditModal({ section, onClose, onSave }) {
           {section.type === 'hero' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Titre</label>
+                <label className="block text-sm font-medium mb-1">{tp('Titre')}</label>
                 <input
                   type="text"
                   value={config.title || ''}
@@ -311,7 +312,7 @@ function SectionEditModal({ section, onClose, onSave }) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Sous-titre</label>
+                <label className="block text-sm font-medium mb-1">{tp('Sous-titre')}</label>
                 <input
                   type="text"
                   value={config.subtitle || ''}
@@ -320,7 +321,7 @@ function SectionEditModal({ section, onClose, onSave }) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Texte du bouton</label>
+                <label className="block text-sm font-medium mb-1">{tp('Texte du bouton')}</label>
                 <input
                   type="text"
                   value={config.ctaText || ''}
@@ -334,7 +335,7 @@ function SectionEditModal({ section, onClose, onSave }) {
           {section.type === 'text' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Titre</label>
+                <label className="block text-sm font-medium mb-1">{tp('Titre')}</label>
                 <input
                   type="text"
                   value={config.title || ''}
@@ -343,7 +344,7 @@ function SectionEditModal({ section, onClose, onSave }) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Contenu</label>
+                <label className="block text-sm font-medium mb-1">{tp('Contenu')}</label>
                 <textarea
                   value={config.content || ''}
                   onChange={(e) => setConfig({ ...config, content: e.target.value })}
@@ -357,7 +358,7 @@ function SectionEditModal({ section, onClose, onSave }) {
           {section.type === 'contact' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Titre</label>
+                <label className="block text-sm font-medium mb-1">{tp('Titre')}</label>
                 <input
                   type="text"
                   value={config.title || ''}
@@ -372,7 +373,7 @@ function SectionEditModal({ section, onClose, onSave }) {
                   value={config.whatsapp || ''}
                   onChange={(e) => setConfig({ ...config, whatsapp: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  placeholder="+237 6XX XXX XXX"
+                  placeholder={tp('+237 6XX XXX XXX')}
                 />
               </div>
             </div>
@@ -481,7 +482,7 @@ const PageBuilder = ({ sections = [], onUpdateSections }) => {
         {/* Sidebar with blocks */}
         <div className="w-80 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
           <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Blocs disponibles</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{tp('Blocs disponibles')}</h2>
             <p className="text-sm text-gray-500 mt-1">
               Faites glisser les blocs vers la page pour les ajouter
             </p>

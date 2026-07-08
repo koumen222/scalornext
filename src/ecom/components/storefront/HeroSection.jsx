@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../../i18n/platform.js';
 
 const HeroSection = ({ config, theme }) => {
   const { title, subtitle, ctaText, bgImage } = config || {};
@@ -23,7 +24,7 @@ const HeroSection = ({ config, theme }) => {
             fontFamily: theme?.fontFamily || 'inherit'
           }}
         >
-          {title || 'Bienvenue dans notre boutique'}
+          {title || tp('Bienvenue dans notre boutique')}
         </h1>
         
         {subtitle && (

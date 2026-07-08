@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useEcomAuth } from '../../hooks/useEcomAuth.jsx';
 import { livreurApi } from '../services/livreurApi.js';
+import { tp } from '../../i18n/platform.js';
 
 const statusLabel = {
   pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
@@ -88,7 +89,7 @@ export default function LivreurHome() {
       const all = deliveriesRes.data?.data || [];
       setRecentDeliveries(all.slice(0, 3));
     } catch (err) {
-      setError('Impossible de charger les données.');
+      setError(tp('Impossible de charger les données.'));
     } finally {
       setLoading(false);
     }
@@ -157,13 +158,13 @@ export default function LivreurHome() {
           <div className="flex-1 min-w-0">
             {gpsStatus === 'denied' ? (
               <>
-                <p className="text-red-700 font-semibold text-sm">GPS désactivé</p>
-                <p className="text-red-500 text-xs mt-0.5">Activez la localisation dans les réglages de votre téléphone pour utiliser la navigation.</p>
+                <p className="text-red-700 font-semibold text-sm">{tp('GPS désactivé')}</p>
+                <p className="text-red-500 text-xs mt-0.5">{tp('Activez la localisation dans les réglages de votre téléphone pour utiliser la navigation.')}</p>
               </>
             ) : (
               <>
-                <p className="text-amber-800 font-semibold text-sm">Activer le GPS</p>
-                <p className="text-amber-600 text-xs mt-0.5">Indispensable pour la navigation et le suivi des livraisons.</p>
+                <p className="text-amber-800 font-semibold text-sm">{tp('Activer le GPS')}</p>
+                <p className="text-amber-600 text-xs mt-0.5">{tp('Indispensable pour la navigation et le suivi des livraisons.')}</p>
               </>
             )}
           </div>
@@ -174,7 +175,7 @@ export default function LivreurHome() {
                 disabled={gpsRequesting}
                 className="bg-amber-500 active:bg-amber-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg disabled:opacity-60"
               >
-                {gpsRequesting ? '...' : 'Activer'}
+                {gpsRequesting ? '...' : tp('Activer')}
               </button>
             )}
             <button onClick={dismissGpsBanner} className="p-1 text-gray-400 active:text-gray-600">
@@ -212,9 +213,9 @@ export default function LivreurHome() {
               <p className="text-white font-black text-xl leading-tight">
                 {(stats?.available ?? 0) > 0
                   ? `${stats.available} course${stats.available > 1 ? 's' : ''} disponible${stats.available > 1 ? 's' : ''} !`
-                  : 'Courses disponibles'}
+                  : tp('Courses disponibles')}
               </p>
-              <p className="text-white/80 text-sm mt-0.5">Appuyez pour accepter une livraison</p>
+              <p className="text-white/80 text-sm mt-0.5">{tp('Appuyez pour accepter une livraison')}</p>
             </div>
           </div>
           <ChevronRight size={24} className="text-white/70 flex-shrink-0" />
@@ -223,12 +224,12 @@ export default function LivreurHome() {
         {/* Livraisons récentes */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-gray-800 text-lg">Mes livraisons</h2>
+            <h2 className="font-semibold text-gray-800 text-lg">{tp('Mes livraisons')}</h2>
             <Link
               to="/ecom/livreur/deliveries"
               className="text-sm text-indigo-600 font-medium"
             >
-              Tout voir
+              {tp('Tout voir')}
             </Link>
           </div>
 
@@ -241,7 +242,7 @@ export default function LivreurHome() {
           ) : recentDeliveries.length === 0 ? (
             <div className="bg-white rounded-xl p-6 text-center border border-dashed border-gray-200">
               <Truck size={32} className="text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">Aucune livraison en cours</p>
+              <p className="text-gray-500 text-sm">{tp('Aucune livraison en cours')}</p>
               <Link
                 to="/ecom/livreur/available"
                 className="mt-3 inline-block text-indigo-600 text-sm font-medium"
@@ -261,17 +262,17 @@ export default function LivreurHome() {
         {/* Montant encaissé */}
         {stats && (
           <section>
-            <h2 className="font-semibold text-gray-800 text-lg mb-3">Montant encaissé</h2>
+            <h2 className="font-semibold text-gray-800 text-lg mb-3">{tp('Montant encaissé')}</h2>
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">Ce mois</p>
+                  <p className="text-gray-500 text-xs uppercase tracking-wide">{tp('Ce mois')}</p>
                   <p className="text-2xl font-bold text-gray-900 mt-0.5">
                     {stats.thisMonth?.amount?.toLocaleString('fr-FR') || 0} FCFA
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">Total</p>
+                  <p className="text-gray-500 text-xs uppercase tracking-wide">{tp('Total')}</p>
                   <p className="text-lg font-semibold text-indigo-600 mt-0.5">
                     {stats.allTime?.amount?.toLocaleString('fr-FR') || 0} FCFA
                   </p>
@@ -320,7 +321,7 @@ function DeliveryCard({ order }) {
         </p>
         <p className="text-gray-400 text-xs flex items-center gap-1 mt-0.5">
           <MapPin size={11} />
-          <span className="truncate">{order.address || order.city || 'Adresse non renseignée'}</span>
+          <span className="truncate">{order.address || order.city || tp('Adresse non renseignée')}</span>
         </p>
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0">

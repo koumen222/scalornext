@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
+import { tp } from '../i18n/platform.js';
 
 const IconFillLoader = ({ backgroundClassName = 'bg-gray-50' }) => {
   const [p, setP] = useState(0);
@@ -61,13 +62,13 @@ const Dashboard = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Aucun espace configuré</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{tp('Aucun espace configuré')}</h2>
           <p className="text-gray-600 mb-6">
-            Créez votre propre espace ou rejoignez une équipe pour commencer ù  utiliser Scalor.
+            {tp('Créez votre propre espace ou rejoignez une équipe pour commencer ù  utiliser Scalor.')}
           </p>
           <div className="space-y-3">
             <Link to="/ecom/workspace-setup" className="block w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition">
-              Créer un espace
+              {tp('Créer un espace')}
             </Link>
             {user?.role !== 'ecom_admin' && (
               <div className="p-3 bg-gray-100 rounded-lg text-xs text-gray-600">

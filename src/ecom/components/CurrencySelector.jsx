@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import { currencies, formatMoney } from '../utils/currency.js';
+import { tp } from '../i18n/platform.js';
 
 const CurrencySelector = ({ compact = false }) => {
   const { user, changeCurrency } = useEcomAuth();
@@ -33,7 +34,7 @@ const CurrencySelector = ({ compact = false }) => {
 
     try {
       await changeCurrency(currencyCode);
-      setSuccess('Devise mise à jour !');
+      setSuccess(tp('Devise mise à jour !'));
       setTimeout(() => setSuccess(''), 2000);
     } catch (err) {
       setError(err.message || 'Erreur lors du changement de devise');
@@ -113,7 +114,7 @@ const CurrencySelector = ({ compact = false }) => {
   // Full version with preview
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-900 mb-3">Ma devise</h3>
+      <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Ma devise')}</h3>
       
       {error && (
         <div className="mb-3 bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg">

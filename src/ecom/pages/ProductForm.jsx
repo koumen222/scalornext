@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from '@/lib/router-compat';
 import { useMoney } from '../hooks/useMoney';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const STATUSES = [
   { value: 'test',   label: 'Test',   color: 'text-amber-600'   },
@@ -134,10 +135,10 @@ export default function ProductForm() {
         </Link>
         <div>
           <h1 className="text-[17px] font-bold text-gray-900 tracking-tight leading-none">
-            {isEditing ? 'Modifier le produit' : 'Nouveau produit'}
+            {isEditing ? 'Modifier le produit' : tp('Nouveau produit')}
           </h1>
           <p className="text-xs text-gray-400 mt-0.5 leading-none">
-            {isEditing ? 'Mettre à jour les informations' : 'Remplissez les champs ci-dessous'}
+            {isEditing ? 'Mettre à jour les informations' : tp('Remplissez les champs ci-dessous')}
           </p>
         </div>
       </div>
@@ -160,7 +161,7 @@ export default function ProductForm() {
             {/* ── Bloc Informations ─────────────────────────── */}
             <section className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50">
-                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">Informations</h2>
+                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">{tp('Informations')}</h2>
               </div>
               <div className="px-5 py-4 space-y-4">
                 <Field label="Nom du produit" required>
@@ -170,7 +171,7 @@ export default function ProductForm() {
                     required
                     value={form.name}
                     onChange={handleChange}
-                    placeholder="ex : Montre connectée XS3"
+                    placeholder={tp('ex : Montre connectée XS3')}
                     className={inputCls}
                   />
                 </Field>
@@ -205,7 +206,7 @@ export default function ProductForm() {
                     <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform ${form.isActive ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
                   </button>
                   <span className="text-sm text-gray-700 font-medium">
-                    {form.isActive ? 'Produit actif' : 'Produit inactif'}
+                    {form.isActive ? 'Produit actif' : tp('Produit inactif')}
                   </span>
                 </div>
               </div>
@@ -214,7 +215,7 @@ export default function ProductForm() {
             {/* ── Bloc Finances ─────────────────────────────── */}
             <section className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50">
-                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">Finance</h2>
+                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">{tp('Finance')}</h2>
               </div>
               <div className="px-5 py-4 space-y-4">
                 <Field label="Coût du produit" required hint={`en ${symbol}`}>
@@ -249,7 +250,7 @@ export default function ProductForm() {
                         type="button"
                         onClick={applySuggested}
                         className="shrink-0 px-3 py-2.5 bg-primary-50 hover:bg-primary-100 border border-primary-200 text-primary-700 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap"
-                        title="Appliquer le prix suggéré"
+                        title={tp('Appliquer le prix suggéré')}
                       >
                         {fmt(suggested)} →
                       </button>
@@ -269,7 +270,7 @@ export default function ProductForm() {
                   }`}>
                     <div className="flex-1 min-w-0">
                       <p className={`text-[11px] font-semibold uppercase tracking-wide ${(benefit ?? 0) > 0 ? 'text-primary-600' : 'text-red-500'}`}>
-                        Bénéfice estimé
+                        {tp('Bénéfice estimé')}
                       </p>
                       <p className={`text-2xl font-bold tabular-nums leading-tight ${(benefit ?? 0) > 0 ? 'text-primary-700' : 'text-red-600'}`}>
                         {benefit !== null ? `${(benefit > 0 ? '+' : '')}${fmt(benefit)}` : '—'}
@@ -277,7 +278,7 @@ export default function ProductForm() {
                     </div>
                     {margin !== null && (
                       <div className="text-right shrink-0">
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Marge</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{tp('Marge')}</p>
                         <p className={`text-2xl font-bold tabular-nums ${(benefit ?? 0) > 0 ? 'text-primary-700' : 'text-red-600'}`}>
                           {margin}%
                         </p>
@@ -291,7 +292,7 @@ export default function ProductForm() {
             {/* ── Bloc Stock ────────────────────────────────── */}
             <section className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50">
-                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">Stock</h2>
+                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">{tp('Stock')}</h2>
               </div>
               <div className="px-5 py-4 grid grid-cols-2 gap-4">
                 <Field label="Quantité en stock" required>
@@ -328,7 +329,7 @@ export default function ProductForm() {
                 onClick={() => navigate('/ecom/products')}
                 className="flex-1 py-2.5 text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl transition-colors"
               >
-                Annuler
+                {tp('Annuler')}
               </button>
               <button
                 type="submit"

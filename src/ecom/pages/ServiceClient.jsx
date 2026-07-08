@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
 import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
+import { tp } from '../i18n/platform.js';
 
 const PLAN_COLORS = {
   free:    { bg: 'bg-gray-100',   text: 'text-gray-600',   label: 'Gratuit'  },
@@ -128,20 +129,20 @@ const AgentsTab = ({ showToast }) => {
       {showForm && (
         <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 space-y-3">
           <div className="flex items-center justify-between mb-1">
-            <p className="font-semibold text-gray-800 text-sm">{editAgent ? 'Modifier l\'agent' : 'Nouvel agent service client'}</p>
+            <p className="font-semibold text-gray-800 text-sm">{editAgent ? 'Modifier l\'agent' : tp('Nouvel agent service client')}</p>
             <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600 transition"><X size={16} /></button>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Nom complet *</label>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">{tp('Nom complet *')}</label>
               <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                placeholder="Jean Dupont"
+                placeholder={tp('Jean Dupont')}
                 className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Email *</label>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">{tp('Email *')}</label>
               <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                placeholder="agent@scalor.net"
+                placeholder={tp('agent@scalor.net')}
                 className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white" />
             </div>
           </div>
@@ -154,7 +155,7 @@ const AgentsTab = ({ showToast }) => {
                 type={showPwd ? 'text' : 'password'}
                 value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                placeholder="Minimum 8 caractères"
+                placeholder={tp('Minimum 8 caractères')}
                 className="w-full px-3 py-2 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white"
               />
               <button type="button" onClick={() => setShowPwd(v => !v)}
@@ -165,11 +166,11 @@ const AgentsTab = ({ showToast }) => {
           </div>
           <div className="flex gap-2 pt-1">
             <button onClick={() => setShowForm(false)} className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-white transition">
-              Annuler
+              {tp('Annuler')}
             </button>
             <button onClick={submit} disabled={saving} className="flex-1 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 disabled:opacity-50">
               {saving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
-              {editAgent ? 'Enregistrer' : 'Créer'}
+              {editAgent ? 'Enregistrer' : tp('Créer')}
             </button>
           </div>
         </div>
@@ -181,8 +182,8 @@ const AgentsTab = ({ showToast }) => {
       ) : agents.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-2xl py-10 text-center">
           <Shield size={32} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-500">Aucun agent service client</p>
-          <p className="text-xs text-gray-400 mt-1">Créez le premier compte agent ci-dessus.</p>
+          <p className="text-sm font-medium text-gray-500">{tp('Aucun agent service client')}</p>
+          <p className="text-xs text-gray-400 mt-1">{tp('Créez le premier compte agent ci-dessus.')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -197,19 +198,19 @@ const AgentsTab = ({ showToast }) => {
               </div>
               <div className="flex items-center gap-1.5 text-xs text-gray-400 flex-shrink-0">
                 <Clock size={11} />
-                {a.lastLogin ? fmtDt(a.lastLogin) : 'Jamais connecté'}
+                {a.lastLogin ? fmtDt(a.lastLogin) : tp('Jamais connecté')}
               </div>
               <span className={`w-2 h-2 rounded-full flex-shrink-0 ${a.isActive ? 'bg-primary-400' : 'bg-red-400'}`} />
               <div className="flex items-center gap-1 flex-shrink-0">
-                <button onClick={() => openEdit(a)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition" title="Modifier">
+                <button onClick={() => openEdit(a)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition" title={tp('Modifier')}>
                   <Edit3 size={13} />
                 </button>
-                <button onClick={() => toggleActive(a)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition" title={a.isActive ? 'Désactiver' : 'Activer'}>
+                <button onClick={() => toggleActive(a)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition" title={a.isActive ? 'Désactiver' : tp('Activer')}>
                   {a.isActive ? <XCircle size={13} className="text-red-400" /> : <CheckCircle size={13} className="text-primary-400" />}
                 </button>
                 <button onClick={() => { if (window.confirm(`Supprimer ${a.name} ?`)) deleteAgent(a._id); }}
                   disabled={deletingId === a._id}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition" title="Supprimer">
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition" title={tp('Supprimer')}>
                   {deletingId === a._id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
                 </button>
               </div>
@@ -353,7 +354,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
         <div className="flex gap-3">
           <div className="flex-1 relative">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" placeholder="Email ou nom du client..." value={query}
+            <input type="text" placeholder={tp('Email ou nom du client...')} value={query}
               onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && search()}
               className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent" />
           </div>
@@ -397,7 +398,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
                   {(selected.name || selected.email)[0].toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-gray-900 truncate">{selected.name || 'Sans nom'}</p>
+                  <p className="font-bold text-gray-900 truncate">{selected.name || tp('Sans nom')}</p>
                   <p className="text-xs text-gray-500 truncate">{selected.email}</p>
                 </div>
               </div>
@@ -406,7 +407,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
                 <Field label="Statut" value={
                   <span className={`inline-flex items-center gap-1 text-xs font-semibold ${selected.isActive !== false ? 'text-primary-600' : 'text-red-500'}`}>
                     {selected.isActive !== false ? <CheckCircle size={11} /> : <XCircle size={11} />}
-                    {selected.isActive !== false ? 'Actif' : 'Bloqué'}
+                    {selected.isActive !== false ? 'Actif' : tp('Bloqué')}
                   </span>
                 } />
                 <Field label="Inscrit le" value={fmt(selected.createdAt)} />
@@ -418,7 +419,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
               <div className="bg-white border border-gray-200 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <Building2 size={14} className="text-gray-400" />
-                  <span className="font-semibold text-gray-800 text-sm">Workspace</span>
+                  <span className="font-semibold text-gray-800 text-sm">{tp('Workspace')}</span>
                 </div>
                 <div className="space-y-1">
                   <Field label="Nom" value={workspace.name} />
@@ -430,7 +431,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
                   className={`mt-4 w-full py-2 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 border
                     ${workspace.isActive !== false ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-primary-200 text-primary-600 hover:bg-primary-50'}`}>
                   {toggling ? <Loader2 size={12} className="animate-spin" /> : workspace.isActive !== false ? <XCircle size={12} /> : <CheckCircle size={12} />}
-                  {workspace.isActive !== false ? 'Désactiver le workspace' : 'Réactiver le workspace'}
+                  {workspace.isActive !== false ? 'Désactiver le workspace' : tp('Réactiver le workspace')}
                 </button>
               </div>
             )}
@@ -440,13 +441,13 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
           <div className="lg:col-span-2 space-y-4">
             {/* Plan */}
             {workspace && (
-              <Section title="Changer le plan" icon={Crown}>
+              <Section title={tp('Changer le plan')} icon={Crown}>
                 <div className="mt-4">
                   {!planEdit ? (
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <PlanBadge plan={workspace.plan} />
-                        {planExpired && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle size={11} /> Expiré</span>}
+                        {planExpired && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle size={11} /> {tp('Expiré')}</span>}
                         {!planExpired && workspace.planExpiresAt && <span className="text-xs text-gray-400">Expire le {fmt(workspace.planExpiresAt)}</span>}
                       </div>
                       <button onClick={() => setPlanEdit(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition">
@@ -463,13 +464,13 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
                               <PlanBadge plan={p} />
                               {newPlan === p && <CheckCircle size={14} className="text-primary-500" />}
                             </div>
-                            <p className="text-[11px] text-gray-500 mt-1">{p === 'free' ? 'Gratuit, sans expiration' : 'Durée configurable'}</p>
+                            <p className="text-[11px] text-gray-500 mt-1">{p === 'free' ? 'Gratuit, sans expiration' : tp('Durée configurable')}</p>
                           </button>
                         ))}
                       </div>
                       {newPlan !== 'free' && (
                         <div>
-                          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Durée</label>
+                          <label className="text-xs font-semibold text-gray-600 block mb-1.5">{tp('Durée')}</label>
                           <div className="flex gap-2">
                             {[1, 3, 6, 12].map(d => (
                               <button key={d} onClick={() => setPlanDuration(d)}
@@ -481,7 +482,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
                         </div>
                       )}
                       <div className="flex gap-2 pt-1">
-                        <button onClick={() => setPlanEdit(false)} className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition">Annuler</button>
+                        <button onClick={() => setPlanEdit(false)} className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition">{tp('Annuler')}</button>
                         <button onClick={savePlan} disabled={planSaving} className="flex-1 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 disabled:opacity-50">
                           {planSaving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />} Confirmer
                         </button>
@@ -494,16 +495,16 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
 
             {/* Crédits */}
             {workspace && (
-              <Section title="Crédits de génération IA" icon={Sparkles}>
+              <Section title={tp('Crédits de génération IA')} icon={Sparkles}>
                 <div className="mt-4">
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="bg-blue-50 rounded-xl p-3 text-center">
                       <p className="text-xl font-black text-blue-700">{workspace.freeGenerationsRemaining ?? 0}</p>
-                      <p className="text-xs text-blue-500 font-medium mt-0.5">Crédits gratuits</p>
+                      <p className="text-xs text-blue-500 font-medium mt-0.5">{tp('Crédits gratuits')}</p>
                     </div>
                     <div className="bg-amber-50 rounded-xl p-3 text-center">
                       <p className="text-xl font-black text-amber-700">{workspace.paidGenerationsRemaining ?? 0}</p>
-                      <p className="text-xs text-amber-500 font-medium mt-0.5">Crédits payants</p>
+                      <p className="text-xs text-amber-500 font-medium mt-0.5">{tp('Crédits payants')}</p>
                     </div>
                   </div>
                   {!creditEdit ? (
@@ -535,7 +536,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
                         ))}
                       </div>
                       <div className="flex gap-2">
-                        <button onClick={() => setCreditEdit(false)} className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition">Annuler</button>
+                        <button onClick={() => setCreditEdit(false)} className="flex-1 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition">{tp('Annuler')}</button>
                         <button onClick={saveCredits} disabled={creditSaving} className="flex-1 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 disabled:opacity-50">
                           {creditSaving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />} Enregistrer
                         </button>
@@ -548,7 +549,7 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
 
             {/* Trial */}
             {workspace && (
-              <Section title="Période d'essai" icon={Clock} defaultOpen={false}>
+              <Section title={tp('Période d\'essai')} icon={Clock} defaultOpen={false}>
                 <div className="mt-4 space-y-3">
                   <div className="grid grid-cols-3 gap-3 text-center">
                     {[['Statut', workspace.trialUsed ? 'Utilisé' : 'Disponible', ''], ['Début', fmt(workspace.trialStartedAt), ''], ['Fin', fmt(workspace.trialEndsAt), workspace.trialEndsAt && new Date(workspace.trialEndsAt) < new Date() ? 'text-red-500' : '']].map(([l, v, a]) => (
@@ -559,10 +560,10 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
                     ))}
                   </div>
                   <div className="flex items-center gap-2">
-                    <label className="text-xs font-semibold text-gray-600 whitespace-nowrap">Prolonger de</label>
+                    <label className="text-xs font-semibold text-gray-600 whitespace-nowrap">{tp('Prolonger de')}</label>
                     <input type="number" min="1" max="90" value={trialDays} onChange={e => setTrialDays(Math.max(1, parseInt(e.target.value) || 1))}
                       className="w-20 text-center px-2 py-1.5 border border-gray-200 rounded-lg text-sm font-bold focus:outline-none focus:ring-1 focus:ring-primary-400" />
-                    <span className="text-xs text-gray-500">jours</span>
+                    <span className="text-xs text-gray-500">{tp('jours')}</span>
                     <button onClick={extendTrial} disabled={trialSaving}
                       className="ml-auto flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition disabled:opacity-50">
                       {trialSaving ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />} Prolonger
@@ -573,13 +574,13 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
             )}
 
             {/* Message */}
-            <Section title="Envoyer un message" icon={MessageSquare}>
+            <Section title={tp('Envoyer un message')} icon={MessageSquare}>
               <div className="mt-4 space-y-3">
                 <div className="bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 flex items-start gap-2">
                   <Info size={13} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-blue-600">Le message apparaîtra dans la messagerie de support de l'utilisateur.</p>
+                  <p className="text-xs text-blue-600">{tp('Le message apparaîtra dans la messagerie de support de l\'utilisateur.')}</p>
                 </div>
-                <textarea rows={3} placeholder="Votre message..." value={msgText} onChange={e => setMsgText(e.target.value)}
+                <textarea rows={3} placeholder={tp('Votre message...')} value={msgText} onChange={e => setMsgText(e.target.value)}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent" />
                 <div className="flex gap-2 flex-wrap">
                   {['Votre paiement a bien été reçu.', 'Votre plan a été mis à jour.', 'Votre problème a été résolu.'].map(t => (
@@ -601,8 +602,8 @@ const ConsoleTab = ({ showToast, isSuperAdmin }) => {
           <div className="w-14 h-14 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <Search size={24} className="text-primary-400" />
           </div>
-          <h3 className="font-semibold text-gray-700 mb-1">Recherchez un client</h3>
-          <p className="text-sm text-gray-400 max-w-xs mx-auto">Entrez l'email ou le nom pour accéder au compte et gérer plan, crédits et support.</p>
+          <h3 className="font-semibold text-gray-700 mb-1">{tp('Recherchez un client')}</h3>
+          <p className="text-sm text-gray-400 max-w-xs mx-auto">{tp('Entrez l\'email ou le nom pour accéder au compte et gérer plan, crédits et support.')}</p>
         </div>
       )}
     </div>
@@ -623,7 +624,7 @@ export default function ServiceClient() {
 
   const tabs = [
     { id: 'console', label: 'Console client', icon: Search },
-    ...(isSuperAdmin ? [{ id: 'agents', label: 'Gérer les agents', icon: Shield }] : []),
+    ...(isSuperAdmin ? [{ id: 'agents', get label() { return tp('Gérer les agents'); }, icon: Shield }] : []),
   ];
 
   return (
@@ -643,10 +644,10 @@ export default function ServiceClient() {
             <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
               <Users size={20} className="text-white" />
             </div>
-            Service Client
+            {tp('Service Client')}
           </h1>
           <p className="text-gray-500 text-sm mt-1 ml-[52px]">
-            Gérez les comptes clients : plan, crédits, support et workspace.
+            {tp('Gérez les comptes clients : plan, crédits, support et workspace.')}
           </p>
         </div>
 

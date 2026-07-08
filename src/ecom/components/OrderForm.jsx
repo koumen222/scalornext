@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import ecomApi from '../services/ecommApi.js';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
   const { fmt, symbol } = useMoney();
@@ -122,7 +123,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
         </label>
         {productId ? (
           <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-            <span className="font-medium">{selectedProduct?.name || 'Chargement...'}</span>
+            <span className="font-medium">{selectedProduct?.name || tp('Chargement...')}</span>
           </div>
         ) : (
           <select
@@ -133,7 +134,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
               errors.productId ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <option value="">Sélectionner un produit</option>
+            <option value="">{tp('Sélectionner un produit')}</option>
             {products.map((product) => (
               <option key={product._id} value={product._id}>
                 {product.name} (Stock: {product.stock})
@@ -229,7 +230,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
       {/* Notes */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Notes
+          {tp('Notes')}
         </label>
         <textarea
           name="notes"
@@ -237,29 +238,29 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
           onChange={handleInputChange}
           rows={4}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
-          placeholder="Observations, problèmes rencontrés, retards de livraison..."
+          placeholder={tp('Observations, problèmes rencontrés, retards de livraison...')}
         />
       </div>
 
       {/* Informations du produit sélectionné */}
       {selectedProduct && (
         <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-          <h4 className="font-medium text-primary-900 mb-2">Informations produit</h4>
+          <h4 className="font-medium text-primary-900 mb-2">{tp('Informations produit')}</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <span className="text-primary-700">Stock actuel:</span>
+              <span className="text-primary-700">{tp('Stock actuel:')}</span>
               <span className="ml-2 font-medium text-primary-900">{selectedProduct.stock}</span>
             </div>
             <div>
-              <span className="text-primary-700">Prix vente:</span>
+              <span className="text-primary-700">{tp('Prix vente:')}</span>
               <span className="ml-2 font-medium text-primary-900">{fmt(selectedProduct.sellingPrice)}</span>
             </div>
             <div>
-              <span className="text-primary-700">Coût produit:</span>
+              <span className="text-primary-700">{tp('Coût produit:')}</span>
               <span className="ml-2 font-medium text-primary-900">{fmt(selectedProduct.productCost)}</span>
             </div>
             <div>
-              <span className="text-primary-700">Statut:</span>
+              <span className="text-primary-700">{tp('Statut:')}</span>
               <span className="ml-2 font-medium text-primary-900 capitalize">{selectedProduct.status}</span>
             </div>
           </div>
@@ -275,7 +276,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
             disabled={submitting}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
           >
-            Annuler
+            {tp('Annuler')}
           </button>
         )}
         <button
@@ -286,7 +287,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
           {submitting ? (
             <div className="flex items-center">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Enregistrement...
+              {tp('Enregistrement...')}
             </div>
           ) : (
             'Enregistrer le rapport'

@@ -5,6 +5,7 @@ import { PHONE_CODES, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, 
 import { publicStoreApi } from '../services/storeApi.js';
 import { getStorefrontT } from '../i18n/storefront.js';
 import { useSubdomain } from '../hooks/useSubdomain.js';
+import { useStoreCart } from '../hooks/useStoreCart.js';
 import { setDocumentMeta } from '../utils/pageMeta';
 import { createMetaEventId, injectPixelScripts, safeFirePixelEvent, trackStorefrontEvent } from '../utils/pixelTracking.js';
 import { formatMoney } from '../utils/currency.js';
@@ -32,6 +33,37 @@ const createCheckoutSessionId = () => {
     return crypto.randomUUID();
   }
   return `checkout_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+};
+
+const toPositiveNumber = (value) => {
+  const num = Number(value);
+  return Number.isFinite(num) && num > 0 ? num : 0;
+};
+
+const normalizeQuantity = (value) => Math.max(1, parseInt(value, 10) || 1);
+
+const getCartLineTotal = (product) => {
+  const hasOffer = product?.offerPrice != null || product?.offerQty != null;
+  const offerTotal = hasOffer ? toPositiveNumber(product?.offerPrice) : 0;
+  if (offerTotal > 0) return offerTotal;
+  return toPositiveNumber(product?.price) * normalizeQuantity(product?.quantity);
+};
+
+const buildOrderProductPayload = (product) => {
+  const payload = {
+    productId: product.productId || product._id,
+    quantity: normalizeQuantity(product.quantity),
+  };
+  const offerPrice = toPositiveNumber(product.offerPrice);
+  const offerQty = product.offerQty != null ? normalizeQuantity(product.offerQty) : null;
+
+  if (offerPrice > 0 && offerQty) {
+    payload.quantity = offerQty;
+    payload.offerPrice = offerPrice;
+    payload.offerQty = offerQty;
+  }
+
+  return payload;
 };
 
 /**
@@ -98,10 +130,22 @@ const StoreCheckout = () => {
   // Langue de la boutique (réglage marchand) — libellés du checkout
   const t = getStorefrontT(store?.language);
 
-  // Products passed from product page via location state
-  const cartProducts = location.state?.products || [];
+  // Panier persistant (localStorage) — source quand on ouvre le checkout via l'icône panier
+  const { items: storedCartItems, clearCart, removeFromCart } = useStoreCart(subdomain);
+  // Produits du checkout : ceux passés par la page produit (achat direct) OU le panier persistant
+  const isPersistentCart = !(location.state?.products?.length);
+  const cartProducts = (isPersistentCart ? storedCartItems : location.state.products) || [];
   const cartSignature = useMemo(
-    () => cartProducts.map((p) => `${p.productId || p._id || ''}:${p.quantity || 1}`).join('|'),
+    () => cartProducts.map((p) => [
+      p.productId || p._id || '',
+      normalizeQuantity(p.quantity),
+      p.offerQty || '',
+      p.offerPrice || '',
+    ].join(':')).join('|'),
+    [cartProducts]
+  );
+  const cartSubtotal = useMemo(
+    () => cartProducts.reduce((sum, p) => sum + getCartLineTotal(p), 0),
     [cartProducts]
   );
   const checkoutSessionStorageKey = useMemo(
@@ -222,9 +266,8 @@ const StoreCheckout = () => {
     const fireCheckoutPixels = (pixelsData, storeData) => {
       if (_pixelsFiredRef.current) return;
       _pixelsFiredRef.current = true;
-      const total = cartProducts.reduce((sum, p) => sum + (p.price || 0) * (p.quantity || 1), 0);
-      const cartCurrs = [...new Set(cartProducts.map((p) => String(p.currency || '').trim().toUpperCase()).filter(Boolean))];
-      const checkoutCur = cartCurrs.length === 1 ? cartCurrs[0] : (storeData?.currency || 'XAF');
+      const total = cartSubtotal;
+      const checkoutCur = storeData?.currency || storeData?.storeSettings?.storeCurrency || 'XAF';
       trackStorefrontEvent({
         subdomain,
         pixels: pixelsData,
@@ -242,8 +285,7 @@ const StoreCheckout = () => {
     if (hasCached && store) {
       const ppc = store?.productPageConfig;
       const storeCountries = resolveFormCountries(ppc?.general?.countries, store?.country || store?.storeCountry || '');
-      const cartCurrs = [...new Set(cartProducts.map((p) => String(p.currency || '').trim().toUpperCase()).filter(Boolean))];
-      const checkoutCur = cartCurrs.length === 1 ? cartCurrs[0] : (store?.currency || 'XAF');
+      const checkoutCur = store?.currency || store?.storeSettings?.storeCurrency || 'XAF';
       setPhoneCode(getDefaultPhoneCodeFromConfig(storeCountries, checkoutCur));
       if (pixels) fireCheckoutPixels(pixels, store);
     }
@@ -256,8 +298,7 @@ const StoreCheckout = () => {
         setStore(storeData);
         const ppc = storeData?.productPageConfig;
         const storeCountries = resolveFormCountries(ppc?.general?.countries, storeData?.country || storeData?.storeCountry || '');
-        const cartCurrs = [...new Set(cartProducts.map((p) => String(p.currency || '').trim().toUpperCase()).filter(Boolean))];
-        const checkoutCur = cartCurrs.length === 1 ? cartCurrs[0] : (storeData?.currency || storeData?.storeSettings?.storeCurrency || 'XAF');
+        const checkoutCur = storeData?.currency || storeData?.storeSettings?.storeCurrency || 'XAF';
         setPhoneCode(getDefaultPhoneCodeFromConfig(storeCountries, checkoutCur));
         setPixels(data.pixels || null);
         if (data.pixels) fireCheckoutPixels(data.pixels, storeData);
@@ -344,8 +385,10 @@ const StoreCheckout = () => {
 
   const formatPrice = (price, cur) => formatMoney(price, cur);
   const themeColor = store?.themeColor || '#0F6B4F';
-  const cartCurrencies = [...new Set(cartProducts.map((p) => String(p.currency || '').trim().toUpperCase()).filter(Boolean))];
-  const currency = cartCurrencies.length === 1 ? cartCurrencies[0] : (store?.currency || 'XAF');
+  // Devise = celle configurée sur la boutique ; repli sur la devise des articles du panier
+  // si la boutique n'a pas (encore) chargé, pour ne jamais afficher une mauvaise devise.
+  const currency = store?.currency || store?.storeSettings?.storeCurrency
+    || cartProducts.find(p => p.currency)?.currency || 'XAF';
 
   // ── Design config from form builder ──────────────────────────────────────
   const fd = store?.productPageConfig?.design || {};
@@ -404,7 +447,7 @@ const StoreCheckout = () => {
     style: inputStyle(field),
   });
 
-  const subtotal = cartProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0);
+  const subtotal = cartSubtotal;
   // Zone cost takes priority; flat fee is the fallback when no per-zone cost applies
   const zoneCost = deliveryStatus.cost || 0;
   const flatCostApplies = flatShippingEnabled && flatShippingFee > 0 && zoneCost === 0;
@@ -442,10 +485,7 @@ const StoreCheckout = () => {
       notes: form.notes.trim(),
       deliveryType: deliveryStatus.type === 'livraison' ? 'livraison' : deliveryStatus.type === 'expedition' ? 'expedition' : '',
       deliveryCost,
-      products: cartProducts.map(p => ({
-        productId: p.productId,
-        quantity: p.quantity
-      })),
+      products: cartProducts.map(buildOrderProductPayload),
       affiliateCode: affiliateAttribution?.affiliateCode || '',
       affiliateLinkCode: affiliateAttribution?.affiliateLinkCode || '',
       metaSourceUrl: typeof window !== 'undefined' ? window.location.href : '',
@@ -475,6 +515,7 @@ const StoreCheckout = () => {
     deliveryStatus.type,
     deliveryCost,
     cartProducts,
+    cartSubtotal,
   ]);
 
   const handleSubmit = async (e) => {
@@ -523,10 +564,7 @@ const StoreCheckout = () => {
         notes: form.notes.trim(),
         deliveryType: deliveryStatus.type === 'livraison' ? 'livraison' : deliveryStatus.type === 'expedition' ? 'expedition' : '',
         deliveryCost: deliveryCost,
-        products: cartProducts.map(p => ({
-          productId: p.productId,
-          quantity: p.quantity
-        })),
+        products: cartProducts.map(buildOrderProductPayload),
         channel: 'store',
         metaEventId: purchaseEventId,
         metaSourceUrl: typeof window !== 'undefined' ? window.location.href : '',
@@ -537,12 +575,14 @@ const StoreCheckout = () => {
 
       const orderData = res.data?.data;
       setOrderResult(orderData);
+      // Vide le panier persistant après une commande réussie (si l'achat venait du panier)
+      if (!location.state?.products?.length) clearCart();
       if (checkoutSessionStorageKey && typeof window !== 'undefined') {
         window.sessionStorage.removeItem(checkoutSessionStorageKey);
       }
 
       // Fire Purchase pixel event — ensure scripts are loaded first
-      const orderTotal = orderData?.total ?? cartProducts.reduce((sum, p) => sum + (p.price || 0) * (p.quantity || 1), 0);
+      const orderTotal = orderData?.total ?? total;
       safeFirePixelEvent(pixels, 'Purchase', {
         value: orderTotal,
         currency,
@@ -847,8 +887,19 @@ const StoreCheckout = () => {
                     <p className="text-xs text-gray-400">Qté : {p.quantity}</p>
                   </div>
                   <span className="text-sm font-bold flex-shrink-0" style={{ color: formTextColor }}>
-                    {formatPrice(p.price * p.quantity, currency)}
+                    {formatPrice(getCartLineTotal(p), currency)}
                   </span>
+                  {isPersistentCart && (
+                    <button
+                      type="button"
+                      aria-label={t('checkout.removeItem')}
+                      title={t('checkout.removeItem')}
+                      onClick={() => removeFromCart(p.productId || p._id)}
+                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 transition"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -953,7 +1004,7 @@ const StoreCheckout = () => {
                     style={{ ...fieldStyle, minWidth: 90, borderTopRightRadius: 0, borderBottomRightRadius: 0, borderTopLeftRadius: '12px', borderBottomLeftRadius: '12px' }}
                   >
                     {PHONE_CODES.map(c => (
-                      <option key={c.code} value={c.code}>{c.label}</option>
+                      <option key={`${c.country}-${c.code}`} value={c.code}>{c.label}</option>
                     ))}
                   </select>
                   <ChevronDown className="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: fieldIconColor }} />

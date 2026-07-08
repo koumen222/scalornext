@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { tp } from '../i18n/platform.js';
 import { useEcomAuth } from './useEcomAuth';
 import ecomApi, { clearEcomGetCache } from '../services/ecommApi';
 
@@ -24,7 +25,7 @@ export const SwitchOverlay = ({ name }) => (
   }}>
     <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid #e5e7eb', borderTopColor: '#0F6B4F', animation: 'spin 0.7s linear infinite' }} />
     <p style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>
-      Basculer vers <span style={{ color: '#0F6B4F' }}>{name}</span>…
+      {tp('Basculer vers')} <span style={{ color: '#0F6B4F' }}>{name}</span>…
     </p>
   </div>
 );

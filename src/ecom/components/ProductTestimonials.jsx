@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Quote, Star } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
 
 const AVATAR_COLORS = ['#111827', '#F97316', '#0F766E', '#7C2D12', '#1D4ED8', '#9A3412', '#4F46E5'];
 const DEFAULT_VISIBLE_COUNT = 6;
@@ -82,7 +83,7 @@ export default function ProductTestimonials({ testimonials = [], visualTheme = n
             fontFamily: 'var(--s-font)',
           }}
         >
-          Ce Que Nos <span style={{ color: primary }}>Clients Disent</span>
+          Ce Que Nos <span style={{ color: primary }}>{tp('Clients Disent')}</span>
         </h2>
 
         <div
@@ -137,7 +138,7 @@ export default function ProductTestimonials({ testimonials = [], visualTheme = n
             >
               <img
                 src={socialProofVisual}
-                alt="Visuel témoignages généré pour ce produit"
+                alt={tp('Visuel témoignages généré pour ce produit')}
                 loading="lazy"
                 style={{
                   width: '100%',
@@ -232,7 +233,7 @@ export default function ProductTestimonials({ testimonials = [], visualTheme = n
                           fontFamily: 'var(--s-font)',
                         }}
                       >
-                        {testimonial.location || 'Client vérifié'}
+                        {testimonial.location || tp('Client vérifié')}
                         {testimonial.date ? ` · ${testimonial.date}` : ''}
                       </div>
                     )}
@@ -306,7 +307,7 @@ export default function ProductTestimonials({ testimonials = [], visualTheme = n
                   }}
                 >
                   <span style={{ fontSize: 14, lineHeight: 1 }}>★</span>
-                  {testimonial.verified === false ? 'Avis client' : 'Avis vérifié'}
+                  {testimonial.verified === false ? 'Avis client' : tp('Avis vérifié')}
                 </span>
               </div>
             </article>

@@ -11,6 +11,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { livreurApi } from '../services/livreurApi.js';
+import { tp } from '../../i18n/platform.js';
 
 const STATUS_CONFIG = {
   delivered: { label: 'Livré', color: 'bg-green-100 text-green-800', icon: '✅' },
@@ -54,9 +55,9 @@ export default function LivreurHistory() {
 
   const filterTabs = [
     { id: '', label: 'Tout' },
-    { id: 'delivered', label: '✅ Livré' },
+    { id: 'delivered', get label() { return tp('✅ Livré'); } },
     { id: 'returned', label: '↩️ Retour' },
-    { id: 'cancelled', label: '❌ Annulé' },
+    { id: 'cancelled', get label() { return tp('❌ Annulé'); } },
   ];
 
   return (
@@ -64,7 +65,7 @@ export default function LivreurHistory() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-gray-900">Historique</h1>
+          <h1 className="text-xl font-bold text-gray-900">{tp('Historique')}</h1>
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-400">{total} livraison{total !== 1 ? 's' : ''}</span>
             <button
@@ -110,8 +111,8 @@ export default function LivreurHistory() {
         ) : orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <History size={48} className="text-gray-200 mb-3" />
-            <p className="text-gray-500 font-medium">Aucun historique</p>
-            <p className="text-gray-400 text-sm mt-1">Vos livraisons terminées apparaîtront ici</p>
+            <p className="text-gray-500 font-medium">{tp('Aucun historique')}</p>
+            <p className="text-gray-400 text-sm mt-1">{tp('Vos livraisons terminées apparaîtront ici')}</p>
           </div>
         ) : (
           <>
@@ -124,7 +125,7 @@ export default function LivreurHistory() {
                 disabled={loading}
                 className="w-full py-3 mt-4 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium active:scale-95 disabled:opacity-60"
               >
-                {loading ? 'Chargement...' : 'Charger plus'}
+                {loading ? 'Chargement...' : tp('Charger plus')}
               </button>
             )}
           </>
@@ -179,7 +180,7 @@ function HistoryCard({ order }) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="font-medium text-gray-800 text-sm truncate">
-          {order.clientName || order.clientPhone || 'Client'}
+          {order.clientName || order.clientPhone || tp('Client')}
         </p>
         <div className="flex items-center gap-1.5 mt-0.5 text-gray-400 text-xs">
           <MapPin size={11} />

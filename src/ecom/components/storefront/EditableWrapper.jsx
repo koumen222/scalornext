@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Pencil, GripVertical, Trash2, Eye, EyeOff, Check, X } from 'lucide-react';
 import { useEditMode } from '../../contexts/EditModeContext';
+import { tp } from '../../i18n/platform.js';
 
 /**
  * EditableWrapper - Enveloppe une section pour la rendre éditable
@@ -95,7 +96,7 @@ export function EditableWrapper({
                 ...toolbarButtonStyle,
                 cursor: 'grab',
               }}
-              title="Réorganiser"
+              title={tp('Réorganiser')}
             >
               <GripVertical size={16} />
             </button>
@@ -109,7 +110,7 @@ export function EditableWrapper({
                 ...toolbarButtonStyle,
                 color: isVisible ? '#6B7280' : '#EF4444',
               }}
-              title={isVisible ? 'Masquer cette section' : 'Afficher cette section'}
+              title={isVisible ? 'Masquer cette section' : tp('Afficher cette section')}
             >
               {isVisible ? <Eye size={16} /> : <EyeOff size={16} />}
             </button>
@@ -125,10 +126,10 @@ export function EditableWrapper({
               padding: '6px 12px',
               gap: 6,
             }}
-            title="Modifier cette section"
+            title={tp('Modifier cette section')}
           >
             <Pencil size={14} />
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Modifier</span>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{tp('Modifier')}</span>
           </button>
 
           {/* Supprimer (si autorisé) */}
@@ -138,7 +139,7 @@ export function EditableWrapper({
                 ...toolbarButtonStyle,
                 color: '#EF4444',
               }}
-              title="Supprimer cette section"
+              title={tp('Supprimer cette section')}
             >
               <Trash2 size={16} />
             </button>
@@ -195,7 +196,7 @@ export function EditableWrapper({
           >
             <EyeOff size={18} color="#6B7280" />
             <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>
-              Section masquée
+              {tp('Section masquée')}
             </span>
           </div>
         </div>
@@ -275,7 +276,7 @@ export function EditToolbar() {
         }}
       >
         <Pencil size={16} />
-        {isEditMode ? 'Mode Édition Actif' : 'Activer Mode Édition'}
+        {isEditMode ? 'Mode Édition Actif' : tp('Activer Mode Édition')}
       </button>
 
       {/* Actions quand modifications en attente */}
@@ -306,7 +307,7 @@ export function EditToolbar() {
             }}
           >
             <X size={14} />
-            Annuler
+            {tp('Annuler')}
           </button>
           
           <button
@@ -328,7 +329,7 @@ export function EditToolbar() {
             }}
           >
             <Check size={14} />
-            {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
+            {isSaving ? 'Sauvegarde...' : tp('Sauvegarder')}
           </button>
         </>
       )}

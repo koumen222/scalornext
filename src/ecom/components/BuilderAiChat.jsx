@@ -4,6 +4,7 @@ import { storeProductsApi } from '../services/storeApi';
 import ecomApi from '../services/ecommApi.js';
 import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 /**
  * Props:
@@ -176,7 +177,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
         className="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-white shadow-2xl transition-all hover:scale-105 hover:shadow-purple-500/30"
       >
         <Sparkles className="h-5 w-5" />
-        <span className="text-sm font-semibold hidden sm:inline">Assistant IA</span>
+        <span className="text-sm font-semibold hidden sm:inline">{tp('Assistant IA')}</span>
       </button>
     );
   }
@@ -188,7 +189,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
       <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex-shrink-0">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4" />
-          <span className="text-sm font-bold">Assistant Builder IA</span>
+          <span className="text-sm font-bold">{tp('Assistant Builder IA')}</span>
         </div>
         <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-white/20 transition">
           <X className="h-4 w-4" />
@@ -260,7 +261,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
                     className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition"
                   >
                     <Lock className="w-3 h-3" />
-                    Découvrir les plans
+                    {tp('Découvrir les plans')}
                   </button>
                 </div>
               )}
@@ -271,7 +272,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
           <div className="flex justify-start">
             <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />
-              <span className="text-xs text-gray-400">Génération en cours...</span>
+              <span className="text-xs text-gray-400">{tp('Génération en cours...')}</span>
             </div>
           </div>
         )}
@@ -299,7 +300,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
                   type="text"
                   value={m.placement}
                   onChange={e => setMedias(prev => prev.map((x, xi) => xi === i ? { ...x, placement: e.target.value } : x))}
-                  placeholder="où ?"
+                  placeholder={tp('où ?')}
                   className="absolute bottom-0 left-0 right-0 text-[9px] bg-black/60 text-white placeholder:text-white/60 border-0 outline-none px-1 py-0.5 w-full"
                 />
                 <button
@@ -309,7 +310,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-gray-400 mt-1.5">Cliquez sur "où ?" pour indiquer l'emplacement de chaque média</p>
+          <p className="text-[10px] text-gray-400 mt-1.5">{tp('Cliquez sur "où ?" pour indiquer l\'emplacement de chaque média')}</p>
         </div>
       )}
 
@@ -328,7 +329,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
             type="button"
             onClick={() => fileRef.current?.click()}
             className="flex-shrink-0 mb-0.5 text-gray-400 hover:text-indigo-500 transition"
-            title="Joindre image, audio ou vidéo"
+            title={tp('Joindre image, audio ou vidéo')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
@@ -344,7 +345,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
               const files = Array.from(e.clipboardData?.files || []).filter(f => f.type.startsWith('image/') || f.type.startsWith('audio/') || f.type.startsWith('video/'));
               if (files.length > 0) { e.preventDefault(); handleFileAdd(files); }
             }}
-            placeholder={recording ? '🔴 Enregistrement vocal...' : 'Décris ce que tu veux créer ou modifier...'}
+            placeholder={recording ? '🔴 Enregistrement vocal...' : tp('Décris ce que tu veux créer ou modifier...')}
             rows={1}
             style={{ maxHeight: 80 }}
             className="flex-1 resize-none bg-transparent text-sm text-gray-800 placeholder:text-gray-400 outline-none overflow-y-auto"
@@ -354,7 +355,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
             onClick={toggleRecording}
             disabled={transcribing}
             className={`flex-shrink-0 mb-0.5 rounded-lg p-1.5 transition disabled:opacity-40 ${recording ? 'bg-red-500 text-white animate-pulse' : 'text-gray-400 hover:text-red-500'}`}
-            title={recording ? 'Arrêter et transcrire' : 'Note vocale'}
+            title={recording ? 'Arrêter et transcrire' : tp('Note vocale')}
           >
             <svg className="w-4 h-4" fill={recording ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>

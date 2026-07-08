@@ -20,6 +20,7 @@ import {
   FileText,
 } from 'lucide-react';
 import DigitalProductEbookModal from '../components/DigitalProductEbookModal.jsx';
+import { tp } from '../i18n/platform.js';
 
 const API_ORIGIN = (process.env.NODE_ENV !== 'production') ? '' : (process.env.NEXT_PUBLIC_API_URL || '');
 
@@ -127,9 +128,9 @@ export default function ProductPageStudio() {
   const filters = useMemo(() => ([
     { id: 'all', label: 'Tout', count: tasks.length },
     { id: 'active', label: 'En cours', count: stats.active.length },
-    { id: 'done', label: 'Prêtes', count: stats.done.length },
+    { id: 'done', get label() { return tp('Prêtes'); }, count: stats.done.length },
     { id: 'recoverable', label: 'Reprise', count: stats.recoverable.length },
-    { id: 'error', label: 'Échecs', count: stats.errors.length },
+    { id: 'error', get label() { return tp('Échecs'); }, count: stats.errors.length },
   ]), [stats.active.length, stats.done.length, stats.errors.length, stats.recoverable.length, tasks.length]);
 
   const filteredTasks = useMemo(() => {
@@ -154,7 +155,7 @@ export default function ProductPageStudio() {
   }, [navigate]);
 
   const handleDelete = async (taskId) => {
-    if (!window.confirm('Supprimer cette génération ?')) return;
+    if (!window.confirm(tp('Supprimer cette génération ?'))) return;
     setDeleting(taskId);
     try {
       const response = await fetch(`${API_ORIGIN}/api/ai/product-generator/tasks/${taskId}`, {
@@ -245,9 +246,9 @@ export default function ProductPageStudio() {
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 border border-primary-100">
             <Layers3 className="w-3.5 h-3.5" />
-            Product Page Studio
+            {tp('Product Page Studio')}
           </div>
-          <h1 className="mt-3 text-3xl font-black text-gray-900">Studio de generation pages produits</h1>
+          <h1 className="mt-3 text-3xl font-black text-gray-900">{tp('Studio de generation pages produits')}</h1>
           <p className="mt-2 text-sm text-gray-500 max-w-3xl">
             Suis toutes les generations, retrouve les echec partiels, reprends ce qui manque et ouvre directement les pages deja sauvegardees.
           </p>
@@ -259,14 +260,14 @@ export default function ProductPageStudio() {
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
           >
             <RefreshCw className="w-4 h-4" />
-            Rafraichir
+            {tp('Rafraichir')}
           </button>
           <button
             onClick={() => navigate('/ecom/boutique/products/generator', { state: { from: '/ecom/boutique/product-page-studio' } })}
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition"
           >
             <Sparkles className="w-4 h-4" />
-            Nouvelle generation
+            {tp('Nouvelle generation')}
           </button>
         </div>
       </div>
@@ -280,19 +281,19 @@ export default function ProductPageStudio() {
 
       <div className="grid gap-4 xl:grid-cols-3">
         <QuickLinkCard
-          title="Toutes les generations"
+          title={tp('Toutes les generations')}
           description="Liste complete avec filtres, ouverture et suppression."
           action="Voir la liste"
           onClick={() => navigate('/ecom/boutique/product-page-studio/generations')}
         />
         <QuickLinkCard
-          title="Echecs et reprise"
+          title={tp('Echecs et reprise')}
           description="Accede directement aux contenus partiels et relance les visuels manquants."
           action="Ouvrir"
           onClick={() => navigate('/ecom/boutique/product-page-studio/errors')}
         />
         <QuickLinkCard
-          title="Nouvelle generation"
+          title={tp('Nouvelle generation')}
           description="Lance une nouvelle page produit dans le generateur plein ecran."
           action="Generer"
           onClick={() => navigate('/ecom/boutique/products/generator', { state: { from: '/ecom/boutique/product-page-studio' } })}
@@ -303,7 +304,7 @@ export default function ProductPageStudio() {
         <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-primary-600" />
-            <h2 className="text-sm font-bold text-gray-900">Etat des credits</h2>
+            <h2 className="text-sm font-bold text-gray-900">{tp('Etat des credits')}</h2>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-3">
@@ -342,24 +343,24 @@ export default function ProductPageStudio() {
         <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <h2 className="text-sm font-bold text-gray-900">Lecture rapide</h2>
+            <h2 className="text-sm font-bold text-gray-900">{tp('Lecture rapide')}</h2>
           </div>
 
           <div className="space-y-3">
             <InsightRow
               label="Générations actives"
               value={`${stats.active.length}`}
-              hint={stats.active.length > 0 ? 'Une mise à jour auto tourne toutes les 8 secondes.' : 'Aucun traitement en cours.'}
+              hint={stats.active.length > 0 ? 'Une mise à jour auto tourne toutes les 8 secondes.' : tp('Aucun traitement en cours.')}
             />
             <InsightRow
               label="Pages prêtes"
               value={`${stats.done.length}`}
-              hint={stats.done.length > 0 ? 'Ouvrables directement depuis la liste complète.' : 'Aucune page finalisée pour le moment.'}
+              hint={stats.done.length > 0 ? 'Ouvrables directement depuis la liste complète.' : tp('Aucune page finalisée pour le moment.')}
             />
             <InsightRow
               label="Échecs récupérables"
               value={`${stats.recoverable.length}`}
-              hint={stats.recoverable.length > 0 ? 'Le contenu sauvegardé peut être rouvert ou repris.' : 'Aucune reprise requise.'}
+              hint={stats.recoverable.length > 0 ? 'Le contenu sauvegardé peut être rouvert ou repris.' : tp('Aucune reprise requise.')}
             />
           </div>
         </div>
@@ -368,9 +369,9 @@ export default function ProductPageStudio() {
       <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 space-y-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-lg font-black text-gray-900">Toutes les informations des générations</h2>
+            <h2 className="text-lg font-black text-gray-900">{tp('Toutes les informations des générations')}</h2>
             <p className="text-sm text-gray-500 mt-1">
-              Filtre, ouvre, reprends ou supprime une génération sans quitter la vue studio.
+              {tp('Filtre, ouvre, reprends ou supprime une génération sans quitter la vue studio.')}
             </p>
           </div>
           <div className="text-xs text-gray-500">
@@ -404,8 +405,8 @@ export default function ProductPageStudio() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50">
               <Sparkles className="w-7 h-7 text-primary-500" />
             </div>
-            <h3 className="text-base font-bold text-gray-900">Aucune donnée pour ce filtre</h3>
-            <p className="mt-1 text-sm text-gray-500">Change de filtre ou lance une nouvelle génération.</p>
+            <h3 className="text-base font-bold text-gray-900">{tp('Aucune donnée pour ce filtre')}</h3>
+            <p className="mt-1 text-sm text-gray-500">{tp('Change de filtre ou lance une nouvelle génération.')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -539,7 +540,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-semibold text-gray-900 truncate max-w-full">
-              {task.productName || task.product?.title || 'Generation sans nom'}
+              {task.productName || task.product?.title || tp('Generation sans nom')}
             </h3>
             <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${config.color}`}>
               <StatusIcon className={`w-3 h-3 ${config.animate ? 'animate-spin' : ''}`} />
@@ -548,7 +549,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
             {isError && hasSavedContent && (
               <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
                 <AlertCircle className="w-3 h-3" />
-                Contenu sauvé
+                {tp('Contenu sauvé')}
               </span>
             )}
           </div>
@@ -556,7 +557,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
           {isActive && (
             <div>
               <div className="mb-1 flex items-center justify-between text-[11px] text-gray-500">
-                <span>{task.currentStep || 'En cours...'}</span>
+                <span>{task.currentStep || tp('En cours...')}</span>
                 <span>{task.progressPercent || 0}%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
@@ -572,7 +573,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
             <div className="space-y-1">
               <p className="text-xs text-red-600 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
-                {task.errorMessage || 'La génération s’est arrêtée avant la fin.'}
+                {task.errorMessage || tp('La génération s’est arrêtée avant la fin.')}
               </p>
               {hasSavedContent && (
                 <p className="text-xs text-gray-500">
@@ -594,10 +595,10 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
             <button
               onClick={() => onOpen(task._id)}
               className="inline-flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-semibold rounded-xl transition"
-              title="Ouvrir le contenu généré"
+              title={tp('Ouvrir le contenu généré')}
             >
               <Eye className="w-3.5 h-3.5" />
-              Voir contenu
+              {tp('Voir contenu')}
             </button>
           )}
 
@@ -610,7 +611,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
                   ? 'border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                   : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
-              title="Produit digital de ce produit"
+              title={tp('Produit digital de ce produit')}
             >
               {digitalProductLoading === task._id ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -625,10 +626,10 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
             <button
               onClick={() => onOpen(task._id)}
               className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-xl transition"
-              title="Utiliser cette génération"
+              title={tp('Utiliser cette génération')}
             >
               <ArrowRight className="w-3.5 h-3.5" />
-              Utiliser
+              {tp('Utiliser')}
             </button>
           )}
 
@@ -637,7 +638,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
               onClick={() => onRetry(task._id)}
               disabled={retrying === task._id}
               className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white text-xs font-semibold rounded-xl transition"
-              title="Reprendre cette génération"
+              title={tp('Reprendre cette génération')}
             >
               {retrying === task._id ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -652,7 +653,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
             onClick={() => onDelete(task._id)}
             disabled={deleting === task._id}
             className="inline-flex items-center gap-1.5 px-3 py-2 border border-red-100 text-red-500 hover:bg-red-50 disabled:opacity-50 text-xs font-semibold rounded-xl transition"
-            title="Supprimer"
+            title={tp('Supprimer')}
           >
             {deleting === task._id ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />

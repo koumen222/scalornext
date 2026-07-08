@@ -8,6 +8,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { livreurApi } from '../services/livreurApi.js';
+import { tp } from '../../i18n/platform.js';
 
 export default function LivreurEarnings() {
   const [stats, setStats] = useState(null);
@@ -38,7 +39,7 @@ export default function LivreurEarnings() {
       {/* Header */}
       <div className="bg-gradient-to-br from-violet-600 to-indigo-700 px-4 pt-12 pb-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-white text-2xl font-bold">Montant encaissé</h1>
+          <h1 className="text-white text-2xl font-bold">{tp('Montant encaissé')}</h1>
           <button
             onClick={loadStats}
             className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white active:scale-95"
@@ -51,7 +52,7 @@ export default function LivreurEarnings() {
           <div className="h-20 bg-white/10 rounded-2xl animate-pulse" />
         ) : (
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5">
-            <p className="text-violet-200 text-sm mb-1">Total encaissé (cumulé)</p>
+            <p className="text-violet-200 text-sm mb-1">{tp('Total encaissé (cumulé)')}</p>
             <p className="text-white text-4xl font-bold">
               {fmt(stats?.allTime?.collected)} <span className="text-2xl font-medium opacity-80">FCFA</span>
             </p>
@@ -74,14 +75,14 @@ export default function LivreurEarnings() {
             {/* Period cards */}
             <div className="grid grid-cols-2 gap-3">
               <PeriodCard
-                title="Ce mois"
+                title={tp('Ce mois')}
                 icon={<TrendingUp size={20} className="text-indigo-500" />}
                 amount={fmt(stats.thisMonth?.collected)}
                 deliveries={stats.thisMonth?.delivered || 0}
                 bg="bg-indigo-50"
               />
               <PeriodCard
-                title="Cette semaine"
+                title={tp('Cette semaine')}
                 icon={<CheckCircle2 size={20} className="text-primary-500" />}
                 amount={fmt(stats.thisWeek?.collected)}
                 deliveries={stats.thisWeek?.delivered || 0}
@@ -92,7 +93,7 @@ export default function LivreurEarnings() {
             {/* Summary table */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-4 py-3 border-b border-gray-100">
-                <h2 className="font-semibold text-gray-800">Résumé</h2>
+                <h2 className="font-semibold text-gray-800">{tp('Résumé')}</h2>
               </div>
               <div className="divide-y divide-gray-50">
                 <SummaryRow
@@ -119,9 +120,9 @@ export default function LivreurEarnings() {
               <div className="flex items-start gap-3">
                 <Wallet size={20} className="text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-amber-800 font-semibold text-sm">Montant encaissé</p>
+                  <p className="text-amber-800 font-semibold text-sm">{tp('Montant encaissé')}</p>
                   <p className="text-amber-700 text-xs mt-1 leading-relaxed">
-                    Total des prix des commandes collectés auprès des clients lors de vos livraisons.
+                    {tp('Total des prix des commandes collectés auprès des clients lors de vos livraisons.')}
                     Ce montant est à remettre à votre gestionnaire.
                   </p>
                 </div>

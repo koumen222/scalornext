@@ -3,6 +3,7 @@ import { useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const STATUS_LABELS = {
   pending: 'En attente', confirmed: 'Acceptée', shipped: 'En transit',
@@ -23,11 +24,11 @@ const STATUS_META = {
 
 const TABS = [
   { key: '', label: 'Tout' },
-  { key: 'confirmed', label: 'Acceptées' },
+  { key: 'confirmed', get label() { return tp('Acceptées'); } },
   { key: 'shipped', label: 'En transit' },
-  { key: 'delivered', label: 'Livrées' },
+  { key: 'delivered', get label() { return tp('Livrées'); } },
   { key: 'returned', label: 'Retours' },
-  { key: 'cancelled', label: 'Annulées' },
+  { key: 'cancelled', get label() { return tp('Annulées'); } },
 ];
 
 const CHANGEABLE_STATUSES = ['confirmed', 'shipped', 'delivered', 'returned', 'cancelled', 'pending'];
@@ -46,7 +47,7 @@ function timeAgo(date) {
 const Loader = () => (
   <div className="flex flex-col items-center justify-center h-64 gap-4">
     <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-    <p className="text-sm text-gray-400 font-medium">Chargement…</p>
+    <p className="text-sm text-gray-400 font-medium">{tp('Chargement…')}</p>
   </div>
 );
 
@@ -77,7 +78,7 @@ const ReassignModal = ({ order, livreurs, onClose, onSave }) => {
       <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-gray-100">
           <div>
-            <h3 className="font-bold text-gray-900">Réassigner le livreur</h3>
+            <h3 className="font-bold text-gray-900">{tp('Réassigner le livreur')}</h3>
             <p className="text-xs text-gray-400 mt-0.5">{order.clientName} · #{order.orderId}</p>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
@@ -92,7 +93,7 @@ const ReassignModal = ({ order, livreurs, onClose, onSave }) => {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-sm transition ${!selected ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-gray-200 hover:border-gray-300'}`}
             >
               <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">—</div>
-              <span className="font-medium">Aucun livreur</span>
+              <span className="font-medium">{tp('Aucun livreur')}</span>
               {!selected && <svg className="w-4 h-4 ml-auto text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
             </button>
             {livreurs.map(l => (
@@ -145,7 +146,7 @@ const StatusDropdown = ({ order, onClose, onSave }) => {
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/30" onClick={onClose}>
       <div className="bg-white rounded-2xl w-full max-w-xs shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
         <div className="px-4 py-3 border-b border-gray-100">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Changer le statut</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Changer le statut')}</p>
           <p className="text-sm font-medium text-gray-800 mt-0.5">{order.clientName}</p>
         </div>
         {saving ? (
@@ -216,7 +217,7 @@ const OrderRow = ({ order, navigate, livreurs, onStatusChange, onLivreurChange, 
         {/* Main content - clickable to order detail */}
         <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/ecom/orders/${order._id}`)}>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-gray-900 truncate">{order.clientName || 'Client'}</span>
+            <span className="text-sm font-semibold text-gray-900 truncate">{order.clientName || tp('Client')}</span>
             {order.orderId && <span className="text-[11px] text-gray-300 flex-shrink-0">#{order.orderId}</span>}
           </div>
           <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 flex-wrap">
@@ -256,21 +257,21 @@ const OrderRow = ({ order, navigate, livreurs, onStatusChange, onLivreurChange, 
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 >
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                  Voir la commande
+                  {tp('Voir la commande')}
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setMenuOpen(false); setShowStatusModal(true); }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 >
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
-                  Changer le statut
+                  {tp('Changer le statut')}
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setMenuOpen(false); setShowReassignModal(true); }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 >
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-                  Réassigner livreur
+                  {tp('Réassigner livreur')}
                 </button>
                 {livreurId && (
                   <>
@@ -281,7 +282,7 @@ const OrderRow = ({ order, navigate, livreurs, onStatusChange, onLivreurChange, 
                       className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" /></svg>
-                      {unassigning ? 'En cours…' : 'Désassigner'}
+                      {unassigning ? 'En cours…' : tp('Désassigner')}
                     </button>
                   </>
                 )}
@@ -390,7 +391,7 @@ const LivreurManagement = () => {
       if (!oldOrder) return prev;
       return { ...prev, [oldOrder.status]: Math.max(0, (prev[oldOrder.status] || 0) - 1), [newStatus]: (prev[newStatus] || 0) + 1 };
     });
-    setSuccess('Statut mis à jour.');
+    setSuccess(tp('Statut mis à jour.'));
   }, [orders]);
 
   const handleLivreurChange = useCallback((orderId, newLivreurId, livreurObj) => {
@@ -399,12 +400,12 @@ const LivreurManagement = () => {
         ? { ...o, assignedLivreur: livreurObj ? { _id: newLivreurId, name: livreurObj.name, email: livreurObj.email } : null }
         : o
     ));
-    setSuccess('Livreur réassigné.');
+    setSuccess(tp('Livreur réassigné.'));
   }, []);
 
   const handleUnassign = useCallback((orderId) => {
     setOrders(prev => prev.filter(o => String(o._id) !== String(orderId)));
-    setSuccess('Livreur désassigné.');
+    setSuccess(tp('Livreur désassigné.'));
   }, []);
 
   const totalAssigned = (stats.confirmed || 0) + (stats.shipped || 0) + (stats.delivered || 0) + (stats.returned || 0) + (stats.cancelled || 0);
@@ -422,7 +423,7 @@ const LivreurManagement = () => {
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-base font-bold text-gray-900">Suivi des livraisons</h1>
+              <h1 className="text-base font-bold text-gray-900">{tp('Suivi des livraisons')}</h1>
               <p className="text-xs text-gray-400">{pagination.total} commande{pagination.total !== 1 ? 's' : ''} · {stats.livreursActifs || 0} livreur{(stats.livreursActifs || 0) !== 1 ? 's' : ''} actifs</p>
             </div>
             <button onClick={() => loadData()} className="p-2 rounded-lg hover:bg-gray-100 transition text-gray-400">
@@ -434,9 +435,9 @@ const LivreurManagement = () => {
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide mb-3">
             {[
               { label: 'Total', value: totalAssigned, dot: 'bg-gray-400' },
-              { label: 'Acceptées', value: stats.confirmed || 0, dot: STATUS_META.confirmed.dot },
+              { get label() { return tp('Acceptées'); }, value: stats.confirmed || 0, dot: STATUS_META.confirmed.dot },
               { label: 'En transit', value: stats.shipped || 0, dot: STATUS_META.shipped.dot },
-              { label: 'Livrées', value: stats.delivered || 0, dot: STATUS_META.delivered.dot },
+              { get label() { return tp('Livrées'); }, value: stats.delivered || 0, dot: STATUS_META.delivered.dot },
               { label: 'Retours', value: (stats.returned || 0) + (stats.cancelled || 0), dot: STATUS_META.returned.dot },
             ].map(({ label, value, dot }) => (
               <div key={label} className="flex items-center gap-1.5 bg-gray-50 rounded-lg px-3 py-1.5 flex-shrink-0 border border-gray-100">
@@ -470,7 +471,7 @@ const LivreurManagement = () => {
             <div className="flex-1 relative">
               <input
                 type="text"
-                placeholder="Rechercher client, téléphone, ville, produit…"
+                placeholder={tp('Rechercher client, téléphone, ville, produit…')}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-8 pr-3 py-2 text-sm bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-transparent"
@@ -487,7 +488,7 @@ const LivreurManagement = () => {
               onChange={e => setFilterLivreur(e.target.value)}
               className="text-sm bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500/30 min-w-0 max-w-[150px] sm:max-w-[200px]"
             >
-              <option value="">Tous les livreurs</option>
+              <option value="">{tp('Tous les livreurs')}</option>
               {livreurs.map(l => (
                 <option key={l._id} value={l._id}>{l.name || l.email}</option>
               ))}
@@ -514,7 +515,7 @@ const LivreurManagement = () => {
         ) : orders.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-4xl mb-3">🚚</div>
-            <p className="text-gray-500 font-medium">Aucune commande trouvée</p>
+            <p className="text-gray-500 font-medium">{tp('Aucune commande trouvée')}</p>
             <p className="text-gray-400 text-sm mt-1">
               {search || tab || filterLivreur ? 'Modifiez vos filtres.' : 'Aucune commande n\'a encore été assignée à un livreur.'}
             </p>

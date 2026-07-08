@@ -5,6 +5,7 @@ import { useAudioRecorder } from '../hooks/useAudioRecorder.js';
 import { useMediaUpload } from '../hooks/useMediaUpload.js';
 import { io } from 'socket.io-client';
 import api from '../../lib/api.js';
+import { tp } from '../i18n/platform.js';
 
 const resolveSocketUrl = () => {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
@@ -64,7 +65,7 @@ const renderMessageContent = (content, own) => {
           <div className="min-w-0 flex-1">
             <p className={`text-[13px] font-bold leading-tight ${own ? 'text-white' : 'text-slate-800'}`}>{title}</p>
             {subtitle && <p className={`text-[11px] mt-0.5 ${own ? 'text-white/70' : 'text-slate-500'}`}>{subtitle}</p>}
-            <p className={`text-[11px] font-semibold mt-1.5 ${own ? 'text-white/80' : 'text-primary-600'}`}>Ouvrir →</p>
+            <p className={`text-[11px] font-semibold mt-1.5 ${own ? 'text-white/80' : 'text-primary-600'}`}>{'Ouvrir →'}</p>
           </div>
         </div>
       </Link>
@@ -602,7 +603,7 @@ export default function TeamChat() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
                 <div>
-                  <h1 className="text-xl font-bold text-slate-900">Messages</h1>
+                  <h1 className="text-xl font-bold text-slate-900">{tp('Messages')}</h1>
                   <p className="text-xs text-slate-400">{conversations.length} conversation{conversations.length > 1 ? 's' : ''}</p>
                 </div>
               </div>
@@ -611,13 +612,13 @@ export default function TeamChat() {
                 className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-3 py-2 rounded-xl transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                <span className="hidden sm:inline">Nouveau</span>
+                <span className="hidden sm:inline">{tp('Nouveau')}</span>
               </button>
             </div>
             {/* Search */}
             <div className="flex items-center bg-slate-100 rounded-xl px-3 py-2 mb-3">
               <svg className="w-4 h-4 text-slate-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher une conversation..." className="flex-1 bg-transparent outline-none text-sm text-slate-700 placeholder-slate-400" />
+              <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder={tp('Rechercher une conversation...')} className="flex-1 bg-transparent outline-none text-sm text-slate-700 placeholder-slate-400" />
             </div>
             {/* Tabs */}
             <div className="flex gap-1">
@@ -635,7 +636,7 @@ export default function TeamChat() {
             {loading ? (
               <div className="flex flex-col items-center justify-center h-40 gap-3">
                 <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-slate-400">Chargement...</p>
+                <p className="text-sm text-slate-400">{tp('Chargement...')}</p>
               </div>
             ) : tab === 'dm' ? (
               filteredConvs.length === 0 ? (
@@ -643,9 +644,9 @@ export default function TeamChat() {
                   <div className="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mb-4">
                     <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                   </div>
-                  <p className="font-semibold text-slate-700 mb-1">Aucune conversation</p>
-                  <p className="text-sm text-slate-400 mb-4">Démarrez une discussion avec un membre de l'équipe</p>
-                  <button onClick={() => setShowNewChat(true)} className="bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">Nouvelle conversation</button>
+                  <p className="font-semibold text-slate-700 mb-1">{tp('Aucune conversation')}</p>
+                  <p className="text-sm text-slate-400 mb-4">{tp('Démarrez une discussion avec un membre de l\'équipe')}</p>
+                  <button onClick={() => setShowNewChat(true)} className="bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">{tp('Nouvelle conversation')}</button>
                 </div>
               ) : filteredConvs.map(conv => {
                 const other = conv.other;
@@ -682,9 +683,9 @@ export default function TeamChat() {
                   <div className="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mb-4">
                     <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                   </div>
-                  <p className="font-semibold text-slate-700 mb-1">Aucun groupe</p>
-                  <p className="text-sm text-slate-400 mb-4">Créez un canal pour collaborer en équipe</p>
-                  <button onClick={() => setShowNewGroup(true)} className="bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">Créer un groupe</button>
+                  <p className="font-semibold text-slate-700 mb-1">{tp('Aucun groupe')}</p>
+                  <p className="text-sm text-slate-400 mb-4">{tp('Créez un canal pour collaborer en équipe')}</p>
+                  <button onClick={() => setShowNewGroup(true)} className="bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">{tp('Créer un groupe')}</button>
                 </div>
               ) : channels.filter(c => !search || c.name?.toLowerCase().includes(search.toLowerCase())).map((channel, idx) => (
                 <button
@@ -697,7 +698,7 @@ export default function TeamChat() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-slate-800 truncate">{channel.name}</p>
-                    <p className="text-sm text-slate-400 truncate mt-0.5">{channel.description || 'Canal de discussion'}</p>
+                    <p className="text-sm text-slate-400 truncate mt-0.5">{channel.description || tp('Canal de discussion')}</p>
                   </div>
                   <svg className="w-4 h-4 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </button>
@@ -722,7 +723,7 @@ export default function TeamChat() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-slate-900 truncate">{activeChannel.name}</p>
-                  <p className="text-xs text-slate-400">Canal de groupe</p>
+                  <p className="text-xs text-slate-400">{tp('Canal de groupe')}</p>
                 </div>
               </>
             ) : activeConv ? (
@@ -733,8 +734,8 @@ export default function TeamChat() {
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-slate-900 truncate">{activeConv.name || activeConv.email?.split('@')[0]}</p>
                   {typing
-                    ? <p className="text-xs text-primary-500 font-medium">✍️ écrit...</p>
-                    : <p className="text-xs text-slate-400">{ROLE_LABELS[activeConv.role] || 'Membre'}</p>
+                    ? <p className="text-xs text-primary-500 font-medium">{tp('✍️ écrit...')}</p>
+                    : <p className="text-xs text-slate-400">{ROLE_LABELS[activeConv.role] || tp('Membre')}</p>
                   }
                 </div>
               </>
@@ -746,14 +747,14 @@ export default function TeamChat() {
             {loading ? (
               <div className="flex flex-col items-center justify-center h-full gap-3">
                 <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-slate-400">Chargement...</p>
+                <p className="text-sm text-slate-400">{tp('Chargement...')}</p>
               </div>
             ) : messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full gap-2">
                 <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center">
                   <svg className="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                 </div>
-                <p className="text-slate-400 text-sm">Démarrez la conversation</p>
+                <p className="text-slate-400 text-sm">{tp('Démarrez la conversation')}</p>
               </div>
             ) : messages.map((msg, idx) => {
               const own = isOwn(msg);
@@ -840,12 +841,12 @@ export default function TeamChat() {
 
                         {/* Contenu */}
                         {msg.deleted ? (
-                          <p className={`text-[14px] italic ${own ? 'text-white/50' : 'text-slate-400'}`}>🚫 Message supprimé</p>
+                          <p className={`text-[14px] italic ${own ? 'text-white/50' : 'text-slate-400'}`}>{tp('🚫 Message supprimé')}</p>
                         ) : msg.messageType === 'audio' ? (
                           msg.mediaUrl ? (
                             <audio controls preload="metadata" src={msg.mediaUrl} className="w-[240px] max-w-full" />
                           ) : (
-                            <span className={`text-[12px] ${own ? 'text-white/60' : 'text-slate-400'}`}>🎤 Audio indisponible</span>
+                            <span className={`text-[12px] ${own ? 'text-white/60' : 'text-slate-400'}`}>{tp('🎤 Audio indisponible')}</span>
                           )
                         ) : msg.messageType === 'image' ? (
                           <img src={msg.mediaUrl} alt="" className="max-w-full rounded-xl max-h-64 object-cover" />
@@ -925,7 +926,7 @@ export default function TeamChat() {
                     <div className="absolute bottom-12 left-0 bg-white rounded-2xl shadow-xl border border-slate-200 w-52 overflow-hidden z-50">
                       <button onClick={() => { fileInputRef.current?.click(); setShowShareMenu(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left text-sm">
                         <span className="w-8 h-8 bg-primary-100 rounded-xl flex items-center justify-center text-lg">📎</span>
-                        <span className="font-semibold text-slate-700">Fichier</span>
+                        <span className="font-semibold text-slate-700">{tp('Fichier')}</span>
                       </button>
                       {SHARE_TYPES.map(st => (
                         <button key={st.key} onClick={() => { setShareType(st.key); setShowShareMenu(false); setShareSearch(''); setShareResults([]); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left text-sm border-t border-slate-100">
@@ -942,7 +943,7 @@ export default function TeamChat() {
                     value={newMessage}
                     onChange={e => handleTyping(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(e); } }}
-                    placeholder="Écrire un message..."
+                    placeholder={tp('Écrire un message...')}
                     className="flex-1 bg-slate-100 rounded-2xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none resize-none max-h-24 focus:bg-slate-50 focus:ring-2 focus:ring-primary-200 transition-all"
                     rows={1}
                     style={{ minHeight: '40px' }}
@@ -975,17 +976,17 @@ export default function TeamChat() {
               <button onClick={() => setShowNewChat(false)} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
-              <h2 className="font-bold text-slate-900">Nouvelle conversation</h2>
+              <h2 className="font-bold text-slate-900">{tp('Nouvelle conversation')}</h2>
             </div>
             <div className="p-3 border-b border-slate-100">
               <div className="flex items-center bg-slate-100 rounded-xl px-3 py-2">
                 <svg className="w-4 h-4 text-slate-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un membre..." className="flex-1 bg-transparent outline-none text-sm text-slate-700 placeholder-slate-400" autoFocus />
+                <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder={tp('Rechercher un membre...')} className="flex-1 bg-transparent outline-none text-sm text-slate-700 placeholder-slate-400" autoFocus />
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
               {filteredMembers.length === 0 ? (
-                <p className="text-center py-10 text-slate-400 text-sm">Aucun membre trouvé</p>
+                <p className="text-center py-10 text-slate-400 text-sm">{tp('Aucun membre trouvé')}</p>
               ) : filteredMembers.map(m => (
                 <button key={m._id} onClick={() => startNewChat(m)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left transition-colors">
                   <div className={`w-11 h-11 ${ROLE_COLORS[m.role] || 'bg-slate-400'} rounded-2xl flex items-center justify-center flex-shrink-0`}>
@@ -1010,11 +1011,11 @@ export default function TeamChat() {
               <button onClick={() => setShowNewGroup(false)} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
-              <h2 className="font-bold text-slate-900">Nouveau groupe</h2>
+              <h2 className="font-bold text-slate-900">{tp('Nouveau groupe')}</h2>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Emoji</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{tp('Emoji')}</label>
                 <div className="flex flex-wrap gap-2">
                   {['💬', '📦', '💰', '🚚', '📣', '📊', '🎯', '👥', '🔧', '🌟'].map(em => (
                     <button
@@ -1029,12 +1030,12 @@ export default function TeamChat() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Nom du groupe</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">{tp('Nom du groupe')}</label>
                 <input
                   type="text"
                   value={newGroupName}
                   onChange={e => setNewGroupName(e.target.value)}
-                  placeholder="Ex: Équipe ventes, Livraisons..."
+                  placeholder={tp('Ex: Équipe ventes, Livraisons...')}
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-500 transition-all"
                   autoFocus
                 />
@@ -1044,7 +1045,7 @@ export default function TeamChat() {
                 disabled={!newGroupName.trim()}
                 className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
-                Créer le groupe
+                {tp('Créer le groupe')}
               </button>
             </div>
           </div>
@@ -1061,7 +1062,7 @@ export default function TeamChat() {
               </button>
               <div>
                 <h2 className="font-bold text-slate-900">Partager {SHARE_TYPES.find(t => t.key === shareType)?.label}</h2>
-                <p className="text-xs text-slate-400">Sélectionnez un élément ù  envoyer</p>
+                <p className="text-xs text-slate-400">{tp('Sélectionnez un élément ù  envoyer')}</p>
               </div>
             </div>
             <div className="p-3 border-b border-slate-100">
@@ -1081,11 +1082,11 @@ export default function TeamChat() {
               {shareLoading ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3">
                   <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-sm text-slate-400">Chargement...</p>
+                  <p className="text-sm text-slate-400">{tp('Chargement...')}</p>
                 </div>
               ) : shareResults.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-2">
-                  <p className="text-slate-400 text-sm">{shareSearch ? 'Aucun résultat' : 'Tapez pour rechercher...'}</p>
+                  <p className="text-slate-400 text-sm">{shareSearch ? 'Aucun résultat' : tp('Tapez pour rechercher...')}</p>
                 </div>
               ) : shareResults.map(item => {
                 const card = formatShareCard(shareType, item);

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { tp } from '../i18n/platform.js';
 import {
   createProviderInstance,
   deleteProviderInstance,
@@ -25,6 +26,8 @@ const initialLogin = {
   email: '',
   password: ''
 };
+
+const STRONG_PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 const initialInstance = {
   name: '',
@@ -83,6 +86,10 @@ const ProviderService = () => {
 
   const onRegister = async (e) => {
     e.preventDefault();
+    if (!STRONG_PASSWORD_RE.test(registerForm.password)) {
+      setError(tp('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'));
+      return;
+    }
     setLoading(true);
     setError('');
     setMessage('');
@@ -244,8 +251,8 @@ const ProviderService = () => {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-lime-50 to-cyan-100">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mb-8 rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary-700">Provider Console</p>
-          <h1 className="mt-2 text-3xl font-black text-slate-900 sm:text-4xl">Interface Provider As A Service</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary-700">{tp('Provider Console')}</p>
+          <h1 className="mt-2 text-3xl font-black text-slate-900 sm:text-4xl">{tp('Interface Provider As A Service')}</h1>
           <p className="mt-3 max-w-3xl text-sm text-slate-600 sm:text-base">
             Creez vos instances, gerez vos boutiques et pilotez votre service avec un Bearer token dedie.
           </p>
@@ -273,21 +280,21 @@ const ProviderService = () => {
                   className={`rounded-full px-4 py-2 text-sm font-semibold ${mode === 'login' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
                   onClick={() => setMode('login')}
                 >
-                  Connexion
+                  {tp('Connexion')}
                 </button>
                 <button
                   type="button"
                   className={`rounded-full px-4 py-2 text-sm font-semibold ${mode === 'register' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
                   onClick={() => setMode('register')}
                 >
-                  Inscription
+                  {tp('Inscription')}
                 </button>
                 <button
                   type="button"
                   className={`rounded-full px-4 py-2 text-sm font-semibold ${mode === 'verify' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
                   onClick={() => setMode('verify')}
                 >
-                  Verification email
+                  {tp('Verification email')}
                 </button>
               </div>
 
@@ -304,7 +311,7 @@ const ProviderService = () => {
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">Mot de passe</label>
+                    <label className="mb-1 block text-sm font-medium text-slate-700">{tp('Mot de passe')}</label>
                     <input
                       required
                       type="password"
@@ -318,7 +325,7 @@ const ProviderService = () => {
                     type="submit"
                     className="w-full rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {loading ? 'Connexion...' : 'Se connecter comme Provider'}
+                    {loading ? 'Connexion...' : tp('Se connecter comme Provider')}
                   </button>
                 </form>
               )}
@@ -326,7 +333,7 @@ const ProviderService = () => {
               {mode === 'register' && (
                 <form onSubmit={onRegister} className="space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">Entreprise</label>
+                    <label className="mb-1 block text-sm font-medium text-slate-700">{tp('Entreprise')}</label>
                     <input
                       required
                       value={registerForm.company}
@@ -335,7 +342,7 @@ const ProviderService = () => {
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">Nom</label>
+                    <label className="mb-1 block text-sm font-medium text-slate-700">{tp('Nom')}</label>
                     <input
                       required
                       value={registerForm.name}
@@ -354,7 +361,7 @@ const ProviderService = () => {
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">Telephone</label>
+                    <label className="mb-1 block text-sm font-medium text-slate-700">{tp('Telephone')}</label>
                     <input
                       value={registerForm.phone}
                       onChange={(e) => setRegisterForm((prev) => ({ ...prev, phone: e.target.value }))}
@@ -362,10 +369,10 @@ const ProviderService = () => {
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">Mot de passe</label>
+                    <label className="mb-1 block text-sm font-medium text-slate-700">{tp('Mot de passe')}</label>
                     <input
                       required
-                      minLength={6}
+                      minLength={8}
                       type="password"
                       value={registerForm.password}
                       onChange={(e) => setRegisterForm((prev) => ({ ...prev, password: e.target.value }))}
@@ -377,7 +384,7 @@ const ProviderService = () => {
                     type="submit"
                     className="w-full rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-500 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {loading ? 'Creation...' : 'Creer mon compte Provider'}
+                    {loading ? 'Creation...' : tp('Creer mon compte Provider')}
                   </button>
                 </form>
               )}
@@ -385,13 +392,13 @@ const ProviderService = () => {
               {mode === 'verify' && (
                 <form onSubmit={onVerify} className="space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">Token de verification email</label>
+                    <label className="mb-1 block text-sm font-medium text-slate-700">{tp('Token de verification email')}</label>
                     <input
                       required
                       value={verifyToken}
                       onChange={(e) => setVerifyToken(e.target.value)}
                       className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none ring-primary-200 focus:ring"
-                      placeholder="Collez le token recu par email"
+                      placeholder={tp('Collez le token recu par email')}
                     />
                   </div>
                   <button
@@ -399,25 +406,25 @@ const ProviderService = () => {
                     type="submit"
                     className="w-full rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {loading ? 'Verification...' : 'Verifier mon email'}
+                    {loading ? 'Verification...' : tp('Verifier mon email')}
                   </button>
                 </form>
               )}
             </div>
 
             <div className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-lg">
-              <h2 className="text-lg font-bold text-slate-900">Comment ca marche</h2>
+              <h2 className="text-lg font-bold text-slate-900">{tp('Comment ca marche')}</h2>
               <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm text-slate-600">
-                <li>Inscrivez votre entreprise provider.</li>
-                <li>Verifiez l'email de validation.</li>
-                <li>Connectez-vous et recevez votre Bearer token.</li>
-                <li>Creez vos instances sans passer par l'API principale.</li>
-                <li>Gerez vos instances avec droits read/write.</li>
+                <li>{tp('Inscrivez votre entreprise provider.')}</li>
+                <li>{tp('Verifiez l\'email de validation.')}</li>
+                <li>{tp('Connectez-vous et recevez votre Bearer token.')}</li>
+                <li>{tp('Creez vos instances sans passer par l\'API principale.')}</li>
+                <li>{tp('Gerez vos instances avec droits read/write.')}</li>
               </ol>
 
               <div className="mt-6 rounded-xl bg-slate-900 p-4 text-xs text-slate-200">
-                <div className="font-semibold text-white">Header API</div>
-                <div className="mt-1 break-all">Authorization: Bearer prov_xxxxxxxxxxxxxxxxx</div>
+                <div className="font-semibold text-white">{tp('Header API')}</div>
+                <div className="mt-1 break-all">{tp('Authorization: Bearer prov_xxxxxxxxxxxxxxxxx')}</div>
               </div>
             </div>
           </div>
@@ -427,7 +434,7 @@ const ProviderService = () => {
           <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-3">
               <div className="rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
-                <div className="text-xs uppercase tracking-wider text-slate-500">Token</div>
+                <div className="text-xs uppercase tracking-wider text-slate-500">{tp('Token')}</div>
                 <div className="mt-2 break-all font-mono text-sm text-slate-800">{tokenPreview}</div>
                 <div className="mt-3 flex gap-2">
                   <button
@@ -435,25 +442,25 @@ const ProviderService = () => {
                     disabled={loading}
                     className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
                   >
-                    Refresh
+                    {tp('Refresh')}
                   </button>
                   <button
                     onClick={onLogout}
                     className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white"
                   >
-                    Deconnexion
+                    {tp('Deconnexion')}
                   </button>
                 </div>
               </div>
 
               <div className="rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
-                <div className="text-xs uppercase tracking-wider text-slate-500">Entreprise</div>
+                <div className="text-xs uppercase tracking-wider text-slate-500">{tp('Entreprise')}</div>
                 <div className="mt-2 text-sm font-semibold text-slate-900">{provider?.company || '-'}</div>
                 <div className="mt-1 text-xs text-slate-600">{provider?.email || '-'}</div>
               </div>
 
               <div className="rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
-                <div className="text-xs uppercase tracking-wider text-slate-500">Instances</div>
+                <div className="text-xs uppercase tracking-wider text-slate-500">{tp('Instances')}</div>
                 <div className="mt-2 text-sm text-slate-900">
                   {(provider?.limits?.activeInstances ?? provider?.stats?.activeInstances ?? instances.length) || 0}
                   {' / '}
@@ -463,17 +470,17 @@ const ProviderService = () => {
             </div>
 
             <div className="rounded-3xl border border-white/70 bg-white p-6 shadow-lg">
-              <h2 className="text-lg font-bold text-slate-900">Creer une nouvelle instance</h2>
+              <h2 className="text-lg font-bold text-slate-900">{tp('Creer une nouvelle instance')}</h2>
               <form onSubmit={onCreateInstance} className="mt-4 grid gap-4 md:grid-cols-4">
                 <input
                   required
-                  placeholder="Nom instance"
+                  placeholder={tp('Nom instance')}
                   value={instanceForm.name}
                   onChange={(e) => setInstanceForm((prev) => ({ ...prev, name: e.target.value }))}
                   className="rounded-xl border border-slate-200 px-3 py-2 outline-none ring-primary-200 focus:ring"
                 />
                 <input
-                  placeholder="Subdomain (optionnel)"
+                  placeholder={tp('Subdomain (optionnel)')}
                   value={instanceForm.subdomain}
                   onChange={(e) => setInstanceForm((prev) => ({ ...prev, subdomain: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }))}
                   className="rounded-xl border border-slate-200 px-3 py-2 outline-none ring-primary-200 focus:ring"
@@ -483,37 +490,37 @@ const ProviderService = () => {
                   onChange={(e) => setInstanceForm((prev) => ({ ...prev, currency: e.target.value }))}
                   className="rounded-xl border border-slate-200 px-3 py-2 outline-none ring-primary-200 focus:ring"
                 >
-                  <option value="XAF">XAF</option>
-                  <option value="XOF">XOF</option>
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
+                  <option value="XAF">{tp('XAF')}</option>
+                  <option value="XOF">{tp('XOF')}</option>
+                  <option value="USD">{tp('USD')}</option>
+                  <option value="EUR">{tp('EUR')}</option>
                 </select>
                 <button
                   disabled={loading}
                   className="rounded-xl bg-primary-600 px-4 py-2 font-semibold text-white hover:bg-primary-500 disabled:opacity-60"
                   type="submit"
                 >
-                  {loading ? 'Creation...' : 'Creer instance'}
+                  {loading ? 'Creation...' : tp('Creer instance')}
                 </button>
               </form>
             </div>
 
             <div className="rounded-3xl border border-white/70 bg-white p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-slate-900">Mes instances</h2>
+                <h2 className="text-lg font-bold text-slate-900">{tp('Mes instances')}</h2>
                 <button
                   onClick={loadDashboard}
                   disabled={loading}
                   className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
                 >
-                  Rafraichir
+                  {tp('Rafraichir')}
                 </button>
               </div>
 
               <div className="space-y-3">
                 {instances.length === 0 && (
                   <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">
-                    Aucune instance pour le moment.
+                    {tp('Aucune instance pour le moment.')}
                   </div>
                 )}
 
@@ -525,7 +532,7 @@ const ProviderService = () => {
                         <div className="text-xs text-slate-500">slug: {inst.slug || '-'} | statut: {inst.status || '-'}</div>
                         {inst.accessUrl && (
                           <a href={inst.accessUrl} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs font-semibold text-cyan-700 underline">
-                            Ouvrir la boutique
+                            {tp('Ouvrir la boutique')}
                           </a>
                         )}
                       </div>
@@ -535,13 +542,13 @@ const ProviderService = () => {
                           onClick={() => onStartEdit(inst)}
                           className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
                         >
-                          Modifier
+                          {tp('Modifier')}
                         </button>
                         <button
                           onClick={() => onDeleteInstance(inst.id)}
                           className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white"
                         >
-                          Supprimer
+                          {tp('Supprimer')}
                         </button>
                       </div>
                     </div>
@@ -562,7 +569,7 @@ const ProviderService = () => {
                           onClick={() => onSaveEdit(inst.id)}
                           className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white"
                         >
-                          Enregistrer
+                          {tp('Enregistrer')}
                         </button>
                       </div>
                     )}

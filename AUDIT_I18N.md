@@ -1,0 +1,3399 @@
+# Audit i18n plateforme admin
+
+- Clés au dictionnaire : **548**
+- Chaînes câblées (tp) sans traduction : **3088** uniques → s'affichent en français en EN/ES
+- Littéraux français non câblés : **1525** uniques (libellés dynamiques, constantes)
+
+## 1. Câblées mais SANS traduction (par fréquence)
+
+- (7×) `votre@email.com` — pages/AffiliateLogin.jsx, pages/AffiliateRegister.jsx, pages/ForgotPassword.jsx
+- (6×) `3 crédits` — components/DigitalProductEbookModal.jsx, components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (5×) `Contenu` — components/DigitalProductEbookModal.jsx, components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (5×) `Demande` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx, pages/ProductResearch.jsx
+- (5×) `En stock` — pages/StoreProductsList.jsx, pages/WhatsAppService.jsx
+- (5×) `Taux livraison` — pages/ControlCenter.jsx, pages/OrdersList.jsx, pages/ReportsList.jsx
+- (4×) `Aucun SKU` — pages/StoreProductsList.jsx
+- (4×) `Confirmées` — pages/ControlCenter.jsx, pages/TeamPerformance.jsx
+- (4×) `Entreprise` — pages/DeveloperSection.jsx, pages/ProviderService.jsx, pages/ScalorRegister.jsx
+- (4×) `Image` — pages/CampaignForm.jsx, pages/OrdersList.jsx, pages/StoreProductsList.jsx
+- (4×) `Moyenne` — components/VisualSiteBuilder.jsx, pages/DecisionForm.jsx, pages/ProductResearch.jsx
+- (4×) `Produit *` — pages/OrdersList.jsx, pages/SourcingList.jsx, pages/StockManagement.jsx
+- (4×) `Texte du bouton` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx, components/VisualSiteBuilder.jsx
+- (4×) `Token` — pages/DeveloperSection.jsx, pages/ProviderService.jsx, pages/WhatsAppConnexion.jsx
+- (4×) `Ventes` — pages/StockManagement.jsx
+- (4×) `Ventes/mois` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx, pages/ProductResearch.jsx
+- (3×) `Ajouter une section` — components/VisualSiteBuilder.jsx, pages/BoutiquePages.jsx, pages/VisualBuilder.jsx
+- (3×) `Aucun produit` — pages/CampaignForm.jsx, pages/ProductResearchList.jsx, pages/StatsPage.jsx
+- (3×) `CA livré` — pages/ControlCenter.jsx
+- (3×) `Compétition` — pages/ProductResearch.jsx
+- (3×) `Date début` — pages/CampaignForm.jsx, pages/ProductReportDetail.jsx, pages/ReportsList.jsx
+- (3×) `Date fin` — pages/CampaignForm.jsx, pages/ProductReportDetail.jsx, pages/ReportsList.jsx
+- (3×) `Devise` — pages/DeveloperSection.jsx, pages/StoreProductForm.jsx, pages/StoreSetup.jsx
+- (3×) `Dépenses par catégorie` — pages/ControlCenter.jsx, pages/TransactionsList.jsx
+- (3×) `Email *` — pages/ScalorRegister.jsx, pages/ServiceClient.jsx, pages/UserManagement.jsx
+- (3×) `Expiré` — pages/ServiceClient.jsx, pages/SuperAdminBilling.jsx, pages/UserManagement.jsx
+- (3×) `Exporter CSV` — pages/ProductReportDetail.jsx, pages/ProductResearchList.jsx, pages/StoreProductsList.jsx
+- (3×) `Fichier` — pages/StoreCreationWizard.jsx, pages/TeamChat.jsx
+- (3×) `Glissez ou cliquez` — pages/CreativeGenerator.jsx, pages/StoreCreationWizard.jsx
+- (3×) `Jean Dupont` — pages/ScalorRegister.jsx, pages/ServiceClient.jsx, pages/Tarifs.jsx
+- (3×) `Police` — pages/BoutiqueSettings.jsx, pages/EnhancedVisualBuilder.jsx, pages/VisualBuilder.jsx
+- (3×) `Période` — pages/Goals.jsx, pages/TransactionsList.jsx
+- (3×) `Quantité *` — pages/SourcingList.jsx, pages/StockOrdersList.jsx, pages/SupplierDetail.jsx
+- (3×) `Retours` — pages/ControlCenter.jsx, pages/TeamPerformance.jsx
+- (3×) `Site Builder` — components/VisualSiteBuilder.jsx, pages/EnhancedVisualBuilder.jsx, pages/VisualBuilder.jsx
+- (3×) `Solde net` — pages/ControlCenter.jsx, pages/TeamPerformance.jsx, pages/TransactionsList.jsx
+- (3×) `Sélectionner un pays` — pages/AgentOnboarding.jsx, pages/OrdersList.jsx, pages/StoreCreationWizard.jsx
+- (3×) `Toutes les villes` — pages/ClientsList.jsx, pages/OrdersList.jsx, pages/StockManagement.jsx
+- (3×) `Vente` — pages/AffiliateCommissions.jsx, pages/ProductResearch.jsx, pages/StockOrdersList.jsx
+- (3×) `Vues` — pages/SuperAdminAnalytics.jsx, pages/TransactionsList.jsx
+- (3×) `Webhook` — pages/AssignmentsManager.jsx, pages/DeveloperSection.jsx, pages/WhatsAppService.jsx
+- (2×) `+237 6XX XXX XXX` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (2×) `-- Choisir un produit du catalogue --` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Accepter une course →` — pages/LivreurDashboard.jsx, pages/LivreurDeliveries.jsx
+- (2×) `Acces Rita IA` — pages/UserManagement.jsx
+- (2×) `Accès rapide` — pages/BoutiqueDashboard.jsx, pages/TermsOfService.jsx
+- (2×) `Achat Chine` — pages/SourcingList.jsx, pages/SourcingStats.jsx
+- (2×) `Activer cette offre` — pages/FormUpsellsPage.jsx
+- (2×) `Activité récente` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Actuel` — pages/StockManagement.jsx
+- (2×) `Agence` — pages/StockManagement.jsx
+- (2×) `Agent IA` — pages/AgentConfig.jsx, pages/LandingPage.jsx
+- (2×) `Analyse financière` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Analyse marché` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Annulées` — pages/ControlCenter.jsx, pages/TeamPerformance.jsx
+- (2×) `Aperçu financier` — pages/StockOrderForm.jsx, pages/StockOrdersList.jsx
+- (2×) `Aperçu non disponible` — components/DigitalProductEbookModal.jsx, components/VisualSiteBuilder.jsx
+- (2×) `Articles` — pages/StoreOrdersDashboard.jsx
+- (2×) `Aucun` — pages/RitaGroupAnimation.jsx, pages/TransactionForm.jsx
+- (2×) `Aucun produit actif trouvé.` — pages/Settings.jsx
+- (2×) `Aucune activité pour cette période` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Aucune campagne envoyée` — pages/CampaignStats.jsx
+- (2×) `Aucune commande trouvée` — pages/LivreurManagement.jsx, pages/OrdersList.jsx
+- (2×) `Aucune commission enregistrée.` — pages/AffiliateCommissions.jsx
+- (2×) `Aucune donnee` — pages/SuperAdminProductPageHistory.jsx
+- (2×) `Aucune transaction sur cette période` — pages/TransactionsList.jsx
+- (2×) `Aucune ville` — pages/CampaignForm.jsx, pages/StatsPage.jsx
+- (2×) `Bonjour, suite à votre achat, nous avons une offre...` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Boutique introuvable` — pages/StoreFront.jsx, pages/VisualBuilder.jsx
+- (2×) `Calcul en cours…` — pages/LivreurDeliveries.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `Calcul...` — pages/CampaignForm.jsx, pages/WhatsAppService.jsx
+- (2×) `Centre financier` — pages/TransactionsList.jsx
+- (2×) `Changer` — pages/BoutiqueDomains.jsx, pages/CampaignForm.jsx
+- (2×) `Changer le plan` — pages/ServiceClient.jsx, pages/SuperAdminUsers.jsx
+- (2×) `Changer le statut` — pages/LivreurManagement.jsx, pages/StoreOrdersDashboard.jsx
+- (2×) `Chargement du builder…` — pages/ProductSettingsPage.jsx, pages/VisualBuilder.jsx
+- (2×) `Cible` — components/InfographicsGeneratorPanel.jsx, components/PremiumProductPageGeneratorModal.jsx
+- (2×) `Ciblée` — pages/LivreurAvailable.jsx, pages/LivreurDashboard.jsx
+- (2×) `Client satisfait` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (2×) `Cmdes` — pages/SuperAdminActivity.jsx
+- (2×) `Code promo ?` — pages/BillingPage.jsx, pages/Tarifs.jsx
+- (2×) `Commander maintenant` — components/VisualSiteBuilder.jsx, pages/BoutiquePages.jsx
+- (2×) `Commandes reçues` — pages/ProductReportDetail.jsx, pages/ReportDetail.jsx
+- (2×) `Comment ça fonctionne :` — pages/AgentConfig.jsx
+- (2×) `Comment ça marche ?` — pages/BoutiquePixel.jsx, pages/Settings.jsx
+- (2×) `Concurrence` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Configure comment Rita gère les demandes de réduction` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Configurez un sous-domaine dans les paramètres` — pages/EnhancedVisualBuilder.jsx, pages/VisualBuilder.jsx
+- (2×) `Contrôlez jusqu'où Rita peut aller sans intervention humaine` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Conversions` — pages/AffiliatesAdmin.jsx
+- (2×) `Coordonnées` — livreur/pages/LivreurProfile.jsx, pages/StoreCreationWizard.jsx
+- (2×) `Copier la commande` — pages/OrdersList.jsx
+- (2×) `Couleur accent` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (2×) `Couleur personnalisée` — components/DigitalProductEbookModal.jsx, pages/StoreCreationWizard.jsx
+- (2×) `Couleur principale` — components/DigitalProductEbookModal.jsx, pages/StoreCreationWizard.jsx
+- (2×) `Coût` — pages/ControlCenter.jsx, pages/ProductsList.jsx
+- (2×) `Coût d'achat final (FCFA)` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Creative (Ads / Vidéo)` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Créer un espace` — pages/CloseuseDashboard.jsx, pages/LivreurDashboard.jsx
+- (2×) `Créer une instance` — pages/DeveloperSection.jsx
+- (2×) `Créer une nouvelle vue` — pages/StoreProductsList.jsx
+- (2×) `Créez une nouvelle instance et scannez le nouveau QR code` — pages/WhatsAppService.jsx
+- (2×) `Date *` — pages/StockManagement.jsx, pages/TransactionForm.jsx
+- (2×) `Date d'arrivée prévue` — pages/SourcingList.jsx, pages/StockOrdersList.jsx
+- (2×) `Dernière commande` — pages/StoreAnalytics.jsx, pages/SupplierDetail.jsx
+- (2×) `Dernière page` — pages/OrdersList.jsx
+- (2×) `Description du produit` — components/PremiumProductPageGeneratorModal.jsx, components/productSettings/LivePreview.jsx
+- (2×) `Destinataire` — pages/EmailCampaignResults.jsx, pages/SuperAdminMailServer.jsx
+- (2×) `Début` — pages/OrdersList.jsx, pages/ReportsList.jsx
+- (2×) `Dépenses / jour` — pages/TransactionsList.jsx
+- (2×) `En ligne` — pages/AgentConfig.jsx, pages/LandingPage.jsx
+- (2×) `Enregistrement…` — pages/LivreurDeliveries.jsx
+- (2×) `Entrées / jour` — pages/TransactionsList.jsx
+- (2×) `Envoyer un message` — pages/ServiceClient.jsx, pages/SuperAdminSupport.jsx
+- (2×) `Essai` — pages/SuperAdminBilling.jsx
+- (2×) `Ex: 1 560` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Ex: 360` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Ex: Drain Stick, Correcteur Blancheur…` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Ex: Forte concurrence…` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Ex: Forte marge…` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Ex: Marché central, Douala` — pages/LivreurDeliveries.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `Ex: Peau terne avec des taches, perte de confiance en soi...` — components/ProductGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (2×) `Ex: Protection expédition` — pages/FormUpsellsPage.jsx
+- (2×) `Ex: Votre quartier, rue...` — components/productSettings/FormBuilder.jsx, pages/ProductSettingsPage.jsx
+- (2×) `Excellent service !` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (2×) `Expire le` — pages/SuperAdminBilling.jsx
+- (2×) `Expéditions` — pages/AgentConfig.jsx
+- (2×) `Facebook Ads, TikTok…` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Fermez cette fenêtre` — pages/WhatsAppService.jsx
+- (2×) `Fiabilité fourn.` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Fin` — pages/OrdersList.jsx, pages/ReportsList.jsx
+- (2×) `Finance` — pages/ProductForm.jsx, pages/StoreCreationWizard.jsx
+- (2×) `Fournisseur` — pages/SourcingList.jsx, pages/StockOrdersList.jsx
+- (2×) `Fournisseurs` — pages/ProductResearch.jsx, pages/SourcingList.jsx
+- (2×) `Frais de livraison calculés` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Google Sheets` — pages/AssignmentsManager.jsx, pages/OrdersList.jsx
+- (2×) `Heure` — pages/AgentConfig.jsx, pages/SuperAdminBoutiqueStats.jsx
+- (2×) `Historique pages produit IA` — pages/SuperAdminFeatureAnalytics.jsx, pages/SuperAdminProductPageHistory.jsx
+- (2×) `Image apparente` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Images créatives` — pages/SuperAdminWorkspaces.jsx
+- (2×) `Importer CSV` — pages/AgentConfig.jsx, pages/ProductResearchList.jsx
+- (2×) `Indisponible` — pages/StoreProductsList.jsx
+- (2×) `Initial` — pages/StockManagement.jsx
+- (2×) `Injoignables` — pages/ControlCenter.jsx, pages/TeamPerformance.jsx
+- (2×) `Inscription` — pages/ScalorRegister.jsx, pages/SuperAdminBilling.jsx
+- (2×) `Inscriptions` — pages/SuperAdminAnalytics.jsx, pages/SuperAdminDashboard.jsx
+- (2×) `Instances` — pages/DeveloperSection.jsx, pages/ProviderService.jsx
+- (2×) `Insérer un lien` — components/RichTextEditor.jsx
+- (2×) `Insérer une vidéo` — components/RichTextEditor.jsx
+- (2×) `Lien Alibaba` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Lien Recherche` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Lien vers la publicité` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Logo` — pages/BoutiqueSettings.jsx, pages/StoreCreationWizard.jsx
+- (2×) `Légende (optionnel)...` — pages/AgentConfig.jsx
+- (2×) `Ma Super Boutique` — pages/BoutiqueSettings.jsx, pages/StoreSetup.jsx
+- (2×) `Marge brute` — pages/ControlCenter.jsx, pages/StockOrdersList.jsx
+- (2×) `Mensuel` — pages/BillingPage.jsx, pages/Goals.jsx
+- (2×) `Mes instances` — pages/DeveloperSection.jsx, pages/ProviderService.jsx
+- (2×) `Message envoyé` — pages/OrderDetail.jsx, pages/SuperAdminWhatsAppLogs.jsx
+- (2×) `Min. 8 caractères` — pages/SetupSuperAdmin.jsx, pages/SuperAdminSettings.jsx
+- (2×) `Minimum 8 caractères` — pages/ResetPassword.jsx, pages/ServiceClient.jsx
+- (2×) `Modifier la configuration Auto WhatsApp` — pages/OrdersList.jsx
+- (2×) `Modifié` — pages/StoreProductsList.jsx
+- (2×) `Mois` — pages/Goals.jsx, pages/TransactionsList.jsx
+- (2×) `Montant fixe (FCFA)` — pages/AffiliatesAdmin.jsx, pages/SuperAdminPromoCodes.jsx
+- (2×) `Nb fournisseurs` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Niveau d'autonomie` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Nom complet *` — pages/ScalorRegister.jsx, pages/ServiceClient.jsx
+- (2×) `Nom de la campagne` — pages/CampaignForm.jsx
+- (2×) `Nom du fournisseur` — pages/SourcingList.jsx, pages/StockOrdersList.jsx
+- (2×) `Non renseigné` — livreur/pages/DeliveryDetail.jsx, pages/StoreCreationWizard.jsx
+- (2×) `Nos Produits` — components/VisualSiteBuilder.jsx, pages/BoutiquePages.jsx
+- (2×) `Notes optionnelles...` — pages/AssignmentsManager.jsx, pages/StockManagement.jsx
+- (2×) `Notes supplémentaires...` — pages/StockOrderForm.jsx, pages/StockOrdersList.jsx
+- (2×) `Notes...` — pages/SourcingList.jsx
+- (2×) `Nouveau` — pages/ReportsList.jsx, pages/TeamChat.jsx
+- (2×) `Numero Mobile Money` — pages/BillingPage.jsx, pages/Tarifs.jsx
+- (2×) `Numéro de suivi` — pages/SourcingList.jsx, pages/StockOrdersList.jsx
+- (2×) `Observations, idées marketing, notes importantes…` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Orange Money` — pages/AffiliateDashboard.jsx, pages/AgentConfig.jsx
+- (2×) `Ouvrir la boutique` — pages/EnhancedVisualBuilder.jsx, pages/VisualBuilder.jsx
+- (2×) `Page vide` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (2×) `Pages gratuites` — pages/SuperAdminWorkspaces.jsx
+- (2×) `Pages payées` — pages/SuperAdminWorkspaces.jsx
+- (2×) `Paiement en attente` — pages/BillingSuccess.jsx, pages/GenerationSuccess.jsx
+- (2×) `Paiement échoué` — pages/BillingSuccess.jsx, pages/GenerationSuccess.jsx
+- (2×) `Par navigateur` — pages/StoreAnalytics.jsx, pages/SuperAdminAnalytics.jsx
+- (2×) `Parrainage` — pages/ClientForm.jsx, pages/ClientsList.jsx
+- (2×) `Permissions` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Poids (kg)` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Politique de prix` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Posts planifiés` — pages/AgentConfig.jsx, pages/RitaFlows.jsx
+- (2×) `Première page` — pages/OrdersList.jsx
+- (2×) `Prix de vente (FCFA)` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Prix du kilo (FCFA)` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Prix et poids` — pages/StockOrderForm.jsx, pages/StockOrdersList.jsx
+- (2×) `Prix sourcing brut (FCFA)` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Prix unitaire` — pages/OrderDetail.jsx
+- (2×) `Produit digital de ce produit` — pages/GenerationsPage.jsx, pages/ProductPageStudio.jsx
+- (2×) `Produit digital lié` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (2×) `Produit et sourcing` — pages/StockOrderForm.jsx, pages/StockOrdersList.jsx
+- (2×) `Produit lié (optionnel)` — pages/TransactionForm.jsx, pages/TransactionsList.jsx
+- (2×) `Programmés` — pages/RitaPerformance.jsx
+- (2×) `Proprietaire` — pages/SuperAdminBilling.jsx
+- (2×) `Prospects` — pages/RitaPerformance.jsx
+- (2×) `Provider Console` — pages/DeveloperSection.jsx, pages/ProviderService.jsx
+- (2×) `Prêt à commander ?` — components/VisualSiteBuilder.jsx, pages/BoutiquePages.jsx
+- (2×) `Quantité Disponible` — pages/StoreProductsList.jsx
+- (2×) `Quantité En stock` — pages/StoreProductsList.jsx
+- (2×) `Que vendez-vous ?` — pages/StoreCreationWizard.jsx, pages/WorkspaceSetup.jsx
+- (2×) `Question exemple ?` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (2×) `Queue` — pages/SuperAdminMailServer.jsx
+- (2×) `Quotas` — pages/WhatsAppConnexion.jsx
+- (2×) `Rechercher un fournisseur...` — pages/SourcingList.jsx, pages/SuppliersList.jsx
+- (2×) `Relâchez pour ajouter` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (2×) `Rentabilité` — pages/ControlCenter.jsx, pages/StatsRapports.jsx
+- (2×) `Revenu` — pages/RitaPerformance.jsx, pages/StatsPage.jsx
+- (2×) `Revenu encaissé quotidien` — pages/StoreAnalytics.jsx
+- (2×) `Revenu mensuel` — pages/ProductResearch.jsx, pages/SuperAdminBilling.jsx
+- (2×) `Revenu total` — pages/ReportDetail.jsx, pages/StatsPage.jsx
+- (2×) `Reçues` — pages/ProductReportDetail.jsx, pages/StatsRapports.jsx
+- (2×) `Rita` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Rita ne négocie pas. Le prix affiché est le dernier prix.` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Rita peut accorder des réductions selon tes règles.` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Rédigez votre message...` — pages/AgentConfig.jsx
+- (2×) `Réessayer` — pages/DeveloperSection.jsx, pages/ImportOrders.jsx
+- (2×) `Réinitialiser` — pages/CampaignForm.jsx, pages/SuperAdminWorkspaces.jsx
+- (2×) `Réponse de Rita…` — pages/AgentConfig.jsx
+- (2×) `Réponse à la question...` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (2×) `Réservé` — pages/StoreProductsList.jsx
+- (2×) `Score` — pages/BoutiqueDashboard.jsx, pages/ProductResearchList.jsx
+- (2×) `Score d'opportunité` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Services` — pages/ProductResearch.jsx, pages/WhatsAppPostulation.jsx
+- (2×) `Sessions` — pages/SuperAdminAnalytics.jsx
+- (2×) `Sessions par jour` — pages/SuperAdminAnalytics.jsx, pages/SuperAdminDashboard.jsx
+- (2×) `Site web concurrent` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Soins visage` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Solde caisse` — pages/ControlCenter.jsx
+- (2×) `Sourcing *` — pages/SourcingList.jsx, pages/StockOrdersList.jsx
+- (2×) `Sous-domaine` — pages/EnhancedVisualBuilder.jsx, pages/StoreSetup.jsx
+- (2×) `Statut de la commande` — pages/StoreOrdersDashboard.jsx, pages/SupplierDetail.jsx
+- (2×) `Store Preview` — pages/EnhancedVisualBuilder.jsx, pages/VisualBuilder.jsx
+- (2×) `Style` — components/productSettings/ButtonEditor.jsx, pages/ProductSettingsPage.jsx
+- (2×) `Style de négociation` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Supprimer cette section` — components/storefront/EditableWrapper.jsx, pages/VisualBuilder.jsx
+- (2×) `Supprimer toutes mes données` — pages/Settings.jsx
+- (2×) `Supprimez l'instance actuelle (icône corbeille)` — pages/WhatsAppService.jsx
+- (2×) `Sync` — pages/OrdersList.jsx
+- (2×) `Synchroniser les clients` — pages/ClientsList.jsx, pages/OrdersList.jsx
+- (2×) `Sélectionner la totalité des stock` — pages/StoreProductsList.jsx
+- (2×) `Sélectionner une catégorie` — pages/AgentOnboarding.jsx, pages/TransactionForm.jsx
+- (2×) `Sérum Éclat` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Telephone` — pages/ProviderService.jsx, pages/SuperAdminBilling.jsx
+- (2×) `Template` — pages/BoutiqueTheme.jsx, pages/VisualBuilder.jsx
+- (2×) `Tendance` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Tendance mensuelle` — pages/TransactionsList.jsx
+- (2×) `Test` — pages/DeveloperSection.jsx, pages/ProductResearchList.jsx
+- (2×) `Texte alternatif (optionnel)` — components/RichTextEditor.jsx, components/productSettings/BlocksEditor.jsx
+- (2×) `Ton` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Total cumulé` — pages/LivreurDashboard.jsx, pages/LivreurEarningsPage.jsx
+- (2×) `Total dépensé` — pages/StoreAnalytics.jsx, pages/SupplierDetail.jsx
+- (2×) `Tous les plans` — pages/SuperAdminScalorWhatsApp.jsx
+- (2×) `Tous statuts` — pages/ClientsList.jsx, pages/SuperAdminMailServer.jsx
+- (2×) `Tout effacer` — pages/ClientsList.jsx, pages/OrdersList.jsx
+- (2×) `Tout le temps` — pages/StatsPage.jsx, pages/StatsRapports.jsx
+- (2×) `Tout voir →` — pages/LivreurDashboard.jsx
+- (2×) `Tracking...` — pages/SourcingList.jsx, pages/SupplierDetail.jsx
+- (2×) `Trier par:` — pages/AffiliatesAdmin.jsx, pages/ProductResearch.jsx
+- (2×) `Tu peux aussi configurer le` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Type de sourcing` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `URL de l'image` — pages/AgentConfig.jsx, pages/RitaFlows.jsx
+- (2×) `Upload…` — pages/AgentConfig.jsx
+- (2×) `Validé` — pages/ProductResearchList.jsx, pages/ReportsList.jsx
+- (2×) `Voir le PDF` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (2×) `Voir nos produits` — components/VisualSiteBuilder.jsx, pages/BoutiquePages.jsx
+- (2×) `Voir tout →` — pages/CloseuseDashboard.jsx, pages/LivreurDashboard.jsx
+- (2×) `Vérification du paiement…` — pages/BillingSuccess.jsx, pages/GenerationSuccess.jsx
+- (2×) `Vérification…` — pages/BoutiqueDomains.jsx, pages/GenerationSuccess.jsx
+- (2×) `Zone de danger` — pages/Settings.jsx, pages/SuperAdminSettings.jsx
+- (2×) `auto-rempli depuis le produit` — pages/StockOrdersList.jsx
+- (2×) `client chaud` — pages/RitaFlows.jsx
+- (2×) `dernier prix` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `et la` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `ex: 500 FCFA` — pages/AgentConfig.jsx
+- (2×) `ex: Ne jamais descendre en dessous du dernier prix. Proposer la livraison gratuite à la place d'une réduction.` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `ex: Si le client achète 2 produits ou plus. Si le client est un ancien client.` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `ma-boutique` — pages/StoreCreationWizard.jsx, pages/StoreSetup.jsx
+- (2×) `maboutique.com` — pages/BoutiqueDomains.jsx
+- (2×) `msg` — pages/DeveloperSection.jsx
+- (2×) `par produit dans l'onglet` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `réduction max` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `À partir de` — pages/BillingPage.jsx
+- (2×) `Écouter cette voix` — pages/WhatsAppService.jsx
+- (2×) `État` — pages/ProductsList.jsx, pages/StockManagement.jsx
+- (2×) `— Choisir un groupe —` — pages/RitaFlows.jsx, pages/RitaGroupAnimation.jsx
+- (2×) `• Quand` — pages/AgentConfig.jsx
+- (2×) `● Arrivée` — pages/LivreurDeliveries.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `● Départ` — pages/LivreurDeliveries.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `● Vous` — pages/LivreurDeliveries.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `✓ Avantages` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `✗ Inconvénients` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `🖼️ Image` — pages/AgentConfig.jsx
+- (2×) `🖼️ Image (URL)` — pages/RitaFlows.jsx, pages/RitaGroupAnimation.jsx
+- (2×) `🚀 Commencer la course` — pages/LivreurDeliveries.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `🛒 Produits` — pages/WhatsAppService.jsx
+- (2×) `🤝 Prix négociable` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (1×) `"Appliquer"` — components/ProductPageGeneratorModal.jsx
+- (1×) `"Utiliser cette page"` — components/ProductPageGeneratorModal.jsx
+- (1×) `% (pourcentage)` — pages/AssignmentsManager.jsx
+- (1×) `(3–8 recommandées)` — components/ProductPageGeneratorModal.jsx
+- (1×) `(HMAC actif)` — pages/ConnectShopify.jsx
+- (1×) `(Sera envoyé à tous les clients concernés)` — pages/WhatsAppService.jsx
+- (1×) `(boutique)` — components/ProductPageGeneratorModal.jsx
+- (1×) `(calculé: poids unitaire × quantité)` — pages/StockOrderForm.jsx
+- (1×) `(commandes en transit, impayées)` — pages/SourcingStats.jsx
+- (1×) `(en Chine)` — pages/StockOrderForm.jsx
+- (1×) `(expirée)` — pages/SuperAdminPlans.jsx
+- (1×) `(global)` — pages/SuperAdminPromoCodes.jsx
+- (1×) `(impossible à modifier/supprimer)` — pages/SecurityDashboard.jsx
+- (1×) `(modifié)` — components/ChatWidget.jsx
+- (1×) `(par unité)` — pages/StockOrderForm.jsx
+- (1×) `(pas de valeur requise)` — pages/RitaFlows.jsx
+- (1×) `(poids x prix/kg)` — pages/StockOrderForm.jsx
+- (1×) `+ Ajouter une FAQ` — pages/WhatsAppService.jsx
+- (1×) `+ Ajouter une action` — pages/RitaFlows.jsx
+- (1×) `+ Ajouter une ligne` — pages/StockManagement.jsx
+- (1×) `+ Ajouter une objection` — pages/WhatsAppService.jsx
+- (1×) `+ Ajouter une règle` — pages/RitaFlows.jsx
+- (1×) `+ Inscription` — pages/AffiliateDashboard.jsx
+- (1×) `+ Nouvelle clé` — pages/DeveloperSection.jsx
+- (1×) `+ Nouvelle instance` — pages/DeveloperSection.jsx
+- (1×) `+ URL vidéo` — pages/WhatsAppService.jsx
+- (1×) `+1 500 FCFA (30%)` — pages/AffiliateDashboard.jsx
+- (1×) `+1 500 FCFA/mois (30%)` — pages/AffiliateDashboard.jsx
+- (1×) `+3 000 FCFA (30%)` — pages/AffiliateDashboard.jsx
+- (1×) `+3 000 FCFA/mois (30%)` — pages/AffiliateDashboard.jsx
+- (1×) `+300 FCFA (immédiat)` — pages/AffiliateDashboard.jsx
+- (1×) `+4 500 FCFA (30%)` — pages/AffiliateDashboard.jsx
+- (1×) `+4 500 FCFA/mois (30%)` — pages/AffiliateDashboard.jsx
+- (1×) `, Rita envoie automatiquement la fiche + la photo.` — pages/RitaGroupAnimation.jsx
+- (1×) `, sélectionnez un groupe depuis la liste de votre instance WhatsApp, puis cliquez` — pages/Settings.jsx
+- (1×) `-- Choisir un livreur --` — pages/OrderDetail.jsx
+- (1×) `-- Choisir un produit --` — pages/AgentConfig.jsx
+- (1×) `-- Instance connectée automatique --` — pages/WhatsAppService.jsx
+- (1×) `. Vous pouvez modifier ou ajouter d'autres statuts ci-dessous.` — pages/CampaignForm.jsx
+- (1×) `.scalor.net` — pages/BoutiqueDomains.jsx
+- (1×) `0 - 100 messages` — pages/WhatsAppPostulation.jsx
+- (1×) `0 = désactivé` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `0 clic` — pages/EmailCampaignResults.jsx
+- (1×) `0 à 50 commandes` — pages/WorkspaceSetup.jsx
+- (1×) `0% = quasi tout en texte, 100% = vocal presque systématique quand le mode mixte est actif.` — pages/WhatsAppService.jsx
+- (1×) `1 000+ vendeurs actifs` — pages/LandingPage.jsx
+- (1×) `1 000/jour · 50 000/mois` — pages/WhatsAppService.jsx
+- (1×) `1 active` — pages/Settings.jsx
+- (1×) `1 crédit` — components/ProductPageGeneratorModal.jsx
+- (1×) `1 mois` — pages/SuperAdminWorkspaces.jsx
+- (1×) `1 page produit complète avec visuels IA` — components/ProductPageGeneratorModal.jsx
+- (1×) `1-Tick Upsell` — pages/FormUpsellsPage.jsx
+- (1×) `1. Obtenez votre clé API` — pages/DeveloperSection.jsx
+- (1×) `100 - 500 messages` — pages/WhatsAppPostulation.jsx
+- (1×) `1000+ messages` — pages/WhatsAppPostulation.jsx
+- (1×) `12 mois` — pages/SuperAdminWorkspaces.jsx
+- (1×) `15 000+ commandes traitées` — pages/LandingPage.jsx
+- (1×) `15 minutes` — pages/LandingPage.jsx
+- (1×) `17 chapitres · 6h+ de contenu · Accès à vie` — pages/Formation.jsx
+- (1×) `180 jours` — pages/EmailAnalytics.jsx
+- (1×) `1ère image galerie` — components/ProductPageGeneratorModal.jsx
+- (1×) `2 clips générés automatiquement et injectés dans la description finale.` — components/ProductPageGeneratorModal.jsx
+- (1×) `2 colonnes` — components/VisualSiteBuilder.jsx
+- (1×) `2. Créez une instance` — pages/DeveloperSection.jsx
+- (1×) `25,000 XAF` — components/VisualSiteBuilder.jsx
+- (1×) `3 Modes de Fonctionnement` — pages/AgentConfig.jsx
+- (1×) `3 avis` — components/ReviewGenerator.jsx
+- (1×) `3 colonnes` — components/VisualSiteBuilder.jsx
+- (1×) `3 mois` — pages/SuperAdminWorkspaces.jsx
+- (1×) `3 à 30 caractères, lettres, chiffres et tirets uniquement` — pages/BoutiqueDomains.jsx
+- (1×) `3 étapes pour commencer à vendre` — pages/AgentIAList.jsx
+- (1×) `3. Scannez le QR code` — pages/DeveloperSection.jsx
+- (1×) `4 arguments marketing` — components/ProductPageGeneratorModal.jsx
+- (1×) `4 avis` — components/ReviewGenerator.jsx
+- (1×) `4 colonnes` — components/VisualSiteBuilder.jsx
+- (1×) `4. Envoyez un message !` — pages/DeveloperSection.jsx
+- (1×) `5 000/jour · 200 000/mois` — pages/WhatsAppService.jsx
+- (1×) `5 Bénéfices clés` — components/AlibabaImportModal.jsx
+- (1×) `5 avis` — components/ReviewGenerator.jsx
+- (1×) `5 colonnes` — components/VisualSiteBuilder.jsx
+- (1×) `5 offres` — pages/FormUpsellsPage.jsx
+- (1×) `5 visuels d'angles marketing, simples et sans surcharge de texte` — components/ProductPageGeneratorModal.jsx
+- (1×) `5/5 satisfaction` — pages/LandingPage.jsx
+- (1×) `50 à 500 commandes` — pages/WorkspaceSetup.jsx
+- (1×) `500 - 1000 messages` — pages/WhatsAppPostulation.jsx
+- (1×) `6 avis` — components/ReviewGenerator.jsx
+- (1×) `6 mois` — pages/SuperAdminWorkspaces.jsx
+- (1×) `70% pour maintenir la rentabilité` — pages/ComptaDashboard.jsx
+- (1×) `80 FCFA / image générée` — pages/CreativeGenerator.jsx
+- (1×) `: choisissez une image ou vidéo déjà uploadée sur le produit, ou laissez le média automatique` — pages/AgentConfig.jsx
+- (1×) `: collez l'URL d'une image uploadée` — pages/AgentConfig.jsx
+- (1×) `: l'agent ignore ces instructions et applique le comportement standard` — pages/AgentConfig.jsx
+- (1×) `: vos instructions ont la priorité maximale sur toutes les règles par défaut` — pages/AgentConfig.jsx
+- (1×) `A records :` — pages/BoutiqueDomains.jsx
+- (1×) `API Fish.audio intégrée directement` — pages/WhatsAppService.jsx
+- (1×) `Aa Bb Cc 123` — pages/BoutiqueTheme.jsx
+- (1×) `Abidjan, Côte d'Ivoire` — pages/BoutiquePages.jsx
+- (1×) `Abidjan, Douala...` — pages/ClientForm.jsx
+- (1×) `Abonnement 10 000 FCFA/mois` — pages/AffiliateDashboard.jsx
+- (1×) `Abonnement 15 000 FCFA/mois` — pages/AffiliateDashboard.jsx
+- (1×) `Abonnement 5 000 FCFA/mois` — pages/AffiliateDashboard.jsx
+- (1×) `Abonnement expiré` — pages/AgentIAList.jsx
+- (1×) `Abonnements actifs` — pages/SuperAdminBilling.jsx
+- (1×) `Acceptation des conditions` — pages/TermsOfService.jsx
+- (1×) `Accepter l'invitation` — pages/InviteAccept.jsx
+- (1×) `Acceptées` — pages/RitaPerformance.jsx
+- (1×) `Accessoires` — pages/ProductResearch.jsx
+- (1×) `Accès` — pages/UserManagement.jsx
+- (1×) `Accès actif` — pages/UserManagement.jsx
+- (1×) `Accès données sensibles` — pages/SecurityDashboard.jsx
+- (1×) `Accès verrouillé` — pages/SetupSuperAdmin.jsx
+- (1×) `Accédez à votre espace de travail` — pages/Login.jsx
+- (1×) `Achat 10 000F` — pages/AffiliateDashboard.jsx
+- (1×) `Achat 15 000F` — pages/AffiliateDashboard.jsx
+- (1×) `Achat 5 000F` — pages/AffiliateDashboard.jsx
+- (1×) `Achat Chine payé` — pages/SourcingList.jsx
+- (1×) `Acheter des credits` — components/ProductPageGeneratorModal.jsx
+- (1×) `Achète des crédits pour générer des pages produit IA.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Actif récemment` — pages/TeamPerformance.jsx
+- (1×) `Actif urbain` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Action:` — pages/DecisionForm.jsx
+- (1×) `Actions (24h)` — pages/SecurityDashboard.jsx
+- (1×) `Actions irréversibles sur votre compte.` — pages/Settings.jsx
+- (1×) `Actions tracées` — pages/SecurityDashboard.jsx
+- (1×) `Activation` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Activation → Actif` — pages/SuperAdminAnalytics.jsx
+- (1×) `Activations/Désactivations` — pages/SecurityDashboard.jsx
+- (1×) `Activer comme offre` — components/DigitalProductEbookModal.jsx
+- (1×) `Activer la boutique` — pages/StoreSetup.jsx
+- (1×) `Activer le GPS` — livreur/pages/LivreurHome.jsx
+- (1×) `Activer le Order Bump` — pages/FormUpsellsPage.jsx
+- (1×) `Activer les alertes WhatsApp` — pages/SuperAdminSettings.jsx
+- (1×) `Activer les instructions personnalisées` — pages/AgentConfig.jsx
+- (1×) `Activer les notifications` — components/PushNotificationBanner.jsx
+- (1×) `Activer les notifications push` — pages/Settings.jsx
+- (1×) `Activer les règles du premier message` — pages/AgentConfig.jsx
+- (1×) `Actives en ligne` — pages/FormQuantityOffersPage.jsx
+- (1×) `Activez` — pages/AgentConfig.jsx
+- (1×) `Activez la génération d'images pour obtenir des visuels` — components/AlibabaImportModal.jsx
+- (1×) `Activez la localisation dans les réglages de votre téléphone pour utiliser la navigation.` — livreur/pages/LivreurHome.jsx
+- (1×) `Activez ou désactivez les sections visibles sur votre boutique` — pages/BoutiqueTheme.jsx
+- (1×) `Activité 7 jours` — pages/CloseuseDashboard.jsx
+- (1×) `Activité boutiques` — pages/SuperAdminActivity.jsx
+- (1×) `Activité par workspace` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Activé le` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Actualiser` — components/SuperAdminShell.jsx
+- (1×) `Actualiser QR` — pages/DeveloperSection.jsx
+- (1×) `Add qty...` — components/productSettings/ConversionSettings.jsx
+- (1×) `Adresse (sous-domaine)` — pages/StoreCreationWizard.jsx
+- (1×) `Adresse de destination` — pages/LivreurDeliveries.jsx
+- (1×) `Adresse de la boutique` — pages/StoreSetup.jsx
+- (1×) `Adresse destinataire` — pages/SuperAdminMailServer.jsx
+- (1×) `Adresse non disponible pour afficher la carte` — livreur/pages/MapNavigation.jsx
+- (1×) `Affectations existantes` — pages/AssignmentsManager.jsx
+- (1×) `Affectez des sources et produits aux closeuses` — pages/AssignmentsManager.jsx
+- (1×) `Affiche non générée` — components/ProductPageGeneratorModal.jsx
+- (1×) `Affiche publicitaire` — components/ProductPageGeneratorModal.jsx
+- (1×) `Afficher la case à cocher sur le formulaire de commande` — pages/FormUpsellsPage.jsx
+- (1×) `Afficher le titre de la section` — components/productSettings/BlocksEditor.jsx
+- (1×) `Affiches publicitaires IA` — components/ProductPageGeneratorModal.jsx
+- (1×) `Affichée en haut de la boutique, y compris sur les pages produit quand elle est activée.` — pages/BoutiqueSettings.jsx
+- (1×) `Affichés` — pages/ClientsList.jsx
+- (1×) `Agent` — pages/WhatsAppService.jsx
+- (1×) `Agent IA créé !` — pages/AgentOnboarding.jsx
+- (1×) `Ajouter des images` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Ajouter l'accessoire assorti` — components/productSettings/LivePreview.jsx
+- (1×) `Ajouter les photos qui serviront de référence` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Ajouter un bloc` — pages/StoreProductForm.jsx
+- (1×) `Ajouter un client` — pages/ClientsList.jsx
+- (1×) `Ajouter un groupe` — pages/Settings.jsx
+- (1×) `Ajouter un membre` — pages/UserManagement.jsx
+- (1×) `Ajouter un pays...` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Ajouter une barre` — pages/StoreProductForm.jsx
+- (1×) `Ajouter une commande` — pages/OrdersList.jsx
+- (1×) `Ajouter une dépense pub` — pages/ControlCenter.jsx
+- (1×) `Ajouter une nouvelle source` — pages/Settings.jsx
+- (1×) `Ajouter une question` — pages/StoreProductForm.jsx
+- (1×) `Ajouter une slide` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Ajouter une stat` — pages/StoreProductForm.jsx
+- (1×) `Ajouter votre logo` — pages/CreativeGenerator.jsx
+- (1×) `Ajoutez Orange Money, MTN MoMo, etc.` — pages/AgentConfig.jsx
+- (1×) `Ajoutez des membres ou passez par un lien d'invitation pour démarrer l'équipe.` — pages/UserManagement.jsx
+- (1×) `Ajoutez des sections pour voir l'aperçu` — components/VisualSiteBuilder.jsx
+- (1×) `Ajoutez le stock de vos produits par ville pour que Rita puisse vérifier la disponibilité` — pages/WhatsAppService.jsx
+- (1×) `Ajoutez les sections dans le modèle de votre page d'accueil puis réorganisez-les dans la liste.` — pages/BoutiquePages.jsx
+- (1×) `Ajoutez une image produit ou un lien produit` — pages/CreativeGenerator.jsx
+- (1×) `Ajoutez une image, une vidéo ou un message vocal à votre campagne` — pages/CampaignForm.jsx
+- (1×) `Ajoutez vos premières zones de livraison` — pages/AgentConfig.jsx
+- (1×) `Ajoutez vos produits avec tous les détails : prix, description, images, vidéos, FAQ et objections. Plus c'est complet, plus l'agent est efficace.` — pages/WhatsAppService.jsx
+- (1×) `Ajoutez vos produits pour que Rita puisse les recommander` — pages/AgentConfig.jsx
+- (1×) `Ajoutez vos promotions, bonus ou avantages pour que Rita puisse les proposer au bon moment.` — pages/WhatsAppService.jsx
+- (1×) `Ajoutez votre premier produit de veille` — pages/ProductResearchList.jsx
+- (1×) `Alerte : Déséquilibre financier critique` — pages/TransactionsList.jsx
+- (1×) `Alerte WhatsApp et rapport quotidien envoyés au responsable.` — pages/WhatsAppService.jsx
+- (1×) `Alertes` — pages/TransactionsList.jsx
+- (1×) `Alertes budgets` — pages/TransactionsList.jsx
+- (1×) `Alibaba, Amazon, AliExpress, site fournisseur…` — pages/StoreProductForm.jsx
+- (1×) `Alignement` — pages/BoutiquePages.jsx
+- (1×) `Alignement du texte` — pages/BoutiquePages.jsx
+- (1×) `Aligner à gauche` — components/RichTextEditor.jsx
+- (1×) `All` — pages/OrdersList.jsx
+- (1×) `Aller en avant` — pages/BoutiquePages.jsx
+- (1×) `Allez dans l'onglet "Clés API" et créez une clé. Copiez-la immédiatement.` — pages/DeveloperSection.jsx
+- (1×) `Analyse Avant Chaque Réponse` — pages/AgentConfig.jsx
+- (1×) `Analyse complète des performances du produit` — pages/ProductReportDetail.jsx
+- (1×) `Analyse des abandons` — pages/SuperAdminAnalytics.jsx
+- (1×) `Analysez les opportunités de marché` — pages/ProductResearch.jsx
+- (1×) `Anciens` — pages/ProductResearchList.jsx
+- (1×) `Angle promo` — pages/CreativeGenerator.jsx
+- (1×) `Angles` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Annuel` — pages/BillingPage.jsx
+- (1×) `Annuler (Ctrl+Z)` — pages/VisualBuilder.jsx
+- (1×) `Anti-taches, illuminateur de teint, résultats visibles en 2 semaines` — pages/WhatsAppService.jsx
+- (1×) `Anti-taches, illuminateur de teint, résultats visibles en 2 semaines…` — pages/AgentConfig.jsx
+- (1×) `Apercu des slides` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Aperçu (1080×1080)` — components/ProductPageGeneratorModal.jsx
+- (1×) `Aperçu (client exemple : Aminata  Douala)` — pages/CampaignForm.jsx
+- (1×) `Aperçu avec :` — pages/ProductSettingsPage.jsx
+- (1×) `Aperçu boutique` — pages/BoutiquePages.jsx
+- (1×) `Aperçu campagne` — pages/CampaignsList.jsx
+- (1×) `Aperçu couverture` — components/DigitalProductEbookModal.jsx
+- (1×) `Aperçu dans le formulaire` — pages/FormUpsellsPage.jsx
+- (1×) `Aperçu de conversion` — pages/Settings.jsx
+- (1×) `Aperçu de la décision` — pages/DecisionForm.jsx
+- (1×) `Aperçu ebook PDF` — components/DigitalProductEbookModal.jsx
+- (1×) `Aperçu indisponible` — pages/BoutiquePages.jsx
+- (1×) `Appareils` — pages/SuperAdminDashboard.jsx
+- (1×) `Appeler` — pages/StoreFront.jsx
+- (1×) `Applique le` — pages/SuperAdminBilling.jsx
+- (1×) `Appliquer le prix suggéré` — pages/ProductForm.jsx
+- (1×) `Approuvées` — pages/AffiliateCommissions.jsx
+- (1×) `Appuyez pour accepter une livraison` — livreur/pages/LivreurHome.jsx
+- (1×) `Arrondis` — pages/EnhancedVisualBuilder.jsx
+- (1×) `Arrêt...` — pages/CampaignsList.jsx
+- (1×) `Arrêter` — pages/DecisionForm.jsx
+- (1×) `Arrêter l'envoi` — pages/Marketing.jsx
+- (1×) `Article` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Assigner un livreur` — pages/OrderDetail.jsx
+- (1×) `Assigné ù :` — pages/DecisionForm.jsx
+- (1×) `Assignées` — pages/ControlCenter.jsx
+- (1×) `Assistant Builder IA` — components/BuilderAiChat.jsx
+- (1×) `Assistant IA` — components/BuilderAiChat.jsx
+- (1×) `Astuce: vous pouvez réutiliser une offre comme offre de dernière relance en un clic.` — pages/WhatsAppService.jsx
+- (1×) `Aucun abonnement ou essai n'expire bientôt` — pages/SuperAdminBilling.jsx
+- (1×) `Aucun affilié actif` — pages/AffiliatesAdmin.jsx
+- (1×) `Aucun agent créé` — pages/AgentIAList.jsx
+- (1×) `Aucun agent service client` — pages/ServiceClient.jsx
+- (1×) `Aucun aperçu disponible` — pages/ImportOrders.jsx
+- (1×) `Aucun canal` — components/ChatWidget.jsx
+- (1×) `Aucun champ éditable pour cette section.` — pages/VisualBuilder.jsx
+- (1×) `Aucun client` — pages/StatsPage.jsx
+- (1×) `Aucun client trouvé avec ces filtres` — pages/CampaignForm.jsx
+- (1×) `Aucun code promo` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Aucun compte configuré` — pages/AgentConfig.jsx
+- (1×) `Aucun compte gratuit ou essai en cours` — pages/SuperAdminBilling.jsx
+- (1×) `Aucun contact enregistré` — pages/AgentConfig.jsx
+- (1×) `Aucun enregistrement détecté. Vérifiez votre configuration DNS.` — pages/BoutiqueDomains.jsx
+- (1×) `Aucun envoi journalise pour le moment` — pages/SuperAdminMailServer.jsx
+- (1×) `Aucun flow configuré. Crée ton premier flow !` — pages/RitaFlows.jsx
+- (1×) `Aucun fournisseur` — pages/SourcingList.jsx
+- (1×) `Aucun groupe` — pages/TeamChat.jsx
+- (1×) `Aucun groupe configuré` — pages/OrdersList.jsx
+- (1×) `Aucun groupe configuré. Ajoutez-en un ci-dessous.` — pages/Settings.jsx
+- (1×) `Aucun groupe de livraison configuré.` — pages/OrderDetail.jsx
+- (1×) `Aucun groupe trouvé` — pages/AgentConfig.jsx
+- (1×) `Aucun groupe trouvé sur l'instance WhatsApp.` — pages/RitaFlows.jsx
+- (1×) `Aucun groupe à animer` — pages/RitaGroupAnimation.jsx
+- (1×) `Aucun historique d'import` — pages/ImportOrders.jsx
+- (1×) `Aucun lien d'invitation` — pages/UserManagement.jsx
+- (1×) `Aucun livreur` — pages/LivreurManagement.jsx
+- (1×) `Aucun livreur dans l'équipe. Ajoutez-en un dans Gestion Équipe.` — pages/OrderDetail.jsx
+- (1×) `Aucun log` — pages/DeveloperSection.jsx
+- (1×) `Aucun log a afficher` — pages/SuperAdminMailServer.jsx
+- (1×) `Aucun log trouvé` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Aucun mail local trouve` — pages/SuperAdminMailServer.jsx
+- (1×) `Aucun membre dans cette catégorie` — pages/TeamPerformance.jsx
+- (1×) `Aucun membre pour l'instant` — pages/UserManagement.jsx
+- (1×) `Aucun membre trouvé` — pages/TeamChat.jsx
+- (1×) `Aucun message dans cette conversation.` — pages/SuperAdminSupport.jsx
+- (1×) `Aucun message enregistré` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Aucun objectif défini` — pages/Goals.jsx
+- (1×) `Aucun objectif défini pour ce mois` — pages/AdminDashboard.jsx
+- (1×) `Aucun paiement` — pages/BillingPage.jsx
+- (1×) `Aucun paiement enregistre` — pages/SuperAdminBilling.jsx
+- (1×) `Aucun paiement trouve` — pages/SuperAdminBilling.jsx
+- (1×) `Aucun palier — les clients paient le prix standard` — pages/AgentConfig.jsx
+- (1×) `Aucun parcours recent` — pages/SuperAdminDashboard.jsx
+- (1×) `Aucun plan à afficher` — pages/SuperAdminDashboard.jsx
+- (1×) `Aucun post planifié.` — pages/AgentConfig.jsx
+- (1×) `Aucun post planifié. Rita peut animer ce groupe automatiquement !` — pages/RitaGroupAnimation.jsx
+- (1×) `Aucun rapport` — pages/ReportsList.jsx
+- (1×) `Aucun rapport trouvé pour cette période` — pages/StatsRapports.jsx
+- (1×) `Aucun revenu enregistre` — pages/SuperAdminBilling.jsx
+- (1×) `Aucun réapprovisionnement nécessaire pour le moment.` — pages/AdminDashboard.jsx
+- (1×) `Aucun résultat pour cette vue` — pages/StoreProductsList.jsx
+- (1×) `Aucun résultat trouvé` — pages/CampaignDetail.jsx
+- (1×) `Aucun statut planifié` — pages/AgentConfig.jsx
+- (1×) `Aucun stock configuré` — pages/WhatsAppService.jsx
+- (1×) `Aucun test lance dans cette session` — pages/SuperAdminMailServer.jsx
+- (1×) `Aucun ticket` — pages/UserSupport.jsx
+- (1×) `Aucun utilisateur actif sur cette periode` — pages/SuperAdminDashboard.jsx
+- (1×) `Aucun utilisateur trouvé` — pages/SuperAdminUsers.jsx
+- (1×) `Aucun utilisateur trouvé pour cette période` — pages/SuperAdminAnalytics.jsx
+- (1×) `Aucun utilisateur trouvé.` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Aucun utilisateur.` — pages/SuperAdminActivity.jsx
+- (1×) `Aucun vendeur sur cette période` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Aucun visuel stocké` — pages/CreativeGallery.jsx
+- (1×) `Aucun workspace` — pages/SuperAdminDashboard.jsx
+- (1×) `Aucun workspace trouve` — pages/SuperAdminBilling.jsx
+- (1×) `Aucune FAQ configurée` — pages/AgentConfig.jsx
+- (1×) `Aucune FAQ générée` — components/AlibabaImportModal.jsx
+- (1×) `Aucune action trackee` — pages/SuperAdminDashboard.jsx
+- (1×) `Aucune activité enregistrée` — pages/UserManagement.jsx
+- (1×) `Aucune affectation` — pages/AssignmentsManager.jsx
+- (1×) `Aucune alerte` — pages/TransactionsList.jsx
+- (1×) `Aucune alerte de stock` — components/StockAlert.jsx
+- (1×) `Aucune automation configurée` — pages/SuperAdminPushCenter.jsx
+- (1×) `Aucune boutique` — components/StoreSwitcher.jsx
+- (1×) `Aucune boutique configurée` — pages/EnhancedVisualBuilder.jsx
+- (1×) `Aucune boutique.` — pages/SuperAdminActivity.jsx
+- (1×) `Aucune campagne dans ce segment` — pages/CampaignsList.jsx
+- (1×) `Aucune campagne envoyée pour l'instant` — pages/Marketing.jsx
+- (1×) `Aucune campagne pour le moment` — pages/RitaPerformance.jsx
+- (1×) `Aucune carte bancaire · Prêt en moins de 2 minutes` — pages/LandingPage.jsx
+- (1×) `Aucune closeuse disponible` — pages/AssignmentsManager.jsx
+- (1×) `Aucune clé API — créez-en une pour commencer.` — pages/DeveloperSection.jsx
+- (1×) `Aucune clé à saisir ici. Rita utilise automatiquement l'API Fish.audio configurée côté serveur.` — pages/WhatsAppService.jsx
+- (1×) `Aucune commande fournisseur trouvée` — pages/StockOrdersList.jsx
+- (1×) `Aucune commande livrée.` — pages/Commissions.jsx
+- (1×) `Aucune connexion récente` — pages/SuperAdminDashboard.jsx
+- (1×) `Aucune connexion.` — pages/SuperAdminActivity.jsx
+- (1×) `Aucune coordonnée renseignée` — livreur/pages/LivreurProfile.jsx
+- (1×) `Aucune course disponible pour le moment` — pages/LivreurDashboard.jsx
+- (1×) `Aucune donnée d'agence disponible` — pages/ReportsInsightsPage.jsx
+- (1×) `Aucune donnée géographique` — pages/SuperAdminAnalytics.jsx
+- (1×) `Aucune donnée par canal` — pages/StoreAnalytics.jsx
+- (1×) `Aucune donnée pour ce filtre` — pages/ProductPageStudio.jsx
+- (1×) `Aucune dépense enregistrée` — pages/TransactionsList.jsx
+- (1×) `Aucune entrée de stock` — pages/StockManagement.jsx
+- (1×) `Aucune entrée de stock. Ajoutez vos produits pour activer le suivi.` — pages/AgentConfig.jsx
+- (1×) `Aucune entrée enregistrée` — pages/TransactionsList.jsx
+- (1×) `Aucune generation ne correspond aux filtres.` — pages/SuperAdminProductPageHistory.jsx
+- (1×) `Aucune génération ne correspond aux filtres.` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Aucune génération récente` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Aucune image générée` — components/AlibabaImportModal.jsx
+- (1×) `Aucune instance` — pages/CampaignsList.jsx
+- (1×) `Aucune instance WhatsApp` — pages/WhatsAppService.jsx
+- (1×) `Aucune instance WhatsApp active` — pages/Marketing.jsx
+- (1×) `Aucune instance connectée` — pages/WhatsAppConnexion.jsx
+- (1×) `Aucune instance enregistrée` — components/WhatsAppInstanceSelector.jsx
+- (1×) `Aucune instance provider.` — pages/DeveloperSection.jsx
+- (1×) `Aucune instance — créez-en une pour commencer.` — pages/DeveloperSection.jsx
+- (1×) `Aucune livraison` — pages/CloseuseDashboard.jsx
+- (1×) `Aucune livraison en cours` — livreur/pages/LivreurHome.jsx
+- (1×) `Aucune methode payee enregistree pour le moment` — pages/SuperAdminBilling.jsx
+- (1×) `Aucune notification programmée` — pages/SuperAdminPushCenter.jsx
+- (1×) `Aucune objection configurée` — pages/AgentConfig.jsx
+- (1×) `Aucune offre de sortie` — pages/FormUpsellsPage.jsx
+- (1×) `Aucune page trackee` — pages/SuperAdminDashboard.jsx
+- (1×) `Aucune page visitée enregistrée` — pages/SuperAdminAnalytics.jsx
+- (1×) `Aucune postulation trouvée` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Aucune règle — toutes les commandes utilisent la config globale ci-dessus.` — pages/OrdersList.jsx
+- (1×) `Aucune section` — pages/VisualBuilder.jsx
+- (1×) `Aucune section configurée` — pages/VisualBuilder.jsx
+- (1×) `Aucune session active` — pages/Profile.jsx
+- (1×) `Aucune source configurée` — pages/ImportOrders.jsx
+- (1×) `Aucune source disponible` — pages/AssignmentsManager.jsx
+- (1×) `Aucune sous-section.` — pages/VisualBuilder.jsx
+- (1×) `Aucune transaction sur cette période.` — pages/ControlCenter.jsx
+- (1×) `Aucune transaction. Utilisez le simulateur ci-dessous.` — pages/AffiliateDashboard.jsx
+- (1×) `Aucune vente produit disponible.` — pages/SuperAdminActivity.jsx
+- (1×) `Aucune vidéo ajoutée` — pages/AgentConfig.jsx
+- (1×) `Aucune zone configurée` — pages/AgentConfig.jsx
+- (1×) `Audience cible` — components/DigitalProductEbookModal.jsx
+- (1×) `Augmentez la valeur de chaque commande avec des offres ciblées` — pages/FormUpsellsPage.jsx
+- (1×) `Aujourd'hui:` — pages/DeveloperSection.jsx
+- (1×) `Authentification` — pages/DeveloperSection.jsx
+- (1×) `Authorization: Bearer prov_xxxxxxxxxxxxxxxxx` — pages/ProviderService.jsx
+- (1×) `Auto-refresh 5s` — pages/EmailCampaignResults.jsx
+- (1×) `Auto-sauvegarde activée` — pages/BoutiqueSettings.jsx
+- (1×) `Automatique` — pages/AgentConfig.jsx
+- (1×) `Autorise la creation et la configuration de l'agent Rita.` — pages/UserManagement.jsx
+- (1×) `Autre chose` — pages/WorkspaceSetup.jsx
+- (1×) `Available Quantities` — components/productSettings/ConversionSettings.jsx
+- (1×) `Avancement` — pages/TransactionsList.jsx
+- (1×) `Avancement du mois` — pages/TransactionsList.jsx
+- (1×) `Avant / Après` — components/ProductPageGeneratorModal.jsx
+- (1×) `Avatar / Mannequin` — components/ProductPageGeneratorModal.jsx
+- (1×) `Avez-vous un code promo ?` — pages/BillingPage.jsx
+- (1×) `Avez-vous un logo ?` — pages/StoreCreationWizard.jsx
+- (1×) `Avis existants` — components/ReviewGenerator.jsx
+- (1×) `Badge remise` — components/productSettings/OffersEditor.jsx
+- (1×) `Barre d'annonce` — pages/BoutiqueSettings.jsx
+- (1×) `Barré` — components/RichTextEditor.jsx
+- (1×) `Basculer entre vos espaces (rôle différent selon l'espace).` — pages/Profile.jsx
+- (1×) `Base URL (API publique)` — pages/DeveloperSection.jsx
+- (1×) `Base de contacts et segments` — pages/ClientsList.jsx
+- (1×) `Basse` — pages/DecisionForm.jsx
+- (1×) `Beauté/Bien-être` — pages/WhatsAppPostulation.jsx
+- (1×) `Bibliothèque de créatives générées` — pages/CreativeGallery.jsx
+- (1×) `Bibliothèque de sections` — pages/BoutiquePages.jsx
+- (1×) `Bienvenue chez nous ! Découvrez notre sélection de produits de qualité…` — pages/StoreCreationWizard.jsx
+- (1×) `Bienvenue dans le support` — components/SupportChatWidget.jsx
+- (1×) `Bienvenue sur Scalor` — pages/Formation.jsx
+- (1×) `Blocs disponibles` — components/PageBuilderFixed.jsx
+- (1×) `Bloque ou autorise l'acces direct a Rita pour ce compte.` — pages/UserManagement.jsx
+- (1×) `Bloqués` — pages/SuperAdminUsers.jsx
+- (1×) `Bold` — components/productSettings/DesignSettings.jsx
+- (1×) `Bonjour ! Je suis Rita 👋 Comment puis-je vous aider ?` — pages/WhatsAppService.jsx
+- (1×) `Bonjour ! Tu as eu le temps de réfléchir ?` — pages/WhatsAppService.jsx
+- (1×) `Boutique IA` — pages/LandingPage.jsx
+- (1×) `Boutique en ligne` — pages/BoutiqueDashboard.jsx
+- (1×) `Boutique, owner, workspace…` — pages/SuperAdminActivity.jsx
+- (1×) `Boutiques` — pages/SuperAdminActivity.jsx
+- (1×) `Bouton du formulaire` — pages/ProductSettingsPage.jsx
+- (1×) `Bouton principal` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Bouton sticky` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Brève description du rôle de cet agent...` — pages/AgentOnboarding.jsx
+- (1×) `Budget` — pages/ControlCenter.jsx
+- (1×) `Budget pub dépensé` — pages/ControlCenter.jsx
+- (1×) `Budget pub max` — pages/ControlCenter.jsx
+- (1×) `Builder boutique style Shopify` — pages/BoutiquePages.jsx
+- (1×) `Bullets affichés` — pages/SuperAdminPlans.jsx
+- (1×) `Bénéfice annuel` — pages/ProductResearch.jsx
+- (1×) `Bénéfice mensuel` — pages/ProductResearch.jsx
+- (1×) `Bénéfice principal` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Bénéfice réel` — pages/ControlCenter.jsx
+- (1×) `Bénéfice/unité` — pages/ProductResearch.jsx
+- (1×) `Bénéfices` — pages/CreativeGenerator.jsx
+- (1×) `C'est combien le Sérum Éclat ?` — pages/WhatsAppService.jsx
+- (1×) `CA` — pages/ProductReportDetail.jsx
+- (1×) `CA Livré` — pages/Commissions.jsx
+- (1×) `CA confirmé` — pages/ControlCenter.jsx
+- (1×) `CA encaissé` — pages/ControlCenter.jsx
+- (1×) `CA total` — pages/SuperAdminActivity.jsx
+- (1×) `COÛT LIVRAISON` — pages/LivreurDeliveryDetail.jsx
+- (1×) `CTA Button` — components/ThemeTest.jsx
+- (1×) `CTA Color:` — components/ThemeTest.jsx
+- (1×) `Campagne interrompue.` — pages/CampaignsList.jsx
+- (1×) `Campagne lancée avec succès` — pages/WhatsAppService.jsx
+- (1×) `Campagnes` — pages/CampaignsList.jsx
+- (1×) `Canal` — pages/StoreOrdersDashboard.jsx
+- (1×) `Canal / Référent` — pages/StoreAnalytics.jsx
+- (1×) `Canal de commande` — pages/StoreAnalytics.jsx
+- (1×) `Canal de groupe` — pages/TeamChat.jsx
+- (1×) `Caractéristiques` — pages/WhatsAppService.jsx
+- (1×) `Caractéristiques clés` — pages/AgentConfig.jsx
+- (1×) `Carré 1:1 pour le carousel` — components/ProductPageGeneratorModal.jsx
+- (1×) `Carte de livraison` — livreur/pages/MapNavigation.jsx
+- (1×) `Catalogue` — pages/StoreProductForm.jsx
+- (1×) `Catalogue vide` — pages/AgentConfig.jsx
+- (1×) `Catégorie *` — pages/TransactionForm.jsx
+- (1×) `Catégorie principale` — pages/StoreProductsList.jsx
+- (1×) `Ce lien de réinitialisation est invalide ou a expiré.` — pages/ResetPassword.jsx
+- (1×) `Ce message sera envoyé à` — pages/SuperAdminSupport.jsx
+- (1×) `Ce mois:` — pages/DeveloperSection.jsx
+- (1×) `Ce nom apparaitra dans la liste des sources sur la page Commandes` — pages/ImportOrders.jsx
+- (1×) `Ce numéro reçoit automatiquement la notification lors de la soumission d'un rapport.` — pages/Settings.jsx
+- (1×) `Ce produit n'a pas encore d'image ni de vidéo uploadée. Le statut utilisera seulement le texte personnalisé.` — pages/AgentConfig.jsx
+- (1×) `Ce qu'ils font` — pages/SuperAdminDashboard.jsx
+- (1×) `Ce que cela signifie concrètement pour vous :` — pages/SecurityDashboard.jsx
+- (1×) `Ce que disent nos clients` — pages/BoutiquePages.jsx
+- (1×) `Ce que l'assistant prépare` — pages/StoreCreationWizard.jsx
+- (1×) `Ce qui s'est passe` — pages/SuperAdminMailServer.jsx
+- (1×) `Ce qui sera généré automatiquement` — components/AlibabaImportModal.jsx
+- (1×) `Ce quota est lié au compte Rita. Passez à une offre supérieure pour continuer.` — pages/WhatsAppService.jsx
+- (1×) `Ce sous-domaine est déjà pris — choisissez-en un autre` — pages/BoutiqueDomains.jsx
+- (1×) `Ce sous-domaine est déjà utilisé` — pages/StoreCreationWizard.jsx
+- (1×) `Ce système va générer` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Ce ticket est résolu.` — pages/UserSupport.jsx
+- (1×) `Centrer` — components/RichTextEditor.jsx
+- (1×) `Certains jours` — pages/AgentConfig.jsx
+- (1×) `Certificat SSL` — pages/BoutiqueDomains.jsx
+- (1×) `Ces groupes reçoivent les commandes à livrer quand vous cliquez "Envoyer au groupe".` — pages/Settings.jsx
+- (1×) `Ces infos aident l'IA a mieux cibler ta page produit` — components/ProductPageGeneratorModal.jsx
+- (1×) `Cette action est irréversible et supprimera toutes les statistiques associées.` — pages/Marketing.jsx
+- (1×) `Cette boutique n'existe pas ou n'est pas encore activée.` — pages/StoreFront.jsx
+- (1×) `Cette conversation est fermée.` — pages/SuperAdminSupport.jsx
+- (1×) `Cette instance n'est plus valide. Voici comment résoudre :` — pages/WhatsAppService.jsx
+- (1×) `Champs du formulaire` — pages/ProductSettingsPage.jsx
+- (1×) `Change de filtre ou lance une nouvelle génération.` — pages/ProductPageStudio.jsx
+- (1×) `Changement en cours…` — pages/AgentConfig.jsx
+- (1×) `Changements de rôle` — pages/SecurityDashboard.jsx
+- (1×) `Changer d'image` — components/ProductPageGeneratorModal.jsx
+- (1×) `Changer l'image` — pages/CreativeGenerator.jsx
+- (1×) `Changer la photo de profil` — pages/Profile.jsx
+- (1×) `Changer le mot de passe` — pages/SuperAdminSettings.jsx
+- (1×) `Changez le filtre pour voir d'autres campagnes.` — pages/CampaignsList.jsx
+- (1×) `Changez votre mot de passe pour sécuriser votre compte` — pages/Profile.jsx
+- (1×) `Chapitres` — components/DigitalProductEbookModal.jsx
+- (1×) `Chaque email envoye par Scalor (OTP, notifications, campagnes) avec son ID de queue Postfix — croisable avec l'onglet Logs.` — pages/SuperAdminMailServer.jsx
+- (1×) `Chaque email envoye par l'application apparaitra ici (OTP, notifications, campagnes...).` — pages/SuperAdminMailServer.jsx
+- (1×) `Chaque ligne est traduite en langage simple. Le detail technique reste disponible pour tracer un ID de queue.` — pages/SuperAdminMailServer.jsx
+- (1×) `Chaque nouvelle commande Shopify declenche un webhook vers Scalor` — pages/ConnectShopify.jsx
+- (1×) `Chaque nouvelle commande est automatiquement notifiée dans le groupe assigné au produit concerné.` — pages/Settings.jsx
+- (1×) `Chaque requête doit contenir votre clé API dans le header Authorization :` — pages/DeveloperSection.jsx
+- (1×) `Chargement de Rita...` — pages/WhatsAppService.jsx
+- (1×) `Chargement de l'aperçu` — pages/BoutiquePages.jsx
+- (1×) `Chargement de l'aperçu...` — pages/ImportOrders.jsx
+- (1×) `Chargement de la boutique…` — pages/VisualBuilder.jsx
+- (1×) `Chargement de la configuration...` — pages/AgentConfig.jsx
+- (1×) `Chargement des donnees facturation...` — pages/SuperAdminBilling.jsx
+- (1×) `Chargement des données Scalor…` — pages/ControlCenter.jsx
+- (1×) `Chargement des groupes...` — pages/AgentConfig.jsx
+- (1×) `Chargement des offres…` — pages/Tarifs.jsx
+- (1×) `Chargement des produits...` — pages/TransactionsList.jsx
+- (1×) `Chargement des sources...` — pages/Settings.jsx
+- (1×) `Chargement du builder...` — pages/EnhancedVisualBuilder.jsx
+- (1×) `Chargement du monitoring mail...` — pages/SuperAdminMailServer.jsx
+- (1×) `Chargement du produit…` — components/productSettings/LivePreview.jsx
+- (1×) `Chargement fournisseur...` — pages/SupplierDetail.jsx
+- (1×) `Chargez d'abord vos groupes dans l'onglet Groupes` — pages/AgentConfig.jsx
+- (1×) `Chat test` — pages/WhatsAppService.jsx
+- (1×) `Chat Équipe` — components/ChatWidget.jsx
+- (1×) `Chiffre d'affaires COD` — pages/StoreAnalytics.jsx
+- (1×) `Chiffre d'affaires des commandes livrées` — pages/Commissions.jsx
+- (1×) `Chiffrement AES-256` — pages/Login.jsx
+- (1×) `Choisie le type de produit — chaque template a son propre style d'images` — components/ProductPageGeneratorModal.jsx
+- (1×) `Choisir depuis la liste` — pages/Settings.jsx
+- (1×) `Choisir l'instance active` — pages/AgentConfig.jsx
+- (1×) `Choisir la closeuse` — pages/AssignmentsManager.jsx
+- (1×) `Choisir un pack` — pages/CreativeGenerator.jsx
+- (1×) `Choisir un pays` — pages/StoreProductForm.jsx
+- (1×) `Choisir un produit du catalogue` — pages/StoreProductForm.jsx
+- (1×) `Choisir un produit...` — pages/WhatsAppService.jsx
+- (1×) `Choisir...` — pages/VisualBuilder.jsx
+- (1×) `Choisis directement le genre, l’âge et le profil de l’audience.` — components/ProductGeneratorModal.jsx
+- (1×) `Choisis le genre, l’âge et le profil sans devoir tout écrire à la main.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Choisis le type de visuels que le modèle doit générer pour cette page produit.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Choisis un thème pour ta page produit` — components/productSettings/ThemeSelector.jsx
+- (1×) `Choisissez comment Rita répond aux clients sur WhatsApp` — pages/WhatsAppService.jsx
+- (1×) `Choisissez comment et quand vous souhaitez être notifié.` — pages/Settings.jsx
+- (1×) `Choisissez l'instance WhatsApp` — pages/CampaignsList.jsx
+- (1×) `Choisissez le moteur de synthèse vocale pour Rita` — pages/WhatsAppService.jsx
+- (1×) `Choisissez le produit, personnalisez le texte si besoin, puis laissez le média en automatique ou sélectionnez une image / vidéo déjà uploadée.` — pages/AgentConfig.jsx
+- (1×) `Choisissez si Rita doit avoir une voix plus neutre ou plus réelle dans l'agent WhatsApp.` — pages/WhatsAppService.jsx
+- (1×) `Choisissez un Google Sheet configuré ou entrez un nouveau lien` — pages/ImportOrders.jsx
+- (1×) `Choisissez un template de message` — pages/CampaignForm.jsx
+- (1×) `Choisissez une workspace dans le menu ci-dessus pour voir les statistiques` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Choisissez votre nouveau mot de passe` — pages/ResetPassword.jsx
+- (1×) `Choisissez votre offre` — components/productSettings/OffersEditor.jsx
+- (1×) `Ciblage` — pages/SuperAdminPushCenter.jsx
+- (1×) `Ciblage des clients` — pages/CampaignForm.jsx
+- (1×) `Cible attendue :` — pages/BoutiqueDomains.jsx
+- (1×) `Ciblés:` — pages/RitaPerformance.jsx
+- (1×) `Classement des meilleurs affiliés` — pages/AffiliatesAdmin.jsx
+- (1×) `Classement détaillé des jours rentables et des agences` — pages/ReportsInsightsPage.jsx
+- (1×) `Classements basés sur les rapports quotidiens` — pages/StatsRapports.jsx
+- (1×) `Classique` — components/ProductPageGeneratorModal.jsx
+- (1×) `Click to insert a variable` — components/productSettings/AutomationSettings.jsx
+- (1×) `Clics par jour (30 derniers jours)` — pages/AffiliatesAdmin.jsx
+- (1×) `Clics totaux` — pages/AffiliateLinks.jsx
+- (1×) `Clics uniques / total` — pages/EmailCampaignResults.jsx
+- (1×) `Client premium` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Client, téléphone, ville ou produit` — pages/OrdersList.jsx
+- (1×) `Clients Disent` — components/ProductTestimonials.jsx
+- (1×) `Clients actifs` — pages/AffiliateDashboard.jsx
+- (1×) `Clients ciblés` — pages/CampaignsList.jsx
+- (1×) `Cliquer pour choisir une image` — components/RichTextEditor.jsx
+- (1×) `Cliquer pour copier` — pages/WhatsAppService.jsx
+- (1×) `Cliquer pour uploader` — pages/AgentConfig.jsx
+- (1×) `Cliquez` — pages/Settings.jsx
+- (1×) `Cliquez sur "où ?" pour indiquer l'emplacement de chaque média` — components/BuilderAiChat.jsx
+- (1×) `Cliquez sur un champ pour l'éditer.` — pages/AgentConfig.jsx
+- (1×) `Cliquez sur un groupe pour envoyer` — pages/AgentConfig.jsx
+- (1×) `Cliquez sur un produit dans la liste pour l'éditer` — pages/AgentConfig.jsx
+- (1×) `Cliquez sur une conversation à gauche pour voir les messages et répondre.` — pages/SuperAdminSupport.jsx
+- (1×) `Clonage vocal haute fidélité avec le modèle S2-Pro` — pages/WhatsAppService.jsx
+- (1×) `Closeuses` — pages/OrdersList.jsx
+- (1×) `Closeuses (90 derniers jours)` — pages/ControlCenter.jsx
+- (1×) `Cloudflare :` — pages/BoutiqueDomains.jsx
+- (1×) `Clés API` — pages/DeveloperSection.jsx
+- (1×) `Cmds` — pages/Goals.jsx
+- (1×) `Coche/décoche et réordonne. Chaque slide génère une image 9:16 dédiée.` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Cochez les villes où vous pouvez expédier vos produits` — pages/AgentConfig.jsx
+- (1×) `Code` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Code :` — components/AffiliateLayout.jsx
+- (1×) `Code actif` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Code d'invitation (ex: ABC123)` — pages/Profile.jsx
+- (1×) `Code injecté automatiquement dans votre boutique :` — pages/BoutiquePixel.jsx
+- (1×) `Code promo (optionnel)` — pages/BillingPage.jsx
+- (1×) `Code à 6 chiffres` — pages/Register.jsx
+- (1×) `Codes` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Coins arrondis (Border Radius)` — pages/BoutiqueTheme.jsx
+- (1×) `Colis` — livreur/pages/DeliveryDetail.jsx
+- (1×) `Coller un lien d'invitation` — pages/Settings.jsx
+- (1×) `Collez le token recu par email` — pages/ProviderService.jsx
+- (1×) `Colonnes` — components/VisualSiteBuilder.jsx
+- (1×) `Colonnes détectées` — pages/ImportOrders.jsx
+- (1×) `Commande créée` — pages/OrderDetail.jsx
+- (1×) `Commande introuvable` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Commande payée` — pages/SourcingList.jsx
+- (1×) `Commande → Vente` — pages/RitaPerformance.jsx
+- (1×) `Commandes Totales` — pages/ComptaDashboard.jsx
+- (1×) `Commandes assignées` — pages/TeamPerformance.jsx
+- (1×) `Commandes ce mois` — pages/TransactionsList.jsx
+- (1×) `Commandes du jour` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Commandes générées` — pages/ControlCenter.jsx
+- (1×) `Commandes générées par mois` — pages/WorkspaceSetup.jsx
+- (1×) `Commandes livrées / total` — pages/Commissions.jsx
+- (1×) `Commandes récentes` — pages/CloseuseDashboard.jsx
+- (1×) `Commandes traitées` — pages/TeamPerformance.jsx
+- (1×) `Commandes · WhatsApp · IA · Analytics · Boutique` — pages/LandingPage.jsx
+- (1×) `Commandé` — pages/AgentConfig.jsx
+- (1×) `Commencer Scalor` — pages/LandingPage.jsx
+- (1×) `Commencer l'essai gratuit — 7 jours` — pages/BillingPage.jsx
+- (1×) `Commencez par fixer vos buts pour cette période.` — pages/Goals.jsx
+- (1×) `Comment Rita amène le prospect à décider` — pages/WhatsAppService.jsx
+- (1×) `Comment Rita réagit à chaque situation particulière` — pages/AgentConfig.jsx
+- (1×) `Comment Rita répond aux blocages clients` — pages/AgentConfig.jsx
+- (1×) `Comment ajouter un groupe :` — pages/Settings.jsx
+- (1×) `Comment ca marche` — pages/ProviderService.jsx
+- (1×) `Comment ca marche ?` — pages/ConnectShopify.jsx
+- (1×) `Comment configurer chez mon registrar ?` — pages/BoutiqueDomains.jsx
+- (1×) `Comment pouvons-nous vous aider ?` — components/SupportChatWidget.jsx
+- (1×) `Comment ça fonctionne` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Comment ça marche :` — pages/WhatsAppService.jsx
+- (1×) `Commerciale IA` — pages/WhatsAppService.jsx
+- (1×) `Commerciaux IA` — pages/AgentIAList.jsx
+- (1×) `Commission de la closeuse` — pages/AssignmentsManager.jsx
+- (1×) `Commissions ce mois (30%)` — pages/AffiliateDashboard.jsx
+- (1×) `Communauté Scalor sur WhatsApp` — components/EcomLayout.jsx
+- (1×) `Comparaison détaillée` — pages/BillingPage.jsx
+- (1×) `Complément recommandé pour ce produit` — components/productSettings/LivePreview.jsx
+- (1×) `Comportement` — pages/AgentConfig.jsx
+- (1×) `Compose une image 1080×1080 avec ta photo + texte. Aucun crédit requis.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Composition` — components/ProductPageGeneratorModal.jsx
+- (1×) `Comptabilité d'engagement sur commandes livrées` — pages/ComptaDashboard.jsx
+- (1×) `Compte` — pages/DeveloperSection.jsx
+- (1×) `Compte créé avec succès` — pages/Register.jsx
+- (1×) `Compte unique` — pages/SetupSuperAdmin.jsx
+- (1×) `Comptes Mobile Money` — pages/AgentConfig.jsx
+- (1×) `Confiance accrue` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Confiance client` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Configuration` — pages/FormUpsellsPage.jsx
+- (1×) `Configuration Livraison` — pages/AgentConfig.jsx
+- (1×) `Configuration Postfix active` — pages/SuperAdminMailServer.jsx
+- (1×) `Configuration SMTP app` — pages/SuperAdminMailServer.jsx
+- (1×) `Configuration WhatsApp` — pages/OrdersList.jsx
+- (1×) `Configuration dans Shopify` — pages/ConnectShopify.jsx
+- (1×) `Configuration de votre espace` — pages/Settings.jsx
+- (1×) `Configuration globale` — pages/AffiliatesAdmin.jsx
+- (1×) `Configuration initiale` — pages/SetupSuperAdmin.jsx
+- (1×) `Configuration requise` — components/WhatsAppInstanceSelector.jsx
+- (1×) `Configurer` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Configurer Auto WhatsApp` — pages/OrdersList.jsx
+- (1×) `Configurer Rita IA` — pages/WhatsAppService.jsx
+- (1×) `Configurer WhatsApp auto` — pages/OrdersList.jsx
+- (1×) `Configurer le webhook` — pages/DeveloperSection.jsx
+- (1×) `Configurer les notifications WhatsApp` — pages/OrdersList.jsx
+- (1×) `Configurer →` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Configurez d'abord un sous-domaine pour afficher votre page d'accueil dans un canvas professionnel.` — pages/BoutiquePages.jsx
+- (1×) `Configurez l'adresse de votre boutique` — pages/BoutiqueDomains.jsx
+- (1×) `Configurez le webhook` — pages/ConnectShopify.jsx
+- (1×) `Configurez les paramètres généraux de votre formulaire COD` — pages/FormSettingsPage.jsx
+- (1×) `Configurez les prix, les limites et les fonctionnalités de chaque plan. Les comptes sans abonnement utilisent automatiquement le plan` — pages/SuperAdminPlans.jsx
+- (1×) `Configurez les produits, messages et paramètres de votre agent.` — pages/AgentConfig.jsx
+- (1×) `Configurez vos modes de paiement` — pages/BoutiquePayments.jsx
+- (1×) `Configurez votre boutique en ligne` — pages/BoutiqueSettings.jsx
+- (1×) `Confirmation WhatsApp activée` — components/productSettings/LivePreview.jsx
+- (1×) `Confirmer le mot de passe` — pages/ResetPassword.jsx
+- (1×) `Confirmée le` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Connecter Rita IA` — pages/WhatsAppService.jsx
+- (1×) `Connecter Rita IA maintenant` — pages/WhatsAppService.jsx
+- (1×) `Connectez WhatsApp pour envoyer des campagnes` — pages/CampaignsList.jsx
+- (1×) `Connectez vos outils de messagerie et intégrations tierces` — pages/FormIntegrationsPage.jsx
+- (1×) `Connectez vos pixels pour tracker les conversions` — pages/BoutiquePixel.jsx
+- (1×) `Connectez votre propre nom de domaine à Scalor` — pages/BoutiqueDomains.jsx
+- (1×) `Connectez-vous et recevez votre Bearer token.` — pages/ProviderService.jsx
+- (1×) `Connectez-vous pour gérer vos liens et commissions.` — pages/AffiliateLogin.jsx
+- (1×) `Connecté` — pages/RitaConversations.jsx
+- (1×) `Connectées` — pages/WhatsAppConnexion.jsx
+- (1×) `Connexion` — pages/LandingPage.jsx
+- (1×) `Connexion Rita IA...` — pages/WhatsAppService.jsx
+- (1×) `Connexion WhatsApp` — pages/WhatsAppConnexion.jsx
+- (1×) `Connexion automatique Provider indisponible.` — pages/DeveloperSection.jsx
+- (1×) `Connexion en cours...` — pages/WhatsAppService.jsx
+- (1×) `Connexion perdue — vérifiez le statut.` — pages/CampaignsList.jsx
+- (1×) `Connexion réussie ! 🎉` — pages/WhatsAppService.jsx
+- (1×) `Connexion échouée` — pages/ImportOrders.jsx
+- (1×) `Connexions` — pages/SecurityDashboard.jsx
+- (1×) `Connexions récentes` — pages/SuperAdminDashboard.jsx
+- (1×) `Connexions échouées` — pages/SecurityDashboard.jsx
+- (1×) `Conseil` — pages/AgentConfig.jsx
+- (1×) `Construction de la page premium` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Consultation utilisateurs` — pages/SecurityDashboard.jsx
+- (1×) `Consultez chaque commande` — pages/Commissions.jsx
+- (1×) `Consultez les journaux d'activité et les alertes de sécurité.` — pages/Settings.jsx
+- (1×) `Contactez-nous` — pages/BoutiquePages.jsx
+- (1×) `Contenu généré automatiquement par l'IA` — components/productSettings/BlocksEditor.jsx
+- (1×) `Contenu marketing avancé` — pages/StoreProductForm.jsx
+- (1×) `Contexte` — pages/WhatsAppService.jsx
+- (1×) `Continuer le paiement` — components/ProductPageGeneratorModal.jsx
+- (1×) `Contrôlez quand Rita vous envoie des alertes sur WhatsApp` — pages/AgentConfig.jsx
+- (1×) `Conversion` — pages/SuperAdminAnalytics.jsx
+- (1×) `Conversion Settings` — components/productSettings/ConversionSettings.jsx
+- (1×) `Copier ID` — pages/DeveloperSection.jsx
+- (1×) `Copier commande` — pages/OrdersList.jsx
+- (1×) `Copier préfixe` — pages/DeveloperSection.jsx
+- (1×) `Copiez cette URL et collez-la dans Shopify` — pages/ConnectShopify.jsx
+- (1×) `Copié` — pages/UserManagement.jsx
+- (1×) `Copié !` — pages/AffiliateDashboard.jsx
+- (1×) `Couleur` — pages/StoreCreationWizard.jsx
+- (1×) `Couleur de fond` — pages/AgentConfig.jsx
+- (1×) `Couleur de votre thème` — components/ProductPageGeneratorModal.jsx
+- (1×) `Couleur du texte` — components/RichTextEditor.jsx
+- (1×) `Couleur du thème` — pages/StoreSetup.jsx
+- (1×) `Couleurs de carte` — components/productSettings/OffersEditor.jsx
+- (1×) `Couleurs disponibles` — components/ProductPageGeneratorModal.jsx
+- (1×) `Course démarrée` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Courses disponibles` — livreur/pages/AvailableOrders.jsx
+- (1×) `Coût / commande` — pages/ControlCenter.jsx
+- (1×) `Coût / vente` — pages/ControlCenter.jsx
+- (1×) `Coût achat total` — pages/StockOrdersList.jsx
+- (1×) `Coût d'achat total:` — pages/StockOrderForm.jsx
+- (1×) `Coût de livraison` — pages/ReportDetail.jsx
+- (1×) `Coût du produit` — pages/ReportDetail.jsx
+- (1×) `Coût livraison` — components/ProductCard.jsx
+- (1×) `Coût livraison total` — pages/ReportDetail.jsx
+- (1×) `Coût par Commande` — pages/ComptaDashboard.jsx
+- (1×) `Coût produit total` — pages/ReportDetail.jsx
+- (1×) `Coût produit:` — components/OrderForm.jsx
+- (1×) `Coût pub moy.` — pages/ControlCenter.jsx
+- (1×) `Coût publicitaire moyen` — pages/ReportDetail.jsx
+- (1×) `Coût total:` — pages/StockOrderForm.jsx
+- (1×) `Coût transport (calculé)` — pages/StockOrdersList.jsx
+- (1×) `Coûts inclus:` — pages/ComptaDashboard.jsx
+- (1×) `Coûts produits + frais de livraison + dépenses publicitaires` — pages/ComptaDashboard.jsx
+- (1×) `Create webhook` — pages/ConnectShopify.jsx
+- (1×) `Creation des infographies 9:16` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Creatives Image` — pages/CreativeGenerator.jsx
+- (1×) `Creer mon compte` — pages/Register.jsx
+- (1×) `Creer une nouvelle instance` — pages/ProviderService.jsx
+- (1×) `Creez un mot de passe fort` — pages/Register.jsx
+- (1×) `Creez un webhook` — pages/ConnectShopify.jsx
+- (1×) `Creez vos instances sans passer par l'API principale.` — pages/ProviderService.jsx
+- (1×) `Croissance SaaS` — pages/SuperAdminDashboard.jsx
+- (1×) `Croissance · Structure · Intelligence` — pages/Login.jsx
+- (1×) `Cron :` — pages/SuperAdminPushCenter.jsx
+- (1×) `Création...` — pages/AffiliateRegister.jsx
+- (1×) `Crédits ajoutés !` — pages/GenerationSuccess.jsx
+- (1×) `Crédits de génération IA` — pages/ServiceClient.jsx
+- (1×) `Crédits gratuits` — pages/ServiceClient.jsx
+- (1×) `Crédits payants` — pages/ServiceClient.jsx
+- (1×) `Crée ou connecte une instance dédiée pour le support avant d'activer les alertes.` — pages/SuperAdminSettings.jsx
+- (1×) `Crée un groupe ou ajoute-le à tes flows pour le voir ici.` — pages/RitaFlows.jsx
+- (1×) `Crée une page produit claire, simple et prête à publier.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Créer affilié` — pages/AffiliatesAdmin.jsx
+- (1×) `Créer le logo` — pages/StoreCreationWizard.jsx
+- (1×) `Créer ma boutique` — pages/StoreCreationWizard.jsx
+- (1×) `Créer ma voix` — pages/WhatsAppService.jsx
+- (1×) `Créer mon espace` — pages/WorkspaceSetup.jsx
+- (1×) `Créer un affilié` — pages/AffiliatesAdmin.jsx
+- (1×) `Créer un budget` — pages/TransactionsList.jsx
+- (1×) `Créer un compte` — pages/Register.jsx
+- (1×) `Créer un groupe` — pages/TeamChat.jsx
+- (1×) `Créer un groupe automatiquement par produit` — pages/RitaFlows.jsx
+- (1×) `Créer un nouveau groupe :` — pages/RitaGroupAnimation.jsx
+- (1×) `Créer un nouveau lien` — pages/AffiliateLinks.jsx
+- (1×) `Créer une campagne de relance` — pages/RitaPerformance.jsx
+- (1×) `Créer une clé API` — pages/DeveloperSection.jsx
+- (1×) `Créer une commande` — pages/StoreOrdersDashboard.jsx
+- (1×) `Créez des rapports quotidiens pour voir les statistiques` — pages/StatsRapports.jsx
+- (1×) `Créez ici les offres commerciales que Rita a le droit d'utiliser. Elle ne proposera que les offres actives et respectera vos conditions.` — pages/WhatsAppService.jsx
+- (1×) `Créez le compte Super Administrateur` — pages/SetupSuperAdmin.jsx
+- (1×) `Créez le premier compte agent ci-dessus.` — pages/ServiceClient.jsx
+- (1×) `Créez un canal pour collaborer en équipe` — pages/TeamChat.jsx
+- (1×) `Créez un groupe ou ajoutez-en un existant pour que Rita l'anime automatiquement.` — pages/RitaGroupAnimation.jsx
+- (1×) `Créez un produit pour voir l'aperçu` — components/productSettings/LivePreview.jsx
+- (1×) `Créez une affectation pour commencer` — pages/AssignmentsManager.jsx
+- (1×) `Créez votre compte développeur` — pages/ScalorRegister.jsx
+- (1×) `Créez votre premier statut automatique avec les images de vos produits` — pages/AgentConfig.jsx
+- (1×) `Créez votre première campagne de relance WhatsApp.` — pages/CampaignsList.jsx
+- (1×) `Créez votre première commande fournisseur` — pages/SourcingList.jsx
+- (1×) `Créé par` — pages/TransactionDetail.jsx
+- (1×) `Créée le` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Current Theme Values` — components/ThemeTest.jsx
+- (1×) `DAU (24h)` — pages/SuperAdminAnalytics.jsx
+- (1×) `DKIM a copier` — pages/SuperAdminMailServer.jsx
+- (1×) `DNS détecté — SSL en attente` — pages/BoutiqueDomains.jsx
+- (1×) `DNS → Records → Add record (proxy OFF)` — pages/BoutiqueDomains.jsx
+- (1×) `Dans le pool livreur` — pages/OrdersList.jsx
+- (1×) `Date de création` — pages/ReportDetail.jsx
+- (1×) `Date ↓` — pages/StoreOrdersDashboard.jsx
+- (1×) `De :` — pages/SuperAdminMailServer.jsx
+- (1×) `Demander un retrait` — pages/AffiliateDashboard.jsx
+- (1×) `Demandez au Super Admin d'activer une offre Pro ou Plus.` — pages/WhatsAppService.jsx
+- (1×) `Demandé le` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Demandé par` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Dernier message` — pages/AgentConfig.jsx
+- (1×) `Derniers evenements mail expliques` — pages/SuperAdminMailServer.jsx
+- (1×) `Derniers paiements` — pages/BillingPage.jsx
+- (1×) `Derniers parcours` — pages/SuperAdminDashboard.jsx
+- (1×) `Dernière activité` — pages/SuperAdminUserDetail.jsx
+- (1×) `Dernière cmd` — pages/SuperAdminActivity.jsx
+- (1×) `Dernière cnx` — pages/SuperAdminActivity.jsx
+- (1×) `Dernière modification` — pages/OrderDetail.jsx
+- (1×) `Dernière modification : inconnue` — pages/Settings.jsx
+- (1×) `Dernière vente` — pages/SuperAdminActivity.jsx
+- (1×) `Dernières campagnes envoyées` — pages/Marketing.jsx
+- (1×) `Dernières commandes` — pages/BoutiqueDashboard.jsx
+- (1×) `Dernières connexions enregistrées` — pages/SuperAdminActivity.jsx
+- (1×) `Dernières générations de pages produit` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Dernières transactions` — pages/ComptaDashboard.jsx
+- (1×) `Des avantages uniques` — pages/BoutiquePages.jsx
+- (1×) `Descendre` — pages/BoutiquePages.jsx
+- (1×) `Description complète` — components/AlibabaImportModal.jsx
+- (1×) `Description courte` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Description courte (ex: Vidéo de présentation)` — pages/AgentConfig.jsx
+- (1×) `Description courte pour Google...` — pages/StoreProductForm.jsx
+- (1×) `Description de l'image` — pages/BoutiquePages.jsx
+- (1×) `Description directe` — components/ProductGeneratorModal.jsx
+- (1×) `Design` — components/DigitalProductEbookModal.jsx
+- (1×) `Destinataires filtrés:` — components/CampaignCountryModal.jsx
+- (1×) `Destination :` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Detail achat` — pages/SuperAdminBilling.jsx
+- (1×) `Detail technique` — pages/SuperAdminMailServer.jsx
+- (1×) `Details` — pages/SuperAdminBilling.jsx
+- (1×) `Devise de vente` — pages/StoreCreationWizard.jsx
+- (1×) `Devise préférée` — pages/Settings.jsx
+- (1×) `Direction IA` — pages/StoreCreationWizard.jsx
+- (1×) `Direction modifiée -- regénérez.` — pages/StoreCreationWizard.jsx
+- (1×) `Direction premium` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Disponibilité` — pages/AgentConfig.jsx
+- (1×) `Disponible ✓` — pages/BoutiqueDomains.jsx
+- (1×) `Disponibles` — pages/StoreProductsList.jsx
+- (1×) `Disposition` — pages/BoutiquePages.jsx
+- (1×) `Dites-nous plus sur votre activité` — pages/AgentOnboarding.jsx
+- (1×) `Domain List → Manage → Advanced DNS` — pages/BoutiqueDomains.jsx
+- (1×) `Domaine actif —` — pages/BoutiqueDomains.jsx
+- (1×) `Domaine complet:` — pages/DomainGeneratorDemo.jsx
+- (1×) `Domaine généré avec succès!` — pages/DomainGeneratorDemo.jsx
+- (1×) `Domaine personnalisé` — pages/BoutiqueDomains.jsx
+- (1×) `Domaines → Zone DNS → Ajouter une entrée` — pages/BoutiqueDomains.jsx
+- (1×) `Donnez un nom clair pour identifier cette campagne dans votre liste` — pages/CampaignForm.jsx
+- (1×) `Donnez un nom à votre agent IA (ex: Rita, Maya...)` — pages/AgentOnboarding.jsx
+- (1×) `Données introuvables` — livreur/pages/MapNavigation.jsx
+- (1×) `Données partielles` — pages/SuperAdminDashboard.jsx
+- (1×) `Données source` — pages/OrderDetail.jsx
+- (1×) `Dupliquer l'offre` — pages/FormQuantityOffersPage.jsx
+- (1×) `Durée` — pages/ServiceClient.jsx
+- (1×) `Durée moy.` — pages/SuperAdminAnalytics.jsx
+- (1×) `Durée sans message avant de considérer le client comme inactif` — pages/RitaFlows.jsx
+- (1×) `Durées` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Dynamic Components` — components/ThemeTest.jsx
+- (1×) `Dynamic Theme Test` — components/ThemeTest.jsx
+- (1×) `Décision` — pages/ControlCenter.jsx
+- (1×) `Décision du jour` — pages/ControlCenter.jsx
+- (1×) `Décision pub` — pages/ControlCenter.jsx
+- (1×) `Décisions` — pages/DecisionsList.jsx
+- (1×) `Déclencheurs` — pages/RitaFlows.jsx
+- (1×) `Déconnecter` — pages/DeveloperSection.jsx
+- (1×) `Déconnecté` — pages/RitaConversations.jsx
+- (1×) `Déconnexion provider` — pages/DeveloperSection.jsx
+- (1×) `Découvrez les avis de ceux qui utilisent Scalor au quotidien.` — pages/LandingPage.jsx
+- (1×) `Découvrez nos produits en images` — pages/BoutiquePages.jsx
+- (1×) `Découvrez notre sélection` — pages/BoutiquePages.jsx
+- (1×) `Découvrez notre sélection de produits soigneusement choisis…` — pages/BoutiqueSettings.jsx
+- (1×) `Décrivez pourquoi vous souhaitez utiliser votre propre numéro WhatsApp pour vos campagnes marketing...` — pages/WhatsAppPostulation.jsx
+- (1×) `Décrivez votre boutique en quelques mots...` — pages/StoreSetup.jsx
+- (1×) `Décrivez votre problème en détail. Plus vous êtes précis, plus vite nous pourrons vous aider.` — pages/UserSupport.jsx
+- (1×) `Décrivez votre problème et nous vous répondrons rapidement.` — components/SupportChatWidget.jsx
+- (1×) `Décrivez votre produit` — pages/StoreProductForm.jsx
+- (1×) `Décrivez votre produit : avantages, matière, utilisation…` — pages/StoreProductForm.jsx
+- (1×) `Décrivez votre produit en détail : nom, caractéristiques, utilisation, bénéfices...` — components/ProductGeneratorModal.jsx
+- (1×) `Déduire et assigner des catégories à partir des noms de produits (IA)` — pages/StoreProductsList.jsx
+- (1×) `Définir comme principale` — pages/StoreProductForm.jsx
+- (1×) `Définissez ce que l'agent envoie automatiquement quand un contact vous écrit pour la première fois` — pages/AgentConfig.jsx
+- (1×) `Définissez exactement comment l'agent doit réagir dans chaque situation` — pages/WhatsAppService.jsx
+- (1×) `Définissez quels clients recevront ce message` — pages/CampaignForm.jsx
+- (1×) `Déjà affilié ?` — pages/AffiliateRegister.jsx
+- (1×) `Délai de réponse` — pages/AgentConfig.jsx
+- (1×) `Délai entre pays:` — components/CampaignCountryModal.jsx
+- (1×) `Délai:` — pages/RitaPerformance.jsx
+- (1×) `Démarrez la conversation` — pages/TeamChat.jsx
+- (1×) `Démarrez une discussion avec un membre de l'équipe` — pages/TeamChat.jsx
+- (1×) `Démo` — pages/AffiliateDashboard.jsx
+- (1×) `Démonstration du produit` — components/ProductMediaManager.jsx
+- (1×) `Dépenses pub` — pages/ProductReportDetail.jsx
+- (1×) `Déplacer à droite` — pages/StoreProductForm.jsx
+- (1×) `Déplacer à gauche` — pages/StoreProductForm.jsx
+- (1×) `Désactiver l'essai gratuit` — pages/SuperAdminBilling.jsx
+- (1×) `Désactivée` — pages/WhatsAppService.jsx
+- (1×) `Désactivés` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Détail commande` — pages/OrderDetail.jsx
+- (1×) `Détail de la course` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Détail des Coûts` — components/FinancialSummary.jsx
+- (1×) `Détail des commissions` — pages/AffiliateCommissions.jsx
+- (1×) `Détail des coûts` — pages/ProductDetail.jsx
+- (1×) `Détail livraison` — livreur/pages/DeliveryDetail.jsx
+- (1×) `Détail transaction` — pages/TransactionDetail.jsx
+- (1×) `Détaillez votre problème…` — components/SupportChatWidget.jsx
+- (1×) `Détails complets` — components/OrderCard.jsx
+- (1×) `Détails de l'erreur` — components/WhatsAppClient.jsx
+- (1×) `Détails de la transaction...` — pages/TransactionForm.jsx
+- (1×) `Détails des Livraisons` — pages/Commissions.jsx
+- (1×) `Détails du rapport` — pages/ReportDetail.jsx
+- (1×) `Détails techniques` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Développez votre catalogue` — pages/BoutiqueDashboard.jsx
+- (1×) `E-commerce` — pages/WhatsAppPostulation.jsx
+- (1×) `EUR` — pages/ProviderService.jsx
+- (1×) `EUR (Euro)` — pages/StoreSetup.jsx
+- (1×) `Ebook bonus` — components/DigitalProductEbookModal.jsx
+- (1×) `Ebook généré avec succès` — components/DigitalProductEbookModal.jsx
+- (1×) `Echecs` — pages/SuperAdminMailServer.jsx
+- (1×) `Echecs et reprise` — pages/ProductPageStudio.jsx
+- (1×) `Effacer la mise en forme` — components/RichTextEditor.jsx
+- (1×) `Effacer la recherche` — pages/OrdersList.jsx
+- (1×) `Effacer les filtres` — pages/ClientsList.jsx
+- (1×) `ElevenLabs pré-configuré` — pages/WhatsAppService.jsx
+- (1×) `Email Scalor` — pages/AffiliateRegister.jsx
+- (1×) `Email ou nom du client...` — pages/ServiceClient.jsx
+- (1×) `Email, sujet, queue ID...` — pages/SuperAdminMailServer.jsx
+- (1×) `Emoji` — pages/TeamChat.jsx
+- (1×) `En attente de la connexion...` — pages/WhatsAppService.jsx
+- (1×) `En attente de validation` — pages/BoutiqueDomains.jsx
+- (1×) `En mode vocal seul, si la génération audio échoue, Rita basculera automatiquement en texte.` — pages/WhatsAppService.jsx
+- (1×) `En profiter` — pages/BoutiquePages.jsx
+- (1×) `Endpoints` — pages/DeveloperSection.jsx
+- (1×) `Engagement` — pages/EmailCampaignResults.jsx
+- (1×) `English` — pages/BoutiqueSettings.jsx
+- (1×) `Enregistré` — pages/FormUpsellsPage.jsx
+- (1×) `Entonnoir COD` — pages/StoreAnalytics.jsx
+- (1×) `Entrez l'adresse d'arrivée pour calculer le trajet et le coût.` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Entrez l'email ou le nom pour accéder au compte et gérer plan, crédits et support.` — pages/ServiceClient.jsx
+- (1×) `Entrez un code d'invitation pour rejoindre un nouvel espace de travail.` — pages/Profile.jsx
+- (1×) `Entrez un message de test...` — components/TestBackend.jsx
+- (1×) `Entrez votre email pour commencer` — pages/Register.jsx
+- (1×) `Entrées par catégorie` — pages/TransactionsList.jsx
+- (1×) `Envoi en cours...` — components/MessageComponents.jsx
+- (1×) `Envoi en cours…` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Envoi manuel` — pages/CampaignsList.jsx
+- (1×) `Envoi progressif anti-spam :` — pages/WhatsAppService.jsx
+- (1×) `Envoyer WhatsApp` — components/WhatsAppSendModal.jsx
+- (1×) `Envoyer au groupe WhatsApp` — pages/OrderDetail.jsx
+- (1×) `Envoyer au livreur` — pages/OrderDetail.jsx
+- (1×) `Envoyer la campagne` — pages/CampaignsList.jsx
+- (1×) `Envoyer un mail de test` — pages/SuperAdminMailServer.jsx
+- (1×) `Envoyer via WhatsApp` — pages/Marketing.jsx
+- (1×) `Envoyer à ce numéro` — pages/CampaignsList.jsx
+- (1×) `Envoyer à tous les pays (ordre par nombre décroissant)` — components/CampaignCountryModal.jsx
+- (1×) `Envoyes` — pages/SuperAdminMailServer.jsx
+- (1×) `Envoyez des messages WhatsApp aux utilisateurs de la plateforme Scalor.` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Envoyé automatiquement si la ville de la commande n'est pas dans votre liste de villes livrables. Utilisez` — pages/WhatsAppService.jsx
+- (1×) `Envoyé automatiquement à la réception d'une commande dans une ville livrable` — pages/WhatsAppService.jsx
+- (1×) `Envoyé le` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Envoyé par` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Envoyés:` — pages/RitaPerformance.jsx
+- (1×) `Erreur :` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Erreur de chargement` — pages/SourcingStats.jsx
+- (1×) `Erreur de génération` — pages/CreativeGenerator.jsx
+- (1×) `Espace Affilié` — components/AffiliateLayout.jsx
+- (1×) `Español` — pages/BoutiqueSettings.jsx
+- (1×) `Essai gratuit 7 jours disponible` — pages/BillingPage.jsx
+- (1×) `Essayez de modifier vos filtres` — pages/SuperAdminUsers.jsx
+- (1×) `Essayez la plage 90j ou une date plus large` — pages/SuperAdminAnalytics.jsx
+- (1×) `Essayez une autre recherche ou ajoutez des produits dans votre store` — pages/AgentConfig.jsx
+- (1×) `Est-ce que mon numéro personnel reste privé ?` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Et bien d'autres pays en cours d'intégration…` — pages/LandingPage.jsx
+- (1×) `Etat` — pages/SuperAdminMailServer.jsx
+- (1×) `Etat DNS public` — pages/SuperAdminMailServer.jsx
+- (1×) `Etat des credits` — pages/ProductPageStudio.jsx
+- (1×) `Etat des services` — pages/SuperAdminMailServer.jsx
+- (1×) `Event` — pages/ConnectShopify.jsx
+- (1×) `Evolution journaliere des campagnes email: envoi, ouverture, clic` — pages/EmailAnalytics.jsx
+- (1×) `Evolution journaliere des volumes` — pages/EmailAnalytics.jsx
+- (1×) `Ex : /ecom/dashboard` — pages/SuperAdminPushCenter.jsx
+- (1×) `Ex : Mise à jour importante` — pages/SuperAdminPushCenter.jsx
+- (1×) `Ex : Relance injoignables  mars 2026` — pages/CampaignForm.jsx
+- (1×) `Ex : Une nouvelle fonctionnalité est disponible…` — pages/SuperAdminPushCenter.jsx
+- (1×) `Ex : Yaoundé, Douala...` — pages/WhatsAppService.jsx
+- (1×) `Ex: +237612345678` — pages/SuperAdminSettings.jsx
+- (1×) `Ex: -10% / Livraison gratuite / 1 accessoire offert` — pages/WhatsAppService.jsx
+- (1×) `Ex: 0707070707` — components/ProductPageGeneratorModal.jsx
+- (1×) `Ex: 10` — pages/AssignmentsManager.jsx
+- (1×) `Ex: 237676778377` — pages/UserManagement.jsx
+- (1×) `Ex: 237699887766` — pages/WhatsAppPostulation.jsx
+- (1×) `Ex: 50` — pages/Goals.jsx
+- (1×) `Ex: 6XXXXXXXX` — pages/CreativeGenerator.jsx
+- (1×) `Ex: Abidjan, CI` — pages/BoutiquePages.jsx
+- (1×) `Ex: Afrique francophone` — pages/StoreProductForm.jsx
+- (1×) `Ex: Alibaba` — pages/SourcingList.jsx
+- (1×) `Ex: Appeler avant livraison, fragile...` — pages/OrderDetail.jsx
+- (1×) `Ex: Attendez ! Voici 10% de remise` — pages/FormUpsellsPage.jsx
+- (1×) `Ex: Awa, Koffi, Mireille, Armand` — components/ReviewGenerator.jsx
+- (1×) `Ex: Bienvenue chez Ma Boutique` — pages/BoutiquePages.jsx
+- (1×) `Ex: Budget Pub` — pages/TransactionsList.jsx
+- (1×) `Ex: CN123456789` — pages/StockOrdersList.jsx
+- (1×) `Ex: Cameroun` — components/ReviewGenerator.jsx
+- (1×) `Ex: Commander maintenant` — components/productSettings/ButtonEditor.jsx
+- (1×) `Ex: Commandes Facebook, Leads Janvier...` — pages/ImportOrders.jsx
+- (1×) `Ex: Disponible maintenant` — pages/OrderDetail.jsx
+- (1×) `Ex: Dla, douala, DOUALA, Doualla, doula` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Ex: Douala` — pages/StockManagement.jsx
+- (1×) `Ex: Douala, Yaoundé, Bafoussam` — components/ReviewGenerator.jsx
+- (1×) `Ex: Douala, Yaoundé...` — pages/WhatsAppService.jsx
+- (1×) `Ex: Glow Beauty, FitLife Store…` — pages/StoreCreationWizard.jsx
+- (1×) `Ex: Guide complet d'utilisation` — components/DigitalProductEbookModal.jsx
+- (1×) `Ex: Gélules nootropiques au collagène, 60 capsules, ingrédients naturels…` — pages/CreativeGenerator.jsx
+- (1×) `Ex: Il n'y a plus assez de pièces` — pages/ProductSettingsPage.jsx
+- (1×) `Ex: Il y a 2 jours` — components/productSettings/BlocksEditor.jsx
+- (1×) `Ex: Jean Dupont` — components/ProductPageGeneratorModal.jsx
+- (1×) `Ex: Livraison offerte aujourd'hui` — pages/WhatsAppService.jsx
+- (1×) `Ex: Livraison rapide` — pages/BoutiquePages.jsx
+- (1×) `Ex: Livré en 24-48h` — pages/BoutiquePages.jsx
+- (1×) `Ex: Livré en main propre, client satisfait, code d'entrée B12…` — pages/LivreurDeliveries.jsx
+- (1×) `Ex: Lygos, Anka` — pages/StockManagement.jsx
+- (1×) `Ex: Ma Belle Boutique` — pages/DomainGeneratorDemo.jsx
+- (1×) `Ex: Ma Boutique, Mon Business...` — pages/WorkspaceSetup.jsx
+- (1×) `Ex: Mise à jour importante...` — pages/SuperAdminSupport.jsx
+- (1×) `Ex: Mon magasin de mode, Ma boutique...` — pages/AgentOnboarding.jsx
+- (1×) `Ex: Montre connectée / prospects tièdes` — pages/WhatsAppService.jsx
+- (1×) `Ex: Neptune Mbalgong` — pages/OrderDetail.jsx
+- (1×) `Ex: Nouveautés` — pages/StoreProductsList.jsx
+- (1×) `Ex: Pack Protection Premium` — pages/FormUpsellsPage.jsx
+- (1×) `Ex: Paiement à la livraison` — components/productSettings/ButtonEditor.jsx
+- (1×) `Ex: Populaire` — components/productSettings/OffersEditor.jsx
+- (1×) `Ex: Pour qui achetez-vous ?` — pages/WhatsAppService.jsx
+- (1×) `Ex: Problème avec mon paiement…` — components/SupportChatWidget.jsx
+- (1×) `Ex: Production, Test, Webhook` — pages/DeveloperSection.jsx
+- (1×) `Ex: Promo weekend, Relance clients...` — pages/AgentConfig.jsx
+- (1×) `Ex: Quels sont les délais de livraison ?` — pages/BoutiquePages.jsx
+- (1×) `Ex: Relance prospects inactifs mars 2026` — pages/RitaPerformance.jsx
+- (1×) `Ex: Rita, Maya, Sophie...` — pages/AgentOnboarding.jsx
+- (1×) `Ex: Robe en wax africain 100% coton, taille 38-42, disponible en rouge/bleu/vert, produite artisanalement au Cameroun…` — pages/StoreProductForm.jsx
+- (1×) `Ex: Si tu confirmes aujourd'hui, je peux t'ajouter la livraison gratuite 🙏` — pages/WhatsAppService.jsx
+- (1×) `Ex: Statut produit phare du lundi` — pages/AgentConfig.jsx
+- (1×) `Ex: Support Client` — pages/DeveloperSection.jsx
+- (1×) `Ex: T-shirt noir XL` — pages/SupplierDetail.jsx
+- (1×) `Ex: Virement, Alibaba, Espèces...` — pages/SupplierDetail.jsx
+- (1×) `Ex: Voix Morgan` — pages/WhatsAppService.jsx
+- (1×) `Ex: Voix posée et chaleureuse` — pages/WhatsAppService.jsx
+- (1×) `Ex: Vêtements, Beauté…` — pages/StoreProductForm.jsx
+- (1×) `Ex: femmes actives, sportifs…` — components/DigitalProductEbookModal.jsx
+- (1×) `Ex: feuille, monogramme GL, eclair geometrique` — pages/StoreCreationWizard.jsx
+- (1×) `Ex: mauvaise haleine persistante, peau sèche, douleurs, manque de temps...` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Ex: ne sait pas comment utiliser le produit` — components/DigitalProductEbookModal.jsx
+- (1×) `Ex: pour aujourd'hui seulement, livraison offerte ou bonus inclus` — pages/AgentConfig.jsx
+- (1×) `Ex: uniquement si le client bloque sur le prix ou commande avant 18h` — pages/WhatsAppService.jsx
+- (1×) `Ex: Équipe ventes, Livraisons...` — pages/TeamChat.jsx
+- (1×) `Ex: 🔥 Notre produit phare en stock ! Contactez-nous pour commander.` — pages/AgentConfig.jsx
+- (1×) `Ex: 🛒 Clients Premium` — pages/RitaGroupAnimation.jsx
+- (1×) `Excellent` — pages/ProductReportDetail.jsx
+- (1×) `Excellentes performances! Considérez le scaling.` — components/FinancialSummary.jsx
+- (1×) `Exceptions de prix` — pages/ReportForm.jsx
+- (1×) `Exclure` — components/CampaignCountryModal.jsx
+- (1×) `Exemple curl` — pages/DeveloperSection.jsx
+- (1×) `Exemples de règles :` — pages/AgentConfig.jsx
+- (1×) `Exemples à tester` — pages/DomainGeneratorDemo.jsx
+- (1×) `Expiration` — pages/SuperAdminBilling.jsx
+- (1×) `Expirent bientôt` — pages/SuperAdminBilling.jsx
+- (1×) `Expliquez comment utiliser le produit étape par étape...` — pages/StoreProductForm.jsx
+- (1×) `Expliquez pourquoi vous prenez cette décision...` — pages/DecisionForm.jsx
+- (1×) `Export` — pages/StoreProductForm.jsx
+- (1×) `Exporter ce produit en CSV` — pages/StoreProductsList.jsx
+- (1×) `Express Union` — pages/AgentConfig.jsx
+- (1×) `Expédiée` — pages/SupplierDetail.jsx
+- (1×) `Expédiée le` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Extra-bold` — components/productSettings/DesignSettings.jsx
+- (1×) `FAQ - 5 questions` — components/ProductPageGeneratorModal.jsx
+- (1×) `FCFA / mois` — pages/LandingPage.jsx
+- (1×) `FCFA/mois` — pages/BillingPage.jsx
+- (1×) `Facture` — pages/OrderDetail.jsx
+- (1×) `Faites défiler les visuels...` — components/productSettings/BlocksEditor.jsx
+- (1×) `Favicon` — pages/BoutiqueSettings.jsx
+- (1×) `Features les plus utilisées` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Femme` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Fiche produit complète en quelques secondes` — pages/StoreProductForm.jsx
+- (1×) `Filtre appliqué depuis le template` — pages/CampaignForm.jsx
+- (1×) `Filtrer :` — pages/AffiliateConversions.jsx
+- (1×) `Filtrer par ville...` — livreur/pages/AvailableOrders.jsx
+- (1×) `Filtrer: bounced, gmail, smtpuser...` — pages/SuperAdminMailServer.jsx
+- (1×) `Filtres actifs` — components/CampaignCountryModal.jsx
+- (1×) `Finalise le paiement dans la fenêtre MoneyFusion ouverte. Dès que le prestataire confirme, tes crédits seront ajoutés automatiquement ici.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Finalisez votre compte` — pages/Register.jsx
+- (1×) `Fish.audio permet de cloner n'importe quelle voix avec une fidélité exceptionnelle. Idéal pour donner une vraie identité vocale à votre agent.` — pages/WhatsAppService.jsx
+- (1×) `Fish.audio — Voix Avancée` — pages/WhatsAppService.jsx
+- (1×) `Fixe (FCFA)` — pages/AffiliatesAdmin.jsx
+- (1×) `Flexible:` — pages/AgentConfig.jsx
+- (1×) `Flux de Trésorerie` — pages/ComptaDashboard.jsx
+- (1×) `Flux de paiements Scalor` — pages/SuperAdminBilling.jsx
+- (1×) `Fonctionnalité` — pages/BillingPage.jsx
+- (1×) `Fonctionnalités incluses` — pages/BillingPage.jsx
+- (1×) `Forcer l'arrêt` — pages/CampaignsList.jsx
+- (1×) `Form Builder` — components/productSettings/FormBuilder.jsx
+- (1×) `Form Display Type` — components/productSettings/GeneralSettings.jsx
+- (1×) `Format` — pages/ConnectShopify.jsx
+- (1×) `Format Professionnel` — pages/DomainGeneratorDemo.jsx
+- (1×) `Format des réponses` — pages/DeveloperSection.jsx
+- (1×) `Formats: mp3, wav, m4a. 10 à 30 secondes recommandées par sample.` — pages/WhatsAppService.jsx
+- (1×) `Formes` — pages/VisualBuilder.jsx
+- (1×) `Formule` — components/ProductPageGeneratorModal.jsx
+- (1×) `Fournisseur:` — pages/CloseuseProduits.jsx
+- (1×) `Frais` — pages/SuperAdminBilling.jsx
+- (1×) `Frais de` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Frais de livraison (XAF)` — pages/SupplierDetail.jsx
+- (1×) `Frais de livraison forfaitaires` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Frais de port` — pages/SupplierDetail.jsx
+- (1×) `Frais liv.` — pages/ProductReportDetail.jsx
+- (1×) `Frais livraison` — pages/ProductReportDetail.jsx
+- (1×) `Français` — pages/BoutiqueSettings.jsx
+- (1×) `Fréquence` — pages/AgentConfig.jsx
+- (1×) `Fréquence d'utilisation des fonctionnalités par workspace` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Fréquence vocale` — pages/AgentConfig.jsx
+- (1×) `Funnel de conversion` — pages/SuperAdminAnalytics.jsx
+- (1×) `GHS (Cedi)` — pages/StoreSetup.jsx
+- (1×) `GIFs` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `GIFs dans la description` — components/ProductPageGeneratorModal.jsx
+- (1×) `GPS actif` — pages/LivreurDeliveries.jsx
+- (1×) `GPS désactivé` — livreur/pages/LivreurHome.jsx
+- (1×) `Gains Totaux` — pages/Commissions.jsx
+- (1×) `Gen. libres` — pages/SuperAdminWorkspaces.jsx
+- (1×) `Gen. payées` — pages/SuperAdminWorkspaces.jsx
+- (1×) `General Settings` — components/productSettings/GeneralSettings.jsx
+- (1×) `Generation en cours` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Genre` — components/ProductPageGeneratorModal.jsx
+- (1×) `Gerez vos instances avec droits read/write.` — pages/ProviderService.jsx
+- (1×) `Gestion` — components/EcomLayout.jsx
+- (1×) `Gestion complète des affiliés, liens et commissions.` — pages/AffiliatesAdmin.jsx
+- (1×) `Gestion des espaces` — pages/SuperAdminWorkspaces.jsx
+- (1×) `Gestion des objections` — pages/WhatsAppService.jsx
+- (1×) `Gestion des utilisateurs` — pages/SuperAdminUsers.jsx
+- (1×) `Gestion du Stock` — pages/AgentConfig.jsx
+- (1×) `Gestion du stock` — pages/StockManagement.jsx
+- (1×) `Gestion Équipe` — pages/UserManagement.jsx
+- (1×) `Ghost Button` — components/ThemeTest.jsx
+- (1×) `Glisse ta photo ici ou` — components/ProductPageGeneratorModal.jsx
+- (1×) `Glisse tes photos ici ou` — components/ProductPageGeneratorModal.jsx
+- (1×) `Glissez-déposez pour réorganiser` — components/VisualSiteBuilder.jsx
+- (1×) `GoDaddy :` — pages/BoutiqueDomains.jsx
+- (1×) `Grand public` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Grande` — components/VisualSiteBuilder.jsx
+- (1×) `Gras (Ctrl+B)` — components/RichTextEditor.jsx
+- (1×) `Gratuit dès` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Groupes WhatsApp par produit` — pages/Settings.jsx
+- (1×) `Groupes de Livraison WhatsApp` — pages/Settings.jsx
+- (1×) `Groupes de livraison` — pages/OrdersList.jsx
+- (1×) `Groupes destinataires` — pages/AgentConfig.jsx
+- (1×) `Groupes gérés` — pages/RitaGroupAnimation.jsx
+- (1×) `Groupes notifiés à chaque nouvelle commande.` — pages/OrdersList.jsx
+- (1×) `Génère un rapport depuis les commandes livrées.` — pages/ReportsList.jsx
+- (1×) `Génère une suite d'infographies verticales mobile-first. La page produit publique affichera uniquement ces visuels empilés + un formulaire de commande minimal.` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Générateur de page produit IA` — components/ProductPageGeneratorModal.jsx
+- (1×) `Générateur page produit premium` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Génération IA` — pages/StoreCreationWizard.jsx
+- (1×) `Génération IA classique avec images générées par IA` — pages/StoreProductsList.jsx
+- (1×) `Génération Instantanée` — pages/DomainGeneratorDemo.jsx
+- (1×) `Génération du QR code...` — pages/WhatsAppService.jsx
+- (1×) `Génération terminée avec succès` — components/ProductPageGeneratorModal.jsx
+- (1×) `Génération...` — pages/BoutiqueDomains.jsx
+- (1×) `Génération…` — pages/StoreProductForm.jsx
+- (1×) `Générer` — pages/StoreProductForm.jsx
+- (1×) `Générer avec l'IA` — pages/StoreProductForm.jsx
+- (1×) `Générer depuis le nom de la boutique` — pages/BoutiqueDomains.jsx
+- (1×) `Générer des images marketing IA` — components/AlibabaImportModal.jsx
+- (1×) `Générez un lien et partagez-le avec votre équipe. Il sera valide 7 jours.` — pages/UserManagement.jsx
+- (1×) `Générées` — pages/ControlCenter.jsx
+- (1×) `Gérer` — pages/SuperAdminWorkspaces.jsx
+- (1×) `Gérez la sécurité de votre compte.` — pages/Settings.jsx
+- (1×) `Gérez plusieurs feuilles de calcul pour vos commandes.` — pages/Settings.jsx
+- (1×) `Gérez vos agents WhatsApp et suivez leurs performances` — pages/AgentIAList.jsx
+- (1×) `Gérez vos commandes fournisseurs` — pages/SuppliersList.jsx
+- (1×) `Gérez votre abonnement et votre forfait EasySell` — pages/FormPlanPage.jsx
+- (1×) `Gérez votre compte et les paramètres de votre espace de travail.` — pages/Settings.jsx
+- (1×) `Gérez votre mot de passe` — pages/Profile.jsx
+- (1×) `HTTPS automatique et gratuit sur tous les domaines` — pages/BoutiqueDomains.jsx
+- (1×) `Haute` — pages/DecisionForm.jsx
+- (1×) `Hauteur` — components/VisualSiteBuilder.jsx
+- (1×) `Hauteur image principale` — components/productSettings/BlocksEditor.jsx
+- (1×) `Header API` — pages/ProviderService.jsx
+- (1×) `Hebdomadaire` — pages/Goals.jsx
+- (1×) `Hero` — components/ProductPageGeneratorModal.jsx
+- (1×) `Hero, bénéfices, avis, FAQ, blocs conversion` — components/ProductPageGeneratorModal.jsx
+- (1×) `Heure d'envoi` — pages/AgentConfig.jsx
+- (1×) `Heure de livraison` — pages/OrderDetail.jsx
+- (1×) `Heures d'activité (sessions/heure)` — pages/SuperAdminAnalytics.jsx
+- (1×) `Historique de tous les envois WhatsApp — diagnostiquez les échecs` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Historique des gains` — pages/AffiliateDashboard.jsx
+- (1×) `Historique des imports` — pages/ImportOrders.jsx
+- (1×) `Historique des paiements` — pages/BillingPage.jsx
+- (1×) `Historique détaillé` — pages/ProductReportDetail.jsx
+- (1×) `Historique mensuel` — pages/AffiliateCommissions.jsx
+- (1×) `Homme` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Hors ligne` — pages/WhatsAppConnexion.jsx
+- (1×) `Hors zone` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `IA analyse + génère la fiche produit complète` — components/AlibabaImportModal.jsx
+- (1×) `ID Log` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `ID ou URL Spreadsheet` — pages/Settings.jsx
+- (1×) `IDÉAL POUR` — components/ProductPageGeneratorModal.jsx
+- (1×) `Identification` — pages/ReportForm.jsx
+- (1×) `Identité de l'agent` — pages/AgentOnboarding.jsx
+- (1×) `Identité de la boutique` — pages/StoreSetup.jsx
+- (1×) `Ils ont choisi Scalor` — pages/LandingPage.jsx
+- (1×) `Image / Vidéo` — pages/AgentConfig.jsx
+- (1×) `Image Hero — Gratuit` — components/ProductPageGeneratorModal.jsx
+- (1×) `Image ajoutée` — pages/CampaignForm.jsx
+- (1×) `Image de fond` — components/VisualSiteBuilder.jsx
+- (1×) `Image haute résolution prête pour Facebook Ads, TikTok ou votre boutique. 100% gratuit, aucun crédit.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Image indisponible` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Image manuelle` — pages/AgentConfig.jsx
+- (1×) `Image non disponible` — components/ProductPageGeneratorModal.jsx
+- (1×) `Image produit` — pages/CreativeGenerator.jsx
+- (1×) `Image professionnelle` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Images (JPG, PNG, WebP) • Vidéo (MP4, MOV, WebM, max 50 MB) • Audio (MP3, OGG, WAV, max 10 MB)` — pages/CampaignForm.jsx
+- (1×) `Images générées` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Import` — pages/OrdersList.jsx
+- (1×) `Import Google Sheets` — pages/OrderDetail.jsx
+- (1×) `Import en cours` — pages/ImportOrders.jsx
+- (1×) `Importation des commandes` — pages/ImportOrders.jsx
+- (1×) `Importer depuis Alibaba` — components/AlibabaImportModal.jsx
+- (1×) `Importer depuis Shopify` — pages/OrdersList.jsx
+- (1×) `Importer depuis le store` — pages/AgentConfig.jsx
+- (1×) `Importer depuis le store Scalor` — pages/AgentConfig.jsx
+- (1×) `Importer depuis un tableur` — pages/OrdersList.jsx
+- (1×) `Importer des commandes` — pages/OrdersList.jsx
+- (1×) `Importer les contacts depuis les commandes` — pages/ClientsList.jsx
+- (1×) `Importer un logo` — pages/StoreCreationWizard.jsx
+- (1×) `Importez plusieurs produits à la fois` — components/ProductImportLocal.jsx
+- (1×) `Importez vos commandes depuis Google Sheets en quelques étapes` — pages/ImportOrders.jsx
+- (1×) `Importez vos commandes depuis la page` — pages/OrdersList.jsx
+- (1×) `Impossible de changer l'instance.` — pages/AgentConfig.jsx
+- (1×) `Impossible de charger les données` — pages/SuperAdminActivity.jsx
+- (1×) `Inactifs` — pages/ProductsList.jsx
+- (1×) `Inactivité par défaut (secondes)` — pages/RitaFlows.jsx
+- (1×) `Inclure` — components/CampaignCountryModal.jsx
+- (1×) `Indicatif pays + numéro, sans + ni espaces` — pages/OrderDetail.jsx
+- (1×) `Indispensable pour la navigation et le suivi des livraisons.` — livreur/pages/LivreurHome.jsx
+- (1×) `Infographies 9:16` — components/ProductPageGeneratorModal.jsx
+- (1×) `Infographies pretes` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Informations complémentaires, actions ù  prendre, etc...` — pages/DecisionForm.jsx
+- (1×) `Informations de votre compte` — pages/Settings.jsx
+- (1×) `Informations personnelles` — pages/Profile.jsx
+- (1×) `Informations principales` — pages/ReportDetail.jsx
+- (1×) `Informations supplémentaires sur la journée…` — pages/ReportForm.jsx
+- (1×) `Informations sur le produit` — pages/ReportDetail.jsx
+- (1×) `Informations utilisées par Rita pour vous contacter et personnaliser les interactions` — pages/AgentConfig.jsx
+- (1×) `Infos business` — pages/AgentOnboarding.jsx
+- (1×) `Infos livraison` — livreur/pages/DeliveryDetail.jsx
+- (1×) `Inline Styled Component` — components/ThemeTest.jsx
+- (1×) `Inscription via lien` — pages/AffiliateDashboard.jsx
+- (1×) `Inscription → Activation` — pages/SuperAdminAnalytics.jsx
+- (1×) `Inscriptions (x300 FCFA)` — pages/AffiliateDashboard.jsx
+- (1×) `Inscriptions par jour` — pages/SuperAdminAnalytics.jsx
+- (1×) `Inscrivez votre entreprise provider.` — pages/ProviderService.jsx
+- (1×) `Installer Scalor` — components/InstallPrompt.jsx
+- (1×) `Instance WhatsApp dédiée au support` — pages/SuperAdminSettings.jsx
+- (1×) `Instance WhatsApp:` — components/CampaignCountryModal.jsx
+- (1×) `Instance changée ✓` — pages/AgentConfig.jsx
+- (1×) `Instance et message spécifiques selon le produit commandé` — pages/OrdersList.jsx
+- (1×) `Instance invalide` — pages/WhatsAppService.jsx
+- (1×) `Instances WhatsApp` — pages/DeveloperSection.jsx
+- (1×) `Instances ZenChat API` — pages/WhatsAppConnexion.jsx
+- (1×) `Instructions personnalisées` — pages/AgentConfig.jsx
+- (1×) `Instructions supplémentaires` — pages/OrderDetail.jsx
+- (1×) `Insérer une image` — components/RichTextEditor.jsx
+- (1×) `Insérer une image / GIF` — components/RichTextEditor.jsx
+- (1×) `Intelligence utilisateurs` — pages/SuperAdminDashboard.jsx
+- (1×) `Interface Provider As A Service` — pages/ProviderService.jsx
+- (1×) `Interrogation des serveurs DNS pour` — pages/BoutiqueDomains.jsx
+- (1×) `Invitation à rejoindre` — pages/InviteAccept.jsx
+- (1×) `Italique (Ctrl+I)` — components/RichTextEditor.jsx
+- (1×) `J'ai payé mais mes crédits n'ont pas été ajoutés` — pages/GenerationsPage.jsx
+- (1×) `JPG, PNG, WEBP — max 10MB chaque — jusqu'à 8 photos` — components/ProductPageGeneratorModal.jsx
+- (1×) `JPG, PNG, WebP — max 5 Mo` — components/RichTextEditor.jsx
+- (1×) `Jamais connecté` — pages/AffiliatesAdmin.jsx
+- (1×) `Je transfère votre demande à un conseiller...` — pages/WhatsAppService.jsx
+- (1×) `Joindre image, audio ou vidéo` — components/BuilderAiChat.jsx
+- (1×) `Jour` — pages/Goals.jsx
+- (1×) `Jour de livraison` — pages/OrderDetail.jsx
+- (1×) `Journal` — pages/CampaignsList.jsx
+- (1×) `Journal SMTP, ouvertures et clics par destinataire` — pages/EmailCampaignResults.jsx
+- (1×) `Journal des envois de l'application` — pages/SuperAdminMailServer.jsx
+- (1×) `Journalier` — pages/Goals.jsx
+- (1×) `Journaux d'accès, alertes et activité suspecte` — pages/Settings.jsx
+- (1×) `Jours` — pages/AgentConfig.jsx
+- (1×) `Jours d'envoi` — pages/AgentConfig.jsx
+- (1×) `Jours d'envoi :` — pages/RitaGroupAnimation.jsx
+- (1×) `Jours restants` — pages/SuperAdminBilling.jsx
+- (1×) `Jusqu'à -25%` — pages/BillingPage.jsx
+- (1×) `KES (Shilling kenyan)` — pages/StoreSetup.jsx
+- (1×) `Kits` — pages/ProductResearch.jsx
+- (1×) `L'IA crée vos visuels…` — pages/CreativeGenerator.jsx
+- (1×) `L'IA habillera l'avatar avec les photos de vêtements que tu fournis. Page produit minimaliste dédiée.` — components/ProductPageGeneratorModal.jsx
+- (1×) `L'IA recrée toute votre page d'accueil en fonction de votre niche, audience et produits.` — pages/BoutiqueSettings.jsx
+- (1×) `L'achat en Chine a été payé` — pages/SourcingList.jsx
+- (1×) `L'agent adapte ses réponses en fonction du stock disponible` — pages/AgentConfig.jsx
+- (1×) `L'agent enverra la liste complète de vos produits avec prix dès le premier contact.` — pages/AgentConfig.jsx
+- (1×) `L'agent ne doit JAMAIS utiliser ces mots ou phrases` — pages/WhatsAppService.jsx
+- (1×) `L'agent utilisera naturellement ces phrases dans ses réponses` — pages/WhatsAppService.jsx
+- (1×) `L'aperçu apparaîtra ici` — pages/CampaignForm.jsx
+- (1×) `L'email ne peut pas être modifié` — pages/Profile.jsx
+- (1×) `La campagne continue en arrière-plan si vous quittez` — pages/CampaignsList.jsx
+- (1×) `La commande est automatiquement importee dans votre tableau de bord` — pages/ConnectShopify.jsx
+- (1×) `La commande locale a été payée` — pages/SourcingList.jsx
+- (1×) `La méthode choisie pilote tout : texte, images, structure de la page` — components/ProductPageGeneratorModal.jsx
+- (1×) `La page d'accueil se charge dans le canvas builder.` — pages/BoutiquePages.jsx
+- (1×) `La palette choisie sera appliquée à toutes les slides générées.` — components/InfographicsGeneratorPanel.jsx
+- (1×) `La propagation DNS peut prendre jusqu'à 48h. SSL généré automatiquement.` — pages/BoutiqueDomains.jsx
+- (1×) `La réponse est envoyée uniquement dans l'application. WhatsApp reste un canal de notification non interactif.` — pages/SuperAdminSupport.jsx
+- (1×) `La réponse à cette question...` — pages/BoutiquePages.jsx
+- (1×) `La solution` — pages/StoreProductForm.jsx
+- (1×) `La solution naturelle pour votre peau` — pages/StoreProductForm.jsx
+- (1×) `Label` — pages/OrdersList.jsx
+- (1×) `Laisser à 0 pour ne pas activer la livraison gratuite.` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Laissez l'IA relancer elle-même les clients inactifs en scannant leurs historiques.` — pages/AgentConfig.jsx
+- (1×) `Laissez vide pour générer automatiquement depuis le produit` — pages/AgentConfig.jsx
+- (1×) `Laissez vide pour utiliser le template par défaut` — pages/OrdersList.jsx
+- (1×) `Laissez vide pour utiliser les données IA / produit` — components/productSettings/BlocksEditor.jsx
+- (1×) `Lancement en cours...` — pages/WhatsAppService.jsx
+- (1×) `Lancer la campagne de relance` — pages/WhatsAppService.jsx
+- (1×) `Lancez le créateur pour concevoir votre première offre de quantité.` — pages/FormQuantityOffersPage.jsx
+- (1×) `Langue de la boutique` — pages/StoreCreationWizard.jsx
+- (1×) `Langue du contenu` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Langue du contenu généré` — components/ProductPageGeneratorModal.jsx
+- (1×) `Layout éditorial épuré : focus silhouette, détails matière, moins de sections marketing. Recommandé pour la mode.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Le QR code n'a pas pu être généré. L'instance doit être recréée.` — pages/WhatsAppService.jsx
+- (1×) `Le Sérum Éclat c'est 15 000 FCFA ma chérie 👍 Tu veux seulement ça ?` — pages/WhatsAppService.jsx
+- (1×) `Le choix de la voix se fait directement dans la liste ci-dessous. Le champ technique Reference ID a été retiré.` — pages/WhatsAppService.jsx
+- (1×) `Le compte Super Admin ne peut pas être supprimé depuis l'interface. Contactez le développeur pour toute modification critique.` — pages/SuperAdminSettings.jsx
+- (1×) `Le compte Super Administrateur a déjà été créé. Cette page n'est plus accessible.` — pages/SetupSuperAdmin.jsx
+- (1×) `Le livreur recevra une proposition dans l'application` — pages/OrderDetail.jsx
+- (1×) `Le message apparaîtra dans la messagerie de support de l'utilisateur.` — pages/ServiceClient.jsx
+- (1×) `Le même packaging apparaîtra dans chaque infographie (image-to-image).` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Le premium utilise ces images pour le hero, les sections et les témoignages.` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Le preset` — pages/WhatsAppService.jsx
+- (1×) `Le problème` — pages/StoreProductForm.jsx
+- (1×) `Le produit est top, je suis trop contente de mon achat !` — pages/WhatsAppService.jsx
+- (1×) `Le spreadsheet doit être partagé en mode "Toute personne disposant du lien peut consulter".` — pages/ImportOrders.jsx
+- (1×) `Le template applique automatiquement le ciblage correspondant. Vous pourrez ajuster les filtres à l'étape suivante.` — pages/CampaignForm.jsx
+- (1×) `Le texte sera envoyé en premier, puis l'image` — pages/CampaignForm.jsx
+- (1×) `Le texte sera envoyé en premier, puis la vidéo` — pages/CampaignForm.jsx
+- (1×) `Le transport a été payé` — pages/SourcingList.jsx
+- (1×) `Le témoignage du client...` — pages/BoutiquePages.jsx
+- (1×) `Le vocal sera envoyé, suivi du message texte` — pages/CampaignForm.jsx
+- (1×) `Lecture rapide` — pages/ProductPageStudio.jsx
+- (1×) `Legacy` — pages/SuperAdminActivity.jsx
+- (1×) `Les actions de votre équipe apparaîtront ici.` — pages/UserManagement.jsx
+- (1×) `Les affiches nécessitent une photo du produit. Relancez la génération en uploadant une photo ou en fournissant une URL contenant une image.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Les appareils s'afficheront dès que des sessions sont enregistrées.` — pages/SuperAdminAnalytics.jsx
+- (1×) `Les badges rouges signalent les produits, villes ou livreurs à arrêter.` — pages/ControlCenter.jsx
+- (1×) `Les clients reconnaissent votre numéro → Plus de réponses` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Les clients voient un numéro inconnu → Moins de confiance` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Les clients vous contacteront sur ce numéro` — pages/StoreCreationWizard.jsx
+- (1×) `Les commandes de votre boutique apparaîtront ici` — pages/BoutiqueDashboard.jsx
+- (1×) `Les contacts s'enregistrent automatiquement dès le premier message reçu` — pages/AgentConfig.jsx
+- (1×) `Les demandes d'activation WhatsApp apparaîtront ici` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Les données apparaîtront dès que du trafic sera enregistré.` — pages/SuperAdminAnalytics.jsx
+- (1×) `Les données suivantes seront supprimées :` — pages/Settings.jsx
+- (1×) `Les doublons sont automatiquement detectes et ignores` — pages/ConnectShopify.jsx
+- (1×) `Les logs d'envoi WhatsApp apparaîtront ici` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Les modifications s'appliquent et se sauvegardent automatiquement` — pages/BoutiqueTheme.jsx
+- (1×) `Les mots de passe ne correspondent pas` — pages/ResetPassword.jsx
+- (1×) `Les nouvelles courses apparaîtront ici automatiquement` — pages/LivreurDashboard.jsx
+- (1×) `Les posts sont envoyés au jour et à l'heure configurés (fuseau Africa/Douala).` — pages/RitaGroupAnimation.jsx
+- (1×) `Les règles que Rita respecte en permanence` — pages/AgentConfig.jsx
+- (1×) `Liaison…` — pages/WhatsAppConnexion.jsx
+- (1×) `Lien` — pages/SourcingList.jsx
+- (1×) `Lien d'invitation (chat.whatsapp.com/...) ou JID` — pages/Settings.jsx
+- (1×) `Lien de la page produit` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Lien direct (MP4)` — components/ProductMediaManager.jsx
+- (1×) `Lien du bouton` — components/VisualSiteBuilder.jsx
+- (1×) `Lien invalide` — pages/ResetPassword.jsx
+- (1×) `Lien produit` — pages/CreativeGenerator.jsx
+- (1×) `Liens créés` — pages/AffiliateLinks.jsx
+- (1×) `Lier` — pages/WhatsAppConnexion.jsx
+- (1×) `Lieu de livraison` — pages/OrderDetail.jsx
+- (1×) `Liez votre compte WhatsApp via ZenChat pour commencer` — pages/WhatsAppConnexion.jsx
+- (1×) `Ligne de réassurance` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Ligne horizontale` — components/RichTextEditor.jsx
+- (1×) `Lignes` — pages/StockManagement.jsx
+- (1×) `Limite atteinte —` — pages/OrdersList.jsx
+- (1×) `Limite atteinte.` — pages/WhatsAppConnexion.jsx
+- (1×) `Limite d'agents atteinte` — pages/AgentIAList.jsx
+- (1×) `Limite de messages atteinte` — pages/WhatsAppService.jsx
+- (1×) `Limites (–1 = illimité)` — pages/SuperAdminPlans.jsx
+- (1×) `Liste des contacts Rita` — pages/AgentConfig.jsx
+- (1×) `Liste numérotée` — components/RichTextEditor.jsx
+- (1×) `Liste à puces` — components/RichTextEditor.jsx
+- (1×) `Live` — pages/DeveloperSection.jsx
+- (1×) `Livr.` — pages/Goals.jsx
+- (1×) `Livraison :` — pages/ReportForm.jsx
+- (1×) `Livraison gratuite si tu commandes aujourd'hui !` — pages/WhatsAppService.jsx
+- (1×) `Livraison locale` — pages/AgentConfig.jsx
+- (1×) `Livraison rapide · Paiement à la livraison · Retours faciles` — pages/BoutiqueSettings.jsx
+- (1×) `Livraisons par agence` — pages/ReportDetail.jsx
+- (1×) `Livraisons par ville` — pages/ControlCenter.jsx
+- (1×) `Livré le` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Livrée le` — pages/LivreurDeliveryDetail.jsx
+- (1×) `Localisation en cours…` — pages/LivreurDeliveries.jsx
+- (1×) `Log brut` — pages/SuperAdminMailServer.jsx
+- (1×) `Logo de marque` — pages/CreativeGenerator.jsx
+- (1×) `Logo optionnel -- cliquez` — pages/StoreCreationWizard.jsx
+- (1×) `Logs Postfix / OpenDKIM` — pages/SuperAdminMailServer.jsx
+- (1×) `Logs de messages` — pages/DeveloperSection.jsx
+- (1×) `Lu le` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Luxe` — pages/ProductResearch.jsx
+- (1×) `MAD (Dirham)` — pages/StoreSetup.jsx
+- (1×) `MAU (30j)` — pages/SuperAdminAnalytics.jsx
+- (1×) `MTN MoMo` — pages/AffiliateDashboard.jsx
+- (1×) `MTN Mobile Money` — pages/AgentConfig.jsx
+- (1×) `Ma Société` — pages/ScalorRegister.jsx
+- (1×) `Ma devise` — components/CurrencySelector.jsx
+- (1×) `Mails locaux recus` — pages/SuperAdminMailServer.jsx
+- (1×) `Maison et Décoration` — pages/WorkspaceSetup.jsx
+- (1×) `Marché` — pages/ProductResearchList.jsx
+- (1×) `Marché cible` — pages/StoreProductForm.jsx
+- (1×) `Marge minimale (%)` — pages/ProductResearch.jsx
+- (1×) `Marge ↑` — pages/ProductResearchList.jsx
+- (1×) `Marge ↓` — pages/ProductResearchList.jsx
+- (1×) `Marge/unité` — components/ProductCard.jsx
+- (1×) `Marketing Email` — pages/Marketing.jsx
+- (1×) `Max relances` — pages/AgentConfig.jsx
+- (1×) `Maximum 3 boutiques atteint` — components/StoreSwitcher.jsx
+- (1×) `Maximum atteint` — pages/FormUpsellsPage.jsx
+- (1×) `Medium` — components/productSettings/DesignSettings.jsx
+- (1×) `Meilleures villes` — pages/StoreAnalytics.jsx
+- (1×) `Membre` — pages/UserManagement.jsx
+- (1×) `Membre depuis` — pages/Profile.jsx
+- (1×) `Membres` — pages/SuperAdminWorkspaces.jsx
+- (1×) `Membres du workspace` — pages/UserManagement.jsx
+- (1×) `Merci ! Rejoins notre groupe 👇` — pages/RitaFlows.jsx
+- (1×) `Mes Produits Affectés` — pages/CloseuseProduits.jsx
+- (1×) `Mes boutiques` — components/StoreSwitcher.jsx
+- (1×) `Mes groupes WhatsApp` — pages/AgentConfig.jsx
+- (1×) `Mes tickets` — components/SupportChatWidget.jsx
+- (1×) `Mes visuels` — pages/CreativeGenerator.jsx
+- (1×) `Mes workspaces` — pages/Profile.jsx
+- (1×) `Message ID` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Message Template` — components/productSettings/AutomationSettings.jsx
+- (1×) `Message WhatsApp` — pages/CampaignForm.jsx
+- (1×) `Message client automatique par produit` — pages/Settings.jsx
+- (1×) `Message de relance` — pages/AgentConfig.jsx
+- (1×) `Message marketing personnalisé` — components/WhatsAppSendModal.jsx
+- (1×) `Message personnalisé pour ce produit... (laisser vide = message global)` — pages/OrdersList.jsx
+- (1×) `Message pour le livreur` — pages/OrderDetail.jsx
+- (1×) `Message vocal ajouté` — pages/CampaignForm.jsx
+- (1×) `Message à envoyer dans le groupe...` — pages/RitaFlows.jsx
+- (1×) `Message à envoyer dans le groupe... 💬` — pages/RitaGroupAnimation.jsx
+- (1×) `Message...` — pages/AgentConfig.jsx
+- (1×) `Messages automatiques planifiés par groupe` — pages/AgentConfig.jsx
+- (1×) `Messages envoyés avec NOTRE numéro` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Messages envoyés avec VOTRE numéro` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Messages/jour` — components/PlanLimitsDisplay.jsx
+- (1×) `Messages/mois` — components/PlanLimitsDisplay.jsx
+- (1×) `Mesures actives` — pages/SecurityDashboard.jsx
+- (1×) `Mesures de sécurité actives et journal d'audit` — pages/SecurityDashboard.jsx
+- (1×) `Methode` — pages/SuperAdminBilling.jsx
+- (1×) `Methodes encaissees` — pages/SuperAdminBilling.jsx
+- (1×) `Mis à jour` — pages/ProductDetail.jsx
+- (1×) `Mise à jour de la veille` — pages/ProductFinderEdit.jsx
+- (1×) `Mix des plans` — pages/SuperAdminDashboard.jsx
+- (1×) `Mixte` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Mode Infographies 9:16` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Mode gratuit — page complète + hero IA, sans images d'angles ni GIFs` — components/ProductPageGeneratorModal.jsx
+- (1×) `Modifications non enregistrées` — pages/AgentConfig.jsx
+- (1×) `Modifications non sauvegardées` — pages/Settings.jsx
+- (1×) `Modifier cette section` — components/storefront/EditableWrapper.jsx
+- (1×) `Modifier l'accès` — pages/UserManagement.jsx
+- (1×) `Modifier la quantité` — pages/WhatsAppService.jsx
+- (1×) `Modifier le budget` — pages/TransactionsList.jsx
+- (1×) `Modifier les DNS` — pages/BoutiqueDomains.jsx
+- (1×) `Modifiez les prix affiches dans le studio produit et appliquez une promo temporaire sans toucher au code.` — pages/SuperAdminPlans.jsx
+- (1×) `Modifiez votre nom et numéro de téléphone` — pages/Profile.jsx
+- (1×) `Module 7 · 17 leçons` — pages/LandingPage.jsx
+- (1×) `Modèles` — components/productSettings/FormThemeSelector.jsx
+- (1×) `Mon compte` — pages/SuperAdminSettings.jsx
+- (1×) `Montant (FCFA) *` — pages/TransactionForm.jsx
+- (1×) `Montant (min 5 000 FCFA)` — pages/AffiliateDashboard.jsx
+- (1×) `Montant Total de la commande` — pages/SupplierDetail.jsx
+- (1×) `Montant limite` — pages/TransactionsList.jsx
+- (1×) `Montants` — pages/SourcingStats.jsx
+- (1×) `Monter` — pages/BoutiquePages.jsx
+- (1×) `Montrez à l'agent comment répondre. Il imitera ce ton et cette énergie.` — pages/WhatsAppService.jsx
+- (1×) `Mot de passe *` — pages/UserManagement.jsx
+- (1×) `Mot de passe * (min. 8 chars)` — pages/ScalorRegister.jsx
+- (1×) `Mot de passe Scalor` — pages/AffiliateRegister.jsx
+- (1×) `Mot de passe initial` — pages/AffiliatesAdmin.jsx
+- (1×) `Mot de passe réinitialisé` — pages/ResetPassword.jsx
+- (1×) `Move down` — components/productSettings/FormBuilder.jsx
+- (1×) `Move up` — components/productSettings/FormBuilder.jsx
+- (1×) `Moy. dép. 3m` — pages/TransactionsList.jsx
+- (1×) `Moy. ent. 3m` — pages/TransactionsList.jsx
+- (1×) `Moyen` — pages/ProductReportDetail.jsx
+- (1×) `Msgs/jour` — pages/WhatsAppConnexion.jsx
+- (1×) `My Products → DNS → Add record` — pages/BoutiqueDomains.jsx
+- (1×) `Média du produit` — pages/AgentConfig.jsx
+- (1×) `Médias (optionnel)` — pages/CampaignForm.jsx
+- (1×) `Méthode de calcul:` — pages/ComptaDashboard.jsx
+- (1×) `Méthode de paiement` — pages/SupplierDetail.jsx
+- (1×) `Métriques financières` — pages/ReportDetail.jsx
+- (1×) `N Transaction` — pages/SuperAdminBilling.jsx
+- (1×) `NGN (Naira)` — pages/StoreSetup.jsx
+- (1×) `Namecheap :` — pages/BoutiqueDomains.jsx
+- (1×) `Naturel` — pages/WhatsAppService.jsx
+- (1×) `Niche` — pages/ProductResearch.jsx
+- (1×) `No quantities set` — components/productSettings/ConversionSettings.jsx
+- (1×) `Nom (ex: Boutique A)` — pages/Settings.jsx
+- (1×) `Nom *` — pages/SourcingList.jsx
+- (1×) `Nom affiché (optionnel — auto-rempli)` — pages/Settings.jsx
+- (1×) `Nom client *` — pages/OrdersList.jsx
+- (1×) `Nom de famille` — pages/ClientForm.jsx
+- (1×) `Nom de l'agence` — pages/ReportForm.jsx
+- (1×) `Nom de l'instance` — pages/WhatsAppService.jsx
+- (1×) `Nom de l'instance (ex: ALDI)` — components/WhatsAppClient.jsx
+- (1×) `Nom de l'onglet` — pages/ImportOrders.jsx
+- (1×) `Nom de l'onglet (ex: Sheet1)` — pages/Settings.jsx
+- (1×) `Nom de la boutique` — pages/StoreSetup.jsx
+- (1×) `Nom de la catégorie` — pages/StoreProductsList.jsx
+- (1×) `Nom de la personne assignée` — pages/DecisionForm.jsx
+- (1×) `Nom de la source` — pages/ImportOrders.jsx
+- (1×) `Nom de la ville (ex: Douala)` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Nom de la voix` — pages/WhatsAppService.jsx
+- (1×) `Nom de votre espace` — pages/WorkspaceSetup.jsx
+- (1×) `Nom du destinataire` — pages/CampaignsList.jsx
+- (1×) `Nom du groupe` — pages/TeamChat.jsx
+- (1×) `Nom du groupe (ex: 🛒 Clients VIP)` — pages/RitaFlows.jsx
+- (1×) `Nom du lien` — pages/AffiliateLinks.jsx
+- (1×) `Nom du livreur` — pages/UserManagement.jsx
+- (1×) `Nom du produit (aucun produit en stock)` — pages/OrdersList.jsx
+- (1×) `Nom du produit *` — pages/SupplierDetail.jsx
+- (1×) `Nom et adresse web` — pages/StoreCreationWizard.jsx
+- (1×) `Nom instance` — pages/ProviderService.jsx
+- (1×) `Nom | Prix | Catégorie | Description` — pages/WhatsAppService.jsx
+- (1×) `Nom, email, téléphone…` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Nom, email…` — pages/SuperAdminActivity.jsx
+- (1×) `Nom, promesse, utilisation, prix, bénéfices...` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Nom, téléphone, ville...` — pages/ClientsList.jsx
+- (1×) `Nombre d'avis` — components/ReviewGenerator.jsx
+- (1×) `Nombre de livraisons` — pages/Goals.jsx
+- (1×) `Nombre de produits` — components/VisualSiteBuilder.jsx
+- (1×) `Non configuré` — pages/WhatsAppService.jsx
+- (1×) `Non ouvert` — pages/EmailCampaignResults.jsx
+- (1×) `Non utilise` — pages/SuperAdminBilling.jsx
+- (1×) `Normal` — components/productSettings/DesignSettings.jsx
+- (1×) `Note optionnelle...` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Notes internes sur ce client...` — pages/ClientForm.jsx
+- (1×) `Notes vocales` — pages/WhatsAppService.jsx
+- (1×) `Notes, remarques...` — pages/OrdersList.jsx
+- (1×) `Notifications WhatsApp support` — pages/SuperAdminSettings.jsx
+- (1×) `Notifications activées !` — components/PushNotificationBanner.jsx
+- (1×) `Notifications boss` — pages/WhatsAppService.jsx
+- (1×) `Notifications push` — pages/Profile.jsx
+- (1×) `Notifications push activées` — pages/Settings.jsx
+- (1×) `Notifications push désactivées` — pages/Settings.jsx
+- (1×) `Notifier automatiquement` — pages/OrdersList.jsx
+- (1×) `Notre Histoire` — pages/BoutiquePages.jsx
+- (1×) `Notre galerie` — pages/BoutiquePages.jsx
+- (1×) `Nous confirmons votre transaction, cela peut prendre quelques secondes.` — pages/BillingSuccess.jsx
+- (1×) `Nous répondons en général dans la journée.` — components/SupportChatWidget.jsx
+- (1×) `Nouveau budget` — pages/TransactionsList.jsx
+- (1×) `Nouveau groupe` — pages/TeamChat.jsx
+- (1×) `Nouveau mot de passe *` — pages/UserManagement.jsx
+- (1×) `Nouveau ticket de support` — pages/UserSupport.jsx
+- (1×) `Nouvel utilisateur` — pages/UserManagement.jsx
+- (1×) `Nouvelle décision` — pages/DecisionForm.jsx
+- (1×) `Nouvelle generation` — pages/ProductPageStudio.jsx
+- (1×) `Nouvelle instance ZenChat` — pages/WhatsAppConnexion.jsx
+- (1×) `Nouvelle question non resolue par l'IA → notification WhatsApp via l'instance dédiée, avec lien vers la conversation.` — pages/SuperAdminSettings.jsx
+- (1×) `Numero WhatsApp du super admin` — pages/SuperAdminSettings.jsx
+- (1×) `Numero à configurer` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Numéro (ex: 237612345678)` — pages/OrdersList.jsx
+- (1×) `Numéro :` — components/WhatsAppClient.jsx
+- (1×) `Numéro Mobile Money` — pages/AffiliateRegister.jsx
+- (1×) `Numéro WhatsApp / Téléphone` — pages/WorkspaceSetup.jsx
+- (1×) `Numéro WhatsApp — Rapports` — pages/Settings.jsx
+- (1×) `Numéro actif` — pages/OrdersList.jsx
+- (1×) `Numéro actuel` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Numéro de téléphone (ex: +33612345678)` — components/WhatsAppClient.jsx
+- (1×) `Numéros valides` — components/CampaignCountryModal.jsx
+- (1×) `N° de Suivi / Référence` — pages/SupplierDetail.jsx
+- (1×) `N° facture, reçu...` — pages/TransactionForm.jsx
+- (1×) `Négociation prix` — pages/AgentConfig.jsx
+- (1×) `Obj` — pages/WhatsAppService.jsx
+- (1×) `Objectif` — components/DigitalProductEbookModal.jsx
+- (1×) `Objections` — pages/AgentConfig.jsx
+- (1×) `Observations, problèmes rencontrés, retards de livraison...` — components/OrderForm.jsx
+- (1×) `Offre Deluxe` — components/productSettings/LivePreview.jsx
+- (1×) `Offre bonus activée` — components/DigitalProductEbookModal.jsx
+- (1×) `Offre commerciale` — components/DigitalProductEbookModal.jsx
+- (1×) `Offre limitée active` — pages/SuperAdminPlans.jsx
+- (1×) `Offre spéciale` — pages/StoreProductForm.jsx
+- (1×) `Offres commerciales actives` — pages/WhatsAppService.jsx
+- (1×) `Offres créées` — pages/FormQuantityOffersPage.jsx
+- (1×) `Options` — pages/CampaignForm.jsx
+- (1×) `Orange Money, MTN Mobile Money, Wave et autres operateurs compatibles.` — pages/Tarifs.jsx
+- (1×) `Order creation` — pages/ConnectShopify.jsx
+- (1×) `Ordre d'affichage` — pages/OrdersList.jsx
+- (1×) `Ordre d'envoi progressif :` — pages/OrdersList.jsx
+- (1×) `Ordre prioritaire (sélectionner les pays ci-dessous)` — components/CampaignCountryModal.jsx
+- (1×) `Ordre:` — pages/ImportOrders.jsx
+- (1×) `Organisation` — pages/StoreProductForm.jsx
+- (1×) `Origine` — pages/SuperAdminMailServer.jsx
+- (1×) `Ou collez une URL d'image...` — pages/StoreProductForm.jsx
+- (1×) `Ou entrez ce code manuellement :` — pages/WhatsAppService.jsx
+- (1×) `Outils séparés` — pages/LandingPage.jsx
+- (1×) `Outline Button` — components/ThemeTest.jsx
+- (1×) `Ouverts ces 10j` — pages/SuperAdminDashboard.jsx
+- (1×) `Ouvertures` — pages/EmailCampaignResults.jsx
+- (1×) `Ouvrez les parametres Shopify` — pages/ConnectShopify.jsx
+- (1×) `Ouvrir en plein écran` — components/ChatWidget.jsx
+- (1×) `Ouvrir le contenu genere` — pages/GenerationsPage.jsx
+- (1×) `Ouvrir le contenu généré` — pages/ProductPageStudio.jsx
+- (1×) `Ouvrir le profil` — components/EcomLayout.jsx
+- (1×) `Ouvrir le tableau de bord sécurité` — pages/Settings.jsx
+- (1×) `Ouvrir →` — pages/TeamChat.jsx
+- (1×) `PDF non disponible` — components/DigitalProductEbookModal.jsx
+- (1×) `PNG transparent recommandé` — pages/CreativeGenerator.jsx
+- (1×) `PNG, JPG, SVG · 5 Mo max` — pages/StoreCreationWizard.jsx
+- (1×) `PNG, JPG, SVG · Max 5 Mo` — pages/StoreCreationWizard.jsx
+- (1×) `PNG, JPG, WebP — max 10 MB` — pages/CreativeGenerator.jsx
+- (1×) `PNG, SVG ou WEBP recommandé` — pages/BoutiqueSettings.jsx
+- (1×) `Pack 3 crédits` — components/ProductPageGeneratorModal.jsx
+- (1×) `Pack complet + livraison offerte` — components/productSettings/LivePreview.jsx
+- (1×) `Pack découverte` — pages/AgentConfig.jsx
+- (1×) `Page` — pages/SuperAdminAnalytics.jsx
+- (1×) `Page Builder` — pages/StoreProductsList.jsx
+- (1×) `Page Complète — Image réduite` — components/ProductPageGeneratorModal.jsx
+- (1×) `Page IA complète + hero généré par IA — sans images d'angles ni GIFs` — components/ProductPageGeneratorModal.jsx
+- (1×) `Page Produit` — pages/VisualBuilder.jsx
+- (1×) `Page complète + hero IA — gratuit, sans images d'angles` — pages/StoreProductsList.jsx
+- (1×) `Page produit minimaliste` — components/ProductPageGeneratorModal.jsx
+- (1×) `Pages les plus visitées` — pages/SuperAdminAnalytics.jsx
+- (1×) `Pages les plus vues` — pages/StoreAnalytics.jsx
+- (1×) `Pages populaires` — pages/SuperAdminDashboard.jsx
+- (1×) `Pages qui retiennent` — pages/SuperAdminDashboard.jsx
+- (1×) `Pages utilisées` — pages/SuperAdminWorkspaces.jsx
+- (1×) `Paiement confirmé !` — pages/BillingSuccess.jsx
+- (1×) `Paiement en attente de confirmation` — components/ProductPageGeneratorModal.jsx
+- (1×) `Paiement à la livraison` — components/StoreProductPageInfographics.jsx
+- (1×) `Paiements Mobile Money` — pages/AffiliateLogin.jsx
+- (1×) `Paiements sécurisés par MoneyFusion` — pages/BillingPage.jsx
+- (1×) `Paliers de quantité` — pages/AgentConfig.jsx
+- (1×) `Panier` — pages/SuperAdminActivity.jsx
+- (1×) `Par appareil` — pages/SuperAdminAnalytics.jsx
+- (1×) `Par défaut : la langue de la boutique. S'applique à toute la page générée.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Par langue` — pages/StoreAnalytics.jsx
+- (1×) `Par produit` — pages/OrdersList.jsx
+- (1×) `Par système` — pages/SuperAdminAnalytics.jsx
+- (1×) `Par type d'appareil` — pages/StoreAnalytics.jsx
+- (1×) `Parent` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Pas assez de données` — pages/SuperAdminDashboard.jsx
+- (1×) `Pas d'invention sur le prix, la livraison, le stock ou les produits. Si l'info manque, Rita doit vérifier ou demander une précision.` — pages/WhatsAppService.jsx
+- (1×) `Pas de donnees` — pages/SuperAdminBilling.jsx
+- (1×) `Pas de numéro` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Pas encore affilié ?` — pages/AffiliateLogin.jsx
+- (1×) `Pas encore de compte ?` — pages/Login.jsx
+- (1×) `Passer` — pages/StoreCreationWizard.jsx
+- (1×) `Passer à Scalor →` — pages/OrdersList.jsx
+- (1×) `Passez à Pro pour activer cet agent` — pages/AgentIAList.jsx
+- (1×) `Passez à Scalor` — components/UpgradeWall.jsx
+- (1×) `Passez à Scalor + IA pour activer vos agents commerciaux IA.` — pages/AgentIAList.jsx
+- (1×) `Pays concernés` — components/CampaignCountryModal.jsx
+- (1×) `Pays concernés:` — components/CampaignCountryModal.jsx
+- (1×) `Pays de vente` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Pays définis` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Pays non couvert` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Payée` — pages/SupplierDetail.jsx
+- (1×) `Payées` — pages/AffiliateCommissions.jsx
+- (1×) `Performance COD` — pages/StoreAnalytics.jsx
+- (1×) `Performance des livreurs (90 derniers jours)` — pages/ControlCenter.jsx
+- (1×) `Performance par statut` — pages/StoreAnalytics.jsx
+- (1×) `Performances Équipe` — pages/TeamPerformance.jsx
+- (1×) `Periode` — pages/EmailAnalytics.jsx
+- (1×) `Personnaliser le message automatique envoyé aux clients` — pages/OrdersList.jsx
+- (1×) `Personnalisez cette section` — components/VisualSiteBuilder.jsx
+- (1×) `Personnalisez l'apparence du bouton de commande` — pages/ProductSettingsPage.jsx
+- (1×) `Personnalisez le ton, les expressions et les réactions de votre agent. Ajoutez des exemples de conversations pour qu'il copie exactement votre style.` — pages/WhatsAppService.jsx
+- (1×) `Petite` — components/VisualSiteBuilder.jsx
+- (1×) `Photo produit + lifestyle (DALL-E 3) · +30s` — components/AlibabaImportModal.jsx
+- (1×) `Photos personnalisées` — components/productSettings/BlocksEditor.jsx
+- (1×) `Photos produit` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Pile d'infographies verticales + formulaire minimal` — components/ProductPageGeneratorModal.jsx
+- (1×) `Pilotage COD — données Scalor en direct` — pages/ControlCenter.jsx
+- (1×) `Pipeline` — pages/StoreCreationWizard.jsx
+- (1×) `Plage personnalisée` — pages/StoreAnalytics.jsx
+- (1×) `Plan Gratuit —` — pages/OrdersList.jsx
+- (1×) `Planifiez des statuts avec images de vos produits — publiés automatiquement chaque jour` — pages/AgentConfig.jsx
+- (1×) `Plans expires` — pages/SuperAdminBilling.jsx
+- (1×) `Plein écran` — components/VisualSiteBuilder.jsx
+- (1×) `Plus anciennes d'abord (bas)` — pages/ImportOrders.jsx
+- (1×) `Plus d'actions` — pages/OrdersList.jsx
+- (1×) `Plus de 500 commandes` — pages/WorkspaceSetup.jsx
+- (1×) `Plus gros temps passe` — pages/SuperAdminDashboard.jsx
+- (1×) `Plus la valeur est haute, plus Rita bascule facilement en vocal.` — pages/WhatsAppService.jsx
+- (1×) `Plus qu'un instant` — pages/Register.jsx
+- (1×) `Plus récentes d'abord (haut)` — pages/ImportOrders.jsx
+- (1×) `Plus votre base est complète et structurée, plus Rita sera précise et convaincante.` — pages/WhatsAppService.jsx
+- (1×) `Poids total (kg)` — pages/SourcingList.jsx
+- (1×) `Poids total (kg) *` — pages/StockOrdersList.jsx
+- (1×) `Poids total:` — pages/StockOrderForm.jsx
+- (1×) `Point radio` — components/productSettings/OffersEditor.jsx
+- (1×) `Politique de confidentialité` — pages/PrivacyPolicy.jsx
+- (1×) `Portail Affilié` — pages/AffiliateLogin.jsx
+- (1×) `Posts actifs` — pages/RitaGroupAnimation.jsx
+- (1×) `Posts en pause` — pages/RitaGroupAnimation.jsx
+- (1×) `Posts récurrents` — pages/AgentConfig.jsx
+- (1×) `Postulation WhatsApp Pro` — pages/WhatsAppPostulation.jsx
+- (1×) `Postulations WhatsApp` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Postulez pour WhatsApp Pro` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Pour les posts de type` — pages/RitaGroupAnimation.jsx
+- (1×) `Pour rejoindre un espace, demandez un lien d'invitation à votre administrateur.` — pages/LivreurDashboard.jsx
+- (1×) `Pourcentage` — components/CampaignCountryModal.jsx
+- (1×) `Pourquoi le client devrait accepter cette offre…` — pages/FormUpsellsPage.jsx
+- (1×) `Pourquoi nous choisir ?` — pages/BoutiquePages.jsx
+- (1×) `Premier contact` — pages/AgentConfig.jsx
+- (1×) `Prenez une décision stratégique pour un produit` — pages/DecisionForm.jsx
+- (1×) `Preuve sociale générée` — components/ProductPageGeneratorModal.jsx
+- (1×) `Primary Button` — components/ThemeTest.jsx
+- (1×) `Primary Color:` — components/ThemeTest.jsx
+- (1×) `Priorité:` — pages/DecisionForm.jsx
+- (1×) `Prise en main de Scalor` — pages/LandingPage.jsx
+- (1×) `Privilèges du Super Admin` — pages/SetupSuperAdmin.jsx
+- (1×) `Prix *` — pages/StoreProductForm.jsx
+- (1×) `Prix U. (XAF) *` — pages/SupplierDetail.jsx
+- (1×) `Prix barré` — components/productSettings/OffersEditor.jsx
+- (1×) `Prix d'achat` — pages/ProductResearch.jsx
+- (1×) `Prix d'achat unitaire *` — pages/SourcingList.jsx
+- (1×) `Prix de vente unitaire *` — pages/SourcingList.jsx
+- (1×) `Prix de vente:` — pages/CloseuseProduits.jsx
+- (1×) `Prix maximum (FCFA)` — pages/ProductResearch.jsx
+- (1×) `Prix moy.` — pages/SuperAdminActivity.jsx
+- (1×) `Prix moyen` — pages/StoreProductsList.jsx
+- (1×) `Prix net` — components/productSettings/OffersEditor.jsx
+- (1×) `Prix par kg (FCFA)` — pages/SourcingList.jsx
+- (1×) `Prix suggéré` — pages/StoreProductForm.jsx
+- (1×) `Prix unit.` — pages/OrderDetail.jsx
+- (1×) `Prix vente:` — components/OrderForm.jsx
+- (1×) `Problème` — components/ProductPageGeneratorModal.jsx
+- (1×) `Problème de connexion` — pages/WhatsAppService.jsx
+- (1×) `Problème principal` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Problème principal à traiter` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Problème résolu` — components/AlibabaImportModal.jsx
+- (1×) `Problème à résoudre` — components/DigitalProductEbookModal.jsx
+- (1×) `Product Settings` — components/productSettings/Sidebar.jsx
+- (1×) `Produit catalogue` — pages/AgentConfig.jsx
+- (1×) `Produit concerné (optionnel)` — pages/WhatsAppService.jsx
+- (1×) `Produit exemple` — components/VisualSiteBuilder.jsx
+- (1×) `Produit lié` — pages/TransactionDetail.jsx
+- (1×) `Produit, URL, user, workspace…` — pages/SuperAdminProductPageHistory.jsx
+- (1×) `Produit:` — pages/DecisionForm.jsx
+- (1×) `Produits classés` — pages/StoreProductsList.jsx
+- (1×) `Produits digitaux ou Services` — pages/WorkspaceSetup.jsx
+- (1×) `Produits en rupture` — pages/ControlCenter.jsx
+- (1×) `Produits existants` — pages/StoreProductsList.jsx
+- (1×) `Produits les moins vendus` — pages/StoreAnalytics.jsx
+- (1×) `Produits les plus rentables` — pages/StoreAnalytics.jsx
+- (1×) `Produits les plus vendus — classement par quantité vendue (12 derniers mois)` — pages/SuperAdminActivity.jsx
+- (1×) `Produits les plus vus` — pages/StoreAnalytics.jsx
+- (1×) `Produits par Statut` — pages/ComptaDashboard.jsx
+- (1×) `Produits populaires:` — components/ProductSearch.jsx
+- (1×) `Produits à couper` — pages/ControlCenter.jsx
+- (1×) `Produits, commandes, finances et équipe proviennent de votre espace Scalor.` — pages/ControlCenter.jsx
+- (1×) `Professionnel` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Profil Admin` — pages/AgentConfig.jsx
+- (1×) `Profil mis à jour` — pages/Settings.jsx
+- (1×) `Profit estimé:` — pages/StockOrderForm.jsx
+- (1×) `Profit net` — pages/ReportDetail.jsx
+- (1×) `Profit net réel` — pages/StockOrdersList.jsx
+- (1×) `Profit par commande` — pages/ReportDetail.jsx
+- (1×) `Profit/unité:` — pages/StockOrderForm.jsx
+- (1×) `Programme — Module 7` — pages/Formation.jsx
+- (1×) `Programmer l'envoi` — pages/CampaignForm.jsx
+- (1×) `Programmer l'envoi (facultatif)` — pages/CampaignForm.jsx
+- (1×) `Programmées` — pages/RitaPerformance.jsx
+- (1×) `Progression objectif` — pages/CloseuseDashboard.jsx
+- (1×) `Projections fin de mois` — pages/TransactionsList.jsx
+- (1×) `Prolonger de` — pages/ServiceClient.jsx
+- (1×) `Promo credits IA active` — pages/SuperAdminPlans.jsx
+- (1×) `Promo de bienvenue 10%` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Promotions, bonus et arguments que Rita peut proposer au bon moment.` — pages/AgentConfig.jsx
+- (1×) `Propriétés` — components/VisualSiteBuilder.jsx
+- (1×) `Propulsé par` — pages/LandingPage.jsx
+- (1×) `Protection de vos données` — components/PrivacyBanner.jsx
+- (1×) `Protégé par le système` — pages/SuperAdminSettings.jsx
+- (1×) `Précisez la raison…` — pages/LivreurDeliveries.jsx
+- (1×) `Précisions sur la course (optionnel)` — pages/LivreurDeliveries.jsx
+- (1×) `Préconfigurations à heures fixes — activables / désactivables` — pages/SuperAdminPushCenter.jsx
+- (1×) `Préférences de notification` — pages/Settings.jsx
+- (1×) `Prénom *` — pages/ClientForm.jsx
+- (1×) `Prénom Nom` — components/productSettings/BlocksEditor.jsx
+- (1×) `Prénom du client` — pages/ClientForm.jsx
+- (1×) `Prénoms (séparés par des virgules)` — components/ReviewGenerator.jsx
+- (1×) `Préparation de la boutique` — pages/StoreCreationWizard.jsx
+- (1×) `Présence du vocal en mode mixte` — pages/WhatsAppService.jsx
+- (1×) `Présentation` — pages/StoreCreationWizard.jsx
+- (1×) `Prévisualisation` — pages/StoreProductForm.jsx
+- (1×) `Prêt à scaler votre business ?` — pages/BillingPage.jsx
+- (1×) `Prêt ù  transformer votre communication ?` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Pub :` — pages/ReportForm.jsx
+- (1×) `Publicités` — pages/ControlCenter.jsx
+- (1×) `Publier maintenant` — pages/AgentConfig.jsx
+- (1×) `Publiez pour appliquer les changements live` — pages/VisualBuilder.jsx
+- (1×) `Puis-je toujours utiliser mon numéro personnel ?` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Période actuelle:` — pages/ComptaDashboard.jsx
+- (1×) `Période d'essai` — pages/ServiceClient.jsx
+- (1×) `Périodes rapides` — pages/StoreAnalytics.jsx
+- (1×) `QR Code` — pages/DeveloperSection.jsx
+- (1×) `QR en attente de génération…` — pages/DeveloperSection.jsx
+- (1×) `QUELQUES JOURS !` — components/ProductPageGeneratorModal.jsx
+- (1×) `Qualification automatique, groupes WhatsApp, animation` — pages/RitaFlows.jsx
+- (1×) `Quand Rita ne sait pas répondre, elle vous passe la main` — pages/AgentConfig.jsx
+- (1×) `Quand une commande est confirmée, Rita crée un groupe pour ce produit` — pages/RitaFlows.jsx
+- (1×) `Quand vous donnez une instruction, Rita l'exécute intelligemment` — pages/AgentConfig.jsx
+- (1×) `Quand vous parlez à Rita, elle est professionnelle, analytique et directe` — pages/AgentConfig.jsx
+- (1×) `Quantite` — pages/OrdersList.jsx
+- (1×) `Quantité vendue` — pages/ProductReportDetail.jsx
+- (1×) `Quantité:` — pages/StockOrderForm.jsx
+- (1×) `Que se passe-t-il si je change de numéro ?` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Quel probleme ton produit resout ?` — components/ProductPageGeneratorModal.jsx
+- (1×) `Question` — pages/StoreProductForm.jsx
+- (1×) `Question du client…` — pages/AgentConfig.jsx
+- (1×) `Question fréquente sur ce produit...` — pages/WhatsAppService.jsx
+- (1×) `Questions de qualification` — pages/WhatsAppService.jsx
+- (1×) `Questions fréquentes et réponses de Rita` — pages/AgentConfig.jsx
+- (1×) `Question…` — components/productSettings/BlocksEditor.jsx
+- (1×) `Queue actuelle` — pages/SuperAdminMailServer.jsx
+- (1×) `Qui a généré, quand, avec quels crédits, et quel contenu a été produit.` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Quota presque atteint —` — pages/OrdersList.jsx
+- (1×) `RECOMMANDÉ` — pages/BoutiqueDomains.jsx
+- (1×) `ROAS` — pages/ReportsList.jsx
+- (1×) `ROAS (Return on Ad Spend)` — pages/ComptaDashboard.jsx
+- (1×) `ROAS idéal:` — pages/ComptaDashboard.jsx
+- (1×) `Rafraichir` — pages/GenerationsPage.jsx
+- (1×) `Rafraîchir l'aperçu` — pages/EnhancedVisualBuilder.jsx
+- (1×) `Raison de non-livraison` — pages/LivreurDeliveries.jsx
+- (1×) `Raisons d'acheter` — components/ProductPageGeneratorModal.jsx
+- (1×) `Rapport Rita` — pages/WhatsAppService.jsx
+- (1×) `Rapport automatique` — pages/ReportsList.jsx
+- (1×) `Rapport d'envoi` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Rapport détaillé :` — pages/ProductReportDetail.jsx
+- (1×) `Rapport généré` — pages/ReportsList.jsx
+- (1×) `Rapporté par` — pages/ReportDetail.jsx
+- (1×) `Rayon des coins` — components/productSettings/DesignSettings.jsx
+- (1×) `Rebond` — pages/SuperAdminAnalytics.jsx
+- (1×) `Recevez des notifications en temps réel sur votre appareil, même quand l'application est fermée.` — pages/Settings.jsx
+- (1×) `Recevez un récap chaque jour de l'activité de Rita` — pages/AgentConfig.jsx
+- (1×) `Recevez votre lien, suivez vos ventes et vos gains.` — pages/AffiliateRegister.jsx
+- (1×) `Recevoir` — pages/StockOrdersList.jsx
+- (1×) `Recharger l'aperçu` — pages/VisualBuilder.jsx
+- (1×) `Recharger les crédits` — pages/CreativeGenerator.jsx
+- (1×) `Rechercher (nom, téléphone, ville)…` — pages/StoreAnalytics.jsx
+- (1×) `Rechercher client, téléphone, ville, produit…` — pages/LivreurManagement.jsx
+- (1×) `Rechercher des commandes` — pages/StoreOrdersDashboard.jsx
+- (1×) `Rechercher par email...` — pages/SuperAdminUsers.jsx
+- (1×) `Rechercher par nom ou email...` — pages/SuperAdminSupport.jsx
+- (1×) `Rechercher par nom ou téléphone...` — pages/CampaignDetail.jsx
+- (1×) `Rechercher par nom, email, telephone, workspace...` — pages/SuperAdminBilling.jsx
+- (1×) `Rechercher par nom, email, téléphone...` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Rechercher par nom, slug ou email propriétaire…` — pages/SuperAdminWorkspaces.jsx
+- (1×) `Rechercher par nom, téléphone, ville, produit…` — pages/LivreurAvailable.jsx
+- (1×) `Rechercher par téléphone, nom, campagne, workspace, erreur...` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Rechercher produit, ville, agence...` — pages/StockManagement.jsx
+- (1×) `Rechercher un code…` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Rechercher un groupe...` — pages/AgentConfig.jsx
+- (1×) `Rechercher un lien...` — pages/AffiliateLinks.jsx
+- (1×) `Rechercher un membre...` — pages/TeamChat.jsx
+- (1×) `Rechercher un produit` — pages/StoreFront.jsx
+- (1×) `Rechercher un produit (ex: téléphone, ordinateur, écologique...)` — pages/ProductResearch.jsx
+- (1×) `Rechercher un produit existant...` — pages/StoreProductsList.jsx
+- (1×) `Rechercher un produit, une URL, un user ou un workspace` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Rechercher un produit…` — pages/StoreProductForm.jsx
+- (1×) `Rechercher une campagne…` — pages/Marketing.jsx
+- (1×) `Rechercher une conversation...` — pages/TeamChat.jsx
+- (1×) `Recherchez un client` — pages/ServiceClient.jsx
+- (1×) `Reconnecte-toi pour continuer à générer des pages.` — components/ProductPageGeneratorModal.jsx
+- (1×) `Recontactez massivement (mais un par un) tous les clients ayant manifesté de l'intérêt ou commandé un produit spécifique.` — pages/AgentConfig.jsx
+- (1×) `Redirection vers le paiement...` — pages/BillingPage.jsx
+- (1×) `Redémarrer` — pages/DeveloperSection.jsx
+- (1×) `Reessayer` — pages/SuperAdminBilling.jsx
+- (1×) `Regardez comment configurer votre webhook Shopify` — pages/ConnectShopify.jsx
+- (1×) `Regardez la formation offerte, puis continuez la configuration de votre espace.` — pages/Formation.jsx
+- (1×) `Rejeté` — pages/ProductResearchList.jsx
+- (1×) `Rejoignez le support` — components/EcomLayout.jsx
+- (1×) `Rejoignez les entrepreneurs qui automatisent leurs ventes avec Scalor. Commencez votre essai gratuit aujourd'hui.` — pages/BillingPage.jsx
+- (1×) `Rejoignez notre groupe support` — components/EcomLayout.jsx
+- (1×) `Rejoignez une équipe existante via un lien d'invitation ou créez votre espace.` — pages/LivreurDashboard.jsx
+- (1×) `Rejoindre avec mon compte Scalor` — pages/AffiliateRegister.jsx
+- (1×) `Rejoindre l'équipe` — pages/InviteAccept.jsx
+- (1×) `Rejoindre le programme affilié` — pages/AffiliateRegister.jsx
+- (1×) `Rejoindre un espace` — pages/Profile.jsx
+- (1×) `Rejoindre un groupe via lien d'invitation` — pages/AgentConfig.jsx
+- (1×) `Rejoint:` — pages/SuperAdminUserDetail.jsx
+- (1×) `Relance` — pages/StoreOrdersDashboard.jsx
+- (1×) `Relance client` — pages/OrderDetail.jsx
+- (1×) `Relancer après` — pages/AgentConfig.jsx
+- (1×) `Relancer la vérification` — pages/BoutiqueDomains.jsx
+- (1×) `Relances Automatiques par Produit` — pages/WhatsAppService.jsx
+- (1×) `Relances automatiques` — pages/WhatsAppService.jsx
+- (1×) `Relances et diffusions WhatsApp` — pages/CampaignsList.jsx
+- (1×) `Rendu vocal` — pages/WhatsAppService.jsx
+- (1×) `Rentables` — pages/ProductsList.jsx
+- (1×) `Repartition plans` — pages/SuperAdminBilling.jsx
+- (1×) `Reponse SMTP` — pages/SuperAdminMailServer.jsx
+- (1×) `Reprendre cette generation` — pages/GenerationsPage.jsx
+- (1×) `Reprendre cette génération` — pages/ProductPageStudio.jsx
+- (1×) `Restaurant/Café` — pages/WhatsAppPostulation.jsx
+- (1×) `Restez informé(e) !` — pages/BoutiquePages.jsx
+- (1×) `Resultat du test` — pages/SuperAdminMailServer.jsx
+- (1×) `Retirer` — pages/AgentConfig.jsx
+- (1×) `Retirer ce groupe de l'animation` — pages/RitaGroupAnimation.jsx
+- (1×) `Retirer la photo` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Retour au dashboard boutique` — pages/BoutiquePages.jsx
+- (1×) `Retour au sourcing` — pages/SourcingStats.jsx
+- (1×) `Retour aux commandes` — pages/OrderDetail.jsx
+- (1×) `Retour aux fournisseurs` — pages/SupplierDetail.jsx
+- (1×) `Retour en arrière` — pages/BoutiquePages.jsx
+- (1×) `Retours / Remboursements` — pages/ReportDetail.jsx
+- (1×) `Retrait minimum :` — pages/AffiliateDashboard.jsx
+- (1×) `Retry-After` — pages/DeveloperSection.jsx
+- (1×) `Revenez dans quelques instants` — livreur/pages/AvailableOrders.jsx
+- (1×) `Revenu annuel` — pages/ProductResearch.jsx
+- (1×) `Revenu par offre` — pages/SuperAdminBilling.jsx
+- (1×) `Revenus générés` — pages/TeamPerformance.jsx
+- (1×) `Reçoivent un message à chaque nouvelle commande.` — pages/OrdersList.jsx
+- (1×) `Reçue` — pages/SupplierDetail.jsx
+- (1×) `Rita IA liée automatiquement ✓` — pages/WhatsAppService.jsx
+- (1×) `Rita adapte sa personnalité selon l'interlocuteur` — pages/AgentConfig.jsx
+- (1×) `Rita analyse chaque message pour adapter sa stratégie` — pages/AgentConfig.jsx
+- (1×) `Rita anime automatiquement vos groupes WhatsApp avec du contenu planifié.` — pages/RitaGroupAnimation.jsx
+- (1×) `Rita doit répondre comme une vendeuse camerounaise: simple, rassurante, sans blabla, sans signature à la fin.` — pages/WhatsAppService.jsx
+- (1×) `Rita envoie la vidéo quand le client hésite ou veut voir le produit en action` — pages/AgentConfig.jsx
+- (1×) `Rita envoie la vidéo quand le client hésite ou veut voir le produit en action.` — pages/WhatsAppService.jsx
+- (1×) `Rita envoie plus souvent un` — pages/WhatsAppService.jsx
+- (1×) `Rita pose ces questions pour comprendre le prospect` — pages/WhatsAppService.jsx
+- (1×) `Rita promotionnera votre groupe auprès des clients intéressés` — pages/AgentConfig.jsx
+- (1×) `Rita relance automatiquement les prospects silencieux` — pages/AgentConfig.jsx
+- (1×) `Rita utilise ces informations pour mieux représenter votre marque` — pages/AgentConfig.jsx
+- (1×) `Rita utilisera ces témoignages pour rassurer les clients hésitants et augmenter les conversions.` — pages/WhatsAppService.jsx
+- (1×) `Rita vérifie toutes les minutes si un post planifié doit être envoyé.` — pages/RitaGroupAnimation.jsx
+- (1×) `Rita · Répond en quelques heures` — pages/LandingPage.jsx
+- (1×) `Rita — Agent IA` — pages/LandingPage.jsx
+- (1×) `Routes disponibles:` — components/TestBackend.jsx
+- (1×) `Rouvrir` — pages/SuperAdminSupport.jsx
+- (1×) `Ruptures` — pages/StockManagement.jsx
+- (1×) `Rythme` — pages/TransactionsList.jsx
+- (1×) `Règle : stock ≤ seuil → pub coupée · stock ≤ 2× seuil → pub réduite. Seuil par défaut 10 si non défini sur la fiche produit.` — pages/ControlCenter.jsx
+- (1×) `Règle critique` — pages/WhatsAppService.jsx
+- (1×) `Règles (évaluées dans l'ordre)` — pages/RitaFlows.jsx
+- (1×) `Règles business actives` — pages/ControlCenter.jsx
+- (1×) `Règles de commission` — pages/AffiliateDashboard.jsx
+- (1×) `Règles du premier message` — pages/AgentConfig.jsx
+- (1×) `Réactiver` — pages/SuperAdminWorkspaces.jsx
+- (1×) `Réassigner le livreur` — pages/LivreurManagement.jsx
+- (1×) `Récapitulatif` — pages/StoreCreationWizard.jsx
+- (1×) `Récapitulatif de vos revenus` — pages/LivreurEarningsPage.jsx
+- (1×) `Récents` — pages/ProductResearchList.jsx
+- (1×) `Récurrent` — pages/StoreAnalytics.jsx
+- (1×) `Rédaction` — pages/CampaignForm.jsx
+- (1×) `Rédiger l’email` — pages/SuperAdminBilling.jsx
+- (1×) `Rédiger manuellement` — components/ProductGeneratorModal.jsx
+- (1×) `Rédigez votre message…` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Réduction` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Réduction, bonus, livraison, cadeau` — pages/AgentConfig.jsx
+- (1×) `Réductions automatiques selon la quantité commandée` — pages/AgentConfig.jsx
+- (1×) `Réduire` — pages/CampaignsList.jsx
+- (1×) `Référence` — pages/TransactionDetail.jsx
+- (1×) `Référence (optionnel)` — pages/TransactionForm.jsx
+- (1×) `Référence API v1` — pages/DeveloperSection.jsx
+- (1×) `Référencement (SEO)` — pages/StoreProductForm.jsx
+- (1×) `Régénérer la homepage par IA` — pages/BoutiqueSettings.jsx
+- (1×) `Réinitialiser l'essai` — pages/SuperAdminBilling.jsx
+- (1×) `Réinitialiser le mot de passe` — pages/UserManagement.jsx
+- (1×) `Réorganiser` — components/storefront/EditableWrapper.jsx
+- (1×) `Répartition des Coûts` — pages/ComptaDashboard.jsx
+- (1×) `Répartition des commandes` — pages/TransactionsList.jsx
+- (1×) `Répartition du prix de vente` — pages/ProductDetail.jsx
+- (1×) `Répartition par pays` — components/CampaignCountryModal.jsx
+- (1×) `Répartition statuts` — pages/CloseuseDashboard.jsx
+- (1×) `Répondre` — components/ChatWidget.jsx
+- (1×) `Répondre en tant que support humain…` — pages/SuperAdminSupport.jsx
+- (1×) `Réponse` — pages/StoreProductForm.jsx
+- (1×) `Réponse pour contrer cette objection...` — pages/WhatsAppService.jsx
+- (1×) `Réponse provider :` — pages/SuperAdminWhatsAppLogs.jsx
+- (1×) `Réponse que Rita doit donner...` — pages/WhatsAppService.jsx
+- (1×) `Réponse rapide` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Réponses prêtes pour les freins à l'achat courants` — pages/WhatsAppService.jsx
+- (1×) `Réponses:` — pages/RitaPerformance.jsx
+- (1×) `Réponse…` — components/productSettings/BlocksEditor.jsx
+- (1×) `Résolu` — pages/SuperAdminSupport.jsx
+- (1×) `Résultats` — components/ProductPageGeneratorModal.jsx
+- (1×) `Résumez votre problème en quelques mots…` — pages/UserSupport.jsx
+- (1×) `Résumé Financier` — components/FinancialSummary.jsx
+- (1×) `Résumé automatique` — pages/ControlCenter.jsx
+- (1×) `Résumé de l'analyse` — components/CampaignCountryModal.jsx
+- (1×) `Résumé de l'envoi` — components/CampaignCountryModal.jsx
+- (1×) `Résumé du Profil` — pages/AgentConfig.jsx
+- (1×) `Rétablir` — pages/VisualBuilder.jsx
+- (1×) `Révoquer` — pages/DeveloperSection.jsx
+- (1×) `Rôle *` — pages/UserManagement.jsx
+- (1×) `Rôle:` — pages/SuperAdminUserDetail.jsx
+- (1×) `Rôles` — pages/SuperAdminDashboard.jsx
+- (1×) `Rôles :` — pages/SuperAdminActivity.jsx
+- (1×) `S'inscrire` — pages/BoutiquePages.jsx
+- (1×) `S2 (standard)` — pages/WhatsAppService.jsx
+- (1×) `S2-Pro ⭐ (meilleur qualité)` — pages/WhatsAppService.jsx
+- (1×) `SMTP / Postfix` — pages/EmailCampaignResults.jsx
+- (1×) `SMTP transactionnel, DKIM, queue, logs et diagnostics DNS.` — pages/SuperAdminMailServer.jsx
+- (1×) `Saisissez un texte simple. Scalor mettra automatiquement le message en forme dans l’email.` — pages/SuperAdminBilling.jsx
+- (1×) `Saisissez votre message WhatsApp...` — components/WhatsAppSendModal.jsx
+- (1×) `Salut ! On a remarqué que tu n'as pas finalisé ta commande. Tu as besoin d'aide ?` — pages/RitaPerformance.jsx
+- (1×) `Sans carte bancaire requise` — pages/BillingPage.jsx
+- (1×) `Sans engagement` — pages/AffiliateRegister.jsx
+- (1×) `Sans instance, l'instance globale sera utilisée` — pages/OrdersList.jsx
+- (1×) `Sans ouverture +10j` — pages/SuperAdminDashboard.jsx
+- (1×) `Santé boutique` — pages/BoutiqueDashboard.jsx
+- (1×) `Santé des comptes` — pages/SuperAdminDashboard.jsx
+- (1×) `Santé et Beauté` — pages/WorkspaceSetup.jsx
+- (1×) `Santé financière` — pages/TransactionsList.jsx
+- (1×) `Satisfait ou remboursé sous 30 jours` — pages/StoreProductForm.jsx
+- (1×) `Sauvegarde...` — pages/Settings.jsx
+- (1×) `Sauvegardez` — pages/ConnectShopify.jsx
+- (1×) `Save` — pages/ConnectShopify.jsx
+- (1×) `Scaler` — pages/DecisionForm.jsx
+- (1×) `Scalor Builder` — pages/StoreCreationWizard.jsx
+- (1×) `Scalor Livreur` — livreur/pages/LivreurProfile.jsx
+- (1×) `Scalor — tout en un` — pages/LandingPage.jsx
+- (1×) `Scanner le QR code` — pages/DeveloperSection.jsx
+- (1×) `Score de santé` — pages/TransactionsList.jsx
+- (1×) `Score ↓` — pages/ProductResearchList.jsx
+- (1×) `Scraping automatique` — components/ProductGeneratorModal.jsx
+- (1×) `Se connecter avec Scalor` — pages/AffiliateLogin.jsx
+- (1×) `Secret de l'instance (clé API)` — components/WhatsAppClient.jsx
+- (1×) `Section` — pages/UserManagement.jsx
+- (1×) `Sections` — pages/EnhancedVisualBuilder.jsx
+- (1×) `Sections de la boutique` — pages/BoutiqueTheme.jsx
+- (1×) `Sections de la page produit` — pages/StoreProductForm.jsx
+- (1×) `Semaine` — pages/Goals.jsx
+- (1×) `Semi-bold` — components/productSettings/DesignSettings.jsx
+- (1×) `Sera intégré dans les visuels` — pages/CreativeGenerator.jsx
+- (1×) `Serveur mail Scalor` — pages/SuperAdminMailServer.jsx
+- (1×) `Session expirée` — components/ProductPageGeneratorModal.jsx
+- (1×) `Sessions / utilisateur` — pages/SuperAdminDashboard.jsx
+- (1×) `Sessions anonymes` — pages/SuperAdminDashboard.jsx
+- (1×) `Sessions identifiees` — pages/SuperAdminDashboard.jsx
+- (1×) `Settings` — pages/ConnectShopify.jsx
+- (1×) `Seuil` — pages/ControlCenter.jsx
+- (1×) `Seuil:` — components/StockAlert.jsx
+- (1×) `Seule boutique certifiée bio en CI, garantie 30 jours, livraison express 4h...` — pages/WhatsAppService.jsx
+- (1×) `Sheet1` — pages/ImportOrders.jsx
+- (1×) `Shopify Admin` — pages/ConnectShopify.jsx
+- (1×) `Shopify · WhatsApp · Meta Ads · Klaviyo · Loox…` — pages/LandingPage.jsx
+- (1×) `Si actif : villes configurées ci-dessous → message livrable · autres villes → message non-livrable` — pages/WhatsAppService.jsx
+- (1×) `Si le client change de langue en cours de conversation, Rita s'adapte automatiquement` — pages/WhatsAppService.jsx
+- (1×) `Signature` — pages/WhatsAppService.jsx
+- (1×) `Simulateur` — pages/AffiliateDashboard.jsx
+- (1×) `Simulation client WhatsApp` — pages/WhatsAppService.jsx
+- (1×) `Simulez une conversation comme un vrai client WhatsApp` — pages/WhatsAppService.jsx
+- (1×) `Slides à générer` — pages/CreativeGenerator.jsx
+- (1×) `Slogans` — pages/CreativeGenerator.jsx
+- (1×) `Slug` — pages/Settings.jsx
+- (1×) `Snapchat` — pages/BoutiquePixel.jsx
+- (1×) `Solde` — pages/ComptaDashboard.jsx
+- (1×) `Solde actuel :` — pages/CreativeGenerator.jsx
+- (1×) `Solde disponible (FCFA)` — pages/AffiliateDashboard.jsx
+- (1×) `Solde disponible :` — pages/AffiliateDashboard.jsx
+- (1×) `Soldé` — pages/TransactionsList.jsx
+- (1×) `Solution` — components/ProductPageGeneratorModal.jsx
+- (1×) `Sorties` — pages/SuperAdminAnalytics.jsx
+- (1×) `Souligné (Ctrl+U)` — components/RichTextEditor.jsx
+- (1×) `Soumettez vos problèmes et suivez leur avancement` — pages/UserSupport.jsx
+- (1×) `Source` — pages/ClientForm.jsx
+- (1×) `Source produit` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Sources Google Sheets` — pages/Settings.jsx
+- (1×) `Sources de trafic` — pages/SuperAdminAnalytics.jsx
+- (1×) `Sous-domaine gratuit` — pages/BoutiqueDomains.jsx
+- (1×) `Sous-domaine:` — pages/DomainGeneratorDemo.jsx
+- (1×) `Sous-titre du bouton` — pages/ProductSettingsPage.jsx
+- (1×) `Sous-total` — pages/BillingPage.jsx
+- (1×) `Soyez le premier à écrire !` — components/ChatWidget.jsx
+- (1×) `Spreadsheet accessible` — pages/ImportOrders.jsx
+- (1×) `Spécifications techniques` — components/AlibabaImportModal.jsx
+- (1×) `Statistiques` — pages/SourcingList.jsx
+- (1×) `Statistiques (3 max)` — components/productSettings/BlocksEditor.jsx
+- (1×) `Statistiques Features` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Statistiques du jour` — pages/AgentIAList.jsx
+- (1×) `Statistiques détaillées campagne` — pages/EmailCampaignResults.jsx
+- (1×) `Statistiques globales` — pages/StatsPage.jsx
+- (1×) `Stats` — pages/CampaignsList.jsx
+- (1×) `Stats Boutique` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Stats produits (Rapports)` — pages/StatsRapports.jsx
+- (1×) `Status :` — components/WhatsAppClient.jsx
+- (1×) `Statut de paiement` — pages/SourcingList.jsx
+- (1×) `Statut des commandes` — pages/CampaignForm.jsx
+- (1×) `Statut du paiement` — pages/StoreOrdersDashboard.jsx
+- (1×) `Statut du traitement` — pages/StoreOrdersDashboard.jsx
+- (1×) `Statut stock` — pages/ControlCenter.jsx
+- (1×) `Statuts` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Statuts :` — pages/CampaignForm.jsx
+- (1×) `Statuts WhatsApp automatiques` — pages/AgentConfig.jsx
+- (1×) `Statuts à synchroniser` — pages/ClientsList.jsx
+- (1×) `Stock actuel calculé` — pages/StockManagement.jsx
+- (1×) `Stock disponible:` — pages/CloseuseProduits.jsx
+- (1×) `Stock faible` — pages/StoreProductsList.jsx
+- (1×) `Stock limité activé` — components/ProductPageGeneratorModal.jsx
+- (1×) `Stock par produit` — pages/ControlCenter.jsx
+- (1×) `Stock total :` — pages/StockManagement.jsx
+- (1×) `Stock à recommander` — pages/ControlCenter.jsx
+- (1×) `Stratégie:` — components/CampaignCountryModal.jsx
+- (1×) `Structure générée` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Studio de generation pages produits` — pages/ProductPageStudio.jsx
+- (1×) `Style conversation` — pages/WhatsAppService.jsx
+- (1×) `Style de bordure` — components/productSettings/OffersEditor.jsx
+- (1×) `Style de couverture` — components/DigitalProductEbookModal.jsx
+- (1×) `Style de page` — components/ProductPageGeneratorModal.jsx
+- (1×) `Style du logo` — pages/StoreCreationWizard.jsx
+- (1×) `Style visuel` — components/productSettings/ButtonEditor.jsx
+- (1×) `Subdomain (optionnel)` — pages/ProviderService.jsx
+- (1×) `Suggestion` — pages/ControlCenter.jsx
+- (1×) `Suiv. →` — pages/EmailCampaignResults.jsx
+- (1×) `Suivez ces etapes pour activer le webhook` — pages/ConnectShopify.jsx
+- (1×) `Suivez ces étapes pour activer votre commercial IA` — pages/AgentIAList.jsx
+- (1×) `Suivez chaque entrée avec une date visible sur chaque ligne.` — pages/StockManagement.jsx
+- (1×) `Suivez les performances de vos formulaires et conversions` — pages/FormAnalyticsPage.jsx
+- (1×) `Suivi Facturation` — pages/SuperAdminBilling.jsx
+- (1×) `Suivi des livraisons` — pages/LivreurManagement.jsx
+- (1×) `Sujet de l'email` — pages/SuperAdminBilling.jsx
+- (1×) `Suppr.` — pages/SuperAdminUsers.jsx
+- (1×) `Suppressions` — pages/SecurityDashboard.jsx
+- (1×) `Supprimer cette boutique` — components/StoreSwitcher.jsx
+- (1×) `Supprimer l'offre` — pages/FormQuantityOffersPage.jsx
+- (1×) `Supprimer la campagne` — pages/Marketing.jsx
+- (1×) `Supprimer la commande` — pages/SupplierDetail.jsx
+- (1×) `Supprimer la dépense pub` — pages/ControlCenter.jsx
+- (1×) `Supprimer le budget` — pages/TransactionsList.jsx
+- (1×) `Supprimer le lien` — components/RichTextEditor.jsx
+- (1×) `Supprimer toutes les commandes` — pages/OrdersList.jsx
+- (1×) `Supérieur à 3.0 (3x le CA par rapport aux dépenses pub)` — pages/ComptaDashboard.jsx
+- (1×) `Survolez un statut pour voir sa description. Vous pouvez en sélectionner plusieurs.` — pages/CampaignForm.jsx
+- (1×) `Symbole` — pages/StoreCreationWizard.jsx
+- (1×) `Sync Google Sheets` — pages/AssignmentsManager.jsx
+- (1×) `Synchronisation des paramètres en cours` — pages/StoreCreationWizard.jsx
+- (1×) `Synchronisation...` — pages/AssignmentsManager.jsx
+- (1×) `Synchroniser` — pages/OrdersList.jsx
+- (1×) `Synchroniser mes sources` — pages/OrdersList.jsx
+- (1×) `Système séparé : hero split, preuves, problème, science, rituel, comparaison.` — components/PremiumProductPageGeneratorModal.jsx
+- (1×) `Système séparé pour page produit premium avancée` — pages/StoreProductsList.jsx
+- (1×) `Sécurité des données` — pages/BoutiquePayments.jsx
+- (1×) `Sélection active` — pages/CampaignsList.jsx
+- (1×) `Sélection multiple` — pages/OrdersList.jsx
+- (1×) `Sélection par cartes de voix` — pages/WhatsAppService.jsx
+- (1×) `Sélectionner un ton` — pages/AgentOnboarding.jsx
+- (1×) `Sélectionner une instance...` — pages/WhatsAppService.jsx
+- (1×) `Sélectionner…` — pages/SuperAdminPushCenter.jsx
+- (1×) `Sélectionnez au moins un filtre pour calculer l'audience` — pages/CampaignForm.jsx
+- (1×) `Sélectionnez des produits à ajouter au catalogue Rita` — pages/AgentConfig.jsx
+- (1×) `Sélectionnez des slides` — pages/CreativeGenerator.jsx
+- (1×) `Sélectionnez la source` — pages/ImportOrders.jsx
+- (1×) `Sélectionnez le ton avec lequel votre agent communiquera` — pages/AgentOnboarding.jsx
+- (1×) `Sélectionnez les groupes destinataires` — pages/OrderDetail.jsx
+- (1×) `Sélectionnez les pays où vous vendez. Si un client est hors de ces pays, il verra un message d'indisponibilité.` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Sélectionnez un produit pour le calcul automatique` — pages/Goals.jsx
+- (1×) `Sélectionnez un ticket` — pages/UserSupport.jsx
+- (1×) `Sélectionnez un volume...` — pages/WorkspaceSetup.jsx
+- (1×) `Sélectionnez un élément ù  envoyer` — pages/TeamChat.jsx
+- (1×) `Sélectionnez une boutique` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Sélectionnez une catégorie...` — pages/WorkspaceSetup.jsx
+- (1×) `Sélectionnez une closeuse, ses sources et ses produits` — pages/AssignmentsManager.jsx
+- (1×) `Sélectionnez une instance connectée pour lancer l'envoi.` — pages/Marketing.jsx
+- (1×) `Sélectionnez une section pour la modifier` — components/VisualSiteBuilder.jsx
+- (1×) `Séparateurs acceptés : | ; , ou tabulation. Seul le Nom est obligatoire.` — pages/WhatsAppService.jsx
+- (1×) `Séparez par des virgules` — pages/StoreProductForm.jsx
+- (1×) `Séquentiel (un par un dans l'ordre)` — components/CampaignCountryModal.jsx
+- (1×) `Tableau de bord sécurité` — pages/Settings.jsx
+- (1×) `Tag` — pages/OrdersList.jsx
+- (1×) `Tags (facultatif)` — pages/CampaignForm.jsx
+- (1×) `Tags (séparés par des virgules)` — pages/ClientForm.jsx
+- (1×) `Taille` — pages/ProductSettingsPage.jsx
+- (1×) `Taille de base` — components/productSettings/DesignSettings.jsx
+- (1×) `Taille miniatures` — components/productSettings/BlocksEditor.jsx
+- (1×) `Tailles disponibles` — components/ProductPageGeneratorModal.jsx
+- (1×) `Tapez SUPPRIMER` — pages/Settings.jsx
+- (1×) `Tapez un message comme un client...` — pages/WhatsAppService.jsx
+- (1×) `Tapez votre email ici, sans HTML` — pages/SuperAdminBilling.jsx
+- (1×) `Tarifs` — pages/LandingPage.jsx
+- (1×) `Tarifs credits IA pages produit` — pages/SuperAdminPlans.jsx
+- (1×) `Tarifs, zones et délais que Rita mentionnera aux clients` — pages/AgentConfig.jsx
+- (1×) `Taux clic / ouverture` — pages/EmailCampaignResults.jsx
+- (1×) `Taux confirmation` — pages/ControlCenter.jsx
+- (1×) `Taux conv.` — pages/AffiliatesAdmin.jsx
+- (1×) `Taux conversion` — pages/RitaPerformance.jsx
+- (1×) `Taux de Succès` — pages/Commissions.jsx
+- (1×) `Taux de confirmation` — pages/TeamPerformance.jsx
+- (1×) `Taux de conversion` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Taux de livraison minimum:` — pages/ComptaDashboard.jsx
+- (1×) `Taux de rebond` — pages/SuperAdminDashboard.jsx
+- (1×) `Taux de retour` — pages/ReportDetail.jsx
+- (1×) `Taux de réponse moyen` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Taux de réussite` — pages/Goals.jsx
+- (1×) `Taux de validité` — components/CampaignCountryModal.jsx
+- (1×) `Taux journaliers` — pages/EmailAnalytics.jsx
+- (1×) `Taux livr.` — pages/StatsRapports.jsx
+- (1×) `Taux retour` — pages/StatsPage.jsx
+- (1×) `Taux sortie` — pages/SuperAdminAnalytics.jsx
+- (1×) `Taux succès` — pages/CampaignDetail.jsx
+- (1×) `Technique de closing` — pages/WhatsAppService.jsx
+- (1×) `Telephone *` — pages/OrdersList.jsx
+- (1×) `Template nom de groupe` — pages/RitaFlows.jsx
+- (1×) `Template visuel` — components/ProductPageGeneratorModal.jsx
+- (1×) `Tendance hebdomadaire` — pages/TransactionsList.jsx
+- (1×) `Tentative` — pages/EmailCampaignResults.jsx
+- (1×) `Tentatives échouées (24h)` — pages/SecurityDashboard.jsx
+- (1×) `Terminer l'inscription` — pages/WorkspaceSetup.jsx
+- (1×) `Tes crédits seront ajoutés automatiquement dès confirmation.` — pages/GenerationSuccess.jsx
+- (1×) `Test events` — pages/BoutiquePixel.jsx
+- (1×) `Test...` — pages/WhatsAppService.jsx
+- (1×) `Tester l'agent` — pages/WhatsAppService.jsx
+- (1×) `Tester l'envoi` — pages/OrdersList.jsx
+- (1×) `Tester statut` — pages/DeveloperSection.jsx
+- (1×) `Testez une question…` — pages/AgentConfig.jsx
+- (1×) `Test…` — pages/WhatsAppConnexion.jsx
+- (1×) `Texte / Légende` — pages/AgentConfig.jsx
+- (1×) `Texte affiché à côté de la case…` — pages/FormUpsellsPage.jsx
+- (1×) `Texte alternatif...` — components/ProductMediaManager.jsx
+- (1×) `Texte du témoignage…` — components/productSettings/BlocksEditor.jsx
+- (1×) `Texte personnalisé (optionnel)` — pages/AgentConfig.jsx
+- (1×) `Texte principal` — components/productSettings/ButtonEditor.jsx
+- (1×) `Texte principal du pop-up…` — pages/FormUpsellsPage.jsx
+- (1×) `Texte prononcé dans cet audio pour améliorer la qualité` — pages/WhatsAppService.jsx
+- (1×) `Textes du formulaire de commande` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Theme Card` — components/ThemeTest.jsx
+- (1×) `Theme Controls` — components/ThemeTest.jsx
+- (1×) `Thème de l'ebook` — components/DigitalProductEbookModal.jsx
+- (1×) `Titre *` — pages/SuperAdminPushCenter.jsx
+- (1×) `Titre d'exemple` — pages/EnhancedVisualBuilder.jsx
+- (1×) `Titre de section` — components/VisualSiteBuilder.jsx
+- (1×) `Titre principal` — components/VisualSiteBuilder.jsx
+- (1×) `Titre émotionnel` — components/AlibabaImportModal.jsx
+- (1×) `Token MF` — pages/SuperAdminBilling.jsx
+- (1×) `Token de verification email` — pages/ProviderService.jsx
+- (1×) `Ton de marque` — pages/StoreCreationWizard.jsx
+- (1×) `Ton de voix` — pages/AgentOnboarding.jsx
+- (1×) `Top 3` — pages/ReportsList.jsx
+- (1×) `Top liens cliqués` — pages/EmailCampaignResults.jsx
+- (1×) `Top pays` — pages/SuperAdminAnalytics.jsx
+- (1×) `Top utilisateurs` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Top utilisateurs generateurs` — pages/SuperAdminProductPageHistory.jsx
+- (1×) `Top utilisateurs générateurs` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Top vendeurs` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Top zones de livraison` — pages/StoreAnalytics.jsx
+- (1×) `Total commandes` — pages/SupplierDetail.jsx
+- (1×) `Total commissions` — pages/AffiliateCommissions.jsx
+- (1×) `Total conversions` — pages/AffiliateConversions.jsx
+- (1×) `Total dépenses` — pages/TeamPerformance.jsx
+- (1×) `Total encaissé (cumulé)` — livreur/pages/LivreurEarnings.jsx
+- (1×) `Total entrées` — pages/TeamPerformance.jsx
+- (1×) `Total frais livraison` — pages/ReportDetail.jsx
+- (1×) `Total livraisons` — pages/ReportsInsightsPage.jsx
+- (1×) `Total ventes` — pages/RitaPerformance.jsx
+- (1×) `Total à prévoir` — pages/SourcingStats.jsx
+- (1×) `Tous les espaces` — pages/SuperAdminUsers.jsx
+- (1×) `Tous les jours` — pages/AgentConfig.jsx
+- (1×) `Tous les jours classés par rentabilité` — pages/ReportsInsightsPage.jsx
+- (1×) `Tous les livreurs` — pages/LivreurManagement.jsx
+- (1×) `Tous les montants seront convertis et affichés dans cette devise.` — pages/Settings.jsx
+- (1×) `Tous les produits / produit spécifique / clients revendeurs` — pages/AgentConfig.jsx
+- (1×) `Tous les rôles` — pages/SuperAdminUsers.jsx
+- (1×) `Tous les stocks sont au vert` — pages/AdminDashboard.jsx
+- (1×) `Tous les tags` — pages/ClientsList.jsx
+- (1×) `Tous les types` — pages/TransactionsList.jsx
+- (1×) `Tous les workspaces` — pages/SuperAdminBilling.jsx
+- (1×) `Tous produits` — pages/ControlCenter.jsx
+- (1×) `Tous workspaces` — pages/SuperAdminSupport.jsx
+- (1×) `Tout afficher` — pages/CampaignsList.jsx
+- (1×) `Tout ce que vous devez savoir` — pages/BoutiquePages.jsx
+- (1×) `Toutes catégories` — pages/TransactionsList.jsx
+- (1×) `Toutes les actions` — pages/SecurityDashboard.jsx
+- (1×) `Toutes les agences` — pages/StockManagement.jsx
+- (1×) `Toutes les campagnes` — pages/EmailAnalytics.jsx
+- (1×) `Toutes les generations` — pages/ProductPageStudio.jsx
+- (1×) `Toutes les informations des générations` — pages/ProductPageStudio.jsx
+- (1×) `Toutes les stores` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `Toutes priorités` — pages/SuperAdminSupport.jsx
+- (1×) `Toutes sources` — pages/ClientsList.jsx
+- (1×) `Toutes vos données seront définitivement supprimées.` — pages/Settings.jsx
+- (1×) `Toutes vos livraisons terminées` — pages/LivreurHistoryPage.jsx
+- (1×) `Traitées` — pages/ControlCenter.jsx
+- (1×) `Trajet` — pages/SuperAdminMailServer.jsx
+- (1×) `Transactions créées` — pages/TeamPerformance.jsx
+- (1×) `Transport payé` — pages/SourcingList.jsx
+- (1×) `Transport:` — pages/StockOrderForm.jsx
+- (1×) `Trial` — pages/SuperAdminBilling.jsx
+- (1×) `Très élevée` — pages/ProductResearch.jsx
+- (1×) `Tu n'as plus de crédits` — components/ProductPageGeneratorModal.jsx
+- (1×) `Tu peux revoir le resultat avant application.` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Tutoriel Complet Scalor` — pages/LandingPage.jsx
+- (1×) `Tutoriel configuration webhook Shopify` — pages/ConnectShopify.jsx
+- (1×) `Tutoriel video` — pages/ConnectShopify.jsx
+- (1×) `Type *` — pages/TransactionForm.jsx
+- (1×) `Type d'activité` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Type d'offre` — pages/FormUpsellsPage.jsx
+- (1×) `Type de commission` — pages/AffiliatesAdmin.jsx
+- (1×) `Type de contenu` — pages/AgentConfig.jsx
+- (1×) `Type de service` — pages/WhatsAppService.jsx
+- (1×) `Types de contenu` — pages/SuperAdminProductPageHistory.jsx
+- (1×) `Types de contenu générés` — pages/SuperAdminFeatureAnalytics.jsx
+- (1×) `Tél:` — components/storefront/Footer.jsx
+- (1×) `Téléphone WhatsApp *` — pages/UserManagement.jsx
+- (1×) `Témoignages clients` — components/productSettings/BlocksEditor.jsx
+- (1×) `URL (optionnel)` — pages/SuperAdminPushCenter.jsx
+- (1×) `URL Alibaba/AliExpress` — components/ProductGeneratorModal.jsx
+- (1×) `URL YouTube, Vimeo ou vidéo directe (.mp4)` — components/RichTextEditor.jsx
+- (1×) `URL de destination (ex: https://...)` — pages/AffiliateLinks.jsx
+- (1×) `URL de la bannière` — pages/StoreSetup.jsx
+- (1×) `URL de la boutique:` — pages/DomainGeneratorDemo.jsx
+- (1×) `URL de la source produit` — pages/StoreProductForm.jsx
+- (1×) `URL destination par défaut` — pages/AffiliatesAdmin.jsx
+- (1×) `URL du logo` — pages/StoreSetup.jsx
+- (1×) `URL du webhook` — pages/WhatsAppService.jsx
+- (1×) `URL ou ID du Google Sheet` — pages/ImportOrders.jsx
+- (1×) `URL slug` — components/ProductPageGeneratorModal.jsx
+- (1×) `USD` — pages/ProviderService.jsx
+- (1×) `USD (Dollar)` — pages/StoreSetup.jsx
+- (1×) `Un montant fixe ajouté automatiquement à chaque commande sur le formulaire de paiement.` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `Un nom pour identifier cette connexion (optionnel)` — pages/WhatsAppService.jsx
+- (1×) `Une ligne = un produit. Format :` — pages/WhatsAppService.jsx
+- (1×) `Une workspace` — pages/SuperAdminPushCenter.jsx
+- (1×) `Unités en stock` — pages/StoreProductsList.jsx
+- (1×) `Univers visuel` — pages/CreativeGenerator.jsx
+- (1×) `Upload 1 à 3 audios, clique sur créer, puis utilise ta voix directement dans Rita.` — pages/WhatsAppService.jsx
+- (1×) `Upload en cours…` — components/RichTextEditor.jsx
+- (1×) `Upload...` — pages/StoreCreationWizard.jsx
+- (1×) `Uploader la photo produit` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Uploadez vos images ou collez une URL. Si l'option ci-dessus est activée, elles seront ajoutées au carrousel; sinon elles remplaceront les photos produit.` — components/productSettings/BlocksEditor.jsx
+- (1×) `Urgence psychologique` — components/ProductPageGeneratorModal.jsx
+- (1×) `Usage` — components/ProductPageGeneratorModal.jsx
+- (1×) `Usage global` — pages/WhatsAppConnexion.jsx
+- (1×) `Utilisateur introuvable` — pages/SuperAdminUserDetail.jsx
+- (1×) `Utilisateur non trouvé` — pages/Profile.jsx
+- (1×) `Utilisateurs actifs` — pages/SuperAdminAnalytics.jsx
+- (1×) `Utilisateurs actifs par rôle` — pages/SuperAdminAnalytics.jsx
+- (1×) `Utilisations` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Utilisations totales` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Utilise` — pages/SuperAdminBilling.jsx
+- (1×) `Utiliser aussi les photos natives du produit` — components/productSettings/BlocksEditor.jsx
+- (1×) `Utiliser cette generation` — pages/GenerationsPage.jsx
+- (1×) `Utiliser cette génération` — pages/ProductPageStudio.jsx
+- (1×) `Utiliser le premier média disponible du produit` — pages/AgentConfig.jsx
+- (1×) `Utilisez *texte* pour le gras et _texte_ pour l'italique dans WhatsApp` — pages/CampaignForm.jsx
+- (1×) `Utilisez notre assistant pour configurer votre boutique en détail : cible, ton, audience, localisation, etc.` — pages/BoutiqueSettings.jsx
+- (1×) `Utilisé` — pages/UserManagement.jsx
+- (1×) `Valeur` — pages/AffiliatesAdmin.jsx
+- (1×) `Valeur TXT` — pages/SuperAdminMailServer.jsx
+- (1×) `Valeur confirmée` — pages/TeamPerformance.jsx
+- (1×) `Valeur de commission` — pages/AffiliatesAdmin.jsx
+- (1×) `Valeur de vente:` — pages/StockOrderForm.jsx
+- (1×) `Valeur du stock` — pages/StoreProductsList.jsx
+- (1×) `Valeur stock` — pages/ControlCenter.jsx
+- (1×) `Valeur stock:` — components/StockAlert.jsx
+- (1×) `Valeur vente totale` — pages/StockOrdersList.jsx
+- (1×) `Validation technique` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Valide jusqu'au` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Valide à partir du` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Validité` — pages/SuperAdminPromoCodes.jsx
+- (1×) `Variables disponibles:` — components/WhatsAppSendModal.jsx
+- (1×) `Veille Produits` — pages/ProductResearchList.jsx
+- (1×) `Veille produit` — pages/ProductFinder.jsx
+- (1×) `Vendeuse WhatsApp IA` — pages/AgentConfig.jsx
+- (1×) `Vendeuse camerounaise chaleureuse, toujours souriante, elle tutoie les clientes et les appelle 'ma chérie' ou 'maman'. Elle est directe mais jamais agressive.` — pages/WhatsAppService.jsx
+- (1×) `Vendus` — pages/ControlCenter.jsx
+- (1×) `Ventes (FCFA)` — pages/AffiliatesAdmin.jsx
+- (1×) `Ventes :` — pages/StockManagement.jsx
+- (1×) `Ventes générées` — pages/AffiliateConversions.jsx
+- (1×) `Ventes par canal` — pages/StoreAnalytics.jsx
+- (1×) `Verifiez l'email de validation.` — pages/ProviderService.jsx
+- (1×) `Vers :` — pages/SuperAdminMailServer.jsx
+- (1×) `Veuillez configurer vos instances dans la page "Connexion WhatsApp" de la barre latérale.` — components/WhatsAppInstanceSelector.jsx
+- (1×) `Veuillez patienter` — pages/BillingPage.jsx
+- (1×) `Vider` — pages/WhatsAppService.jsx
+- (1×) `Vidéo ajoutée` — pages/CampaignForm.jsx
+- (1×) `Vidéos du produit` — pages/AgentConfig.jsx
+- (1×) `Villes (séparées par des virgules)` — components/ReviewGenerator.jsx
+- (1×) `Villes hors zone — livraison via agence` — pages/AgentConfig.jsx
+- (1×) `Villes éligibles` — pages/AgentConfig.jsx
+- (1×) `Vimeo` — components/ProductMediaManager.jsx
+- (1×) `Virement bancaire` — pages/AffiliateDashboard.jsx
+- (1×) `Visite → Inscription` — pages/SuperAdminAnalytics.jsx
+- (1×) `Visites par pays` — pages/StoreAnalytics.jsx
+- (1×) `Visites par ville` — pages/StoreAnalytics.jsx
+- (1×) `Visites quotidiennes` — pages/StoreAnalytics.jsx
+- (1×) `Visiteurs uniques par jour` — pages/SuperAdminAnalytics.jsx
+- (1×) `Visuels galerie principale` — components/ProductPageGeneratorModal.jsx
+- (1×) `Visuels produit premium · IA` — pages/CreativeGenerator.jsx
+- (1×) `Vocal` — pages/CampaignForm.jsx
+- (1×) `Vocaux transcrits` — pages/WhatsAppService.jsx
+- (1×) `Voici un texte d'exemple pour voir le rendu.` — pages/EnhancedVisualBuilder.jsx
+- (1×) `Voir la page produit` — pages/ProductSettingsPage.jsx
+- (1×) `Voir la page produit (en ligne)` — pages/StoreProductsList.jsx
+- (1×) `Voir la page produit (version locale)` — pages/StoreProductsList.jsx
+- (1×) `Voir le produit` — pages/StoreFront.jsx
+- (1×) `Voir les invitations` — pages/UserManagement.jsx
+- (1×) `Voir les notifications →` — components/EcomLayout.jsx
+- (1×) `Voir les statistiques` — pages/Marketing.jsx
+- (1×) `Voir les statistiques globales` — pages/OrdersList.jsx
+- (1×) `Voir ▶` — pages/AgentConfig.jsx
+- (1×) `Voix` — pages/AgentConfig.jsx
+- (1×) `Voix de Rita (cliquer pour sélectionner)` — pages/WhatsAppService.jsx
+- (1×) `Voix disponibles` — pages/WhatsAppService.jsx
+- (1×) `Voix plus réelle` — pages/WhatsAppService.jsx
+- (1×) `Volume mensuel` — pages/SuperAdminWhatsAppPostulations.jsx
+- (1×) `Vos créas apparaîtront ici` — pages/CreativeGenerator.jsx
+- (1×) `Vos instances WhatsApp` — pages/DeveloperSection.jsx
+- (1×) `Vos instructions` — pages/AgentConfig.jsx
+- (1×) `Votre adresse email` — pages/BoutiquePages.jsx
+- (1×) `Votre boutique :` — pages/BoutiqueDomains.jsx
+- (1×) `Votre boutique est accessible immédiatement` — pages/BoutiqueDomains.jsx
+- (1×) `Votre clé API` — pages/ScalorRegister.jsx
+- (1×) `Votre consentement` — pages/PrivacyPolicy.jsx
+- (1×) `Votre contenu ici...` — components/VisualSiteBuilder.jsx
+- (1×) `Votre espace de travail actuel` — pages/Profile.jsx
+- (1×) `Votre lien de parrainage` — pages/AffiliateDashboard.jsx
+- (1×) `Votre message… (Entrée pour envoyer)` — pages/UserSupport.jsx
+- (1×) `Votre mot de passe` — pages/Login.jsx
+- (1×) `Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter.` — pages/ResetPassword.jsx
+- (1×) `Votre mot de passe doit contenir :` — pages/Register.jsx
+- (1×) `Votre nom complet` — pages/BillingPage.jsx
+- (1×) `Votre nom et prenom` — pages/Register.jsx
+- (1×) `Votre nouvelle clé API (copiez-la maintenant, elle ne sera plus visible) :` — pages/DeveloperSection.jsx
+- (1×) `Votre plan sera activé automatiquement.` — pages/BillingPage.jsx
+- (1×) `Votre rôle` — pages/InviteAccept.jsx
+- (1×) `Votre rôle dans cet espace` — pages/WorkspaceSetup.jsx
+- (1×) `Votre sous-domaine actuel` — pages/StoreSetup.jsx
+- (1×) `Votre taux de commission` — pages/AffiliateCommissions.jsx
+- (1×) `Vous aimerez aussi` — components/productSettings/LivePreview.jsx
+- (1×) `Vous allez supprimer cette campagne.` — pages/Marketing.jsx
+- (1×) `Vous avez des modifications non sauvegardées` — pages/Settings.jsx
+- (1×) `Vous devez d'abord créer un compte ou vous connecter` — pages/InviteAccept.jsx
+- (1×) `Vous n'avez pas encore passé de commande chez ce fournisseur.` — pages/SupplierDetail.jsx
+- (1×) `Vous pouvez mettre en pause à tout moment` — pages/CampaignsList.jsx
+- (1×) `Vous pouvez mettre un post en pause sans le supprimer avec le switch Actif/Pause.` — pages/RitaGroupAnimation.jsx
+- (1×) `Vous recevez une notification en temps reel` — pages/ConnectShopify.jsx
+- (1×) `Vous recevrez les alertes en temps réel, comme une vraie app.` — components/PushNotificationBanner.jsx
+- (1×) `Vous serez redirigé vers la page de connexion.` — pages/Settings.jsx
+- (1×) `Vous êtes ù  jour !` — components/NotificationPanel.jsx
+- (1×) `Vous êtes ù  jour ! Toutes vos notifications ont été traitées.` — components/NotificationModal.jsx
+- (1×) `Vue actuelle` — pages/ClientsList.jsx
+- (1×) `Vue d'activité et performances de l'agent.` — pages/WhatsAppService.jsx
+- (1×) `Vue d'ensemble complète des commandes et paiements` — pages/SourcingStats.jsx
+- (1×) `Vue d'ensemble de l'activité WhatsApp` — pages/CampaignStats.jsx
+- (1×) `Vue d'ensemble de votre activité e-commerce` — pages/StatsPage.jsx
+- (1×) `Vue simple des ventes, commandes, livraisons et visites de la boutique.` — pages/StoreAnalytics.jsx
+- (1×) `Vérification DNS en cours…` — pages/BoutiqueDomains.jsx
+- (1×) `Vérification Disponibilité` — pages/DomainGeneratorDemo.jsx
+- (1×) `Vérification du paiement en cours…` — pages/BillingPage.jsx
+- (1×) `Vérifier et continuer` — pages/ImportOrders.jsx
+- (1×) `Vérifier le statut` — components/ProductPageGeneratorModal.jsx
+- (1×) `Vérifiez que Rita est connectée à WhatsApp, puis rafraîchissez` — pages/AgentConfig.jsx
+- (1×) `Vérifiez que les colonnes sont correctement détectées` — pages/ImportOrders.jsx
+- (1×) `Vérifiez votre email` — pages/Register.jsx
+- (1×) `Vêtements mode et Beauté` — pages/WorkspaceSetup.jsx
+- (1×) `WAU (7j)` — pages/SuperAdminAnalytics.jsx
+- (1×) `Webhook Shopify` — pages/ConnectShopify.jsx
+- (1×) `Webhook URL` — pages/ConnectShopify.jsx
+- (1×) `Webhooks` — pages/ConnectShopify.jsx
+- (1×) `WhatsApp Automation` — components/productSettings/AutomationSettings.jsx
+- (1×) `WhatsApp Business API Platform` — pages/ScalorLogin.jsx
+- (1×) `WhatsApp Number` — components/productSettings/AutomationSettings.jsx
+- (1×) `WhatsApp Pro pour votre Business` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `WhatsApp Service` — pages/WhatsAppService.jsx
+- (1×) `WhatsApp — Utilisateurs Scalor` — pages/SuperAdminScalorWhatsApp.jsx
+- (1×) `Workspace plan actuel` — pages/SuperAdminBilling.jsx
+- (1×) `Workspaces` — pages/SuperAdminDashboard.jsx
+- (1×) `X-RateLimit-Limit` — pages/DeveloperSection.jsx
+- (1×) `X-RateLimit-Remaining` — pages/DeveloperSection.jsx
+- (1×) `XAF` — pages/ProviderService.jsx
+- (1×) `XAF (Franc CFA - CEMAC)` — pages/StoreSetup.jsx
+- (1×) `XOF` — pages/ProviderService.jsx
+- (1×) `XOF (Franc CFA - UEMOA)` — pages/StoreSetup.jsx
+- (1×) `Y a-t-il des limites d'envoi ?` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `Y aller` — components/WhatsAppInstanceSelector.jsx
+- (1×) `YouTube, Vimeo, ou lien direct .mp4 / .webm` — components/RichTextEditor.jsx
+- (1×) `ZAR (Rand)` — pages/StoreSetup.jsx
+- (1×) `Zone corporelle` — components/InfographicsGeneratorPanel.jsx
+- (1×) `Zone de livraison` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `[LIEN]` — components/WhatsAppSendModal.jsx
+- (1×) `[PRODUIT]` — components/WhatsAppSendModal.jsx
+- (1×) `activé` — pages/AgentConfig.jsx
+- (1×) `admin@votreplateforme.com` — pages/SetupSuperAdmin.jsx
+- (1×) `agent@scalor.net` — pages/ServiceClient.jsx
+- (1×) `app.scalor.pro/dashboard` — pages/LandingPage.jsx
+- (1×) `augmente le réalisme et la proximité de Rita pour les réponses vocales WhatsApp.` — pages/WhatsAppService.jsx
+- (1×) `auto` — components/productSettings/OffersEditor.jsx
+- (1×) `boutique` — pages/BoutiqueDomains.jsx
+- (1×) `boutique-preview.scalor.app` — components/ProductPageGeneratorModal.jsx
+- (1×) `client@email.com` — pages/ClientForm.jsx
+- (1×) `clique pour choisir` — components/ProductPageGeneratorModal.jsx
+- (1×) `clique pour sélectionner` — components/ProductPageGeneratorModal.jsx
+- (1×) `commandes ce mois. Nouvelles commandes bloquées.` — pages/OrdersList.jsx
+- (1×) `commandes livrées` — pages/Commissions.jsx
+- (1×) `commandes utilisées ce mois.` — pages/OrdersList.jsx
+- (1×) `configurer dans les réglages` — pages/ReportForm.jsx
+- (1×) `contact@...` — pages/SourcingList.jsx
+- (1×) `contact@maboutique.com` — pages/BoutiquePages.jsx
+- (1×) `crédits restants` — components/ProductPageGeneratorModal.jsx
+- (1×) `d'achat.` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `dans la sidebar pour configurer les règles de remise par produit.` — pages/AgentConfig.jsx
+- (1×) `de l'E-commerce Africain.` — pages/AffiliateRegister.jsx
+- (1×) `de la plateforme.` — pages/SuperAdminSupport.jsx
+- (1×) `de vos entrées. Maintenir au moins` — pages/TransactionsList.jsx
+- (1×) `disponible 24h/24` — pages/LandingPage.jsx
+- (1×) `désactivé` — pages/AgentConfig.jsx
+- (1×) `email@exemple.com` — pages/UserManagement.jsx
+- (1×) `en 17 leçons` — pages/LandingPage.jsx
+- (1×) `en Afrique` — pages/LandingPage.jsx
+- (1×) `en bas de page, puis cliquez sur` — pages/ConnectShopify.jsx
+- (1×) `ex : 237699887766` — pages/Settings.jsx
+- (1×) `ex : DHL, Campost…` — pages/ReportForm.jsx
+- (1×) `ex : Montre connectée XS3` — pages/ProductForm.jsx
+- (1×) `ex: +225 07 00 00 00` — pages/AgentConfig.jsx
+- (1×) `ex: 100% naturel, Sans paraben...` — pages/WhatsAppService.jsx
+- (1×) `ex: 100% naturel, Sans paraben…` — pages/AgentConfig.jsx
+- (1×) `ex: 12 000 FCFA` — pages/WhatsAppService.jsx
+- (1×) `ex: 24 heures` — pages/AgentConfig.jsx
+- (1×) `ex: 24h` — pages/AgentConfig.jsx
+- (1×) `ex: 690123456` — pages/AgentConfig.jsx
+- (1×) `ex: Boutique en ligne de cosmétiques naturels. Nous livrons dans toute la Côte d'Ivoire...` — pages/AgentConfig.jsx
+- (1×) `ex: C'est déjà notre meilleur prix 🙏` — pages/AgentConfig.jsx
+- (1×) `ex: C'est déjà notre meilleur prix, on ne peut pas descendre plus bas 🙏` — pages/WhatsAppService.jsx
+- (1×) `ex: C'est trop cher` — pages/WhatsAppService.jsx
+- (1×) `ex: C'est trop cher…` — pages/AgentConfig.jsx
+- (1×) `ex: Cameroun, Sénégal, Côte d'Ivoire` — components/InfographicsGeneratorPanel.jsx
+- (1×) `ex: D'accord maman, Je check ça, C'est bon ma chérie` — pages/WhatsAppService.jsx
+- (1×) `ex: Douala` — pages/AgentConfig.jsx
+- (1×) `ex: Douala, Yaoundé, Abidjan...` — pages/AgentConfig.jsx
+- (1×) `ex: En tant qu'IA, Je suis un assistant, Cordialement` — pages/WhatsAppService.jsx
+- (1×) `ex: GlucoControl` — components/InfographicsGeneratorPanel.jsx
+- (1×) `ex: J'ai essayé ce produit et en 2 semaines ma peau a vraiment changé ! Je recommande fortement...` — pages/AgentConfig.jsx
+- (1×) `ex: Jean KOUMEN` — pages/AgentConfig.jsx
+- (1×) `ex: Marie D.` — pages/AgentConfig.jsx
+- (1×) `ex: Mohamed Diallo` — pages/AgentConfig.jsx
+- (1×) `ex: Mon WhatsApp Business` — pages/WhatsAppService.jsx
+- (1×) `ex: Offrir livraison si ≥2` — pages/WhatsAppService.jsx
+- (1×) `ex: Paiement à la livraison, vérification avant paiement` — pages/AgentConfig.jsx
+- (1×) `ex: Solution naturelle pour réguler la glycémie.` — components/InfographicsGeneratorPanel.jsx
+- (1×) `ex: Toujours demander confirmation du point de retrait avant d'envoyer les coordonnées` — pages/AgentConfig.jsx
+- (1×) `ex: Zendo Store` — pages/AgentConfig.jsx
+- (1×) `ex: admin@monshop.com` — pages/AgentConfig.jsx
+- (1×) `ex: femmes africaines 35-55 ans` — components/InfographicsGeneratorPanel.jsx
+- (1×) `ex: offrir livraison si ≥2` — pages/AgentConfig.jsx
+- (1×) `ex: pics de sucre, fatigue, fringales` — components/InfographicsGeneratorPanel.jsx
+- (1×) `ex: prix, commander, livraison...` — pages/WhatsAppService.jsx
+- (1×) `ex: visage, cheveux, ventre` — components/InfographicsGeneratorPanel.jsx
+- (1×) `ex: Équilibrez votre glycémie, retrouvez votre vitalité` — components/InfographicsGeneratorPanel.jsx
+- (1×) `gratuitement` — pages/Formation.jsx
+- (1×) `heures` — pages/AgentConfig.jsx
+- (1×) `ignorés` — pages/CampaignsList.jsx
+- (1×) `jours` — pages/ServiceClient.jsx
+- (1×) `le client demande un produit qui n'existe pas` — pages/WhatsAppService.jsx
+- (1×) `les agences classées par efficacité` — pages/ReportsInsightsPage.jsx
+- (1×) `modifier dans les réglages` — pages/ReportForm.jsx
+- (1×) `multiplie` — pages/LandingPage.jsx
+- (1×) `nom-boutique.scalor.net` — pages/DomainGeneratorDemo.jsx
+- (1×) `note audio` — pages/WhatsAppService.jsx
+- (1×) `objectifs atteints` — pages/Goals.jsx
+- (1×) `ou cliquez pour parcourir · JPG, PNG, WebP · max 5 MB` — pages/StoreProductForm.jsx
+- (1×) `ou coller URL image/vidéo...` — pages/AgentConfig.jsx
+- (1×) `ou coller URL...` — pages/AgentConfig.jsx
+- (1×) `ou créez-en un nouveau` — pages/UserSupport.jsx
+- (1×) `ou par email` — pages/Register.jsx
+- (1×) `oui, intéressé, ok` — pages/RitaFlows.jsx
+- (1×) `où ?` — components/BuilderAiChat.jsx
+- (1×) `pour afficher la ville.` — pages/WhatsAppService.jsx
+- (1×) `pour commencer` — pages/LandingPage.jsx
+- (1×) `pour continuer sans logo.` — pages/StoreCreationWizard.jsx
+- (1×) `pour l'E-commerce Africain.` — pages/Login.jsx
+- (1×) `pour les réponses longues, explications, mise en confiance et confirmations importantes, puis garde le` — pages/WhatsAppService.jsx
+- (1×) `pour les réponses plus rapides.` — pages/WhatsAppService.jsx
+- (1×) `pour vendre en Afrique` — pages/LandingPage.jsx
+- (1×) `produit` — pages/RitaGroupAnimation.jsx
+- (1×) `promo, nouveau, bestseller` — pages/StoreProductForm.jsx
+- (1×) `proposer les produits similaires disponibles et demander une précision` — pages/WhatsAppService.jsx
+- (1×) `relance, janvier...` — pages/CampaignForm.jsx
+- (1×) `restants` — pages/BillingPage.jsx
+- (1×) `shop.monsite.fr` — pages/BoutiqueDomains.jsx
+- (1×) `simples` — pages/Tarifs.jsx
+- (1×) `sur chaque vente.` — pages/AffiliateLogin.jsx
+- (1×) `taux d'écoulement` — pages/StockManagement.jsx
+- (1×) `taux restant` — pages/StockManagement.jsx
+- (1×) `texte` — pages/WhatsAppService.jsx
+- (1×) `toi@example.com` — pages/SuperAdminMailServer.jsx
+- (1×) `tous les utilisateurs actifs` — pages/SuperAdminSupport.jsx
+- (1×) `toutes commandes` — pages/Commissions.jsx
+- (1×) `transparent` — pages/BoutiquePages.jsx
+- (1×) `trié par date de connexion` — pages/SuperAdminAnalytics.jsx
+- (1×) `un seul tableau de bord` — pages/LandingPage.jsx
+- (1×) `unités` — pages/StockManagement.jsx
+- (1×) `unités disponibles` — pages/StockManagement.jsx
+- (1×) `unités vendues` — pages/StockManagement.jsx
+- (1×) `vip, fidèle, nouveau...` — pages/ClientForm.jsx
+- (1×) `vocal` — pages/WhatsAppService.jsx
+- (1×) `votre e-commerce ?` — pages/LandingPage.jsx
+- (1×) `vous@exemple.com` — pages/Register.jsx
+- (1×) `whatsappAutoConfirm:` — pages/OrdersList.jsx
+- (1×) `À chaque commande, l'instance choisie envoie automatiquement un WhatsApp au client. Sans instance, l'instance par défaut du workspace est utilisée.` — pages/Settings.jsx
+- (1×) `À prévoir` — pages/SourcingList.jsx
+- (1×) `Échantillons audio` — pages/WhatsAppService.jsx
+- (1×) `Échec du test` — pages/BoutiquePixel.jsx
+- (1×) `Écologique` — pages/ProductResearch.jsx
+- (1×) `Écrire un message...` — pages/TeamChat.jsx
+- (1×) `Écrire un message... (@mention)` — components/ChatWidget.jsx
+- (1×) `Écrivez un message…` — pages/LandingPage.jsx
+- (1×) `Écrivez vos propres règles — elles remplacent le comportement par défaut quand activées` — pages/AgentConfig.jsx
+- (1×) `Éditer le design et les prix` — pages/FormQuantityOffersPage.jsx
+- (1×) `Éducation/Formation` — pages/WhatsAppPostulation.jsx
+- (1×) `Électronique` — pages/ProductResearch.jsx
+- (1×) `Électronique et Gadgets` — pages/WorkspaceSetup.jsx
+- (1×) `Épaisseur` — components/productSettings/DesignSettings.jsx
+- (1×) `Évolution des commandes` — pages/ProductReportDetail.jsx
+- (1×) `Évolution du CA` — pages/ProductReportDetail.jsx
+- (1×) `Événements` — pages/WhatsAppService.jsx
+- (1×) `Événements trackés automatiquement` — pages/BoutiquePixel.jsx
+- (1×) `échecs` — pages/CampaignsList.jsx
+- (1×) `— Actif` — pages/BillingPage.jsx
+- (1×) `— Aucun groupe —` — pages/Settings.jsx
+- (1×) `— Choisir un groupe WhatsApp —` — pages/Settings.jsx
+- (1×) `— Choisir un produit du catalogue —` — pages/RitaGroupAnimation.jsx
+- (1×) `— Choisir une workspace —` — pages/SuperAdminBoutiqueStats.jsx
+- (1×) `— Cochez les sources puis sélectionnez les produits` — pages/AssignmentsManager.jsx
+- (1×) `— Ignorer —` — pages/ReportsList.jsx
+- (1×) `— Instance par défaut du workspace —` — pages/OrdersList.jsx
+- (1×) `— Instance par défaut —` — pages/Settings.jsx
+- (1×) `— Message : « Nous ne livrons pas dans ce pays. »` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `— Nombre max de requêtes/min` — pages/DeveloperSection.jsx
+- (1×) `— Produit —` — pages/OrdersList.jsx
+- (1×) `— Requêtes restantes` — pages/DeveloperSection.jsx
+- (1×) `— Secondes avant de pouvoir réessayer (si 429)` — pages/DeveloperSection.jsx
+- (1×) `— Seuls les clients dans ces pays peuvent commander. Message d'erreur sinon.` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `— Si la ville du client correspond à une zone, la livraison est proposée avec paiement à la réception + frais de livraison définis.` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `— Si la ville n'est dans aucune zone (mais le pays est ok), l'expédition est proposée : le client doit payer avant l'envoi.` — pages/BoutiqueDeliveryZones.jsx
+- (1×) `— Source :` — pages/ImportOrders.jsx
+- (1×) `— Sélectionner un produit —` — pages/OrdersList.jsx
+- (1×) `— Toute la catégorie —` — pages/TransactionsList.jsx
+- (1×) `— via Orange Money, MTN MoMo ou virement.` — pages/AffiliateDashboard.jsx
+- (1×) `“Accepté SMTP” signifie que Postfix a pris le mail en charge.` — pages/EmailCampaignResults.jsx
+- (1×) `• Bouton ▶ pour tester et publier immédiatement` — pages/AgentConfig.jsx
+- (1×) `• Catalogue : partager directement tous vos produits avec prix` — pages/AgentConfig.jsx
+- (1×) `• Image : envoyer une photo du catalogue ou d'une promo en cours` — pages/AgentConfig.jsx
+- (1×) `• Le statut est publié automatiquement à l'heure planifiée, chaque jour` — pages/AgentConfig.jsx
+- (1×) `• Soyez précis : "Ne jamais baisser le prix" est mieux que "être ferme sur les prix"` — pages/AgentConfig.jsx
+- (1×) `• Texte : accueillir avec un message personnalisé avant de poser des questions` — pages/AgentConfig.jsx
+- (1×) `• Tous vos journaux d'audit` — pages/Settings.jsx
+- (1×) `• Toutes vos commandes` — pages/Settings.jsx
+- (1×) `• Toutes vos transactions` — pages/Settings.jsx
+- (1×) `• Vidéo : envoyer une vidéo de présentation du produit phare dès le premier message` — pages/AgentConfig.jsx
+- (1×) `• Votre compte utilisateur` — pages/Settings.jsx
+- (1×) `• Vous pouvez mélanger règles de vente, réponses spécifiques, et comportements personnalisés` — pages/AgentConfig.jsx
+- (1×) `ℹ️ Informations Comptables` — pages/ComptaDashboard.jsx
+- (1×) `← Préc.` — pages/EmailCampaignResults.jsx
+- (1×) `← Retour` — pages/LivreurDeliveryDetail.jsx
+- (1×) `⏳ En attente du GPS` — pages/LivreurDeliveries.jsx
+- (1×) `☀️ Aujourd'hui` — pages/LivreurEarningsPage.jsx
+- (1×) `⚙️ Paramètres globaux` — pages/RitaFlows.jsx
+- (1×) `⚠️ Ajoutez une instance dans l'onglet Instances d'abord.` — pages/WhatsAppService.jsx
+- (1×) `⚠️ Cette action est irréversible !` — pages/Settings.jsx
+- (1×) `⚠️ Choisir une instance pour ce produit` — pages/OrdersList.jsx
+- (1×) `⚠️ Confirmation requise` — components/CampaignCountryModal.jsx
+- (1×) `⚠️ L'envoi est progressif pour protéger votre numéro contre les signalements WhatsApp (anti-spam).` — pages/AgentConfig.jsx
+- (1×) `⚠️ L'instance sélectionnée n'existe plus. Veuillez en sélectionner une autre.` — pages/WhatsAppService.jsx
+- (1×) `⚠️ Numéro admin manquant` — pages/AgentConfig.jsx
+- (1×) `⚠️ Sauvegardez cette clé maintenant. Elle ne sera plus affichée.` — pages/ScalorRegister.jsx
+- (1×) `⚠️ Sélectionnez une instance pour activer Rita IA.` — pages/WhatsAppService.jsx
+- (1×) `⚡ Actions` — pages/LivreurDeliveryDetail.jsx
+- (1×) `✅ CONNEXION RÉUSSIE` — components/WhatsAppClient.jsx
+- (1×) `✅ Groupes enregistrés` — pages/Settings.jsx
+- (1×) `✅ Livraison gratuite · Satisfait ou remboursé` — pages/StoreProductForm.jsx
+- (1×) `✅ Livraison terminée` — pages/LivreurDeliveryDetail.jsx
+- (1×) `✅ MESSAGE ENVOYÉ` — components/WhatsAppClient.jsx
+- (1×) `✅ Message — villes où vous livrez` — pages/WhatsAppService.jsx
+- (1×) `✅ Notification de test envoyée !` — pages/Profile.jsx
+- (1×) `✅ Numéro enregistré` — pages/Settings.jsx
+- (1×) `✅ On livre !` — pages/LivreurDeliveries.jsx
+- (1×) `✅ Pourquoi choisir ce produit ?` — components/ProductPageGeneratorModal.jsx
+- (1×) `✅ Succès` — pages/DeveloperSection.jsx
+- (1×) `✍️ écrit...` — pages/TeamChat.jsx
+- (1×) `✓ Actif` — components/productSettings/FormThemeSelector.jsx
+- (1×) `✓ Forces` — pages/ProductResearchList.jsx
+- (1×) `✓ Objectif atteint` — pages/AdminDashboard.jsx
+- (1×) `✓ Oui` — pages/AgentConfig.jsx
+- (1×) `✓ Sélectionnée` — pages/AgentConfig.jsx
+- (1×) `✓ Webhook configuré` — pages/WhatsAppService.jsx
+- (1×) `✕ Supprimer` — pages/RitaFlows.jsx
+- (1×) `✗ Faiblesses` — pages/ProductResearchList.jsx
+- (1×) `❌ ERREUR` — components/WhatsAppClient.jsx
+- (1×) `❌ Erreur` — pages/DeveloperSection.jsx
+- (1×) `❌ Marquer non livré` — pages/LivreurDeliveries.jsx
+- (1×) `❓ FAQ de ce produit` — pages/WhatsAppService.jsx
+- (1×) `➕ Ajouter un groupe à animer` — pages/RitaGroupAnimation.jsx
+- (1×) `➕ Créer un nouveau groupe WhatsApp` — pages/RitaFlows.jsx
+- (1×) `🇧🇯 Bénin` — pages/AgentConfig.jsx
+- (1×) `🇨🇩 RD Congo` — pages/AgentConfig.jsx
+- (1×) `🇨🇮 Côte d'Ivoire` — pages/AgentConfig.jsx
+- (1×) `🇨🇲 Cameroun` — pages/AgentConfig.jsx
+- (1×) `🇨🇲 Local` — pages/SourcingList.jsx
+- (1×) `🇨🇳 Chine` — pages/SourcingList.jsx
+- (1×) `🇸🇳 Sénégal` — pages/AgentConfig.jsx
+- (1×) `🇹🇬 Togo` — pages/AgentConfig.jsx
+- (1×) `🌍 Détection automatique de langue` — pages/WhatsAppService.jsx
+- (1×) `🌍 Voix africaines prioritaires` — pages/WhatsAppService.jsx
+- (1×) `🎚️ Mode de réponse` — pages/WhatsAppService.jsx
+- (1×) `🎤 Audio indisponible` — pages/TeamChat.jsx
+- (1×) `🎥 Vidéo` — pages/AgentConfig.jsx
+- (1×) `🎨 Visuel affiche — idéal pour publicités Facebook/Instagram` — components/ProductPageGeneratorModal.jsx
+- (1×) `🎬 Vidéos du produit` — pages/WhatsAppService.jsx
+- (1×) `🎯 Cas d'usage` — components/AlibabaImportModal.jsx
+- (1×) `🎯 Objectifs du mois` — pages/AdminDashboard.jsx
+- (1×) `🎵 Hooks TikTok / Reels` — components/AlibabaImportModal.jsx
+- (1×) `🏅 Top produits` — pages/CloseuseDashboard.jsx
+- (1×) `🏆 Top 5 campagnes` — pages/CampaignStats.jsx
+- (1×) `🏙️ Villes où vous livrez` — pages/WhatsAppService.jsx
+- (1×) `👤 Client` — pages/LivreurDeliveryDetail.jsx
+- (1×) `👥 Contacts` — pages/RitaPerformance.jsx
+- (1×) `💡 Comment fonctionne l'animation ?` — pages/RitaGroupAnimation.jsx
+- (1×) `💡 Exemples de conversations` — pages/WhatsAppService.jsx
+- (1×) `💡 Pourquoi ces infos ?` — pages/AgentConfig.jsx
+- (1×) `💡 Recommandations` — components/FinancialSummary.jsx
+- (1×) `💡 Revenu moyen par livraison` — pages/LivreurEarningsPage.jsx
+- (1×) `💬 Expressions typiques / tics de langage` — pages/WhatsAppService.jsx
+- (1×) `💬 Message texte` — pages/AgentConfig.jsx
+- (1×) `💬 Texte uniquement` — pages/AgentConfig.jsx
+- (1×) `💰 Mes gains` — pages/LivreurEarningsPage.jsx
+- (1×) `💰 Montant encaissé` — pages/LivreurDashboard.jsx
+- (1×) `💰 Négociation des prix` — pages/WhatsAppService.jsx
+- (1×) `💰 Négociation prix` — pages/WhatsAppService.jsx
+- (1×) `💰 Tarifs (FCFA / mois)` — pages/DeveloperSection.jsx
+- (1×) `💰 Ventes` — pages/RitaPerformance.jsx
+- (1×) `📂 Par type de campagne` — pages/CampaignStats.jsx
+- (1×) `📅 Activité des 7 derniers jours` — pages/CampaignStats.jsx
+- (1×) `📅 Chronologie` — pages/LivreurDeliveryDetail.jsx
+- (1×) `📈 Insights mensuels` — pages/ReportsInsightsPage.jsx
+- (1×) `📊 Statistiques` — pages/LivreurEarningsPage.jsx
+- (1×) `📊 Statistiques des Campagnes` — pages/CampaignStats.jsx
+- (1×) `📋 Confirmer la livraison` — pages/LivreurDeliveries.jsx
+- (1×) `📋 Historique` — pages/LivreurHistoryPage.jsx
+- (1×) `📋 Import en masse` — pages/WhatsAppService.jsx
+- (1×) `📋 Règles de comportement` — pages/WhatsAppService.jsx
+- (1×) `📌 Variables disponibles — cliquez pour copier` — pages/WhatsAppService.jsx
+- (1×) `📍 Commencer la course` — pages/LivreurDeliveryDetail.jsx
+- (1×) `📍 Course en cours` — pages/LivreurDeliveries.jsx
+- (1×) `📝 Message envoyé` — pages/CampaignDetail.jsx
+- (1×) `📝 Notes` — pages/LivreurDeliveryDetail.jsx
+- (1×) `📞 Besoin d'aide ? Contactez notre équipe` — pages/WhatsAppEnSavoirPlus.jsx
+- (1×) `📞 Vous serez contacté par WhatsApp ou Email` — pages/WhatsAppPostulation.jsx
+- (1×) `📢 Animation des groupes` — pages/RitaGroupAnimation.jsx
+- (1×) `📢 Campagnes de relance` — pages/RitaPerformance.jsx
+- (1×) `📢 Posts planifiés` — pages/RitaGroupAnimation.jsx
+- (1×) `📣 Angles marketing` — components/AlibabaImportModal.jsx
+- (1×) `📦 Catalogue produits` — pages/AgentConfig.jsx
+- (1×) `📦 Commandes` — pages/RitaPerformance.jsx
+- (1×) `📦 Comment ça fonctionne` — pages/AgentConfig.jsx
+- (1×) `📦 Courses disponibles` — pages/LivreurAvailable.jsx
+- (1×) `📦 Produit` — pages/LivreurDeliveryDetail.jsx
+- (1×) `📦 Produit du catalogue (auto)` — pages/AgentConfig.jsx
+- (1×) `📦 Vos affectations par source` — pages/CloseuseProduits.jsx
+- (1×) `📱 Envoyer un message WhatsApp` — components/WhatsAppClient.jsx
+- (1×) `📸 Photos du produit` — pages/WhatsAppService.jsx
+- (1×) `🔄 Rita Flows` — pages/RitaFlows.jsx
+- (1×) `🔄 Régénérer` — pages/RitaGroupAnimation.jsx
+- (1×) `🔊 Fournisseur vocal` — pages/WhatsAppService.jsx
+- (1×) `🔌 CLIENT WHATSAPP` — components/WhatsAppClient.jsx
+- (1×) `🔍 Recommandations` — pages/ReportsInsightsPage.jsx
+- (1×) `🔍 SEO` — components/AlibabaImportModal.jsx
+- (1×) `🔐 Debug Auth:` — hooks/useEcomAuth.jsx
+- (1×) `🔒 Headers utiles` — pages/DeveloperSection.jsx
+- (1×) `🔒 Prix fixe` — pages/AgentConfig.jsx
+- (1×) `🔒 Prix fixe (dernier prix)` — pages/WhatsAppService.jsx
+- (1×) `🔥 Offre spéciale — Livraison GRATUITE !` — pages/BoutiquePages.jsx
+- (1×) `🔥 Plus que 3 en stock !` — pages/StoreProductForm.jsx
+- (1×) `🔧 Configuration de l'instance` — components/WhatsAppClient.jsx
+- (1×) `🕐 Dernières campagnes envoyées` — pages/CampaignStats.jsx
+- (1×) `🕓 Dernières livraisons` — pages/LivreurEarningsPage.jsx
+- (1×) `🖼️ Image manuelle + texte` — pages/AgentConfig.jsx
+- (1×) `🗣️ Témoignages clients` — pages/WhatsAppService.jsx
+- (1×) `🗺️ Activer le routage par ville` — pages/WhatsAppService.jsx
+- (1×) `🗺️ Course en cours` — pages/LivreurDeliveryDetail.jsx
+- (1×) `🚀 Démarrage rapide` — pages/DeveloperSection.jsx
+- (1×) `🚀 Lancer la course` — pages/LivreurDeliveries.jsx
+- (1×) `🚚 En cours` — pages/LivreurDashboard.jsx
+- (1×) `🚚 Mes livraisons` — pages/LivreurDeliveries.jsx
+- (1×) `🚫 Expressions interdites` — pages/WhatsAppService.jsx
+- (1×) `🚫 Message supprimé` — pages/TeamChat.jsx
+- (1×) `🚫 Message — villes hors zone de livraison` — pages/WhatsAppService.jsx
+- (1×) `🛡️ Objections de ce produit` — pages/WhatsAppService.jsx
+- (1×) `🤝 Escalade — questions sans réponse` — pages/WhatsAppService.jsx
+
+## 2. Littéraux français NON câblés (top 300)
+
+- (18×) `Entrées` — pages/BoutiqueFormBuilder.jsx, pages/TransactionsList.jsx
+- (16×) `Annulé` — components/OrderCard.jsx, livreur/pages/LivreurHistory.jsx
+- (15×) `Élevée` — pages/AdminDashboard.jsx, pages/ProductFinder.jsx
+- (14×) `Livré` — components/OrderCard.jsx, livreur/pages/LivreurHistory.jsx
+- (14×) `Annulée` — pages/CloseuseDashboard.jsx, pages/ControlCenter.jsx
+- (13×) `Reporté` — components/OrderCard.jsx, pages/ClientsList.jsx
+- (13×) `unité` — components/EmbeddedOrderForm.jsx, components/QuickOrderModal.jsx
+- (13×) `Questions fréquentes` — components/PageBuilder.jsx, components/PageBuilderFixed.jsx
+- (12×) `Confirmé` — components/OrderCard.jsx, livreur/pages/LivreurHome.jsx
+- (12×) `Expédié` — components/OrderCard.jsx, pages/ClientsList.jsx
+- (10×) `Appelé` — components/OrderCard.jsx, pages/ClientsList.jsx
+- (9×) `Sénégal` — components/CampaignCountryModal.jsx, pages/AgentOnboarding.jsx
+- (9×) `Paramètres` — components/BoutiqueLayout.jsx, components/EcomLayout.jsx
+- (9×) `Téléphone` — pages/BoutiqueFormBuilder.jsx, pages/ImportOrders.jsx
+- (9×) `Livrée` — pages/CloseuseDashboard.jsx, pages/ControlCenter.jsx
+- (8×) `Paiement à la livraison` — components/ConversionBlocks.jsx, components/StorefrontShared.jsx
+- (8×) `unités` — components/EmbeddedOrderForm.jsx, components/QuickOrderModal.jsx
+- (7×) `Aperçu` — components/BoutiqueLayout.jsx, components/WhatsAppSendModal.jsx
+- (7×) `Activité` — components/EcomLayout.jsx, components/SuperAdminShell.jsx
+- (7×) `Paiement sécurisé` — components/EmbeddedOrderForm.jsx, components/QuickOrderModal.jsx
+- (7×) `Bénéfices` — components/InfographicsGeneratorPanel.jsx, components/productSettings/BlocksEditor.jsx
+- (7×) `Guinée` — pages/BoutiqueDeliveryZones.jsx, pages/BoutiqueSettings.jsx
+- (7×) `Confirmée` — pages/CloseuseDashboard.jsx, pages/ControlCenter.jsx
+- (7×) `Payé` — pages/AffiliateDashboard.jsx, pages/BillingPage.jsx
+- (6×) `Général` — components/ChatWidget.jsx, components/SupportChatWidget.jsx
+- (6×) `Impossible de générer le produit digital` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (6×) `Erreur lors de la génération du produit digital` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (6×) `Satisfait ou remboursé` — components/EmbeddedOrderForm.jsx, components/QuickOrderModal.jsx
+- (6×) `Connecté` — components/WhatsAppInstanceSelector.jsx, pages/CampaignsList.jsx
+- (6×) `Algérie` — components/CampaignCountryModal.jsx, pages/BoutiqueSettings.jsx
+- (6×) `Envoyés` — pages/CampaignsList.jsx, pages/Marketing.jsx
+- (6×) `Entrée` — pages/ControlCenter.jsx, pages/TransactionDetail.jsx
+- (6×) `livré` — pages/LivreurDeliveries.jsx
+- (5×) `français` — components/PremiumProductPageGeneratorModal.jsx, components/ProductGeneratorModal.jsx
+- (5×) `Déconnecté` — components/WhatsAppInstanceSelector.jsx, pages/Marketing.jsx
+- (5×) `Client vérifié` — components/ProductTestimonials.jsx, components/TestimonialsCarousel.jsx
+- (5×) `Blocs de réassurance` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (5×) `Acceptée` — livreur/pages/DeliveryDetail.jsx, livreur/pages/MyDeliveries.jsx
+- (5×) `Illimité` — pages/DeveloperSection.jsx, pages/ScalorRegister.jsx
+- (5×) `Mettre à jour` — pages/AgentOnboarding.jsx, pages/AssignmentsManager.jsx
+- (5×) `Échouée` — pages/CampaignDetail.jsx, pages/CampaignsList.jsx
+- (5×) `Payée` — pages/AffiliateCommissions.jsx, pages/AffiliateConversions.jsx
+- (5×) `Tout sélectionner` — pages/CreativeGenerator.jsx, pages/OrdersList.jsx
+- (5×) `Désactivé` — pages/AgentConfig.jsx, pages/RitaFlows.jsx
+- (5×) `Erreur lors de la mise à jour` — pages/ProductFinderEdit.jsx, pages/StoreOrdersDashboard.jsx
+- (5×) `Unités` — pages/quantityOffers/FormQuantityOffersWizard.jsx
+- (4×) `Recharge cette génération depuis le Studio pour créer le produit digital.` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (4×) `Configuré` — components/WhatsAppInstanceSelector.jsx, pages/Marketing.jsx
+- (4×) `Erreur lors de la génération` — components/ProductGeneratorModal.jsx, components/ReviewGenerator.jsx
+- (4×) `Comptabilité` — components/ChatWidget.jsx, components/EcomLayout.jsx
+- (4×) `Français` — components/ProductPageGeneratorModal.jsx, pages/StoreCreationWizard.jsx
+- (4×) `Confidentialité` — components/StorefrontShared.jsx, pages/LandingPage.jsx
+- (4×) `Copié !` — livreur/pages/DeliveryDetail.jsx, livreur/pages/MapNavigation.jsx
+- (4×) `Acceptées` — livreur/pages/MyDeliveries.jsx, pages/LivreurDeliveries.jsx
+- (4×) `Action enregistrée.` — livreur/pages/DeliveryDetail.jsx, pages/LivreurDashboard.jsx
+- (4×) `Non renseigné` — livreur/pages/DeliveryDetail.jsx, pages/AgentConfig.jsx
+- (4×) `Génération...` — pages/ReportsList.jsx, pages/ScalorDashboard.jsx
+- (4×) `Jamais connecté` — pages/ServiceClient.jsx, pages/SuperAdminUserDetail.jsx
+- (4×) `Yaoundé` — pages/AgentConfig.jsx, pages/ProductPageBuilder.jsx
+- (4×) `Envoyée` — pages/CampaignDetail.jsx, pages/CampaignsList.jsx
+- (4×) `Utilisateur supprimé` — pages/SuperAdminUserDetail.jsx, pages/SuperAdminUsers.jsx
+- (4×) `Expédiée` — pages/CloseuseDashboard.jsx, pages/ControlCenter.jsx
+- (4×) `Livrées` — pages/LivreurManagement.jsx, pages/ProductReportDetail.jsx
+- (4×) `Publicité` — pages/ControlCenter.jsx, pages/TransactionDetail.jsx
+- (4×) `Matériel` — pages/ControlCenter.jsx, pages/TransactionDetail.jsx
+- (4×) `Autre dépense` — pages/ControlCenter.jsx, pages/TransactionDetail.jsx
+- (4×) `Autre entrée` — pages/ControlCenter.jsx, pages/TransactionDetail.jsx
+- (4×) `Connectée` — pages/AgentConfig.jsx, pages/OrdersList.jsx
+- (4×) `Identité` — pages/AgentConfig.jsx, pages/AgentOnboarding.jsx
+- (4×) `Déconnectée` — pages/AgentConfig.jsx, pages/OrdersList.jsx
+- (4×) `Activé` — pages/AgentConfig.jsx, pages/RitaFlows.jsx
+- (4×) `Catégorie` — pages/StoreCreationWizard.jsx, pages/TransactionsList.jsx
+- (4×) `Notre équipe` — pages/OrderDetail.jsx
+- (4×) `non-livré` — pages/LivreurDeliveries.jsx
+- (4×) `Échoué` — pages/BillingPage.jsx, pages/CampaignDetail.jsx
+- (3×) `Génération en cours...` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (3×) `Entrez le statut personnalisé :` — components/OrderCard.jsx, pages/OrdersList.jsx
+- (3×) `Appel à l\` — components/VisualSiteBuilder.jsx, pages/BoutiquePages.jsx
+- (3×) `Prêt à commander ?` — components/VisualSiteBuilder.jsx, pages/BoutiquePages.jsx
+- (3×) `Livraison gratuite. Paiement à la livraison.` — components/StoreProductPageInfographics.jsx, pages/ProductThemePage.jsx
+- (3×) `Affiliés` — components/EcomLayout.jsx, pages/AffiliatesAdmin.jsx
+- (3×) `Español` — components/ProductPageGeneratorModal.jsx, pages/StoreCreationWizard.jsx
+- (3×) `✅ Livré` — livreur/pages/LivreurHistory.jsx, pages/LivreurDashboard.jsx
+- (3×) `Bon après-midi` — livreur/pages/LivreurHome.jsx, pages/AdminDashboard.jsx
+- (3×) `Course refusée.` — livreur/pages/DeliveryDetail.jsx, pages/LivreurAvailable.jsx
+- (3×) `✓ Sauvegardé` — pages/BoutiqueDomains.jsx, pages/BoutiquePayments.jsx
+- (3×) `Instance créée !` — pages/DeveloperSection.jsx, pages/ScalorDashboard.jsx
+- (3×) `Instance supprimée.` — pages/DeveloperSection.jsx, pages/ScalorDashboard.jsx
+- (3×) `Révoquée` — pages/DeveloperSection.jsx, pages/ScalorDashboard.jsx
+- (3×) `Non spécifié` — pages/OrdersList.jsx, pages/StatsPage.jsx
+- (3×) `Publié !` — pages/EnhancedVisualBuilder.jsx, pages/StorepageBuilder.jsx
+- (3×) `Génération…` — pages/BoutiqueSettings.jsx, pages/ScalorDashboard.jsx
+- (3×) `Section personnalisée` — pages/BoutiquePages.jsx, pages/ProductPageBuilder.jsx
+- (3×) `Approuvée` — pages/AffiliateCommissions.jsx, pages/AffiliateConversions.jsx
+- (3×) `Rejetée` — pages/AffiliateCommissions.jsx, pages/AffiliateConversions.jsx
+- (3×) `Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre` — pages/Profile.jsx, pages/ResetPassword.jsx
+- (3×) `Bloqué` — pages/ClientsList.jsx, pages/ServiceClient.jsx
+- (3×) `Bannière` — pages/BoutiqueFormBuilder.jsx, pages/ProductPageBuilder.jsx
+- (3×) `Sauvegardé !` — pages/BoutiqueDeliveryZones.jsx, pages/quantityOffers/FormQuantityOffersWizard.jsx
+- (3×) `Programmée` — pages/CampaignDetail.jsx, pages/CampaignsList.jsx
+- (3×) `Relance annulés` — pages/CampaignDetail.jsx, pages/CampaignStats.jsx
+- (3×) `Personnalisée` — pages/CampaignDetail.jsx, pages/CampaignStats.jsx
+- (3×) `Campagne supprimée` — pages/CampaignsList.jsx, pages/Marketing.jsx
+- (3×) `Terminée` — pages/CampaignsList.jsx, pages/ProductPageStudio.jsx
+- (3×) `Très élevée` — pages/ProductResearch.jsx
+- (3×) `Reportée` — pages/CloseuseDashboard.jsx, pages/ControlCenter.jsx
+- (3×) `Programmées` — pages/CampaignStats.jsx, pages/SuperAdminPushCenter.jsx
+- (3×) `Messages reçus` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (3×) `Vidéo` — pages/AgentConfig.jsx, pages/PublicStorefront.jsx
+- (3×) `Livraison confirmée !` — pages/LivreurDashboard.jsx, pages/LivreurDeliveries.jsx
+- (3×) `Trimestre à ce jour` — pages/StoreDashboard.jsx
+- (3×) `Échoués` — pages/SuperAdminScalorWhatsApp.jsx, pages/SuperAdminWhatsAppLogs.jsx
+- (3×) `Après` — pages/PublicStorefront.jsx, pages/StorepageBuilder.jsx
+- (3×) `Retourné` — pages/OrdersList.jsx
+- (3×) `Personnalisé` — pages/FormUpsellsPage.jsx, pages/StoreAnalytics.jsx
+- (3×) `Livrés` — pages/ClientsList.jsx, pages/SuperAdminWhatsAppLogs.jsx
+- (3×) `Erreur lors de la génération du domaine` — pages/BoutiqueDomains.jsx, pages/DomainGeneratorDemo.jsx
+- (3×) `Quantité` — pages/BoutiqueFormBuilder.jsx, pages/ImportOrders.jsx
+- (3×) `Impayé` — pages/SourcingList.jsx
+- (3×) `Illimitées` — pages/BillingPage.jsx
+- (3×) `Illimités` — pages/BillingPage.jsx
+- (3×) `livrées` — pages/LivreurDashboard.jsx
+- (2×) `Vous avez des modifications non sauvegardées. Voulez-vous vraiment quitter ?` — contexts/EditModeContext.jsx, pages/AgentConfig.jsx
+- (2×) `Votre période d\` — components/TrialBanner.jsx
+- (2×) `Affilié` — components/AffiliateLayout.jsx, pages/AffiliateDashboard.jsx
+- (2×) `\n\nImages jointes (URLs hébergées) :\n` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) ` (emplacement non précisé — utilise comme image principale)` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) `\n\nAutres médias joints:\n` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) `Intègre cette image sur la page` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) `Analyse ce média` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) `\n\n✅ Sections mises à jour.` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) `Décris ce que tu veux créer ou modifier...` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) `Arrêter et transcrire` — components/BuilderAiChat.jsx, pages/StorepageBuilder.jsx
+- (2×) `Commandes illimitées` — components/UpgradeWall.jsx, pages/BillingPage.jsx
+- (2×) `Gestion clients complète` — components/UpgradeWall.jsx, pages/BillingPage.jsx
+- (2×) `Messages illimités` — components/UpgradeWall.jsx, pages/BillingPage.jsx
+- (2×) `Passer à Scalor IA Pro` — components/PlanLimitAlert.jsx, components/UpgradeWall.jsx
+- (2×) `Problème d\` — components/AlibabaImportModal.jsx
+- (2×) `español` — components/PremiumProductPageGeneratorModal.jsx, components/ProductPageGeneratorModal.jsx
+- (2×) `Chargement de la génération premium...` — components/PremiumProductPageGeneratorModal.jsx
+- (2×) `Génération des images premium...` — components/PremiumProductPageGeneratorModal.jsx
+- (2×) `Offre spéciale` — components/QuickOrderModal.jsx, components/productSettings/LivePreview.jsx
+- (2×) `À quel moment souhaitez-vous être appelé ?` — components/EmbeddedOrderForm.jsx, components/QuickOrderModal.jsx
+- (2×) `Centre de contrôle` — components/EcomLayout.jsx
+- (2×) `Montant encaissé` — components/EcomLayout.jsx, pages/LivreurDashboard.jsx
+- (2×) `Encaissé` — components/EcomLayout.jsx, livreur/components/LivreurLayout.jsx
+- (2×) `Veuillez sélectionner un fichier CSV ou Excel (.csv, .xlsx, .xls)` — components/ProductImport.jsx, components/ProductImportLocal.jsx
+- (2×) `en-tête et une ligne de données` — components/ProductImport.jsx, components/ProductImportLocal.jsx
+- (2×) `Erreur lors de la lecture du fichier CSV. Vérifiez le format.` — components/ProductImport.jsx, components/ProductImportLocal.jsx
+- (2×) `Ebook généré` — components/DigitalProductEbookModal.jsx, pages/StoreProductForm.jsx
+- (2×) `Problème` — components/InfographicsGeneratorPanel.jsx, components/ProductPageGeneratorModal.jsx
+- (2×) `Votre page est prête.` — components/ProductPageGeneratorModal.jsx
+- (2×) `Génération des visuels en cours...` — components/ProductPageGeneratorModal.jsx
+- (2×) `Impossible de vérifier le paiement pour le moment.` — components/ProductPageGeneratorModal.jsx
+- (2×) `as plus de crédits. Achète un pack pour continuer.` — components/ProductPageGeneratorModal.jsx
+- (2×) `Produit digital généré et ajouté à cette page.` — components/ProductPageGeneratorModal.jsx, pages/StoreProductForm.jsx
+- (2×) `Image chargée` — components/ProductPageGeneratorModal.jsx, pages/StorepageBuilder.jsx
+- (2×) `Génération échouée` — components/InfographicsGeneratorPanel.jsx, pages/CreativeGenerator.jsx
+- (2×) `Offres de quantité` — components/BoutiqueLayout.jsx
+- (2×) `Intégrations et messagerie` — components/BoutiqueLayout.jsx
+- (2×) `Luxe Doré` — components/productSettings/FormThemeSelector.jsx, components/productSettings/ThemeSelector.jsx
+- (2×) `Phrase de réassurance sous le titre` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Stock limité, preuve sociale` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Liste des bénéfices` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Description complète` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Produit de valeur supérieure` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Produit complémentaire` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: Découvrez le secret des pros…` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Phrase de réassurance` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: Résultats visibles en 7 jours` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: ⚡ Dernières pièces — 3 restants !` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: Résultats en 7 jours` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: Le problème` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: Maux de dos fréquents` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: Offre spéciale` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Ex: Satisfait ou remboursé 30 jours` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Stock limité` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Description détaillée du produit…` — components/productSettings/BlocksEditor.jsx, pages/ProductPageBuilder.jsx
+- (2×) `Faites défiler les visuels avant de commander` — components/productSettings/BlocksEditor.jsx, components/productSettings/LivePreview.jsx
+- (2×) `Sécurité` — livreur/pages/LivreurProfile.jsx, pages/Settings.jsx
+- (2×) `Confirmer la récupération` — livreur/pages/DeliveryDetail.jsx, livreur/pages/MyDeliveries.jsx
+- (2×) `Marquer comme livré` — livreur/pages/DeliveryDetail.jsx, livreur/pages/MyDeliveries.jsx
+- (2×) `📎 Média` — pages/TeamChat.jsx
+- (2×) `Aucun résultat` — pages/ClientsList.jsx, pages/TeamChat.jsx
+- (2×) `Produit non trouvé` — pages/ProductDetail.jsx, pages/ProductReportDetail.jsx
+- (2×) `Clé secrète` — pages/BoutiquePayments.jsx
+- (2×) `Référence API` — pages/DeveloperSection.jsx, pages/ScalorDashboard.jsx
+- (2×) `Instance déconnectée.` — pages/DeveloperSection.jsx, pages/SuperAdminScalorWhatsApp.jsx
+- (2×) `Numéro` — pages/BoutiqueFormBuilder.jsx, pages/DeveloperSection.jsx
+- (2×) `Token rafraîchi.` — pages/DeveloperSection.jsx, pages/ScalorDashboard.jsx
+- (2×) `+ Créer` — pages/DeveloperSection.jsx, pages/ScalorDashboard.jsx
+- (2×) `Génération pages IA` — pages/BillingPage.jsx, pages/SuperAdminPlans.jsx
+- (2×) `Générer la clé` — pages/ScalorDashboard.jsx
+- (2×) `Bannière promo` — pages/BoutiquePages.jsx, pages/BoutiqueTheme.jsx
+- (2×) `Régénérer la page d\` — pages/BoutiquePages.jsx, pages/BoutiqueSettings.jsx
+- (2×) `Agent activé` — pages/AgentIAList.jsx, pages/ServiceClient.jsx
+- (2×) `Crédits mis à jour` — pages/ServiceClient.jsx, pages/SuperAdminWorkspaces.jsx
+- (2×) `Utilisé` — pages/ServiceClient.jsx
+- (2×) `Créez votre propre espace pour commencer à utiliser Scalor.` — pages/AdminDashboard.jsx, pages/ComptaDashboard.jsx
+- (2×) `Rejoignez une équipe existante pour accéder aux données partagées.` — pages/AdminDashboard.jsx, pages/ComptaDashboard.jsx
+- (2×) `Excédent` — pages/ComptaDashboard.jsx, pages/TransactionsList.jsx
+- (2×) `Bénéfices produit` — pages/ProductPageBuilder.jsx, pages/VisualBuilder.jsx
+- (2×) `Votre réponse ici...` — pages/ProductPageBuilder.jsx
+- (2×) `Taux succès` — pages/CampaignStats.jsx, pages/Marketing.jsx
+- (2×) `Envoyées` — pages/CampaignStats.jsx, pages/Marketing.jsx
+- (2×) `Arrêter` — pages/DecisionsList.jsx, pages/Marketing.jsx
+- (2×) `Marge élevée` — pages/ProductResearch.jsx
+- (2×) `Compétition` — pages/ProductResearch.jsx
+- (2×) `Appelée` — pages/CloseuseDashboard.jsx, pages/ControlCenter.jsx
+- (2×) `Non configurée` — pages/CloseuseDashboard.jsx, pages/Commissions.jsx
+- (2×) `Introduction à Scalor` — pages/Formation.jsx, pages/LandingPage.jsx
+- (2×) `Connecter sa boutique à Scalor` — pages/Formation.jsx, pages/LandingPage.jsx
+- (2×) `Paramétrer sa boutique Scalor` — pages/Formation.jsx, pages/LandingPage.jsx
+- (2×) `Les fonctionnalités sur Scalor` — pages/Formation.jsx, pages/LandingPage.jsx
+- (2×) `Page produit — Méthode 1` — pages/Formation.jsx, pages/LandingPage.jsx
+- (2×) `Bénéfice net` — pages/AdminDashboard.jsx, pages/Settings.jsx
+- (2×) `Commandes livrées` — pages/AdminDashboard.jsx, pages/ControlCenter.jsx
+- (2×) `Non vérifié` — pages/WhatsAppConnexion.jsx, pages/WhatsAppService.jsx
+- (2×) `Erreur lors de la création` — pages/ProductResearchList.jsx, pages/WhatsAppService.jsx
+- (2×) `Impossible de récupérer le QR code` — pages/WhatsAppService.jsx
+- (2×) `WhatsApp connecté avec succès ! 🎉` — pages/WhatsAppService.jsx
+- (2×) `Instance connectée !` — pages/WhatsAppConnexion.jsx, pages/WhatsAppService.jsx
+- (2×) `Message reçu` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Conseillère` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Bonjour ma chérie 👋 Tu cherches quel produit exactement ?` — pages/WhatsAppService.jsx
+- (2×) `, text: "Bonjour ma chérie 👋 Tu cherches quel produit exactement ?", time: ` — pages/WhatsAppService.jsx
+- (2×) `🇫🇷 Français` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `🇪🇸 Español` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `🎁 Généreux` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `Accorde facilement la réduction max` — pages/AgentConfig.jsx, pages/WhatsAppService.jsx
+- (2×) `✨ Par défaut` — pages/WhatsAppService.jsx
+- (2×) `✅ Animation sauvegardée !` — pages/AgentConfig.jsx, pages/RitaGroupAnimation.jsx
+- (2×) `Ce groupe est déjà géré.` — pages/AgentConfig.jsx, pages/RitaGroupAnimation.jsx
+- (2×) `invitation mis à jour !` — pages/AgentConfig.jsx, pages/RitaGroupAnimation.jsx
+- (2×) `❌ Erreur génération du lien` — pages/AgentConfig.jsx, pages/RitaGroupAnimation.jsx
+- (2×) `🔧 Personnalisé` — pages/AgentConfig.jsx, pages/RitaGroupAnimation.jsx
+- (2×) `Erreur lors du démarrage.` — pages/LivreurDeliveries.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `Récupération confirmée !` — pages/LivreurDashboard.jsx, pages/LivreurDeliveryDetail.jsx
+- (2×) `Erreur réseau.` — pages/GenerationSuccess.jsx, pages/GenerationsPage.jsx
+- (2×) `Barre icônes` — pages/PublicStorefront.jsx, pages/StorepageBuilder.jsx
+- (2×) `Qualité garantie` — pages/StorepageBuilder.jsx
+- (2×) `Upload échoué` — pages/StorepageBuilder.jsx
+- (2×) `Cliquez pour éditer...` — pages/PublicStorefront.jsx, pages/StorepageBuilder.jsx
+- (2×) `Cette année` — pages/Commissions.jsx, pages/TransactionsList.jsx
+- (2×) `Une erreur est survenue. Veuillez réessayer.` — pages/ForgotPassword.jsx, pages/Tarifs.jsx
+- (2×) `Veuillez sélectionner au moins un statut` — pages/ClientsList.jsx, pages/OrdersList.jsx
+- (2×) `Confirmés` — pages/ClientsList.jsx, pages/OrdersList.jsx
+- (2×) `Commande supprimée` — pages/OrderDetail.jsx, pages/OrdersList.jsx
+- (2×) `Excédentaire` — pages/TransactionsList.jsx
+- (2×) `Mode & Vêtements` — pages/AgentOnboarding.jsx
+- (2×) `Beauté & Cosmétiques` — pages/AgentOnboarding.jsx
+- (2×) `Santé & Bien-être` — pages/AgentOnboarding.jsx
+- (2×) `Maison & Décoration` — pages/AgentOnboarding.jsx
+- (2×) `Non traité` — pages/StoreOrdersDashboard.jsx
+- (2×) `Corée du Sud` — pages/BoutiqueSettings.jsx, pages/StoreAnalytics.jsx
+- (2×) `Érythrée` — pages/BoutiqueSettings.jsx, pages/StoreAnalytics.jsx
+- (2×) `Guinée équatoriale` — pages/BoutiqueSettings.jsx, pages/StoreAnalytics.jsx
+- (2×) `Guinée-Bissau` — pages/BoutiqueSettings.jsx, pages/StoreAnalytics.jsx
+- (2×) `Norvège` — pages/BoutiqueSettings.jsx, pages/StoreAnalytics.jsx
+- (2×) `Accès complet à toutes les fonctionnalités` — pages/SetupSuperAdmin.jsx, pages/WorkspaceSetup.jsx
+- (2×) `Commandes traitées` — pages/LandingPage.jsx, pages/Login.jsx
+- (2×) `Aucune donnée disponible` — pages/StoreAnalytics.jsx, pages/SuperAdminAnalytics.jsx
+- (2×) `Sans rôle` — pages/SuperAdminAnalytics.jsx
+- (2×) `Rejeté` — pages/AffiliateDashboard.jsx, pages/ProductResearchList.jsx
+- (2×) `📦 Récupéré` — pages/LivreurDashboard.jsx, pages/LivreurDeliveries.jsx
+- (2×) `Carré` — pages/ProductThemePage.jsx
+- (2×) `Relance appelés` — pages/CampaignDetail.jsx, pages/CampaignStats.jsx
+- (2×) `Relance reportés` — pages/CampaignDetail.jsx, pages/CampaignStats.jsx
+- (2×) `Relance confirmés non expédiés` — pages/CampaignDetail.jsx, pages/CampaignStats.jsx
+- (2×) `Suivi expédition` — pages/CampaignDetail.jsx, pages/CampaignStats.jsx
+- (2×) `Envoyé` — pages/CampaignDetail.jsx, pages/SuperAdminWhatsAppLogs.jsx
+- (2×) `Achat payé` — pages/SourcingList.jsx
+- (2×) `Achat impayé` — pages/SourcingList.jsx
+- (2×) `Transport payé` — pages/SourcingList.jsx
+- (2×) `Transport impayé` — pages/SourcingList.jsx
+- (2×) `Supprimer cette commande ? Cette action est irréversible.` — pages/SourcingList.jsx, pages/StockOrdersList.jsx
+- (2×) `Arrêté` — pages/ControlCenter.jsx
+- (2×) `Produit à couper` — pages/ControlCenter.jsx
+- (2×) `Problème principal` — pages/ControlCenter.jsx
+- (2×) `Non payé` — pages/BillingPage.jsx, pages/SuperAdminBilling.jsx
+- (2×) `Puis-je changer de plan à tout moment ?` — pages/BillingPage.jsx, pages/Tarifs.jsx
+- (2×) `Produit à choisir` — pages/FormUpsellsPage.jsx
+- (2×) ` : "Créer l` — pages/FormUpsellsPage.jsx
+- (2×) `Fonctionnalités` — pages/LandingPage.jsx
+- (2×) `Comment ça marche` — pages/LandingPage.jsx
+- (2×) `Le prix sourcing doit être supérieur à 0` — pages/ProductFinder.jsx, pages/ProductFinderEdit.jsx
+- (2×) `Nom, URL et catégorie` — pages/StoreCreationWizard.jsx
+- (2×) `Non classé` — pages/StoreProductsList.jsx
+- (2×) `Impossible de générer les catégories.` — pages/StoreProductsList.jsx
+- (2×) `Générer un produit digital` — pages/StoreProductsList.jsx
+- (2×) `Mot de passe réinitialisé` — pages/UserManagement.jsx
+- (2×) `Compte à rebours` — pages/BoutiqueFormBuilder.jsx
+- (2×) `Formulaire intégré` — pages/BoutiqueFormBuilder.jsx
+- (2×) `Résumé` — pages/StoreAnalytics.jsx
+- (1×) `useCurrency doit être utilisé dans un CurrencyProvider` — contexts/CurrencyContext.jsx
+- (1×) `Numéro de téléphone et message requis` — components/WhatsAppSendModal.jsx
+- (1×) `Aperçu du message...` — components/WhatsAppSendModal.jsx
+- (1×) `Non défini` — components/WhatsAppSendModal.jsx
+- (1×) `Devise mise à jour !` — components/CurrencySelector.jsx
+- (1×) `emplacement indiqué comme clé.` — components/BuilderAiChat.jsx

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tp } from '../i18n/platform.js';
 import {
   X, Send, MessageCircle, User, Smartphone, Copy, CheckCircle,
   AlertCircle, Loader2, Settings, RotateCcw, Eye
@@ -49,7 +50,7 @@ const WhatsAppSendModal = ({
 
   const handleSendMessage = async () => {
     if (!phoneNumber.trim() || !message.trim()) {
-      setError('Numéro de téléphone et message requis');
+      setError(tp('Numéro de téléphone et message requis'));
       return;
     }
 
@@ -126,8 +127,8 @@ const WhatsAppSendModal = ({
               <Send className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="font-bold text-gray-900">Envoyer WhatsApp</h2>
-              <p className="text-sm text-gray-500">Message marketing personnalisé</p>
+              <h2 className="font-bold text-gray-900">{tp('Envoyer WhatsApp')}</h2>
+              <p className="text-sm text-gray-500">{tp('Message marketing personnalisé')}</p>
             </div>
           </div>
           <button
@@ -160,7 +161,7 @@ const WhatsAppSendModal = ({
                     <>
                       <AlertCircle className="w-4 h-4 text-red-600" />
                       <span className="text-sm font-semibold text-red-800">
-                        Configuration requise
+                        {tp('Configuration requise')}
                       </span>
                     </>
                   )}
@@ -171,7 +172,7 @@ const WhatsAppSendModal = ({
                     className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                   >
                     <Settings className="w-3 h-3" />
-                    Configurer
+                    {tp('Configurer')}
                   </button>
                 )}
               </div>
@@ -182,7 +183,7 @@ const WhatsAppSendModal = ({
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               <Smartphone className="w-4 h-4 inline mr-1" />
-              Numéro du destinataire
+              {tp('Numéro du destinataire')}
             </label>
             <input
               type="tel"
@@ -201,7 +202,7 @@ const WhatsAppSendModal = ({
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-semibold text-gray-700">
                 <MessageCircle className="w-4 h-4 inline mr-1" />
-                Message WhatsApp
+                {tp('Message WhatsApp')}
               </label>
               <div className="flex gap-2">
                 <button
@@ -209,27 +210,27 @@ const WhatsAppSendModal = ({
                   className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1"
                 >
                   <Eye className="w-3 h-3" />
-                  {previewMode ? 'Éditer' : 'Aperçu'}
+                  {previewMode ? 'Éditer' : tp('Aperçu')}
                 </button>
                 <button
                   onClick={copyMessage}
                   className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
                 >
                   <Copy className="w-3 h-3" />
-                  Copier
+                  {tp('Copier')}
                 </button>
               </div>
             </div>
             
             {previewMode ? (
               <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl min-h-[120px] text-sm text-gray-800 whitespace-pre-wrap">
-                {previewMessage || 'Aperçu du message...'}
+                {previewMessage || tp('Aperçu du message...')}
               </div>
             ) : (
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Saisissez votre message WhatsApp..."
+                placeholder={tp('Saisissez votre message WhatsApp...')}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                 rows={6}
               />
@@ -237,11 +238,11 @@ const WhatsAppSendModal = ({
             
             {productData && (
               <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-xs font-semibold text-blue-800 mb-1">Variables disponibles:</p>
+                <p className="text-xs font-semibold text-blue-800 mb-1">{tp('Variables disponibles:')}</p>
                 <div className="text-xs text-blue-700 space-y-1">
-                  <p><code className="bg-blue-100 px-1 rounded">[PRODUIT]</code> → {productData.name || 'Non défini'}</p>
+                  <p><code className="bg-blue-100 px-1 rounded">{tp('[PRODUIT]')}</code> → {productData.name || tp('Non défini')}</p>
                   <p><code className="bg-blue-100 px-1 rounded">[PRIX]</code> → {productData.price ? `${productData.price} FCFA` : 'Non défini'}</p>
-                  <p><code className="bg-blue-100 px-1 rounded">[LIEN]</code> → {productData.link ? 'Lien défini' : 'Non défini'}</p>
+                  <p><code className="bg-blue-100 px-1 rounded">{tp('[LIEN]')}</code> → {productData.link ? 'Lien défini' : tp('Non défini')}</p>
                 </div>
               </div>
             )}
@@ -268,7 +269,7 @@ const WhatsAppSendModal = ({
               onClick={onClose}
               className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition"
             >
-              Annuler
+              {tp('Annuler')}
             </button>
             <button
               onClick={handleSendMessage}
@@ -286,7 +287,7 @@ const WhatsAppSendModal = ({
 
           {/* Info */}
           <div className="text-xs text-gray-500 text-center">
-            Le message sera envoyé depuis votre numéro WhatsApp configuré
+            {tp('Le message sera envoyé depuis votre numéro WhatsApp configuré')}
           </div>
         </div>
       </div>

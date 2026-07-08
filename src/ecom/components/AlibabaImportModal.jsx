@@ -5,15 +5,16 @@ import {
   TrendingUp, HelpCircle, Package, ArrowRight, Send, Settings
 } from 'lucide-react';
 import WhatsAppSendModal from './WhatsAppSendModal.jsx';
+import { tp } from '../i18n/platform.js';
 // WhatsAppConfigModal supprimé
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
 
 const STEPS = [
   { id: 1, icon: '🔍', label: 'Analyse de la page Alibaba' },
-  { id: 2, icon: '🧠', label: 'Génération copywriting IA' },
-  { id: 3, icon: '🎨', label: 'Création visuels marketing' },
-  { id: 4, icon: '✅', label: 'Produit prêt !' }
+  { id: 2, icon: '🧠', get label() { return tp('Génération copywriting IA'); } },
+  { id: 3, icon: '🎨', get label() { return tp('Création visuels marketing'); } },
+  { id: 4, icon: '✅', get label() { return tp('Produit prêt !'); } }
 ];
 
 const TABS = [
@@ -36,7 +37,7 @@ function CopyButton({ text }) {
       type="button"
       onClick={copy}
       className="p-1 text-gray-400 hover:text-primary-600 transition"
-      title="Copier"
+      title={tp('Copier')}
     >
       {copied ? <CheckCircle className="w-3.5 h-3.5 text-primary-500" /> : <Copy className="w-3.5 h-3.5" />}
     </button>
@@ -261,8 +262,8 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               <span className="text-lg">🛒</span>
             </div>
             <div>
-              <h2 className="font-bold text-gray-900 text-base">Importer depuis Alibaba</h2>
-              <p className="text-xs text-gray-400">IA analyse + génère la fiche produit complète</p>
+              <h2 className="font-bold text-gray-900 text-base">{tp('Importer depuis Alibaba')}</h2>
+              <p className="text-xs text-gray-400">{tp('IA analyse + génère la fiche produit complète')}</p>
             </div>
           </div>
           <button
@@ -283,7 +284,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               {/* URL field */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Lien Alibaba
+                  {tp('Lien Alibaba')}
                 </label>
                 <div className="relative">
                   <input
@@ -313,7 +314,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
               {/* What will be generated */}
               <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
-                <p className="text-xs font-semibold text-orange-700 mb-2.5 uppercase tracking-wide">Ce qui sera généré automatiquement</p>
+                <p className="text-xs font-semibold text-orange-700 mb-2.5 uppercase tracking-wide">{tp('Ce qui sera généré automatiquement')}</p>
                 <div className="grid grid-cols-2 gap-1.5">
                   {[
                     '📝 Titre optimisé conversion', '✨ Description storytelling',
@@ -336,8 +337,8 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                     <Sparkles className="w-4 h-4 text-violet-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">Générer des images marketing IA</p>
-                    <p className="text-xs text-gray-400">Photo produit + lifestyle (DALL-E 3) · +30s</p>
+                    <p className="text-sm font-medium text-gray-800">{tp('Générer des images marketing IA')}</p>
+                    <p className="text-xs text-gray-400">{tp('Photo produit + lifestyle (DALL-E 3) · +30s')}</p>
                   </div>
                 </div>
                 <div
@@ -371,7 +372,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               {/* Current label */}
               <div className="text-center space-y-1">
                 <p className="text-base font-semibold text-gray-800">
-                  {stepLabel || 'Initialisation...'}
+                  {stepLabel || tp('Initialisation...')}
                 </p>
                 <p className="text-xs text-gray-400">
                   L'IA analyse et génère votre fiche produit complète
@@ -410,7 +411,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                         )}
                         {active && (
                           <div className="text-xs text-orange-600 font-medium mt-0.5">
-                            En cours...
+                            {tp('En cours...')}
                           </div>
                         )}
                       </div>
@@ -427,7 +428,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               </div>
 
               <p className="text-xs text-gray-400 text-center">
-                {withImages ? 'Environ 45-90 secondes avec génération d\'images' : 'Environ 15-30 secondes'}
+                {withImages ? 'Environ 45-90 secondes avec génération d\'images' : tp('Environ 15-30 secondes')}
               </p>
             </div>
           )}
@@ -453,7 +454,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                     <div className="flex items-center gap-3 mt-2 flex-wrap">
                       {product.suggestedPrice > 0 && (
                         <span className="text-sm font-bold text-primary-700 bg-primary-100 px-2 py-0.5 rounded-lg">
-                          {product.suggestedPrice.toLocaleString()} {product.currency || 'XAF'}
+                          {product.suggestedPrice.toLocaleString()} {product.currency || tp('XAF')}
                         </span>
                       )}
                       {product.category && (
@@ -496,19 +497,19 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                   <div className="space-y-3">
                     {product.headline && (
                       <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                        <p className="text-xs text-blue-500 font-semibold uppercase mb-1">Titre émotionnel</p>
+                        <p className="text-xs text-blue-500 font-semibold uppercase mb-1">{tp('Titre émotionnel')}</p>
                         <p className="text-sm font-bold text-blue-900">{product.headline}</p>
                       </div>
                     )}
 
                     {product.problemSolved && (
-                      <CollapsibleSection title="Problème résolu" defaultOpen>
+                      <CollapsibleSection title={tp('Problème résolu')} defaultOpen>
                         <p className="text-sm text-gray-700">{product.problemSolved}</p>
                       </CollapsibleSection>
                     )}
 
                     {product.benefits?.length > 0 && (
-                      <CollapsibleSection title="5 Bénéfices clés" defaultOpen>
+                      <CollapsibleSection title={tp('5 Bénéfices clés')} defaultOpen>
                         <ul className="space-y-1.5">
                           {product.benefits.map((b, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
@@ -521,13 +522,13 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                     )}
 
                     {product.description && (
-                      <CollapsibleSection title="Description complète">
+                      <CollapsibleSection title={tp('Description complète')}>
                         <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{product.description}</p>
                       </CollapsibleSection>
                     )}
 
                     {product.specs?.length > 0 && (
-                      <CollapsibleSection title="Spécifications techniques">
+                      <CollapsibleSection title={tp('Spécifications techniques')}>
                         <div className="divide-y divide-gray-100">
                           {product.specs.map((s, i) => (
                             <div key={i} className="flex justify-between py-1.5 text-xs">
@@ -541,7 +542,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.tags?.length > 0 && (
                       <div>
-                        <p className="text-xs text-gray-500 font-semibold mb-1.5">Tags</p>
+                        <p className="text-xs text-gray-500 font-semibold mb-1.5">{tp('Tags')}</p>
                         <div className="flex flex-wrap gap-1.5">
                           {product.tags.map((t, i) => (
                             <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full border border-gray-200">
@@ -559,7 +560,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                   <div className="space-y-3">
                     {product.marketingAngles?.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">📣 Angles marketing</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('📣 Angles marketing')}</p>
                         <div className="space-y-1.5">
                           {product.marketingAngles.map((a, i) => (
                             <div key={i} className="flex items-start gap-2 p-2.5 bg-amber-50 border border-amber-100 rounded-lg text-sm text-amber-800">
@@ -573,7 +574,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.tiktokHooks?.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">🎵 Hooks TikTok / Reels</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('🎵 Hooks TikTok / Reels')}</p>
                         <div className="space-y-1.5">
                           {product.tiktokHooks.map((h, i) => (
                             <div key={i} className="flex items-center justify-between p-2.5 bg-pink-50 border border-pink-100 rounded-lg">
@@ -590,14 +591,14 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                         <div className="flex items-center justify-between mb-2">
                           <p className="text-xs font-semibold text-gray-500 uppercase">
                             <MessageCircle className="w-3.5 h-3.5 inline mr-1 text-green-500" />
-                            Message WhatsApp
+                            {tp('Message WhatsApp')}
                           </p>
                           <button
                             onClick={() => setShowWhatsAppSend(true)}
                             className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition"
                           >
                             <Send className="w-3 h-3" />
-                            Envoyer
+                            {tp('Envoyer')}
                           </button>
                         </div>
                         <div className="relative p-3 bg-green-50 border border-green-100 rounded-xl">
@@ -611,7 +612,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.useCases?.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">🎯 Cas d'usage</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('🎯 Cas d\'usage')}</p>
                         <div className="space-y-1.5">
                           {product.useCases.map((u, i) => (
                             <div key={i} className="flex items-start gap-2 text-sm text-gray-700">
@@ -625,7 +626,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {(product.seoTitle || product.seoDescription) && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">🔍 SEO</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('🔍 SEO')}</p>
                         <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl space-y-2">
                           {product.seoTitle && (
                             <div>
@@ -658,7 +659,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                         </div>
                       </div>
                     )) : (
-                      <p className="text-sm text-gray-400 text-center py-8">Aucune FAQ générée</p>
+                      <p className="text-sm text-gray-400 text-center py-8">{tp('Aucune FAQ générée')}</p>
                     )}
                   </div>
                 )}
@@ -678,7 +679,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                             />
                             {i === 0 && (
                               <span className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 text-white text-[10px] rounded-md">
-                                Principale
+                                {tp('Principale')}
                               </span>
                             )}
                           </div>
@@ -687,8 +688,8 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                     ) : (
                       <div className="text-center py-10 text-gray-400">
                         <Image className="w-10 h-10 mx-auto mb-2 opacity-30" />
-                        <p className="text-sm">Aucune image générée</p>
-                        <p className="text-xs mt-1">Activez la génération d'images pour obtenir des visuels</p>
+                        <p className="text-sm">{tp('Aucune image générée')}</p>
+                        <p className="text-xs mt-1">{tp('Activez la génération d\'images pour obtenir des visuels')}</p>
                       </div>
                     )}
                   </div>
@@ -719,7 +720,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               onClick={handleCancel}
               className="w-full py-3 text-sm font-medium text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition"
             >
-              Annuler
+              {tp('Annuler')}
             </button>
           )}
 
@@ -730,7 +731,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                 onClick={() => { setPhase('input'); setProduct(null); setUrl(''); }}
                 className="px-4 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition"
               >
-                Nouveau produit
+                {tp('Nouveau produit')}
               </button>
               <button
                 type="button"
@@ -738,7 +739,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                 className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition text-sm shadow-sm"
               >
                 <CheckCircle className="w-4 h-4" />
-                Appliquer au formulaire
+                {tp('Appliquer au formulaire')}
               </button>
             </div>
           )}

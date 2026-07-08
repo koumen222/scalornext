@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
 import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle, Plus, Bot, X } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
 
 // ─── Predefined lists ────────────────────────────────────────────────────────
 
@@ -107,7 +108,7 @@ export default function AgentOnboarding() {
     if (step === 2) {
       if (!formData.country) { setError('Le pays est requis'); return false; }
       if (!formData.description.trim()) { setError('Le nom du business est requis'); return false; }
-      if (!formData.niche) { setError('La catégorie est requise'); return false; }
+      if (!formData.niche) { setError(tp('La catégorie est requise')); return false; }
     }
     if (step === 3) {
       if (!formData.tone) { setError('Le ton est requis'); return false; }
@@ -185,7 +186,7 @@ export default function AgentOnboarding() {
           <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-primary-600" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">Agent IA créé !</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">{tp('Agent IA créé !')}</h2>
           <p className="text-gray-500 mb-8 leading-relaxed">
             Votre agent a été configuré avec succès. Connectez WhatsApp et ajoutez vos produits pour commencer à vendre.
           </p>
@@ -199,14 +200,14 @@ export default function AgentOnboarding() {
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              Créer un autre
+              {tp('Créer un autre')}
             </button>
             <button
               onClick={() => navigate('/ecom/agent-ia')}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors"
             >
               <Bot className="w-5 h-5" />
-              Voir mes agents
+              {tp('Voir mes agents')}
             </button>
           </div>
         </div>
@@ -215,7 +216,7 @@ export default function AgentOnboarding() {
   }
 
   const stepMeta = [
-    { label: 'Identité' },
+    { get label() { return tp('Identité'); } },
     { label: 'Business' },
     { label: 'Communication' },
   ];
@@ -231,10 +232,10 @@ export default function AgentOnboarding() {
             className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour
+            {tp('Retour')}
           </button>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-            {existingAgent ? 'Modifier l\'agent IA' : 'Créer un agent IA'}
+            {existingAgent ? 'Modifier l\'agent IA' : tp('Créer un agent IA')}
           </h1>
           <p className="text-gray-500 text-sm">
             Étape {step} sur {TOTAL_STEPS} — {stepMeta[step - 1].label}
@@ -258,7 +259,7 @@ export default function AgentOnboarding() {
           <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 mb-6 flex items-start gap-4 text-red-900">
             <AlertCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-red-600" />
             <div className="flex-1">
-              <p className="font-bold text-red-900 mb-2">Erreur</p>
+              <p className="font-bold text-red-900 mb-2">{tp('Erreur')}</p>
               <p className="text-sm text-red-800 whitespace-pre-wrap leading-relaxed">{error}</p>
             </div>
             <button
@@ -277,8 +278,8 @@ export default function AgentOnboarding() {
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Identité de l'agent</h2>
-                <p className="text-sm text-gray-500">Donnez un nom à votre agent IA (ex: Rita, Maya...)</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">{tp('Identité de l\'agent')}</h2>
+                <p className="text-sm text-gray-500">{tp('Donnez un nom à votre agent IA (ex: Rita, Maya...)')}</p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -289,20 +290,20 @@ export default function AgentOnboarding() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Ex: Rita, Maya, Sophie..."
+                  placeholder={tp('Ex: Rita, Maya, Sophie...')}
                   autoFocus
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Description <span className="text-gray-400 font-normal">(optionnel)</span>
+                  Description <span className="text-gray-400 font-normal">{tp('(optionnel)')}</span>
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Brève description du rôle de cet agent..."
+                  placeholder={tp('Brève description du rôle de cet agent...')}
                   rows={3}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition resize-none"
                 />
@@ -314,12 +315,12 @@ export default function AgentOnboarding() {
           {step === 2 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Infos business</h2>
-                <p className="text-sm text-gray-500">Dites-nous plus sur votre activité</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">{tp('Infos business')}</h2>
+                <p className="text-sm text-gray-500">{tp('Dites-nous plus sur votre activité')}</p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Pays <span className="text-red-400">*</span>
+                  {tp('Pays')} <span className="text-red-400">*</span>
                 </label>
                 <select
                   name="country"
@@ -327,26 +328,26 @@ export default function AgentOnboarding() {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition bg-white"
                 >
-                  <option value="">Sélectionner un pays</option>
+                  <option value="">{tp('Sélectionner un pays')}</option>
                   {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Nom du business <span className="text-red-400">*</span>
+                  {tp('Nom du business')} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Ex: Mon magasin de mode, Ma boutique..."
+                  placeholder={tp('Ex: Mon magasin de mode, Ma boutique...')}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Catégorie <span className="text-red-400">*</span>
+                  {tp('Catégorie')} <span className="text-red-400">*</span>
                 </label>
                 <select
                   name="niche"
@@ -354,7 +355,7 @@ export default function AgentOnboarding() {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition bg-white"
                 >
-                  <option value="">Sélectionner une catégorie</option>
+                  <option value="">{tp('Sélectionner une catégorie')}</option>
                   {NICHES.map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
@@ -365,12 +366,12 @@ export default function AgentOnboarding() {
           {step === 3 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Ton de voix</h2>
-                <p className="text-sm text-gray-500">Sélectionnez le ton avec lequel votre agent communiquera</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">{tp('Ton de voix')}</h2>
+                <p className="text-sm text-gray-500">{tp('Sélectionnez le ton avec lequel votre agent communiquera')}</p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Ton de voix <span className="text-red-400">*</span>
+                  {tp('Ton de voix')} <span className="text-red-400">*</span>
                 </label>
                 <select
                   name="tone"
@@ -378,7 +379,7 @@ export default function AgentOnboarding() {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition bg-white"
                 >
-                  <option value="">Sélectionner un ton</option>
+                  <option value="">{tp('Sélectionner un ton')}</option>
                   {TONES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
@@ -395,7 +396,7 @@ export default function AgentOnboarding() {
             className="flex-1 flex items-center justify-center gap-2 px-6 py-3 border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Précédent
+            {tp('Précédent')}
           </button>
 
           {step < TOTAL_STEPS ? (
@@ -404,7 +405,7 @@ export default function AgentOnboarding() {
               disabled={loading}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-teal-600 hover:from-primary-600 hover:to-teal-700 text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
             >
-              Suivant
+              {tp('Suivant')}
               <ArrowRight className="w-4 h-4" />
             </button>
           ) : (
@@ -416,7 +417,7 @@ export default function AgentOnboarding() {
               {loading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  Création...
+                  {tp('Création...')}
                 </>
               ) : (
                 <>

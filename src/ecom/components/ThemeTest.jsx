@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import DynamicButton from './DynamicButton';
+import { tp } from '../i18n/platform.js';
 
 const ThemeTest = () => {
   const { theme, updateTheme } = useTheme();
@@ -15,11 +16,11 @@ const ThemeTest = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Dynamic Theme Test</h2>
+      <h2 className="text-2xl font-bold">{tp('Dynamic Theme Test')}</h2>
       
       {/* Theme Controls */}
       <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Theme Controls</h3>
+        <h3 className="text-lg font-semibold mb-4">{tp('Theme Controls')}</h3>
         
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
           {testColors.map((color) => (
@@ -38,7 +39,7 @@ const ThemeTest = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium">Primary Color:</label>
+          <label className="block text-sm font-medium">{tp('Primary Color:')}</label>
           <input
             type="color"
             value={theme.primaryColor}
@@ -46,7 +47,7 @@ const ThemeTest = () => {
             className="w-12 h-8 rounded border"
           />
           
-          <label className="block text-sm font-medium mt-4">CTA Color:</label>
+          <label className="block text-sm font-medium mt-4">{tp('CTA Color:')}</label>
           <input
             type="color"
             value={theme.ctaColor}
@@ -58,20 +59,20 @@ const ThemeTest = () => {
 
       {/* Dynamic Components Demo */}
       <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Dynamic Components</h3>
+        <h3 className="text-lg font-semibold mb-4">{tp('Dynamic Components')}</h3>
         
         <div className="space-y-4">
           <div className="flex gap-2 flex-wrap">
-            <DynamicButton variant="primary">Primary Button</DynamicButton>
-            <DynamicButton variant="cta">CTA Button</DynamicButton>
-            <DynamicButton variant="outline">Outline Button</DynamicButton>
-            <DynamicButton variant="ghost">Ghost Button</DynamicButton>
+            <DynamicButton variant="primary">{tp('Primary Button')}</DynamicButton>
+            <DynamicButton variant="cta">{tp('CTA Button')}</DynamicButton>
+            <DynamicButton variant="outline">{tp('Outline Button')}</DynamicButton>
+            <DynamicButton variant="ghost">{tp('Ghost Button')}</DynamicButton>
           </div>
 
           <div className="theme-card p-4">
-            <h4 className="theme-text font-semibold mb-2">Theme Card</h4>
+            <h4 className="theme-text font-semibold mb-2">{tp('Theme Card')}</h4>
             <p className="theme-text--secondary text-sm">
-              This card uses dynamic theme classes and will update automatically when colors change.
+              {tp('This card uses dynamic theme classes and will update automatically when colors change.')}
             </p>
           </div>
 
@@ -83,9 +84,9 @@ const ThemeTest = () => {
               border: `2px solid ${theme.primaryColor}`,
             }}
           >
-            <h4 className="font-semibold mb-2">Inline Styled Component</h4>
+            <h4 className="font-semibold mb-2">{tp('Inline Styled Component')}</h4>
             <p className="text-sm opacity-80">
-              This component uses inline styles with theme values.
+              {tp('This component uses inline styles with theme values.')}
             </p>
           </div>
         </div>
@@ -93,7 +94,7 @@ const ThemeTest = () => {
 
       {/* Current Theme Display */}
       <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Current Theme Values</h3>
+        <h3 className="text-lg font-semibold mb-4">{tp('Current Theme Values')}</h3>
         <pre className="text-sm bg-gray-100 p-3 rounded">
           {JSON.stringify(theme, null, 2)}
         </pre>

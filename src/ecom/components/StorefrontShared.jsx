@@ -4,6 +4,7 @@ import {
   ShoppingCart, ChevronRight, MessageCircle, MapPin, Phone, Mail, CreditCard, Menu, X,
 } from 'lucide-react';
 import { preloadStoreCheckoutRoute } from '../utils/routePrefetch';
+import { tp } from '../i18n/platform.js';
 
 // ── Shared Header (mobile: hamburger | logo center | cart) ──────────────────
 export const StorefrontHeader = ({ store, cartCount = 0, prefix = '' }) => {
@@ -63,7 +64,7 @@ export const StorefrontHeader = ({ store, cartCount = 0, prefix = '' }) => {
                 backgroundColor: mobileMenuOpen ? '#F3F4F6' : 'transparent', cursor: 'pointer',
                 alignItems: 'center', justifyContent: 'center',
               }}
-              aria-label="Menu"
+              aria-label={tp('Menu')}
             >
               {mobileMenuOpen ? <X size={20} color="var(--s-text)" /> : <Menu size={20} color="var(--s-text)" />}
             </button>
@@ -72,11 +73,11 @@ export const StorefrontHeader = ({ store, cartCount = 0, prefix = '' }) => {
               <Link to={`${prefix}/`} className="sf-nav-link" style={{
                 padding: '6px 12px', borderRadius: 6, fontSize: 13, fontWeight: 600,
                 color: 'var(--s-text2)', textDecoration: 'none', fontFamily: 'var(--s-font)',
-              }}>Accueil</Link>
+              }}>{tp('Accueil')}</Link>
               <Link to={`${prefix}/products`} className="sf-nav-link" style={{
                 padding: '6px 12px', borderRadius: 6, fontSize: 13, fontWeight: 600,
                 color: 'var(--s-text2)', textDecoration: 'none', fontFamily: 'var(--s-font)',
-              }}>Produits</Link>
+              }}>{tp('Produits')}</Link>
             </div>
           </div>
 
@@ -199,9 +200,9 @@ export const StorefrontFooter = ({ store, prefix = '', footer = null }) => {
     { label: 'Nos Produits', href: '/products' },
   ];
   const legalLinks = footer?.legalLinks || [
-    { label: 'Confidentialité', href: '/legal/confidentialite' },
+    { get label() { return tp('Confidentialité'); }, href: '/legal/confidentialite' },
     { label: 'CGV', href: '/legal/cgv' },
-    { label: 'Mentions légales', href: '/legal/mentions' },
+    { get label() { return tp('Mentions légales'); }, href: '/legal/mentions' },
     { label: 'Remboursement', href: '/legal/remboursement' },
   ];
   const paymentMethods = footer?.paymentMethods || ['Paiement à la livraison', 'Mobile Money'];
@@ -283,7 +284,7 @@ export const StorefrontFooter = ({ store, prefix = '', footer = null }) => {
         {/* Navigation */}
         <div>
           <p style={{ fontWeight: 700, fontSize: 12, color: 'var(--s-text)', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Navigation
+            {tp('Navigation')}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {quickLinks.map(link => (
@@ -300,7 +301,7 @@ export const StorefrontFooter = ({ store, prefix = '', footer = null }) => {
         {/* Contact */}
         <div>
           <p style={{ fontWeight: 700, fontSize: 12, color: 'var(--s-text)', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Contact
+            {tp('Contact')}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {store?.city && (
@@ -343,7 +344,7 @@ export const StorefrontFooter = ({ store, prefix = '', footer = null }) => {
         {/* Informations légales */}
         <div>
           <p style={{ fontWeight: 700, fontSize: 12, color: 'var(--s-text)', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Informations
+            {tp('Informations')}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {legalLinks.map(link => (

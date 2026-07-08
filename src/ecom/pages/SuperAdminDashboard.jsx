@@ -11,6 +11,7 @@ import {
 import ecomApi, { clearEcomGetCache } from '../services/ecommApi.js';
 import SuperAdminShell from '../components/SuperAdminShell.jsx';
 import { DashboardSkeleton, SkeletonKpi, SectionError } from '../components/Skeleton.jsx';
+import { tp } from '../i18n/platform.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -126,7 +127,7 @@ const AreaChart = ({ data, dataKey, color = '#059669', h = 180 }) => {
   if (!data || data.length < 2) return (
     <div className="flex flex-col items-center justify-center gap-2 bg-slate-50 rounded-xl" style={{ height: h }}>
       <BarChart3 className="w-5 h-5 text-slate-300" />
-      <p className="text-xs text-slate-400 font-medium">Pas assez de données</p>
+      <p className="text-xs text-slate-400 font-medium">{tp('Pas assez de données')}</p>
     </div>
   );
   const values = data.map(d => d[dataKey] || 0);
@@ -447,7 +448,7 @@ const SuperAdminDashboard = () => {
 
   return (
     <SuperAdminShell
-      title="Super Admin"
+      title={tp('Super Admin')}
       subtitle={usersOk
         ? `${(userStats.totalUsers || 0).toLocaleString()} utilisateurs · ${workspaces.length} workspaces`
         : 'Données partielles'
@@ -464,7 +465,7 @@ const SuperAdminDashboard = () => {
           <Panel className="border-red-200 bg-red-50">
             <div className="flex flex-wrap items-center gap-2 text-sm text-red-700">
               <AlertCircle className="h-4 w-4" />
-              <span className="font-semibold">Données partielles</span>
+              <span className="font-semibold">{tp('Données partielles')}</span>
               {Object.entries(errors).map(([key, msg]) => (
                 <span key={key} className="rounded-md bg-white px-2 py-1 text-xs font-medium text-red-600">
                   {key}: {msg}
@@ -551,7 +552,7 @@ const SuperAdminDashboard = () => {
         </div>
 
         <Panel>
-          <SH icon={TrendingUp} title="Croissance SaaS" subtitle={`Période actuelle vs période précédente · ${rangeLabel}`} color="#2563eb">
+          <SH icon={TrendingUp} title={tp('Croissance SaaS')} subtitle={`Période actuelle vs période précédente · ${rangeLabel}`} color="#2563eb">
             <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">
               Score {formatPercent(saasKpis.growthScore || 0, true)}
             </span>
@@ -604,7 +605,7 @@ const SuperAdminDashboard = () => {
 
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Mix des plans</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Mix des plans')}</p>
                     <p className="text-xs font-semibold text-slate-400">{(saasKpis.totalWorkspaces || 0).toLocaleString()} workspaces</p>
                   </div>
                   {planMix.length > 0 ? (
@@ -630,7 +631,7 @@ const SuperAdminDashboard = () => {
                       })}
                     </div>
                   ) : (
-                    <p className="py-8 text-center text-sm text-slate-400">Aucun plan à afficher</p>
+                    <p className="py-8 text-center text-sm text-slate-400">{tp('Aucun plan à afficher')}</p>
                   )}
                 </div>
               </div>
@@ -639,7 +640,7 @@ const SuperAdminDashboard = () => {
         </Panel>
 
         <Panel>
-          <SH icon={Route} title="Intelligence utilisateurs" subtitle={`Connexions, temps passe et parcours sur ${rangeLabel}`} color="#0f766e">
+          <SH icon={Route} title={tp('Intelligence utilisateurs')} subtitle={`Connexions, temps passe et parcours sur ${rangeLabel}`} color="#0f766e">
             <button onClick={() => navigate('/ecom/super-admin/analytics')}
               className="inline-flex min-h-[36px] items-center gap-1 rounded-md px-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900">
               Analyse complete <ChevronRight className="h-3.5 w-3.5" />
@@ -652,33 +653,33 @@ const SuperAdminDashboard = () => {
               <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.1fr_0.9fr]">
                 <div>
                   <div className="mb-2 flex items-center justify-between gap-3">
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Sessions par jour</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Sessions par jour')}</p>
                     <p className="text-xs font-semibold text-slate-400">{(engagementKpis.totalSessions || 0).toLocaleString()} sessions</p>
                   </div>
                   <AreaChart data={engagementDaily} dataKey="sessions" color="#0f766e" h={205} />
                   <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     <div className="rounded-lg bg-slate-50 p-3">
                       <p className="text-sm font-bold text-slate-900">{(engagementKpis.identifiedSessions || 0).toLocaleString()}</p>
-                      <p className="mt-1 text-xs font-medium text-slate-500">Sessions identifiees</p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">{tp('Sessions identifiees')}</p>
                     </div>
                     <div className="rounded-lg bg-slate-50 p-3">
                       <p className="text-sm font-bold text-slate-900">{(engagementKpis.anonymousSessions || 0).toLocaleString()}</p>
-                      <p className="mt-1 text-xs font-medium text-slate-500">Sessions anonymes</p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">{tp('Sessions anonymes')}</p>
                     </div>
                     <div className="rounded-lg bg-slate-50 p-3">
                       <p className="text-sm font-bold text-slate-900">{(engagementKpis.avgSessionsPerUser || 0).toLocaleString('fr-FR')}</p>
-                      <p className="mt-1 text-xs font-medium text-slate-500">Sessions / utilisateur</p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">{tp('Sessions / utilisateur')}</p>
                     </div>
                     <div className="rounded-lg bg-slate-50 p-3">
                       <p className="text-sm font-bold text-slate-900">{engagementKpis.bounceRate || 0}%</p>
-                      <p className="mt-1 text-xs font-medium text-slate-500">Taux de rebond</p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">{tp('Taux de rebond')}</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Plus gros temps passe</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Plus gros temps passe')}</p>
                     <p className="text-xs font-semibold text-slate-400">{topTimeUsers.length} utilisateurs</p>
                   </div>
                   {topTimeUsers.length > 0 ? (
@@ -687,9 +688,9 @@ const SuperAdminDashboard = () => {
                         <div key={user.userId} className="py-3 first:pt-0">
                           <div className="mb-2 flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold text-slate-800">{user.name || user.email || 'Utilisateur sans nom'}</p>
+                              <p className="truncate text-sm font-semibold text-slate-800">{user.name || user.email || tp('Utilisateur sans nom')}</p>
                               <p className="truncate text-xs text-slate-500">
-                                {user.workspaceName || user.email || 'Workspace inconnu'} · {user.sessions || 0} session{(user.sessions || 0) > 1 ? 's' : ''}
+                                {user.workspaceName || user.email || tp('Workspace inconnu')} · {user.sessions || 0} session{(user.sessions || 0) > 1 ? 's' : ''}
                               </p>
                             </div>
                             <span className="shrink-0 rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">
@@ -713,14 +714,14 @@ const SuperAdminDashboard = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="py-8 text-center text-sm text-slate-400">Aucun utilisateur actif sur cette periode</p>
+                    <p className="py-8 text-center text-sm text-slate-400">{tp('Aucun utilisateur actif sur cette periode')}</p>
                   )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-5 border-t border-slate-100 pt-5 lg:grid-cols-3">
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Ce qu'ils font</p>
+                  <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Ce qu\'ils font')}</p>
                   {topActions.length > 0 ? (
                     <div className="space-y-3">
                       {topActions.slice(0, 6).map((action) => (
@@ -734,12 +735,12 @@ const SuperAdminDashboard = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="py-8 text-center text-sm text-slate-400">Aucune action trackee</p>
+                    <p className="py-8 text-center text-sm text-slate-400">{tp('Aucune action trackee')}</p>
                   )}
                 </div>
 
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Pages qui retiennent</p>
+                  <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Pages qui retiennent')}</p>
                   {engagementPages.length > 0 ? (
                     <div className="space-y-3">
                       {engagementPages.slice(0, 6).map((page) => (
@@ -753,19 +754,19 @@ const SuperAdminDashboard = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="py-8 text-center text-sm text-slate-400">Aucune page trackee</p>
+                    <p className="py-8 text-center text-sm text-slate-400">{tp('Aucune page trackee')}</p>
                   )}
                 </div>
 
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Derniers parcours</p>
+                  <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Derniers parcours')}</p>
                   {recentJourneys.length > 0 ? (
                     <div className="divide-y divide-slate-100">
                       {recentJourneys.slice(0, 5).map((session, index) => (
                         <div key={session.sessionId || index} className="py-2.5 first:pt-0">
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold text-slate-800">{session.name || session.email || 'Visiteur anonyme'}</p>
+                              <p className="truncate text-sm font-semibold text-slate-800">{session.name || session.email || tp('Visiteur anonyme')}</p>
                               <p className="text-xs text-slate-500">
                                 {formatDuration(session.duration || 0)} · {(session.pageViews || 0).toLocaleString()} pages
                               </p>
@@ -785,7 +786,7 @@ const SuperAdminDashboard = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="py-8 text-center text-sm text-slate-400">Aucun parcours recent</p>
+                    <p className="py-8 text-center text-sm text-slate-400">{tp('Aucun parcours recent')}</p>
                   )}
                 </div>
               </div>
@@ -795,7 +796,7 @@ const SuperAdminDashboard = () => {
 
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_0.65fr]">
           <Panel>
-            <SH icon={Activity} title="Inscriptions" subtitle={`Nouveaux utilisateurs par jour sur ${rangeLabel}`} color="#2563eb">
+            <SH icon={Activity} title={tp('Inscriptions')} subtitle={`Nouveaux utilisateurs par jour sur ${rangeLabel}`} color="#2563eb">
               <span className="text-xs font-semibold text-slate-500">
                 {(kpis.signups ?? 0).toLocaleString()} inscriptions sur la période
               </span>
@@ -804,18 +805,18 @@ const SuperAdminDashboard = () => {
           </Panel>
 
           <Panel>
-            <SH icon={Shield} title="Santé des comptes" subtitle="Dernière activité de session" color="#b45309" />
+            <SH icon={Shield} title={tp('Santé des comptes')} subtitle="Dernière activité de session" color="#b45309" />
             <div className="space-y-4">
               <div>
                 <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="font-medium text-slate-600">Ouverts ces 10j</span>
+                  <span className="font-medium text-slate-600">{tp('Ouverts ces 10j')}</span>
                   <span className="font-semibold text-slate-900">{activeSessionUsers10d.toLocaleString()}</span>
                 </div>
                 <Bar value={activeSessionUsers10d} max={totalSessionUsers || 1} color="#0f766e" />
               </div>
               <div>
                 <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="font-medium text-slate-600">Sans ouverture +10j</span>
+                  <span className="font-medium text-slate-600">{tp('Sans ouverture +10j')}</span>
                   <span className="font-semibold text-slate-900">{inactiveSessionUsers10d.toLocaleString()}</span>
                 </div>
                 <Bar value={inactiveSessionUsers10d} max={totalSessionUsers || 1} color="#b45309" />
@@ -830,7 +831,7 @@ const SuperAdminDashboard = () => {
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <Panel>
-            <SH icon={Eye} title="Pages populaires" subtitle="Top vues" color="#2563eb" />
+            <SH icon={Eye} title={tp('Pages populaires')} subtitle="Top vues" color="#2563eb" />
             {errors.pages ? (
               <SectionError message={errors.pages} onRetry={() => retrySection('pages')} />
             ) : topPages.length > 0 ? (
@@ -846,12 +847,12 @@ const SuperAdminDashboard = () => {
                 ))}
               </div>
             ) : (
-              <p className="py-8 text-center text-sm text-slate-400">Aucune donnée</p>
+              <p className="py-8 text-center text-sm text-slate-400">{tp('Aucune donnée')}</p>
             )}
           </Panel>
 
           <Panel>
-            <SH icon={Smartphone} title="Appareils" subtitle="Répartition des sessions" color="#475569" />
+            <SH icon={Smartphone} title={tp('Appareils')} subtitle="Répartition des sessions" color="#475569" />
             {errors.traffic ? (
               <SectionError message={errors.traffic} />
             ) : deviceData.length > 0 ? (
@@ -862,7 +863,7 @@ const SuperAdminDashboard = () => {
                   return (
                     <div key={d._id || i}>
                       <div className="mb-1 flex items-center justify-between text-sm">
-                        <span className="font-medium capitalize text-slate-700">{d._id || 'Inconnu'}</span>
+                        <span className="font-medium capitalize text-slate-700">{d._id || tp('Inconnu')}</span>
                         <span className="font-semibold text-slate-500">{pct}%</span>
                       </div>
                       <Bar value={d.sessions || 0} max={total} color="#475569" />
@@ -871,12 +872,12 @@ const SuperAdminDashboard = () => {
                 })}
               </div>
             ) : (
-              <p className="py-8 text-center text-sm text-slate-400">Aucune donnée</p>
+              <p className="py-8 text-center text-sm text-slate-400">{tp('Aucune donnée')}</p>
             )}
           </Panel>
 
           <Panel>
-            <SH icon={Shield} title="Rôles" subtitle="Comptes par rôle" color="#0f766e" />
+            <SH icon={Shield} title={tp('Rôles')} subtitle="Comptes par rôle" color="#0f766e" />
             <div className="space-y-3">
               {[
                 { role: 'super_admin', label: 'Super Admin', color: '#475569' },
@@ -903,7 +904,7 @@ const SuperAdminDashboard = () => {
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.15fr_0.85fr]">
           <Panel className="overflow-hidden p-0">
             <div className="px-4 pt-4">
-              <SH icon={LogIn} title="Connexions récentes" subtitle={`${usersActivity?.totalLogins ?? 0} connexions sur ${rangeLabel}`} color="#334155">
+              <SH icon={LogIn} title={tp('Connexions récentes')} subtitle={`${usersActivity?.totalLogins ?? 0} connexions sur ${rangeLabel}`} color="#334155">
                 <button onClick={() => navigate('/ecom/super-admin/users')}
                   className="inline-flex min-h-[36px] items-center gap-1 rounded-md px-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900">
                   Voir tous <ChevronRight className="h-3.5 w-3.5" />
@@ -940,7 +941,7 @@ const SuperAdminDashboard = () => {
                         </td>
                       </tr>
                     )) : (
-                      <tr><td colSpan="4" className="px-4 py-10 text-center text-sm text-slate-400">Aucune connexion récente</td></tr>
+                      <tr><td colSpan="4" className="px-4 py-10 text-center text-sm text-slate-400">{tp('Aucune connexion récente')}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -949,7 +950,7 @@ const SuperAdminDashboard = () => {
           </Panel>
 
           <Panel>
-            <SH icon={Building2} title="Workspaces" subtitle={`${totalMembers.toLocaleString()} membres au total`} color="#475569">
+            <SH icon={Building2} title={tp('Workspaces')} subtitle={`${totalMembers.toLocaleString()} membres au total`} color="#475569">
               <button onClick={() => navigate('/ecom/super-admin/workspaces')}
                 className="inline-flex min-h-[36px] items-center gap-1 rounded-md px-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900">
                 Gérer <ChevronRight className="h-3.5 w-3.5" />
@@ -961,17 +962,17 @@ const SuperAdminDashboard = () => {
                   <button key={ws._id} onClick={() => navigate('/ecom/super-admin/workspaces')}
                     className="flex min-h-[56px] w-full items-center justify-between gap-3 py-3 text-left transition-colors hover:bg-slate-50">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-slate-800">{ws.name || 'Sans nom'}</p>
+                      <p className="truncate text-sm font-semibold text-slate-800">{ws.name || tp('Sans nom')}</p>
                       <p className="text-xs text-slate-500">{ws.memberCount || 0} membre{(ws.memberCount || 0) > 1 ? 's' : ''}</p>
                     </div>
                     <span className={`rounded-full px-2 py-1 text-xs font-semibold ${ws.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
-                      {ws.isActive ? 'Actif' : 'Inactif'}
+                      {ws.isActive ? 'Actif' : tp('Inactif')}
                     </span>
                   </button>
                 ))}
               </div>
             ) : (
-              <p className="py-8 text-center text-sm text-slate-400">Aucun workspace</p>
+              <p className="py-8 text-center text-sm text-slate-400">{tp('Aucun workspace')}</p>
             )}
           </Panel>
         </div>

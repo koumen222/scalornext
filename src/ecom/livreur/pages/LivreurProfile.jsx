@@ -14,6 +14,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useEcomAuth } from '../../hooks/useEcomAuth.jsx';
+import { tp } from '../../i18n/platform.js';
 
 export default function LivreurProfile() {
   const { user, logout } = useEcomAuth();
@@ -22,7 +23,7 @@ export default function LivreurProfile() {
   const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    if (!window.confirm('Se déconnecter ?')) return;
+    if (!window.confirm(tp('Se déconnecter ?'))) return;
     setLoggingOut(true);
     try {
       await logout();
@@ -42,7 +43,7 @@ export default function LivreurProfile() {
       group: 'Compte',
       items: [
         { icon: User, label: 'Informations personnelles', onClick: () => navigate('/ecom/profile') },
-        { icon: Shield, label: 'Sécurité', onClick: () => navigate('/ecom/settings') },
+        { icon: Shield, get label() { return tp('Sécurité'); }, onClick: () => navigate('/ecom/settings') },
       ],
     },
     {
@@ -77,7 +78,7 @@ export default function LivreurProfile() {
             )}
           </div>
           <div className="flex-1">
-            <h1 className="text-white text-xl font-bold">{localUser?.name || 'Livreur'}</h1>
+            <h1 className="text-white text-xl font-bold">{localUser?.name || tp('Livreur')}</h1>
             <p className="text-gray-400 text-sm mt-0.5">{localUser?.email || ''}</p>
             <div className="mt-2">
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
@@ -92,7 +93,7 @@ export default function LivreurProfile() {
         {/* Contact info */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-50">
-            <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Coordonnées</h2>
+            <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">{tp('Coordonnées')}</h2>
           </div>
           <div className="divide-y divide-gray-50">
             {localUser?.phone && (
@@ -108,7 +109,7 @@ export default function LivreurProfile() {
               </div>
             )}
             {!localUser?.phone && !localUser?.email && (
-              <div className="px-4 py-3.5 text-gray-400 text-sm">Aucune coordonnée renseignée</div>
+              <div className="px-4 py-3.5 text-gray-400 text-sm">{tp('Aucune coordonnée renseignée')}</div>
             )}
           </div>
         </div>
@@ -141,7 +142,7 @@ export default function LivreurProfile() {
         {/* Workspace */}
         {localUser?.workspaceId && (
           <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
-            <p className="text-xs text-indigo-400 uppercase tracking-wide font-medium mb-1">Espace de travail</p>
+            <p className="text-xs text-indigo-400 uppercase tracking-wide font-medium mb-1">{tp('Espace de travail')}</p>
             <p className="text-indigo-700 text-sm font-medium">
               {localUser.workspaceName || localUser.workspaceId}
             </p>
@@ -155,11 +156,11 @@ export default function LivreurProfile() {
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-red-50 border border-red-100 text-red-600 font-semibold text-sm active:scale-[0.98] transition-transform disabled:opacity-60"
         >
           <LogOut size={18} />
-          {loggingOut ? 'Déconnexion...' : 'Se déconnecter'}
+          {loggingOut ? 'Déconnexion...' : tp('Se déconnecter')}
         </button>
 
         {/* Version */}
-        <p className="text-center text-gray-300 text-xs pb-2">Scalor Livreur</p>
+        <p className="text-center text-gray-300 text-xs pb-2">{tp('Scalor Livreur')}</p>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../../i18n/platform.js';
 
 const THEMES = [
   {
@@ -20,7 +21,7 @@ const THEMES = [
     id: 'dark-tech',
     name: 'Tech Sombre',
     emoji: '⚡',
-    desc: 'Fond dark noir-bleu, accent bleu électrique — gadgets, électronique, audio',
+    get desc() { return tp('Fond dark noir-bleu, accent bleu électrique — gadgets, électronique, audio'); },
     preview: {
       bg: '#0a0f1e',
       text: '#ffffff',
@@ -35,7 +36,7 @@ const THEMES = [
     id: 'luxury-gold',
     name: 'Luxe Doré',
     emoji: '👑',
-    desc: 'Fond crème chaud, accents or — mode, bijoux, accessoires premium',
+    get desc() { return tp('Fond crème chaud, accents or — mode, bijoux, accessoires premium'); },
     preview: {
       bg: '#faf7f2',
       text: '#2d1f0e',
@@ -50,7 +51,7 @@ const THEMES = [
     id: 'nature',
     name: 'Nature & Beauté',
     emoji: '🌿',
-    desc: 'Fond ivoire doux, vert profond — cosmétique, soins, bien-être',
+    get desc() { return tp('Fond ivoire doux, vert profond — cosmétique, soins, bien-être'); },
     preview: {
       bg: '#fffdf9',
       text: '#0d2b14',
@@ -65,7 +66,7 @@ const THEMES = [
     id: 'health-energy',
     name: 'Santé & Énergie',
     emoji: '💪',
-    desc: 'Fond blanc frais, vert émeraude + orange — nutrition, compléments, sport',
+    get desc() { return tp('Fond blanc frais, vert émeraude + orange — nutrition, compléments, sport'); },
     preview: {
       bg: '#ffffff',
       text: '#1a2e1b',
@@ -80,7 +81,7 @@ const THEMES = [
     id: 'warm-home',
     name: 'Maison Chaleureux',
     emoji: '🏠',
-    desc: 'Fond beige, terracotta — décoration, cuisine, maison',
+    get desc() { return tp('Fond beige, terracotta — décoration, cuisine, maison'); },
     preview: {
       bg: '#f5f0e8',
       text: '#2d1a0e',
@@ -95,7 +96,7 @@ const THEMES = [
     id: 'rose-beauty',
     name: 'Rose Premium',
     emoji: '💄',
-    desc: 'Fond rose doux, rose gold — maquillage, parfum, beauté premium',
+    get desc() { return tp('Fond rose doux, rose gold — maquillage, parfum, beauté premium'); },
     preview: {
       bg: '#fff5f5',
       text: '#3d1a2a',
@@ -110,7 +111,7 @@ const THEMES = [
     id: 'minimalist',
     name: 'Minimaliste Noir',
     emoji: '◼️',
-    desc: 'Noir et blanc pur, élégant et épuré — tout type de produit',
+    get desc() { return tp('Noir et blanc pur, élégant et épuré — tout type de produit'); },
     preview: {
       bg: '#ffffff',
       text: '#000000',
@@ -202,7 +203,7 @@ const ThemeCard = ({ theme, selected, onSelect }) => {
           </span>
           {selected && (
             <span className="ml-auto text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
-              Actif
+              {tp('Actif')}
             </span>
           )}
         </div>
@@ -249,7 +250,7 @@ const ThemeSelector = ({ config, onChange }) => {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xs font-bold text-gray-700 mb-1">Choisis un thème pour ta page produit</div>
+        <div className="text-xs font-bold text-gray-700 mb-1">{tp('Choisis un thème pour ta page produit')}</div>
         <p className="text-[10px] text-gray-400 mb-3">
           Le thème détermine les couleurs, le fond et l'ambiance de ta page produit. Tu peux ajuster les détails dans "Design & Styles".
         </p>

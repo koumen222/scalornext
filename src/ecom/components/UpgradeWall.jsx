@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Zap, Star, ArrowRight, Clock, CheckCircle, X } from 'lucide-react';
 import { activateTrial } from '../services/billingApi.js';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 const PLANS = [
   {
@@ -77,10 +78,10 @@ export default function UpgradeWall({ onDismiss, workspaceId, trialUsed = false 
             <div className="p-2 bg-white/20 rounded-xl">
               <Zap className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-extrabold">Passez à Scalor</h2>
+            <h2 className="text-2xl font-extrabold">{tp('Passez à Scalor')}</h2>
           </div>
           <p className="text-white/90 text-sm">
-            Gérez vos commandes, vendez sur WhatsApp et créez des pages produit IA en un clic.
+            {tp('Gérez vos commandes, vendez sur WhatsApp et créez des pages produit IA en un clic.')}
           </p>
 
           {!trialUsed && (

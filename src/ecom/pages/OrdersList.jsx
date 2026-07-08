@@ -8,10 +8,11 @@ import { conversionRates } from '../contexts/CurrencyContext.jsx';
 import ecomApi from '../services/ecommApi.js';
 import { playCashRegisterSound, playConfirmSound } from '../services/soundService.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 // ❌ CACHE DÉSACTIVÉ
 // import { getCache, setCache, invalidatePrefix } from '../utils/cacheUtils.js';
 
-const SL = { pending: 'En attente', confirmed: 'Confirmé', shipped: 'Expédié', delivered: 'Livré', returned: 'Retour', cancelled: 'Annulé', unreachable: 'Injoignable', called: 'Appelé', postponed: 'Reporté', reported: 'Reporté' };
+const SL = { pending: 'En attente', confirmed: 'Confirmé', shipped: 'Expédié', delivered: 'Livré', returned: 'Retourné', cancelled: 'Annulé', unreachable: 'Injoignable', called: 'Appelé', postponed: 'Reporté', reported: 'Reporté' };
 const SC = {
   pending: 'bg-yellow-50 text-yellow-700 border-yellow-100',
   confirmed: 'bg-primary-50 text-primary-700 border-primary-100',
@@ -26,22 +27,22 @@ const SC = {
 };
 const STATUS_FILTER_META = [
   { key: 'pending', label: 'En attente', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-200' },
-  { key: 'confirmed', label: 'Confirmé', color: 'bg-primary-100 text-primary-700 hover:bg-primary-200 border border-primary-200' },
-  { key: 'shipped', label: 'Expédié', color: 'bg-primary-100 text-primary-800 hover:bg-primary-200 border border-primary-200' },
-  { key: 'delivered', label: 'Livré', color: 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200' },
-  { key: 'returned', label: 'Retour', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-200' },
-  { key: 'cancelled', label: 'Annulé', color: 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200' },
+  { key: 'confirmed', get label() { return tp('Confirmé'); }, color: 'bg-primary-100 text-primary-700 hover:bg-primary-200 border border-primary-200' },
+  { key: 'shipped', get label() { return tp('Expédié'); }, color: 'bg-primary-100 text-primary-800 hover:bg-primary-200 border border-primary-200' },
+  { key: 'delivered', get label() { return tp('Livré'); }, color: 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200' },
+  { key: 'returned', get label() { return tp('Retourné'); }, color: 'bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-200' },
+  { key: 'cancelled', get label() { return tp('Annulé'); }, color: 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200' },
   { key: 'unreachable', label: 'Injoignable', color: 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300' },
-  { key: 'called', label: 'Appelé', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200 border border-cyan-200' },
-  { key: 'postponed', label: 'Reporté', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-200' },
-  { key: 'reported', label: 'Reporté', color: 'bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200' }
+  { key: 'called', get label() { return tp('Appelé'); }, color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200 border border-cyan-200' },
+  { key: 'postponed', get label() { return tp('Reporté'); }, color: 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-200' },
+  { key: 'reported', get label() { return tp('Reporté'); }, color: 'bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200' }
 ];
 const SD = {
   pending: '', confirmed: '', shipped: '',
   delivered: '', returned: '', cancelled: '',
   unreachable: '', called: '', postponed: '', reported: ''
 };
-const getStatusLabel = (s) => SL[s] || s;
+const getStatusLabel = (s) => tp(SL[s] || s);
 const getStatusColor = (s) => SC[s] || 'bg-primary-100 text-primary-900 border-primary-200';
 const getStatusDot = (s) => SD[s] || 'border-l-primary-500';
 
@@ -242,7 +243,7 @@ const OrdersList = () => {
     if (!config || !config.detectedColumns) {
       // Configuration par défaut si aucune détection
       return [
-        { key: 'clientPhone', label: 'Téléphone', icon: 'phone', getValue: getClientPhone, priority: 1 },
+        { key: 'clientPhone', get label() { return tp('Téléphone'); }, icon: 'phone', getValue: getClientPhone, priority: 1 },
         { key: 'city', label: 'Ville', icon: 'location', getValue: getCity, priority: 2 },
         { key: 'address', label: 'Adresse', icon: 'home', getValue: getAddress, priority: 3 },
         { key: 'product', label: 'Produit', icon: 'package', getValue: getProductName, priority: 4 },
@@ -269,7 +270,7 @@ const OrdersList = () => {
     // Mapper les colonnes détectées vers les champs d'affichage
     Object.entries(columns).forEach(([field, columnIndex]) => {
       const fieldConfig = {
-        clientPhone: { label: 'Téléphone', icon: 'phone', getValue: getClientPhone },
+        clientPhone: { get label() { return tp('Téléphone'); }, icon: 'phone', getValue: getClientPhone },
         city: { label: 'Ville', icon: 'location', getValue: getCity },
         address: { label: 'Adresse', icon: 'home', getValue: getAddress },
         product: { label: 'Produit', icon: 'package', getValue: getProductName },
@@ -277,7 +278,7 @@ const OrdersList = () => {
         orderId: { label: 'N°', icon: 'hashtag', getValue: getOrderId },
         date: { label: 'Date', icon: 'calendar', getValue: getDate },
         price: { label: 'Prix', icon: 'money', getValue: getPrice },
-        quantity: { label: 'Qté', icon: 'number', getValue: getQuantity }
+        quantity: { get label() { return tp('Qté'); }, icon: 'number', getValue: getQuantity }
       }[field];
 
       if (fieldConfig) {
@@ -342,7 +343,7 @@ const OrdersList = () => {
       const parsedDay = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
       if (parsedDay.getTime() === today.getTime()) return "Aujourd'hui";
       if (parsedDay.getTime() === tomorrow.getTime()) return 'Demain';
-      if (parsedDay < today) return 'Dépassé';
+      if (parsedDay < today) return tp('Dépassé');
       return parsed.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
     }
     // Fallback: return raw string trimmed
@@ -415,8 +416,26 @@ const OrdersList = () => {
     // •• Phase 2 : chargement complet ••
     try {
       const fullParams = { ...params, page, limit: itemsPerPage };
-      const res = await ecomApi.get('/orders', { params: fullParams });
-      const d = { orders: res.data.data.orders, stats: res.data.data.stats, pagination: res.data.data.pagination || {} };
+      let res = await ecomApi.get('/orders', { params: fullParams });
+      let d = {
+        orders: res.data?.data?.orders || [],
+        stats: res.data?.data?.stats || {},
+        pagination: res.data?.data?.pagination || {}
+      };
+
+      const lastPage = Math.max(1, Number(d.pagination?.pages) || 1);
+      const hasPageOverflow = d.orders.length === 0 && Number(d.pagination?.total || 0) > 0 && page > lastPage;
+      if (hasPageOverflow) {
+        const retryParams = { ...params, page: lastPage, limit: itemsPerPage };
+        res = await ecomApi.get('/orders', { params: retryParams });
+        d = {
+          orders: res.data?.data?.orders || [],
+          stats: res.data?.data?.stats || d.stats,
+          pagination: res.data?.data?.pagination || d.pagination
+        };
+        setPage(lastPage);
+      }
+
       // ❌ CACHE DÉSACTIVÉ
       setOrders(d.orders); setStats(d.stats); setPagination(d.pagination);
     } catch (err) {
@@ -456,6 +475,9 @@ const OrdersList = () => {
       setSourcesConfig(configMap);
       if (assignedSources.length === 1) {
         setSelectedSourceId(assignedSources[0]._id);
+      } else if (selectedSourceId && !assignedSources.some(source => String(source._id) === String(selectedSourceId))) {
+        setSelectedSourceId('');
+        setPage(1);
       }
     } catch (err) {
       console.error('Erreur chargement sources closeuse:', err);
@@ -497,6 +519,20 @@ const OrdersList = () => {
         setSourcesConfig(configMap);
         
         setSources(allSources);
+        const validSourceIds = new Set([
+          ...allSources.map(source => String(source._id)),
+          'legacy',
+          'scalor',
+          'shopify',
+          'webhook',
+          'skelor',
+          'boutique',
+          'rita'
+        ]);
+        if (selectedSourceId && !validSourceIds.has(String(selectedSourceId))) {
+          setSelectedSourceId('');
+          setPage(1);
+        }
         
         const syncs = {};
         allSources.forEach(s => {
@@ -587,7 +623,7 @@ const OrdersList = () => {
   };
 
   const deleteWhatsAppNumber = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce numéro WhatsApp ?')) {
+    if (!window.confirm(tp('Êtes-vous sûr de vouloir supprimer ce numéro WhatsApp ?'))) {
       return;
     }
     
@@ -652,7 +688,7 @@ const OrdersList = () => {
       const { data } = await ecomApi.post('/v1/external/whatsapp/upload-image', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       if (data.url) {
         setAutoConfig(prev => ({ ...prev, imageUrl: data.url }));
-        setSuccess('Image uploadée');
+        setSuccess(tp('Image uploadée'));
       }
     } catch (err) {
       setError('Erreur upload image');
@@ -671,7 +707,7 @@ const OrdersList = () => {
       const { data } = await ecomApi.post('/v1/external/whatsapp/upload-image', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       if (data.url) {
         setAutoConfig(prev => ({ ...prev, audioUrl: data.url }));
-        setSuccess('Vocal uploadé');
+        setSuccess(tp('Vocal uploadé'));
       }
     } catch (err) {
       setError('Erreur upload vocal');
@@ -744,7 +780,7 @@ const OrdersList = () => {
       if (res.data.success) {
         setWhatsappAutoConfirm(true);
         setShowAutoConfigModal(false);
-        setSuccess('Auto WhatsApp activé et configuré');
+        setSuccess(tp('Auto WhatsApp activé et configuré'));
       }
     } catch (err) {
       setError(getContextualError(err, 'update_settings'));
@@ -792,7 +828,7 @@ const OrdersList = () => {
         deliveryGroupNumbers
       });
       if (res.data.success) {
-        setSuccess('Configuration des notifications sauvegardée');
+        setSuccess(tp('Configuration des notifications sauvegardée'));
       }
     } catch (err) {
       setError(getContextualError(err, 'update_settings'));
@@ -883,7 +919,7 @@ const OrdersList = () => {
         const createdSource = res.data.data || {};
         const newSourceId = createdSource._id || createdSource.source?._id || createdSource.sourceId;
         
-        setSuccess('Source ajoutée avec succès ! Lancement de la première synchronisation...');
+        setSuccess(tp('Source ajoutée avec succès ! Lancement de la première synchronisation...'));
         setShowAddSheetModal(false);
         setNewSheetData({ name: '', spreadsheetId: '', sheetName: 'Sheet1' });
         await fetchConfig();
@@ -1301,7 +1337,7 @@ const OrdersList = () => {
       const targetSourceId = sourceId || selectedSourceId;
       
       if (!targetSourceId) {
-        setError('Veuillez sélectionner une source à synchroniser');
+        setError(tp('Veuillez sélectionner une source à synchroniser'));
         return;
       }
 
@@ -1338,7 +1374,7 @@ const OrdersList = () => {
         }));
         setSuccess(`${uniqueNewOrders.length} nouvelle${uniqueNewOrders.length > 1 ? 's' : ''} commande${uniqueNewOrders.length > 1 ? 's' : ''} ajoutée${uniqueNewOrders.length > 1 ? 's' : ''}`);
       } else {
-        setSuccess('Synchronisation terminée, aucune nouvelle commande');
+        setSuccess(tp('Synchronisation terminée, aucune nouvelle commande'));
       }
       
       // Sync clients auto après sync sheets
@@ -1383,7 +1419,7 @@ const OrdersList = () => {
     setConfigLoading(true);
     try {
       await ecomApi.put('/orders/settings', config);
-      setSuccess('Configuration sauvegardée');
+      setSuccess(tp('Configuration sauvegardée'));
       setShowConfig(false);
     } catch (err) { setError(getContextualError(err, 'update_settings')); }
     finally { setConfigLoading(false); }
@@ -1400,7 +1436,7 @@ const OrdersList = () => {
       if (newStatus === 'postponed') {
         const input = window.prompt('Entrez la date de report (ex: 28/02/2026 14:00)', oldDeliveryTime || '');
         if (!input || !input.trim()) {
-          setError('Date de report requise pour le statut Reporté');
+          setError(tp('Date de report requise pour le statut Reporté'));
           return;
         }
         postponedDate = input.trim();
@@ -1480,7 +1516,7 @@ const OrdersList = () => {
 
   const handleSyncClients = async () => {
     if (syncClientsStatuses.length === 0) {
-      setError('Veuillez sélectionner au moins un statut');
+      setError(tp('Veuillez sélectionner au moins un statut'));
       return;
     }
     
@@ -1548,7 +1584,7 @@ const OrdersList = () => {
 
   const handleSaveOrder = async () => {
     if (!orderForm.clientName && !orderForm.clientPhone) {
-      setError('Nom client ou téléphone requis');
+      setError(tp('Nom client ou téléphone requis'));
       return;
     }
     setSavingOrder(true);
@@ -1556,7 +1592,7 @@ const OrdersList = () => {
     try {
       if (editingOrder) {
         const result = await ecomApi.put(`/orders/${editingOrder._id}`, orderForm);
-        setSuccess('Commande modifiée');
+        setSuccess(tp('Commande modifiée'));
 
         // Track order update
         import('../../utils/analytics.js').then(m => {
@@ -1570,7 +1606,7 @@ const OrdersList = () => {
         }).catch(() => {});
       } else {
         const result = await ecomApi.post('/orders', orderForm);
-        setSuccess('Commande créée');
+        setSuccess(tp('Commande créée'));
 
         // Track order creation
         import('../../utils/analytics.js').then(m => {
@@ -1601,7 +1637,7 @@ const OrdersList = () => {
     try {
       const orderToDelete = orders.find(o => o._id === orderId);
       await ecomApi.delete(`/orders/${orderId}`);
-      setSuccess('Commande supprimée');
+      setSuccess(tp('Commande supprimée'));
 
       // Track order deletion
       import('../../utils/analytics.js').then(m => {
@@ -1654,7 +1690,7 @@ const OrdersList = () => {
   const handleCopyOrder = (order) => {
     const textToCopy = buildOrderDeliveryMessage(order);
     navigator.clipboard.writeText(textToCopy).then(() => {
-      setSuccess('Commande copiée dans le presse-papier');
+      setSuccess(tp('Commande copiée dans le presse-papier'));
     }).catch(() => {
       setError('Impossible de copier dans le presse-papier');
     });
@@ -2104,8 +2140,8 @@ const OrdersList = () => {
       >
         <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
         <div className="flex-1 text-left">
-          <div className="font-medium text-gray-900">Google Sheets</div>
-          <div className="text-xs text-gray-500">Importer depuis un tableur</div>
+          <div className="font-medium text-gray-900">{tp('Google Sheets')}</div>
+          <div className="text-xs text-gray-500">{tp('Importer depuis un tableur')}</div>
         </div>
       </button>
       <button
@@ -2118,7 +2154,7 @@ const OrdersList = () => {
         <svg className="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 24 24"><path d="M15.337 2.136c-.012-.012-.025-.012-.037-.024-.012-.013-.025-.013-.037-.025l-.427-.214c-.287-.15-.65-.1-.888.125l-.325.3c-.1.088-.225.163-.35.238-.538-.163-1.15-.238-1.825-.125-1.05.175-2.037.713-2.787 1.525-.537.575-.925 1.275-1.137 2.038-.688.2-1.175.35-1.2.363-.362.112-.375.125-.425.475-.037.262-1.05 8.1-1.05 8.1l10.562 2.025 5.1-1.188S15.35 2.148 15.337 2.136zm-2.7.938c-.175.05-.375.113-.6.175v-.15c0-.525-.075-1-.2-1.438.375.088.65.725.8 1.413zm-1.4-.363c-.125.038-.25.075-.4.125V1.723c0-.45-.088-.875-.238-1.25.538.2.888.863 1.013 1.638-.125.037-.25.075-.375.1zm-.95-1.788c.15.375.225.813.225 1.313v.088c-.4.125-.838.25-1.288.388.25-.963.725-1.438 1.063-1.788zm-.538 10.325l-.875-2.913c.4-.15.913-.325 1.013-.363.125-.037.15.05.15.1 0 .063-.025 1.663-.288 3.176zm3.338-8.738c-.012-.537-.1-1.025-.237-1.45.537.175.875.8 1.05 1.438-.188.062-.513.15-.813.237v-.225z"/></svg>
         <div className="flex-1 text-left">
           <div className="font-medium text-gray-900">Shopify</div>
-          <div className="text-xs text-gray-500">Importer depuis Shopify</div>
+          <div className="text-xs text-gray-500">{tp('Importer depuis Shopify')}</div>
         </div>
       </button>
     </>
@@ -2212,16 +2248,16 @@ const OrdersList = () => {
                 )}
                 <span>
                   {isOver
-                    ? <>Limite atteinte — <strong>{used}/{maxOrders}</strong> commandes ce mois. Nouvelles commandes bloquées.</>
+                    ? <>{tp('Limite atteinte —')} <strong>{used}/{maxOrders}</strong> {tp('commandes ce mois. Nouvelles commandes bloquées.')}</>
                     : isWarning
-                    ? <>Quota presque atteint — <strong>{used}/{maxOrders}</strong> commandes ce mois ({pct}%).</>
-                    : <>Plan Gratuit — <strong>{used}/{maxOrders}</strong> commandes utilisées ce mois.</>
+                    ? <>{tp('Quota presque atteint —')} <strong>{used}/{maxOrders}</strong> commandes ce mois ({pct}%).</>
+                    : <>{tp('Plan Gratuit —')} <strong>{used}/{maxOrders}</strong> {tp('commandes utilisées ce mois.')}</>
                   }
                 </span>
               </div>
               <a href="/ecom/billing" className={`font-semibold underline underline-offset-2 whitespace-nowrap text-xs ${
                 isOver ? 'text-red-700 hover:text-red-900' : isWarning ? 'text-amber-700 hover:text-amber-900' : 'text-primary-700 hover:text-primary-900'
-              }`}>Passer à Scalor →</a>
+              }`}>{tp('Passer à Scalor →')}</a>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
               <div className={`h-1.5 rounded-full transition-all ${barColor}`} style={{ width: `${pct}%` }} />
@@ -2234,7 +2270,7 @@ const OrdersList = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="min-w-0 w-full sm:flex-1">
           <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
-            {selectedSourceId ? sources.find(s => s._id === selectedSourceId)?.name : 'Commandes'}
+            {selectedSourceId ? sources.find(s => s._id === selectedSourceId)?.name : tp('Commandes')}
           </h1>
           <p className="text-[11px] text-gray-400 mt-0.5">
             {hasActiveFilters ? (
@@ -2245,7 +2281,7 @@ const OrdersList = () => {
                 {filterProduct && <> • <span className="text-green-600 font-medium">{filterProduct}</span></>}
               </>
             ) : (
-              <>{stats.total || 0} commandes au total</>
+              <>{tp('{n} commandes au total', { n: stats.total || 0 })}</>
             )}
           </p>
         </div>
@@ -2259,12 +2295,12 @@ const OrdersList = () => {
                   ? 'bg-gray-900 text-white hover:bg-gray-800'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
-              title={viewAllWorkspaces ? 'Voir toutes les commandes de tous les espaces' : 'Voir uniquement les commandes de mon espace'}
+              title={viewAllWorkspaces ? 'Voir toutes les commandes de tous les espaces' : tp('Voir uniquement les commandes de mon espace')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={viewAllWorkspaces ? "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" : "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"} />
               </svg>
-              {viewAllWorkspaces ? 'Tous les espaces' : 'Mon espace'}
+              {viewAllWorkspaces ? 'Tous les espaces' : tp('Mon espace')}
             </button>
           )}
           {isAdmin && (
@@ -2278,20 +2314,20 @@ const OrdersList = () => {
                       ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 rounded-l-xl border-r-0'
                       : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 rounded-xl'
                   }`}
-                  title={whatsappAutoConfirm ? 'Cliquer pour désactiver' : 'Cliquer pour configurer et activer'}
+                  title={whatsappAutoConfirm ? 'Cliquer pour désactiver' : tp('Cliquer pour configurer et activer')}
                 >
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                   </svg>
-                  <span className="hidden sm:inline">{whatsappAutoConfirm ? 'Auto ON' : 'Auto OFF'}</span>
+                  <span className="hidden sm:inline">{whatsappAutoConfirm ? 'Auto ON' : tp('Auto OFF')}</span>
                   <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${whatsappAutoConfirm ? 'bg-green-500' : 'bg-gray-400'}`} />
                 </button>
                 {whatsappAutoConfirm && (
                   <button
                     onClick={openAutoConfigModal}
                     className="inline-flex h-11 w-11 items-center justify-center px-2 py-1.5 bg-green-50 text-green-600 border border-green-200 border-l-0 rounded-r-xl hover:bg-green-100 transition"
-                    title="Modifier la configuration Auto WhatsApp"
-                    aria-label="Modifier la configuration Auto WhatsApp"
+                    title={tp('Modifier la configuration Auto WhatsApp')}
+                    aria-label={tp('Modifier la configuration Auto WhatsApp')}
                   >
                     <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   </button>
@@ -2301,8 +2337,8 @@ const OrdersList = () => {
               <button
                 onClick={openNotifModal}
                 className="inline-flex h-11 w-11 items-center justify-center p-2 text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition"
-                title="Configurer WhatsApp auto"
-                aria-label="Configurer les notifications WhatsApp"
+                title={tp('Configurer WhatsApp auto')}
+                aria-label={tp('Configurer les notifications WhatsApp')}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -2311,20 +2347,20 @@ const OrdersList = () => {
               <button
                 onClick={openCreateOrder}
                 className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-primary-600 text-white rounded-xl active:scale-95 transition text-[11px] sm:text-xs font-semibold shadow-sm"
-                title="Ajouter une commande"
+                title={tp('Ajouter une commande')}
               >
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                <span className="hidden sm:inline">Ajouter</span>
+                <span className="hidden sm:inline">{tp('Ajouter')}</span>
               </button>
               <div className="relative" ref={importMenuRef}>
                 <button
                   onClick={() => setShowImportMenu(!showImportMenu)}
                   className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-white text-gray-700 border border-gray-200 rounded-xl active:scale-95 hover:bg-gray-50 transition text-[11px] sm:text-xs font-semibold"
-                  aria-label="Importer des commandes"
+                  aria-label={tp('Importer des commandes')}
                   aria-expanded={showImportMenu}
                 >
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 013 3h10a3 3 0 013-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                  <span className="hidden sm:inline">Importer</span>
+                  <span className="hidden sm:inline">{tp('Importer')}</span>
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
                 {showImportMenu && (
@@ -2337,27 +2373,27 @@ const OrdersList = () => {
                 onClick={() => handleSync()}
                 disabled={syncDisabled}
                 className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-white text-gray-700 border border-gray-200 rounded-xl active:scale-95 hover:bg-gray-50 transition text-[11px] sm:text-xs font-semibold disabled:opacity-50"
-                title="Synchroniser"
+                title={tp('Synchroniser')}
               >
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                <span className="hidden sm:inline">Sync</span>
+                <span className="hidden sm:inline">{tp('Sync')}</span>
               </button>
               <button
                 onClick={() => navigate('/ecom/stats')}
                 className="hidden sm:inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 rounded-xl transition text-xs font-semibold"
-                title="Voir les statistiques globales"
+                title={tp('Voir les statistiques globales')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                Stats
+                {tp('Stats')}
               </button>
               {orders.length > 0 && (
                 <button
                   onClick={toggleSelectionMode}
                   className={`inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 py-2 sm:w-auto rounded-lg transition text-xs font-medium ${selectionMode ? 'bg-primary-100 text-primary-700 border border-primary-300' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
-                  title="Sélection multiple"
+                  title={tp('Sélection multiple')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-                  <span className="hidden sm:inline">{selectionMode ? 'Annuler' : 'Sélectionner'}</span>
+                  <span className="hidden sm:inline">{selectionMode ? 'Annuler' : tp('Sélectionner')}</span>
                 </button>
               )}
               {orders.length > 0 && (
@@ -2365,7 +2401,7 @@ const OrdersList = () => {
                   onClick={handleDeleteAll}
                   disabled={deletingAll}
                   className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 py-2 sm:w-auto text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition text-xs font-medium"
-                  title="Supprimer toutes les commandes"
+                  title={tp('Supprimer toutes les commandes')}
                 >
                   {deletingAll ? (
                     <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
@@ -2382,10 +2418,10 @@ const OrdersList = () => {
               onClick={() => handleSync()}
               disabled={syncDisabled}
               className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-orange-600 text-white rounded-xl active:scale-95 transition text-[11px] sm:text-xs font-semibold disabled:opacity-50"
-              title="Synchroniser mes sources"
+              title={tp('Synchroniser mes sources')}
             >
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-              <span className="hidden sm:inline">Sync</span>
+              <span className="hidden sm:inline">{tp('Sync')}</span>
             </button>
           )}
         </div>
@@ -2402,7 +2438,7 @@ const OrdersList = () => {
         <div className="bg-white rounded-xl border border-gray-200 p-2.5">
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-            <span className="text-[11px] font-semibold text-gray-700">Sources</span>
+            <span className="text-[11px] font-semibold text-gray-700">{tp('Sources')}</span>
             <span className="text-[10px] text-gray-400 tabular-nums">({sources.length})</span>
           </div>
 
@@ -2432,8 +2468,8 @@ const OrdersList = () => {
               }`}
             >
               <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
-              <span className="hidden sm:inline">Toutes</span>
-              <span className="sm:hidden">All</span>
+              <span className="hidden sm:inline">{tp('Toutes')}</span>
+              <span className="sm:hidden">{tp('All')}</span>
             </button>
             {sources.map(s => (
               <div key={s._id} className="flex min-w-0 items-center gap-0.5">
@@ -2462,7 +2498,7 @@ const OrdersList = () => {
                         ? 'text-red-400 hover:text-red-600 hover:bg-red-50'
                         : 'text-gray-300 hover:text-red-500 hover:bg-red-50'
                     } ${deletingSource === s._id ? 'opacity-50 cursor-wait' : ''}`}
-                    title="Supprimer"
+                    title={tp('Supprimer')}
                   >
                     {deletingSource === s._id ? (
                       <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
@@ -2475,7 +2511,7 @@ const OrdersList = () => {
             ))}
             {sources.length === 0 && (
               <p className="text-[10px] sm:text-xs text-gray-400 italic py-1">
-                {isCloseuse ? 'Aucune source assignée' : 'Aucune source. Importer des commandes.'}
+                {isCloseuse ? 'Aucune source assignée' : tp('Aucune source. Importer des commandes.')}
               </p>
             )}
             {/* Source enum filters: Scalor (skelor+boutique) / Shopify */}
@@ -2512,7 +2548,7 @@ const OrdersList = () => {
         <div className="px-2.5 py-2 border-b border-gray-100">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <h3 className="text-xs font-semibold text-gray-900">Filtres</h3>
+              <h3 className="text-xs font-semibold text-gray-900">{tp('Filtres')}</h3>
               <p className="text-[11px] text-gray-500">
                 {hasActiveFilters ? (
                   <>
@@ -2529,15 +2565,15 @@ const OrdersList = () => {
                 value={sortOrder} 
                 onChange={(e) => { setSortOrder(e.target.value); setPage(1); }}
                 className="min-h-[36px] text-[11px] border border-gray-300 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-primary-600"
-                title="Ordre d'affichage"
+                title={tp('Ordre d\'affichage')}
               >
-                <option value="newest_first">Plus récentes</option>
-                <option value="oldest_first">Plus anciennes</option>
+                <option value="newest_first">{tp('Plus récentes')}</option>
+                <option value="oldest_first">{tp('Plus anciennes')}</option>
               </select>
               {activeFiltersCount > 0 && (
                 <button onClick={clearAllFilters} className="inline-flex min-h-[36px] items-center gap-1 px-2 py-1 bg-white text-red-600 hover:bg-red-50 border border-red-100 rounded-md text-[11px] font-semibold transition-all">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                  Réinitialiser
+                  {tp('Réinitialiser')}
                 </button>
               )}
             </div>
@@ -2607,7 +2643,7 @@ const OrdersList = () => {
               <svg className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               <input 
                 type="text" 
-                placeholder="Client, téléphone, ville ou produit" 
+                placeholder={tp('Client, téléphone, ville ou produit')} 
                 value={search} 
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 className="w-full min-h-[38px] pl-9 pr-9 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent"
@@ -2616,7 +2652,7 @@ const OrdersList = () => {
                 <button 
                   onClick={() => { setSearch(''); setPage(1); }}
                   className="absolute right-0.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
-                  aria-label="Effacer la recherche"
+                  aria-label={tp('Effacer la recherche')}
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
@@ -2632,14 +2668,14 @@ const OrdersList = () => {
               {statusFilters.map(s => (
                 <button key={s.key} onClick={() => { setFilterStatus(filterStatus === s.key ? '' : s.key); setPage(1); }}
                   className={`shrink-0 min-h-[34px] px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${filterStatus === s.key ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
-                  {s.label} ({(filterCity || filterProduct || filterTag || filterStartDate || filterEndDate || search) ? dynamicFilterCounts[s.key] || 0 : stats[s.key] || 0})
+                  {tp(s.label)} ({(filterCity || filterProduct || filterTag || filterStartDate || filterEndDate || search) ? dynamicFilterCounts[s.key] || 0 : stats[s.key] || 0})
                 </button>
               ))}
             </div>
           </div>
 
           <div className="mb-2.5">
-            <label className="block text-[11px] font-semibold text-gray-700 mb-1.5">Période rapide</label>
+            <label className="block text-[11px] font-semibold text-gray-700 mb-1.5">{tp('Période rapide')}</label>
             <div className="-mx-2.5 flex gap-1.5 overflow-x-auto px-2.5 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
               {[
                 { key: 'today', label: "Aujourd'hui" },
@@ -2656,7 +2692,7 @@ const OrdersList = () => {
                       : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
                   }`}
                 >
-                  {preset.label}
+                  {tp(preset.label)}
                 </button>
               ))}
             </div>
@@ -2667,7 +2703,7 @@ const OrdersList = () => {
             className={`w-full min-h-[36px] px-3 py-1.5 rounded-md text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all ${showFilters ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v2m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-            {showFilters ? 'Masquer avancés' : 'Filtres avancés'}
+            {showFilters ? tp('Masquer avancés') : tp('Filtres avancés')}
           </button>
 
           {/* Advanced filters panel */}
@@ -2675,31 +2711,31 @@ const OrdersList = () => {
             <div className="mt-2.5 pt-2.5 border-t border-gray-100">
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">Début</label>
+                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Début')}</label>
                   <input type="date" value={filterStartDate} onChange={e => { setFilterStartDate(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">Fin</label>
+                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Fin')}</label>
                   <input type="date" value={filterEndDate} onChange={e => { setFilterEndDate(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">Ville</label>
+                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Ville')}</label>
                   <select value={filterCity} onChange={e => { setFilterCity(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
-                    <option value="">Toutes les villes</option>
+                    <option value="">{tp('Toutes les villes')}</option>
                     {uniqueCities.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">Produit</label>
+                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Produit')}</label>
                   <select value={filterProduct} onChange={e => { setFilterProduct(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
-                    <option value="">Tous</option>
+                    <option value="">{tp('Tous')}</option>
                     {uniqueProducts.map(p => <option key={p} value={p}>{p}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">Tag</label>
+                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Tag')}</label>
                   <select value={filterTag} onChange={e => { setFilterTag(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
-                    <option value="">Tous</option>
+                    <option value="">{tp('Tous')}</option>
                     {uniqueTags.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
@@ -2713,7 +2749,7 @@ const OrdersList = () => {
                     {filterProduct && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium text-gray-700">{filterProduct} <button onClick={() => { setFilterProduct(''); setPage(1); }} className="hover:text-gray-900">&times;</button></span>}
                     {filterTag && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium text-gray-700">{filterTag} <button onClick={() => { setFilterTag(''); setPage(1); }} className="hover:text-gray-900">&times;</button></span>}
                   </div>
-                  <button onClick={clearAllFilters} className="text-[10px] text-red-600 hover:text-red-800 font-medium">Tout effacer</button>
+                  <button onClick={clearAllFilters} className="text-[10px] text-red-600 hover:text-red-800 font-medium">{tp('Tout effacer')}</button>
                 </div>
               )}
             </div>
@@ -2726,13 +2762,13 @@ const OrdersList = () => {
       {/* KPI Cards - Design compact */}
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-white rounded-xl border border-gray-200 p-3">
-          <p className="text-[11px] font-semibold text-gray-500 mb-1">Revenu livré</p>
+          <p className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Revenu livré')}</p>
           <p className="text-xl font-bold text-gray-900 mb-1 tabular-nums">{fmtRaw(filteredStats.deliveredRevenue || 0) || `0 ${symbol}`}</p>
-          <p className="text-[11px] text-green-700 font-medium">{filteredStats.delivered || 0} livrés · {Math.round((filteredStats.delivered || 0) / (filteredStats.total || 1) * 100)}%</p>
+          <p className="text-[11px] text-green-700 font-medium">{tp('{n} livrés', { n: filteredStats.delivered || 0 })} · {Math.round((filteredStats.delivered || 0) / (filteredStats.total || 1) * 100)}%</p>
         </div>
         
         <div className="bg-white rounded-xl border border-gray-200 p-3">
-          <p className="text-[11px] font-semibold text-gray-500 mb-1">Taux livraison</p>
+          <p className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Taux livraison')}</p>
           <p className="text-xl font-bold text-gray-900 mb-1.5 tabular-nums">{deliveryRate}%</p>
           <div className="w-full bg-gray-100 rounded-full h-1.5">
             <div className="bg-primary-600 h-1.5 rounded-full" style={{ width: `${Math.min(deliveryRate, 100)}%` }}></div>
@@ -2760,7 +2796,7 @@ const OrdersList = () => {
             onClick={() => { setSelectedOrders(new Set()); setSelectionMode(false); }}
             className="min-h-[44px] px-3 py-2 text-gray-300 hover:text-white text-sm transition"
           >
-            Annuler
+            {tp('Annuler')}
           </button>
         </div>
       )}
@@ -2771,11 +2807,11 @@ const OrdersList = () => {
           <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
             <svg className="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
           </div>
-          <p className="text-gray-500 text-sm font-medium">Aucune commande trouvée</p>
+          <p className="text-gray-500 text-sm font-medium">{tp('Aucune commande trouvée')}</p>
           <p className="text-xs text-gray-400 mt-1">
             {search || filterStatus || filterCity || filterProduct || filterTag || filterStartDate || filterEndDate
               ? 'Essayez de modifier vos filtres ou votre recherche.'
-              : isAdmin ? <>Importez vos commandes depuis la page <a href="/ecom/import" className="text-primary-600 hover:underline">Import</a></> : 'Aucune commande disponible.'
+              : isAdmin ? <>{tp('Importez vos commandes depuis la page')} <a href="/ecom/import" className="text-primary-600 hover:underline">{tp('Import')}</a></> : 'Aucune commande disponible.'
             }
           </p>
         </div>
@@ -2825,7 +2861,7 @@ const OrdersList = () => {
                           {clientName ? clientName.charAt(0).toUpperCase() : '?'}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-gray-900 truncate">{clientName || 'Sans nom'}</h3>
+                          <h3 className="text-sm font-bold text-gray-900 truncate">{clientName || tp('Sans nom')}</h3>
                           <div className="flex items-center gap-2 text-xs">
                             {clientPhone && (
                               <span className="text-gray-600 font-mono">{clientPhone}</span>
@@ -2852,7 +2888,7 @@ const OrdersList = () => {
                         <div className="flex-shrink-0 max-w-[160px] hidden sm:block">
                           <p className="text-xs text-gray-500 text-right truncate">{productName}</p>
                           {o.quantity > 1 && (
-                            <p className="text-[10px] text-gray-400 text-right">Qté : {o.quantity}</p>
+                            <p className="text-[10px] text-gray-400 text-right">{tp('Qté')} : {o.quantity}</p>
                           )}
                         </div>
                       )}
@@ -2866,10 +2902,10 @@ const OrdersList = () => {
 
                       {/* Pool livreur badge */}
                       {o.readyForDelivery && !o.assignedLivreur && (
-                        <div className="flex-shrink-0" title="Dans le pool livreur">
+                        <div className="flex-shrink-0" title={tp('Dans le pool livreur')}>
                           <span className="text-[10px] font-semibold px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 17a2 2 0 11-4 0 2 2 0 014 0zm12 0a2 2 0 11-4 0 2 2 0 014 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 17H3V6a1 1 0 011-1h9v12H7m6 0h3m4 0h1v-5l-3-4h-5"/></svg>
-                            Pool
+                            {tp('Pool')}
                           </span>
                         </div>
                       )}
@@ -2898,15 +2934,15 @@ const OrdersList = () => {
                           value={o.status} 
                           onChange={(e) => { 
                             if (e.target.value === '__custom') { 
-                              const c = prompt('Entrez le statut personnalisé'); 
+                              const c = prompt(tp('Entrez le statut personnalisé')); 
                               if (c && c.trim()) handleStatusChange(o._id, c.trim()); 
                             } else handleStatusChange(o._id, e.target.value); 
                           }}
                           className={`text-xs px-2.5 py-1.5 rounded-lg font-semibold border cursor-pointer focus:ring-2 focus:ring-primary-600 focus:outline-none transition-all ${getStatusColor(o.status)}`}
                         >
-                          {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                          {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{tp(v)}</option>)}
                           {!SL[o.status] && <option value={o.status}>{o.status}</option>}
-                          <option value="__custom">+ Personnalisé...</option>
+                          <option value="__custom">{tp('+ Personnalisé...')}</option>
                         </select>
                       </div>
 
@@ -2914,8 +2950,8 @@ const OrdersList = () => {
                       <button
                         onClick={(e) => { e.stopPropagation(); handleCopyOrder(o); }}
                         className="flex-shrink-0 w-10 h-10 text-primary-600 bg-white hover:bg-primary-50 border border-primary-200 rounded-lg transition flex items-center justify-center"
-                        title="Copier la commande"
-                        aria-label="Copier la commande"
+                        title={tp('Copier la commande')}
+                        aria-label={tp('Copier la commande')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -2972,7 +3008,7 @@ const OrdersList = () => {
                           {clientName ? clientName.charAt(0).toUpperCase() : '?'}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-[15px] font-semibold text-gray-900 truncate leading-tight">{clientName || 'Sans nom'}</h3>
+                          <h3 className="text-[15px] font-semibold text-gray-900 truncate leading-tight">{clientName || tp('Sans nom')}</h3>
                           <p className="text-xs text-gray-500 font-mono mt-0.5 truncate">{clientPhone || '—'}</p>
                         </div>
                       </div>
@@ -2981,7 +3017,7 @@ const OrdersList = () => {
                           <p className="text-[15px] font-bold text-gray-900 tabular-nums">{fmtOrder(totalPrice, o.currency)}</p>
                         )}
                         {o.quantity > 1 && (
-                          <span className="text-[10px] text-gray-400 font-medium">Qté : {o.quantity}</span>
+                          <span className="text-[10px] text-gray-400 font-medium">{tp('Qté')} : {o.quantity}</span>
                         )}
                       </div>
                     </div>
@@ -3019,7 +3055,7 @@ const OrdersList = () => {
                       {o.readyForDelivery && !o.assignedLivreur && (
                         <span className="inline-flex items-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[10px] font-semibold text-amber-700">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 17a2 2 0 11-4 0 2 2 0 014 0zm12 0a2 2 0 11-4 0 2 2 0 014 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 17H3V6a1 1 0 011-1h9v12H7m6 0h3m4 0h1v-5l-3-4h-5"/></svg>
-                          Pool
+                          {tp('Pool')}
                         </span>
                       )}
                       {(o.source === 'skelor' || o.source === 'boutique') && <span className="inline-flex items-center rounded-lg border border-emerald-800 bg-emerald-900 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">Scalor</span>}
@@ -3037,16 +3073,16 @@ const OrdersList = () => {
                         onClick={(e) => e.stopPropagation()}
                         className={`h-8 rounded-lg border px-2 text-[11px] font-semibold cursor-pointer focus:ring-2 focus:ring-primary-500 focus:outline-none ${getStatusColor(o.status)}`}
                       >
-                        {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                        {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{tp(v)}</option>)}
                         {!SL[o.status] && <option value={o.status}>{o.status}</option>}
-                        <option value="__custom">+ Personnalisé...</option>
+                        <option value="__custom">{tp('+ Personnalisé...')}</option>
                       </select>
                     </div>
                     <div className="flex flex-shrink-0 items-center gap-0.5">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleCopyOrder(o); }}
                         className="inline-flex h-8 w-8 items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition"
-                        aria-label="Copier commande"
+                        aria-label={tp('Copier commande')}
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                       </button>
@@ -3057,7 +3093,7 @@ const OrdersList = () => {
                             setExpandedId(expandedId === o._id ? null : o._id);
                           }}
                           className="inline-flex h-8 w-8 items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition"
-                          aria-label="Plus d'actions"
+                          aria-label={tp('Plus d\'actions')}
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
                         </button>
@@ -3065,18 +3101,18 @@ const OrdersList = () => {
                           <div className="absolute right-0 bottom-full mb-1 min-w-[156px] rounded-xl border border-gray-100 bg-white py-1 shadow-xl shadow-gray-200/50" style={{zIndex: 9999}} onClick={(e) => e.stopPropagation()}>
                             <button onClick={(e) => { e.stopPropagation(); navigateToOrder(o._id); setExpandedId(null); }} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-lg mx-0.5 transition">
                               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                              Voir détails
+                              {tp('Voir détails')}
                             </button>
-                            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(o.clientPhone || ''); setExpandedId(null); setSuccess('Téléphone copié'); }} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-lg mx-0.5 transition">
+                            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(o.clientPhone || ''); setExpandedId(null); setSuccess(tp('Téléphone copié')); }} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-lg mx-0.5 transition">
                               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                              Copier tél.
+                              {tp('Copier tél.')}
                             </button>
                             {isAdmin && (
                               <>
                                 <div className="my-1 mx-3 border-t border-gray-100"></div>
                                 <button onClick={(e) => { e.stopPropagation(); handleDeleteOrder(o._id); setExpandedId(null); }} disabled={deletingOrderId === o._id} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg mx-0.5 disabled:opacity-50 transition">
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                  Supprimer
+                                  {tp('Supprimer')}
                                 </button>
                               </>
                             )}
@@ -3098,22 +3134,22 @@ const OrdersList = () => {
           <p className="text-[11px] text-gray-400">
             {pagination.pages > 1 ? (
               <>
-                Page <span className="font-semibold text-gray-900 tabular-nums">{page}</span>
+                {tp('Page')} <span className="font-semibold text-gray-900 tabular-nums">{page}</span>
                 <span className="text-gray-300"> / </span>
                 <span className="tabular-nums">{pagination.pages}</span>
                 <span className="text-gray-300"> · </span>
                 <span className="tabular-nums">
                   {Math.min((page - 1) * itemsPerPage + 1, pagination.total)}–{Math.min(page * itemsPerPage, pagination.total)}
                 </span>
-                <span className="text-gray-400"> sur </span>
-                <span className="tabular-nums">{pagination.total}</span> commandes
+                <span className="text-gray-400"> {tp('sur')} </span>
+                <span className="tabular-nums">{pagination.total}</span> {tp('commandes')}
               </>
             ) : (
-              <>{orders.length} commande{orders.length > 1 ? 's' : ''} affichée{orders.length > 1 ? 's' : ''}</>
+              <>{tp('{n} commande(s) affichée(s)', { n: orders.length })}</>
             )}
           </p>
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-gray-500 font-medium">Lignes par page:</label>
+            <label className="text-[11px] text-gray-500 font-medium">{tp('Lignes par page:')}</label>
             <select
               value={itemsPerPage}
               onChange={(e) => { setItemsPerPage(Number(e.target.value)); setPage(1); }}
@@ -3134,8 +3170,8 @@ const OrdersList = () => {
               onClick={() => setPage(1)}
               disabled={page <= 1}
               className="h-11 w-11 px-2.5 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
-              aria-label="Première page"
-              title="Première page"
+              aria-label={tp('Première page')}
+              title={tp('Première page')}
             >
               «
             </button>
@@ -3144,7 +3180,7 @@ const OrdersList = () => {
               disabled={page <= 1}
               className="min-h-[44px] px-3 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
-              Préc
+              {tp('Préc')}
             </button>
             <span className="px-2 text-xs text-gray-400 tabular-nums">
               {page}/{pagination.pages}
@@ -3154,14 +3190,14 @@ const OrdersList = () => {
               disabled={page >= pagination.pages}
               className="min-h-[44px] px-3 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
-              Suiv
+              {tp('Suiv')}
             </button>
             <button
               onClick={() => setPage(pagination.pages)}
               disabled={page >= pagination.pages}
               className="h-11 w-11 px-2.5 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
-              aria-label="Dernière page"
-              title="Dernière page"
+              aria-label={tp('Dernière page')}
+              title={tp('Dernière page')}
             >
               »
             </button>
@@ -3175,10 +3211,10 @@ const OrdersList = () => {
           <div className="bg-white rounded-xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Configurer Auto WhatsApp</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Personnaliser le message automatique envoyé aux clients</p>
+                <h3 className="text-lg font-bold text-gray-900">{tp('Configurer Auto WhatsApp')}</h3>
+                <p className="text-xs text-gray-500 mt-0.5">{tp('Personnaliser le message automatique envoyé aux clients')}</p>
               </div>
-              <button onClick={() => setShowAutoConfigModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label="Fermer">
+              <button onClick={() => setShowAutoConfigModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label={tp('Fermer')}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -3190,7 +3226,7 @@ const OrdersList = () => {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   <span className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                    Message texte personnalisé
+                    {tp('Message texte personnalisé')}
                   </span>
                 </label>
                 <textarea
@@ -3200,15 +3236,15 @@ const OrdersList = () => {
                   rows={5}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
                 />
-                <p className="text-[10px] text-gray-400 mt-1">Laissez vide pour utiliser le template par défaut</p>
+                <p className="text-[10px] text-gray-400 mt-1">{tp('Laissez vide pour utiliser le template par défaut')}</p>
               </div>
 
               {/* ─── Règles par produit ─── */}
               <div className="border-t border-gray-100 pt-5">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Par produit</p>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Instance et message spécifiques selon le produit commandé</p>
+                    <p className="text-sm font-semibold text-gray-900">{tp('Par produit')}</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{tp('Instance et message spécifiques selon le produit commandé')}</p>
                   </div>
                   <button
                     type="button"
@@ -3216,7 +3252,7 @@ const OrdersList = () => {
                     className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-                    Ajouter
+                    {tp('Ajouter')}
                   </button>
                 </div>
 
@@ -3230,7 +3266,7 @@ const OrdersList = () => {
                           onChange={e => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => i === ridx ? { ...r, productKeyword: e.target.value } : r) }))}
                           className="flex-1 h-9 px-2 border border-gray-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none"
                         >
-                          <option value="">— Sélectionner un produit —</option>
+                          <option value="">{tp('— Sélectionner un produit —')}</option>
                           {availableProducts.map(p => (
                             <option key={p._id} value={p.name}>{p.name}</option>
                           ))}
@@ -3251,15 +3287,15 @@ const OrdersList = () => {
                           onChange={e => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => i === ridx ? { ...r, instanceId: e.target.value } : r) }))}
                           className={`w-full h-9 px-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none ${!rule.instanceId ? 'border-amber-300 text-gray-400' : 'border-green-300 text-gray-900'}`}
                         >
-                          <option value="">⚠️ Choisir une instance pour ce produit</option>
+                          <option value="">{tp('⚠️ Choisir une instance pour ce produit')}</option>
                           {whatsappInstances.map(inst => (
                             <option key={inst._id} value={inst._id}>
-                              {inst.customName} — {inst.isConnected ? 'Connectée' : 'Déconnectée'}
+                              {inst.customName} — {inst.isConnected ? 'Connectée' : tp('Déconnectée')}
                             </option>
                           ))}
                         </select>
                         {!rule.instanceId && (
-                          <p className="text-[10px] text-amber-600 mt-1 pl-1">Sans instance, l'instance globale sera utilisée</p>
+                          <p className="text-[10px] text-amber-600 mt-1 pl-1">{tp('Sans instance, l\'instance globale sera utilisée')}</p>
                         )}
                       </div>
 
@@ -3267,7 +3303,7 @@ const OrdersList = () => {
                       <textarea
                         value={rule.template || ''}
                         onChange={e => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => i === ridx ? { ...r, template: e.target.value } : r) }))}
-                        placeholder="Message personnalisé pour ce produit... (laisser vide = message global)"
+                        placeholder={tp('Message personnalisé pour ce produit... (laisser vide = message global)')}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none resize-none"
                       />
@@ -3294,7 +3330,7 @@ const OrdersList = () => {
                               ) : (
                                 <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                               )}
-                              <span className="text-[10px] text-gray-400">Image</span>
+                              <span className="text-[10px] text-gray-400">{tp('Image')}</span>
                               <input type="file" accept="image/*" className="hidden" onChange={e => handleRuleMediaUpload(ridx, 'imageUrl', e.target.files?.[0])} />
                             </label>
                           )}
@@ -3305,7 +3341,7 @@ const OrdersList = () => {
                           {rule.videoUrl ? (
                             <div className="relative rounded-lg overflow-hidden border border-blue-200 bg-blue-50 h-20 flex items-center justify-center">
                               <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
-                              <p className="text-[10px] text-blue-600 truncate max-w-[80px] ml-1">Vidéo</p>
+                              <p className="text-[10px] text-blue-600 truncate max-w-[80px] ml-1">{tp('Vidéo')}</p>
                               <button
                                 type="button"
                                 onClick={() => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => i === ridx ? { ...r, videoUrl: '' } : r) }))}
@@ -3321,7 +3357,7 @@ const OrdersList = () => {
                               ) : (
                                 <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
                               )}
-                              <span className="text-[10px] text-gray-400">Vidéo</span>
+                              <span className="text-[10px] text-gray-400">{tp('Vidéo')}</span>
                               <input type="file" accept="video/*,.mp4,.mov,.avi" className="hidden" onChange={e => handleRuleMediaUpload(ridx, 'videoUrl', e.target.files?.[0])} />
                             </label>
                           )}
@@ -3330,7 +3366,7 @@ const OrdersList = () => {
                     </div>
                   ))}
                   {(autoConfig.productRules || []).length === 0 && (
-                    <p className="text-xs text-gray-400 italic py-1">Aucune règle — toutes les commandes utilisent la config globale ci-dessus.</p>
+                    <p className="text-xs text-gray-400 italic py-1">{tp('Aucune règle — toutes les commandes utilisent la config globale ci-dessus.')}</p>
                   )}
                 </div>
               </div>
@@ -3338,7 +3374,7 @@ const OrdersList = () => {
               {/* Info envoi progressif */}
               {(autoConfig.template || autoConfig.imageUrl || autoConfig.audioUrl) && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                  <p className="text-xs font-medium text-blue-700 mb-1">Ordre d'envoi progressif :</p>
+                  <p className="text-xs font-medium text-blue-700 mb-1">{tp('Ordre d\'envoi progressif :')}</p>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-[10px] font-medium">
                       1. Texte
@@ -3383,7 +3419,7 @@ const OrdersList = () => {
               </button>
               {dbConfig && (
                 <div className="mt-2 p-3 bg-gray-900 text-green-300 rounded-lg text-[10px] font-mono overflow-auto max-h-64">
-                  <p><strong>whatsappAutoConfirm:</strong> {String(dbConfig.whatsappAutoConfirm)}</p>
+                  <p><strong>{tp('whatsappAutoConfirm:')}</strong> {String(dbConfig.whatsappAutoConfirm)}</p>
                   <p><strong>Règles produit ({(dbConfig.whatsappAutoProductMediaRules || []).length}):</strong></p>
                   {(dbConfig.whatsappAutoProductMediaRules || []).map((r, i) => (
                     <div key={i} className="pl-2 mt-1 border-l border-green-600">
@@ -3401,11 +3437,11 @@ const OrdersList = () => {
 
             {/* Zone test */}
             <div className="px-5 pb-4 space-y-2">
-              <p className="text-xs font-semibold text-gray-500">Tester l'envoi</p>
+              <p className="text-xs font-semibold text-gray-500">{tp('Tester l\'envoi')}</p>
               <div className="flex gap-2">
                 <input
                   type="tel"
-                  placeholder="Numéro (ex: 237612345678)"
+                  placeholder={tp('Numéro (ex: 237612345678)')}
                   value={testAutoPhone}
                   onChange={e => { setTestAutoPhone(e.target.value); setTestAutoResult(null); }}
                   className="flex-1 h-9 px-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500/20 focus:outline-none"
@@ -3415,7 +3451,7 @@ const OrdersList = () => {
                   onChange={e => { setTestAutoProduct(e.target.value); setTestAutoResult(null); }}
                   className="w-36 h-9 px-2 border border-gray-200 rounded-lg text-xs bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none"
                 >
-                  <option value="">— Produit —</option>
+                  <option value="">{tp('— Produit —')}</option>
                   {availableProducts.map(p => <option key={p._id} value={p.name}>{p.name}</option>)}
                 </select>
                 <button
@@ -3441,7 +3477,7 @@ const OrdersList = () => {
                 onClick={() => setShowAutoConfigModal(false)}
                 className="min-h-[44px] px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition"
               >
-                Annuler
+                {tp('Annuler')}
               </button>
               <button
                 onClick={saveAutoConfig}
@@ -3468,41 +3504,41 @@ const OrdersList = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowOrderModal(false)}>
           <div className="bg-white rounded-xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900">{editingOrder ? 'Modifier la commande' : 'Nouvelle commande'}</h3>
-              <button onClick={() => setShowOrderModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label="Fermer">
+              <h3 className="text-lg font-bold text-gray-900">{editingOrder ? 'Modifier la commande' : tp('Nouvelle commande')}</h3>
+              <button onClick={() => setShowOrderModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label={tp('Fermer')}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Nom client *</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Nom client *')}</label>
                   <input type="text" value={orderForm.clientName} onChange={e => setOrderForm({...orderForm, clientName: e.target.value})}
-                    placeholder="Nom complet" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
+                    placeholder={tp('Nom complet')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Telephone *</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Telephone *')}</label>
                   <input type="text" value={orderForm.clientPhone} onChange={e => setOrderForm({...orderForm, clientPhone: e.target.value})}
                     placeholder="06..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Ville</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Ville')}</label>
                   <input type="text" value={orderForm.city} onChange={e => setOrderForm({...orderForm, city: e.target.value})}
-                    placeholder="Ville" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
+                    placeholder={tp('Ville')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Adresse</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Adresse')}</label>
                   <input type="text" value={orderForm.address} onChange={e => setOrderForm({...orderForm, address: e.target.value})}
-                    placeholder="Adresse de livraison" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
+                    placeholder={tp('Adresse de livraison')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Produit *</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Produit *')}</label>
                 {loadingProducts ? (
                   <div className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-400">
-                    Chargement des produits...
+                    {tp('Chargement des produits...')}
                   </div>
                 ) : availableProducts.length > 0 ? (
                   <select
@@ -3518,7 +3554,7 @@ const OrdersList = () => {
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                   >
-                    <option value="">Sélectionner un produit</option>
+                    <option value="">{tp('Sélectionner un produit')}</option>
                     {availableProducts.map(product => (
                       <option key={product._id} value={product._id}>
                         {product.name} - Stock: {product.stock} - {product.sellingPrice || 0} FCFA
@@ -3530,47 +3566,47 @@ const OrdersList = () => {
                     type="text"
                     value={orderForm.product}
                     onChange={e => setOrderForm({...orderForm, product: e.target.value})}
-                    placeholder="Nom du produit (aucun produit en stock)"
+                    placeholder={tp('Nom du produit (aucun produit en stock)')}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                   />
                 )}
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Prix</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Prix')}</label>
                   <input type="number" value={orderForm.price} onChange={e => setOrderForm({...orderForm, price: parseFloat(e.target.value) || 0})}
                     min="0" step="0.01" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Quantite</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Quantite')}</label>
                   <input type="number" value={orderForm.quantity} onChange={e => setOrderForm({...orderForm, quantity: parseInt(e.target.value) || 1})}
                     min="1" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Statut</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Statut')}</label>
                   <select value={orderForm.status} onChange={e => { if (e.target.value === '__custom') { const c = prompt('Entrez le statut personnalisé :'); if (c && c.trim()) setOrderForm({...orderForm, status: c.trim()}); } else setOrderForm({...orderForm, status: e.target.value}); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600">
-                    {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                    {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{tp(v)}</option>)}
                     {!SL[orderForm.status] && <option value={orderForm.status}>{orderForm.status}</option>}
-                    <option value="__custom">+ Personnalisé...</option>
+                    <option value="__custom">{tp('+ Personnalisé...')}</option>
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Notes</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Notes')}</label>
                 <textarea value={orderForm.notes} onChange={e => setOrderForm({...orderForm, notes: e.target.value})}
-                  rows={2} placeholder="Notes, remarques..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 resize-none" />
+                  rows={2} placeholder={tp('Notes, remarques...')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 resize-none" />
               </div>
             </div>
             <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4 flex gap-3">
               <button onClick={() => setShowOrderModal(false)} className="flex-1 min-h-[44px] px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium">
-                Annuler
+                {tp('Annuler')}
               </button>
               <button onClick={handleSaveOrder} disabled={savingOrder}
                 className="flex min-h-[44px] flex-1 items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-sm font-medium">
                 {savingOrder ? (
-                  <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Enregistrement...</>
-                ) : editingOrder ? 'Modifier' : 'Creer'}
+                  <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> {tp('Enregistrement...')}</>
+                ) : editingOrder ? 'Modifier' : tp('Creer')}
               </button>
             </div>
           </div>
@@ -3583,8 +3619,8 @@ const OrdersList = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 flex-shrink-0">
               <div>
-                <h3 className="text-base font-semibold text-gray-900">Notifications</h3>
-                <p className="text-xs text-gray-400 mt-0.5">Configuration WhatsApp</p>
+                <h3 className="text-base font-semibold text-gray-900">{tp('Notifications')}</h3>
+                <p className="text-xs text-gray-400 mt-0.5">{tp('Configuration WhatsApp')}</p>
               </div>
               <button onClick={() => setShowWhatsAppConfig(false)} className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -3600,9 +3636,9 @@ const OrdersList = () => {
                   <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
                     <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                   </div>
-                  <h4 className="text-sm font-semibold text-gray-900">Closeuses</h4>
+                  <h4 className="text-sm font-semibold text-gray-900">{tp('Closeuses')}</h4>
                 </div>
-                <p className="text-xs text-gray-400 mb-4 pl-[38px]">Reçoivent un message à chaque nouvelle commande.</p>
+                <p className="text-xs text-gray-400 mb-4 pl-[38px]">{tp('Reçoivent un message à chaque nouvelle commande.')}</p>
 
                 <div className="space-y-3">
                   {closeuseNotifNumbers.map((item, idx) => (
@@ -3611,7 +3647,7 @@ const OrdersList = () => {
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
-                          placeholder="Label"
+                          placeholder={tp('Label')}
                           value={item.label}
                           onChange={e => setCloseuseNotifNumbers(prev => prev.map((n, i) => i === idx ? { ...n, label: e.target.value } : n))}
                           className="flex-1 min-w-0 h-10 px-3 bg-gray-50 border-0 rounded-lg text-sm text-gray-900 placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 transition"
@@ -3627,7 +3663,7 @@ const OrdersList = () => {
                           type="button"
                           onClick={() => setCloseuseNotifNumbers(prev => prev.map((n, i) => i === idx ? { ...n, isActive: !n.isActive } : n))}
                           className={`relative h-6 w-11 rounded-full transition-colors flex-shrink-0 ${item.isActive ? 'bg-emerald-500' : 'bg-gray-200'}`}
-                          title={item.isActive ? 'Actif' : 'Inactif'}
+                          title={item.isActive ? 'Actif' : tp('Inactif')}
                         >
                           <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${item.isActive ? 'translate-x-5' : 'translate-x-0'}`} />
                         </button>
@@ -3648,7 +3684,7 @@ const OrdersList = () => {
                           onChange={e => setCloseuseNotifNumbers(prev => prev.map((n, i) => i === idx ? { ...n, instanceId: e.target.value || null } : n))}
                           className="flex-1 h-7 px-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                         >
-                          <option value="">— Instance par défaut du workspace —</option>
+                          <option value="">{tp('— Instance par défaut du workspace —')}</option>
                           {whatsappInstances.map(inst => (
                             <option key={inst._id} value={inst._id}>
                               {inst.customName || inst.instanceName}{inst.status ? ` (${inst.status})` : ''}
@@ -3678,7 +3714,7 @@ const OrdersList = () => {
                             }}
                             className="flex-1 min-w-[140px] h-7 px-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
                           >
-                            <option value="">{item.products?.length ? '+ Ajouter un produit...' : 'Tous les produits (sélectionner pour filtrer)'}</option>
+                            <option value="">{item.products?.length ? '+ Ajouter un produit...' : tp('Tous les produits (sélectionner pour filtrer)')}</option>
                             {availableProducts.filter(p => !(item.products || []).includes(p.name)).map(p => (
                               <option key={p._id} value={p.name}>{p.name}</option>
                             ))}
@@ -3695,7 +3731,7 @@ const OrdersList = () => {
                   className="mt-3 inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 border border-dashed border-gray-200 hover:border-gray-300 rounded-lg transition"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-                  Ajouter
+                  {tp('Ajouter')}
                 </button>
               </section>
 
@@ -3706,22 +3742,22 @@ const OrdersList = () => {
                     <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
                       <svg className="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
-                    <h4 className="text-sm font-semibold text-gray-900">Groupes de livraison</h4>
+                    <h4 className="text-sm font-semibold text-gray-900">{tp('Groupes de livraison')}</h4>
                   </div>
                   <a href="/ecom/settings?tab=delivery_groups" className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition">
-                    Gérer
+                    {tp('Gérer')}
                   </a>
                 </div>
-                <p className="text-xs text-gray-400 mb-4 pl-[38px]">Groupes notifiés à chaque nouvelle commande.</p>
+                <p className="text-xs text-gray-400 mb-4 pl-[38px]">{tp('Groupes notifiés à chaque nouvelle commande.')}</p>
 
                 {deliveryGroupNumbers.length === 0 ? (
                   <div className="rounded-xl border border-dashed border-gray-200 py-8 flex flex-col items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
                       <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
-                    <p className="text-xs text-gray-400">Aucun groupe configuré</p>
+                    <p className="text-xs text-gray-400">{tp('Aucun groupe configuré')}</p>
                     <a href="/ecom/settings?tab=delivery_groups" className="text-xs font-medium text-emerald-600 hover:text-emerald-700 transition">
-                      Configurer dans Paramètres
+                      {tp('Configurer dans Paramètres')}
                     </a>
                   </div>
                 ) : (
@@ -3735,11 +3771,11 @@ const OrdersList = () => {
                           className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500/20 flex-shrink-0"
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-800 truncate">{item.label || 'Groupe sans nom'}</p>
+                          <p className="text-sm font-medium text-gray-800 truncate">{item.label || tp('Groupe sans nom')}</p>
                           <p className="text-[11px] font-mono text-gray-400 truncate">{item.phoneNumber}</p>
                         </div>
                         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.isActive !== false ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
-                          {item.isActive !== false ? 'Actif' : 'Off'}
+                          {item.isActive !== false ? 'Actif' : tp('Off')}
                         </span>
                       </label>
                     ))}
@@ -3750,7 +3786,7 @@ const OrdersList = () => {
               {/* Test result */}
               {testNotifResult && (
                 <div className={`rounded-xl p-4 text-xs ${testNotifResult.success ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-800'}`}>
-                  <p className="font-semibold">{testNotifResult.success ? 'Envoi réussi' : 'Erreur'} — {testNotifResult.message}</p>
+                  <p className="font-semibold">{testNotifResult.success ? 'Envoi réussi' : tp('Erreur')} — {testNotifResult.message}</p>
                   {testNotifResult.results?.map((r, i) => (
                     <p key={i} className="font-mono text-[11px] mt-1 opacity-75">
                       {r.status === 'ok' ? 'OK' : 'Erreur'} — {r.label ? `${r.label} — ` : ''}{r.phone || r.jid || ''}
@@ -3760,7 +3796,7 @@ const OrdersList = () => {
                   {!testNotifResult.success && testNotifResult.results?.some(r => r.error?.toLowerCase().includes('déconnect') || r.error?.toLowerCase().includes('reconnect')) && (
                     <a href="/ecom/whatsapp" className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-red-700 hover:text-red-800 transition">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                      Reconnecter WhatsApp
+                      {tp('Reconnecter WhatsApp')}
                     </a>
                   )}
                 </div>
@@ -3805,12 +3841,12 @@ const OrdersList = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowWhatsAppMultiConfig(false)}>
           <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-5" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              {editingWhatsAppNumber ? 'Modifier le numéro WhatsApp' : 'Ajouter un numéro WhatsApp'}
+              {editingWhatsAppNumber ? 'Modifier le numéro WhatsApp' : tp('Ajouter un numéro WhatsApp')}
             </h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pays</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Pays')}</label>
                 <select
                   value={whatsappForm.country}
                   onChange={(e) => {
@@ -3824,7 +3860,7 @@ const OrdersList = () => {
                   }}
                   className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 >
-                  <option value="">Sélectionner un pays</option>
+                  <option value="">{tp('Sélectionner un pays')}</option>
                   {COUNTRIES.map(country => (
                     <option key={country.code} value={country.code}>
                       {country.flag} {country.name}
@@ -3834,7 +3870,7 @@ const OrdersList = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Numéro WhatsApp</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Numéro WhatsApp')}</label>
                 <input
                   type="text"
                   value={whatsappForm.phoneNumber}
@@ -3855,7 +3891,7 @@ const OrdersList = () => {
                     onChange={(e) => setWhatsappForm({ ...whatsappForm, isActive: e.target.checked })}
                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                   />
-                  <span className="text-sm text-gray-700">Numéro actif</span>
+                  <span className="text-sm text-gray-700">{tp('Numéro actif')}</span>
                 </label>
                 
                 <label className="flex items-center gap-2">
@@ -3865,7 +3901,7 @@ const OrdersList = () => {
                     onChange={(e) => setWhatsappForm({ ...whatsappForm, autoNotifyOrders: e.target.checked })}
                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                   />
-                  <span className="text-sm text-gray-700">Notifier automatiquement</span>
+                  <span className="text-sm text-gray-700">{tp('Notifier automatiquement')}</span>
                 </label>
               </div>
             </div>
@@ -3886,7 +3922,7 @@ const OrdersList = () => {
                 }}
                 className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
               >
-                Annuler
+                {tp('Annuler')}
               </button>
               <button
                 type="button"
@@ -3894,7 +3930,7 @@ const OrdersList = () => {
                 disabled={savingWhatsAppNumber}
                 className="flex-1 min-h-[44px] px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
               >
-                {savingWhatsAppNumber ? 'Enregistrement...' : 'Enregistrer'}
+                {savingWhatsAppNumber ? 'Enregistrement...' : tp('Enregistrer')}
               </button>
             </div>
           </div>
@@ -3906,8 +3942,8 @@ const OrdersList = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowSyncClientsModal(false)}>
           <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">Synchroniser les clients</h3>
-              <button onClick={() => setShowSyncClientsModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label="Fermer">
+              <h3 className="text-lg font-bold text-gray-900">{tp('Synchroniser les clients')}</h3>
+              <button onClick={() => setShowSyncClientsModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label={tp('Fermer')}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -3918,15 +3954,15 @@ const OrdersList = () => {
             
             <div className="space-y-2 mb-6 max-h-64 overflow-y-auto">
               {[
-                { key: 'delivered', label: 'Livré', color: 'bg-green-500' },
-                { key: 'confirmed', label: 'Confirmé', color: 'bg-primary-600' },
-                { key: 'shipped', label: 'Expédié', color: 'bg-primary-600' },
+                { key: 'delivered', get label() { return tp('Livré'); }, color: 'bg-green-500' },
+                { key: 'confirmed', get label() { return tp('Confirmé'); }, color: 'bg-primary-600' },
+                { key: 'shipped', get label() { return tp('Expédié'); }, color: 'bg-primary-600' },
                 { key: 'pending', label: 'En attente', color: 'bg-yellow-500' },
-                { key: 'returned', label: 'Retour', color: 'bg-orange-500' },
-                { key: 'cancelled', label: 'Annulé', color: 'bg-red-500' },
+                { key: 'returned', get label() { return tp('Retourné'); }, color: 'bg-orange-500' },
+                { key: 'cancelled', get label() { return tp('Annulé'); }, color: 'bg-red-500' },
                 { key: 'unreachable', label: 'Injoignable', color: 'bg-gray-500' },
-                { key: 'called', label: 'Appelé', color: 'bg-cyan-500' },
-                { key: 'postponed', label: 'Reporté', color: 'bg-amber-500' }
+                { key: 'called', get label() { return tp('Appelé'); }, color: 'bg-cyan-500' },
+                { key: 'postponed', get label() { return tp('Reporté'); }, color: 'bg-amber-500' }
               ].map(status => (
                 <label key={status.key} className="flex min-h-[44px] items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                   <input
@@ -3942,7 +3978,7 @@ const OrdersList = () => {
                     className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
                   />
                   <span className={`w-2 h-2 rounded-full ${status.color}`}></span>
-                  <span className="text-sm text-gray-700">{status.label}</span>
+                  <span className="text-sm text-gray-700">{tp(status.label)}</span>
                 </label>
               ))}
             </div>
@@ -3952,7 +3988,7 @@ const OrdersList = () => {
                 onClick={() => setShowSyncClientsModal(false)}
                 className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
               >
-                Annuler
+                {tp('Annuler')}
               </button>
               <button
                 onClick={handleSyncClients}
@@ -3965,14 +4001,14 @@ const OrdersList = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    Sync...
+                    {tp('Sync...')}
                   </>
                 ) : (
                   <>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Lancer la sync
+                    {tp('Lancer la sync')}
                   </>
                 )}
               </button>

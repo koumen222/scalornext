@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TrendingUp, Plus, X } from 'lucide-react';
 import SectionCard from './SectionCard';
 import ToggleSwitch from './ToggleSwitch';
+import { tp } from '../../i18n/platform.js';
 
 const ConversionSettings = ({ config, onChange }) => {
   const [newQty, setNewQty] = useState('');
@@ -23,7 +24,7 @@ const ConversionSettings = ({ config, onChange }) => {
 
   return (
     <div className="space-y-5">
-      <SectionCard icon={<TrendingUp size={18} />} title="Conversion Settings" description="Boost your conversion rate with upsells and order bumps.">
+      <SectionCard icon={<TrendingUp size={18} />} title={tp('Conversion Settings')} description="Boost your conversion rate with upsells and order bumps.">
         <ToggleSwitch
           label="Upsell"
           description="Suggest a higher-value product at checkout"
@@ -38,7 +39,7 @@ const ConversionSettings = ({ config, onChange }) => {
         />
 
         <div className="pt-3 border-t border-gray-100 mt-3">
-          <label className="block text-xs font-semibold text-gray-700 mb-2">Available Quantities</label>
+          <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Available Quantities')}</label>
           <div className="flex flex-wrap gap-2 mb-3">
             {config.quantities.map((qty) => (
               <span
@@ -56,7 +57,7 @@ const ConversionSettings = ({ config, onChange }) => {
               </span>
             ))}
             {config.quantities.length === 0 && (
-              <span className="text-xs text-gray-400 italic">No quantities set</span>
+              <span className="text-xs text-gray-400 italic">{tp('No quantities set')}</span>
             )}
           </div>
           <div className="flex gap-2">
@@ -66,7 +67,7 @@ const ConversionSettings = ({ config, onChange }) => {
               value={newQty}
               onChange={(e) => setNewQty(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addQuantity()}
-              placeholder="Add qty..."
+              placeholder={tp('Add qty...')}
               className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F6B4F] focus:ring-1 focus:ring-[#0F6B4F]/20"
             />
             <button

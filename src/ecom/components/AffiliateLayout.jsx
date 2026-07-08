@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, memo } from 'react';
 import { Link, useLocation, useNavigate } from '@/lib/router-compat';
 import { clearAffiliateToken } from '../services/affiliatePortalApi.js';
+import { tp } from '../i18n/platform.js';
 
 const AffiliateLayoutComponent = ({ children, affiliate }) => {
   const location = useLocation();
@@ -68,12 +69,12 @@ const AffiliateLayoutComponent = ({ children, affiliate }) => {
             <Link to="/affiliate/dashboard" className="flex items-center gap-2.5 mb-1">
               <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
             </Link>
-            <span className="text-[10px] font-bold text-[#0F6B4F] uppercase tracking-wider">Espace Affilié</span>
+            <span className="text-[10px] font-bold text-[#0F6B4F] uppercase tracking-wider">{tp('Espace Affilié')}</span>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
-            <p className="px-2 pt-1 pb-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Navigation</p>
+            <p className="px-2 pt-1 pb-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Navigation')}</p>
             {navItems.map(item => <NavLink key={item.name} item={item} />)}
           </nav>
 
@@ -88,7 +89,7 @@ const AffiliateLayoutComponent = ({ children, affiliate }) => {
                   <span className="text-white text-xs font-bold">{initial}</span>
                 </div>
                 <div className="min-w-0 flex-1 text-left">
-                  <p className="text-xs font-semibold text-gray-800 truncate">{affiliate?.name || 'Affilié'}</p>
+                  <p className="text-xs font-semibold text-gray-800 truncate">{affiliate?.name || tp('Affilié')}</p>
                   <p className="text-[10px] text-gray-400 truncate">{affiliate?.email || ''}</p>
                 </div>
                 <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
@@ -105,7 +106,7 @@ const AffiliateLayoutComponent = ({ children, affiliate }) => {
           <div className="flex items-center justify-between h-14 px-4">
             <Link to="/affiliate/dashboard" className="flex items-center gap-2">
               <img src="/logo.png" alt="Scalor" className="h-7 object-contain" />
-              <span className="text-[10px] font-bold text-[#0F6B4F] uppercase tracking-wider">Affilié</span>
+              <span className="text-[10px] font-bold text-[#0F6B4F] uppercase tracking-wider">{tp('Affilié')}</span>
             </Link>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-primary-700 to-primary-900 rounded-full flex items-center justify-center">
@@ -118,7 +119,7 @@ const AffiliateLayoutComponent = ({ children, affiliate }) => {
         {/* Desktop Header */}
         <header className="hidden lg:flex border-b h-14 items-center px-5 fixed top-0 left-[220px] right-0 z-20 bg-white border-gray-200 gap-4">
           <div className="flex items-center gap-2 min-w-[160px]">
-            <span className="text-xs text-gray-500">Code : <span className="font-mono font-bold text-[#0F6B4F]">{affiliate?.referralCode || '—'}</span></span>
+            <span className="text-xs text-gray-500">{tp('Code :')} <span className="font-mono font-bold text-[#0F6B4F]">{affiliate?.referralCode || '—'}</span></span>
           </div>
           <div className="flex-1" />
           <div className="flex items-center gap-3 flex-shrink-0">
@@ -127,7 +128,7 @@ const AffiliateLayoutComponent = ({ children, affiliate }) => {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-              Déconnexion
+              {tp('Déconnexion')}
             </button>
           </div>
         </header>

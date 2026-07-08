@@ -4,6 +4,7 @@ import { Loader2, Save, ChevronDown, Send, RotateCcw, Bell, Settings, Bot, Messa
 import ecomApi from '../services/ecommApi.js';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ProductImportLocal from '../components/ProductImportLocal.jsx';
+import { tp } from '../i18n/platform.js';
 
 const ACCENT = '#0F6B4F';
 const VIDEO_UPLOAD_TIMEOUT_MS = 10 * 60 * 1000;
@@ -22,14 +23,14 @@ const getMediaUploadConfig = (file, field) => {
 
 // ─── Tabs ───
 const TABS = [
-  { id: 'identity', label: 'Identité', icon: Bot },
+  { id: 'identity', get label() { return tp('Identité'); }, icon: Bot },
   { id: 'intelligence', label: 'Intelligence', icon: Sparkles },
   { id: 'sales-rules', label: 'Vente', icon: Target },
   { id: 'delivery', label: 'Livraison', icon: Truck },
   { id: 'products', label: 'Produits', icon: Package },
   { id: 'stock', label: 'Stock', icon: Warehouse },
   { id: 'admin-profile', label: 'Profil Admin', icon: UserCog },
-  { id: 'testimonials', label: 'Témoignages', icon: Star },
+  { id: 'testimonials', get label() { return tp('Témoignages'); }, icon: Star },
   { id: 'admin-pilotage', label: 'Pilotage', icon: Headphones },
   { id: 'analytics', label: 'Analytiques', icon: BarChart3 },
   { id: 'contacts', label: 'Contacts', icon: Users },
@@ -41,51 +42,51 @@ const TABS = [
 
 const TONE_OPTIONS = [
   { value: 'warm', label: 'Tutoiement chaleureux', desc: 'Naturelle, humaine, proche du client', Icon: Smile },
-  { value: 'professional', label: 'Tutoiement professionnel', desc: 'Sérieuse, crédible, claire', Icon: Briefcase },
+  { value: 'professional', label: 'Tutoiement professionnel', get desc() { return tp('Sérieuse, crédible, claire'); }, Icon: Briefcase },
   { value: 'formal', label: 'Vouvoiement respectueux', desc: 'Polie, courtoise, relation premium', Icon: Crown },
-  { value: 'humorous', label: 'Humoristique légère', desc: 'Ajoute des blagues courtes sans perdre le sérieux', Icon: MessageCircle },
-  { value: 'persuasive', label: 'Persuasive', desc: 'Orientée closing, enthousiaste', Icon: Flame },
+  { value: 'humorous', get label() { return tp('Humoristique légère'); }, get desc() { return tp('Ajoute des blagues courtes sans perdre le sérieux'); }, Icon: MessageCircle },
+  { value: 'persuasive', label: 'Persuasive', get desc() { return tp('Orientée closing, enthousiaste'); }, Icon: Flame },
 ];
 
 const LANGUAGE_OPTIONS = [
-  { value: 'fr', label: '🇫🇷 Français' },
+  { value: 'fr', get label() { return tp('🇫🇷 Français'); } },
   { value: 'en', label: '🇬🇧 English' },
-  { value: 'fr_en', label: '🇫🇷🇬🇧 FR + EN (auto-détection)' },
-  { value: 'es', label: '🇪🇸 Español' },
+  { value: 'fr_en', get label() { return tp('🇫🇷🇬🇧 FR + EN (auto-détection)'); } },
+  { value: 'es', get label() { return tp('🇪🇸 Español'); } },
   { value: 'ar', label: '🇸🇦 العربية' },
 ];
 
 const CLIENT_TYPES = [
   { value: 'curieux', label: '🤔 Curieux', desc: 'Pose des questions, explore', strategy: 'Informer, montrer la valeur, proposer un visuel' },
-  { value: 'acheteur', label: '💰 Acheteur', desc: 'Prêt à acheter, décidé', strategy: 'Faciliter, confirmer vite, proposer la commande' },
-  { value: 'hesitant', label: '😰 Hésitant', desc: 'Intéressé mais freiné', strategy: 'Rassurer, témoignages, offre limitée' },
-  { value: 'revendeur', label: '📦 Revendeur', desc: 'Achète en gros pour revendre', strategy: 'Prix de gros, conditions spéciales, suivi VIP' },
+  { value: 'acheteur', label: '💰 Acheteur', get desc() { return tp('Prêt à acheter, décidé'); }, strategy: 'Faciliter, confirmer vite, proposer la commande' },
+  { value: 'hesitant', get label() { return tp('😰 Hésitant'); }, get desc() { return tp('Intéressé mais freiné'); }, strategy: 'Rassurer, témoignages, offre limitée' },
+  { value: 'revendeur', label: '📦 Revendeur', get desc() { return tp('Achète en gros pour revendre'); }, strategy: 'Prix de gros, conditions spéciales, suivi VIP' },
 ];
 
 const SPECIAL_CASES_DEFAULT = [
   { trigger: 'ask_price', label: 'Demande de prix', reaction: 'Donner le prix + bénéfices + proposer un visuel', enabled: true },
-  { trigger: 'how_it_works', label: 'Comment ça marche ?', reaction: 'Expliquer clairement + proposer une démo', enabled: true },
+  { trigger: 'how_it_works', get label() { return tp('Comment ça marche ?'); }, reaction: 'Expliquer clairement + proposer une démo', enabled: true },
   { trigger: 'mention_budget', label: 'Mentionne un budget', reaction: 'Adapter la proposition + proposer une solution dans le budget', enabled: true },
-  { trigger: 'hesitation', label: 'Client hésite', reaction: 'Poser une question pour comprendre le blocage', enabled: true },
+  { trigger: 'hesitation', get label() { return tp('Client hésite'); }, reaction: 'Poser une question pour comprendre le blocage', enabled: true },
   { trigger: 'too_expensive', label: 'Trouve cher', reaction: 'Justifier la valeur + comparer avec les alternatives', enabled: true },
-  { trigger: 'bulk_order', label: 'Grande quantité', reaction: 'Basculer en mode revendeur + proposer tarifs de gros', enabled: true },
+  { trigger: 'bulk_order', get label() { return tp('Grande quantité'); }, reaction: 'Basculer en mode revendeur + proposer tarifs de gros', enabled: true },
   { trigger: 'reseller', label: 'Client revendeur', reaction: 'Offre de gros + poser des questions business', enabled: true },
   { trigger: 'silent', label: 'Client silencieux', reaction: 'Relance naturelle et douce', enabled: true },
   { trigger: 'lang_switch', label: 'Change de langue', reaction: "S'adapter immédiatement à la langue du client", enabled: true },
 ];
 
 const AUTONOMY_LEVELS = [
-  { level: 1, label: 'Assistante', desc: 'Répond aux questions simples uniquement', color: 'bg-blue-100 text-blue-700' },
-  { level: 2, label: 'Conseillère', desc: 'Recommande des produits et qualifie les leads', color: 'bg-cyan-100 text-cyan-700' },
+  { level: 1, label: 'Assistante', get desc() { return tp('Répond aux questions simples uniquement'); }, color: 'bg-blue-100 text-blue-700' },
+  { level: 2, get label() { return tp('Conseillère'); }, desc: 'Recommande des produits et qualifie les leads', color: 'bg-cyan-100 text-cyan-700' },
   { level: 3, label: 'Commerciale', desc: "Gère les objections et pousse à l'achat", color: 'bg-primary-100 text-primary-700' },
-  { level: 4, label: 'Négociatrice', desc: 'Conclut des ventes de façon autonome', color: 'bg-amber-100 text-amber-700' },
+  { level: 4, get label() { return tp('Négociatrice'); }, get desc() { return tp('Conclut des ventes de façon autonome'); }, color: 'bg-amber-100 text-amber-700' },
   { level: 5, label: 'Chasseuse', desc: 'Mode offensif : closing agressif, upsell', color: 'bg-red-100 text-red-700' },
 ];
 
 const MODES_CONFIG = [
-  { id: 'client', label: '👤 Mode Client', subtitle: 'Vente & Support', desc: 'Rita parle au client : chaleureuse, naturelle, persuasive. Suit la logique Comprendre → Répondre → Valeur → Question.', color: 'border-primary-400 bg-primary-50/60', iconBg: 'bg-primary-100', iconColor: 'text-primary-700' },
-  { id: 'boss', label: '🧑‍💼 Mode Boss', subtitle: 'Analyse & Rapports', desc: 'Rita parle au boss : professionnelle, analytique, directe. Analyse les conversations, explique les erreurs, propose des améliorations.', color: 'border-blue-400 bg-blue-50/60', iconBg: 'bg-blue-100', iconColor: 'text-blue-700' },
-  { id: 'execution', label: '⚙️ Mode Exécution', subtitle: 'Actions Boss', desc: 'Le boss donne une instruction, Rita comprend, adapte et exécute intelligemment. Elle ne copie jamais le message du boss.', color: 'border-amber-400 bg-amber-50/60', iconBg: 'bg-amber-100', iconColor: 'text-amber-700' },
+  { id: 'client', label: '👤 Mode Client', subtitle: 'Vente & Support', get desc() { return tp('Rita parle au client : chaleureuse, naturelle, persuasive. Suit la logique Comprendre → Répondre → Valeur → Question.'); }, color: 'border-primary-400 bg-primary-50/60', iconBg: 'bg-primary-100', iconColor: 'text-primary-700' },
+  { id: 'boss', label: '🧑‍💼 Mode Boss', subtitle: 'Analyse & Rapports', get desc() { return tp('Rita parle au boss : professionnelle, analytique, directe. Analyse les conversations, explique les erreurs, propose des améliorations.'); }, color: 'border-blue-400 bg-blue-50/60', iconBg: 'bg-blue-100', iconColor: 'text-blue-700' },
+  { id: 'execution', get label() { return tp('⚙️ Mode Exécution'); }, subtitle: 'Actions Boss', get desc() { return tp('Le boss donne une instruction, Rita comprend, adapte et exécute intelligemment. Elle ne copie jamais le message du boss.'); }, color: 'border-amber-400 bg-amber-50/60', iconBg: 'bg-amber-100', iconColor: 'text-amber-700' },
 ];
 
 const RESPONSE_MODE_OPTIONS = [
@@ -95,24 +96,24 @@ const RESPONSE_MODE_OPTIONS = [
 ];
 
 const TTS_PROVIDER_OPTIONS = [
-  { value: 'fishaudio', label: 'Voix ultra réaliste' },
+  { value: 'fishaudio', get label() { return tp('Voix ultra réaliste'); } },
 ];
 
 const ELEVENLABS_VOICES = [
   { id: 'cgSgspJ2msm6clMCkdW9', name: 'Michelle', gender: '♀', lang: 'FR/EN', desc: 'Chaleureuse, naturelle, commerciale' },
-  { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Rita', gender: '♀', lang: 'FR', desc: 'Douce, persuasive, élégante' },
+  { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Rita', gender: '♀', lang: 'FR', get desc() { return tp('Douce, persuasive, élégante'); } },
 ];
 
 const FISH_AUDIO_VOICES = [
-  { id: '13f7f6e260f94079b9d51c961fa6c9e2', name: 'Michelle', gender: '♀', lang: 'FR/EN', desc: 'Voix féminine chaleureuse, naturelle' },
-  { id: '14b22748e04a48a58f92fbcde088ee50', name: 'Rita', gender: '♀', lang: 'FR', desc: 'Séduisante, persuasive' },
+  { id: '13f7f6e260f94079b9d51c961fa6c9e2', name: 'Michelle', gender: '♀', lang: 'FR/EN', get desc() { return tp('Voix féminine chaleureuse, naturelle'); } },
+  { id: '14b22748e04a48a58f92fbcde088ee50', name: 'Rita', gender: '♀', lang: 'FR', get desc() { return tp('Séduisante, persuasive'); } },
   { id: 'e3a12335ddd040209a99002ee76b682f', name: 'Sophie', gender: '♀', lang: 'FR', desc: 'Douce, bienveillante, assistante' },
 ];
 
 const OFFER_TRIGGER_OPTIONS = [
-  { value: 'hesitation', label: 'Client hésitant' },
+  { value: 'hesitation', get label() { return tp('Client hésitant'); } },
   { value: 'price_objection', label: 'Objection prix' },
-  { value: 'bulk_interest', label: 'Demande de quantité' },
+  { value: 'bulk_interest', get label() { return tp('Demande de quantité'); } },
   { value: 'follow_up', label: 'Relance' },
   { value: 'closing', label: 'Avant closing' },
 ];
@@ -314,7 +315,7 @@ const TextEditModal = ({ open, title, value, placeholder, rows = 6, onClose, onC
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <p className="text-[14px] font-bold text-gray-900">{title || 'Modifier'}</p>
+          <p className="text-[14px] font-bold text-gray-900">{title || tp('Modifier')}</p>
           <button type="button" onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
             <X className="w-4 h-4" />
           </button>
@@ -344,7 +345,7 @@ const TextEditModal = ({ open, title, value, placeholder, rows = 6, onClose, onC
         <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-100 bg-gray-50/60">
           <button type="button" onClick={onClose}
             className="px-4 py-2 text-[13px] font-semibold text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors">
-            Annuler
+            {tp('Annuler')}
           </button>
           <button type="button" onClick={handleConfirm}
             className="px-5 py-2 text-[13px] font-bold text-white rounded-xl shadow-sm transition-all hover:opacity-90 active:scale-95"
@@ -523,7 +524,7 @@ export default function AgentConfig() {
 
   const saveStatut = async () => {
     if (statutForm.type === 'product' && !statutForm.productName?.trim()) {
-      alert('Sélectionnez un produit pour ce statut.');
+      alert(tp('Sélectionnez un produit pour ce statut.'));
       return;
     }
 
@@ -538,7 +539,7 @@ export default function AgentConfig() {
     }
 
     if (statutForm.scheduleType === 'weekly' && !(statutForm.weekDays || []).length) {
-      alert('Sélectionnez au moins un jour de publication.');
+      alert(tp('Sélectionnez au moins un jour de publication.'));
       return;
     }
 
@@ -591,7 +592,7 @@ export default function AgentConfig() {
 
   const sendNow = async (schedule) => {
     if (!config.instanceId) {
-      alert('Sélectionnez et sauvegardez une instance WhatsApp Rita avant de publier un statut.');
+      alert(tp('Sélectionnez et sauvegardez une instance WhatsApp Rita avant de publier un statut.'));
       return;
     }
 
@@ -976,7 +977,7 @@ export default function AgentConfig() {
     setShowImport(false);
     if (config.enabled && !config.instanceId) {
       setSaveStatus('error');
-      alert('❌ Sélectionnez une instance WhatsApp précise avant d\'activer Rita.');
+      alert(tp('❌ Sélectionnez une instance WhatsApp précise avant d\'activer Rita.'));
       return;
     }
 
@@ -1746,7 +1747,7 @@ export default function AgentConfig() {
     { value: 'clients', label: '🛒 Clients' },
     { value: 'prospects', label: '🎯 Prospects' },
     { value: 'vip', label: '⭐ VIP' },
-    { value: 'custom', label: '🔧 Personnalisé' },
+    { value: 'custom', get label() { return tp('🔧 Personnalisé'); } },
   ];
 
   const exportContactsCSV = async () => {
@@ -1774,7 +1775,7 @@ export default function AgentConfig() {
         <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg animate-pulse">
           <Bot className="w-7 h-7 text-white" />
         </div>
-        <p className="text-sm text-gray-400">Chargement de la configuration...</p>
+        <p className="text-sm text-gray-400">{tp('Chargement de la configuration...')}</p>
       </div>
     </div>
   );
@@ -1789,24 +1790,24 @@ export default function AgentConfig() {
           <div className="py-3">
             <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-gray-400">
               <button onClick={() => {
-                if (hasChanges && !window.confirm('Vous avez des modifications non sauvegardées. Voulez-vous vraiment quitter ?')) return;
+                if (hasChanges && !window.confirm(tp('Vous avez des modifications non sauvegardées. Voulez-vous vraiment quitter ?'))) return;
                 navigate('/ecom/agent-ia');
-              }} className="hover:text-gray-600 transition-colors">Agent IA</button>
+              }} className="hover:text-gray-600 transition-colors">{tp('Agent IA')}</button>
               <span>›</span>
-              <span className="text-gray-600 font-medium">{agent?.name || 'Configuration'}</span>
+              <span className="text-gray-600 font-medium">{agent?.name || tp('Configuration')}</span>
             </nav>
           </div>
 
           {/* Title bar */}
           <div className="flex flex-col gap-4 pb-4 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0">
-              <h1 className="text-[20px] sm:text-[22px] font-bold text-gray-900 break-words">{agent?.name || 'Configuration Agent IA'}</h1>
-              <p className="text-[13px] text-gray-400 mt-0.5">Configurez les produits, messages et paramètres de votre agent.</p>
+              <h1 className="text-[20px] sm:text-[22px] font-bold text-gray-900 break-words">{agent?.name || tp('Configuration Agent IA')}</h1>
+              <p className="text-[13px] text-gray-400 mt-0.5">{tp('Configurez les produits, messages et paramètres de votre agent.')}</p>
             </div>
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:gap-3 w-full md:w-auto">
               <button onClick={handleReset} disabled={!hasChanges}
                 className="w-full sm:w-auto px-4 py-2 text-[13px] font-medium text-gray-500 hover:text-gray-700 disabled:opacity-40 transition-colors">
-                Annuler
+                {tp('Annuler')}
               </button>
               <button onClick={handleSave} disabled={saving}
                 className="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-5 py-2.5 text-[13px] font-bold text-white rounded-xl disabled:opacity-50 transition-all shadow-sm hover:shadow-md"
@@ -1863,7 +1864,7 @@ export default function AgentConfig() {
                       {config.agentName || 'Nom de l\'agent'}
                     </p>
                     <p className="text-white/60 text-[12px] truncate">
-                      {config.agentRole || 'Rôle non défini'}
+                      {config.agentRole || tp('Rôle non défini')}
                     </p>
                   </div>
                   {/* Activation toggle */}
@@ -1877,7 +1878,7 @@ export default function AgentConfig() {
                     }`}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${config.enabled ? 'bg-primary-400' : 'bg-white/30'}`} />
-                    {config.enabled ? 'Actif' : 'Inactif'}
+                    {config.enabled ? 'Actif' : tp('Inactif')}
                     <span className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${config.enabled ? 'bg-primary-500' : 'bg-white/20'}`}>
                       <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform ${config.enabled ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
                     </span>
@@ -1891,7 +1892,7 @@ export default function AgentConfig() {
                       <ModalInput
                         value={config.agentName}
                         onChange={e => set('agentName', e.target.value)}
-                        placeholder="Rita"
+                        placeholder={tp('Rita')}
                         label="Nom de l'agent"
                         className="ac-input"
                       />
@@ -1900,7 +1901,7 @@ export default function AgentConfig() {
                       <ModalInput
                         value={config.agentRole}
                         onChange={e => set('agentRole', e.target.value)}
-                        placeholder="Vendeuse WhatsApp IA"
+                        placeholder={tp('Vendeuse WhatsApp IA')}
                         label="Rôle"
                         className="ac-input"
                       />
@@ -1925,7 +1926,7 @@ export default function AgentConfig() {
                   </span>
                   <div className="flex items-center gap-2">
                     <span className={`text-[11px] font-semibold ${config.enabled ? 'text-primary-600' : 'text-gray-400'}`}>
-                      {config.enabled ? 'Agent actif' : 'Agent inactif'}
+                      {config.enabled ? 'Agent actif' : tp('Agent inactif')}
                     </span>
                   </div>
                 </div>
@@ -1938,9 +1939,9 @@ export default function AgentConfig() {
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <p className="text-[13px] font-semibold text-gray-600">{instanceError || 'Aucune instance connectée'}</p>
+                      <p className="text-[13px] font-semibold text-gray-600">{instanceError || tp('Aucune instance connectée')}</p>
                       <p className="text-[12px] text-gray-400 text-center max-w-[260px]">
-                        Connectez un numéro WhatsApp dans l'onglet <strong>Service WhatsApp</strong> pour activer l'agent.
+                        Connectez un numéro WhatsApp dans l'onglet <strong>{tp('Service WhatsApp')}</strong> pour activer l'agent.
                       </p>
                       <button type="button" onClick={loadInstances} className="mt-2 text-[12px] font-bold text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-4 py-1.5 rounded-full transition-colors">
                         ↻ Recharger
@@ -1951,17 +1952,17 @@ export default function AgentConfig() {
                       <div className={`w-3 h-3 rounded-full flex-shrink-0 ring-4 ${isInstanceConnected(selectedInstance?.status) ? 'bg-primary-400 ring-primary-100' : 'bg-gray-300 ring-gray-100'}`} />
                       <div className="flex-1 min-w-0">
                         <p className="text-[14px] font-bold text-gray-800 truncate">
-                          {selectedInstance?.customName || selectedInstance?.instanceName || 'Instance WhatsApp'}
+                          {selectedInstance?.customName || selectedInstance?.instanceName || tp('Instance WhatsApp')}
                         </p>
                         <p className="text-[11px] text-gray-400">{isInstanceConnected(selectedInstance?.status) ? '● Connectée et prête' : '○ Hors ligne'}</p>
                       </div>
                       <span className={`flex-shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ${isInstanceConnected(selectedInstance?.status) ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-500'}`}>
-                        {isInstanceConnected(selectedInstance?.status) ? '✓ Prête' : 'Déconnectée'}
+                        {isInstanceConnected(selectedInstance?.status) ? '✓ Prête' : tp('Déconnectée')}
                       </span>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <p className="text-[11px] text-gray-400 mb-2 font-semibold uppercase tracking-wider">Choisir l'instance active</p>
+                      <p className="text-[11px] text-gray-400 mb-2 font-semibold uppercase tracking-wider">{tp('Choisir l\'instance active')}</p>
                       {instances.map(inst => (
                         <button
                           key={inst._id}
@@ -1976,20 +1977,20 @@ export default function AgentConfig() {
                           <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${isInstanceConnected(inst.status) ? 'bg-primary-400' : 'bg-gray-300'}`} />
                           <div className="flex-1 min-w-0">
                             <p className="text-[13px] font-semibold text-gray-800 truncate">
-                              {inst.customName || inst.instanceName || 'Instance WhatsApp'}
+                              {inst.customName || inst.instanceName || tp('Instance WhatsApp')}
                             </p>
-                            <p className="text-[11px] text-gray-400">{isInstanceConnected(inst.status) ? 'Connectée' : 'Déconnectée'}</p>
+                            <p className="text-[11px] text-gray-400">{isInstanceConnected(inst.status) ? 'Connectée' : tp('Déconnectée')}</p>
                           </div>
                           {config.instanceId === inst._id && (
-                            <span className="text-[11px] font-bold text-primary-600 bg-primary-100 px-2 py-0.5 rounded-full flex-shrink-0">✓ Sélectionnée</span>
+                            <span className="text-[11px] font-bold text-primary-600 bg-primary-100 px-2 py-0.5 rounded-full flex-shrink-0">{tp('✓ Sélectionnée')}</span>
                           )}
                         </button>
                       ))}
                     </div>
                   )}
-                  {instanceSwitching && <p className="mt-3 text-[12px] text-blue-600 text-center">Changement en cours…</p>}
-                  {instanceSwitchStatus === 'success' && <p className="mt-3 text-[12px] text-primary-600 text-center">Instance changée ✓</p>}
-                  {instanceSwitchStatus === 'error' && <p className="mt-3 text-[12px] text-red-500 text-center">Impossible de changer l'instance.</p>}
+                  {instanceSwitching && <p className="mt-3 text-[12px] text-blue-600 text-center">{tp('Changement en cours…')}</p>}
+                  {instanceSwitchStatus === 'success' && <p className="mt-3 text-[12px] text-primary-600 text-center">{tp('Instance changée ✓')}</p>}
+                  {instanceSwitchStatus === 'error' && <p className="mt-3 text-[12px] text-red-500 text-center">{tp('Impossible de changer l\'instance.')}</p>}
                 </div>
               </div>
 
@@ -2001,7 +2002,7 @@ export default function AgentConfig() {
                   </span>
                   <div>
                     <h2 className="text-[14px] font-bold text-gray-900">Personnalité &amp; Messages</h2>
-                    <p className="text-[11px] text-gray-400">Cliquez sur un champ pour l'éditer.</p>
+                    <p className="text-[11px] text-gray-400">{tp('Cliquez sur un champ pour l\'éditer.')}</p>
                   </div>
                 </div>
                 <div className="p-4 space-y-2">
@@ -2035,13 +2036,13 @@ export default function AgentConfig() {
               <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center"><Settings size={14} className="text-gray-600" /></span>
-                  <h2 className="text-[13px] font-bold text-gray-900">Comportement</h2>
+                  <h2 className="text-[13px] font-bold text-gray-900">{tp('Comportement')}</h2>
                 </div>
                 <div className="p-4 space-y-4">
 
                   {/* Ton — grille compacte 2+3 */}
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Ton</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{tp('Ton')}</p>
                     <div className="grid grid-cols-2 gap-1.5">
                       {TONE_OPTIONS.map(t => {
                         const active = config.toneStyle === t.value;
@@ -2063,7 +2064,7 @@ export default function AgentConfig() {
                   {/* Délai de réponse */}
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Délai de réponse</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{tp('Délai de réponse')}</p>
                       <span className="text-[13px] font-bold text-primary-700 tabular-nums">{config.responseDelay}s</span>
                     </div>
                     <div className="relative">
@@ -2081,7 +2082,7 @@ export default function AgentConfig() {
                   {/* Toggles compacts */}
                   <div className="space-y-0 divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
                     {[
-                      { key: 'useEmojis', Icon: Smile, label: 'Emojis dans les réponses' },
+                      { key: 'useEmojis', Icon: Smile, get label() { return tp('Emojis dans les réponses'); } },
                       { key: 'signMessages', Icon: Bot, label: 'Mentionner que c\'est une IA' },
                     ].map(({ key, Icon: ToggleIcon, label }) => (
                       <div key={key} className="flex items-center justify-between px-3 py-2.5 bg-white">
@@ -2102,7 +2103,7 @@ export default function AgentConfig() {
               <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-md bg-purple-50 flex items-center justify-center"><Mic size={14} className="text-purple-600" /></span>
-                  <h2 className="text-[13px] font-bold text-gray-900">Voix</h2>
+                  <h2 className="text-[13px] font-bold text-gray-900">{tp('Voix')}</h2>
                 </div>
                 <div className="p-4 space-y-4">
                   {/* Mode selector — 3 pills */}
@@ -2180,7 +2181,7 @@ export default function AgentConfig() {
                       {config.responseMode === 'both' && (
                         <div>
                           <div className="flex justify-between mb-1">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Fréquence vocale</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{tp('Fréquence vocale')}</p>
                             <span className="text-[11px] font-bold text-primary-700">{config.mixedVoiceReplyChance || 0}%</span>
                           </div>
                           <input type="range" min="0" max="100" value={config.mixedVoiceReplyChance || 0}
@@ -2202,13 +2203,13 @@ export default function AgentConfig() {
                     {(config.agentName || 'R').charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[12px] font-bold text-white leading-none">{config.agentName || 'Rita'}</p>
+                    <p className="text-[12px] font-bold text-white leading-none">{config.agentName || tp('Rita')}</p>
                     <div className="flex items-center gap-1 mt-0.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary-400" />
-                      <span className="text-[10px] text-white/50">En ligne</span>
+                      <span className="text-[10px] text-white/50">{tp('En ligne')}</span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Aperçu</span>
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider">{tp('Aperçu')}</span>
                 </div>
 
                 {/* Messages */}
@@ -2242,7 +2243,7 @@ export default function AgentConfig() {
                   <div className="flex gap-2 bg-white/10 rounded-xl px-3 py-1.5">
                     <input value={simInput} onChange={e => setSimInput(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && handleSimSend()}
-                      placeholder="Testez une question…"
+                      placeholder={tp('Testez une question…')}
                       className="flex-1 bg-transparent text-[12px] text-white placeholder-white/30 outline-none" />
                     <button onClick={handleSimSend} disabled={simTyping}
                       className="w-7 h-7 flex items-center justify-center bg-primary-500 hover:bg-primary-400 rounded-lg transition-colors disabled:opacity-40 flex-shrink-0">
@@ -2273,15 +2274,15 @@ export default function AgentConfig() {
                     <span className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
                       <Zap className="w-3.5 h-3.5 text-violet-500" />
                     </span>
-                    <h2 className="text-[14px] font-bold text-gray-900">3 Modes de Fonctionnement</h2>
+                    <h2 className="text-[14px] font-bold text-gray-900">{tp('3 Modes de Fonctionnement')}</h2>
                   </div>
-                  <p className="text-[11.5px] text-gray-400 ml-9">Rita adapte sa personnalité selon l'interlocuteur</p>
+                  <p className="text-[11.5px] text-gray-400 ml-9">{tp('Rita adapte sa personnalité selon l\'interlocuteur')}</p>
                 </div>
                 <div className="px-4 pb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
                     { id: 'client',    Icon: Users,    label: 'Mode Client',    subtitle: 'Vente & Support',    desc: 'Chaleureuse, naturelle, persuasive. Logique Comprendre → Valeur → Question.', accent: '#05976D', bg: '#f0fdf8', pill: 'bg-primary-100 text-primary-700' },
-                    { id: 'boss',      Icon: BarChart3, label: 'Mode Boss',      subtitle: 'Analyse & Rapports', desc: 'Professionnelle, analytique, directe. Analyse les conversations et propose des améliorations.', accent: '#2563eb', bg: '#eff6ff', pill: 'bg-blue-100 text-blue-700' },
-                    { id: 'execution', Icon: Settings,  label: 'Mode Exécution', subtitle: 'Actions Boss',        desc: 'Comprend, adapte et exécute les instructions intelligemment sans copier.', accent: '#d97706', bg: '#fffbeb', pill: 'bg-amber-100 text-amber-700' },
+                    { id: 'boss',      Icon: BarChart3, label: 'Mode Boss',      subtitle: 'Analyse & Rapports', get desc() { return tp('Professionnelle, analytique, directe. Analyse les conversations et propose des améliorations.'); }, accent: '#2563eb', bg: '#eff6ff', pill: 'bg-blue-100 text-blue-700' },
+                    { id: 'execution', Icon: Settings,  get label() { return tp('Mode Exécution'); }, subtitle: 'Actions Boss',        get desc() { return tp('Comprend, adapte et exécute les instructions intelligemment sans copier.'); }, accent: '#d97706', bg: '#fffbeb', pill: 'bg-amber-100 text-amber-700' },
                   ].map(mode => {
                     const key = `mode${mode.id.charAt(0).toUpperCase() + mode.id.slice(1)}Enabled`;
                     const active = !!config[key];
@@ -2298,7 +2299,7 @@ export default function AgentConfig() {
                               <mode.Icon className="w-4 h-4" style={{ color: active ? mode.accent : '#9ca3af' }} />
                             </span>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${active ? mode.pill : 'bg-gray-100 text-gray-400'}`}>
-                              {active ? 'Actif' : 'Inactif'}
+                              {active ? 'Actif' : tp('Inactif')}
                             </span>
                           </div>
                           <div>
@@ -2312,7 +2313,7 @@ export default function AgentConfig() {
                               style={{ background: active ? mode.accent : '#d1d5db' }}>
                               <div className={`w-3 h-3 rounded-full bg-white shadow transition-transform duration-200 ${active ? 'translate-x-3' : 'translate-x-0'}`} />
                             </div>
-                            <span className="text-[10.5px] text-gray-400">{active ? 'Activé' : 'Désactivé'}</span>
+                            <span className="text-[10.5px] text-gray-400">{active ? 'Activé' : tp('Désactivé')}</span>
                           </div>
                         </div>
                       </button>
@@ -2328,9 +2329,9 @@ export default function AgentConfig() {
                     <span className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
                       <Target className="w-3.5 h-3.5 text-orange-500" />
                     </span>
-                    <h2 className="text-[14px] font-bold text-gray-900">Niveau d'autonomie</h2>
+                    <h2 className="text-[14px] font-bold text-gray-900">{tp('Niveau d\'autonomie')}</h2>
                   </div>
-                  <p className="text-[11.5px] text-gray-400 ml-6">Contrôlez jusqu'où Rita peut aller sans intervention humaine</p>
+                  <p className="text-[11.5px] text-gray-400 ml-6">{tp('Contrôlez jusqu\'où Rita peut aller sans intervention humaine')}</p>
                 </div>
                 <div className="px-6 pb-6">
                   {/* Slider visuel 5 niveaux */}
@@ -2380,14 +2381,14 @@ export default function AgentConfig() {
                     <span className="w-7 h-7 rounded-lg bg-cyan-50 flex items-center justify-center">
                       <Eye className="w-3.5 h-3.5 text-cyan-500" />
                     </span>
-                    <h2 className="text-[14px] font-bold text-gray-900">Analyse Avant Chaque Réponse</h2>
+                    <h2 className="text-[14px] font-bold text-gray-900">{tp('Analyse Avant Chaque Réponse')}</h2>
                   </div>
-                  <p className="text-[11.5px] text-gray-400 ml-9">Rita analyse chaque message pour adapter sa stratégie</p>
+                  <p className="text-[11.5px] text-gray-400 ml-9">{tp('Rita analyse chaque message pour adapter sa stratégie')}</p>
                 </div>
                 <div className="px-4 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    { key: 'detectClientType',    Icon: Users,       label: 'Type de client',   desc: 'Curieux, acheteur, hésitant ou revendeur',         color: '#0891b2', bg: '#ecfeff' },
-                    { key: 'detectInterestLevel', Icon: TrendingUp,  label: "Niveau d'intérêt", desc: 'Faible / moyen / élevé → adapter la pression',     color: '#7c3aed', bg: '#f5f3ff' },
+                    { key: 'detectClientType',    Icon: Users,       label: 'Type de client',   get desc() { return tp('Curieux, acheteur, hésitant ou revendeur'); },         color: '#0891b2', bg: '#ecfeff' },
+                    { key: 'detectInterestLevel', Icon: TrendingUp,  label: "Niveau d'intérêt", get desc() { return tp('Faible / moyen / élevé → adapter la pression'); },     color: '#7c3aed', bg: '#f5f3ff' },
                   ].map(item => {
                     const active = !!config[item.key];
                     return (
@@ -2423,12 +2424,12 @@ export default function AgentConfig() {
                   </span>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-[13.5px] text-gray-900">Relances & Suivi Clients</p>
-                    <p className="text-[11.5px] text-gray-400 mt-0.5">Rita relance automatiquement les prospects silencieux</p>
+                    <p className="text-[11.5px] text-gray-400 mt-0.5">{tp('Rita relance automatiquement les prospects silencieux')}</p>
                   </div>
                   {/* big pill toggle */}
                   <div className="flex-shrink-0 flex items-center gap-2">
                     <span className={`text-[11px] font-bold ${config.followUpEnabled ? 'text-purple-600' : 'text-gray-400'}`}>
-                      {config.followUpEnabled ? 'Activé' : 'Désactivé'}
+                      {config.followUpEnabled ? 'Activé' : tp('Désactivé')}
                     </span>
                     <div className="w-10 h-6 rounded-full flex items-center px-0.5 transition-all duration-200"
                       style={{ background: config.followUpEnabled ? '#a855f7' : '#d1d5db' }}>
@@ -2442,17 +2443,17 @@ export default function AgentConfig() {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Délai */}
                       <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-3">
-                        <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Relancer après</p>
+                        <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Relancer après')}</p>
                         <div className="flex items-baseline gap-1.5">
                           <input type="number" value={config.followUpDelay}
                             onChange={e => set('followUpDelay', parseInt(e.target.value) || 24)}
                             min="1" className="w-16 text-[20px] font-bold text-gray-900 bg-transparent border-none outline-none p-0" />
-                          <span className="text-[12px] text-gray-400 font-medium">heures</span>
+                          <span className="text-[12px] text-gray-400 font-medium">{tp('heures')}</span>
                         </div>
                       </div>
                       {/* Max relances */}
                       <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-3">
-                        <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Max relances</p>
+                        <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Max relances')}</p>
                         <div className="flex items-center gap-2 mt-1">
                           {[1,2,3,4,5].map(n => (
                             <button key={n} type="button" onClick={() => set('followUpMaxRelances', n)}
@@ -2467,7 +2468,7 @@ export default function AgentConfig() {
                     </div>
                     {/* Message */}
                     <div>
-                      <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Message de relance</p>
+                      <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Message de relance')}</p>
                       <ModalTextarea value={config.followUpMessage}
                         onChange={e => set('followUpMessage', e.target.value)}
                         rows={5}
@@ -2483,7 +2484,7 @@ export default function AgentConfig() {
               {/* Permissions */}
               <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900">Permissions</h2>
+                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Permissions')}</h2>
                 </div>
                 <div className="p-5 space-y-1">
                   <Toggle enabled={config.canCloseDeals} onChange={v => set('canCloseDeals', v)}
@@ -2500,7 +2501,7 @@ export default function AgentConfig() {
                 <div className="px-5 py-4 border-b border-gray-100">
                   <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
                     <span className="text-sm">🧠</span>
-                    Comportement Humain
+                    {tp('Comportement Humain')}
                   </h2>
                 </div>
                 <div className="p-5 space-y-1">
@@ -2514,7 +2515,7 @@ export default function AgentConfig() {
               {/* Business hours */}
               <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900">Disponibilité</h2>
+                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Disponibilité')}</h2>
                 </div>
                 <div className="p-5 space-y-3">
                   <Toggle enabled={config.businessHoursOnly} onChange={v => set('businessHoursOnly', v)}
@@ -2548,9 +2549,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
                       <ShieldCheck className="w-4 h-4 text-primary-600" />
                     </span>
-                    Règles de Vente Intelligente
+                    {tp('Règles de Vente Intelligente')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Les règles que Rita respecte en permanence</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Les règles que Rita respecte en permanence')}</p>
                 </div>
                 <div className="p-6 space-y-1">
                   <Toggle enabled={config.alwaysAnswerFirst} onChange={v => set('alwaysAnswerFirst', v)}
@@ -2575,9 +2576,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
                       <MessageCircle className="w-4 h-4 text-green-600" />
                     </span>
-                    Groupe WhatsApp
+                    {tp('Groupe WhatsApp')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Rita promotionnera votre groupe auprès des clients intéressés</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Rita promotionnera votre groupe auprès des clients intéressés')}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <Toggle
@@ -2609,9 +2610,9 @@ export default function AgentConfig() {
                       <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                         <Bell className="w-4 h-4 text-amber-600" />
                       </span>
-                      Offres Commerciales
+                      {tp('Offres Commerciales')}
                     </h2>
-                    <p className="text-[12px] text-gray-400 mt-1">Promotions, bonus et arguments que Rita peut proposer au bon moment.</p>
+                    <p className="text-[12px] text-gray-400 mt-1">{tp('Promotions, bonus et arguments que Rita peut proposer au bon moment.')}</p>
                   </div>
                   <Toggle enabled={config.commercialOffersEnabled} onChange={v => set('commercialOffersEnabled', v)} label="" />
                 </div>
@@ -2622,7 +2623,7 @@ export default function AgentConfig() {
                         value={config.followUpOffer || ''}
                         onChange={e => set('followUpOffer', e.target.value)}
                         rows={4}
-                        placeholder="Ex: pour aujourd'hui seulement, livraison offerte ou bonus inclus"
+                        placeholder={tp('Ex: pour aujourd\'hui seulement, livraison offerte ou bonus inclus')}
                         label="Offre de relance globale"
                         className="ac-textarea"
                       />
@@ -2641,7 +2642,7 @@ export default function AgentConfig() {
 
                     {(config.commercialOffers || []).length === 0 ? (
                       <div className="rounded-xl border border-dashed border-gray-200 p-4 text-center text-[12px] text-gray-400">
-                        Aucune offre configurée.
+                        {tp('Aucune offre configurée.')}
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -2652,7 +2653,7 @@ export default function AgentConfig() {
                               <div className="flex items-center gap-2">
                                 <Toggle enabled={offer.active !== false} onChange={v => updateCommercialOffer(idx, 'active', v)} label="" />
                                 <button type="button" onClick={() => removeCommercialOffer(idx)} className="text-[12px] text-red-500 hover:text-red-700">
-                                  Supprimer
+                                  {tp('Supprimer')}
                                 </button>
                               </div>
                             </div>
@@ -2669,10 +2670,10 @@ export default function AgentConfig() {
                               </Field>
                             </div>
                             <Field label="S'applique à">
-                              <ModalInput value={offer.appliesTo || ''} onChange={e => updateCommercialOffer(idx, 'appliesTo', e.target.value)} placeholder="Tous les produits / produit spécifique / clients revendeurs" label="S'applique à" className="ac-input" />
+                              <ModalInput value={offer.appliesTo || ''} onChange={e => updateCommercialOffer(idx, 'appliesTo', e.target.value)} placeholder={tp('Tous les produits / produit spécifique / clients revendeurs')} label="S'applique à" className="ac-input" />
                             </Field>
                             <Field label="Bénéfice client">
-                              <ModalInput value={offer.benefit || ''} onChange={e => updateCommercialOffer(idx, 'benefit', e.target.value)} placeholder="Réduction, bonus, livraison, cadeau" label="Bénéfice client" className="ac-input" />
+                              <ModalInput value={offer.benefit || ''} onChange={e => updateCommercialOffer(idx, 'benefit', e.target.value)} placeholder={tp('Réduction, bonus, livraison, cadeau')} label="Bénéfice client" className="ac-input" />
                             </Field>
                             <Field label="Message à utiliser">
                               <ModalTextarea value={offer.message || ''} onChange={e => updateCommercialOffer(idx, 'message', e.target.value)} rows={4} label="Message à utiliser" className="ac-textarea" />
@@ -2695,9 +2696,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
                       <AlertTriangle className="w-4 h-4 text-red-500" />
                     </span>
-                    Gestion des Cas Spéciaux
+                    {tp('Gestion des Cas Spéciaux')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Comment Rita réagit à chaque situation particulière</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Comment Rita réagit à chaque situation particulière')}</p>
                 </div>
                 <div className="p-6 space-y-2">
                   {(config.specialCases || SPECIAL_CASES_DEFAULT).map((sc, idx) => (
@@ -2728,7 +2729,7 @@ export default function AgentConfig() {
                 <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                   <div>
                     <h2 className="text-[15px] font-bold text-gray-900">💰 Prix & Négociation</h2>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Configure comment Rita gère les demandes de réduction</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{tp('Configure comment Rita gère les demandes de réduction')}</p>
                   </div>
                   <button type="button"
                     onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), enabled: !config.pricingNegotiation?.enabled })}
@@ -2742,23 +2743,23 @@ export default function AgentConfig() {
 
                     {/* Politique de prix */}
                     <div>
-                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Politique de prix</p>
+                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">{tp('Politique de prix')}</p>
                       <div className="grid grid-cols-2 gap-2">
                         <button type="button"
                           onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), priceIsFinal: true, allowDiscount: false })}
                           className={`text-left px-3 py-3 rounded-xl border-2 transition-all duration-200 ${
                             config.pricingNegotiation?.priceIsFinal ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'
                           }`}>
-                          <p className="font-semibold text-[12px] text-gray-800">🔒 Prix fixe</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">Rita ne négocie pas. Le prix affiché est le dernier prix.</p>
+                          <p className="font-semibold text-[12px] text-gray-800">{tp('🔒 Prix fixe')}</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5">{tp('Rita ne négocie pas. Le prix affiché est le dernier prix.')}</p>
                         </button>
                         <button type="button"
                           onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), priceIsFinal: false, allowDiscount: true })}
                           className={`text-left px-3 py-3 rounded-xl border-2 transition-all duration-200 ${
                             !config.pricingNegotiation?.priceIsFinal ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'
                           }`}>
-                          <p className="font-semibold text-[12px] text-gray-800">🤝 Prix négociable</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">Rita peut accorder des réductions selon tes règles.</p>
+                          <p className="font-semibold text-[12px] text-gray-800">{tp('🤝 Prix négociable')}</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5">{tp('Rita peut accorder des réductions selon tes règles.')}</p>
                         </button>
                       </div>
                     </div>
@@ -2769,12 +2770,12 @@ export default function AgentConfig() {
 
                         {/* Style de négociation */}
                         <div>
-                          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Style de négociation</p>
+                          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">{tp('Style de négociation')}</p>
                           <div className="grid grid-cols-3 gap-2">
                             {[
-                              { id: 'firm', label: '💪 Ferme', desc: 'Réduction rare, seulement si insistance' },
-                              { id: 'flexible', label: '🤝 Flexible', desc: 'Ouvert à la discussion, à mi-chemin' },
-                              { id: 'generous', label: '🎁 Généreux', desc: 'Accorde facilement la réduction max' },
+                              { id: 'firm', label: '💪 Ferme', get desc() { return tp('Réduction rare, seulement si insistance'); } },
+                              { id: 'flexible', label: '🤝 Flexible', get desc() { return tp('Ouvert à la discussion, à mi-chemin'); } },
+                              { id: 'generous', get label() { return tp('🎁 Généreux'); }, get desc() { return tp('Accorde facilement la réduction max'); } },
                             ].map(s => (
                               <button key={s.id} type="button"
                                 onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), negotiationStyle: s.id })}
@@ -2805,7 +2806,7 @@ export default function AgentConfig() {
                           <ModalTextarea
                             value={config.pricingNegotiation?.discountConditions || ''}
                             onChange={e => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), discountConditions: e.target.value })}
-                            placeholder="ex: Si le client achète 2 produits ou plus. Si le client est un ancien client."
+                            placeholder={tp('ex: Si le client achète 2 produits ou plus. Si le client est un ancien client.')}
                             rows={4}
                             label="Conditions de réduction"
                             className="ac-textarea"
@@ -2819,7 +2820,7 @@ export default function AgentConfig() {
                       <ModalInput
                         value={config.pricingNegotiation?.refusalMessage || ''}
                         onChange={e => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), refusalMessage: e.target.value })}
-                        placeholder="ex: C'est déjà notre meilleur prix 🙏"
+                        placeholder={tp('ex: C\'est déjà notre meilleur prix 🙏')}
                         label="Message de refus"
                         className="ac-input"
                       />
@@ -2830,7 +2831,7 @@ export default function AgentConfig() {
                       <ModalTextarea
                         value={config.pricingNegotiation?.globalNote || ''}
                         onChange={e => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), globalNote: e.target.value })}
-                        placeholder="ex: Ne jamais descendre en dessous du dernier prix. Proposer la livraison gratuite à la place d'une réduction."
+                        placeholder={tp('ex: Ne jamais descendre en dessous du dernier prix. Proposer la livraison gratuite à la place d\'une réduction.')}
                         rows={4}
                         label="Note globale sur les prix"
                         className="ac-textarea"
@@ -2839,7 +2840,7 @@ export default function AgentConfig() {
 
                     <div className="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
                       <span className="text-amber-500 text-sm mt-0.5">💡</span>
-                      <p className="text-[11px] text-amber-700 leading-snug">Tu peux aussi configurer le <strong>dernier prix</strong> et la <strong>réduction max</strong> par produit dans l'onglet <strong>Produits</strong>.</p>
+                      <p className="text-[11px] text-amber-700 leading-snug">{tp('Tu peux aussi configurer le')} <strong>{tp('dernier prix')}</strong> {tp('et la')} <strong>{tp('réduction max')}</strong> {tp('par produit dans l\'onglet')} <strong>{tp('Produits')}</strong>.</p>
                     </div>
 
                   </div>
@@ -2859,8 +2860,8 @@ export default function AgentConfig() {
                   <Package className="w-5 h-5" style={{ color: ACCENT }} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-[15px] font-bold text-gray-900">Importer depuis le store</h3>
-                  <p className="text-[12px] text-gray-400">Sélectionnez des produits à ajouter au catalogue Rita</p>
+                  <h3 className="text-[15px] font-bold text-gray-900">{tp('Importer depuis le store')}</h3>
+                  <p className="text-[12px] text-gray-400">{tp('Sélectionnez des produits à ajouter au catalogue Rita')}</p>
                 </div>
                 <button onClick={() => setShowStoreImport(false)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
                   <X className="w-4 h-4" />
@@ -2871,7 +2872,7 @@ export default function AgentConfig() {
               <div className="px-5 py-3 border-b border-gray-100">
                 <input
                   type="text"
-                  placeholder="Rechercher un produit..."
+                  placeholder={tp('Rechercher un produit...')}
                   value={storeImportSearch}
                   onChange={e => {
                     setStoreImportSearch(e.target.value);
@@ -2892,8 +2893,8 @@ export default function AgentConfig() {
                 ) : storeImportProducts.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-16 text-center">
                     <Package className="w-10 h-10 text-gray-200 mb-3" />
-                    <p className="text-[13px] font-semibold text-gray-400">Aucun produit trouvé</p>
-                    <p className="text-[11px] text-gray-300 mt-1">Essayez une autre recherche ou ajoutez des produits dans votre store</p>
+                    <p className="text-[13px] font-semibold text-gray-400">{tp('Aucun produit trouvé')}</p>
+                    <p className="text-[11px] text-gray-300 mt-1">{tp('Essayez une autre recherche ou ajoutez des produits dans votre store')}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -2926,7 +2927,7 @@ export default function AgentConfig() {
                           </div>
                           {/* Info */}
                           <div className="p-2.5">
-                            <p className="text-[12px] font-semibold text-gray-900 leading-tight line-clamp-2">{p.name || 'Sans nom'}</p>
+                            <p className="text-[12px] font-semibold text-gray-900 leading-tight line-clamp-2">{p.name || tp('Sans nom')}</p>
                             {p.price != null && (
                               <p className="text-[11px] font-bold mt-1" style={{ color: ACCENT }}>{Number(p.price).toLocaleString('fr-FR')} FCFA</p>
                             )}
@@ -2954,12 +2955,12 @@ export default function AgentConfig() {
                 <span className="text-[12px] text-gray-400">
                   {storeImportSelected.size > 0
                     ? <span className="font-semibold" style={{ color: ACCENT }}>{storeImportSelected.size} produit{storeImportSelected.size > 1 ? 's' : ''} sélectionné{storeImportSelected.size > 1 ? 's' : ''}</span>
-                    : 'Sélectionnez des produits'}
+                    : tp('Sélectionnez des produits')}
                 </span>
                 <div className="flex items-center gap-2">
                   <button onClick={() => setShowStoreImport(false)}
                     className="px-4 py-2 text-[12px] font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
-                    Annuler
+                    {tp('Annuler')}
                   </button>
                   <button
                     onClick={confirmStoreImport}
@@ -2988,30 +2989,30 @@ export default function AgentConfig() {
                       <MapPin className="w-5 h-5 text-white" />
                     </span>
                     <div>
-                      <h2 className="text-[16px] font-bold text-white tracking-tight">Configuration Livraison</h2>
-                      <p className="text-[12px] text-blue-100 mt-0.5">Tarifs, zones et délais que Rita mentionnera aux clients</p>
+                      <h2 className="text-[16px] font-bold text-white tracking-tight">{tp('Configuration Livraison')}</h2>
+                      <p className="text-[12px] text-blue-100 mt-0.5">{tp('Tarifs, zones et délais que Rita mentionnera aux clients')}</p>
                     </div>
                   </div>
                 </div>
                 <div className="p-6 space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Field label="Frais de livraison" hint="ex: 500 FCFA, gratuit">
-                      <ModalInput value={config.deliveryFee || ''} onChange={e => set('deliveryFee', e.target.value)} placeholder="ex: 500 FCFA" label="Frais de livraison" className="ac-input" />
+                      <ModalInput value={config.deliveryFee || ''} onChange={e => set('deliveryFee', e.target.value)} placeholder={tp('ex: 500 FCFA')} label="Frais de livraison" className="ac-input" />
                     </Field>
                     <Field label="Délai estimé" hint="ex: 24h, 2-3 jours">
-                      <ModalInput value={config.deliveryDelay || ''} onChange={e => set('deliveryDelay', e.target.value)} placeholder="ex: 24 heures" label="Délai estimé" className="ac-input" />
+                      <ModalInput value={config.deliveryDelay || ''} onChange={e => set('deliveryDelay', e.target.value)} placeholder={tp('ex: 24 heures')} label="Délai estimé" className="ac-input" />
                     </Field>
                   </div>
 
                   <Field label="Informations complémentaires" hint="optionnel">
-                    <ModalTextarea value={config.deliveryInfo || ''} onChange={e => set('deliveryInfo', e.target.value)} placeholder="ex: Paiement à la livraison, vérification avant paiement" rows={4} label="Informations complémentaires" className="ac-textarea" />
+                    <ModalTextarea value={config.deliveryInfo || ''} onChange={e => set('deliveryInfo', e.target.value)} placeholder={tp('ex: Paiement à la livraison, vérification avant paiement')} rows={4} label="Informations complémentaires" className="ac-textarea" />
                   </Field>
 
                   {/* Zones header + add button */}
                   <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                      <span className="text-[13px] font-bold text-gray-800">Zones de livraison</span>
+                      <span className="text-[13px] font-bold text-gray-800">{tp('Zones de livraison')}</span>
                       {(config.deliveryZones || []).length > 0 && (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}>
                           {(config.deliveryZones || []).length}
@@ -3028,8 +3029,8 @@ export default function AgentConfig() {
                   {(config.deliveryZones || []).length === 0 ? (
                     <div className="rounded-xl border-2 border-dashed border-blue-200 p-8 text-center" style={{ background: 'rgba(59,130,246,0.03)' }}>
                       <MapPin className="w-8 h-8 text-blue-300 mx-auto mb-2" />
-                      <p className="text-[13px] font-medium text-gray-400">Aucune zone configurée</p>
-                      <p className="text-[11px] text-gray-300 mt-1">Ajoutez vos premières zones de livraison</p>
+                      <p className="text-[13px] font-medium text-gray-400">{tp('Aucune zone configurée')}</p>
+                      <p className="text-[11px] text-gray-300 mt-1">{tp('Ajoutez vos premières zones de livraison')}</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -3038,20 +3039,20 @@ export default function AgentConfig() {
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                               <span className="w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-bold text-white" style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}>{idx + 1}</span>
-                              <span className="text-[12px] font-bold text-gray-700">{zone.city || 'Nouvelle zone'}</span>
+                              <span className="text-[12px] font-bold text-gray-700">{zone.city || tp('Nouvelle zone')}</span>
                             </div>
                             <button type="button" onClick={() => set('deliveryZones', (config.deliveryZones || []).filter((_, i) => i !== idx))}
                               className="w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 transition-all duration-200 text-[14px]">✕</button>
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <Field label="Ville/Zone">
-                              <ModalInput value={zone.city || ''} onChange={e => { const z = [...(config.deliveryZones || [])]; z[idx].city = e.target.value; set('deliveryZones', z); }} placeholder="ex: Douala" label="Ville/Zone" className="ac-input" />
+                              <ModalInput value={zone.city || ''} onChange={e => { const z = [...(config.deliveryZones || [])]; z[idx].city = e.target.value; set('deliveryZones', z); }} placeholder={tp('ex: Douala')} label="Ville/Zone" className="ac-input" />
                             </Field>
                             <Field label="Tarif">
-                              <ModalInput value={zone.fee || ''} onChange={e => { const z = [...(config.deliveryZones || [])]; z[idx].fee = e.target.value; set('deliveryZones', z); }} placeholder="ex: 500 FCFA" label="Tarif" className="ac-input" />
+                              <ModalInput value={zone.fee || ''} onChange={e => { const z = [...(config.deliveryZones || [])]; z[idx].fee = e.target.value; set('deliveryZones', z); }} placeholder={tp('ex: 500 FCFA')} label="Tarif" className="ac-input" />
                             </Field>
                             <Field label="Délai">
-                              <ModalInput value={zone.delay || ''} onChange={e => { const z = [...(config.deliveryZones || [])]; z[idx].delay = e.target.value; set('deliveryZones', z); }} placeholder="ex: 24h" label="Délai" className="ac-input" />
+                              <ModalInput value={zone.delay || ''} onChange={e => { const z = [...(config.deliveryZones || [])]; z[idx].delay = e.target.value; set('deliveryZones', z); }} placeholder={tp('ex: 24h')} label="Délai" className="ac-input" />
                             </Field>
                           </div>
                         </div>
@@ -3069,8 +3070,8 @@ export default function AgentConfig() {
                       <Package className="w-5 h-5 text-white" />
                     </span>
                     <div>
-                      <h2 className="text-[16px] font-bold text-white tracking-tight">Expéditions</h2>
-                      <p className="text-[12px] text-orange-100 mt-0.5">Villes hors zone — livraison via agence</p>
+                      <h2 className="text-[16px] font-bold text-white tracking-tight">{tp('Expéditions')}</h2>
+                      <p className="text-[12px] text-orange-100 mt-0.5">{tp('Villes hors zone — livraison via agence')}</p>
                     </div>
                   </div>
                   <Toggle enabled={config.expeditionEnabled} onChange={v => set('expeditionEnabled', v)} label="" />
@@ -3081,14 +3082,14 @@ export default function AgentConfig() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-                        <span className="text-[13px] font-bold text-gray-800">Villes éligibles</span>
+                        <span className="text-[13px] font-bold text-gray-800">{tp('Villes éligibles')}</span>
                         {(config.expeditionCities || []).length > 0 && (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f97316, #c2410c)' }}>
                             {(config.expeditionCities || []).length}
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-gray-400">Cochez les villes où vous pouvez expédier vos produits</p>
+                      <p className="text-[11px] text-gray-400">{tp('Cochez les villes où vous pouvez expédier vos produits')}</p>
                       
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {(CITIES_BY_COUNTRY[config.businessCountry || 'CM'] || CITIES_BY_COUNTRY.CM).map((city) => {
@@ -3121,7 +3122,7 @@ export default function AgentConfig() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                          <span className="text-[13px] font-bold text-gray-800">Comptes Mobile Money</span>
+                          <span className="text-[13px] font-bold text-gray-800">{tp('Comptes Mobile Money')}</span>
                         </div>
                         <button type="button" onClick={() => { const u = { ...config.paymentCoordinates, mobileMoney: [...(config.paymentCoordinates?.mobileMoney || []), { provider: 'Orange Money', number: '', accountName: '' }] }; set('paymentCoordinates', u); }}
                           className="text-[12px] font-semibold px-4 py-2 rounded-xl transition-all duration-200 hover:shadow-md"
@@ -3133,8 +3134,8 @@ export default function AgentConfig() {
                       {(config.paymentCoordinates?.mobileMoney || []).length === 0 ? (
                         <div className="rounded-xl border-2 border-dashed border-orange-200 p-8 text-center" style={{ background: 'rgba(249,115,22,0.03)' }}>
                           <Phone className="w-8 h-8 text-orange-300 mx-auto mb-2" />
-                          <p className="text-[13px] font-medium text-gray-400">Aucun compte configuré</p>
-                          <p className="text-[11px] text-gray-300 mt-1">Ajoutez Orange Money, MTN MoMo, etc.</p>
+                          <p className="text-[13px] font-medium text-gray-400">{tp('Aucun compte configuré')}</p>
+                          <p className="text-[11px] text-gray-300 mt-1">{tp('Ajoutez Orange Money, MTN MoMo, etc.')}</p>
                         </div>
                       ) : (
                         <div className="space-y-3">
@@ -3143,24 +3144,24 @@ export default function AgentConfig() {
                               <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-2">
                                   <span className="w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-bold text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>{idx + 1}</span>
-                                  <span className="text-[12px] font-bold text-gray-700">{mm.provider || 'Compte'}</span>
+                                  <span className="text-[12px] font-bold text-gray-700">{mm.provider || tp('Compte')}</span>
                                 </div>
                                 <button type="button" onClick={() => { const u = { ...config.paymentCoordinates }; u.mobileMoney = u.mobileMoney.filter((_, i) => i !== idx); set('paymentCoordinates', u); }}
                                   className="w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 transition-all duration-200 text-[14px]">✕</button>
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <Field label="Opérateur">
-                                  <select value={mm.provider || 'Orange Money'} onChange={e => { const u = { ...config.paymentCoordinates }; u.mobileMoney[idx].provider = e.target.value; set('paymentCoordinates', u); }} className="ac-input">
-                                    <option value="Orange Money">Orange Money</option>
-                                    <option value="MTN Mobile Money">MTN Mobile Money</option>
-                                    <option value="Express Union">Express Union</option>
+                                  <select value={mm.provider || tp('Orange Money')} onChange={e => { const u = { ...config.paymentCoordinates }; u.mobileMoney[idx].provider = e.target.value; set('paymentCoordinates', u); }} className="ac-input">
+                                    <option value="Orange Money">{tp('Orange Money')}</option>
+                                    <option value="MTN Mobile Money">{tp('MTN Mobile Money')}</option>
+                                    <option value="Express Union">{tp('Express Union')}</option>
                                   </select>
                                 </Field>
                                 <Field label="Numéro">
-                                  <ModalInput value={mm.number || ''} onChange={e => { const u = { ...config.paymentCoordinates }; u.mobileMoney[idx].number = e.target.value; set('paymentCoordinates', u); }} placeholder="ex: 690123456" label="Numéro Mobile Money" className="ac-input" />
+                                  <ModalInput value={mm.number || ''} onChange={e => { const u = { ...config.paymentCoordinates }; u.mobileMoney[idx].number = e.target.value; set('paymentCoordinates', u); }} placeholder={tp('ex: 690123456')} label="Numéro Mobile Money" className="ac-input" />
                                 </Field>
                                 <Field label="Nom du compte">
-                                  <ModalInput value={mm.accountName || ''} onChange={e => { const u = { ...config.paymentCoordinates }; u.mobileMoney[idx].accountName = e.target.value; set('paymentCoordinates', u); }} placeholder="ex: Jean KOUMEN" label="Nom du compte" className="ac-input" />
+                                  <ModalInput value={mm.accountName || ''} onChange={e => { const u = { ...config.paymentCoordinates }; u.mobileMoney[idx].accountName = e.target.value; set('paymentCoordinates', u); }} placeholder={tp('ex: Jean KOUMEN')} label="Nom du compte" className="ac-input" />
                                 </Field>
                               </div>
                             </div>
@@ -3171,12 +3172,12 @@ export default function AgentConfig() {
 
                     {/* Instructions */}
                     <Field label="Instructions spéciales (optionnel)" hint="Instructions pour Rita concernant les expéditions">
-                      <ModalTextarea value={config.expeditionInstructions || ''} onChange={e => set('expeditionInstructions', e.target.value)} placeholder="ex: Toujours demander confirmation du point de retrait avant d'envoyer les coordonnées" rows={4} label="Instructions spéciales expédition" className="ac-textarea" />
+                      <ModalTextarea value={config.expeditionInstructions || ''} onChange={e => set('expeditionInstructions', e.target.value)} placeholder={tp('ex: Toujours demander confirmation du point de retrait avant d\'envoyer les coordonnées')} rows={4} label="Instructions spéciales expédition" className="ac-textarea" />
                     </Field>
 
                     {/* Flow info */}
                     <div className="rounded-xl p-5 space-y-3" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', border: '1px solid #fed7aa' }}>
-                      <p className="text-[13px] font-bold text-orange-800 flex items-center gap-2">📦 Comment ça fonctionne</p>
+                      <p className="text-[13px] font-bold text-orange-800 flex items-center gap-2">{tp('📦 Comment ça fonctionne')}</p>
                       <div className="space-y-2">
                         {[
                           { n: '1', t: 'Rita détecte si le client est dans une ville hors zone' },
@@ -3204,7 +3205,7 @@ export default function AgentConfig() {
                 <div className="px-5 py-4" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
                   <h2 className="text-[15px] font-bold text-white flex items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-slate-300" />
-                    Récapitulatif
+                    {tp('Récapitulatif')}
                   </h2>
                 </div>
                 <div className="p-5 space-y-3">
@@ -3214,7 +3215,7 @@ export default function AgentConfig() {
                         <MapPin className="w-4 h-4 text-white" />
                       </span>
                       <div className="flex-1">
-                        <p className="text-[12px] font-bold text-blue-900">Livraison locale</p>
+                        <p className="text-[12px] font-bold text-blue-900">{tp('Livraison locale')}</p>
                         <p className="text-[11px] text-blue-700 mt-0.5">
                           {config.deliveryFee ? `${config.deliveryFee}` : 'Non configuré'}
                           {config.deliveryDelay && ` • ${config.deliveryDelay}`}
@@ -3237,10 +3238,10 @@ export default function AgentConfig() {
                         <Package className="w-4 h-4 text-white" />
                       </span>
                       <div className="flex-1">
-                        <p className="text-[12px] font-bold text-orange-900">Expéditions</p>
+                        <p className="text-[12px] font-bold text-orange-900">{tp('Expéditions')}</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <span className="w-2 h-2 rounded-full" style={{ background: config.expeditionEnabled ? '#22c55e' : '#ef4444' }}></span>
-                          <span className="text-[11px] text-orange-700">{config.expeditionEnabled ? 'Activé' : 'Désactivé'}</span>
+                          <span className="text-[11px] text-orange-700">{config.expeditionEnabled ? 'Activé' : tp('Désactivé')}</span>
                         </div>
                       </div>
                     </div>
@@ -3266,7 +3267,7 @@ export default function AgentConfig() {
                   <span className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0F6B4F, #10b981)' }}>
                     <Sparkles className="w-3.5 h-3.5 text-white" />
                   </span>
-                  <p className="text-[13px] font-bold text-primary-800">Conseil</p>
+                  <p className="text-[13px] font-bold text-primary-800">{tp('Conseil')}</p>
                 </div>
                 <p className="text-[11px] text-primary-700 leading-relaxed">
                   Configurez les zones de livraison locale pour Douala/Yaoundé, et activez les expéditions pour les autres villes du Cameroun.
@@ -3287,28 +3288,28 @@ export default function AgentConfig() {
               <div className="flex items-center gap-2">
                 <div className="flex-1">
                   <h2 className="text-[14px] font-bold text-gray-900">
-                    Catalogue
+                    {tp('Catalogue')}
                     <span className="ml-2 text-[11px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
                       {config.productCatalog.length}
                     </span>
                   </h2>
                 </div>
                 <button onClick={() => setShowImport(!showImport)}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors" title="Importer CSV">
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors" title={tp('Importer CSV')}>
                   <Upload className="w-3.5 h-3.5" />
                 </button>
                 <button onClick={openStoreImport}
                   className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] font-bold transition-all hover:opacity-90 active:scale-95 border"
                   style={{ color: ACCENT, borderColor: ACCENT, background: `${ACCENT}10` }}
-                  title="Importer depuis le store Scalor">
+                  title={tp('Importer depuis le store Scalor')}>
                   <Package className="w-3.5 h-3.5" />
-                  Store
+                  {tp('Store')}
                 </button>
                 <button onClick={addProduct}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-[12px] font-bold text-white shadow-sm transition-all hover:opacity-90 active:scale-95"
                   style={{ background: ACCENT }}>
                   <Plus className="w-3.5 h-3.5" />
-                  Nouveau
+                  {tp('Nouveau')}
                 </button>
               </div>
 
@@ -3345,8 +3346,8 @@ export default function AgentConfig() {
                   <div className="w-16 h-16 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center mb-4">
                     <Package className="w-7 h-7 text-gray-300" />
                   </div>
-                  <p className="text-[13px] font-semibold text-gray-500">Catalogue vide</p>
-                  <p className="text-[11px] text-gray-400 mt-1 mb-4 max-w-[180px]">Ajoutez vos produits pour que Rita puisse les recommander</p>
+                  <p className="text-[13px] font-semibold text-gray-500">{tp('Catalogue vide')}</p>
+                  <p className="text-[11px] text-gray-400 mt-1 mb-4 max-w-[180px]">{tp('Ajoutez vos produits pour que Rita puisse les recommander')}</p>
                   <button onClick={addProduct}
                     className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-bold text-white rounded-xl shadow-sm"
                     style={{ background: ACCENT }}>
@@ -3385,7 +3386,7 @@ export default function AgentConfig() {
                       {/* Info */}
                       <div className="min-w-0 flex-1">
                         <p className={`text-[12px] font-semibold truncate leading-tight ${editingProduct === idx ? 'text-white' : 'text-gray-800'}`}>
-                          {product.name || <span className="italic opacity-60">Sans nom</span>}
+                          {product.name || <span className="italic opacity-60">{tp('Sans nom')}</span>}
                         </p>
                         <p className={`text-[11px] truncate mt-0.5 ${editingProduct === idx ? 'text-primary-100' : 'text-gray-400'}`}>
                           {product.price || '—'}
@@ -3423,7 +3424,7 @@ export default function AgentConfig() {
                   <div className="px-5 pt-4 pb-0 border-b border-gray-100">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="min-w-0">
-                        <p className="text-[15px] font-bold text-gray-900 truncate">{product.name || 'Nouveau produit'}</p>
+                        <p className="text-[15px] font-bold text-gray-900 truncate">{product.name || tp('Nouveau produit')}</p>
                         <p className="text-[11px] text-gray-400 mt-0.5">
                           {product.price && <span className="font-semibold text-primary-600">{product.price}</span>}
                           {product.category && <span> · {product.category}</span>}
@@ -3449,7 +3450,7 @@ export default function AgentConfig() {
                     <div className="flex gap-0.5 -mb-px">
                       {[
                         { id: 'info',    label: 'Infos',    emoji: '📝' },
-                        { id: 'medias',  label: 'Médias',   emoji: '📸' },
+                        { id: 'medias',  get label() { return tp('Médias'); },   emoji: '📸' },
                         { id: 'vente',   label: 'Vente',    emoji: '💰' },
                         { id: 'contenu', label: 'Contenu',  emoji: '📖' },
                       ].map(tab => (
@@ -3474,7 +3475,7 @@ export default function AgentConfig() {
                       <div className="space-y-4">
                         <Field label="Nom du produit" required>
                           <ModalInput value={product.name} onChange={e => updateProduct(idx, 'name', e.target.value)}
-                            placeholder="Sérum Éclat" label="Nom du produit" className="ac-input" />
+                            placeholder={tp('Sérum Éclat')} label="Nom du produit" className="ac-input" />
                         </Field>
                         <div className="grid grid-cols-2 gap-3">
                           <Field label="Prix" hint="avec devise">
@@ -3483,13 +3484,13 @@ export default function AgentConfig() {
                           </Field>
                           <Field label="Catégorie">
                             <ModalInput value={product.category || ''} onChange={e => updateProduct(idx, 'category', e.target.value)}
-                              placeholder="Soins visage" label="Catégorie" className="ac-input" />
+                              placeholder={tp('Soins visage')} label="Catégorie" className="ac-input" />
                           </Field>
                         </div>
                         <Field label="Description">
                           <ModalTextarea value={product.description || ''} onChange={e => updateProduct(idx, 'description', e.target.value)}
                             rows={6}
-                            placeholder="Anti-taches, illuminateur de teint, résultats visibles en 2 semaines…"
+                            placeholder={tp('Anti-taches, illuminateur de teint, résultats visibles en 2 semaines…')}
                             label="Description du produit"
                             className="ac-textarea"
                           />
@@ -3497,7 +3498,7 @@ export default function AgentConfig() {
 
                         {/* Caractéristiques */}
                         <div>
-                          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Caractéristiques clés</p>
+                          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">{tp('Caractéristiques clés')}</p>
                           <div className="flex flex-wrap gap-1.5 mb-2 min-h-[28px]">
                             {(product.features || []).map((f, fIdx) => (
                               <span key={fIdx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 rounded-lg text-[11px] font-medium border border-primary-100">
@@ -3507,7 +3508,7 @@ export default function AgentConfig() {
                             ))}
                           </div>
                           <div className="flex gap-2">
-                            <input id={`feat-input-${idx}`} placeholder="ex: 100% naturel, Sans paraben…"
+                            <input id={`feat-input-${idx}`} placeholder={tp('ex: 100% naturel, Sans paraben…')}
                               className="ac-input flex-1 text-xs"
                               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addProductFeature(idx, e.target.value); e.target.value = ''; } }} />
                             <button type="button"
@@ -3525,13 +3526,13 @@ export default function AgentConfig() {
                         {/* Images */}
                         <div>
                           <div className="flex items-center justify-between mb-3">
-                            <p className="text-[13px] font-bold text-gray-800">Photos du produit</p>
+                            <p className="text-[13px] font-bold text-gray-800">{tp('Photos du produit')}</p>
                             <label className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg text-primary-700 bg-primary-50 hover:bg-primary-100 cursor-pointer transition-colors border border-primary-100">
                               <input type="file" accept="image/*" multiple className="hidden"
                                 onChange={async (e) => { await handleProductMediaUpload(idx, 'images', e.target.files); e.target.value = ''; }} />
                               {mediaUploadingByProduct[`${idx}:images`]
-                                ? <><Loader2 className="w-3 h-3 animate-spin" /> Upload…</>
-                                : <><Image className="w-3 h-3" /> Ajouter</>}
+                                ? <><Loader2 className="w-3 h-3 animate-spin" /> {tp('Upload…')}</>
+                                : <><Image className="w-3 h-3" /> {tp('Ajouter')}</>}
                             </label>
                           </div>
                           {(product.images || []).length === 0 ? (
@@ -3539,7 +3540,7 @@ export default function AgentConfig() {
                               <input type="file" accept="image/*" multiple className="hidden"
                                 onChange={async (e) => { await handleProductMediaUpload(idx, 'images', e.target.files); e.target.value = ''; }} />
                               <Image className="w-5 h-5 mb-1" />
-                              <span className="text-[11px] font-medium">Cliquer pour uploader</span>
+                              <span className="text-[11px] font-medium">{tp('Cliquer pour uploader')}</span>
                             </label>
                           ) : (
                             <div className="grid grid-cols-4 gap-2">
@@ -3566,19 +3567,19 @@ export default function AgentConfig() {
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800">Vidéos du produit</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">Rita envoie la vidéo quand le client hésite ou veut voir le produit en action</p>
+                              <p className="text-[13px] font-bold text-gray-800">{tp('Vidéos du produit')}</p>
+                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Rita envoie la vidéo quand le client hésite ou veut voir le produit en action')}</p>
                             </div>
                             <label className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors border border-blue-100">
                               <input type="file" accept="video/*" multiple className="hidden"
                                 onChange={async (e) => { await handleProductMediaUpload(idx, 'videos', e.target.files); e.target.value = ''; }} />
                               {mediaUploadingByProduct[`${idx}:videos`]
-                                ? <><Loader2 className="w-3 h-3 animate-spin" /> Upload…</>
-                                : <><Video className="w-3 h-3" /> Ajouter</>}
+                                ? <><Loader2 className="w-3 h-3 animate-spin" /> {tp('Upload…')}</>
+                                : <><Video className="w-3 h-3" /> {tp('Ajouter')}</>}
                             </label>
                           </div>
                           {(product.videos || []).length === 0 ? (
-                            <p className="text-[11px] text-gray-400 py-2">Aucune vidéo ajoutée</p>
+                            <p className="text-[11px] text-gray-400 py-2">{tp('Aucune vidéo ajoutée')}</p>
                           ) : (
                             <div className="space-y-1.5">
                               {(product.videos || []).map((url, videoIndex) => (
@@ -3587,7 +3588,7 @@ export default function AgentConfig() {
                                     <PlayCircle className="w-4 h-4 text-blue-500" />
                                   </div>
                                   <span className="text-[11px] text-gray-600 flex-1 truncate font-medium">Vidéo {videoIndex + 1}</span>
-                                  <a href={url} target="_blank" rel="noreferrer" className="text-[10px] text-blue-500 hover:text-blue-700 font-semibold">Voir ▶</a>
+                                  <a href={url} target="_blank" rel="noreferrer" className="text-[10px] text-blue-500 hover:text-blue-700 font-semibold">{tp('Voir ▶')}</a>
                                   <button type="button" onClick={() => removeProductMedia(idx, 'videos', videoIndex)}
                                     className="text-gray-300 hover:text-red-500 transition-colors">
                                     <X className="w-3.5 h-3.5" />
@@ -3611,7 +3612,7 @@ export default function AgentConfig() {
                               <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
                                 <span className="text-sm">💰</span>
                               </div>
-                              <p className="text-[13px] font-bold text-amber-800">Négociation prix</p>
+                              <p className="text-[13px] font-bold text-amber-800">{tp('Négociation prix')}</p>
                             </div>
                             <div className="grid grid-cols-3 gap-3">
                               <Field label="Dernier prix" hint="plancher">
@@ -3625,14 +3626,14 @@ export default function AgentConfig() {
                               </Field>
                               <Field label="Note prix">
                                 <ModalInput value={product.priceNote || ''} onChange={e => updateProduct(idx, 'priceNote', e.target.value)}
-                                  placeholder="ex: offrir livraison si ≥2" label="Note prix" className="ac-input text-xs" />
+                                  placeholder={tp('ex: offrir livraison si ≥2')} label="Note prix" className="ac-input text-xs" />
                               </Field>
                             </div>
                           </div>
                         ) : (
                           <div className="flex items-start gap-2.5 px-3.5 py-3 bg-gray-50 border border-gray-200 rounded-xl">
                             <span className="text-sm">💡</span>
-                            <p className="text-[11px] text-gray-500 leading-snug">Activez <strong>Prix & Négociation</strong> dans la sidebar pour configurer les règles de remise par produit.</p>
+                            <p className="text-[11px] text-gray-500 leading-snug">{tp('Activez')} <strong>Prix & Négociation</strong> {tp('dans la sidebar pour configurer les règles de remise par produit.')}</p>
                           </div>
                         )}
 
@@ -3640,8 +3641,8 @@ export default function AgentConfig() {
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800">Paliers de quantité</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">Réductions automatiques selon la quantité commandée</p>
+                              <p className="text-[13px] font-bold text-gray-800">{tp('Paliers de quantité')}</p>
+                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Réductions automatiques selon la quantité commandée')}</p>
                             </div>
                             <button type="button" onClick={() => addProductQuantityOffer(idx)}
                               className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-100 transition-colors">
@@ -3651,7 +3652,7 @@ export default function AgentConfig() {
                           {(product.quantityOffers || []).length === 0 ? (
                             <div className="flex items-center gap-2.5 px-3.5 py-3 border-2 border-dashed border-gray-200 rounded-xl">
                               <span className="text-gray-300 text-lg">📦</span>
-                              <p className="text-[11px] text-gray-400">Aucun palier — les clients paient le prix standard</p>
+                              <p className="text-[11px] text-gray-400">{tp('Aucun palier — les clients paient le prix standard')}</p>
                             </div>
                           ) : (
                             <div className="space-y-2">
@@ -3680,7 +3681,7 @@ export default function AgentConfig() {
                                     </Field>
                                     <Field label="Libellé">
                                       <ModalInput value={offer.label || ''} onChange={e => updateProductQuantityOffer(idx, offerIdx, 'label', e.target.value)}
-                                        placeholder="Pack découverte" label="Libellé du palier" className="ac-input text-xs" />
+                                        placeholder={tp('Pack découverte')} label="Libellé du palier" className="ac-input text-xs" />
                                     </Field>
                                   </div>
                                 </div>
@@ -3700,7 +3701,7 @@ export default function AgentConfig() {
                           <div className="flex items-center justify-between mb-3">
                             <div>
                               <p className="text-[13px] font-bold text-gray-800">FAQ</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">Questions fréquentes et réponses de Rita</p>
+                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Questions fréquentes et réponses de Rita')}</p>
                             </div>
                             <button type="button" onClick={() => addProductFaq(idx)}
                               className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-100 transition-colors">
@@ -3708,7 +3709,7 @@ export default function AgentConfig() {
                             </button>
                           </div>
                           {(product.faq || []).length === 0 ? (
-                            <p className="text-[11px] text-gray-400 py-1">Aucune FAQ configurée</p>
+                            <p className="text-[11px] text-gray-400 py-1">{tp('Aucune FAQ configurée')}</p>
                           ) : (
                             <div className="space-y-2">
                               {(product.faq || []).map((f, fIdx) => (
@@ -3716,13 +3717,13 @@ export default function AgentConfig() {
                                   <div className="flex items-center gap-2 px-3 py-2 bg-purple-50/60 border-b border-gray-100">
                                     <span className="w-5 h-5 rounded-md bg-purple-100 text-purple-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">Q</span>
                                     <ModalInput value={f.question} onChange={e => updateProductFaq(idx, fIdx, 'question', e.target.value)}
-                                      placeholder="Question du client…" label="Question FAQ" className="ac-input flex-1 text-xs bg-transparent border-0 px-0 py-0 focus:ring-0" />
+                                      placeholder={tp('Question du client…')} label="Question FAQ" className="ac-input flex-1 text-xs bg-transparent border-0 px-0 py-0 focus:ring-0" />
                                     <button type="button" onClick={() => removeProductFaq(idx, fIdx)} className="text-gray-300 hover:text-red-500 flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
                                   </div>
                                   <div className="flex items-start gap-2 px-3 py-2">
                                     <span className="w-5 h-5 rounded-md bg-primary-100 text-primary-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">R</span>
                                     <ModalTextarea value={f.answer} onChange={e => updateProductFaq(idx, fIdx, 'answer', e.target.value)}
-                                      placeholder="Réponse de Rita…" rows={4} label="Réponse FAQ"
+                                      placeholder={tp('Réponse de Rita…')} rows={4} label="Réponse FAQ"
                                       className="ac-textarea flex-1 text-xs" />
                                   </div>
                                 </div>
@@ -3735,8 +3736,8 @@ export default function AgentConfig() {
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800">Objections</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">Comment Rita répond aux blocages clients</p>
+                              <p className="text-[13px] font-bold text-gray-800">{tp('Objections')}</p>
+                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Comment Rita répond aux blocages clients')}</p>
                             </div>
                             <button type="button" onClick={() => addProductObjection(idx)}
                               className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-100 transition-colors">
@@ -3744,7 +3745,7 @@ export default function AgentConfig() {
                             </button>
                           </div>
                           {(product.objections || []).length === 0 ? (
-                            <p className="text-[11px] text-gray-400 py-1">Aucune objection configurée</p>
+                            <p className="text-[11px] text-gray-400 py-1">{tp('Aucune objection configurée')}</p>
                           ) : (
                             <div className="space-y-2">
                               {(product.objections || []).map((o, oIdx) => (
@@ -3752,13 +3753,13 @@ export default function AgentConfig() {
                                   <div className="flex items-center gap-2 px-3 py-2 bg-orange-50/60 border-b border-gray-100">
                                     <span className="w-5 h-5 rounded-md bg-orange-100 text-orange-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0 shrink-0">!</span>
                                     <ModalInput value={o.objection} onChange={e => updateProductObjection(idx, oIdx, 'objection', e.target.value)}
-                                      placeholder="ex: C'est trop cher…" label="Objection client" className="ac-input flex-1 text-xs bg-transparent border-0 px-0 py-0 focus:ring-0" />
+                                      placeholder={tp('ex: C\'est trop cher…')} label="Objection client" className="ac-input flex-1 text-xs bg-transparent border-0 px-0 py-0 focus:ring-0" />
                                     <button type="button" onClick={() => removeProductObjection(idx, oIdx)} className="text-gray-300 hover:text-red-500 flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
                                   </div>
                                   <div className="flex items-start gap-2 px-3 py-2">
                                     <span className="w-5 h-5 rounded-md bg-primary-100 text-primary-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">→</span>
                                     <ModalTextarea value={o.response} onChange={e => updateProductObjection(idx, oIdx, 'response', e.target.value)}
-                                      placeholder="Réponse de Rita…" rows={4} label="Réponse à l'objection"
+                                      placeholder={tp('Réponse de Rita…')} rows={4} label="Réponse à l'objection"
                                       className="ac-textarea flex-1 text-xs" />
                                   </div>
                                 </div>
@@ -3779,8 +3780,8 @@ export default function AgentConfig() {
                     <Package className="w-5 h-5 text-gray-300" />
                   </div>
                   <div>
-                    <p className="text-[13px] font-semibold text-gray-500">Sélectionnez un produit</p>
-                    <p className="text-[11px] text-gray-400 mt-1">Cliquez sur un produit dans la liste pour l'éditer</p>
+                    <p className="text-[13px] font-semibold text-gray-500">{tp('Sélectionnez un produit')}</p>
+                    <p className="text-[11px] text-gray-400 mt-1">{tp('Cliquez sur un produit dans la liste pour l\'éditer')}</p>
                   </div>
                 </div>
               )
@@ -3794,8 +3795,8 @@ export default function AgentConfig() {
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div>
-                  <h2 className="text-[15px] font-bold text-gray-900">Gestion du Stock</h2>
-                  <p className="text-[12px] text-gray-400 mt-0.5">L'agent adapte ses réponses en fonction du stock disponible</p>
+                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Gestion du Stock')}</h2>
+                  <p className="text-[12px] text-gray-400 mt-0.5">{tp('L\'agent adapte ses réponses en fonction du stock disponible')}</p>
                 </div>
                 <Toggle enabled={config.stockManagementEnabled} onChange={v => set('stockManagementEnabled', v)} label="" />
               </div>
@@ -3808,13 +3809,13 @@ export default function AgentConfig() {
                     </button>
                   </div>
                   {(config.stockEntries || []).length === 0 ? (
-                    <p className="text-center text-[13px] text-gray-400 py-6">Aucune entrée de stock. Ajoutez vos produits pour activer le suivi.</p>
+                    <p className="text-center text-[13px] text-gray-400 py-6">{tp('Aucune entrée de stock. Ajoutez vos produits pour activer le suivi.')}</p>
                   ) : (
                     <div className="space-y-2">
                       {(config.stockEntries || []).map((entry, idx) => (
                         <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 rounded-xl">
                           <ModalInput value={entry.productName || ''} onChange={e => updateStockEntry(idx, 'productName', e.target.value)}
-                            placeholder="Nom du produit" label="Nom du produit" className="ac-input flex-1 !bg-white" />
+                            placeholder={tp('Nom du produit')} label="Nom du produit" className="ac-input flex-1 !bg-white" />
                           <input type="number" value={entry.quantity || 0} onChange={e => updateStockEntry(idx, 'quantity', parseInt(e.target.value) || 0)}
                             className="ac-input w-full sm:w-20 !bg-white text-center" min="0" />
                           <button onClick={() => removeStockEntry(idx)} className="self-end sm:self-auto text-gray-400 hover:text-red-500 transition-colors p-1">
@@ -3843,7 +3844,7 @@ export default function AgentConfig() {
                     </span>
                     Coordonnées de l'Administrateur
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Informations utilisées par Rita pour vous contacter et personnaliser les interactions</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Informations utilisées par Rita pour vous contacter et personnaliser les interactions')}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -3851,14 +3852,14 @@ export default function AgentConfig() {
                       <div className="relative">
                         <UserCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                         <ModalInput value={config.adminName} onChange={e => set('adminName', e.target.value)}
-                          placeholder="ex: Mohamed Diallo" label="Nom de l'admin" className="ac-input !pl-10" />
+                          placeholder={tp('ex: Mohamed Diallo')} label="Nom de l'admin" className="ac-input !pl-10" />
                       </div>
                     </Field>
                     <Field label="Téléphone admin (WhatsApp)" required>
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                         <ModalInput value={config.bossPhone} onChange={e => set('bossPhone', e.target.value)}
-                          placeholder="ex: +225 07 00 00 00" label="Téléphone admin" className="ac-input !pl-10" />
+                          placeholder={tp('ex: +225 07 00 00 00')} label="Téléphone admin" className="ac-input !pl-10" />
                       </div>
                     </Field>
                   </div>
@@ -3866,7 +3867,7 @@ export default function AgentConfig() {
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                       <ModalInput type="email" value={config.adminEmail} onChange={e => set('adminEmail', e.target.value)}
-                        placeholder="ex: admin@monshop.com" label="Email admin" className="ac-input !pl-10" />
+                        placeholder={tp('ex: admin@monshop.com')} label="Email admin" className="ac-input !pl-10" />
                     </div>
                   </Field>
                 </div>
@@ -3879,9 +3880,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
                       <Building2 className="w-4 h-4 text-purple-600" />
                     </span>
-                    Informations du Business
+                    {tp('Informations du Business')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Rita utilise ces informations pour mieux représenter votre marque</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Rita utilise ces informations pour mieux représenter votre marque')}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -3889,7 +3890,7 @@ export default function AgentConfig() {
                       <div className="relative">
                         <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                         <ModalInput value={config.businessName} onChange={e => set('businessName', e.target.value)}
-                          placeholder="ex: Zendo Store" label="Nom du business" className="ac-input !pl-10" />
+                          placeholder={tp('ex: Zendo Store')} label="Nom du business" className="ac-input !pl-10" />
                       </div>
                     </Field>
                     <Field label="Pays" required>
@@ -3900,12 +3901,12 @@ export default function AgentConfig() {
                           onChange={e => set('businessCountry', e.target.value)}
                           className="ac-input !pl-10"
                         >
-                          <option value="CM">🇨🇲 Cameroun</option>
-                          <option value="CD">🇨🇩 RD Congo</option>
-                          <option value="SN">🇸🇳 Sénégal</option>
-                          <option value="CI">🇨🇮 Côte d'Ivoire</option>
-                          <option value="BJ">🇧🇯 Bénin</option>
-                          <option value="TG">🇹🇬 Togo</option>
+                          <option value="CM">{tp('🇨🇲 Cameroun')}</option>
+                          <option value="CD">{tp('🇨🇩 RD Congo')}</option>
+                          <option value="SN">{tp('🇸🇳 Sénégal')}</option>
+                          <option value="CI">{tp('🇨🇮 Côte d\'Ivoire')}</option>
+                          <option value="BJ">{tp('🇧🇯 Bénin')}</option>
+                          <option value="TG">{tp('🇹🇬 Togo')}</option>
                         </select>
                       </div>
                     </Field>
@@ -3914,13 +3915,13 @@ export default function AgentConfig() {
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                       <ModalInput value={config.businessCity} onChange={e => set('businessCity', e.target.value)}
-                        placeholder="ex: Douala, Yaoundé, Abidjan..." label="Ville / Localisation" className="ac-input !pl-10" />
+                        placeholder={tp('ex: Douala, Yaoundé, Abidjan...')} label="Ville / Localisation" className="ac-input !pl-10" />
                     </div>
                   </Field>
                   <Field label="Description de l'activité" hint="courte présentation pour Rita">
                     <ModalTextarea value={config.businessDescription} onChange={e => set('businessDescription', e.target.value)}
                       rows={5} label="Description de l'activité"
-                      placeholder="ex: Boutique en ligne de cosmétiques naturels. Nous livrons dans toute la Côte d'Ivoire..."
+                      placeholder={tp('ex: Boutique en ligne de cosmétiques naturels. Nous livrons dans toute la Côte d\'Ivoire...')}
                       className="ac-textarea" />
                   </Field>
                 </div>
@@ -3931,7 +3932,7 @@ export default function AgentConfig() {
             <div className="space-y-6">
               <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900">Résumé du Profil</h2>
+                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Résumé du Profil')}</h2>
                 </div>
                 <div className="p-5 space-y-3">
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
@@ -3939,8 +3940,8 @@ export default function AgentConfig() {
                       <UserCog className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-gray-900 truncate">{config.adminName || 'Non renseigné'}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{config.bossPhone || 'Aucun téléphone'}</p>
+                      <p className="text-[13px] font-bold text-gray-900 truncate">{config.adminName || tp('Non renseigné')}</p>
+                      <p className="text-[11px] text-gray-400 truncate">{config.bossPhone || tp('Aucun téléphone')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
@@ -3948,8 +3949,8 @@ export default function AgentConfig() {
                       <Building2 className="w-5 h-5 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-gray-900 truncate">{config.businessName || 'Non renseigné'}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{config.businessCity || 'Aucune ville'}</p>
+                      <p className="text-[13px] font-bold text-gray-900 truncate">{config.businessName || tp('Non renseigné')}</p>
+                      <p className="text-[11px] text-gray-400 truncate">{config.businessCity || tp('Aucune ville')}</p>
                     </div>
                   </div>
                   {config.adminEmail && (
@@ -3962,9 +3963,9 @@ export default function AgentConfig() {
               </div>
 
               <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-                <p className="text-[12px] font-semibold text-amber-700 mb-1">💡 Pourquoi ces infos ?</p>
+                <p className="text-[12px] font-semibold text-amber-700 mb-1">{tp('💡 Pourquoi ces infos ?')}</p>
                 <p className="text-[11px] text-amber-600 leading-relaxed">
-                  Rita utilise votre nom et numéro pour les escalades et notifications.
+                  {tp('Rita utilise votre nom et numéro pour les escalades et notifications.')}
                   Les infos business enrichissent ses réponses clients et renforcent la crédibilité.
                 </p>
               </div>
@@ -3983,10 +3984,10 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                       <Star className="w-4 h-4 text-amber-600" />
                     </span>
-                    Témoignages Clients
+                    {tp('Témoignages Clients')}
                   </h2>
                   <p className="text-[12px] text-gray-400 mt-1">
-                    Rita utilisera ces témoignages pour convaincre les clients hésitants. 
+                    {tp('Rita utilisera ces témoignages pour convaincre les clients hésitants.')} 
                     Ajoutez des photos/vidéos pour plus d'impact.
                   </p>
                 </div>
@@ -4018,7 +4019,7 @@ export default function AgentConfig() {
                           </label>
                           <select value={t.productName || ''} onChange={e => updateTestimonial(idx, 'productName', e.target.value)}
                             className="w-full ac-input">
-                            <option value="">-- Choisir un produit --</option>
+                            <option value="">{tp('-- Choisir un produit --')}</option>
                             {(config.productCatalog || []).map(p => (
                               <option key={p.name} value={p.name}>
                                 {p.name} {p.price ? ` • ${p.price}` : ''}
@@ -4045,7 +4046,7 @@ export default function AgentConfig() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <Field label="Nom du client">
                             <ModalInput value={t.clientName || ''} onChange={e => updateTestimonial(idx, 'clientName', e.target.value)}
-                              placeholder="ex: Marie D." label="Nom du client" className="ac-input" />
+                              placeholder={tp('ex: Marie D.')} label="Nom du client" className="ac-input" />
                           </Field>
                           <Field label="Note (1-5 étoiles)">
                             <select value={t.rating || 5} onChange={e => updateTestimonial(idx, 'rating', parseInt(e.target.value))}
@@ -4059,14 +4060,14 @@ export default function AgentConfig() {
 
                         {/* Flexible Content */}
                         <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 text-[11px] text-amber-700">
-                          💡 <strong>Flexible:</strong> Vous pouvez avoir du texte seul, des images seules, ou une combinaison. 
+                          💡 <strong>{tp('Flexible:')}</strong> Vous pouvez avoir du texte seul, des images seules, ou une combinaison. 
                           Tous les champs sont optionnels.
                         </div>
 
                         {/* Text */}
                         <Field label="Texte du témoignage (optionnel)">
                           <ModalTextarea value={t.text || ''} onChange={e => updateTestimonial(idx, 'text', e.target.value)}
-                            placeholder="ex: J'ai essayé ce produit et en 2 semaines ma peau a vraiment changé ! Je recommande fortement..."
+                            placeholder={tp('ex: J\'ai essayé ce produit et en 2 semaines ma peau a vraiment changé ! Je recommande fortement...')}
                             rows={5} label="Texte du témoignage" className="ac-textarea" />
                         </Field>
 
@@ -4091,7 +4092,7 @@ export default function AgentConfig() {
                               onChange={async (e) => { await handleTestimonialMediaUpload(idx, 'images', e.target.files); e.target.value = ''; }} />
                             <Plus className="w-3 h-3" /> Ajouter photos
                           </label>
-                          {testimonialUploading[`${idx}:images`] && <span className="text-[11px] text-primary-600 ml-2">Upload en cours...</span>}
+                          {testimonialUploading[`${idx}:images`] && <span className="text-[11px] text-primary-600 ml-2">{tp('Upload en cours...')}</span>}
                         </div>
 
                         {/* Videos */}
@@ -4116,7 +4117,7 @@ export default function AgentConfig() {
                               onChange={async (e) => { await handleTestimonialMediaUpload(idx, 'videos', e.target.files); e.target.value = ''; }} />
                             <Plus className="w-3 h-3" /> Ajouter vidéos
                           </label>
-                          {testimonialUploading[`${idx}:videos`] && <span className="text-[11px] text-blue-600 ml-2">Upload en cours...</span>}
+                          {testimonialUploading[`${idx}:videos`] && <span className="text-[11px] text-blue-600 ml-2">{tp('Upload en cours...')}</span>}
                         </div>
                       </div>
                     );
@@ -4146,7 +4147,7 @@ export default function AgentConfig() {
                     </span>
                     Mode Boss — Analyse
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Quand vous parlez à Rita, elle est professionnelle, analytique et directe</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Quand vous parlez à Rita, elle est professionnelle, analytique et directe')}</p>
                 </div>
                 <div className="p-6 space-y-1">
                   <Toggle enabled={config.bossAnalyzeConversations} onChange={v => set('bossAnalyzeConversations', v)}
@@ -4168,9 +4169,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                       <Zap className="w-4 h-4 text-amber-600" />
                     </span>
-                    Mode Exécution Boss
+                    {tp('Mode Exécution Boss')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Quand vous donnez une instruction, Rita l'exécute intelligemment</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Quand vous donnez une instruction, Rita l\'exécute intelligemment')}</p>
                 </div>
                 <div className="p-6 space-y-3">
                   <Toggle enabled={config.executionAdaptMessage} onChange={v => set('executionAdaptMessage', v)}
@@ -4190,9 +4191,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                       <Bell className="w-4 h-4 text-amber-600" />
                     </span>
-                    Notifications Admin
+                    {tp('Notifications Admin')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Contrôlez quand Rita vous envoie des alertes sur WhatsApp</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Contrôlez quand Rita vous envoie des alertes sur WhatsApp')}</p>
                 </div>
                 <div className="p-6 space-y-1">
                   <Toggle enabled={config.bossNotifications} onChange={v => set('bossNotifications', v)}
@@ -4220,7 +4221,7 @@ export default function AgentConfig() {
                     </span>
                     Escalade vers l'Admin
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Quand Rita ne sait pas répondre, elle vous passe la main</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Quand Rita ne sait pas répondre, elle vous passe la main')}</p>
                 </div>
                 <div className="p-6 space-y-3">
                   <Toggle enabled={config.bossEscalationEnabled} onChange={v => set('bossEscalationEnabled', v)}
@@ -4255,9 +4256,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
                       <BarChart3 className="w-4 h-4 text-primary-600" />
                     </span>
-                    Résumé Quotidien
+                    {tp('Résumé Quotidien')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">Recevez un récap chaque jour de l'activité de Rita</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Recevez un récap chaque jour de l\'activité de Rita')}</p>
                 </div>
                 <div className="p-6 space-y-3">
                   <Toggle enabled={config.dailySummary} onChange={v => set('dailySummary', v)}
@@ -4281,9 +4282,9 @@ export default function AgentConfig() {
             <div className="space-y-6">
               {!config.bossPhone && (
                 <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
-                  <p className="text-[12px] font-semibold text-red-700 mb-1">⚠️ Numéro admin manquant</p>
+                  <p className="text-[12px] font-semibold text-red-700 mb-1">{tp('⚠️ Numéro admin manquant')}</p>
                   <p className="text-[11px] text-red-600 leading-relaxed">
-                    Pour recevoir les notifications et escalades, renseignez votre numéro WhatsApp dans l'onglet <strong>Profil Admin</strong>.
+                    Pour recevoir les notifications et escalades, renseignez votre numéro WhatsApp dans l'onglet <strong>{tp('Profil Admin')}</strong>.
                   </p>
                 </div>
               )}
@@ -4314,15 +4315,15 @@ export default function AgentConfig() {
             ) : !activityData ? (
               <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
                 <BarChart3 className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-[14px] font-semibold text-gray-500">Aucune donnée disponible</p>
+                <p className="text-[14px] font-semibold text-gray-500">{tp('Aucune donnée disponible')}</p>
               </div>
             ) : (
               <>
                 {/* Stats grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
-                    { label: 'Messages reçus', value: activityData.stats?.messagesReceived || 0, color: '#3b82f6', bg: 'bg-blue-50' },
-                    { label: 'Réponses', value: activityData.stats?.messagesReplied || 0, color: ACCENT, bg: 'bg-primary-50' },
+                    { get label() { return tp('Messages reçus'); }, value: activityData.stats?.messagesReceived || 0, color: '#3b82f6', bg: 'bg-blue-50' },
+                    { get label() { return tp('Réponses'); }, value: activityData.stats?.messagesReplied || 0, color: ACCENT, bg: 'bg-primary-50' },
                     { label: 'Commandes', value: activityData.stats?.ordersConfirmed || 0, color: '#8b5cf6', bg: 'bg-purple-50' },
                     { label: 'Clients uniques', value: activityData.stats?.uniqueClients || 0, color: '#f59e0b', bg: 'bg-amber-50' },
                   ].map(s => (
@@ -4336,17 +4337,17 @@ export default function AgentConfig() {
                 {/* Recent activity */}
                 <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-100">
-                    <h2 className="text-[15px] font-bold text-gray-900">Activité récente</h2>
+                    <h2 className="text-[15px] font-bold text-gray-900">{tp('Activité récente')}</h2>
                   </div>
                   <div className="p-6">
                     {(activityData.recent || []).length === 0 ? (
-                      <p className="text-center text-[13px] text-gray-400 py-6">Aucune activité pour cette période</p>
+                      <p className="text-center text-[13px] text-gray-400 py-6">{tp('Aucune activité pour cette période')}</p>
                     ) : (
                       <div className="space-y-1.5 max-h-[400px] overflow-y-auto">
                         {(activityData.recent || []).map((a, i) => {
                           const LABELS = {
-                            message_received: { label: 'Message reçu', emoji: '💬', bg: 'bg-blue-50 text-blue-700' },
-                            message_replied: { label: 'Réponse', emoji: '📤', bg: 'bg-primary-50 text-primary-700' },
+                            message_received: { get label() { return tp('Message reçu'); }, emoji: '💬', bg: 'bg-blue-50 text-blue-700' },
+                            message_replied: { get label() { return tp('Réponse'); }, emoji: '📤', bg: 'bg-primary-50 text-primary-700' },
                             order_confirmed: { label: 'Commande', emoji: '📦', bg: 'bg-purple-50 text-purple-700' },
                             vocal_transcribed: { label: 'Vocal', emoji: '🎤', bg: 'bg-amber-50 text-amber-700' },
                           };
@@ -4377,7 +4378,7 @@ export default function AgentConfig() {
             {/* Header */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <h2 className="text-[15px] font-bold text-gray-900">Liste des contacts Rita</h2>
+                <h2 className="text-[15px] font-bold text-gray-900">{tp('Liste des contacts Rita')}</h2>
                 <p className="text-[12px] text-gray-400 mt-0.5">{contactsTotal} contact{contactsTotal !== 1 ? 's' : ''} enregistré{contactsTotal !== 1 ? 's' : ''}</p>
               </div>
               <button
@@ -4385,7 +4386,7 @@ export default function AgentConfig() {
                 className="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-4 py-2 text-[13px] font-semibold text-white rounded-xl shadow-sm hover:opacity-90 transition-all"
                 style={{ background: ACCENT }}>
                 <Download className="w-4 h-4" />
-                Exporter CSV
+                {tp('Exporter CSV')}
               </button>
             </div>
 
@@ -4398,8 +4399,8 @@ export default function AgentConfig() {
               ) : contactsList.length === 0 ? (
                 <div className="text-center py-16">
                   <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-[14px] text-gray-500">Aucun contact enregistré</p>
-                  <p className="text-[12px] text-gray-400 mt-1">Les contacts s'enregistrent automatiquement dès le premier message reçu</p>
+                  <p className="text-[14px] text-gray-500">{tp('Aucun contact enregistré')}</p>
+                  <p className="text-[12px] text-gray-400 mt-1">{tp('Les contacts s\'enregistrent automatiquement dès le premier message reçu')}</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -4407,13 +4408,13 @@ export default function AgentConfig() {
                     <thead>
                       <tr className="border-b border-gray-100 bg-gray-50/60">
                         <th className="px-4 py-3 text-left font-semibold text-gray-500">N°</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">Téléphone</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">Nom</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">Ville</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">Messages</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">Commandé</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">Premier contact</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">Dernier message</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Téléphone')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Nom')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Ville')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Messages')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Commandé')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Premier contact')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Dernier message')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -4426,8 +4427,8 @@ export default function AgentConfig() {
                           <td className="px-4 py-3 text-gray-600">{c.messageCount}</td>
                           <td className="px-4 py-3">
                             {c.hasOrdered
-                              ? <span className="px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 font-semibold text-[11px]">✓ Oui</span>
-                              : <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 text-[11px]">Non</span>}
+                              ? <span className="px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 font-semibold text-[11px]">{tp('✓ Oui')}</span>
+                              : <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 text-[11px]">{tp('Non')}</span>}
                           </td>
                           <td className="px-4 py-3 text-gray-400">
                             {c.firstMessageAt ? new Date(c.firstMessageAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—'}
@@ -4470,8 +4471,8 @@ export default function AgentConfig() {
             {/* Header + bouton ajouter */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <h2 className="text-[15px] font-bold text-gray-900">Statuts WhatsApp automatiques</h2>
-                <p className="text-[12px] text-gray-500 mt-0.5">Planifiez des statuts avec images de vos produits — publiés automatiquement chaque jour</p>
+                <h2 className="text-[15px] font-bold text-gray-900">{tp('Statuts WhatsApp automatiques')}</h2>
+                <p className="text-[12px] text-gray-500 mt-0.5">{tp('Planifiez des statuts avec images de vos produits — publiés automatiquement chaque jour')}</p>
               </div>
               <button
                 onClick={() => { setEditingStatut(null); setStatutForm({ name: '', type: 'product', caption: '', mediaUrl: '', productName: '', backgroundColor: '#0F6B4F', scheduleType: 'daily', sendTime: '09:00', weekDays: [] }); setShowStatutForm(true); }}
@@ -4485,7 +4486,7 @@ export default function AgentConfig() {
             {/* Formulaire création/édition */}
             {showStatutForm && (
               <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
-                <h3 className="text-[14px] font-bold text-gray-900">{editingStatut ? 'Modifier le statut' : 'Nouveau statut'}</h3>
+                <h3 className="text-[14px] font-bold text-gray-900">{editingStatut ? 'Modifier le statut' : tp('Nouveau statut')}</h3>
 
                 <div className={`rounded-xl border p-3 text-[12px] ${config.instanceId ? 'border-primary-100 bg-primary-50 text-primary-700' : 'border-amber-100 bg-amber-50 text-amber-700'}`}>
                   {config.instanceId
@@ -4495,46 +4496,46 @@ export default function AgentConfig() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">Nom</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Nom')}</label>
                     <ModalInput type="text" value={statutForm.name} onChange={e => setStatutForm(p => ({ ...p, name: e.target.value }))}
-                      placeholder="Ex: Statut produit phare du lundi"
+                      placeholder={tp('Ex: Statut produit phare du lundi')}
                       label="Nom du statut"
                       className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">Type de contenu</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Type de contenu')}</label>
                     <select value={statutForm.type} onChange={e => setStatutForm(p => ({ ...p, type: e.target.value }))}
                       className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none bg-white">
-                      <option value="product">📦 Produit du catalogue (auto)</option>
-                      <option value="image">🖼️ Image manuelle + texte</option>
-                      <option value="text">💬 Texte uniquement</option>
+                      <option value="product">{tp('📦 Produit du catalogue (auto)')}</option>
+                      <option value="image">{tp('🖼️ Image manuelle + texte')}</option>
+                      <option value="text">{tp('💬 Texte uniquement')}</option>
                     </select>
                   </div>
                 </div>
 
                 {statutForm.type === 'product' && (
                   <div className="space-y-3">
-                    <label className="text-[12px] font-semibold text-gray-600">Produit</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Produit')}</label>
                     <select value={statutForm.productName} onChange={e => setStatutForm(p => ({ ...p, productName: e.target.value, mediaUrl: '' }))}
                       className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none bg-white">
-                      <option value="">— Choisir un produit —</option>
+                      <option value="">{tp('— Choisir un produit —')}</option>
                       {(config.productCatalog || []).filter(p => p.name).map((p, i) => (
                         <option key={i} value={p.name}>{p.name}{p.price ? ` (${p.price})` : ''}</option>
                       ))}
                     </select>
-                    <p className="text-[11px] text-gray-400">Choisissez le produit, personnalisez le texte si besoin, puis laissez le média en automatique ou sélectionnez une image / vidéo déjà uploadée.</p>
+                    <p className="text-[11px] text-gray-400">{tp('Choisissez le produit, personnalisez le texte si besoin, puis laissez le média en automatique ou sélectionnez une image / vidéo déjà uploadée.')}</p>
 
                     {statutForm.productName && (
                       <div className="space-y-2">
-                        <label className="text-[12px] font-semibold text-gray-600">Média du produit</label>
+                        <label className="text-[12px] font-semibold text-gray-600">{tp('Média du produit')}</label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <button
                             type="button"
                             onClick={() => setStatutForm(p => ({ ...p, mediaUrl: '' }))}
                             className={`rounded-xl border px-3 py-3 text-left transition-colors ${!statutForm.mediaUrl ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-primary-300'}`}
                           >
-                            <p className="text-[12px] font-semibold text-gray-700">Automatique</p>
-                            <p className="text-[11px] text-gray-400 mt-1">Utiliser le premier média disponible du produit</p>
+                            <p className="text-[12px] font-semibold text-gray-700">{tp('Automatique')}</p>
+                            <p className="text-[11px] text-gray-400 mt-1">{tp('Utiliser le premier média disponible du produit')}</p>
                           </button>
 
                           {statutProductMediaOptions.map((media) => (
@@ -4555,7 +4556,7 @@ export default function AgentConfig() {
                                 <span className="text-[12px] font-semibold text-gray-700 truncate">{media.label}</span>
                                 <span className="text-[11px] text-gray-400 flex items-center gap-1 flex-shrink-0">
                                   {media.type === 'video' ? <Video className="w-3.5 h-3.5" /> : <Image className="w-3.5 h-3.5" />}
-                                  {media.type === 'video' ? 'Vidéo' : 'Image'}
+                                  {media.type === 'video' ? 'Vidéo' : tp('Image')}
                                 </span>
                               </div>
                             </button>
@@ -4563,7 +4564,7 @@ export default function AgentConfig() {
                         </div>
 
                         {selectedStatutProduct && statutProductMediaOptions.length === 0 && (
-                          <p className="text-[11px] text-amber-600">Ce produit n'a pas encore d'image ni de vidéo uploadée. Le statut utilisera seulement le texte personnalisé.</p>
+                          <p className="text-[11px] text-amber-600">{tp('Ce produit n\'a pas encore d\'image ni de vidéo uploadée. Le statut utilisera seulement le texte personnalisé.')}</p>
                         )}
                       </div>
                     )}
@@ -4572,7 +4573,7 @@ export default function AgentConfig() {
 
                 {statutForm.type === 'image' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">URL de l'image</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('URL de l\'image')}</label>
                     <ModalInput type="text" value={statutForm.mediaUrl} onChange={e => setStatutForm(p => ({ ...p, mediaUrl: e.target.value }))}
                       placeholder="https://..."
                       label="URL de l'image"
@@ -4582,9 +4583,9 @@ export default function AgentConfig() {
 
                 {statutForm.type !== 'product' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">Texte / Légende</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Texte / Légende')}</label>
                     <ModalTextarea rows={4} value={statutForm.caption} onChange={e => setStatutForm(p => ({ ...p, caption: e.target.value }))}
-                      placeholder="Ex: 🔥 Notre produit phare en stock ! Contactez-nous pour commander."
+                      placeholder={tp('Ex: 🔥 Notre produit phare en stock ! Contactez-nous pour commander.')}
                       label="Texte / Légende"
                       className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
@@ -4592,9 +4593,9 @@ export default function AgentConfig() {
 
                 {statutForm.type === 'product' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">Texte personnalisé (optionnel)</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Texte personnalisé (optionnel)')}</label>
                     <ModalTextarea rows={3} value={statutForm.caption} onChange={e => setStatutForm(p => ({ ...p, caption: e.target.value }))}
-                      placeholder="Laissez vide pour générer automatiquement depuis le produit"
+                      placeholder={tp('Laissez vide pour générer automatiquement depuis le produit')}
                       label="Texte personnalisé du statut"
                       className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
@@ -4602,21 +4603,21 @@ export default function AgentConfig() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">Fréquence</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Fréquence')}</label>
                     <select value={statutForm.scheduleType} onChange={e => setStatutForm(p => ({ ...p, scheduleType: e.target.value }))}
                       className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none bg-white">
-                      <option value="daily">Tous les jours</option>
-                      <option value="weekly">Certains jours</option>
+                      <option value="daily">{tp('Tous les jours')}</option>
+                      <option value="weekly">{tp('Certains jours')}</option>
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">Heure d'envoi</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Heure d\'envoi')}</label>
                     <input type="time" value={statutForm.sendTime} onChange={e => setStatutForm(p => ({ ...p, sendTime: e.target.value }))}
                       className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
                   {statutForm.type === 'text' && (
                     <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-gray-600">Couleur de fond</label>
+                      <label className="text-[12px] font-semibold text-gray-600">{tp('Couleur de fond')}</label>
                       <input type="color" value={statutForm.backgroundColor} onChange={e => setStatutForm(p => ({ ...p, backgroundColor: e.target.value }))}
                         className="w-full h-[38px] px-1 py-1 border border-gray-200 rounded-xl cursor-pointer" />
                     </div>
@@ -4625,7 +4626,7 @@ export default function AgentConfig() {
 
                 {statutForm.scheduleType === 'weekly' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">Jours</label>
+                    <label className="text-[12px] font-semibold text-gray-600">{tp('Jours')}</label>
                     <div className="flex gap-2 flex-wrap">
                       {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map((d, i) => (
                         <button key={i}
@@ -4650,11 +4651,11 @@ export default function AgentConfig() {
                     disabled={statutSaving}
                     className="w-full sm:w-auto px-5 py-2 text-[13px] font-bold text-white rounded-xl disabled:opacity-60"
                     style={{ background: ACCENT }}>
-                    {statutSaving ? 'Enregistrement...' : editingStatut ? 'Enregistrer' : 'Créer'}
+                    {statutSaving ? 'Enregistrement...' : editingStatut ? 'Enregistrer' : tp('Créer')}
                   </button>
                   <button onClick={() => { setShowStatutForm(false); setEditingStatut(null); }}
                     className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50">
-                    Annuler
+                    {tp('Annuler')}
                   </button>
                 </div>
               </div>
@@ -4668,8 +4669,8 @@ export default function AgentConfig() {
             ) : statuts.length === 0 ? (
               <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center">
                 <Radio className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-                <p className="text-[14px] font-semibold text-gray-500">Aucun statut planifié</p>
-                <p className="text-[12px] text-gray-400 mt-1">Créez votre premier statut automatique avec les images de vos produits</p>
+                <p className="text-[14px] font-semibold text-gray-500">{tp('Aucun statut planifié')}</p>
+                <p className="text-[12px] text-gray-400 mt-1">{tp('Créez votre premier statut automatique avec les images de vos produits')}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -4684,10 +4685,10 @@ export default function AgentConfig() {
 
                     {/* Infos */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold text-gray-900">{s.name || 'Sans titre'}</p>
+                      <p className="text-[13px] font-semibold text-gray-900">{s.name || tp('Sans titre')}</p>
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-0.5">
                         <span className="text-[11px] text-gray-400">
-                          {s.scheduleType === 'daily' ? 'Tous les jours' : 'Certains jours'} à {s.sendTime}
+                          {s.scheduleType === 'daily' ? 'Tous les jours' : tp('Certains jours')} à {s.sendTime}
                         </span>
                         {s.type === 'product' && s.productName && (
                           <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary-50 text-primary-600 font-medium">{s.productName}</span>
@@ -4708,7 +4709,7 @@ export default function AgentConfig() {
                       </button>
                       {/* Envoyer maintenant */}
                       <button onClick={() => sendNow(s)} disabled={statutSending === s._id}
-                        title="Publier maintenant"
+                        title={tp('Publier maintenant')}
                         className="p-1.5 text-gray-400 hover:text-primary-600 transition-colors">
                         {statutSending === s._id ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}
                       </button>
@@ -4729,11 +4730,11 @@ export default function AgentConfig() {
 
             {/* Info box */}
             <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-[12px] text-blue-700 space-y-1">
-              <p className="font-bold">Comment ça fonctionne :</p>
-              <p>• <strong>Produit catalogue</strong> : choisissez une image ou vidéo déjà uploadée sur le produit, ou laissez le média automatique</p>
-              <p>• <strong>Image manuelle</strong> : collez l'URL d'une image uploadée</p>
-              <p>• Le statut est publié automatiquement à l'heure planifiée, chaque jour</p>
-              <p>• Bouton ▶ pour tester et publier immédiatement</p>
+              <p className="font-bold">{tp('Comment ça fonctionne :')}</p>
+              <p>• <strong>{tp('Produit catalogue')}</strong> {tp(': choisissez une image ou vidéo déjà uploadée sur le produit, ou laissez le média automatique')}</p>
+              <p>• <strong>{tp('Image manuelle')}</strong> {tp(': collez l\'URL d\'une image uploadée')}</p>
+              <p>{tp('• Le statut est publié automatiquement à l\'heure planifiée, chaque jour')}</p>
+              <p>{tp('• Bouton ▶ pour tester et publier immédiatement')}</p>
             </div>
           </div>
         )}
@@ -4749,8 +4750,8 @@ export default function AgentConfig() {
                   <MessageSquare className="w-5 h-5" style={{ color: ACCENT }} />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-bold text-gray-900">Règles du premier message</h3>
-                  <p className="text-[12px] text-gray-500">Définissez ce que l'agent envoie automatiquement quand un contact vous écrit pour la première fois</p>
+                  <h3 className="text-[15px] font-bold text-gray-900">{tp('Règles du premier message')}</h3>
+                  <p className="text-[12px] text-gray-500">{tp('Définissez ce que l\'agent envoie automatiquement quand un contact vous écrit pour la première fois')}</p>
                 </div>
               </div>
 
@@ -4758,7 +4759,7 @@ export default function AgentConfig() {
                 {/* Toggle */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
                   <div>
-                    <p className="text-[14px] font-semibold text-gray-800">Activer les règles du premier message</p>
+                    <p className="text-[14px] font-semibold text-gray-800">{tp('Activer les règles du premier message')}</p>
                     <p className="text-[12px] text-gray-500 mt-0.5">
                       {config.firstMessageRulesEnabled
                         ? '✅ Actif — vos règles s\'appliquent au premier contact'
@@ -4797,10 +4798,10 @@ export default function AgentConfig() {
                               }}
                               className="text-[12px] font-semibold border border-gray-200 rounded-lg px-2 py-1 bg-white focus:outline-none"
                             >
-                              <option value="video">🎥 Vidéo</option>
-                              <option value="image">🖼️ Image</option>
-                              <option value="text">💬 Message texte</option>
-                              <option value="catalog">📦 Catalogue produits</option>
+                              <option value="video">{tp('🎥 Vidéo')}</option>
+                              <option value="image">{tp('🖼️ Image')}</option>
+                              <option value="text">{tp('💬 Message texte')}</option>
+                              <option value="catalog">{tp('📦 Catalogue produits')}</option>
                             </select>
                           </div>
                           <button
@@ -4820,7 +4821,7 @@ export default function AgentConfig() {
                                 const updated = (config.firstMessageRules || []).map((r, i) => i === idx ? { ...r, label: e.target.value } : r);
                                 set('firstMessageRules', updated);
                               }}
-                              placeholder="Description courte (ex: Vidéo de présentation)"
+                              placeholder={tp('Description courte (ex: Vidéo de présentation)')}
                               className="w-full px-3 py-2 text-[12px] border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-200"
                             />
                             <input
@@ -4840,7 +4841,7 @@ export default function AgentConfig() {
                           </div>
                         )}
                         {rule.type === 'catalog' && (
-                          <p className="text-[11px] text-gray-500 italic">L'agent enverra la liste complète de vos produits avec prix dès le premier contact.</p>
+                          <p className="text-[11px] text-gray-500 italic">{tp('L\'agent enverra la liste complète de vos produits avec prix dès le premier contact.')}</p>
                         )}
                       </div>
                     ))}
@@ -4855,11 +4856,11 @@ export default function AgentConfig() {
                 )}
 
                 <div className={`p-3 rounded-xl border text-[11px] space-y-1 ${config.firstMessageRulesEnabled ? 'bg-primary-50 border-primary-200 text-primary-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
-                  <p className="font-bold">Exemples de règles :</p>
-                  <p>• Vidéo : envoyer une vidéo de présentation du produit phare dès le premier message</p>
-                  <p>• Image : envoyer une photo du catalogue ou d'une promo en cours</p>
-                  <p>• Texte : accueillir avec un message personnalisé avant de poser des questions</p>
-                  <p>• Catalogue : partager directement tous vos produits avec prix</p>
+                  <p className="font-bold">{tp('Exemples de règles :')}</p>
+                  <p>{tp('• Vidéo : envoyer une vidéo de présentation du produit phare dès le premier message')}</p>
+                  <p>{tp('• Image : envoyer une photo du catalogue ou d\'une promo en cours')}</p>
+                  <p>{tp('• Texte : accueillir avec un message personnalisé avant de poser des questions')}</p>
+                  <p>{tp('• Catalogue : partager directement tous vos produits avec prix')}</p>
                 </div>
               </div>
             </div>
@@ -4871,8 +4872,8 @@ export default function AgentConfig() {
                   <FileText className="w-5 h-5" style={{ color: ACCENT }} />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-bold text-gray-900">Instructions personnalisées</h3>
-                  <p className="text-[12px] text-gray-500">Écrivez vos propres règles — elles remplacent le comportement par défaut quand activées</p>
+                  <h3 className="text-[15px] font-bold text-gray-900">{tp('Instructions personnalisées')}</h3>
+                  <p className="text-[12px] text-gray-500">{tp('Écrivez vos propres règles — elles remplacent le comportement par défaut quand activées')}</p>
                 </div>
               </div>
 
@@ -4880,7 +4881,7 @@ export default function AgentConfig() {
                 {/* Toggle activation */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
                   <div>
-                    <p className="text-[14px] font-semibold text-gray-800">Activer les instructions personnalisées</p>
+                    <p className="text-[14px] font-semibold text-gray-800">{tp('Activer les instructions personnalisées')}</p>
                     <p className="text-[12px] text-gray-500 mt-0.5">
                       {config.customInstructionsEnabled
                         ? '✅ Actif — vos instructions remplacent le comportement par défaut'
@@ -4897,7 +4898,7 @@ export default function AgentConfig() {
 
                 {/* Zone de texte */}
                 <div className="space-y-2">
-                  <label className="text-[13px] font-semibold text-gray-700">Vos instructions</label>
+                  <label className="text-[13px] font-semibold text-gray-700">{tp('Vos instructions')}</label>
                   <ModalTextarea
                     rows={14}
                     value={config.customInstructions}
@@ -4917,11 +4918,11 @@ export default function AgentConfig() {
 
                 {/* Info box */}
                 <div className={`p-4 rounded-xl border text-[12px] space-y-1.5 ${config.customInstructionsEnabled ? 'bg-primary-50 border-primary-200 text-primary-800' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
-                  <p className="font-bold">Comment ça fonctionne :</p>
-                  <p>• Quand <strong>activé</strong> : vos instructions ont la priorité maximale sur toutes les règles par défaut</p>
-                  <p>• Quand <strong>désactivé</strong> : l'agent ignore ces instructions et applique le comportement standard</p>
-                  <p>• Soyez précis : "Ne jamais baisser le prix" est mieux que "être ferme sur les prix"</p>
-                  <p>• Vous pouvez mélanger règles de vente, réponses spécifiques, et comportements personnalisés</p>
+                  <p className="font-bold">{tp('Comment ça fonctionne :')}</p>
+                  <p>{tp('• Quand')} <strong>{tp('activé')}</strong> {tp(': vos instructions ont la priorité maximale sur toutes les règles par défaut')}</p>
+                  <p>{tp('• Quand')} <strong>{tp('désactivé')}</strong> {tp(': l\'agent ignore ces instructions et applique le comportement standard')}</p>
+                  <p>{tp('• Soyez précis : "Ne jamais baisser le prix" est mieux que "être ferme sur les prix"')}</p>
+                  <p>{tp('• Vous pouvez mélanger règles de vente, réponses spécifiques, et comportements personnalisés')}</p>
                 </div>
               </div>
             </div>
@@ -4962,26 +4963,26 @@ export default function AgentConfig() {
                     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                       <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                         <h3 className="text-[15px] font-bold text-gray-900">
-                          {campaignEditing !== null ? 'Modifier la campagne' : 'Nouvelle campagne'}
+                          {campaignEditing !== null ? 'Modifier la campagne' : tp('Nouvelle campagne')}
                         </h3>
                         {campaignEditing !== null && (
                           <button onClick={() => { setCampaignEditing(null); setCampaignForm({ name: '', message: '', mediaUrl: '', caption: '', scheduleAt: '', groupJids: [] }); }}
-                            className="text-[12px] text-gray-400 hover:text-gray-600">Annuler</button>
+                            className="text-[12px] text-gray-400 hover:text-gray-600">{tp('Annuler')}</button>
                         )}
                       </div>
                       <div className="px-5 py-4 space-y-3">
                         <Field label="Nom de la campagne">
                           <ModalInput value={campaignForm.name} onChange={e => setCampaignForm(f => ({ ...f, name: e.target.value }))}
-                            placeholder="Ex: Promo weekend, Relance clients..." label="Nom de la campagne" className="ac-input" />
+                            placeholder={tp('Ex: Promo weekend, Relance clients...')} label="Nom de la campagne" className="ac-input" />
                         </Field>
                         <Field label="Message">
                           <ModalTextarea value={campaignForm.message} onChange={e => setCampaignForm(f => ({ ...f, message: e.target.value }))}
-                            rows={6} placeholder="Rédigez votre message..." label="Message de la campagne" className="ac-textarea" />
+                            rows={6} placeholder={tp('Rédigez votre message...')} label="Message de la campagne" className="ac-textarea" />
                         </Field>
 
                         {/* Média : upload ou URL */}
                         <div className="space-y-2">
-                          <p className="text-[12px] font-semibold text-gray-600">Image / Vidéo</p>
+                          <p className="text-[12px] font-semibold text-gray-600">{tp('Image / Vidéo')}</p>
                           <div className="flex items-center gap-2">
                             <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 cursor-pointer transition flex-shrink-0">
                               <input type="file" accept="image/*,video/*" className="hidden"
@@ -5000,7 +5001,7 @@ export default function AgentConfig() {
                               {campaignMediaUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : '📎 Upload'}
                             </label>
                             <ModalInput value={campaignForm.mediaUrl} onChange={e => setCampaignForm(f => ({ ...f, mediaUrl: e.target.value }))}
-                              placeholder="ou coller URL..." label="URL du média" className="ac-input flex-1 text-[12px]" />
+                              placeholder={tp('ou coller URL...')} label="URL du média" className="ac-input flex-1 text-[12px]" />
                             {campaignForm.mediaUrl && (
                               <button onClick={() => setCampaignForm(f => ({ ...f, mediaUrl: '', caption: '' }))}
                                 className="text-gray-300 hover:text-red-400 transition text-lg flex-shrink-0">×</button>
@@ -5012,7 +5013,7 @@ export default function AgentConfig() {
                                 <img src={campaignForm.mediaUrl} alt="" className="w-14 h-14 rounded-lg object-cover border border-gray-200 flex-shrink-0" />
                               )}
                               <ModalInput value={campaignForm.caption} onChange={e => setCampaignForm(f => ({ ...f, caption: e.target.value }))}
-                                placeholder="Légende (optionnel)..." label="Légende du média" className="ac-input flex-1 text-[12px]" />
+                                placeholder={tp('Légende (optionnel)...')} label="Légende du média" className="ac-input flex-1 text-[12px]" />
                             </div>
                           )}
                         </div>
@@ -5036,7 +5037,7 @@ export default function AgentConfig() {
                               className="ac-input" />
                           ) : (
                             <div className="space-y-2">
-                              <p className="text-[11px] text-gray-500">Jours d'envoi</p>
+                              <p className="text-[11px] text-gray-500">{tp('Jours d\'envoi')}</p>
                               <div className="flex flex-wrap gap-1.5">
                                 {['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'].map(d => {
                                   const active = campaignForm.repeatDays.includes(d);
@@ -5049,10 +5050,10 @@ export default function AgentConfig() {
                                   );
                                 })}
                                 <button type="button" onClick={() => setCampaignForm(f => ({ ...f, repeatDays: ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'] }))}
-                                  className="text-[10px] px-2 text-primary-600 hover:underline">Tous</button>
+                                  className="text-[10px] px-2 text-primary-600 hover:underline">{tp('Tous')}</button>
                               </div>
                               <div className="flex items-center gap-2">
-                                <p className="text-[11px] text-gray-500 flex-shrink-0">Heure</p>
+                                <p className="text-[11px] text-gray-500 flex-shrink-0">{tp('Heure')}</p>
                                 <input type="time" value={campaignForm.repeatHour}
                                   onChange={e => setCampaignForm(f => ({ ...f, repeatHour: e.target.value }))}
                                   className="ac-input w-32" />
@@ -5061,9 +5062,9 @@ export default function AgentConfig() {
                           )}
                         </div>
                         <div>
-                          <p className="text-[12px] font-semibold text-gray-600 mb-2">Groupes destinataires</p>
+                          <p className="text-[12px] font-semibold text-gray-600 mb-2">{tp('Groupes destinataires')}</p>
                           {whatsappGroups.length === 0 ? (
-                            <p className="text-[12px] text-gray-400">Chargez d'abord vos groupes dans l'onglet Groupes</p>
+                            <p className="text-[12px] text-gray-400">{tp('Chargez d\'abord vos groupes dans l\'onglet Groupes')}</p>
                           ) : (
                             <div className="max-h-48 overflow-y-auto space-y-1 border border-gray-200 rounded-xl p-2">
                               {whatsappGroups.map(wg => {
@@ -5110,7 +5111,7 @@ export default function AgentConfig() {
                               <div className="flex items-center gap-1 flex-shrink-0">
                                 <button onClick={() => { setCampaignEditing(i); setCampaignForm({ name: c.name, message: c.message, mediaUrl: c.mediaUrl || '', caption: c.caption || '', scheduleAt: c.scheduleAt || '', groupJids: c.groupJids }); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                                   className="text-[11px] px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition">
-                                  Modifier
+                                  {tp('Modifier')}
                                 </button>
                                 <button onClick={() => sendCampaign(i)} disabled={bcSending}
                                   className="text-[11px] px-2.5 py-1 rounded-lg text-white transition disabled:opacity-40"
@@ -5160,7 +5161,7 @@ export default function AgentConfig() {
                     {/* Composer */}
                     <div className="px-5 py-4 space-y-3">
                       <ModalTextarea value={bcMessage} onChange={e => setBcMessage(e.target.value)}
-                        rows={6} placeholder="Rédigez votre message..."
+                        rows={6} placeholder={tp('Rédigez votre message...')}
                         label="Message à envoyer"
                         className="ac-textarea w-full" />
 
@@ -5181,7 +5182,7 @@ export default function AgentConfig() {
                           📎 Fichier
                         </label>
                         <ModalInput value={bcMediaUrl} onChange={e => setBcMediaUrl(e.target.value)}
-                          placeholder="ou coller URL image/vidéo..."
+                          placeholder={tp('ou coller URL image/vidéo...')}
                           label="URL média"
                           className="ac-input flex-1 text-[12px]" />
                       </div>
@@ -5192,7 +5193,7 @@ export default function AgentConfig() {
                             <img src={bcMediaUrl} alt="" className="w-16 h-16 rounded-lg object-cover border border-gray-200 flex-shrink-0" />
                           )}
                           <ModalInput value={bcCaption} onChange={e => setBcCaption(e.target.value)}
-                            placeholder="Légende (optionnel)..." label="Légende du média" className="ac-input flex-1 text-[12px]" />
+                            placeholder={tp('Légende (optionnel)...')} label="Légende du média" className="ac-input flex-1 text-[12px]" />
                           <button onClick={() => { setBcMediaUrl(''); setBcCaption(''); }}
                             className="text-gray-300 hover:text-red-400 transition flex-shrink-0">×</button>
                         </div>
@@ -5214,8 +5215,8 @@ export default function AgentConfig() {
                   <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                       <div>
-                        <h3 className="text-[15px] font-bold text-gray-900">Mes groupes WhatsApp</h3>
-                        <p className="text-[12px] text-gray-400 mt-0.5">Cliquez sur un groupe pour envoyer</p>
+                        <h3 className="text-[15px] font-bold text-gray-900">{tp('Mes groupes WhatsApp')}</h3>
+                        <p className="text-[12px] text-gray-400 mt-0.5">{tp('Cliquez sur un groupe pour envoyer')}</p>
                       </div>
                       <button onClick={loadGroupAnimation} disabled={groupsLoading}
                         className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition disabled:opacity-40 flex items-center gap-1">
@@ -5229,7 +5230,7 @@ export default function AgentConfig() {
                         <input
                           value={groupSearch}
                           onChange={e => setGroupSearch(e.target.value)}
-                          placeholder="Rechercher un groupe..."
+                          placeholder={tp('Rechercher un groupe...')}
                           className="ac-input w-full text-[13px]"
                         />
                       </div>
@@ -5238,13 +5239,13 @@ export default function AgentConfig() {
                     {groupsLoading ? (
                       <div className="px-5 py-10 flex items-center justify-center gap-2">
                         <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-                        <span className="text-[13px] text-gray-400">Chargement des groupes...</span>
+                        <span className="text-[13px] text-gray-400">{tp('Chargement des groupes...')}</span>
                       </div>
                     ) : whatsappGroups.length === 0 ? (
                       <div className="px-5 py-10 text-center">
                         <Users className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-                        <p className="text-[13px] text-gray-500">Aucun groupe trouvé</p>
-                        <p className="text-[11px] text-gray-400 mt-1">Vérifiez que Rita est connectée à WhatsApp, puis rafraîchissez</p>
+                        <p className="text-[13px] text-gray-500">{tp('Aucun groupe trouvé')}</p>
+                        <p className="text-[11px] text-gray-400 mt-1">{tp('Vérifiez que Rita est connectée à WhatsApp, puis rafraîchissez')}</p>
                       </div>
                     ) : (
                       <div className="divide-y divide-gray-50">
@@ -5267,7 +5268,7 @@ export default function AgentConfig() {
 
                     {/* Rejoindre via lien */}
                     <div className="px-5 py-4 border-t border-gray-100 bg-gray-50/50">
-                      <p className="text-[11px] text-gray-500 mb-2">Rejoindre un groupe via lien d'invitation</p>
+                      <p className="text-[11px] text-gray-500 mb-2">{tp('Rejoindre un groupe via lien d\'invitation')}</p>
                       <div className="flex gap-2">
                         <input type="text" value={groupInviteLink} onChange={e => setGroupInviteLink(e.target.value)}
                           placeholder="https://chat.whatsapp.com/..."
@@ -5276,7 +5277,7 @@ export default function AgentConfig() {
                         <button onClick={joinGroupByInvite} disabled={groupJoining || !groupInviteLink.trim()}
                           className="px-3 py-2 rounded-xl text-[12px] font-bold text-white disabled:opacity-50 whitespace-nowrap"
                           style={{ background: ACCENT }}>
-                          {groupJoining ? '...' : 'Rejoindre'}
+                          {groupJoining ? '...' : tp('Rejoindre')}
                         </button>
                       </div>
                     </div>
@@ -5288,13 +5289,13 @@ export default function AgentConfig() {
                   <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                       <div>
-                        <h3 className="text-[15px] font-bold text-gray-900">Posts récurrents</h3>
-                        <p className="text-[12px] text-gray-400 mt-0.5">Messages automatiques planifiés par groupe</p>
+                        <h3 className="text-[15px] font-bold text-gray-900">{tp('Posts récurrents')}</h3>
+                        <p className="text-[12px] text-gray-400 mt-0.5">{tp('Messages automatiques planifiés par groupe')}</p>
                       </div>
                       <button onClick={saveGroupConfig} disabled={groupSaving}
                         className="text-[12px] font-bold px-3 py-1.5 rounded-xl text-white disabled:opacity-50"
                         style={{ background: ACCENT }}>
-                        {groupSaving ? '...' : 'Sauvegarder'}
+                        {groupSaving ? '...' : tp('Sauvegarder')}
                       </button>
                     </div>
                     <div className="divide-y divide-gray-50">
@@ -5313,14 +5314,14 @@ export default function AgentConfig() {
                                 <p className="text-[11px] text-gray-400">{postsCount} post{postsCount !== 1 ? 's' : ''} planifié{postsCount !== 1 ? 's' : ''}</p>
                               </div>
                               <button onClick={e => { e.stopPropagation(); removeGroupFromAnimation(gi); }}
-                                className="text-[11px] text-gray-300 hover:text-red-400 transition mr-1">Retirer</button>
+                                className="text-[11px] text-gray-300 hover:text-red-400 transition mr-1">{tp('Retirer')}</button>
                               <ChevronDown className={`w-4 h-4 text-gray-300 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                             </button>
 
                             {isExpanded && (
                               <div className="px-5 pb-5 space-y-3 bg-gray-50/30">
                                 <div className="flex items-center justify-between pt-2">
-                                  <p className="text-[12px] font-semibold text-gray-600">Posts planifiés</p>
+                                  <p className="text-[12px] font-semibold text-gray-600">{tp('Posts planifiés')}</p>
                                   <button onClick={() => {
                                     const posts = [...(group.scheduledPosts || []), { type: 'text', content: '', productName: '', days: [], hour: '09:00', enabled: true }];
                                     updateManagedGroup(gi, { ...group, scheduledPosts: posts });
@@ -5330,7 +5331,7 @@ export default function AgentConfig() {
                                 </div>
 
                                 {!postsCount && (
-                                  <p className="text-[12px] text-gray-400 py-2">Aucun post planifié.</p>
+                                  <p className="text-[12px] text-gray-400 py-2">{tp('Aucun post planifié.')}</p>
                                 )}
 
                                 {(group.scheduledPosts || []).map((post, pi) => (
@@ -5340,9 +5341,9 @@ export default function AgentConfig() {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], type: e.target.value };
                                         updateManagedGroup(gi, { ...group, scheduledPosts: ps });
                                       }} className="text-[12px] border rounded-lg px-2 py-1.5 bg-gray-50">
-                                        <option value="text">📝 Texte</option>
-                                        <option value="image">🖼️ Image</option>
-                                        <option value="product">🛍️ Produit</option>
+                                        <option value="text">{tp('📝 Texte')}</option>
+                                        <option value="image">{tp('🖼️ Image')}</option>
+                                        <option value="product">{tp('🛍️ Produit')}</option>
                                       </select>
                                       <input type="time" value={post.hour || '09:00'} onChange={e => {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], hour: e.target.value };
@@ -5367,7 +5368,7 @@ export default function AgentConfig() {
                                       <textarea value={post.content || ''} onChange={e => {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], content: e.target.value };
                                         updateManagedGroup(gi, { ...group, scheduledPosts: ps });
-                                      }} rows={2} placeholder="Message..." className="ac-textarea" />
+                                      }} rows={2} placeholder={tp('Message...')} className="ac-textarea" />
                                     )}
                                     {post.type === 'image' && (
                                       <input value={post.content || ''} onChange={e => {
@@ -5380,7 +5381,7 @@ export default function AgentConfig() {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], productName: e.target.value };
                                         updateManagedGroup(gi, { ...group, scheduledPosts: ps });
                                       }} className="ac-input">
-                                        <option value="">— Choisir un produit —</option>
+                                        <option value="">{tp('— Choisir un produit —')}</option>
                                         {groupProducts.map(p => <option key={p} value={p}>{p}</option>)}
                                       </select>
                                     )}
@@ -5399,7 +5400,7 @@ export default function AgentConfig() {
                                       <button onClick={() => {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], days: GA_DAYS.slice() };
                                         updateManagedGroup(gi, { ...group, scheduledPosts: ps });
-                                      }} className="text-[10px] px-1.5 text-primary-600 hover:underline">Tous</button>
+                                      }} className="text-[10px] px-1.5 text-primary-600 hover:underline">{tp('Tous')}</button>
                                     </div>
                                   </div>
                                 ))}
@@ -5430,9 +5431,9 @@ export default function AgentConfig() {
                     <span className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                       <Bot className="w-4 h-4 text-blue-600" />
                     </span>
-                    Autopilote IA : Relances Autonomes
+                    {tp('Autopilote IA : Relances Autonomes')}
                   </h2>
-                  <p className="text-[13px] text-gray-500 mt-1">Laissez l'IA relancer elle-même les clients inactifs en scannant leurs historiques.</p>
+                  <p className="text-[13px] text-gray-500 mt-1">{tp('Laissez l\'IA relancer elle-même les clients inactifs en scannant leurs historiques.')}</p>
                 </div>
                 <Toggle
                   checked={config.autoRelanceEnabled || false}
@@ -5480,9 +5481,9 @@ export default function AgentConfig() {
                   <span className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
                     <Send className="w-4 h-4 text-primary-600" />
                   </span>
-                  Relances Automatiques par Produit
+                  {tp('Relances Automatiques par Produit')}
                 </h2>
-                <p className="text-[13px] text-gray-500 mt-1">Recontactez massivement (mais un par un) tous les clients ayant manifesté de l'intérêt ou commandé un produit spécifique.</p>
+                <p className="text-[13px] text-gray-500 mt-1">{tp('Recontactez massivement (mais un par un) tous les clients ayant manifesté de l\'intérêt ou commandé un produit spécifique.')}</p>
               </div>
               <div className="p-6 space-y-5">
                 <Field label="Sélectionnez le produit">
@@ -5491,7 +5492,7 @@ export default function AgentConfig() {
                     onChange={e => handleProductSelect(e.target.value)}
                     className="ac-input appearance-none bg-white font-medium"
                   >
-                    <option value="">-- Choisir un produit du catalogue --</option>
+                    <option value="">{tp('-- Choisir un produit du catalogue --')}</option>
                     {(config.productCatalog || []).map((p, idx) => (
                       <option key={idx} value={p.name}>{p.name}</option>
                     ))}
@@ -5501,7 +5502,7 @@ export default function AgentConfig() {
                   <textarea
                     value={rpMessage}
                     onChange={e => setRpMessage(e.target.value)}
-                    placeholder="Bonjour, suite à votre achat, nous avons une offre..."
+                    placeholder={tp('Bonjour, suite à votre achat, nous avons une offre...')}
                     className="ac-textarea"
                     rows={4}
                   />
@@ -5523,7 +5524,7 @@ export default function AgentConfig() {
                     {rpLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     Lancer la campagne de relance
                   </button>
-                  <p className="text-[11px] text-gray-400 mt-2 italic">⚠️ L'envoi est progressif pour protéger votre numéro contre les signalements WhatsApp (anti-spam).</p>
+                  <p className="text-[11px] text-gray-400 mt-2 italic">{tp('⚠️ L\'envoi est progressif pour protéger votre numéro contre les signalements WhatsApp (anti-spam).')}</p>
                 </div>
               </div>
             </div>
@@ -5538,12 +5539,12 @@ export default function AgentConfig() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span className="text-[13px] font-medium text-gray-600">Modifications non enregistrées</span>
+              <span className="text-[13px] font-medium text-gray-600">{tp('Modifications non enregistrées')}</span>
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <button onClick={handleReset}
                 className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                Réinitialiser
+                {tp('Réinitialiser')}
               </button>
               <button onClick={handleSave} disabled={saving}
                 className="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-5 py-2.5 text-[13px] font-bold text-white rounded-xl disabled:opacity-50 transition-all"

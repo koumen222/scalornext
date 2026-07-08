@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../../i18n/platform.js';
 import {
   getIconComponent,
   getAnimationClass,
@@ -49,7 +50,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
       {/* Live button preview */}
       <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100 p-5">
         <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3 text-center">
-          Aperçu du bouton
+          {tp('Aperçu du bouton')}
         </div>
         <div className="flex justify-center">
           <button
@@ -68,7 +69,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
           >
             <span className="flex items-center gap-2">
               <BtnIcon size={16} />
-              {config.text || 'Commander'}
+              {config.text || tp('Commander')}
             </span>
             {config.subtext && (
               <span style={{ fontSize: Math.max(10, fontSize - 4), fontWeight: 500, opacity: 0.8 }}>{config.subtext}</span>
@@ -80,22 +81,22 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
       {/* Text */}
       <div className="space-y-3">
         <div>
-          <label className="block text-xs font-semibold text-gray-700 mb-1.5">Texte principal</label>
+          <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Texte principal')}</label>
           <input type="text" value={config.text} onChange={e => update('text', e.target.value)}
-            placeholder="Ex: Commander maintenant"
+            placeholder={tp('Ex: Commander maintenant')}
             className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-700 mb-1.5">Sous-titre</label>
+          <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Sous-titre')}</label>
           <input type="text" value={config.subtext} onChange={e => update('subtext', e.target.value)}
-            placeholder="Ex: Paiement à la livraison"
+            placeholder={tp('Ex: Paiement à la livraison')}
             className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
         </div>
       </div>
 
       {/* Visual params — 3-col row */}
       <div className="pt-4 border-t border-gray-100 space-y-4">
-        <div className="text-xs font-bold text-gray-700">Style visuel</div>
+        <div className="text-xs font-bold text-gray-700">{tp('Style visuel')}</div>
 
         <div className="grid grid-cols-2 gap-3">
           <ColorRow label="Couleur du bouton" value={bgColor} onChange={v => update('bgColor', v)} />
@@ -105,7 +106,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
-              Taille du texte
+              {tp('Taille du texte')}
             </label>
             <div className="flex items-center gap-1.5">
               <input type="number" min="10" max="30"
@@ -116,7 +117,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
             </div>
           </div>
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Style</label>
+            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Style')}</label>
             <div className="flex gap-1">
               <button type="button"
                 className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${bold ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
@@ -160,7 +161,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
 
       {/* Icon selector */}
       <div className="pt-4 border-t border-gray-100">
-        <label className="block text-xs font-semibold text-gray-700 mb-2">Icône</label>
+        <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Icône')}</label>
         <div className="grid grid-cols-6 gap-1.5">
           {ICONS.map(({ id, label, Icon }) => (
             <button key={id} onClick={() => update('icon', id)} title={label}
@@ -178,7 +179,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
 
       {/* Animation selector */}
       <div className="pt-4 border-t border-gray-100">
-        <label className="block text-xs font-semibold text-gray-700 mb-2">Animation</label>
+        <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Animation')}</label>
         <div className="grid grid-cols-3 gap-1.5">
           {ANIMATIONS.map(({ id, label }) => (
             <button key={id} onClick={() => update('animation', id)}

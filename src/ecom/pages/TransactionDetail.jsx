@@ -4,6 +4,7 @@ import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
+import { tp } from '../i18n/platform.js';
 
 const categoryLabels = {
   publicite: 'Publicité', produit: 'Produit', livraison: 'Livraison',
@@ -46,7 +47,7 @@ const TransactionDetail = () => {
     return (
       <div className="p-3 sm:p-4 lg:p-6">
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-          {error || 'Transaction non trouvée'}
+          {error || tp('Transaction non trouvée')}
         </div>
         <button onClick={() => navigate(-1)} className="mt-4 text-primary-600 hover:text-primary-800 text-sm font-medium">
           ← Retour
@@ -68,23 +69,23 @@ const TransactionDetail = () => {
             </svg>
           </button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Détail transaction</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('Détail transaction')}</h1>
             <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${
               isIncome ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
             }`}>
-              {isIncome ? 'Entrée' : 'Dépense'}
+              {isIncome ? 'Entrée' : tp('Dépense')}
             </span>
           </div>
         </div>
         <Link to={`/ecom/transactions/${id}/edit`}
           className="px-3 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 text-sm font-medium">
-          Modifier
+          {tp('Modifier')}
         </Link>
       </div>
 
       {/* Montant */}
       <div className={`rounded-xl p-6 mb-4 sm:mb-6 text-center ${isIncome ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-        <p className="text-xs font-medium text-gray-500 uppercase mb-1">Montant</p>
+        <p className="text-xs font-medium text-gray-500 uppercase mb-1">{tp('Montant')}</p>
         <p className={`text-3xl sm:text-4xl font-bold ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
           {isIncome ? '+' : '-'}{fmt(tx.amount)}
         </p>
@@ -92,45 +93,45 @@ const TransactionDetail = () => {
 
       {/* Infos */}
       <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">Informations</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">{tp('Informations')}</h3>
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="text-sm text-gray-600">Date</span>
+            <span className="text-sm text-gray-600">{tp('Date')}</span>
             <span className="text-sm font-medium text-gray-900">
               {new Date(tx.date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </span>
           </div>
           <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="text-sm text-gray-600">Type</span>
+            <span className="text-sm text-gray-600">{tp('Type')}</span>
             <span className={`px-2 py-0.5 rounded text-xs font-semibold ${isIncome ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-              {isIncome ? 'Entrée' : 'Dépense'}
+              {isIncome ? 'Entrée' : tp('Dépense')}
             </span>
           </div>
           <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="text-sm text-gray-600">Catégorie</span>
+            <span className="text-sm text-gray-600">{tp('Catégorie')}</span>
             <span className="text-sm font-medium text-gray-900">{categoryLabels[tx.category] || tx.category}</span>
           </div>
           {tx.reference && (
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
-              <span className="text-sm text-gray-600">Référence</span>
+              <span className="text-sm text-gray-600">{tp('Référence')}</span>
               <span className="text-sm font-medium text-gray-900">{tx.reference}</span>
             </div>
           )}
           {tx.productId && (
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
-              <span className="text-sm text-gray-600">Produit lié</span>
+              <span className="text-sm text-gray-600">{tp('Produit lié')}</span>
               <Link to={`/products/${tx.productId._id || tx.productId}`}
                 className="text-sm font-medium text-primary-600 hover:text-primary-800">
-                {tx.productId.name || 'Voir le produit'}
+                {tx.productId.name || tp('Voir le produit')}
               </Link>
             </div>
           )}
           <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="text-sm text-gray-600">Créé par</span>
+            <span className="text-sm text-gray-600">{tp('Créé par')}</span>
             <span className="text-sm text-gray-900">{tx.createdBy?.email || '-'}</span>
           </div>
           <div className="flex justify-between items-center py-2">
-            <span className="text-sm text-gray-600">Créé le</span>
+            <span className="text-sm text-gray-600">{tp('Créé le')}</span>
             <span className="text-sm text-gray-900">
               {new Date(tx.createdAt).toLocaleDateString('fr-FR')} à {new Date(tx.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
             </span>
@@ -141,7 +142,7 @@ const TransactionDetail = () => {
       {/* Description */}
       {tx.description && (
         <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">Description</h3>
+          <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">{tp('Description')}</h3>
           <p className="text-sm text-gray-700 whitespace-pre-wrap">{tx.description}</p>
         </div>
       )}

@@ -6,6 +6,7 @@ import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
+import { tp } from '../i18n/platform.js';
 // ❌ CACHE DÉSACTIVÉ
 // import { getCache, setCache, invalidatePrefix } from '../utils/cacheUtils.js';
 
@@ -47,7 +48,7 @@ const NAV = [
   { id:'transactions', label:'Transactions', ico:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
   { id:'budgets', label:'Budgets', ico:'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
   { id:'analyse', label:'Analyse', ico:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-  { id:'previsions', label:'Prévisions', ico:'M13 10V3L4 14h7v7l9-11h-7z' },
+  { id:'previsions', get label() { return tp('Prévisions'); }, ico:'M13 10V3L4 14h7v7l9-11h-7z' },
 ];
 const STATUS_LABELS = { pending:'En attente', confirmed:'Confirmée', shipped:'Expédiée', delivered:'Livrée', returned:'Retournée', no_answer:'Pas de réponse', cancelled:'Annulée' };
 const SEV_CFG = { critical:{bg:'bg-red-50 border-red-200',text:'text-red-700',badge:'bg-red-100 text-red-700'}, warning:{bg:'bg-orange-50 border-orange-200',text:'text-orange-700',badge:'bg-orange-100 text-orange-700'}, info:{bg:'bg-primary-50 border-primary-200',text:'text-primary-700',badge:'bg-primary-100 text-primary-700'}, success:{bg:'bg-primary-50 border-primary-200',text:'text-primary-700',badge:'bg-primary-100 text-primary-700'} };
@@ -59,8 +60,8 @@ const PERIODS = [
   { id:'last_month', label:'Mois dernier' },
   { id:'3months', label:'3 mois' },
   { id:'6months', label:'6 mois' },
-  { id:'year', label:'Cette année' },
-  { id:'custom', label:'Personnalisé' },
+  { id:'year', get label() { return tp('Cette année'); } },
+  { id:'custom', get label() { return tp('Personnalisé'); } },
 ];
 
 /* â”€â”€â”€ SVG Icon System â”€â”€â”€ */
@@ -354,15 +355,15 @@ const TransactionsList = () => {
         {/* Brand */}
         <div className="px-4 py-4 border-b border-gray-100">
           <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Scalor</p>
-          <h1 className="text-sm font-black text-gray-900 leading-tight">Centre financier</h1>
+          <h1 className="text-sm font-black text-gray-900 leading-tight">{tp('Centre financier')}</h1>
           <p className="text-xs text-gray-400 mt-0.5 capitalize leading-snug">
             {now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}
           </p>
         </div>
 
         {/* Navigation */}
-        <nav className="px-2 pt-3 pb-2 flex-shrink-0" role="tablist" aria-label="Vues">
-          <p className="px-3 mb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vues</p>
+        <nav className="px-2 pt-3 pb-2 flex-shrink-0" role="tablist" aria-label={tp('Vues')}>
+          <p className="px-3 mb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Vues')}</p>
           {NAV.map(n=>(
             <button key={n.id} onClick={()=>setTab(n.id)}
               role="tab"
@@ -380,7 +381,7 @@ const TransactionsList = () => {
 
         {/* Period selector */}
         <div className="px-2 pt-2 pb-3 border-t border-gray-100 flex-shrink-0">
-          <p className="px-3 mb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Période</p>
+          <p className="px-3 mb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Période')}</p>
           {PERIODS.filter(p=>p.id!=='custom').map(p=>(
             <button key={p.id} onClick={()=>handlePeriod(p.id)}
               className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-all mb-0.5 ${
@@ -403,7 +404,7 @@ const TransactionsList = () => {
                 className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
               <button onClick={()=>loadTab()}
                 className="w-full px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition active:scale-95">
-                Appliquer
+                {tp('Appliquer')}
               </button>
             </div>
           )}
@@ -436,7 +437,7 @@ const TransactionsList = () => {
           {/* Left: title (mobile) / breadcrumb (desktop) */}
           <div className="flex items-center gap-3 min-w-0">
             <div className="lg:hidden">
-              <h1 className="text-base font-black text-gray-900 tracking-tight">Centre financier</h1>
+              <h1 className="text-base font-black text-gray-900 tracking-tight">{tp('Centre financier')}</h1>
             </div>
             <div className="hidden lg:flex items-center gap-2.5">
               <h2 className="text-sm font-bold text-gray-900">{NAV.find(n=>n.id===tab)?.label}</h2>
@@ -460,14 +461,14 @@ const TransactionsList = () => {
             <Link to="/ecom/transactions/new"
               className="inline-flex items-center gap-2 px-3.5 py-2 bg-scalor-green hover:bg-scalor-green-dark text-white rounded-lg text-sm font-medium transition-all active:scale-95">
               <Ico d={I.plus} className="w-4 h-4" aria-hidden="true"/>
-              <span>Nouvelle transaction</span>
+              <span>{tp('Nouvelle transaction')}</span>
             </Link>
             {tab === 'budgets' && (
               <button
                 onClick={()=>{setBudgetError('');setShowBudgetForm(true);setEditingBudget(null);setBudgetForm({name:'',category:'publicite',amount:'',productId:'',month:budgetMonth});loadProducts();}}
                 className="inline-flex items-center gap-2 px-3.5 py-2 bg-scalor-green hover:bg-scalor-green-dark text-white rounded-lg text-sm font-medium transition-all active:scale-95">
                 <Ico d={I.plus} className="w-4 h-4" aria-hidden="true"/>
-                <span>Nouveau budget</span>
+                <span>{tp('Nouveau budget')}</span>
               </button>
             )}
           </div>
@@ -495,7 +496,7 @@ const TransactionsList = () => {
                 className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
               <input type="date" value={customDates.endDate} onChange={e=>setCustomDates(p=>({...p,endDate:e.target.value}))}
                 className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
-              <button onClick={()=>loadTab()} className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition">Appliquer</button>
+              <button onClick={()=>loadTab()} className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition">{tp('Appliquer')}</button>
             </div>
           )}
           <div className="flex flex-wrap gap-0.5" role="tablist">
@@ -557,22 +558,22 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-xs font-medium text-gray-500 mb-1">Entrées</p>
+          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Entrées')}</p>
           <p className="text-xl font-semibold text-gray-900 tabular-nums">{fmtC(summary.totalIncome)}</p>
           <p className="text-xs text-gray-400 tabular-nums mt-0.5">{summary.incomeCount||0} transactions</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-xs font-medium text-gray-500 mb-1">Dépenses</p>
+          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Dépenses')}</p>
           <p className="text-xl font-semibold text-gray-900 tabular-nums">{fmtC(summary.totalExpense)}</p>
           <p className="text-xs text-gray-400 tabular-nums mt-0.5">{summary.expenseCount||0} transactions</p>
         </div>
         <div className={`border rounded-lg p-4 ${bal>=0?'bg-emerald-50 border-emerald-200':'bg-red-50 border-red-200'}`}>
-          <p className="text-xs font-medium text-gray-500 mb-1">Solde net</p>
+          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Solde net')}</p>
           <p className={`text-xl font-semibold tabular-nums ${bal>=0?'text-scalor-green':'text-red-600'}`}>{fmtC(bal)}</p>
           <p className={`text-xs mt-0.5 ${bal>=0?'text-scalor-green':'text-red-600'}`}>{bal>=0?'Excédent':'Déficit'}</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-xs font-medium text-gray-500 mb-1">Santé financière</p>
+          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Santé financière')}</p>
           <div className="flex items-baseline gap-1">
             <p className={`text-xl font-semibold tabular-nums ${scoreColor}`}>{score}</p>
             <p className="text-xs text-gray-400">/100</p>
@@ -586,10 +587,10 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
       {/* Commandes + Avancement */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-900 mb-3">Commandes ce mois</p>
+          <p className="text-sm font-medium text-gray-900 mb-3">{tp('Commandes ce mois')}</p>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <p className="text-xs text-gray-400">Total</p>
+              <p className="text-xs text-gray-400">{tp('Total')}</p>
               <p className="text-lg font-semibold text-gray-900 tabular-nums">{orders.thisMonth||0}</p>
               {orders.growth!==undefined && <p className={`text-xs font-medium ${orders.growth>=0?'text-scalor-green':'text-red-600'}`}>{orders.growth>=0?'+':''}{orders.growth}%</p>}
             </div>
@@ -598,20 +599,20 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
               <p className="text-lg font-semibold text-gray-900 tabular-nums">{fmtC(orders.revenueThisMonth)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-400">Livraison</p>
+              <p className="text-xs text-gray-400">{tp('Livraison')}</p>
               <p className="text-lg font-semibold text-gray-900 tabular-nums">{orders.deliveryRate||0}%</p>
             </div>
           </div>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-900 mb-3">Avancement du mois</p>
+          <p className="text-sm font-medium text-gray-900 mb-3">{tp('Avancement du mois')}</p>
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <p className="text-xs text-gray-400">Dépenses / jour</p>
+              <p className="text-xs text-gray-400">{tp('Dépenses / jour')}</p>
               <p className="text-base font-semibold text-gray-900 tabular-nums">{fmtC(f.dailyExpenseRate)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-400">Entrées / jour</p>
+              <p className="text-xs text-gray-400">{tp('Entrées / jour')}</p>
               <p className="text-base font-semibold text-gray-900 tabular-nums">{fmtC(f.dailyIncomeRate)}</p>
             </div>
           </div>
@@ -629,14 +630,14 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-medium text-gray-900">Projections fin de mois</p>
-            <button onClick={()=>setTab('previsions')} className="text-xs text-gray-400 hover:text-gray-700 transition">Voir tout</button>
+            <p className="text-sm font-medium text-gray-900">{tp('Projections fin de mois')}</p>
+            <button onClick={()=>setTab('previsions')} className="text-xs text-gray-400 hover:text-gray-700 transition">{tp('Voir tout')}</button>
           </div>
           <div className="space-y-2">
             {[
-              {label:'Dépenses projetées', value:fmtC(f.projectedExpense), color:'text-red-600'},
-              {label:'Entrées projetées', value:fmtC(f.projectedIncome), color:'text-scalor-green'},
-              {label:'Solde projeté', value:fmtC(f.projectedBalance), color:(f.projectedBalance||0)>=0?'text-scalor-green':'text-red-600'},
+              {get label() { return tp('Dépenses projetées'); }, value:fmtC(f.projectedExpense), color:'text-red-600'},
+              {get label() { return tp('Entrées projetées'); }, value:fmtC(f.projectedIncome), color:'text-scalor-green'},
+              {get label() { return tp('Solde projeté'); }, value:fmtC(f.projectedBalance), color:(f.projectedBalance||0)>=0?'text-scalor-green':'text-red-600'},
             ].map((p,idx)=>(
               <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                 <p className="text-sm text-gray-500">{p.label}</p>
@@ -647,9 +648,9 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
         </div>
 
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-900 mb-3">Alertes</p>
+          <p className="text-sm font-medium text-gray-900 mb-3">{tp('Alertes')}</p>
           {recs.length===0 ? (
-            <p className="text-sm text-gray-400">Aucune alerte</p>
+            <p className="text-sm text-gray-400">{tp('Aucune alerte')}</p>
           ) : (
             <div className="space-y-2">
               {recs.map((r,idx)=>{
@@ -771,9 +772,9 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
           <Ico d={I.alert} className="w-4 h-4 text-red-600" aria-hidden="true"/>
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-xs font-bold text-red-900 uppercase tracking-wide mb-1">Alerte : Déséquilibre financier critique</h4>
+          <h4 className="text-xs font-bold text-red-900 uppercase tracking-wide mb-1">{tp('Alerte : Déséquilibre financier critique')}</h4>
           <p className="text-xs text-red-700 leading-relaxed">
-            Vos dépenses ({fmt(totalExpense)}) représentent <strong>{expenseRatio.toFixed(0)}%</strong> de vos entrées. Maintenir au moins <strong>30%</strong> des entrées en caisse.
+            Vos dépenses ({fmt(totalExpense)}) représentent <strong>{expenseRatio.toFixed(0)}%</strong> {tp('de vos entrées. Maintenir au moins')} <strong>30%</strong> des entrées en caisse.
             <span className="opacity-80 mt-0.5 block">Entrées: {fmt(totalIncome)} • Sorties: {fmt(totalExpense)} • Caisse: {fmt(cashBalance)} • Min. requis: {fmt(minCashRequired)}</span>
           </p>
         </div>
@@ -784,10 +785,10 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
     <div className="bg-white border border-gray-100 rounded-xl p-3 shadow-sm lg:rounded-none lg:border-x-0 lg:border-t-0 lg:border-b-gray-200 lg:shadow-none lg:bg-gray-50/50">
       <div className="flex flex-wrap items-center gap-3">
         <select value={filters.type} onChange={e=>setFilters(p=>({...p,type:e.target.value}))} className="px-3 py-2 border border-gray-200 rounded-lg text-xs font-medium bg-gray-50 focus:ring-2 focus:ring-gray-900/10">
-          <option value="">Tous les types</option><option value="expense">Dépenses</option><option value="income">Entrées</option>
+          <option value="">{tp('Tous les types')}</option><option value="expense">{tp('Dépenses')}</option><option value="income">{tp('Entrées')}</option>
         </select>
         <select value={filters.category} onChange={e=>setFilters(p=>({...p,category:e.target.value}))} className="px-3 py-2 border border-gray-200 rounded-lg text-xs font-medium bg-gray-50 focus:ring-2 focus:ring-gray-900/10">
-          <option value="">Toutes catégories</option>
+          <option value="">{tp('Toutes catégories')}</option>
           {Object.entries(CAT).map(([k,v])=><option key={k} value={k}>{v}</option>)}
         </select>
         {(filters.type||filters.category) && (
@@ -817,7 +818,7 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
                 disabled={transactions.length === 0}
               >
                 <span className="w-3 h-3 bg-green-100 rounded"></span>
-                Excel (.xlsx)
+                {tp('Excel (.xlsx)')}
               </button>
               <button
                 onClick={() => {
@@ -828,7 +829,7 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
                 disabled={transactions.length === 0}
               >
                 <span className="w-3 h-3 bg-primary-100 rounded"></span>
-                CSV (.csv)
+                {tp('CSV (.csv)')}
               </button>
             </div>
           )}
@@ -843,7 +844,7 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
         {transactions.length===0 ? (
           <div className="px-6 py-12 text-center">
             <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-3"><Ico d={I.wallet} className="w-5 h-5 text-gray-400"/></div>
-            <p className="text-sm text-gray-500 font-medium">Aucune transaction sur cette période</p>
+            <p className="text-sm text-gray-500 font-medium">{tp('Aucune transaction sur cette période')}</p>
           </div>
         ) : transactions.map(tx => (
           <div key={tx._id} className="px-3 py-2.5 grid grid-cols-[auto_1fr_auto] items-center gap-2">
@@ -854,8 +855,8 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
               {tx.type==='income'?'+':'-'}{fmtCompact(tx.amount)}
             </span>
             <div className="flex items-center gap-1">
-              <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label="Modifier" className="p-1.5 rounded-lg hover:bg-gray-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-gray-400" aria-hidden="true"/></Link>
-              <button onClick={()=>handleDelete(tx._id)} aria-label="Supprimer" className="p-1.5 rounded-lg hover:bg-red-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" aria-hidden="true"/></button>
+              <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label={tp('Modifier')} className="p-1.5 rounded-lg hover:bg-gray-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-gray-400" aria-hidden="true"/></Link>
+              <button onClick={()=>handleDelete(tx._id)} aria-label={tp('Supprimer')} className="p-1.5 rounded-lg hover:bg-red-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" aria-hidden="true"/></button>
             </div>
           </div>
         ))}
@@ -864,19 +865,19 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
       <div className="hidden sm:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead><tr className="bg-gray-50">
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left border-b border-gray-200">Date</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden sm:table-cell border-b border-gray-200">Type</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden sm:table-cell border-b border-gray-200">Catégorie</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden md:table-cell border-b border-gray-200">Description</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-right border-b border-gray-200">Montant</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-center hidden lg:table-cell border-b border-gray-200">Soldé</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left border-b border-gray-200">{tp('Date')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden sm:table-cell border-b border-gray-200">{tp('Type')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden sm:table-cell border-b border-gray-200">{tp('Catégorie')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden md:table-cell border-b border-gray-200">{tp('Description')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-right border-b border-gray-200">{tp('Montant')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-center hidden lg:table-cell border-b border-gray-200">{tp('Soldé')}</th>
             <th className="px-4 py-2.5 border-b border-gray-200"></th>
           </tr></thead>
           <tbody className="divide-y divide-gray-100">
             {transactions.length===0 ? (
               <tr><td colSpan="7" className="px-6 py-16 text-center">
                 <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-3"><Ico d={I.wallet} className="w-5 h-5 text-gray-400" aria-hidden="true"/></div>
-                <p className="text-sm text-gray-500 font-medium">Aucune transaction sur cette période</p>
+                <p className="text-sm text-gray-500 font-medium">{tp('Aucune transaction sur cette période')}</p>
               </td></tr>
             ) : transactions.map((tx,idx)=>(
               <tr key={tx._id} className={`hover:bg-blue-50/30 transition-colors ${idx%2===0?'bg-white':'bg-gray-50/40'}`}>
@@ -884,7 +885,7 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
                   <Link to={`/ecom/transactions/${tx._id}`} className="text-xs font-semibold text-gray-700 hover:text-gray-900 tabular-nums">{new Date(tx.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'2-digit'})}</Link>
                 </td>
                 <td className="px-4 py-2.5 whitespace-nowrap hidden sm:table-cell">
-                  <Badge variant={tx.type==='income'?'success':'danger'}>{tx.type==='income'?'Entrée':'Dépense'}</Badge>
+                  <Badge variant={tx.type==='income'?'success':'danger'}>{tx.type==='income'?'Entrée': tp('Dépense')}</Badge>
                 </td>
                 <td className="px-4 py-2.5 text-xs text-gray-600 hidden sm:table-cell font-medium">{CAT[tx.category]||tx.category}</td>
                 <td className="px-4 py-2.5 text-xs text-gray-400 max-w-[200px] truncate hidden md:table-cell">{tx.description||'—'}</td>
@@ -897,14 +898,14 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
                     <input type="checkbox" checked={tx.isPaid || false}
                       onChange={async (e) => { try { await ecomApi.put(`/transactions/${tx._id}`, { isPaid: e.target.checked }); } catch {} }}
                       className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
-                      aria-label={tx.isPaid ? 'Marquer comme non soldé' : 'Marquer comme soldé'}
+                      aria-label={tx.isPaid ? 'Marquer comme non soldé' : tp('Marquer comme soldé')}
                     />
                   ) : <span className="text-gray-200">—</span>}
                 </td>
                 <td className="px-4 py-2.5 text-right whitespace-nowrap">
                   <div className="flex items-center justify-end gap-0.5">
-                    <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label="Modifier" className="p-1.5 rounded hover:bg-gray-200 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-gray-400" aria-hidden="true"/></Link>
-                    <button onClick={()=>handleDelete(tx._id)} aria-label="Supprimer" className="p-1.5 rounded hover:bg-red-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" aria-hidden="true"/></button>
+                    <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label={tp('Modifier')} className="p-1.5 rounded hover:bg-gray-200 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-gray-400" aria-hidden="true"/></Link>
+                    <button onClick={()=>handleDelete(tx._id)} aria-label={tp('Supprimer')} className="p-1.5 rounded hover:bg-red-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" aria-hidden="true"/></button>
                   </div>
                 </td>
               </tr>
@@ -932,7 +933,7 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
       <Card className="p-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <Ico d={I.cal} className="w-4 h-4 text-gray-400"/>
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Période</span>
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{tp('Période')}</span>
           <select value={budgetMonth} onChange={e=>setBudgetMonth(e.target.value)} className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-semibold bg-gray-50 focus:ring-2 focus:ring-gray-900/10">
             {monthOptions.map(m=><option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
@@ -951,8 +952,8 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => { if (!budgetSaving) { setShowBudgetForm(false); setEditingBudget(null); setBudgetError(''); } }}>
           <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-bold text-gray-900">{editingBudget?'Modifier le budget':'Nouveau budget'}</h3>
-              <button onClick={() => {setShowBudgetForm(false);setEditingBudget(null);setBudgetError('');}} aria-label="Fermer" className="text-gray-400 hover:text-gray-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 rounded-lg p-0.5 active:scale-95">
+              <h3 className="text-lg font-bold text-gray-900">{editingBudget?'Modifier le budget': tp('Nouveau budget')}</h3>
+              <button onClick={() => {setShowBudgetForm(false);setEditingBudget(null);setBudgetError('');}} aria-label={tp('Fermer')} className="text-gray-400 hover:text-gray-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 rounded-lg p-0.5 active:scale-95">
                 <Ico d={I.close} className="w-5 h-5" aria-hidden="true"/>
               </button>
             </div>
@@ -965,45 +966,45 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Nom</label>
-                <input required value={budgetForm.name} onChange={e=>setBudgetForm(p=>({...p,name:e.target.value}))} placeholder="Ex: Budget Pub" className={inputCls}/>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom')}</label>
+                <input required value={budgetForm.name} onChange={e=>setBudgetForm(p=>({...p,name:e.target.value}))} placeholder={tp('Ex: Budget Pub')} className={inputCls}/>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Mois</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Mois')}</label>
                 <select required value={budgetForm.month||budgetMonth} onChange={e=>setBudgetForm(p=>({...p,month:e.target.value}))} className={inputCls}>
                   {monthOptions.map(m=><option key={m.value} value={m.value}>{m.label}</option>)}
                 </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Catégorie</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Catégorie')}</label>
                 <select required value={budgetForm.category} onChange={e=>setBudgetForm(p=>({...p,category:e.target.value}))} className={inputCls}>
                   {EXP_CATS.map(c=><option key={c} value={c}>{CAT[c]}</option>)}
                 </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Montant limite</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Montant limite')}</label>
                 <input required type="number" min="1" value={budgetForm.amount} onChange={e=>setBudgetForm(p=>({...p,amount:e.target.value}))} placeholder="150 000" className={inputCls}/>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Produit lié (optionnel)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Produit lié (optionnel)')}</label>
                 <select value={budgetForm.productId||''} onChange={e=>setBudgetForm(p=>({...p,productId:e.target.value||null}))} className={inputCls}>
-                  <option value="">— Toute la catégorie —</option>
-                  {(products||[]).length===0 && <option disabled>Chargement des produits...</option>}
+                  <option value="">{tp('— Toute la catégorie —')}</option>
+                  {(products||[]).length===0 && <option disabled>{tp('Chargement des produits...')}</option>}
                   {(products||[]).map(p=><option key={p._id} value={p._id}>{p.name}{p.status?' ('+p.status+')':''}</option>)}
                 </select>
               </div>
               
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={()=>{setShowBudgetForm(false);setEditingBudget(null);setBudgetError('');}} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium transition" disabled={budgetSaving}>
-                  Annuler
+                  {tp('Annuler')}
                 </button>
                 <button type="submit" disabled={budgetSaving} className="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                   {budgetSaving && <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>}
-                  {budgetSaving ? 'Enregistrement...' : editingBudget ? 'Enregistrer' : 'Créer'}
+                  {budgetSaving ? 'Enregistrement...' : editingBudget ? 'Enregistrer' : tp('Créer')}
                 </button>
               </div>
             </form>
@@ -1014,7 +1015,7 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
       {budgets.length===0 ? (
         <Card className="p-0">
           <EmptyState icon={I.target} title={`Aucun budget pour ${currentMonthLabel}`} sub="Définissez des budgets pour suivre vos dépenses par catégorie"
-            action={<button onClick={()=>{setBudgetError('');setShowBudgetForm(true);setBudgetForm({name:'',category:'publicite',amount:'',productId:'',month:budgetMonth});loadProducts();}} className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition">Créer un budget</button>}/>
+            action={<button onClick={()=>{setBudgetError('');setShowBudgetForm(true);setBudgetForm({name:'',category:'publicite',amount:'',productId:'',month:budgetMonth});loadProducts();}} className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition">{tp('Créer un budget')}</button>}/>
         </Card>
       ) : (
         <div className="space-y-3">
@@ -1043,10 +1044,10 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
                       <p className="text-xs text-gray-400">{fmtC(Math.max(b.remaining,0))} restants — {b.transactionCount||0} tx</p>
                     </div>
                     <div className="flex gap-0.5">
-                      <button onClick={()=>{setBudgetError('');setEditingBudget(b);setBudgetForm({name:b.name,category:b.category,amount:b.amount,productId:b.productId?._id||'',month:b.month||budgetMonth});setShowBudgetForm(true);loadProducts();}} aria-label="Modifier le budget" className="p-1.5 rounded-lg hover:bg-gray-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95">
+                      <button onClick={()=>{setBudgetError('');setEditingBudget(b);setBudgetForm({name:b.name,category:b.category,amount:b.amount,productId:b.productId?._id||'',month:b.month||budgetMonth});setShowBudgetForm(true);loadProducts();}} aria-label={tp('Modifier le budget')} className="p-1.5 rounded-lg hover:bg-gray-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95">
                         <Ico d={I.edit} className="w-4 h-4 text-gray-400" aria-hidden="true"/>
                       </button>
-                      <button onClick={()=>handleDeleteBudget(b._id)} aria-label="Supprimer le budget" className="p-1.5 rounded-lg hover:bg-red-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95">
+                      <button onClick={()=>handleDeleteBudget(b._id)} aria-label={tp('Supprimer le budget')} className="p-1.5 rounded-lg hover:bg-red-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95">
                         <Ico d={I.trash} className="w-4 h-4 text-gray-400 hover:text-red-500" aria-hidden="true"/>
                       </button>
                     </div>
@@ -1099,15 +1100,15 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
         <Metric label="Total entrées" value={fmt(a.totalIncome)} mobileValue={fmtC(a.totalIncome)} icon={I.trend} color="text-primary-600" iconBg="bg-primary-50"/>
         <Metric label="Total dépenses" value={fmt(a.totalExpenses)} mobileValue={fmtC(a.totalExpenses)} icon={I.down} color="text-red-500" iconBg="bg-red-50"/>
         <Metric label="Solde global" value={fmt(a.balance)} mobileValue={fmtC(a.balance)} icon={I.wallet} color={(a.balance||0)>=0?'text-primary-600':'text-red-500'} iconBg={(a.balance||0)>=0?'bg-primary-50':'bg-red-50'}/>
-        <Metric label="Mois précédent" value={fmt(lastBal)} mobileValue={fmtC(lastBal)} sub={lastBal>=0?'Excédentaire':'Déficitaire'} icon={I.cal} color={lastBal>=0?'text-primary-600':'text-red-500'} iconBg="bg-gray-100"/>
+        <Metric label="Mois précédent" value={fmt(lastBal)} mobileValue={fmtC(lastBal)} sub={lastBal>=0?'Excédentaire': tp('Déficitaire')} icon={I.cal} color={lastBal>=0?'text-primary-600':'text-red-500'} iconBg="bg-gray-100"/>
       </div>
 
 
       {/* Category breakdowns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-5">
-          <SectionTitle>Dépenses par catégorie</SectionTitle>
-          {expenses.length===0 ? <p className="text-sm text-gray-400 py-6 text-center">Aucune dépense enregistrée</p> : (
+          <SectionTitle>{tp('Dépenses par catégorie')}</SectionTitle>
+          {expenses.length===0 ? <p className="text-sm text-gray-400 py-6 text-center">{tp('Aucune dépense enregistrée')}</p> : (
             <div className="space-y-3">
               {expenses.sort((x,y)=>y.total-x.total).map((c,idx)=>{
                 const pct = totalExp>0?(c.total/totalExp*100):0;
@@ -1127,8 +1128,8 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
           )}
         </Card>
         <Card className="p-5">
-          <SectionTitle>Entrées par catégorie</SectionTitle>
-          {income.length===0 ? <p className="text-sm text-gray-400 py-6 text-center">Aucune entrée enregistrée</p> : (
+          <SectionTitle>{tp('Entrées par catégorie')}</SectionTitle>
+          {income.length===0 ? <p className="text-sm text-gray-400 py-6 text-center">{tp('Aucune entrée enregistrée')}</p> : (
             <div className="space-y-3">
               {income.sort((x,y)=>y.total-x.total).map((c,idx)=>{
                 const pct = totalInc>0?(c.total/totalInc*100):0;
@@ -1152,7 +1153,7 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
       {/* Monthly trend */}
       {monthLabels.length>0 && (
         <Card className="p-5">
-          <SectionTitle>Tendance mensuelle</SectionTitle>
+          <SectionTitle>{tp('Tendance mensuelle')}</SectionTitle>
           <div className="mb-5 space-y-2">
             {monthLabels.slice(-6).map(ml=>{
               const { inc, exp, bal: mBal } = getMonthData(ml);
@@ -1171,8 +1172,8 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
               );
             })}
             <div className="flex gap-4 mt-1 text-xs text-gray-400 ml-14">
-              <span className="flex items-center gap-1"><span className="w-2 h-2 bg-primary-400 rounded-sm"/>Entrées</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 bg-red-300 rounded-sm"/>Dépenses</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 bg-primary-400 rounded-sm"/>{tp('Entrées')}</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 bg-red-300 rounded-sm"/>{tp('Dépenses')}</span>
             </div>
           </div>
           <div className="overflow-x-auto border-t border-gray-100 pt-4">
@@ -1234,7 +1235,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
       {/* Score + Rythme */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-5">
-          <SectionTitle>Score de santé</SectionTitle>
+          <SectionTitle>{tp('Score de santé')}</SectionTitle>
           <div className="flex items-center gap-5 mb-4">
             <div className="relative w-20 h-20 flex-shrink-0">
               <svg className="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
@@ -1246,27 +1247,27 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
             <div className="min-w-0">
               <p className={`text-base font-bold ${scoreColor}`}>{f.healthLabel||'—'}</p>
               <div className="mt-2 space-y-1 text-xs text-gray-400">
-                <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium"><span>Moy. dép. 3m</span><span className="text-gray-700 font-semibold tabular-nums">{fmtC(f.avg3mExpense)}</span></div>
-                <div className="flex justify-between gap-4"><span>Moy. ent. 3m</span><span className="text-gray-700 font-semibold tabular-nums">{fmtC(f.avg3mIncome)}</span></div>
+                <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium"><span>{tp('Moy. dép. 3m')}</span><span className="text-gray-700 font-semibold tabular-nums">{fmtC(f.avg3mExpense)}</span></div>
+                <div className="flex justify-between gap-4"><span>{tp('Moy. ent. 3m')}</span><span className="text-gray-700 font-semibold tabular-nums">{fmtC(f.avg3mIncome)}</span></div>
               </div>
             </div>
           </div>
           <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium"><span>Avancement</span><span>{f.daysPassed||0}/{f.daysInMonth||30}j</span></div>
+            <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium"><span>{tp('Avancement')}</span><span>{f.daysPassed||0}/{f.daysInMonth||30}j</span></div>
             <div className="w-full bg-gray-200 rounded-full h-1.5"><div className="h-1.5 rounded-full bg-gray-900 transition-all" style={{width:`${f.daysInMonth>0?(f.daysPassed/f.daysInMonth*100):0}%`}}/></div>
           </div>
         </Card>
 
         <Card className="p-5">
-          <SectionTitle>Rythme</SectionTitle>
+          <SectionTitle>{tp('Rythme')}</SectionTitle>
           <div className="space-y-2 mb-4">
-            <div className="flex justify-between items-center text-sm bg-red-50 rounded-lg px-3 py-2"><span className="text-gray-600 font-medium">Dépenses / jour</span><span className="font-bold text-red-500 tabular-nums">{fmtC(f.dailyExpenseRate||0)}</span></div>
-            <div className="flex justify-between items-center text-sm bg-primary-50 rounded-lg px-3 py-2"><span className="text-gray-600 font-medium">Entrées / jour</span><span className="font-bold text-primary-600 tabular-nums">{fmtC(f.dailyIncomeRate||0)}</span></div>
+            <div className="flex justify-between items-center text-sm bg-red-50 rounded-lg px-3 py-2"><span className="text-gray-600 font-medium">{tp('Dépenses / jour')}</span><span className="font-bold text-red-500 tabular-nums">{fmtC(f.dailyExpenseRate||0)}</span></div>
+            <div className="flex justify-between items-center text-sm bg-primary-50 rounded-lg px-3 py-2"><span className="text-gray-600 font-medium">{tp('Entrées / jour')}</span><span className="font-bold text-primary-600 tabular-nums">{fmtC(f.dailyIncomeRate||0)}</span></div>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <div className="text-center bg-gray-50 rounded-lg p-3">
               <p className="text-xl font-bold text-gray-900">{orders.thisMonth||0}</p>
-              <p className="text-xs text-gray-400 font-medium">Commandes</p>
+              <p className="text-xs text-gray-400 font-medium">{tp('Commandes')}</p>
               {orders.growth!==undefined && <p className={`text-xs font-bold ${varColor(orders.growth)}`}>{arr(orders.growth)} {Math.abs(orders.growth)}%</p>}
             </div>
             <div className="text-center bg-gray-50 rounded-lg p-3">
@@ -1275,7 +1276,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
             </div>
             <div className="text-center bg-gray-50 rounded-lg p-3">
               <p className="text-xl font-bold text-gray-900">{orders.deliveryRate||0}%</p>
-              <p className="text-xs text-gray-400 font-medium">Livraison</p>
+              <p className="text-xs text-gray-400 font-medium">{tp('Livraison')}</p>
             </div>
           </div>
         </Card>
@@ -1284,7 +1285,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
       {/* Recommandations */}
       {recs.length>0 && (
         <Card className="p-5">
-          <SectionTitle>Recommandations</SectionTitle>
+          <SectionTitle>{tp('Recommandations')}</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {recs.map((r,idx)=>{
               const cfg=SEV_CFG[r.type]||SEV_CFG.info;
@@ -1309,7 +1310,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {cats.length>0 && (
           <Card className="p-5">
-            <SectionTitle>Dépenses par catégorie</SectionTitle>
+            <SectionTitle>{tp('Dépenses par catégorie')}</SectionTitle>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead><tr className="border-b border-gray-100">
@@ -1332,7 +1333,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
 
         {prods.length>0 && (
           <Card className="p-5">
-            <SectionTitle>Top produits</SectionTitle>
+            <SectionTitle>{tp('Top produits')}</SectionTitle>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead><tr className="border-b border-gray-100">
@@ -1361,7 +1362,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
       {/* Budget alerts */}
       {alerts.length>0 && (
         <Card className="p-5">
-          <SectionTitle>Alertes budgets</SectionTitle>
+          <SectionTitle>{tp('Alertes budgets')}</SectionTitle>
           <div className="space-y-2">
             {alerts.map((a,idx)=>{
               const sev = a.severity==='critical'?'bg-red-50 border-red-200 text-red-700':a.severity==='high'?'bg-amber-50 border-amber-200 text-amber-700':'bg-yellow-50 border-yellow-200 text-yellow-700';
@@ -1386,7 +1387,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {weekly.length>0 && (
           <Card className="p-5">
-            <SectionTitle>Tendance hebdomadaire</SectionTitle>
+            <SectionTitle>{tp('Tendance hebdomadaire')}</SectionTitle>
             <div className="space-y-2">
               {weekly.map((w,idx)=>{
                 const mx=Math.max(...weekly.map(wk=>Math.max(wk.expenses,wk.income)),1);
@@ -1401,8 +1402,8 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
                 );
               })}
               <div className="flex gap-4 mt-1 text-xs text-gray-400">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-red-300 rounded-sm"/>Dépenses</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-primary-400 rounded-sm"/>Entrées</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-red-300 rounded-sm"/>{tp('Dépenses')}</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-primary-400 rounded-sm"/>{tp('Entrées')}</span>
               </div>
             </div>
           </Card>
@@ -1410,7 +1411,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
 
         {monthly.length>0 && (
           <Card className="p-5">
-            <SectionTitle>Tendance mensuelle</SectionTitle>
+            <SectionTitle>{tp('Tendance mensuelle')}</SectionTitle>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead><tr className="border-b border-gray-100">
@@ -1440,7 +1441,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
       {/* Order status */}
       {(orders.byStatus||[]).length>0 && (
         <Card className="p-5">
-          <SectionTitle>Répartition des commandes</SectionTitle>
+          <SectionTitle>{tp('Répartition des commandes')}</SectionTitle>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {(orders.byStatus||[]).map((s,idx)=>(
               <div key={idx} className="text-center p-3 bg-gray-50 rounded-lg">

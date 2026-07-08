@@ -6,6 +6,7 @@ import { useSubdomain } from '../hooks/useSubdomain.js';
 import { injectStoreCssVars } from '../hooks/useStoreData.js';
 import { injectPixelScripts, firePixelEvent } from '../utils/pixelTracking.js';
 import { formatMoney } from '../utils/currency.js';
+import { tp } from '../i18n/platform.js';
 
 // Cache sessionStorage SUPPRIMÉ — on lit toujours frais depuis l'API.
 // (cf. useStoreData.js pour la justification : trop de bugs "modif pas visible")
@@ -304,8 +305,8 @@ const StoreFront = () => {
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--s-bg, #ffffff)', color: 'var(--s-text, #111827)', fontFamily: 'var(--s-font-base, var(--s-font, Inter, sans-serif))' }}>
         <div className="text-center">
           <ShoppingBag className="w-16 h-16 mx-auto" style={{ color: 'var(--s-text2, #9ca3af)' }} />
-          <h1 className="text-xl font-bold mt-4" style={{ color: 'var(--s-text, #111827)' }}>Boutique introuvable</h1>
-          <p className="text-sm mt-2" style={{ color: 'var(--s-text2, #6b7280)' }}>Cette boutique n'existe pas ou n'est pas encore activée.</p>
+          <h1 className="text-xl font-bold mt-4" style={{ color: 'var(--s-text, #111827)' }}>{tp('Boutique introuvable')}</h1>
+          <p className="text-sm mt-2" style={{ color: 'var(--s-text2, #6b7280)' }}>{tp('Cette boutique n\'existe pas ou n\'est pas encore activée.')}</p>
         </div>
       </div>
     );
@@ -378,7 +379,7 @@ const StoreFront = () => {
                   href={`tel:${store.phone}`}
                   className="p-2 rounded-full text-white transition"
                   style={{ background: 'var(--sf-btn-bg)', color: 'var(--sf-btn-text)', border: '1px solid var(--sf-btn-border)' }}
-                  title="Appeler"
+                  title={tp('Appeler')}
                 >
                   <Phone className="w-4 h-4" />
                 </a>
@@ -391,10 +392,10 @@ const StoreFront = () => {
       {store && <main className="sf-in max-w-6xl mx-auto px-4 pb-12 pt-8 lg:pt-10">
         <section className="text-center">
           <div className="text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: 'var(--s-text2)' }}>
-            Accueil / Produits
+            {tp('Accueil / Produits')}
           </div>
           <h2 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl" style={{ color: 'var(--s-text)' }}>
-            Tous nos produits
+            {tp('Tous nos produits')}
           </h2>
           <p className="mt-3 text-sm font-medium" style={{ color: 'var(--s-text2)' }}>
             {pagination.total || totalVisibleProducts} article{(pagination.total || totalVisibleProducts) > 1 ? 's' : ''} disponible{(pagination.total || totalVisibleProducts) > 1 ? 's' : ''}
@@ -408,7 +409,7 @@ const StoreFront = () => {
             className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition"
             style={selectedCategory === '' ? { backgroundColor: 'var(--s-text)', color: 'var(--s-bg)' } : { backgroundColor: 'var(--sf-surface)', color: 'var(--s-text)', border: '1px solid var(--sf-soft-border)' }}
           >
-            <span>Tout</span>
+            <span>{tp('Tout')}</span>
             <span className="text-xs opacity-70">{pagination.total || products.length}</span>
           </button>
           {categories.map((cat) => (
@@ -433,7 +434,7 @@ const StoreFront = () => {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher un produit"
+                placeholder={tp('Rechercher un produit')}
                 className="w-full pl-10 pr-4 py-3 text-sm focus:outline-none"
                 style={{ backgroundColor: 'var(--s-bg)', color: 'var(--s-text)', border: '1px solid var(--sf-soft-border)', borderRadius: '999px' }}
               />
@@ -470,7 +471,7 @@ const StoreFront = () => {
 
               <div className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold" style={{ backgroundColor: 'var(--sf-soft-surface)', color: 'var(--s-text2)' }}>
                 <ArrowUpDown className="w-3.5 h-3.5" />
-                Trier
+                {tp('Trier')}
               </div>
               <select
                 value={sortBy}
@@ -522,7 +523,7 @@ const StoreFront = () => {
               {(minPrice || maxPrice) ? <span>Prix: {formatPrice(minPrice, store.currency)} - {formatPrice(maxPrice, store.currency)}</span> : null}
               {activeFilters.length > 0 && (
                 <button type="button" onClick={clearAllFilters} className="font-semibold" style={{ color: 'var(--s-primary)' }}>
-                  Effacer les filtres
+                  {tp('Effacer les filtres')}
                 </button>
               )}
             </div>
@@ -534,7 +535,7 @@ const StoreFront = () => {
           <div className="text-center py-16">
             <ShoppingBag className="w-12 h-12 mx-auto" style={{ color: 'var(--s-text2)' }} />
             <p className="mt-3 text-sm" style={{ color: 'var(--s-text2)' }}>
-              {search || availability !== 'all' || selectedCategory ? 'Aucun produit trouvé avec ces filtres' : 'Aucun produit disponible'}
+              {search || availability !== 'all' || selectedCategory ? 'Aucun produit trouvé avec ces filtres' : tp('Aucun produit disponible')}
             </p>
           </div>
         ) : (
@@ -590,19 +591,19 @@ const StoreFront = () => {
                     </h3>
                     <div className="mt-3 flex items-baseline gap-2">
                       <span className="text-base font-black sm:text-lg" style={{ color: 'var(--s-primary)' }}>
-                        {formatPrice(product.price, product.currency || store.currency)}
+                        {formatPrice(product.price, store.currency)}
                       </span>
                       {product.compareAtPrice && product.compareAtPrice > product.price && (
                         <span className="text-xs line-through sm:text-sm" style={{ color: 'var(--s-text2)' }}>
-                          {formatPrice(product.compareAtPrice, product.currency || store.currency)}
+                          {formatPrice(product.compareAtPrice, store.currency)}
                         </span>
                       )}
                     </div>
                     <div className="mt-3 flex items-center justify-between gap-2">
                       <span className="inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={Number(product.stock || 0) > 0 ? { backgroundColor: 'var(--sf-soft-surface)', color: 'var(--s-text)' } : { backgroundColor: 'color-mix(in srgb, #ef4444 12%, var(--s-bg))', color: '#dc2626' }}>
-                        {Number(product.stock || 0) > 0 ? 'En stock' : 'Rupture'}
+                        {Number(product.stock || 0) > 0 ? 'En stock' : tp('Rupture')}
                       </span>
-                      <span className="text-[11px] font-semibold" style={{ color: 'var(--s-text2)' }}>Voir le produit</span>
+                      <span className="text-[11px] font-semibold" style={{ color: 'var(--s-text2)' }}>{tp('Voir le produit')}</span>
                     </div>
                   </div>
                 </a>

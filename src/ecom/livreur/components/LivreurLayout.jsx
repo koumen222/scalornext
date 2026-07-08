@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../../i18n/platform.js';
 import { NavLink, useLocation } from '@/lib/router-compat';
 import {
   LayoutDashboard,

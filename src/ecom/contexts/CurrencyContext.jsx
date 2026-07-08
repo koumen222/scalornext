@@ -51,7 +51,8 @@ const CurrencyContext = createContext();
 export const CurrencyProvider = ({ children }) => {
   const { user } = useEcomAuth();
 
-  // Gestion robuste de la devise avec fallback
+  // Devise du SYSTÈME GÉNÉRAL = préférence de l'utilisateur (indépendante de la boutique).
+  // Les pages du module boutique résolvent, elles, la devise du store explicitement.
   const currencyCode = user?.currency || 'XAF';
   const currencyInfo = getCurrencyInfo(currencyCode);
 

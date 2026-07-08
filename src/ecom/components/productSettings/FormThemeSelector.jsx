@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { tp } from '../../i18n/platform.js';
 
 export const FORM_THEMES = [
   {
@@ -526,7 +527,7 @@ const ThemeCard = ({ theme, selected, onSelect }) => {
           {theme.name}
         </span>
         {selected && (
-          <span className="text-[9px] font-bold text-primary-500">✓ Actif</span>
+          <span className="text-[9px] font-bold text-primary-500">{tp('✓ Actif')}</span>
         )}
       </div>
     </button>
@@ -557,13 +558,13 @@ const FormThemePicker = ({ config, onConfigChange }) => {
     <div className="space-y-2.5">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="text-xs font-bold text-gray-700">Modèles</div>
+        <div className="text-xs font-bold text-gray-700">{tp('Modèles')}</div>
         <button
           type="button"
           onClick={() => handleSelect('classic')}
           className="text-[10px] text-gray-400 hover:text-primary-600 transition-colors font-medium"
         >
-          Restaurer par défaut
+          {tp('Restaurer par défaut')}
         </button>
       </div>
 

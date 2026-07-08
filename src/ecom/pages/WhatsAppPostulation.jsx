@@ -3,6 +3,7 @@ import { Link, useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const WhatsAppPostulation = () => {
   const { user } = useEcomAuth();
@@ -50,7 +51,7 @@ const WhatsAppPostulation = () => {
         reason: formData.reason
       });
 
-      setSuccess('🎉 Votre postulation a été envoyée avec succès ! Notre équipe vous contactera dans les plus brefs délais.');
+      setSuccess(tp('🎉 Votre postulation a été envoyée avec succès ! Notre équipe vous contactera dans les plus brefs délais.'));
 
       // Rediriger vers la page marketing après 3 secondes
       setTimeout(() => {
@@ -73,7 +74,7 @@ const WhatsAppPostulation = () => {
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Retour au Marketing
+            {tp('Retour au Marketing')}
           </Link>
 
           <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -82,9 +83,9 @@ const WhatsAppPostulation = () => {
             </svg>
           </div>
 
-          <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">Postulation WhatsApp Pro</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">{tp('Postulation WhatsApp Pro')}</h1>
           <p className="text-gray-600 max-w-lg mx-auto">
-            Utilisez votre propre numéro WhatsApp pour envoyer vos campagnes marketing.
+            {tp('Utilisez votre propre numéro WhatsApp pour envoyer vos campagnes marketing.')}
             Plus de confiance, plus de réponses, plus de ventes !
           </p>
         </div>
@@ -118,7 +119,7 @@ const WhatsAppPostulation = () => {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">1</span>
-                Informations sur votre entreprise
+                {tp('Informations sur votre entreprise')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -147,13 +148,13 @@ const WhatsAppPostulation = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     required
                   >
-                    <option value="">Sélectionnez...</option>
-                    <option value="ecommerce">E-commerce</option>
-                    <option value="services">Services</option>
-                    <option value="restaurant">Restaurant/Café</option>
-                    <option value="beauty">Beauté/Bien-être</option>
-                    <option value="education">Éducation/Formation</option>
-                    <option value="other">Autre</option>
+                    <option value="">{tp('Sélectionnez...')}</option>
+                    <option value="ecommerce">{tp('E-commerce')}</option>
+                    <option value="services">{tp('Services')}</option>
+                    <option value="restaurant">{tp('Restaurant/Café')}</option>
+                    <option value="beauty">{tp('Beauté/Bien-être')}</option>
+                    <option value="education">{tp('Éducation/Formation')}</option>
+                    <option value="other">{tp('Autre')}</option>
                   </select>
                 </div>
               </div>
@@ -163,7 +164,7 @@ const WhatsAppPostulation = () => {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">2</span>
-                Coordonnées du responsable
+                {tp('Coordonnées du responsable')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -201,7 +202,7 @@ const WhatsAppPostulation = () => {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">3</span>
-                Configuration WhatsApp
+                {tp('Configuration WhatsApp')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -214,7 +215,7 @@ const WhatsAppPostulation = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Ex: 237699887766"
+                    placeholder={tp('Ex: 237699887766')}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     required
                   />
@@ -231,11 +232,11 @@ const WhatsAppPostulation = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     required
                   >
-                    <option value="">Sélectionnez...</option>
-                    <option value="0-100">0 - 100 messages</option>
-                    <option value="100-500">100 - 500 messages</option>
-                    <option value="500-1000">500 - 1000 messages</option>
-                    <option value="1000+">1000+ messages</option>
+                    <option value="">{tp('Sélectionnez...')}</option>
+                    <option value="0-100">{tp('0 - 100 messages')}</option>
+                    <option value="100-500">{tp('100 - 500 messages')}</option>
+                    <option value="500-1000">{tp('500 - 1000 messages')}</option>
+                    <option value="1000+">{tp('1000+ messages')}</option>
                   </select>
                 </div>
               </div>
@@ -245,7 +246,7 @@ const WhatsAppPostulation = () => {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">4</span>
-                Pourquoi vouloir utiliser votre numéro ?
+                {tp('Pourquoi vouloir utiliser votre numéro ?')}
               </h3>
 
               <div>
@@ -258,7 +259,7 @@ const WhatsAppPostulation = () => {
                   onChange={handleChange}
                   rows={4}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="Décrivez pourquoi vous souhaitez utiliser votre propre numéro WhatsApp pour vos campagnes marketing..."
+                  placeholder={tp('Décrivez pourquoi vous souhaitez utiliser votre propre numéro WhatsApp pour vos campagnes marketing...')}
                   required
                 />
               </div>
@@ -303,7 +304,7 @@ const WhatsAppPostulation = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    Envoi en cours...
+                    {tp('Envoi en cours...')}
                   </span>
                 ) : (
                   '📋 Envoyer ma postulation'
@@ -315,8 +316,8 @@ const WhatsAppPostulation = () => {
 
         {/* Info */}
         <div className="mt-8 text-center text-sm text-gray-600">
-          <p>⏰ Délai de traitement : 24-48h</p>
-          <p className="mt-1">📞 Vous serez contacté par WhatsApp ou Email</p>
+          <p>{tp('⏰ Délai de traitement : 24-48h')}</p>
+          <p className="mt-1">{tp('📞 Vous serez contacté par WhatsApp ou Email')}</p>
         </div>
       </div>
     </div>

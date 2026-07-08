@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { livreurApi } from '../services/livreurApi.js';
 import { useEcomAuth } from '../../hooks/useEcomAuth.jsx';
+import { tp } from '../../i18n/platform.js';
 
 const STATUS_FLOW = {
   confirmed: {
@@ -146,7 +147,7 @@ export default function DeliveryDetail() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-500 text-sm">Chargement...</p>
+          <p className="text-gray-500 text-sm">{tp('Chargement...')}</p>
         </div>
       </div>
     );
@@ -186,7 +187,7 @@ export default function DeliveryDetail() {
           </button>
           <div className="flex-1">
             <p className="text-xs text-gray-400 font-mono">{order.orderId}</p>
-            <h1 className="text-lg font-bold text-gray-900 leading-tight">Détail livraison</h1>
+            <h1 className="text-lg font-bold text-gray-900 leading-tight">{tp('Détail livraison')}</h1>
           </div>
           <Link
             to={`/ecom/livreur/delivery/${id}/map`}
@@ -224,8 +225,8 @@ export default function DeliveryDetail() {
         </div>
 
         {/* Client info */}
-        <InfoCard title="Client" icon={<User size={16} className="text-indigo-500" />}>
-          <p className="font-semibold text-gray-900">{order.clientName || 'Non renseigné'}</p>
+        <InfoCard title={tp('Client')} icon={<User size={16} className="text-indigo-500" />}>
+          <p className="font-semibold text-gray-900">{order.clientName || tp('Non renseigné')}</p>
           {order.clientPhone && (
             <div className="flex items-center gap-2 mt-2">
               <button
@@ -233,22 +234,22 @@ export default function DeliveryDetail() {
                 className="flex items-center gap-2 flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium active:scale-95 justify-center"
               >
                 <Phone size={15} />
-                Appeler
+                {tp('Appeler')}
               </button>
               <button
                 onClick={copyPhone}
                 className="flex items-center gap-2 flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium active:scale-95 justify-center"
               >
                 <Copy size={15} />
-                {copied ? 'Copié !' : 'Copier'}
+                {copied ? 'Copié !' : tp('Copier')}
               </button>
             </div>
           )}
         </InfoCard>
 
         {/* Address */}
-        <InfoCard title="Adresse de livraison" icon={<MapPin size={16} className="text-indigo-500" />}>
-          <p className="text-gray-700 text-sm">{order.address || order.city || 'Non renseignée'}</p>
+        <InfoCard title={tp('Adresse de livraison')} icon={<MapPin size={16} className="text-indigo-500" />}>
+          <p className="text-gray-700 text-sm">{order.address || order.city || tp('Non renseignée')}</p>
           {order.city && order.city !== order.address && (
             <p className="text-gray-400 text-xs mt-0.5">{order.city}</p>
           )}
@@ -258,13 +259,13 @@ export default function DeliveryDetail() {
               className="flex items-center gap-2 mt-3 py-2.5 w-full rounded-xl bg-gray-100 text-gray-700 text-sm font-medium active:scale-95 justify-center"
             >
               <ExternalLink size={15} />
-              Ouvrir dans Maps
+              {tp('Ouvrir dans Maps')}
             </button>
           )}
         </InfoCard>
 
         {/* Product */}
-        <InfoCard title="Colis" icon={<Package size={16} className="text-indigo-500" />}>
+        <InfoCard title={tp('Colis')} icon={<Package size={16} className="text-indigo-500" />}>
           {order.product ? (
             <div className="space-y-1">
               <p className="text-gray-800 font-medium">{order.product}</p>
@@ -278,20 +279,20 @@ export default function DeliveryDetail() {
               )}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">Non renseigné</p>
+            <p className="text-gray-400 text-sm">{tp('Non renseigné')}</p>
           )}
         </InfoCard>
 
         {/* Notes */}
         {order.notes && (
-          <InfoCard title="Notes" icon={<Clock size={16} className="text-indigo-500" />}>
+          <InfoCard title={tp('Notes')} icon={<Clock size={16} className="text-indigo-500" />}>
             <p className="text-gray-700 text-sm">{order.notes}</p>
           </InfoCard>
         )}
 
         {/* Delivery info */}
         {(order.deliveryLocation || order.deliveryTime) && (
-          <InfoCard title="Infos livraison" icon={<Truck size={16} className="text-indigo-500" />}>
+          <InfoCard title={tp('Infos livraison')} icon={<Truck size={16} className="text-indigo-500" />}>
             {order.deliveryLocation && (
               <p className="text-gray-700 text-sm">{order.deliveryLocation}</p>
             )}
@@ -304,7 +305,7 @@ export default function DeliveryDetail() {
         {/* Actions */}
         {isMyOrder && config.actions.length > 0 && (
           <div className="space-y-2 pt-2">
-            <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Actions</h3>
+            <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">{tp('Actions')}</h3>
             {config.actions.map((action) => {
               const Icon = action.icon;
               return (

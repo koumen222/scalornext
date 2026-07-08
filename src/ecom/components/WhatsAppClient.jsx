@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import { tp } from '../i18n/platform.js';
 
 export default function WhatsAppClient() {
   const [instanceName, setInstanceName] = useState("")
@@ -80,17 +81,17 @@ export default function WhatsAppClient() {
   return (
     <div style={{ padding: 40, fontFamily: "sans-serif", maxWidth: 800, margin: "0 auto" }}>
       <div style={{ background: "#1976d2", color: "white", padding: 20, borderRadius: 8, marginBottom: 30 }}>
-        <h1 style={{ margin: 0, fontSize: 28 }}>🔌 CLIENT WHATSAPP</h1>
+        <h1 style={{ margin: 0, fontSize: 28 }}>{tp('🔌 CLIENT WHATSAPP')}</h1>
         <p style={{ margin: "10px 0 0 0", opacity: 0.9 }}>
-          Test de connexion et envoi de messages via Evolution API
+          {tp('Test de connexion et envoi de messages via Evolution API')}
         </p>
       </div>
 
       <div style={{ background: "white", padding: 30, borderRadius: 8, border: "1px solid #ddd", marginBottom: 30 }}>
-        <h2 style={{ marginTop: 0 }}>🔧 Configuration de l'instance</h2>
+        <h2 style={{ marginTop: 0 }}>{tp('🔧 Configuration de l\'instance')}</h2>
         
         <input
-          placeholder="Nom de l'instance (ex: ALDI)"
+          placeholder={tp('Nom de l\'instance (ex: ALDI)')}
           value={instanceName}
           onChange={(e) => setInstanceName(e.target.value.trim())}
           style={{ 
@@ -106,7 +107,7 @@ export default function WhatsAppClient() {
 
         <input
           type="password"
-          placeholder="Secret de l'instance (clé API)"
+          placeholder={tp('Secret de l\'instance (clé API)')}
           value={instanceSecret}
           onChange={(e) => setInstanceSecret(e.target.value.trim())}
           style={{ 
@@ -141,10 +142,10 @@ export default function WhatsAppClient() {
       </div>
 
       <div style={{ background: "white", padding: 30, borderRadius: 8, border: "1px solid #ddd", marginBottom: 30 }}>
-        <h2 style={{ marginTop: 0 }}>📱 Envoyer un message WhatsApp</h2>
+        <h2 style={{ marginTop: 0 }}>{tp('📱 Envoyer un message WhatsApp')}</h2>
         
         <input
-          placeholder="Numéro de téléphone (ex: +33612345678)"
+          placeholder={tp('Numéro de téléphone (ex: +33612345678)')}
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value.trim())}
           style={{ 
@@ -159,7 +160,7 @@ export default function WhatsAppClient() {
         />
 
         <textarea
-          placeholder="Votre message..."
+          placeholder={tp('Votre message...')}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           style={{ 
@@ -198,11 +199,11 @@ export default function WhatsAppClient() {
       {/* Messages de succès */}
       {result?.success && result.sent && (
         <div style={{ marginTop: 30, padding: 25, background: "#e8f5e9", borderRadius: 8, border: "2px solid #4caf50" }}>
-          <h2 style={{ color: "#2e7d32", marginTop: 0 }}>✅ MESSAGE ENVOYÉ</h2>
+          <h2 style={{ color: "#2e7d32", marginTop: 0 }}>{tp('✅ MESSAGE ENVOYÉ')}</h2>
           <div style={{ fontSize: 15, lineHeight: 1.8 }}>
-            <p><b>Instance :</b> <code style={{ background: "#fff", padding: "2px 6px", borderRadius: 3 }}>{result.instanceName}</code></p>
-            <p><b>Numéro :</b> <code style={{ background: "#fff", padding: "2px 6px", borderRadius: 3 }}>{result.phoneNumber}</code></p>
-            <p><b>Message :</b> {result.message}</p>
+            <p><b>{tp('Instance :')}</b> <code style={{ background: "#fff", padding: "2px 6px", borderRadius: 3 }}>{result.instanceName}</code></p>
+            <p><b>{tp('Numéro :')}</b> <code style={{ background: "#fff", padding: "2px 6px", borderRadius: 3 }}>{result.phoneNumber}</code></p>
+            <p><b>{tp('Message :')}</b> {result.message}</p>
           </div>
           
           <details style={{ marginTop: 20 }}>
@@ -218,11 +219,11 @@ export default function WhatsAppClient() {
 
       {result?.success && result.connected && !result.sent && (
         <div style={{ marginTop: 30, padding: 25, background: "#e8f5e9", borderRadius: 8, border: "2px solid #4caf50" }}>
-          <h2 style={{ color: "#2e7d32", marginTop: 0 }}>✅ CONNEXION RÉUSSIE</h2>
+          <h2 style={{ color: "#2e7d32", marginTop: 0 }}>{tp('✅ CONNEXION RÉUSSIE')}</h2>
           <div style={{ fontSize: 15, lineHeight: 1.8 }}>
-            <p><b>Instance :</b> <code style={{ background: "#fff", padding: "2px 6px", borderRadius: 3 }}>{result.instanceId}</code></p>
-            <p><b>Status :</b> <span style={{ color: "#2e7d32", fontWeight: "bold" }}>{result.status}</span></p>
-            <p><b>Message :</b> {result.message}</p>
+            <p><b>{tp('Instance :')}</b> <code style={{ background: "#fff", padding: "2px 6px", borderRadius: 3 }}>{result.instanceId}</code></p>
+            <p><b>{tp('Status :')}</b> <span style={{ color: "#2e7d32", fontWeight: "bold" }}>{result.status}</span></p>
+            <p><b>{tp('Message :')}</b> {result.message}</p>
           </div>
           
           <details style={{ marginTop: 20 }}>
@@ -239,12 +240,12 @@ export default function WhatsAppClient() {
       {/* Messages d'erreur */}
       {result && !result.success && (
         <div style={{ marginTop: 30, padding: 25, background: "#ffebee", borderRadius: 8, border: "2px solid #f44336" }}>
-          <h2 style={{ color: "#c62828", marginTop: 0 }}>❌ ERREUR</h2>
-          <p style={{ fontSize: 15 }}><b>Message :</b> {result.error}</p>
+          <h2 style={{ color: "#c62828", marginTop: 0 }}>{tp('❌ ERREUR')}</h2>
+          <p style={{ fontSize: 15 }}><b>{tp('Message :')}</b> {result.error}</p>
           
           {result.details && (
             <details style={{ marginTop: 15 }}>
-              <summary style={{ cursor: "pointer", fontWeight: "bold" }}>Détails de l'erreur</summary>
+              <summary style={{ cursor: "pointer", fontWeight: "bold" }}>{tp('Détails de l\'erreur')}</summary>
               <pre style={{ background: "#fff", padding: 10, overflow: "auto", fontSize: 12, marginTop: 10 }}>
                 {result.details}
               </pre>

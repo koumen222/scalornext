@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, X, Tag, Flame, Check, Wand2, ChevronDown, ChevronUp, Palette } from 'lucide-react';
 import ToggleSwitch from './ToggleSwitch';
+import { tp } from '../../i18n/platform.js';
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR').format(n);
 
@@ -41,7 +42,7 @@ const ColorRow = ({ label, value, onChange }) => (
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
-        placeholder="auto"
+        placeholder={tp('auto')}
         className="w-20 px-2 py-1 rounded-lg border border-gray-200 text-[11px] focus:outline-none focus:border-primary-400 font-mono"
       />
       {value && (
@@ -280,7 +281,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
       {offersEnabled && basePrice === 0 && (
         <p className="mt-2 text-[10px] text-gray-400 italic px-1">
-          Sélectionnez un produit en haut pour activer le pré-remplissage automatique des prix.
+          {tp('Sélectionnez un produit en haut pour activer le pré-remplissage automatique des prix.')}
         </p>
       )}
 
@@ -289,7 +290,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
           {/* ── Type d'affichage des offres ── */}
           <div>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Type d'affichage</p>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Type d\'affichage')}</p>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { val: 'radio', label: 'Radio', desc: 'Liste avec bouton radio', icon: '☰' },
@@ -356,7 +357,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                         onClick={() => selectOffer(idx)}
                         className="text-[10px] font-medium text-primary-600 hover:text-primary-700 px-2 py-1 rounded-lg hover:bg-primary-50 transition-colors"
                       >
-                        Sélectionner
+                        {tp('Sélectionner')}
                       </button>
                     )}
                     {offers.length > 1 && (
@@ -372,7 +373,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">Quantité</label>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Quantité')}</label>
                     <input
                       type="number" min="1"
                       value={offer.qty}
@@ -381,34 +382,34 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">Prix</label>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Prix')}</label>
                     <input
                       type="number" min="0"
                       value={offer.price || ''}
                       onChange={e => updateOffer(idx, 'price', parseInt(e.target.value) || 0)}
-                      placeholder="Prix net"
+                      placeholder={tp('Prix net')}
                       className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">Prix barré</label>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Prix barré')}</label>
                     <input
                       type="number" min="0"
                       value={offer.comparePrice || ''}
                       onChange={e => updateOffer(idx, 'comparePrice', parseInt(e.target.value) || 0)}
-                      placeholder="Ancien prix"
+                      placeholder={tp('Ancien prix')}
                       className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">Badge</label>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Badge')}</label>
                     <div className="relative">
                       <Tag size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
                       <input
                         type="text"
                         value={offer.badge}
                         onChange={e => updateOffer(idx, 'badge', e.target.value)}
-                        placeholder="Ex: Populaire"
+                        placeholder={tp('Ex: Populaire')}
                         className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
                       />
                     </div>
@@ -449,7 +450,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
             >
               <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                 <Palette size={14} className="text-primary-500" />
-                Design des cartes
+                {tp('Design des cartes')}
               </div>
               {designOpen ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
             </button>
@@ -459,7 +460,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Couleurs de carte */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Couleurs de carte</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Couleurs de carte')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Bordure sélectionnée" value={od.borderColorSelected} onChange={v => updateOD('borderColorSelected', v)} />
                     <ColorRow label="Bordure non-sélectionnée" value={od.borderColorUnselected} onChange={v => updateOD('borderColorUnselected', v)} />
@@ -470,12 +471,12 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Style de bordure */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Style de bordure</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Style de bordure')}</p>
                   <div className="flex gap-2">
                     {[
                       { val: 'solid', label: 'Plein' },
                       { val: 'dashed', label: 'Tirets' },
-                      { val: 'dotted', label: 'Pointillés' },
+                      { val: 'dotted', get label() { return tp('Pointillés'); } },
                     ].map(({ val, label }) => (
                       <button
                         key={val}
@@ -497,13 +498,13 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Radio dot */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Point radio</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Point radio')}</p>
                   <ColorRow label="Couleur du point" value={od.radioColor} onChange={v => updateOD('radioColor', v)} />
                 </div>
 
                 {/* Badge */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Badge</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Badge')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Fond du badge" value={od.badgeBg} onChange={v => updateOD('badgeBg', v)} />
                     <ColorRow label="Texte du badge" value={od.badgeTextColor} onChange={v => updateOD('badgeTextColor', v)} />
@@ -513,7 +514,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Prix */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Prix</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Prix')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Couleur du prix" value={od.priceColor} onChange={v => updateOD('priceColor', v)} />
                     <SliderRow label="Taille du prix" value={od.priceFontSize} onChange={v => updateOD('priceFontSize', v)} min={10} max={22} unit="px" />
@@ -522,7 +523,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Badge remise */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Badge remise</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Badge remise')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Fond remise" value={od.discountBg} onChange={v => updateOD('discountBg', v)} />
                     <ColorRow label="Texte remise" value={od.discountTextColor} onChange={v => updateOD('discountTextColor', v)} />
@@ -531,22 +532,22 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Section label */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Titre de la section</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Titre de la section')}</p>
                   <input
                     type="text"
                     value={od.sectionLabel}
                     onChange={e => updateOD('sectionLabel', e.target.value)}
-                    placeholder="Choisissez votre offre"
+                    placeholder={tp('Choisissez votre offre')}
                     className={inputCls}
                   />
                 </div>
 
                 {/* Live preview */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Aperçu</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Aperçu')}</p>
                   <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
                     <p className="text-[11px] font-semibold text-gray-600 mb-2">
-                      {od.sectionLabel || 'Choisissez votre offre'}
+                      {od.sectionLabel || tp('Choisissez votre offre')}
                     </p>
                     {(od.displayType || 'radio') === 'grid' ? (
                       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${previewOffers.length}, 1fr)`, gap: 6 }}>

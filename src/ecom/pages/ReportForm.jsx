@@ -4,6 +4,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const inputCls = 'w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white transition placeholder:text-gray-400';
 
@@ -219,10 +220,10 @@ export default function ReportForm() {
         </Link>
         <div>
           <h1 className="text-[17px] font-bold text-gray-900 tracking-tight leading-none">
-            {isEditing ? 'Modifier le rapport' : 'Nouveau rapport'}
+            {isEditing ? 'Modifier le rapport' : tp('Nouveau rapport')}
           </h1>
           <p className="text-xs text-gray-400 mt-0.5 leading-none">
-            Données quotidiennes pour un produit
+            {tp('Données quotidiennes pour un produit')}
           </p>
         </div>
       </div>
@@ -242,7 +243,7 @@ export default function ReportForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
 
             {/* ── Identité ─────────────────────────────────── */}
-            <Section title="Identification">
+            <Section title={tp('Identification')}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Date" required>
                   <input
@@ -257,7 +258,7 @@ export default function ReportForm() {
                 </Field>
                 <Field label="Produit" required>
                   <select name="productId" required value={form.productId} onChange={handleChange} className={inputCls}>
-                    <option value="">Sélectionner un produit</option>
+                    <option value="">{tp('Sélectionner un produit')}</option>
                     {products.map(p => (
                       <option key={p._id} value={p._id}>{p.name}</option>
                     ))}
@@ -267,7 +268,7 @@ export default function ReportForm() {
             </Section>
 
             {/* ── Commandes ────────────────────────────────── */}
-            <Section title="Commandes">
+            <Section title={tp('Commandes')}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Field label="Reçues" required>
                   <input type="number" name="ordersReceived" required min="0" value={form.ordersReceived} onChange={handleChange} placeholder="0" className={inputCls} />
@@ -300,25 +301,25 @@ export default function ReportForm() {
 
             {/* ── Exceptions de prix ───────────────────────── */}
             <Section
-              title="Exceptions de prix"
+              title={tp('Exceptions de prix')}
               action={
                 <button type="button" onClick={addException}
                   className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-lg transition-colors">
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-                  Ajouter
+                  {tp('Ajouter')}
                 </button>
               }
             >
               {form.priceExceptions.length === 0 ? (
                 <p className="text-xs text-gray-400 py-1">
-                  Prix standard du produit appliqué à toutes les commandes livrées.
+                  {tp('Prix standard du produit appliqué à toutes les commandes livrées.')}
                 </p>
               ) : (
                 <div className="space-y-2">
                   {form.priceExceptions.map((ex, i) => (
                     <div key={i} className="flex gap-2 items-end bg-amber-50 border border-amber-200 rounded-xl px-3 py-3">
                       <div className="flex-1">
-                        <label className="block text-[11px] font-semibold text-gray-500 mb-1">Qté</label>
+                        <label className="block text-[11px] font-semibold text-gray-500 mb-1">{tp('Qté')}</label>
                         <input type="number" value={ex.quantity} onChange={e => updateException(i, 'quantity', e.target.value)}
                           min="1" placeholder="0" className={inputCls} />
                       </div>
@@ -356,12 +357,12 @@ export default function ReportForm() {
 
             {/* ── Frais de livraison ───────────────────────── */}
             <Section
-              title="Frais de livraison"
+              title={tp('Frais de livraison')}
               action={
                 <button type="button" onClick={addDelivery}
                   className="inline-flex items-center gap-1 text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 px-2.5 py-1 rounded-lg transition-colors">
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-                  Ajouter une agence
+                  {tp('Ajouter une agence')}
                 </button>
               }
             >
@@ -384,12 +385,12 @@ export default function ReportForm() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="sm:col-span-1">
-                          <label className="block text-[11px] font-semibold text-gray-500 mb-1">Nom de l'agence</label>
+                          <label className="block text-[11px] font-semibold text-gray-500 mb-1">{tp('Nom de l\'agence')}</label>
                           <input type="text" value={d.agencyName} onChange={e => updateDelivery(i, 'agencyName', e.target.value)}
-                            placeholder="ex : DHL, Campost…" className={inputCls} />
+                            placeholder={tp('ex : DHL, Campost…')} className={inputCls} />
                         </div>
                         <div>
-                          <label className="block text-[11px] font-semibold text-gray-500 mb-1">Commandes livrées</label>
+                          <label className="block text-[11px] font-semibold text-gray-500 mb-1">{tp('Commandes livrées')}</label>
                           <input type="number" value={d.ordersDelivered} onChange={e => updateDelivery(i, 'ordersDelivered', e.target.value)}
                             min="0" placeholder="0" className={inputCls} />
                         </div>
@@ -407,7 +408,7 @@ export default function ReportForm() {
                     <div className="flex items-center justify-between px-3 py-2 bg-primary-50 border border-primary-200 rounded-xl">
                       <div className="flex items-center gap-2 text-xs text-primary-700">
                         <span className="font-semibold">{form.deliveries.reduce((s, d) => s + (parseInt(d.ordersDelivered) || 0), 0)}</span>
-                        <span>commandes</span>
+                        <span>{tp('commandes')}</span>
                         <span className="text-primary-400">·</span>
                         <span>{form.deliveries.filter(d => d.agencyName).length} agence{form.deliveries.filter(d => d.agencyName).length > 1 ? 's' : ''}</span>
                       </div>
@@ -422,7 +423,7 @@ export default function ReportForm() {
 
             {/* ── Finances ─────────────────────────────────── */}
             {user?.role !== 'ecom_closeuse' && (
-              <Section title="Dépenses publicitaires">
+              <Section title={tp('Dépenses publicitaires')}>
                 <Field label={`Montant dépensé en pub`} hint={`en ${symbol}`}>
                   <input type="number" name="adSpend" min="0" step="1" value={form.adSpend} onChange={handleChange}
                     placeholder="0" className={inputCls} />
@@ -434,33 +435,33 @@ export default function ReportForm() {
             {selectedProduct && hasStats && (
               <div className={`rounded-2xl border px-5 py-4 flex items-center gap-6 ${calcBenefit() >= 0 ? 'bg-primary-50 border-primary-200' : 'bg-red-50 border-red-200'}`}>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-[11px] font-bold uppercase tracking-wide ${calcBenefit() >= 0 ? 'text-primary-600' : 'text-red-500'}`}>Bénéfice estimé</p>
+                  <p className={`text-[11px] font-bold uppercase tracking-wide ${calcBenefit() >= 0 ? 'text-primary-600' : 'text-red-500'}`}>{tp('Bénéfice estimé')}</p>
                   <p className={`text-2xl font-bold tabular-nums ${calcBenefit() >= 0 ? 'text-primary-700' : 'text-red-600'}`}>
                     {calcBenefit() >= 0 ? '+' : ''}{calcBenefit().toLocaleString('fr-FR')} {symbol}
                   </p>
                 </div>
                 <div className="text-right shrink-0 space-y-0.5">
                   <p className="text-xs text-gray-500">CA : <span className="font-semibold text-gray-700">{calcRevenue().toLocaleString('fr-FR')} {symbol}</span></p>
-                  <p className="text-xs text-gray-500">Livraison : <span className="font-semibold text-gray-700">{totalDeliveryCost.toLocaleString('fr-FR')} {symbol}</span></p>
-                  <p className="text-xs text-gray-500">Pub : <span className="font-semibold text-gray-700">{adSpend.toLocaleString('fr-FR')} {symbol}</span></p>
+                  <p className="text-xs text-gray-500">{tp('Livraison :')} <span className="font-semibold text-gray-700">{totalDeliveryCost.toLocaleString('fr-FR')} {symbol}</span></p>
+                  <p className="text-xs text-gray-500">{tp('Pub :')} <span className="font-semibold text-gray-700">{adSpend.toLocaleString('fr-FR')} {symbol}</span></p>
                 </div>
               </div>
             )}
 
             {/* ── Notes ───────────────────────────────────── */}
-            <Section title="Informations complémentaires">
+            <Section title={tp('Informations complémentaires')}>
               <div className="space-y-4">
                 <Field label="Notes">
                   <textarea name="notes" rows={3} value={form.notes} onChange={handleChange}
-                    placeholder="Informations supplémentaires sur la journée…"
+                    placeholder={tp('Informations supplémentaires sur la journée…')}
                     className={`${inputCls} resize-none`} />
                 </Field>
                 {whatsappNumber ? (
                   <div className="flex items-center gap-2.5 px-3 py-2.5 bg-primary-50 border border-primary-200 rounded-xl">
                     <svg className="w-4 h-4 text-primary-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <p className="text-xs text-primary-700">
-                      Notification envoyée à <span className="font-bold">{whatsappNumber}</span> —{' '}
-                      <Link to="/ecom/settings?tab=delivery_groups" className="underline underline-offset-2">modifier dans les réglages</Link>
+                      {tp('Notification envoyée à')} <span className="font-bold">{whatsappNumber}</span> —{' '}
+                      <Link to="/ecom/settings?tab=delivery_groups" className="underline underline-offset-2">{tp('modifier dans les réglages')}</Link>
                     </p>
                   </div>
                 ) : (
@@ -468,7 +469,7 @@ export default function ReportForm() {
                     <svg className="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     <p className="text-xs text-amber-700">
                       Aucun numéro WhatsApp configuré —{' '}
-                      <Link to="/ecom/settings?tab=delivery_groups" className="underline underline-offset-2">configurer dans les réglages</Link>
+                      <Link to="/ecom/settings?tab=delivery_groups" className="underline underline-offset-2">{tp('configurer dans les réglages')}</Link>
                     </p>
                   </div>
                 )}
@@ -479,7 +480,7 @@ export default function ReportForm() {
             <div className="flex gap-3 pt-1 pb-8">
               <button type="button" onClick={() => navigate('/ecom/reports')}
                 className="flex-1 py-2.5 text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl transition-colors">
-                Annuler
+                {tp('Annuler')}
               </button>
               <button type="submit" disabled={loading}
                 className="flex-1 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-sm shadow-primary-200 transition-all active:scale-95">

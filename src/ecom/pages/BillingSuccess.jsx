@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from '@/lib/router-compat';
 import { getPaymentStatus } from '../services/billingApi.js';
+import { tp } from '../i18n/platform.js';
 
 /**
  * BillingSuccess — landing page after MoneyFusion payment redirect.
@@ -61,8 +62,8 @@ export default function BillingSuccess() {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Vérification du paiement…</h1>
-            <p className="text-gray-500 text-sm">Nous confirmons votre transaction, cela peut prendre quelques secondes.</p>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Vérification du paiement…')}</h1>
+            <p className="text-gray-500 text-sm">{tp('Nous confirmons votre transaction, cela peut prendre quelques secondes.')}</p>
           </>
         )}
 
@@ -73,15 +74,15 @@ export default function BillingSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Paiement confirmé !</h1>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Paiement confirmé !')}</h1>
             <p className="text-gray-600 text-sm mb-6">
-              Votre plan <strong>Pro</strong> est maintenant actif. Profitez de toutes les fonctionnalités WhatsApp & IA.
+              {tp('Votre plan')} <strong>Pro</strong> est maintenant actif. Profitez de toutes les fonctionnalités WhatsApp & IA.
             </p>
             <button
               onClick={() => navigate('/ecom/dashboard')}
               className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition"
             >
-              Aller au tableau de bord
+              {tp('Aller au tableau de bord')}
             </button>
           </>
         )}
@@ -93,7 +94,7 @@ export default function BillingSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Paiement échoué</h1>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Paiement échoué')}</h1>
             <p className="text-gray-600 text-sm mb-6">
               La transaction n'a pas abouti. Vérifiez votre solde Mobile Money et réessayez.
             </p>
@@ -101,7 +102,7 @@ export default function BillingSuccess() {
               onClick={() => navigate('/ecom/billing')}
               className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition"
             >
-              Réessayer
+              {tp('Réessayer')}
             </button>
           </>
         )}
@@ -113,7 +114,7 @@ export default function BillingSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Paiement en attente</h1>
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Paiement en attente')}</h1>
             <p className="text-gray-600 text-sm mb-6">
               Votre paiement est en cours de traitement. Votre plan sera automatiquement activé dès confirmation. Vous pouvez fermer cette page.
             </p>

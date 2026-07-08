@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
@@ -42,11 +43,11 @@ const RankBadge = ({ rank }) => {
 };
 
 const TABS = [
-  { key: 'sold', label: 'Plus vendus', icon: ShoppingCart, color: 'blue', sortKey: 'ordersDelivered', desc: 'Par nombre de commandes livrées' },
-  { key: 'delivery', label: 'Meilleur taux livraison', icon: Truck, color: 'green', sortKey: 'deliveryRate', desc: 'Par taux de livraison (livrées / reçues)' },
+  { key: 'sold', label: 'Plus vendus', icon: ShoppingCart, color: 'blue', sortKey: 'ordersDelivered', get desc() { return tp('Par nombre de commandes livrées'); } },
+  { key: 'delivery', label: 'Meilleur taux livraison', icon: Truck, color: 'green', sortKey: 'deliveryRate', get desc() { return tp('Par taux de livraison (livrées / reçues)'); } },
   { key: 'revenue', label: 'Meilleur CA', icon: DollarSign, color: 'emerald', sortKey: 'revenue', desc: 'Par chiffre d\'affaires total' },
-  { key: 'profit', label: 'Meilleur bénéfice', icon: TrendingUp, color: 'purple', sortKey: 'profit', desc: 'Par bénéfice net total' },
-  { key: 'profitability', label: 'Plus rentables', icon: Target, color: 'amber', sortKey: 'profitabilityRate', desc: 'Par taux de rentabilité (bénéfice / CA)' },
+  { key: 'profit', get label() { return tp('Meilleur bénéfice'); }, icon: TrendingUp, color: 'purple', sortKey: 'profit', get desc() { return tp('Par bénéfice net total'); } },
+  { key: 'profitability', label: 'Plus rentables', icon: Target, color: 'amber', sortKey: 'profitabilityRate', get desc() { return tp('Par taux de rentabilité (bénéfice / CA)'); } },
 ];
 
 const StatsRapports = () => {
@@ -173,19 +174,19 @@ const StatsRapports = () => {
             <ArrowLeft size={20} className="text-gray-600" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Stats produits (Rapports)</h1>
-            <p className="text-sm text-gray-500">Classements basés sur les rapports quotidiens</p>
+            <h1 className="text-2xl font-bold text-gray-900">{tp('Stats produits (Rapports)')}</h1>
+            <p className="text-sm text-gray-500">{tp('Classements basés sur les rapports quotidiens')}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <select value={dateRange} onChange={(e) => setDateRange(e.target.value)}
             className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-transparent">
-            <option value="all">Tout le temps</option>
-            <option value="7d">7 derniers jours</option>
-            <option value="30d">30 derniers jours</option>
-            <option value="90d">90 derniers jours</option>
-            <option value="custom">Personnalisé</option>
+            <option value="all">{tp('Tout le temps')}</option>
+            <option value="7d">{tp('7 derniers jours')}</option>
+            <option value="30d">{tp('30 derniers jours')}</option>
+            <option value="90d">{tp('90 derniers jours')}</option>
+            <option value="custom">{tp('Personnalisé')}</option>
           </select>
           {dateRange === 'custom' && (
             <>
@@ -242,14 +243,14 @@ const StatsRapports = () => {
                 <thead>
                   <tr className="text-xs text-gray-500 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
                     <th className="text-left py-3 px-4 w-12">#</th>
-                    <th className="text-left py-3 px-4">Produit</th>
-                    <th className="text-right py-3 px-4">Reçues</th>
-                    <th className="text-right py-3 px-4">Livrées</th>
-                    <th className="text-right py-3 px-4">Taux livr.</th>
+                    <th className="text-left py-3 px-4">{tp('Produit')}</th>
+                    <th className="text-right py-3 px-4">{tp('Reçues')}</th>
+                    <th className="text-right py-3 px-4">{tp('Livrées')}</th>
+                    <th className="text-right py-3 px-4">{tp('Taux livr.')}</th>
                     <th className="text-right py-3 px-4">CA</th>
-                    <th className="text-right py-3 px-4">Bénéfice</th>
-                    <th className="text-right py-3 px-4">Rentabilité</th>
-                    <th className="text-right py-3 px-4">Pub</th>
+                    <th className="text-right py-3 px-4">{tp('Bénéfice')}</th>
+                    <th className="text-right py-3 px-4">{tp('Rentabilité')}</th>
+                    <th className="text-right py-3 px-4">{tp('Pub')}</th>
                     <th className="py-3 px-4 w-36"></th>
                   </tr>
                 </thead>
@@ -263,7 +264,7 @@ const StatsRapports = () => {
                         </td>
                         <td className="py-3 px-4">
                           <p className="text-sm font-semibold text-gray-900 truncate max-w-[220px]" title={p.productName}>
-                            {p.productName || 'Produit inconnu'}
+                            {p.productName || tp('Produit inconnu')}
                           </p>
                           <p className="text-xs text-gray-400">{p.reportsCount} rapport{p.reportsCount > 1 ? 's' : ''}</p>
                         </td>
@@ -319,8 +320,8 @@ const StatsRapports = () => {
             {sorted.length === 0 && (
               <div className="text-center py-12">
                 <Package size={40} className="mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-500 text-sm">Aucun rapport trouvé pour cette période</p>
-                <p className="text-gray-400 text-xs mt-1">Créez des rapports quotidiens pour voir les statistiques</p>
+                <p className="text-gray-500 text-sm">{tp('Aucun rapport trouvé pour cette période')}</p>
+                <p className="text-gray-400 text-xs mt-1">{tp('Créez des rapports quotidiens pour voir les statistiques')}</p>
               </div>
             )}
           </div>
@@ -356,7 +357,7 @@ const StatsRapports = () => {
                       <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{tab.label}</span>
                     </div>
                     <p className="text-sm font-bold text-gray-900 truncate" title={best.productName}>
-                      {best.productName || 'Inconnu'}
+                      {best.productName || tp('Inconnu')}
                     </p>
                     <p className={`text-lg font-bold ${textColorMap[tab.color]} mt-1`}>
                       {tab.sortKey === 'ordersDelivered' && `${best.ordersDelivered}`}

@@ -1,19 +1,21 @@
 import React from 'react';
+import { tp } from '../i18n/platform.js';
 import { Link, useLocation } from '@/lib/router-compat';
 import {
   BarChart3, Users, Building2, Activity, FileText,
   Clock, Bell, MessageSquare, Zap, Settings, RefreshCw,
-  CheckCircle2, AlertCircle, DollarSign, Layers, List, Store,
+  CheckCircle2, AlertCircle, DollarSign, Layers, List, Store, TrendingUp,
 } from 'lucide-react';
 
 const NAV = [
   { to: '/ecom/super-admin',                       label: 'Dashboard',    icon: BarChart3     },
+  { to: '/ecom/super-admin/growth',                get label() { return tp('Croissance'); },   icon: TrendingUp    },
   { to: '/ecom/super-admin/users',                 label: 'Utilisateurs', icon: Users         },
   { to: '/ecom/super-admin/workspaces',            label: 'Workspaces',   icon: Building2     },
   { to: '/ecom/super-admin/analytics',             label: 'Analytics',    icon: Activity      },
   { to: '/ecom/super-admin/billing',               label: 'Billing',      icon: DollarSign    },
   { to: '/ecom/super-admin/product-page-history',  label: 'Pages IA',     icon: FileText      },
-  { to: '/ecom/super-admin/activity',              label: 'Activité',     icon: Clock         },
+  { to: '/ecom/super-admin/activity',              get label() { return tp('Activité'); },     icon: Clock         },
   { to: '/ecom/super-admin/boutique-stats',        label: 'Stats Boutique', icon: Store       },
   { to: '/ecom/super-admin/push',                  label: 'Push',         icon: Bell          },
   { to: '/ecom/super-admin/whatsapp-postulations', label: 'WhatsApp',     icon: MessageSquare },
@@ -57,7 +59,7 @@ const SuperAdminShell = ({
                   <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight truncate">{title}</h1>
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 bg-emerald-50 text-emerald-600 border border-emerald-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Live
+                    {tp('Live')}
                   </span>
                 </div>
                 {subtitle && (
@@ -75,7 +77,7 @@ const SuperAdminShell = ({
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-all bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-                  <span className="hidden sm:inline">Actualiser</span>
+                  <span className="hidden sm:inline">{tp('Actualiser')}</span>
                 </button>
               )}
             </div>

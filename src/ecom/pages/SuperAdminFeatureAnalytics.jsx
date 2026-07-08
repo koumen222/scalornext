@@ -6,6 +6,7 @@ import {
   ChevronDown, ChevronUp, Clock, Bell, Settings, Activity, Search, Filter, CreditCard, CheckCircle2, AlertTriangle, Sparkles
 } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const FEATURE_LABELS = {
   product_page_generator: { label: 'Page Produit IA', icon: FileText, color: '#6366f1' },
@@ -41,11 +42,11 @@ const CONTENT_TYPE_LABELS = {
 };
 
 const STATUS_META = {
-  started: { label: 'Démarrée', bg: '#e0f2fe', color: '#0369a1' },
+  started: { get label() { return tp('Démarrée'); }, bg: '#e0f2fe', color: '#0369a1' },
   processing_images: { label: 'Images en cours', bg: '#ede9fe', color: '#6d28d9' },
-  completed: { label: 'Terminée', bg: '#dcfce7', color: '#15803d' },
+  completed: { get label() { return tp('Terminée'); }, bg: '#dcfce7', color: '#15803d' },
   partial_failure: { label: 'Partielle', bg: '#fef3c7', color: '#b45309' },
-  failed: { label: 'Échouée', bg: '#fee2e2', color: '#b91c1c' },
+  failed: { get label() { return tp('Échouée'); }, bg: '#fee2e2', color: '#b91c1c' },
 };
 
 function formatDateTime(value) {
@@ -164,10 +165,10 @@ const SuperAdminFeatureAnalytics = () => {
   });
 
   const generationStatusRows = [
-    { key: 'completed', label: 'Terminées', value: generationOverview.completedCount || 0, icon: CheckCircle2, color: '#16a34a' },
+    { key: 'completed', get label() { return tp('Terminées'); }, value: generationOverview.completedCount || 0, icon: CheckCircle2, color: '#16a34a' },
     { key: 'processing_images', label: 'Images en cours', value: generationOverview.processingCount || 0, icon: Sparkles, color: '#7c3aed' },
     { key: 'partial_failure', label: 'Partielles', value: generationOverview.partialFailureCount || 0, icon: AlertTriangle, color: '#d97706' },
-    { key: 'failed', label: 'Échouées', value: generationOverview.failedCount || 0, icon: AlertTriangle, color: '#dc2626' },
+    { key: 'failed', get label() { return tp('Échouées'); }, value: generationOverview.failedCount || 0, icon: AlertTriangle, color: '#dc2626' },
   ];
 
   const navItems = [
@@ -209,8 +210,8 @@ const SuperAdminFeatureAnalytics = () => {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', margin: 0 }}>Statistiques Features</h1>
-            <p style={{ fontSize: 13, color: '#64748b', margin: '4px 0 0' }}>Fréquence d'utilisation des fonctionnalités par workspace</p>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', margin: 0 }}>{tp('Statistiques Features')}</h1>
+            <p style={{ fontSize: 13, color: '#64748b', margin: '4px 0 0' }}>{tp('Fréquence d\'utilisation des fonctionnalités par workspace')}</p>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: 4, background: '#f1f5f9', borderRadius: 10, padding: 4 }}>
@@ -239,7 +240,7 @@ const SuperAdminFeatureAnalytics = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '80px 0', color: '#94a3b8' }}>
             <div style={{ width: 36, height: 36, border: '3px solid #e2e8f0', borderTopColor: '#6366f1', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-            Chargement...
+            {tp('Chargement...')}
           </div>
         ) : data && (
           <>
@@ -254,8 +255,8 @@ const SuperAdminFeatureAnalytics = () => {
             <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: 24, marginBottom: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
                 <div>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Historique pages produit IA</h2>
-                  <p style={{ fontSize: 13, color: '#64748b', margin: '6px 0 0' }}>Qui a généré, quand, avec quels crédits, et quel contenu a été produit.</p>
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>{tp('Historique pages produit IA')}</h2>
+                  <p style={{ fontSize: 13, color: '#64748b', margin: '6px 0 0' }}>{tp('Qui a généré, quand, avec quels crédits, et quel contenu a été produit.')}</p>
                 </div>
                 <div style={badgeStyle('#eef2ff', '#4338ca')}>
                   <CreditCard size={14} />
@@ -284,8 +285,8 @@ const SuperAdminFeatureAnalytics = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 20, marginBottom: 22 }}>
                 <div style={{ border: '1px solid #e2e8f0', borderRadius: 14, padding: 18 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 14 }}>Top utilisateurs générateurs</div>
-                  {generationUsers.length === 0 ? <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Aucune donnée</p> : generationUsers.slice(0, 8).map((user, index) => (
+                  <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 14 }}>{tp('Top utilisateurs générateurs')}</div>
+                  {generationUsers.length === 0 ? <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>{tp('Aucune donnée')}</p> : generationUsers.slice(0, 8).map((user, index) => (
                     <button
                       key={String(user._id || index)}
                       type="button"
@@ -306,8 +307,8 @@ const SuperAdminFeatureAnalytics = () => {
                     >
                       <div style={{ width: 28, height: 28, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#64748b', flexShrink: 0 }}>{index + 1}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.name || user.email || 'Utilisateur'}</div>
-                        <div style={{ fontSize: 11, color: '#64748b' }}>{user.email || 'Email inconnu'} · {user.workspaceCount || 0} workspace{(user.workspaceCount || 0) > 1 ? 's' : ''}</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.name || user.email || tp('Utilisateur')}</div>
+                        <div style={{ fontSize: 11, color: '#64748b' }}>{user.email || tp('Email inconnu')} · {user.workspaceCount || 0} workspace{(user.workspaceCount || 0) > 1 ? 's' : ''}</div>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
                         <div style={{ fontSize: 14, fontWeight: 700, color: '#4338ca' }}>{user.generationCount || 0}</div>
@@ -318,8 +319,8 @@ const SuperAdminFeatureAnalytics = () => {
                 </div>
 
                 <div style={{ border: '1px solid #e2e8f0', borderRadius: 14, padding: 18 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 14 }}>Types de contenu générés</div>
-                  {generationContentTypes.length === 0 ? <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Aucune donnée</p> : generationContentTypes.map((row) => (
+                  <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 14 }}>{tp('Types de contenu générés')}</div>
+                  {generationContentTypes.length === 0 ? <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>{tp('Aucune donnée')}</p> : generationContentTypes.map((row) => (
                     <div key={row._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
                       <div style={{ fontSize: 13, color: '#334155' }}>{CONTENT_TYPE_LABELS[row._id] || row._id}</div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{row.count}</div>
@@ -334,18 +335,18 @@ const SuperAdminFeatureAnalytics = () => {
                   <input
                     value={generationSearch}
                     onChange={(event) => setGenerationSearch(event.target.value)}
-                    placeholder="Rechercher un produit, une URL, un user ou un workspace"
+                    placeholder={tp('Rechercher un produit, une URL, un user ou un workspace')}
                     style={{ width: '100%', padding: '11px 12px 11px 36px', borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13, outline: 'none' }}
                   />
                 </div>
                 <select value={selectedGenerationUser} onChange={(event) => setSelectedGenerationUser(event.target.value)} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13, background: '#fff' }}>
-                  <option value="all">Tous les utilisateurs</option>
+                  <option value="all">{tp('Tous les utilisateurs')}</option>
                   {generationUsers.map((user) => (
-                    <option key={String(user._id)} value={String(user._id)}>{user.name || user.email || 'Utilisateur'}</option>
+                    <option key={String(user._id)} value={String(user._id)}>{user.name || user.email || tp('Utilisateur')}</option>
                   ))}
                 </select>
                 <select value={selectedGenerationStatus} onChange={(event) => setSelectedGenerationStatus(event.target.value)} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13, background: '#fff' }}>
-                  <option value="all">Tous les statuts</option>
+                  <option value="all">{tp('Tous les statuts')}</option>
                   {Object.entries(STATUS_META).map(([key, meta]) => (
                     <option key={key} value={key}>{meta.label}</option>
                   ))}
@@ -358,7 +359,7 @@ const SuperAdminFeatureAnalytics = () => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {filteredGenerationHistory.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Aucune génération ne correspond aux filtres.</p>}
+                {filteredGenerationHistory.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>{tp('Aucune génération ne correspond aux filtres.')}</p>}
                 {filteredGenerationHistory.map((item) => {
                   const statusMeta = STATUS_META[item.status] || STATUS_META.started;
                   const itemUserName = item.userId?.name || item.userSnapshot?.name || item.userId?.email || item.userSnapshot?.email || 'Utilisateur inconnu';
@@ -370,11 +371,11 @@ const SuperAdminFeatureAnalytics = () => {
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: 280 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
-                            <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>{item.productName || item.productUrl || 'Produit sans nom'}</div>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>{item.productName || item.productUrl || tp('Produit sans nom')}</div>
                             <span style={badgeStyle(statusMeta.bg, statusMeta.color)}>{statusMeta.label}</span>
                             <span style={badgeStyle('#ecfeff', '#0f766e')}>{item.creditsUsed || 0} crédit{(item.creditsUsed || 0) > 1 ? 's' : ''}</span>
                             <span style={badgeStyle('#eff6ff', '#1d4ed8')}>{item.creditSource || 'unknown'}</span>
-                            <span style={badgeStyle('#f8fafc', '#475569')}>{item.outputMode === 'page_with_images' ? 'Page + images' : 'Page seule'}</span>
+                            <span style={badgeStyle('#f8fafc', '#475569')}>{item.outputMode === 'page_with_images' ? 'Page + images' : tp('Page seule')}</span>
                           </div>
                           <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>{itemUserName} · {itemUserEmail} · {workspaceName}</div>
                           <div style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>
@@ -398,15 +399,15 @@ const SuperAdminFeatureAnalytics = () => {
 
                         <div style={{ minWidth: 250, display: 'grid', gridTemplateColumns: 'repeat(2, minmax(110px, 1fr))', gap: 10 }}>
                           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '10px 12px' }}>
-                            <div style={{ fontSize: 11, color: '#64748b' }}>Images générées</div>
+                            <div style={{ fontSize: 11, color: '#64748b' }}>{tp('Images générées')}</div>
                             <div style={{ marginTop: 4, fontSize: 18, fontWeight: 700, color: '#0f172a' }}>{item.stats?.generatedImageCount || 0}</div>
                           </div>
                           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '10px 12px' }}>
-                            <div style={{ fontSize: 11, color: '#64748b' }}>GIFs</div>
+                            <div style={{ fontSize: 11, color: '#64748b' }}>{tp('GIFs')}</div>
                             <div style={{ marginTop: 4, fontSize: 18, fontWeight: 700, color: '#0f172a' }}>{item.stats?.generatedGifCount || 0}</div>
                           </div>
                           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '10px 12px' }}>
-                            <div style={{ fontSize: 11, color: '#64748b' }}>Angles</div>
+                            <div style={{ fontSize: 11, color: '#64748b' }}>{tp('Angles')}</div>
                             <div style={{ marginTop: 4, fontSize: 18, fontWeight: 700, color: '#0f172a' }}>{item.stats?.anglesCount || 0}</div>
                           </div>
                           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '10px 12px' }}>
@@ -424,8 +425,8 @@ const SuperAdminFeatureAnalytics = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
               {/* Top features bar chart */}
               <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: 24 }}>
-                <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>Features les plus utilisées</h2>
-                {data.topFeatures?.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>Aucune donnée</p>}
+                <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>{tp('Features les plus utilisées')}</h2>
+                {data.topFeatures?.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>{tp('Aucune donnée')}</p>}
                 {data.topFeatures?.map(f => {
                   const meta = FEATURE_LABELS[f._id] || { label: f._id, color: '#94a3b8' };
                   return (
@@ -436,13 +437,13 @@ const SuperAdminFeatureAnalytics = () => {
 
               {/* Top users */}
               <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: 24 }}>
-                <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>Top utilisateurs</h2>
-                {data.topUsers?.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>Aucune donnée</p>}
+                <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>{tp('Top utilisateurs')}</h2>
+                {data.topUsers?.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>{tp('Aucune donnée')}</p>}
                 {data.topUsers?.slice(0, 10).map((u, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: '#64748b', flexShrink: 0 }}>{i + 1}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email || u.name || 'Utilisateur'}</div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email || u.name || tp('Utilisateur')}</div>
                       <div style={{ fontSize: 11, color: '#94a3b8' }}>{u.features?.length} feature(s)</div>
                     </div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#6366f1', flexShrink: 0 }}>{u.count}</div>
@@ -453,19 +454,19 @@ const SuperAdminFeatureAnalytics = () => {
 
             {/* Workspace leaderboard */}
             <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: 24, marginBottom: 20 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>Activité par workspace</h2>
-              {wsLeaderboard.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>Aucune donnée</p>}
+              <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>{tp('Activité par workspace')}</h2>
+              {wsLeaderboard.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>{tp('Aucune donnée')}</p>}
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <th style={{ textAlign: 'left', padding: '8px 12px', color: '#64748b', fontWeight: 500 }}>Workspace</th>
+                      <th style={{ textAlign: 'left', padding: '8px 12px', color: '#64748b', fontWeight: 500 }}>{tp('Workspace')}</th>
                       {Object.keys(FEATURE_LABELS).map(k => (
                         <th key={k} style={{ textAlign: 'center', padding: '8px 8px', color: '#64748b', fontWeight: 500, fontSize: 11, whiteSpace: 'nowrap' }}>
                           {FEATURE_LABELS[k].label}
                         </th>
                       ))}
-                      <th style={{ textAlign: 'right', padding: '8px 12px', color: '#64748b', fontWeight: 500 }}>Total</th>
+                      <th style={{ textAlign: 'right', padding: '8px 12px', color: '#64748b', fontWeight: 500 }}>{tp('Total')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -487,8 +488,8 @@ const SuperAdminFeatureAnalytics = () => {
 
             {/* Recent product page generations */}
             <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: 24 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>Dernières générations de pages produit</h2>
-              {data.recentGenerations?.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>Aucune génération récente</p>}
+              <h2 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: '0 0 20px' }}>{tp('Dernières générations de pages produit')}</h2>
+              {data.recentGenerations?.length === 0 && <p style={{ fontSize: 13, color: '#94a3b8' }}>{tp('Aucune génération récente')}</p>}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {data.recentGenerations?.slice(0, 20).map((g, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: '#f8fafc', borderRadius: 10 }}>
@@ -497,14 +498,14 @@ const SuperAdminFeatureAnalytics = () => {
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {g.meta?.productName || g.meta?.productUrl || 'Produit sans nom'}
+                        {g.meta?.productName || g.meta?.productUrl || tp('Produit sans nom')}
                       </div>
                       <div style={{ fontSize: 11, color: '#94a3b8' }}>
                         {g.workspaceId?.name || '—'} · {g.userId?.email || '—'}
                       </div>
                     </div>
                     <div style={{ fontSize: 11, padding: '3px 8px', borderRadius: 6, background: g.meta?.generationType === 'free' ? '#dcfce7' : '#fef3c7', color: g.meta?.generationType === 'free' ? '#16a34a' : '#d97706', flexShrink: 0 }}>
-                      {g.meta?.generationType === 'free' ? 'Gratuite' : 'Payante'}
+                      {g.meta?.generationType === 'free' ? 'Gratuite' : tp('Payante')}
                     </div>
                     <div style={{ fontSize: 11, color: '#94a3b8', flexShrink: 0, textAlign: 'right' }}>
                       {new Date(g.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}

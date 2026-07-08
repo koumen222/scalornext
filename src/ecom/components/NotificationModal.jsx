@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from '@/lib/router-compat';
 import { notificationsApi } from '../services/ecommApi';
+import { tp } from '../i18n/platform.js';
 
 const ICON_MAP = {
   order: (
@@ -203,7 +204,7 @@ export default function NotificationModal({ isOpen, onClose, onMarkAllRead }) {
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Notifications</h2>
+              <h2 className="text-xl font-bold text-gray-900">{tp('Notifications')}</h2>
               {unreadCount > 0 && (
                 <p className="text-sm text-gray-500">{unreadCount} non lue{unreadCount > 1 ? 's' : ''}</p>
               )}
@@ -215,7 +216,7 @@ export default function NotificationModal({ isOpen, onClose, onMarkAllRead }) {
                 onClick={handleMarkAllRead}
                 className="px-4 py-2 text-sm font-semibold text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
               >
-                Tout marquer comme lu
+                {tp('Tout marquer comme lu')}
               </button>
             )}
             <button
@@ -242,8 +243,8 @@ export default function NotificationModal({ isOpen, onClose, onMarkAllRead }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune notification</h3>
-              <p className="text-gray-500">Vous êtes ù  jour ! Toutes vos notifications ont été traitées.</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{tp('Aucune notification')}</h3>
+              <p className="text-gray-500">{tp('Vous êtes ù  jour ! Toutes vos notifications ont été traitées.')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
@@ -282,15 +283,15 @@ export default function NotificationModal({ isOpen, onClose, onMarkAllRead }) {
                             <button
                               onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleMarkAsRead(notif._id); }}
                               className="px-3 py-1.5 text-xs font-semibold text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                              title="Marquer comme lu"
+                              title={tp('Marquer comme lu')}
                             >
-                              Marquer comme lu
+                              {tp('Marquer comme lu')}
                             </button>
                           )}
                           <button
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(notif._id); }}
                             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Supprimer"
+                            title={tp('Supprimer')}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -332,7 +333,7 @@ export default function NotificationModal({ isOpen, onClose, onMarkAllRead }) {
                     {loading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
-                        Chargement...
+                        {tp('Chargement...')}
                       </div>
                     ) : (
                       'Charger plus'

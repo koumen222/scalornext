@@ -2,12 +2,13 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Link } from '@/lib/router-compat';
 import { Link2, Sparkles, Download, RefreshCw, Image, Globe, Loader2, CheckCircle, AlertCircle, ChevronDown, Copy, ExternalLink, Upload, X, FileText, Zap, Shield, Star, LayoutGrid, Package, Wallet, Plus, CreditCard, Target, List, Scale, Users } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const FORMATS = [
-  { id: 'hero-benefits', label: 'Bénéfices', icon: Sparkles, desc: 'Produit + bénéfices clés' },
+  { id: 'hero-benefits', get label() { return tp('Bénéfices'); }, icon: Sparkles, get desc() { return tp('Produit + bénéfices clés'); } },
   { id: 'target-promise', label: 'Cible & Promesse', icon: Target, desc: 'Lifestyle + transformation' },
-  { id: 'problem-solution', label: 'Prob. / Solution', icon: Zap, desc: 'Avant / Après split' },
-  { id: 'how-to-use', label: "Mode d'emploi", icon: List, desc: '3 étapes simples' },
+  { id: 'problem-solution', label: 'Prob. / Solution', icon: Zap, get desc() { return tp('Avant / Après split'); } },
+  { id: 'how-to-use', label: "Mode d'emploi", icon: List, get desc() { return tp('3 étapes simples'); } },
   { id: 'ingredients-trust', label: 'Confiance', icon: Shield, desc: 'Badges & certifications' },
   { id: 'comparison', label: 'Comparaison', icon: Scale, desc: 'Tableau ✓ / ✗' },
   { id: 'social-proof', label: 'Preuve Sociale', icon: Users, desc: 'Avis clients' },
@@ -25,8 +26,8 @@ const TEMPLATES = [
 
 const STEPS = [
   { icon: Globe, label: 'Analyse marketing…' },
-  { icon: Sparkles, label: 'Création des prompts…' },
-  { icon: Image, label: 'Génération des images…' },
+  { icon: Sparkles, get label() { return tp('Création des prompts…'); } },
+  { icon: Image, get label() { return tp('Génération des images…'); } },
 ];
 
 const CREDIT_PACKS = [
@@ -73,7 +74,7 @@ const CreativeGenerator = () => {
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { setError('Sélectionnez une image'); return; }
+    if (!file.type.startsWith('image/')) { setError(tp('Sélectionnez une image')); return; }
     if (file.size > 10 * 1024 * 1024) { setError('Image trop lourde (max 10 MB)'); return; }
     setProductImage(file);
     setImagePreview(URL.createObjectURL(file));
@@ -90,7 +91,7 @@ const CreativeGenerator = () => {
   const handleLogoSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { setError('Sélectionnez une image pour le logo'); return; }
+    if (!file.type.startsWith('image/')) { setError(tp('Sélectionnez une image pour le logo')); return; }
     if (file.size > 5 * 1024 * 1024) { setError('Logo trop lourd (max 5 MB)'); return; }
     setLogoImage(file);
     setLogoPreview(URL.createObjectURL(file));
@@ -240,8 +241,8 @@ const CreativeGenerator = () => {
                   <CreditCard size={14} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-white font-semibold text-sm">Recharger les crédits</p>
-                  <p className="text-white/40 text-[11px]">80 FCFA / image générée</p>
+                  <p className="text-white font-semibold text-sm">{tp('Recharger les crédits')}</p>
+                  <p className="text-white/40 text-[11px]">{tp('80 FCFA / image générée')}</p>
                 </div>
               </div>
               <button
@@ -259,18 +260,18 @@ const CreativeGenerator = () => {
                     <CheckCircle size={28} className="text-green-600" />
                   </div>
                   <p className="font-semibold text-gray-900 text-base">{buySuccess}</p>
-                  <p className="text-sm text-gray-500 mt-1">Solde actuel : <strong>{credits}</strong> crédit{credits !== 1 ? 's' : ''}</p>
+                  <p className="text-sm text-gray-500 mt-1">{tp('Solde actuel :')} <strong>{credits}</strong> crédit{credits !== 1 ? 's' : ''}</p>
                   <button
                     onClick={() => setShowBuyModal(false)}
                     className="mt-4 w-full h-11 bg-green-600 text-white font-medium rounded-2xl text-sm hover:bg-green-700 transition-colors"
                   >
-                    Fermer
+                    {tp('Fermer')}
                   </button>
                 </div>
               ) : (
                 <>
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Choisir un pack</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Choisir un pack')}</p>
                     <div className="space-y-2">
                       {CREDIT_PACKS.map(pack => (
                         <button
@@ -300,22 +301,22 @@ const CreativeGenerator = () => {
 
                   <div className="space-y-2">
                     <div>
-                      <label className="text-xs font-semibold text-gray-500 mb-1 block">Numéro de téléphone</label>
+                      <label className="text-xs font-semibold text-gray-500 mb-1 block">{tp('Numéro de téléphone')}</label>
                       <input
                         type="tel"
                         value={buyPhone}
                         onChange={e => setBuyPhone(e.target.value)}
-                        placeholder="Ex: 6XXXXXXXX"
+                        placeholder={tp('Ex: 6XXXXXXXX')}
                         className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-gray-500 mb-1 block">Nom complet</label>
+                      <label className="text-xs font-semibold text-gray-500 mb-1 block">{tp('Nom complet')}</label>
                       <input
                         type="text"
                         value={buyName}
                         onChange={e => setBuyName(e.target.value)}
-                        placeholder="Votre nom"
+                        placeholder={tp('Votre nom')}
                         className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all"
                       />
                     </div>
@@ -352,8 +353,8 @@ const CreativeGenerator = () => {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-6">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Creatives Image</h1>
-            <p className="text-sm text-gray-400 mt-0.5">Visuels produit premium · IA</p>
+            <h1 className="text-xl font-bold text-gray-900">{tp('Creatives Image')}</h1>
+            <p className="text-sm text-gray-400 mt-0.5">{tp('Visuels produit premium · IA')}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Link
@@ -361,7 +362,7 @@ const CreativeGenerator = () => {
               className="h-10 px-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors"
             >
               <LayoutGrid size={14} className="text-gray-400" />
-              <span className="hidden sm:inline">Mes visuels</span>
+              <span className="hidden sm:inline">{tp('Mes visuels')}</span>
             </Link>
             <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl h-10 px-3.5">
               <Wallet size={14} className="text-green-600" />
@@ -385,7 +386,7 @@ const CreativeGenerator = () => {
             {/* Upload produit */}
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="px-4 pt-4 pb-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Image produit</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Image produit')}</p>
               </div>
               <div className="p-4">
                 <input type="file" ref={fileInputRef} onChange={handleImageSelect} accept="image/*" className="hidden" />
@@ -398,8 +399,8 @@ const CreativeGenerator = () => {
                       <Upload size={18} className="text-gray-400 group-hover:text-green-600" />
                     </div>
                     <div className="text-center">
-                      <span className="block text-sm font-medium text-gray-600 group-hover:text-green-700">Glissez ou cliquez</span>
-                      <span className="text-xs text-gray-400">PNG, JPG, WebP — max 10 MB</span>
+                      <span className="block text-sm font-medium text-gray-600 group-hover:text-green-700">{tp('Glissez ou cliquez')}</span>
+                      <span className="text-xs text-gray-400">{tp('PNG, JPG, WebP — max 10 MB')}</span>
                     </div>
                   </button>
                 ) : (
@@ -408,7 +409,7 @@ const CreativeGenerator = () => {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-800 truncate">{productImage?.name}</p>
                       <p className="text-xs text-gray-400">{productImage ? `${(productImage.size / 1024).toFixed(0)} KB` : ''}</p>
-                      <button onClick={() => fileInputRef.current?.click()} className="text-xs font-medium text-green-600 mt-1 hover:text-green-700">Changer l'image</button>
+                      <button onClick={() => fileInputRef.current?.click()} className="text-xs font-medium text-green-600 mt-1 hover:text-green-700">{tp('Changer l\'image')}</button>
                     </div>
                     <button onClick={removeImage} className="w-7 h-7 rounded-lg bg-red-50 border border-red-100 text-red-400 flex items-center justify-center hover:bg-red-100 transition-colors shrink-0">
                       <X size={13} />
@@ -421,8 +422,8 @@ const CreativeGenerator = () => {
             {/* Logo */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Logo de marque</p>
-                <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-md">Optionnel</span>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Logo de marque')}</p>
+                <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-md">{tp('Optionnel')}</span>
               </div>
               <input type="file" ref={logoInputRef} onChange={handleLogoSelect} accept="image/*" className="hidden" />
               {!logoPreview ? (
@@ -434,8 +435,8 @@ const CreativeGenerator = () => {
                     <Package size={15} className="text-gray-400 group-hover:text-green-600" />
                   </div>
                   <div className="text-left">
-                    <span className="block text-xs font-medium text-gray-500 group-hover:text-green-700">Ajouter votre logo</span>
-                    <span className="text-[10px] text-gray-400">PNG transparent recommandé</span>
+                    <span className="block text-xs font-medium text-gray-500 group-hover:text-green-700">{tp('Ajouter votre logo')}</span>
+                    <span className="text-[10px] text-gray-400">{tp('PNG transparent recommandé')}</span>
                   </div>
                 </button>
               ) : (
@@ -444,7 +445,7 @@ const CreativeGenerator = () => {
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-700 truncate">{logoImage?.name}</p>
                     <p className="text-[10px] text-gray-400">{logoImage ? `${(logoImage.size / 1024).toFixed(0)} KB` : ''}</p>
-                    <p className="text-[10px] text-green-600 font-medium mt-0.5">Sera intégré dans les visuels</p>
+                    <p className="text-[10px] text-green-600 font-medium mt-0.5">{tp('Sera intégré dans les visuels')}</p>
                   </div>
                   <button onClick={removeLogo} className="w-6 h-6 rounded-lg bg-red-50 border border-red-100 text-red-400 flex items-center justify-center hover:bg-red-100 transition-colors shrink-0">
                     <X size={11} />
@@ -455,9 +456,9 @@ const CreativeGenerator = () => {
 
             {/* URL + Description */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Informations produit</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Informations produit')}</p>
               <div>
-                <label className="text-xs font-medium text-gray-600 mb-1.5 block">Lien produit <span className="text-gray-400 font-normal">(optionnel)</span></label>
+                <label className="text-xs font-medium text-gray-600 mb-1.5 block">{tp('Lien produit')} <span className="text-gray-400 font-normal">{tp('(optionnel)')}</span></label>
                 <div className="relative">
                   <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
@@ -470,11 +471,11 @@ const CreativeGenerator = () => {
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 mb-1.5 block">Description <span className="text-gray-400 font-normal">(optionnel)</span></label>
+                <label className="text-xs font-medium text-gray-600 mb-1.5 block">{tp('Description')} <span className="text-gray-400 font-normal">{tp('(optionnel)')}</span></label>
                 <textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  placeholder="Ex: Gélules nootropiques au collagène, 60 capsules, ingrédients naturels…"
+                  placeholder={tp('Ex: Gélules nootropiques au collagène, 60 capsules, ingrédients naturels…')}
                   rows={3}
                   className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-gray-50 placeholder:text-gray-400 resize-none"
                 />
@@ -483,7 +484,7 @@ const CreativeGenerator = () => {
 
             {/* Template */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Univers visuel</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Univers visuel')}</p>
               <div className="grid grid-cols-4 gap-2">
                 {TEMPLATES.map(tpl => (
                   <button
@@ -512,12 +513,12 @@ const CreativeGenerator = () => {
             {/* Formats */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Slides à générer</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Slides à générer')}</p>
                 <button
                   onClick={() => setSelectedFormats(selectedFormats.length === FORMATS.length ? [] : FORMATS.map(f => f.id))}
                   className="text-[11px] font-medium text-green-600 hover:text-green-700"
                 >
-                  {selectedFormats.length === FORMATS.length ? 'Tout effacer' : 'Tout sélectionner'}
+                  {selectedFormats.length === FORMATS.length ? 'Tout effacer' : tp('Tout sélectionner')}
                 </button>
               </div>
               <div className="space-y-1.5">
@@ -556,7 +557,7 @@ const CreativeGenerator = () => {
             <div className={`rounded-xl border p-4 ${insufficientCredits ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-100'}`}>
               <div className="flex items-center justify-between mb-2">
                 <p className={`text-xs font-semibold uppercase tracking-wide ${insufficientCredits ? 'text-red-600' : 'text-green-700'}`}>
-                  {insufficientCredits ? 'Crédits insuffisants' : 'Crédits disponibles'}
+                  {insufficientCredits ? 'Crédits insuffisants' : tp('Crédits disponibles')}
                 </p>
                 <div className="flex items-center gap-1.5">
                   <Wallet size={12} className={insufficientCredits ? 'text-red-400' : 'text-green-600'} />
@@ -577,7 +578,7 @@ const CreativeGenerator = () => {
                   )}
                 </div>
               ) : (
-                <p className="text-xs text-gray-400">Sélectionnez des slides</p>
+                <p className="text-xs text-gray-400">{tp('Sélectionnez des slides')}</p>
               )}
               {insufficientCredits && (
                 <button
@@ -603,7 +604,7 @@ const CreativeGenerator = () => {
                 : `Générer ${selectedFormats.length} image${selectedFormats.length > 1 ? 's' : ''}`}
             </button>
             {!canGenerate && !insufficientCredits && (
-              <p className="text-[11px] text-center text-gray-400 -mt-2">Ajoutez une image produit ou un lien produit</p>
+              <p className="text-[11px] text-center text-gray-400 -mt-2">{tp('Ajoutez une image produit ou un lien produit')}</p>
             )}
           </div>
 
@@ -619,7 +620,7 @@ const CreativeGenerator = () => {
                       <Loader2 size={32} className="text-green-600 animate-spin" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">L'IA crée vos visuels…</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">{tp('L\'IA crée vos visuels…')}</h3>
                   <p className="text-sm text-gray-500 mb-8">Ça prend ~2 minutes pour {selectedFormats.length} image{selectedFormats.length > 1 ? 's' : ''}</p>
                   <div className="w-full max-w-xs space-y-2">
                     {STEPS.map((step, i) => {
@@ -663,7 +664,7 @@ const CreativeGenerator = () => {
                   <AlertCircle size={16} className="text-red-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-red-800">Erreur de génération</p>
+                  <p className="text-sm font-semibold text-red-800">{tp('Erreur de génération')}</p>
                   <p className="text-sm text-red-600 mt-0.5">{error}</p>
                 </div>
               </div>
@@ -715,7 +716,7 @@ const CreativeGenerator = () => {
                       <div className="flex items-center gap-2">
                         {result.productImageFound && (
                           <span className="text-[10px] font-semibold bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-md">
-                            Image détectée
+                            {tp('Image détectée')}
                           </span>
                         )}
                         <ChevronDown size={15} className={`text-gray-400 transition-transform ${showAnalysis ? 'rotate-180' : ''}`} />
@@ -724,16 +725,16 @@ const CreativeGenerator = () => {
                     {showAnalysis && (
                       <div className="px-4 pb-4 border-t border-gray-100 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Accroche</p>
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{tp('Accroche')}</p>
                           <p className="text-sm text-gray-700">{result.analysis.emotionalHook}</p>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Angle promo</p>
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{tp('Angle promo')}</p>
                           <p className="text-sm text-gray-700">{result.analysis.promoAngle}</p>
                         </div>
                         {result.analysis.keyBenefits?.length > 0 && (
                           <div className="sm:col-span-2">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Bénéfices</p>
+                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Bénéfices')}</p>
                             <div className="flex flex-wrap gap-1.5">
                               {result.analysis.keyBenefits.map((b, i) => (
                                 <span key={i} className="text-xs bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-md font-medium">{b}</span>
@@ -743,7 +744,7 @@ const CreativeGenerator = () => {
                         )}
                         {result.analysis.slogans?.length > 0 && (
                           <div className="sm:col-span-2">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Slogans</p>
+                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Slogans')}</p>
                             <div className="space-y-1">
                               {result.analysis.slogans.map((s, i) => (
                                 <p key={i} className="text-sm text-gray-700 bg-gray-50 border border-gray-100 px-3 py-2 rounded-lg">{s}</p>
@@ -798,7 +799,7 @@ const CreativeGenerator = () => {
                             <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
                               <AlertCircle size={18} className="text-red-400" />
                             </div>
-                            <p className="text-xs text-gray-400 text-center leading-tight">{creative.error || 'Génération échouée'}</p>
+                            <p className="text-xs text-gray-400 text-center leading-tight">{creative.error || tp('Génération échouée')}</p>
                           </div>
                         )}
                       </div>
@@ -828,9 +829,9 @@ const CreativeGenerator = () => {
                 <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mb-5">
                   <LayoutGrid size={24} className="text-green-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Vos créas apparaîtront ici</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">{tp('Vos créas apparaîtront ici')}</h3>
                 <p className="text-sm text-gray-500 max-w-xs">
-                  Configurez votre produit à gauche, choisissez les slides et lancez la génération.
+                  {tp('Configurez votre produit à gauche, choisissez les slides et lancez la génération.')}
                 </p>
                 <div className="flex flex-wrap justify-center gap-2 mt-6">
                   {FORMATS.map(f => {

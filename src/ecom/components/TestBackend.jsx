@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, AlertCircle, MessageSquare, Smartphone } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const API_BASE = (() => {
   const url = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
@@ -83,7 +84,7 @@ const TestBackend = () => {
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
         <CheckCircle className="h-6 w-6" />
-        Test Backend - WhatsApp
+        {tp('Test Backend - WhatsApp')}
       </h1>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -113,14 +114,14 @@ const TestBackend = () => {
                 )}
               </div>
             ) : (
-              <p className="text-gray-500">Chargement...</p>
+              <p className="text-gray-500">{tp('Chargement...')}</p>
             )}
             <button
               onClick={testBackendStatus}
               disabled={loading}
               className="mt-3 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 transition"
             >
-              {loading ? 'Test...' : 'Retester'}
+              {loading ? 'Test...' : tp('Retester')}
             </button>
           </div>
         </div>
@@ -130,7 +131,7 @@ const TestBackend = () => {
           <div className="p-4 border-b">
             <h3 className="font-semibold flex items-center gap-2">
               <Smartphone className="h-5 w-5" />
-              Status WhatsApp
+              {tp('Status WhatsApp')}
             </h3>
           </div>
           <div className="p-4">
@@ -143,7 +144,7 @@ const TestBackend = () => {
                   <div className="text-sm text-gray-600">
                     <p>Status: {whatsappStatus.data.status}</p>
                     <div className="mt-2">
-                      <p>Routes disponibles:</p>
+                      <p>{tp('Routes disponibles:')}</p>
                       <ul className="ml-4">
                         {Object.entries(whatsappStatus.data.routes).map(([key, route]) => (
                           <li key={key} className="text-xs">{route}</li>
@@ -154,13 +155,13 @@ const TestBackend = () => {
                 )}
               </div>
             ) : (
-              <p className="text-gray-500">Chargement...</p>
+              <p className="text-gray-500">{tp('Chargement...')}</p>
             )}
             <button
               onClick={testWhatsappStatus}
               className="mt-3 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition"
             >
-              Retester
+              {tp('Retester')}
             </button>
           </div>
         </div>
@@ -170,7 +171,7 @@ const TestBackend = () => {
           <div className="p-4 border-b">
             <h3 className="font-semibold flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              Test Communication
+              {tp('Test Communication')}
             </h3>
           </div>
           <div className="p-4">
@@ -180,7 +181,7 @@ const TestBackend = () => {
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Entrez un message de test..."
+                  placeholder={tp('Entrez un message de test...')}
                   className="flex-1 px-3 py-2 border rounded-md"
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 />
@@ -189,7 +190,7 @@ const TestBackend = () => {
                   disabled={!message.trim()}
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition text-sm font-medium"
                 >
-                  Envoyer
+                  {tp('Envoyer')}
                 </button>
               </div>
               

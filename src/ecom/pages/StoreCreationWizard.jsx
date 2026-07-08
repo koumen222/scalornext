@@ -1,15 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from '@/lib/router-compat';
 import { useStore, isStoreEnabled } from '../contexts/StoreContext.jsx';
 import {
   Check, ArrowRight, ArrowLeft, Loader2, Store, Palette, MapPin,
-  Sparkles, MessageSquare, ChevronRight, Zap,
-  Globe2, Phone, Upload, X, Wand2, RefreshCw
+  Sparkles, MessageSquare, ChevronRight, ChevronDown, Zap,
+  Globe2, Upload, X, Wand2, RefreshCw
 } from 'lucide-react';
 import { storeManageApi, storesApi } from '../services/storeApi.js';
 import { storeProductsApi } from '../services/storeApi.js';
 import { createEmptyStore } from '../utils/storeDefaults.js';
 import { getErrorMessage } from '../utils/errorMessages.js';
+import { tp } from '../i18n/platform.js';
+import {
+  COUNTRY_PHONE_OPTIONS,
+  PHONE_CODES,
+  buildFullPhone,
+  findCountryPhoneOptionByName,
+  getCurrencyByPhoneCode,
+  getPhoneCodeByCountryName,
+  getPhoneLength
+} from '../utils/phoneCodes.js';
+import { getCountryFormPlaceholders, getPopularCitiesForCountry } from '../utils/storeCountryConfig.js';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DONNÉES
@@ -31,7 +42,7 @@ const CURRENCIES = [
   { code: 'XOF', label: 'Franc CFA', symbol: 'FCFA', region: 'Afrique Ouest' },
   { code: 'NGN', label: 'Naira', symbol: '₦', region: 'Nigeria' },
   { code: 'GHS', label: 'Cedi', symbol: 'GH₵', region: 'Ghana' },
-  { code: 'GNF', label: 'Franc Guinéen', symbol: 'GNF', region: 'Guinée' },
+  { code: 'GNF', get label() { return tp('Franc Guinéen'); }, symbol: 'GNF', region: 'Guinée' },
   { code: 'MAD', label: 'Dirham', symbol: 'DH', region: 'Maroc' },
   { code: 'EUR', label: 'Euro', symbol: '€', region: 'Europe' },
   { code: 'USD', label: 'Dollar US', symbol: '$', region: 'International' },
@@ -63,29 +74,29 @@ const COLORS = [
 ];
 
 const BRAND_TONES = [
-  { value: 'premium', label: 'Premium', desc: 'Luxe, élégance, raffinement' },
-  { value: 'naturel', label: 'Naturel', desc: 'Doux, sincère, authentique' },
-  { value: 'dynamique', label: 'Dynamique', desc: 'Énergie, mouvement, impact' },
-  { value: 'confiance', label: 'Confiance', desc: 'Sérieux, stabilité, crédibilité' },
+  { value: 'premium', label: 'Premium', get desc() { return tp('Luxe, élégance, raffinement'); } },
+  { value: 'naturel', label: 'Naturel', get desc() { return tp('Doux, sincère, authentique'); } },
+  { value: 'dynamique', label: 'Dynamique', get desc() { return tp('Énergie, mouvement, impact'); } },
+  { value: 'confiance', label: 'Confiance', get desc() { return tp('Sérieux, stabilité, crédibilité'); } },
   { value: 'tendance', label: 'Tendance', desc: 'Mode, lifestyle, contemporain' },
   { value: 'chaleureux', label: 'Chaleureux', desc: 'Accessible, humain, proche' },
 ];
 
 const LOGO_VARIANTS = [
   { value: 'wordmark', label: 'Wordmark', desc: 'Le nom de la marque reste central' },
-  { value: 'combination', label: 'Combiné', desc: 'Icône + nom lisible et polyvalent' },
-  { value: 'emblem', label: 'Emblème', desc: 'Badge compact avec présence premium' },
+  { value: 'combination', get label() { return tp('Combiné'); }, get desc() { return tp('Icône + nom lisible et polyvalent'); } },
+  { value: 'emblem', get label() { return tp('Emblème'); }, get desc() { return tp('Badge compact avec présence premium'); } },
   { value: 'monogram', label: 'Monogramme', desc: 'Initiales ou signe typographique fort' },
-  { value: 'abstract', label: 'Abstrait', desc: 'Symbole moderne, distinctif et épuré' },
+  { value: 'abstract', label: 'Abstrait', get desc() { return tp('Symbole moderne, distinctif et épuré'); } },
 ];
 
 const LOGO_SYMBOL_STYLES = [
-  { value: 'sector', label: 'Adapté au secteur', desc: "L'icône suit d'abord votre activité" },
-  { value: 'minimal', label: 'Minimal', desc: 'Très sobre, peu de traits, très net' },
-  { value: 'geometric', label: 'Géométrique', desc: 'Construction précise et moderne' },
+  { value: 'sector', get label() { return tp('Adapté au secteur'); }, desc: "L'icône suit d'abord votre activité" },
+  { value: 'minimal', label: 'Minimal', get desc() { return tp('Très sobre, peu de traits, très net'); } },
+  { value: 'geometric', get label() { return tp('Géométrique'); }, get desc() { return tp('Construction précise et moderne'); } },
   { value: 'organic', label: 'Organique', desc: 'Courbes souples, rendu plus naturel' },
-  { value: 'signature', label: 'Signature', desc: 'Éditorial, chic, plus mode' },
-  { value: 'bold', label: 'Bold', desc: 'Plus franc, visible, mémorable' },
+  { value: 'signature', label: 'Signature', get desc() { return tp('Éditorial, chic, plus mode'); } },
+  { value: 'bold', label: 'Bold', get desc() { return tp('Plus franc, visible, mémorable'); } },
 ];
 
 const LOGO_FLOW_OPTIONS = [
@@ -142,11 +153,11 @@ const PRODUCT_TYPE_LOGO_PRESETS = {
 };
 
 const STEPS = [
-  { num: 1, title: 'Votre boutique', subtitle: 'Nom, URL et catégorie' },
+  { num: 1, title: 'Votre boutique', get subtitle() { return tp('Nom, URL et catégorie'); } },
   { num: 2, title: 'Direction visuelle', subtitle: 'Style, ton et couleurs' },
-  { num: 3, title: 'Votre logo', subtitle: 'Génération ou import' },
-  { num: 4, title: 'Finalisez', subtitle: 'Coordonnées et devise' },
-  { num: 5, title: 'Vérification', subtitle: 'Aperçu et création' },
+  { num: 3, title: 'Votre logo', get subtitle() { return tp('Génération ou import'); } },
+  { num: 4, title: 'Finalisez', get subtitle() { return tp('Coordonnées et devise'); } },
+  { num: 5, title: 'Vérification', get subtitle() { return tp('Aperçu et création'); } },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -154,13 +165,13 @@ const STEPS = [
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const BASE_GENERATION_STEPS = [
-  { key: 'subdomain', label: 'Création de votre boutique' },
+  { key: 'subdomain', get label() { return tp('Création de votre boutique'); } },
   { key: 'config', label: 'Enregistrement de vos informations' },
-  { key: 'theme', label: 'Application du thème' },
+  { key: 'theme', get label() { return tp('Application du thème'); } },
   { key: 'homepage', label: "Génération de la page d'accueil par l'IA" },
-  { key: 'images', label: 'Création des visuels personnalisés' },
-  { key: 'verification', label: 'Vérification finale de la boutique' },
-  { key: 'done', label: 'Votre boutique est prête !' },
+  { key: 'images', get label() { return tp('Création des visuels personnalisés'); } },
+  { key: 'verification', get label() { return tp('Vérification finale de la boutique'); } },
+  { key: 'done', get label() { return tp('Votre boutique est prête !'); } },
 ];
 
 const getGenerationSteps = ({ includeLogoStep = false } = {}) => {
@@ -228,14 +239,14 @@ const GenerationOverlay = ({ currentStep, storeName, subdomain, themeColor = '#0
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Scalor Builder</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">{tp('Scalor Builder')}</p>
                     <p className="mt-1 truncate text-sm font-semibold text-white">{storeLabel}</p>
                   </div>
                 </div>
 
                 <div className="mt-12 sm:mt-16">
                   <div className="inline-flex min-h-[28px] items-center rounded-full border border-white/10 bg-white/10 px-3 text-xs font-semibold text-white/80">
-                    {activeStep?.label || 'Préparation'}
+                    {activeStep?.label || tp('Préparation')}
                   </div>
                   <h2 className="mt-5 max-w-md text-3xl font-black tracking-tight text-white sm:text-4xl">
                     {title}
@@ -248,11 +259,11 @@ const GenerationOverlay = ({ currentStep, storeName, subdomain, themeColor = '#0
                 <div className="mt-10 rounded-lg border border-white/10 bg-white/[0.06] p-4">
                   <div className="flex items-end justify-between gap-4">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">Progression</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">{tp('Progression')}</p>
                       <p className="mt-1 text-3xl font-black tabular-nums text-white">{progressPct}%</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-white/50">Adresse</p>
+                      <p className="text-xs text-white/50">{tp('Adresse')}</p>
                       <p className="mt-1 max-w-[180px] truncate text-sm font-semibold text-white/80">{urlLabel}</p>
                     </div>
                   </div>
@@ -267,15 +278,15 @@ const GenerationOverlay = ({ currentStep, storeName, subdomain, themeColor = '#0
 
               <div className="relative mt-8 flex items-center gap-2 text-xs font-medium text-white/50">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Synchronisation des paramètres en cours</span>
+                <span>{tp('Synchronisation des paramètres en cours')}</span>
               </div>
             </section>
 
             <section className="px-5 py-6 sm:px-7 lg:px-9 lg:py-9">
               <div className="flex flex-col gap-2 border-b border-slate-100 pb-5 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Pipeline</p>
-                  <h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">Préparation de la boutique</h3>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{tp('Pipeline')}</p>
+                  <h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">{tp('Préparation de la boutique')}</h3>
                 </div>
                 <span className="text-sm font-semibold text-slate-500">{safeCurrentIdx + 1}/{generationSteps.length}</span>
               </div>
@@ -324,12 +335,12 @@ const GenerationOverlay = ({ currentStep, storeName, subdomain, themeColor = '#0
                                 ? 'bg-amber-100 text-amber-800'
                                 : 'bg-slate-100 text-slate-500'
                           }`}>
-                            {isDone ? 'Terminé' : isActive ? 'En cours' : 'En attente'}
+                            {isDone ? 'Terminé' : isActive ? 'En cours' : tp('En attente')}
                           </span>
                         </div>
                         {isActive && (
                           <p className="mt-1 text-xs leading-5 text-slate-500">
-                            Cette étape peut prendre quelques secondes selon la charge du serveur.
+                            {tp('Cette étape peut prendre quelques secondes selon la charge du serveur.')}
                           </p>
                         )}
                       </div>
@@ -461,6 +472,29 @@ const Textarea = ({ label, hint, error, ...props }) => (
   </div>
 );
 
+const splitInternationalPhone = (value = '', fallbackCode = '+237') => {
+  const compact = String(value || '').trim().replace(/\s+/g, '');
+  const safeFallback = fallbackCode || '+237';
+  if (!compact) return { code: safeFallback, local: '' };
+
+  const matches = PHONE_CODES
+    .filter((country) => compact.startsWith(country.code))
+    .sort((a, b) => b.code.length - a.code.length);
+
+  if (matches.length > 0) {
+    const code = matches[0].code;
+    return { code, local: compact.slice(code.length) };
+  }
+
+  const digits = compact.replace(/\D/g, '');
+  const fallbackDigits = safeFallback.replace(/\D/g, '');
+  if (fallbackDigits && digits.startsWith(fallbackDigits)) {
+    return { code: safeFallback, local: digits.slice(fallbackDigits.length) };
+  }
+
+  return { code: safeFallback, local: compact.replace(/^\+/, '') };
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // WIZARD PRINCIPAL
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -500,6 +534,8 @@ const StoreCreationWizard = ({ onComplete }) => {
     logoConcept: '',
     logoFlowChoice: 'generate',
   });
+  const [phoneCode, setPhoneCode] = useState('+237');
+  const [whatsappLocal, setWhatsappLocal] = useState('');
 
   const [subdomainStatus, setSubdomainStatus] = useState(null);
   const [originalSubdomain, setOriginalSubdomain] = useState('');
@@ -564,7 +600,14 @@ const StoreCreationWizard = ({ onComplete }) => {
 
         if (s?.storeName && !isNewStoreMode) {
           const existingSub = data.subdomain || '';
+          const countryName = findCountryPhoneOptionByName(s.country)?.name || s.country || 'Cameroun';
+          const parsedPhone = splitInternationalPhone(
+            s.storeWhatsApp || '',
+            getPhoneCodeByCountryName(countryName) || '+237'
+          );
           setOriginalSubdomain(existingSub);
+          setPhoneCode(parsedPhone.code);
+          setWhatsappLocal(parsedPhone.local);
           setForm(prev => ({
             ...prev,
             storeName: s.storeName || '',
@@ -574,7 +617,7 @@ const StoreCreationWizard = ({ onComplete }) => {
             themeColor: s.storeThemeColor || '#0F6B4F',
             storeWhatsApp: s.storeWhatsApp || '',
             city: s.city || '',
-            country: s.country || 'Cameroun',
+            country: countryName,
             storeCurrency: s.storeCurrency || 'XAF',
             language: s.language || 'fr',
             storeDescription: s.storeDescription || '',
@@ -613,7 +656,8 @@ const StoreCreationWizard = ({ onComplete }) => {
         const detectedCurrency = Object.entries(COUNTRY_CURRENCY).find(
           ([k]) => normalized === k || normalized.includes(k) || k.includes(normalized)
         )?.[1];
-        if (detectedCurrency) next.storeCurrency = detectedCurrency;
+        const phoneCurrency = getCurrencyByPhoneCode(getPhoneCodeByCountryName(val));
+        if (detectedCurrency || phoneCurrency) next.storeCurrency = detectedCurrency || phoneCurrency;
       }
       return next;
     });
@@ -629,6 +673,25 @@ const StoreCreationWizard = ({ onComplete }) => {
   const showCreativeAccordion = form.logoFlowChoice === 'generate';
   const showUploadAccordion = form.logoFlowChoice === 'upload';
   const showLaterAccordion = form.logoFlowChoice === 'later';
+  const selectedCountryOption = useMemo(
+    () => findCountryPhoneOptionByName(form.country),
+    [form.country]
+  );
+  const cityOptions = useMemo(
+    () => getPopularCitiesForCountry(form.country),
+    [form.country]
+  );
+  const countryPlaceholders = useMemo(
+    () => getCountryFormPlaceholders(form.country || selectedCountryOption?.name || 'Cameroun'),
+    [form.country, selectedCountryOption?.name]
+  );
+  const countrySelectOptions = useMemo(() => {
+    if (!form.country || selectedCountryOption) return COUNTRY_PHONE_OPTIONS;
+    return [
+      { code: phoneCode, country: 'CUSTOM', flag: '', label: phoneCode, name: form.country, rawName: form.country },
+      ...COUNTRY_PHONE_OPTIONS
+    ];
+  }, [form.country, selectedCountryOption, phoneCode]);
   const isGeneratedLogoOutdated = Boolean(generatedLogo?.url) && (
     (generatedLogo.variant || 'wordmark') !== form.logoVariant ||
     (generatedLogo.tone || 'premium') !== form.tone ||
@@ -637,6 +700,34 @@ const StoreCreationWizard = ({ onComplete }) => {
     (generatedLogo.productType || '') !== (form.productType || '') ||
     (generatedLogo.themeColor || '') !== form.themeColor
   );
+
+  const syncWhatsapp = (nextCode, nextLocal) => {
+    setPhoneCode(nextCode);
+    setWhatsappLocal(nextLocal);
+    set('storeWhatsApp', buildFullPhone(nextCode, nextLocal));
+  };
+
+  const handleCountryChange = (value) => {
+    const option = findCountryPhoneOptionByName(value);
+    const nextCountry = option?.name || value;
+    const nextCode = option?.code || getPhoneCodeByCountryName(nextCountry) || phoneCode;
+    set('country', nextCountry);
+    syncWhatsapp(nextCode, whatsappLocal);
+  };
+
+  const handlePhoneCodeChange = (value) => {
+    const nextCode = value || '+237';
+    if (!form.country) {
+      const option = PHONE_CODES.find((country) => country.code === nextCode);
+      if (option?.name) set('country', option.name);
+    }
+    syncWhatsapp(nextCode, whatsappLocal);
+  };
+
+  const handleWhatsappLocalChange = (value) => {
+    const cleaned = value.replace(/[^\d\s().-]/g, '');
+    syncWhatsapp(phoneCode, cleaned);
+  };
 
   const slugify = (str) =>
     str.toLowerCase().trim()
@@ -911,7 +1002,7 @@ const StoreCreationWizard = ({ onComplete }) => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
-          <p className="text-gray-600 font-medium">Chargement...</p>
+          <p className="text-gray-600 font-medium">{tp('Chargement...')}</p>
         </div>
       </div>
     );
@@ -929,15 +1020,15 @@ const StoreCreationWizard = ({ onComplete }) => {
               <div className="p-6 sm:p-8 lg:p-10">
                 <div className="inline-flex items-center gap-2 text-sm font-semibold text-scalor-green">
                   <Wand2 className="h-4 w-4" />
-                  Assistant boutique
+                  {tp('Assistant boutique')}
                 </div>
 
                 <div className="mt-8 max-w-2xl">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Configuration guidée
+                    {tp('Configuration guidée')}
                   </p>
                   <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-                    Créez une boutique prête à vendre
+                    {tp('Créez une boutique prête à vendre')}
                   </h1>
                   <p className="mt-4 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
                     Configurez l'identité, le visuel et les informations essentielles en quelques minutes.
@@ -951,7 +1042,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                     onClick={() => setShowIntro(false)}
                     className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-lg bg-scalor-green px-5 py-3 text-sm font-semibold text-white transition hover:bg-scalor-green-dark"
                   >
-                    Commencer la configuration
+                    {tp('Commencer la configuration')}
                     <ArrowRight className="h-4 w-4" />
                   </button>
 
@@ -960,19 +1051,19 @@ const StoreCreationWizard = ({ onComplete }) => {
                     onClick={() => navigate('/ecom/dashboard')}
                     className="inline-flex min-h-[46px] items-center justify-center rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                   >
-                    Retour au dashboard
+                    {tp('Retour au dashboard')}
                   </button>
                 </div>
               </div>
 
               <aside className="border-t border-slate-200 bg-slate-50/70 p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
-                <p className="text-sm font-semibold text-slate-900">Ce que l'assistant prépare</p>
+                <p className="text-sm font-semibold text-slate-900">{tp('Ce que l\'assistant prépare')}</p>
 
                 <div className="mt-5 divide-y divide-slate-200">
                   {[
                     {
                       icon: Store,
-                      label: 'Identité',
+                      get label() { return tp('Identité'); },
                       value: 'Nom, URL et catégorie',
                     },
                     {
@@ -1003,7 +1094,7 @@ const StoreCreationWizard = ({ onComplete }) => {
 
                 <div className="mt-6 flex items-center gap-2 text-sm text-slate-600">
                   <Check className="h-4 w-4 text-scalor-green" />
-                  Base modifiable à tout moment
+                  {tp('Base modifiable à tout moment')}
                 </div>
               </aside>
             </div>
@@ -1036,7 +1127,7 @@ const StoreCreationWizard = ({ onComplete }) => {
         <div className="px-5 py-5 border-b border-gray-100">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">Scalor</p>
           <p className="mt-0.5 text-sm font-bold text-gray-900">
-            {isEditMode ? 'Modifier la boutique' : 'Nouvelle boutique'}
+            {isEditMode ? 'Modifier la boutique' : tp('Nouvelle boutique')}
           </p>
         </div>
 
@@ -1082,7 +1173,7 @@ const StoreCreationWizard = ({ onComplete }) => {
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-gray-900 hover:bg-white transition"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Quitter
+            {tp('Quitter')}
           </button>
           {isEditMode && !isResetMode && (
             <button
@@ -1091,7 +1182,7 @@ const StoreCreationWizard = ({ onComplete }) => {
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-500 hover:text-red-700 hover:bg-red-50 transition"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              Repartir à zéro
+              {tp('Repartir à zéro')}
             </button>
           )}
         </div>
@@ -1108,7 +1199,7 @@ const StoreCreationWizard = ({ onComplete }) => {
               className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition"
             >
               <ArrowLeft className="w-4 h-4" />
-              Quitter
+              {tp('Quitter')}
             </button>
             <p className="text-xs font-bold text-gray-900">Étape {step}/{STEPS.length}</p>
             <div className="w-14" />
@@ -1138,13 +1229,13 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Identité */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Identité</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Nom et adresse web</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Identité')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Nom et adresse web')}</p>
               </div>
               <div className="px-5 py-5 space-y-5">
                 <Input
                   label="Nom de la boutique"
-                  placeholder="Ex: Glow Beauty, FitLife Store…"
+                  placeholder={tp('Ex: Glow Beauty, FitLife Store…')}
                   value={form.storeName}
                   onChange={e => handleStoreName(e.target.value)}
                   error={errors.storeName}
@@ -1152,13 +1243,13 @@ const StoreCreationWizard = ({ onComplete }) => {
                   autoFocus
                 />
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-semibold text-gray-800">Adresse (sous-domaine)</label>
+                  <label className="block text-sm font-semibold text-gray-800">{tp('Adresse (sous-domaine)')}</label>
                   <div className="flex items-stretch rounded-lg border border-gray-200 bg-gray-50 focus-within:border-primary-600 focus-within:bg-white transition-all overflow-hidden">
                     <input
                       type="text"
                       value={form.subdomain}
                       onChange={e => set('subdomain', slugify(e.target.value))}
-                      placeholder="ma-boutique"
+                      placeholder={tp('ma-boutique')}
                       className="flex-1 px-4 py-3 bg-transparent text-sm font-mono focus:outline-none"
                     />
                     <span className="flex items-center px-4 text-gray-400 text-sm font-mono border-l border-gray-200 bg-gray-100">
@@ -1172,10 +1263,10 @@ const StoreCreationWizard = ({ onComplete }) => {
                   </div>
                   {errors.subdomain && <p className="text-xs text-red-600">{errors.subdomain}</p>}
                   {subdomainStatus === 'available' && !errors.subdomain && (
-                    <p className="text-xs text-primary-600 flex items-center gap-1"><Check className="w-3 h-3" /> Disponible</p>
+                    <p className="text-xs text-primary-600 flex items-center gap-1"><Check className="w-3 h-3" /> {tp('Disponible')}</p>
                   )}
                   {subdomainStatus === 'taken' && (
-                    <p className="text-xs text-red-600">Ce sous-domaine est déjà utilisé</p>
+                    <p className="text-xs text-red-600">{tp('Ce sous-domaine est déjà utilisé')}</p>
                   )}
                 </div>
               </div>
@@ -1184,8 +1275,8 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Catégorie */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Catégorie</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Que vendez-vous ?</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Catégorie')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Que vendez-vous ?')}</p>
               </div>
               <div className="px-5 py-5">
                 {errors.productType && <p className="mb-3 text-xs text-red-600">{errors.productType}</p>}
@@ -1224,8 +1315,8 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Ton de marque */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Identité</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Ton de marque</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Identité')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Ton de marque')}</p>
                 <p className="mt-1 text-xs text-gray-500">{selectedTone.desc}</p>
               </div>
               <div className="px-5 py-5">
@@ -1256,8 +1347,8 @@ const StoreCreationWizard = ({ onComplete }) => {
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Couleur</p>
-                  <p className="mt-0.5 text-sm font-semibold text-gray-900">Couleur principale</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Couleur')}</p>
+                  <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Couleur principale')}</p>
                 </div>
                 <span className="text-xs font-medium text-gray-500">{COLORS.find((c) => c.value === form.themeColor)?.name || form.themeColor}</span>
               </div>
@@ -1279,7 +1370,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                       )}
                     </button>
                   ))}
-                  <label className="relative w-9 h-9 cursor-pointer overflow-hidden rounded-lg border-2 border-dashed border-gray-300 transition hover:border-gray-400 flex items-center justify-center" title="Couleur personnalisée">
+                  <label className="relative w-9 h-9 cursor-pointer overflow-hidden rounded-lg border-2 border-dashed border-gray-300 transition hover:border-gray-400 flex items-center justify-center" title={tp('Couleur personnalisée')}>
                     <input
                       type="color"
                       value={form.themeColor}
@@ -1297,11 +1388,11 @@ const StoreCreationWizard = ({ onComplete }) => {
                       {(form.storeName || 'B').charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-gray-900 truncate">{form.storeName || 'Votre boutique'}</p>
-                      <p className="text-xs text-gray-400 truncate">{selectedProductType?.label || 'Boutique'}</p>
+                      <p className="text-sm font-bold text-gray-900 truncate">{form.storeName || tp('Votre boutique')}</p>
+                      <p className="text-xs text-gray-400 truncate">{selectedProductType?.label || tp('Boutique')}</p>
                     </div>
                     <button className="px-3 py-1.5 rounded-md text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: form.themeColor }}>
-                      Commander
+                      {tp('Commander')}
                     </button>
                   </div>
                 </div>
@@ -1311,8 +1402,8 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Logo -- choix rapide */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Logo</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Avez-vous un logo ?</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Logo')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Avez-vous un logo ?')}</p>
               </div>
               <div className="px-5 py-5">
                 <div className="grid gap-2 sm:grid-cols-3">
@@ -1355,14 +1446,14 @@ const StoreCreationWizard = ({ onComplete }) => {
             {form.logoFlowChoice === 'generate' && (
               <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Direction IA</p>
-                  <p className="mt-0.5 text-sm font-semibold text-gray-900">Style du logo</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Direction IA')}</p>
+                  <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Style du logo')}</p>
                 </div>
                 <div className="p-5">
                   <div className="grid gap-5 md:grid-cols-2">
                     {/* Colonne gauche: Type */}
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</p>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Type')}</p>
                       <div className="space-y-1.5">
                         {LOGO_VARIANTS.map((variant) => {
                           const sel = form.logoVariant === variant.value;
@@ -1387,7 +1478,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                     </div>
                     {/* Colonne droite: Style symbole */}
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Symbole</p>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Symbole')}</p>
                       <div className="space-y-1.5">
                         {LOGO_SYMBOL_STYLES.map((style) => {
                           const sel = form.logoSymbolStyle === style.value;
@@ -1416,7 +1507,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                     <Input
                       label="Idée libre (optionnel)"
                       hint="Symbole, initiales, objet, signe distinctif"
-                      placeholder="Ex: feuille, monogramme GL, eclair geometrique"
+                      placeholder={tp('Ex: feuille, monogramme GL, eclair geometrique')}
                       value={form.logoConcept}
                       onChange={e => set('logoConcept', e.target.value)}
                       icon={Wand2}
@@ -1434,8 +1525,8 @@ const StoreCreationWizard = ({ onComplete }) => {
                   {/* Colonne gauche: Générer */}
                   <div className="p-5 space-y-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Génération IA</p>
-                      <p className="mt-0.5 text-sm font-semibold text-gray-900">Créer le logo</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Génération IA')}</p>
+                      <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Créer le logo')}</p>
                     </div>
                     <button
                       type="button"
@@ -1444,7 +1535,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                       className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary-700 text-white text-sm font-semibold disabled:opacity-50"
                     >
                       {logoGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                      {logoGenerating ? 'En cours...' : generatedLogo?.url ? 'Regénérer' : 'Générer'}
+                      {logoGenerating ? 'En cours...' : generatedLogo?.url ? 'Regénérer' : tp('Générer')}
                     </button>
 
                     {logoGenerating && (
@@ -1458,7 +1549,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                     )}
 
                     {isGeneratedLogoOutdated && !logoGenerating && (
-                      <p className="text-[10px] text-amber-600 font-semibold">Direction modifiée -- regénérez.</p>
+                      <p className="text-[10px] text-amber-600 font-semibold">{tp('Direction modifiée -- regénérez.')}</p>
                     )}
 
                     {generatedLogo?.url && (
@@ -1475,7 +1566,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                             onClick={() => { set('storeLogo', generatedLogo.url); setLogoPreview(generatedLogo.url); }}
                             className="px-2.5 py-1 rounded-md bg-primary-700 text-white text-[10px] font-bold shrink-0"
                           >
-                            Utiliser
+                            {tp('Utiliser')}
                           </button>
                         </div>
                       </div>
@@ -1497,8 +1588,8 @@ const StoreCreationWizard = ({ onComplete }) => {
                   {/* Colonne droite: Upload */}
                   <div className="p-5 space-y-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Fichier</p>
-                      <p className="mt-0.5 text-sm font-semibold text-gray-900">Importer un logo</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Fichier')}</p>
+                      <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Importer un logo')}</p>
                     </div>
                     <label className={`relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed cursor-pointer transition-all ${
                       logoPreview ? 'border-gray-300 bg-gray-50' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'
@@ -1506,7 +1597,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                       {logoUploading ? (
                         <div className="flex flex-col items-center gap-2">
                           <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-                          <span className="text-xs text-gray-500">Upload...</span>
+                          <span className="text-xs text-gray-500">{tp('Upload...')}</span>
                         </div>
                       ) : logoPreview ? (
                         <>
@@ -1522,8 +1613,8 @@ const StoreCreationWizard = ({ onComplete }) => {
                         <div className="flex flex-col items-center gap-2 text-center px-3">
                           <Upload className="w-5 h-5 text-gray-400" />
                           <div>
-                            <p className="text-xs font-semibold text-gray-700">Glissez ou cliquez</p>
-                            <p className="text-[10px] text-gray-400">PNG, JPG, SVG · 5 Mo max</p>
+                            <p className="text-xs font-semibold text-gray-700">{tp('Glissez ou cliquez')}</p>
+                            <p className="text-[10px] text-gray-400">{tp('PNG, JPG, SVG · 5 Mo max')}</p>
                           </div>
                         </div>
                       )}
@@ -1538,9 +1629,9 @@ const StoreCreationWizard = ({ onComplete }) => {
             {form.logoFlowChoice !== 'generate' && (
               <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Fichier</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Fichier')}</p>
                   <p className="mt-0.5 text-sm font-semibold text-gray-900">
-                    {form.logoFlowChoice === 'upload' ? 'Importez votre logo' : 'Importer un logo (optionnel)'}
+                    {form.logoFlowChoice === 'upload' ? 'Importez votre logo' : tp('Importer un logo (optionnel)')}
                   </p>
                 </div>
                 <div className="px-5 py-5">
@@ -1551,7 +1642,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                     {logoUploading ? (
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-                        <span className="text-sm text-gray-500">Upload en cours...</span>
+                        <span className="text-sm text-gray-500">{tp('Upload en cours...')}</span>
                       </div>
                     ) : logoPreview ? (
                       <>
@@ -1567,8 +1658,8 @@ const StoreCreationWizard = ({ onComplete }) => {
                       <div className="flex flex-col items-center gap-2 text-center">
                         <Upload className="w-6 h-6 text-gray-400" />
                         <div>
-                          <p className="text-sm font-semibold text-gray-700">Glissez ou cliquez</p>
-                          <p className="text-xs text-gray-400">PNG, JPG, SVG · Max 5 Mo</p>
+                          <p className="text-sm font-semibold text-gray-700">{tp('Glissez ou cliquez')}</p>
+                          <p className="text-xs text-gray-400">{tp('PNG, JPG, SVG · Max 5 Mo')}</p>
                         </div>
                       </div>
                     )}
@@ -1579,7 +1670,7 @@ const StoreCreationWizard = ({ onComplete }) => {
             )}
 
             <div className="rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
-              <p className="text-xs text-gray-500">Logo optionnel -- cliquez <strong className="text-gray-700">Passer</strong> pour continuer sans logo.</p>
+              <p className="text-xs text-gray-500">{tp('Logo optionnel -- cliquez')} <strong className="text-gray-700">{tp('Passer')}</strong> {tp('pour continuer sans logo.')}</p>
             </div>
           </div>
         )}
@@ -1592,33 +1683,81 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Contact */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Contact</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Coordonnées</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Contact')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Coordonnées')}</p>
               </div>
               <div className="px-5 py-5 space-y-4">
-                <Input
-                  label="Numéro WhatsApp"
-                  hint="Les clients vous contacteront sur ce numéro"
-                  placeholder="+237 6XX XXX XXX"
-                  value={form.storeWhatsApp}
-                  onChange={e => set('storeWhatsApp', e.target.value)}
-                  error={errors.storeWhatsApp}
-                  icon={MessageSquare}
-                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-800">{tp('Numéro WhatsApp')}</label>
+                  <p className="text-xs text-gray-500">{tp('Les clients vous contacteront sur ce numéro')}</p>
+                  <div className={`flex overflow-hidden rounded-xl border-2 bg-gray-50 transition-all duration-200 focus-within:bg-white focus-within:border-primary-600 focus-within:ring-4 focus-within:ring-primary-600/10 ${
+                    errors.storeWhatsApp ? 'border-red-300 bg-red-50' : 'border-transparent'
+                  }`}>
+                    <div className="relative shrink-0 border-r border-gray-200 bg-white">
+                      <select
+                        value={phoneCode}
+                        onChange={(e) => handlePhoneCodeChange(e.target.value)}
+                        className="h-full min-h-[52px] w-[124px] appearance-none bg-transparent py-3.5 pl-3 pr-8 text-sm font-semibold text-gray-800 outline-none cursor-pointer"
+                      >
+                        {PHONE_CODES.map((country) => (
+                          <option key={`${country.country}-${country.code}`} value={country.code}>
+                            {country.label} {country.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+                    </div>
+                    <div className="relative min-w-0 flex-1">
+                      <MessageSquare className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="tel"
+                        inputMode="tel"
+                        value={whatsappLocal}
+                        maxLength={getPhoneLength(phoneCode)}
+                        onChange={(e) => handleWhatsappLocalChange(e.target.value)}
+                        placeholder={countryPlaceholders.phone}
+                        className="h-full min-h-[52px] w-full bg-transparent py-3.5 pl-12 pr-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none"
+                      />
+                    </div>
+                  </div>
+                  {errors.storeWhatsApp && <p className="text-xs text-red-600 font-medium">{errors.storeWhatsApp}</p>}
+                </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Input
                     label="Ville"
-                    placeholder="Douala"
+                    placeholder={countryPlaceholders.city.replace(/^Ex\s*:\s*/i, '')}
                     value={form.city}
+                    list="store-city-options"
                     onChange={e => set('city', e.target.value)}
                   />
-                  <Input
-                    label="Pays"
-                    placeholder="Cameroun"
-                    value={form.country}
-                    onChange={e => set('country', e.target.value)}
-                    error={errors.country}
-                  />
+                  {cityOptions.length > 0 && (
+                    <datalist id="store-city-options">
+                      {cityOptions.map((city) => (
+                        <option key={city} value={city} />
+                      ))}
+                    </datalist>
+                  )}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-800">{tp('Pays')}</label>
+                    <div className="relative">
+                      <select
+                        value={form.country}
+                        onChange={(e) => handleCountryChange(e.target.value)}
+                        className={`w-full appearance-none px-4 py-3.5 pr-10 bg-gray-50 border-2 rounded-xl text-sm font-medium transition-all duration-200 outline-none focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-600/10 ${
+                          errors.country ? 'border-red-300 bg-red-50' : 'border-transparent'
+                        }`}
+                      >
+                        <option value="">{tp('Sélectionner un pays')}</option>
+                        {countrySelectOptions.map((country) => (
+                          <option key={`${country.country}-${country.name}`} value={country.name}>
+                            {country.flag ? `${country.flag} ` : ''}{country.name} ({country.code})
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    </div>
+                    {errors.country && <p className="text-xs text-red-600 font-medium">{errors.country}</p>}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1626,8 +1765,8 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Devise */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Finance</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Devise de vente</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Finance')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Devise de vente')}</p>
               </div>
               <div className="px-5 py-5">
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -1654,15 +1793,15 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Langue de la boutique */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Langue</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Langue de la boutique</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Langue')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Langue de la boutique')}</p>
               </div>
               <div className="px-5 py-5">
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+                    { code: 'fr', get label() { return tp('Français'); }, flag: '🇫🇷' },
                     { code: 'en', label: 'English', flag: '🇬🇧' },
-                    { code: 'es', label: 'Español', flag: '🇪🇸' },
+                    { code: 'es', get label() { return tp('Español'); }, flag: '🇪🇸' },
                   ].map(l => (
                     <button
                       key={l.code}
@@ -1688,13 +1827,13 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Description */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Présentation</p>
-                <p className="mt-0.5 text-sm font-semibold text-gray-900">Description <span className="font-normal text-gray-400">(optionnel)</span></p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Présentation')}</p>
+                <p className="mt-0.5 text-sm font-semibold text-gray-900">{tp('Description')} <span className="font-normal text-gray-400">{tp('(optionnel)')}</span></p>
               </div>
               <div className="px-5 py-5">
                 <Textarea
                   hint="Ce texte apparaîtra sur votre page d'accueil"
-                  placeholder="Bienvenue chez nous ! Découvrez notre sélection de produits de qualité…"
+                  placeholder={tp('Bienvenue chez nous ! Découvrez notre sélection de produits de qualité…')}
                   rows={3}
                   value={form.storeDescription}
                   onChange={e => set('storeDescription', e.target.value)}
@@ -1721,7 +1860,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="text-base font-bold text-gray-950 truncate">{form.storeName || 'Ma Boutique'}</p>
+                  <p className="text-base font-bold text-gray-950 truncate">{form.storeName || tp('Ma Boutique')}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{PRODUCT_TYPES.find(p => p.value === form.productType)?.label || '--'}</p>
                 </div>
               </div>
@@ -1736,11 +1875,11 @@ const StoreCreationWizard = ({ onComplete }) => {
             {/* Récapitulatif */}
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Récapitulatif</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{tp('Récapitulatif')}</p>
               </div>
               <dl className="divide-y divide-gray-100">
                 {[
-                  { label: 'Catégorie', value: PRODUCT_TYPES.find(p => p.value === form.productType)?.label || '--' },
+                  { get label() { return tp('Catégorie'); }, value: PRODUCT_TYPES.find(p => p.value === form.productType)?.label || '--' },
                   { label: 'Couleur principale', value: (
                     <span className="flex items-center gap-2">
                       <span className="w-3.5 h-3.5 rounded-full border border-gray-200 inline-block" style={{ backgroundColor: form.themeColor }} />
@@ -1750,7 +1889,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                   { label: 'Ton de marque', value: BRAND_TONES.find(t => t.value === form.tone)?.label || '--' },
                   { label: 'Devise', value: form.storeCurrency || '--' },
                   { label: 'Pays', value: form.country || '--' },
-                  { label: 'WhatsApp', value: form.storeWhatsApp || <span className="text-gray-400">Non renseigné</span> },
+                  { label: 'WhatsApp', value: form.storeWhatsApp || <span className="text-gray-400">{tp('Non renseigné')}</span> },
                 ].map(row => (
                   <div key={row.label} className="flex items-center justify-between gap-4 px-5 py-3">
                     <dt className="text-sm text-gray-500 shrink-0">{row.label}</dt>
@@ -1764,7 +1903,7 @@ const StoreCreationWizard = ({ onComplete }) => {
             <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 flex items-start gap-3">
               <Zap className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" />
               <p className="text-xs text-gray-600 leading-5">
-                En cliquant sur <strong className="text-gray-900">Créer ma boutique</strong>, l'IA génère automatiquement une page d'accueil adaptée à votre activité. L'opération prend environ 30 à 60 secondes.
+                En cliquant sur <strong className="text-gray-900">{tp('Créer ma boutique')}</strong>, l'IA génère automatiquement une page d'accueil adaptée à votre activité. L'opération prend environ 30 à 60 secondes.
               </p>
             </div>
 
@@ -1787,7 +1926,7 @@ const StoreCreationWizard = ({ onComplete }) => {
               className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
             >
               <ArrowLeft className="w-4 h-4" />
-              Retour
+              {tp('Retour')}
             </button>
           ) : <div />}
 
@@ -1798,7 +1937,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                 onClick={skip}
                 className="px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-gray-700 transition"
               >
-                Passer
+                {tp('Passer')}
               </button>
             )}
 
@@ -1808,7 +1947,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                 onClick={next}
                 className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-primary-700 rounded-lg hover:bg-primary-800 transition"
               >
-                Continuer
+                {tp('Continuer')}
                 <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
@@ -1821,12 +1960,12 @@ const StoreCreationWizard = ({ onComplete }) => {
                 {saving ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="max-w-[180px] truncate">{savingStep || 'Génération...'}</span>
+                    <span className="max-w-[180px] truncate">{savingStep || tp('Génération...')}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    Créer ma boutique
+                    {tp('Créer ma boutique')}
                   </>
                 )}
               </button>

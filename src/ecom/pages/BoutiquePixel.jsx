@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const PixelCard = ({ title, icon, color, description, fields, values, onChange, validatePixel, extra }) => (
   <div className="bg-white rounded-2xl border border-gray-200 p-5">
@@ -44,7 +45,7 @@ const CodePreview = ({ pixels }) => {
 
   return (
     <div className="bg-gray-900 rounded-2xl p-5 overflow-x-auto">
-      <p className="text-xs font-bold text-gray-400 mb-3">Code injecté automatiquement dans votre boutique :</p>
+      <p className="text-xs font-bold text-gray-400 mb-3">{tp('Code injecté automatiquement dans votre boutique :')}</p>
       <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap leading-relaxed">
 {pixels.metaPixelId && `<!-- Meta Pixel -->
 <script>
@@ -210,7 +211,7 @@ const BoutiquePixel = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Pixel & Tracking</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Connectez vos pixels pour tracker les conversions</p>
+          <p className="text-sm text-gray-500 mt-0.5">{tp('Connectez vos pixels pour tracker les conversions')}</p>
         </div>
         <button
           onClick={handleSave}
@@ -219,7 +220,7 @@ const BoutiquePixel = () => {
             saved ? 'bg-green-500' : hasErrors ? 'bg-red-400' : 'bg-[#0F6B4F] hover:bg-[#0A5740]'
           } disabled:opacity-60`}
         >
-          {saving ? 'Enregistrement...' : saved ? '✓ Sauvegardé' : hasErrors ? 'Format invalide' : 'Sauvegarder'}
+          {saving ? 'Enregistrement...' : saved ? '✓ Sauvegardé' : hasErrors ? 'Format invalide' : tp('Sauvegarder')}
         </button>
       </div>
 
@@ -227,7 +228,7 @@ const BoutiquePixel = () => {
       <div className="bg-[#E6F2ED] border border-[#96C7B5] rounded-2xl p-4 flex items-start gap-3">
         <svg className="w-5 h-5 text-[#0F6B4F] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         <div>
-          <p className="text-sm font-semibold text-[#053326]">Comment ça marche ?</p>
+          <p className="text-sm font-semibold text-[#053326]">{tp('Comment ça marche ?')}</p>
           <p className="text-xs text-[#0A5740] mt-0.5">
             Entrez simplement vos IDs de pixel. Le code sera automatiquement injecté dans votre boutique.
             Les événements de conversion (PageView, AddToCart, Purchase) sont trackés automatiquement.
@@ -243,7 +244,7 @@ const BoutiquePixel = () => {
           description="Trackez les conversions de vos pubs Facebook & Instagram"
           fields={[
             { key: 'metaPixelId', label: 'Meta Pixel ID', placeholder: '1234567890123456', hint: 'Uniquement des chiffres (15-16 chiffres) — Meta Business Suite → Events Manager' },
-            { key: 'metaAccessToken', label: 'Conversions API Token (optionnel)', placeholder: 'EAABs...', hint: 'Pour le server-side tracking avancé' },
+            { key: 'metaAccessToken', label: 'Conversions API Token (optionnel)', placeholder: 'EAABs...', get hint() { return tp('Pour le server-side tracking avancé'); } },
           ]}
           values={pixels}
           onChange={update}
@@ -253,7 +254,7 @@ const BoutiquePixel = () => {
               {/* test_event_code input — pour faire apparaître l'event dans le tab Test Events de Meta */}
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1 block">
-                  Test Event Code (optionnel)
+                  {tp('Test Event Code (optionnel)')}
                 </label>
                 <input
                   type="text"
@@ -263,7 +264,7 @@ const BoutiquePixel = () => {
                   className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition bg-gray-50 focus:bg-white font-mono"
                 />
                 <p className="text-[11px] text-gray-400 mt-1">
-                  Récupère-le dans Events Manager → onglet <em>Test events</em>. Sans ce code, l'événement n'apparaît pas dans ce tab (mais sera visible dans l'Overview après quelques minutes).
+                  Récupère-le dans Events Manager → onglet <em>{tp('Test events')}</em>. Sans ce code, l'événement n'apparaît pas dans ce tab (mais sera visible dans l'Overview après quelques minutes).
                 </p>
               </div>
 
@@ -289,7 +290,7 @@ const BoutiquePixel = () => {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Envoyer un événement de test à Meta
+                    {tp('Envoyer un événement de test à Meta')}
                   </>
                 )}
               </button>
@@ -319,7 +320,7 @@ const BoutiquePixel = () => {
                 <div className="rounded-xl p-3 flex items-start gap-2.5" style={{ backgroundColor: '#fef2f2', border: '1px solid #fca5a5' }}>
                   <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="#dc2626" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold" style={{ color: '#b91c1c' }}>Échec du test</p>
+                    <p className="text-xs font-bold" style={{ color: '#b91c1c' }}>{tp('Échec du test')}</p>
                     <p className="text-[11px] mt-0.5 break-words" style={{ color: '#991b1b' }}>{metaTest.message}</p>
                     {metaTest.hint && (
                       <p className="text-[11px] mt-1.5 italic" style={{ color: '#7f1d1d' }}>{metaTest.hint}</p>
@@ -359,7 +360,7 @@ const BoutiquePixel = () => {
         />
 
         <PixelCard
-          title="Snapchat"
+          title={tp('Snapchat')}
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
           color="#FFFC00"
           description="Trackez les conversions Snapchat Ads"
@@ -377,17 +378,17 @@ const BoutiquePixel = () => {
 
       {/* Events tracked */}
       <div className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-3">Événements trackés automatiquement</h2>
+        <h2 className="text-sm font-bold text-gray-900 mb-3">{tp('Événements trackés automatiquement')}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { name: 'PageView', desc: 'Chaque visite de page', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg> },
             { name: 'ViewContent', desc: 'Vue d\'un produit', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> },
             { name: 'AddToCart', desc: 'Ajout au panier / Commande', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg> },
-            { name: 'Purchase', desc: 'Achat confirmé', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-            { name: 'InitiateCheckout', desc: 'Début du checkout', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg> },
-            { name: 'Lead', desc: 'Formulaire WhatsApp envoyé', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> },
+            { name: 'Purchase', get desc() { return tp('Achat confirmé'); }, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+            { name: 'InitiateCheckout', get desc() { return tp('Début du checkout'); }, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg> },
+            { name: 'Lead', get desc() { return tp('Formulaire WhatsApp envoyé'); }, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> },
             { name: 'Search', desc: 'Recherche produit', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg> },
-            { name: 'CompleteRegistration', desc: 'Création de compte', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
+            { name: 'CompleteRegistration', get desc() { return tp('Création de compte'); }, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
           ].map(e => (
             <div key={e.name} className="p-3 bg-gray-50 rounded-xl">
               <span className="w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 mb-2">{e.icon}</span>

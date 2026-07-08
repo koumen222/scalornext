@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { publicSearch } from '../services/publicApi.js';
 import { formatMoney } from '../utils/currency.js';
+import { tp } from '../i18n/platform.js';
 
 const ProductSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,7 +72,7 @@ const ProductSearch = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setShowResults(true)}
-            placeholder="Rechercher un produit..."
+            placeholder={tp('Rechercher un produit...')}
             className="w-full px-4 py-3 pl-12 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-600 focus:border-primary-600 shadow-sm"
           />
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -136,7 +137,7 @@ const ProductSearch = () => {
       {/* Suggestions populaires */}
       {!searchTerm && !showResults && (
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500 mb-3">Produits populaires:</p>
+          <p className="text-sm text-gray-500 mb-3">{tp('Produits populaires:')}</p>
           <div className="flex flex-wrap gap-2 justify-center">
             {['Gummies', 'Sérum', 'Ceinture', 'Crème'].map((term) => (
               <button

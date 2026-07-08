@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 // ── Constantes ───────────────────────────────────────────────────────────────
 
@@ -67,7 +68,7 @@ function ConditionEditor({ cond, onChange }) {
         {CONDITION_TYPES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
       </select>
       {needsArray && (
-        <input type="text" placeholder="oui, intéressé, ok"
+        <input type="text" placeholder={tp('oui, intéressé, ok')}
           value={Array.isArray(cond.value) ? cond.value.join(', ') : cond.value || ''}
           onChange={e => onChange({ ...cond, value: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
           className="text-sm border rounded-lg px-2 py-1.5 flex-1 min-w-[140px]" />
@@ -78,11 +79,11 @@ function ConditionEditor({ cond, onChange }) {
           className="text-sm border rounded-lg px-2 py-1.5 w-24" />
       )}
       {needsString && (
-        <input type="text" placeholder="client chaud"
+        <input type="text" placeholder={tp('client chaud')}
           value={cond.value || ''} onChange={e => onChange({ ...cond, value: e.target.value })}
           className="text-sm border rounded-lg px-2 py-1.5 flex-1" />
       )}
-      {noValue && <span className="text-xs text-gray-400 italic">(pas de valeur requise)</span>}
+      {noValue && <span className="text-xs text-gray-400 italic">{tp('(pas de valeur requise)')}</span>}
     </div>
   );
 }
@@ -107,17 +108,17 @@ function ActionEditor({ action, onChange, groups }) {
           onChange({ ...action, groupId: e.target.value, groupName: g?.name || '' });
         }}
           className="text-sm border rounded-lg px-2 py-1.5 flex-1 min-w-[140px]">
-          <option value="">— Choisir un groupe —</option>
+          <option value="">{tp('— Choisir un groupe —')}</option>
           {groups.map(g => <option key={g.id} value={g.id}>{g.name} ({g.participants})</option>)}
         </select>
       )}
       {needsMessage && (
-        <input type="text" placeholder="Merci ! Rejoins notre groupe 👇"
+        <input type="text" placeholder={tp('Merci ! Rejoins notre groupe 👇')}
           value={action.message || ''} onChange={e => onChange({ ...action, message: e.target.value })}
           className="text-sm border rounded-lg px-2 py-1.5 flex-1" />
       )}
       {needsTag && (
-        <input type="text" placeholder="client chaud"
+        <input type="text" placeholder={tp('client chaud')}
           value={action.tag || ''} onChange={e => onChange({ ...action, tag: e.target.value })}
           className="text-sm border rounded-lg px-2 py-1.5 w-40" />
       )}
@@ -145,7 +146,7 @@ function RuleEditor({ rule, index, onChange, onRemove, groups }) {
     <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-sm font-bold text-gray-700">Règle {index + 1}</span>
-        <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">✕ Supprimer</button>
+        <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">{tp('✕ Supprimer')}</button>
       </div>
       <ConditionEditor cond={rule.condition} onChange={updateCondition} />
       {rule.actions.map((act, i) => (
@@ -154,7 +155,7 @@ function RuleEditor({ rule, index, onChange, onRemove, groups }) {
           {rule.actions.length > 1 && <button onClick={() => removeAction(i)} className="text-xs text-red-400 mt-2">✕</button>}
         </div>
       ))}
-      <button onClick={addAction} className="text-xs text-primary-600 font-medium hover:underline">+ Ajouter une action</button>
+      <button onClick={addAction} className="text-xs text-primary-600 font-medium hover:underline">{tp('+ Ajouter une action')}</button>
     </div>
   );
 }
@@ -179,14 +180,14 @@ function FlowEditor({ flow, index, onChange, onRemove, groups }) {
         <label className="flex items-center gap-1.5 text-sm">
           <input type="checkbox" checked={flow.enabled} onChange={e => update('enabled', e.target.checked)}
             className="w-4 h-4 rounded text-primary-600" />
-          Actif
+          {tp('Actif')}
         </label>
-        <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700 font-medium">Supprimer</button>
+        <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700 font-medium">{tp('Supprimer')}</button>
       </div>
 
       {/* Triggers */}
       <div>
-        <span className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Déclencheurs</span>
+        <span className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">{tp('Déclencheurs')}</span>
         <div className="flex flex-wrap gap-2">
           {TRIGGER_TYPES.map(t => (
             <button key={t.value} onClick={() => toggleTrigger(t.value)}
@@ -201,11 +202,11 @@ function FlowEditor({ flow, index, onChange, onRemove, groups }) {
 
       {/* Rules */}
       <div className="space-y-3">
-        <span className="text-xs font-semibold text-gray-500 uppercase">Règles (évaluées dans l'ordre)</span>
+        <span className="text-xs font-semibold text-gray-500 uppercase">{tp('Règles (évaluées dans l\'ordre)')}</span>
         {flow.rules.map((rule, i) => (
           <RuleEditor key={i} rule={rule} index={i} onChange={r => updateRule(i, r)} onRemove={() => removeRule(i)} groups={groups} />
         ))}
-        <button onClick={addRule} className="text-sm text-primary-600 font-medium hover:underline">+ Ajouter une règle</button>
+        <button onClick={addRule} className="text-sm text-primary-600 font-medium hover:underline">{tp('+ Ajouter une règle')}</button>
       </div>
     </div>
   );
@@ -224,32 +225,32 @@ function ScheduledPostRow({ post, index, onChange, onRemove, products }) {
       <div className="flex items-center gap-2 justify-between">
         <select value={post.type} onChange={e => update('type', e.target.value)}
           className="text-sm border rounded-lg px-2 py-1 bg-white">
-          <option value="text">📝 Texte</option>
-          <option value="image">🖼️ Image (URL)</option>
-          <option value="product">🛍️ Produit</option>
+          <option value="text">{tp('📝 Texte')}</option>
+          <option value="image">{tp('🖼️ Image (URL)')}</option>
+          <option value="product">{tp('🛍️ Produit')}</option>
         </select>
         <input type="time" value={post.hour || '09:00'} onChange={e => update('hour', e.target.value)}
           className="text-sm border rounded-lg px-2 py-1" />
         <label className="flex items-center gap-1 text-xs">
           <input type="checkbox" checked={post.enabled !== false} onChange={e => update('enabled', e.target.checked)} className="w-3.5 h-3.5 rounded" />
-          Actif
+          {tp('Actif')}
         </label>
         <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">✕</button>
       </div>
 
       {post.type === 'text' && (
         <textarea value={post.content || ''} onChange={e => update('content', e.target.value)} rows={2}
-          placeholder="Message à envoyer dans le groupe..."
+          placeholder={tp('Message à envoyer dans le groupe...')}
           className="w-full text-sm border rounded-lg px-3 py-2 resize-none" />
       )}
       {post.type === 'image' && (
         <input type="text" value={post.content || ''} onChange={e => update('content', e.target.value)}
-          placeholder="URL de l'image" className="w-full text-sm border rounded-lg px-3 py-2" />
+          placeholder={tp('URL de l\'image')} className="w-full text-sm border rounded-lg px-3 py-2" />
       )}
       {post.type === 'product' && (
         <select value={post.productName || ''} onChange={e => update('productName', e.target.value)}
           className="w-full text-sm border rounded-lg px-2 py-1.5 bg-white">
-          <option value="">— Choisir un produit —</option>
+          <option value="">{tp('— Choisir un produit —')}</option>
           {products.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
       )}
@@ -376,14 +377,14 @@ export default function RitaFlows() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">🔄 Rita Flows</h1>
-          <p className="text-sm text-gray-500 mt-1">Qualification automatique, groupes WhatsApp, animation</p>
+          <h1 className="text-2xl font-extrabold text-gray-900">{tp('🔄 Rita Flows')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{tp('Qualification automatique, groupes WhatsApp, animation')}</p>
         </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 bg-gray-100 rounded-xl px-4 py-2">
             <input type="checkbox" checked={config.enabled} onChange={e => updateConfig('enabled', e.target.checked)}
               className="w-4 h-4 rounded text-primary-600" />
-            <span className="text-sm font-semibold">{config.enabled ? 'Activé' : 'Désactivé'}</span>
+            <span className="text-sm font-semibold">{config.enabled ? 'Activé' : tp('Désactivé')}</span>
           </label>
           <button onClick={save} disabled={saving}
             className="px-5 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition">
@@ -403,7 +404,7 @@ export default function RitaFlows() {
         {[
           { id: 'flows', label: '🔄 Flows', count: config.flows?.length || 0 },
           { id: 'groups', label: '👥 Groupes', count: config.groups?.length || 0 },
-          { id: 'settings', label: '⚙️ Paramètres' },
+          { id: 'settings', get label() { return tp('⚙️ Paramètres'); } },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`flex-1 text-sm font-semibold py-2.5 rounded-lg transition ${tab === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
@@ -418,7 +419,7 @@ export default function RitaFlows() {
           {!config.flows?.length && (
             <div className="text-center py-12 text-gray-400">
               <p className="text-4xl mb-3">🔄</p>
-              <p className="text-sm">Aucun flow configuré. Crée ton premier flow !</p>
+              <p className="text-sm">{tp('Aucun flow configuré. Crée ton premier flow !')}</p>
             </div>
           )}
           {config.flows?.map((flow, i) => (
@@ -437,14 +438,14 @@ export default function RitaFlows() {
         <div className="space-y-4">
           {/* Créer un groupe */}
           <div className="bg-white border rounded-2xl p-4 space-y-3">
-            <h3 className="text-sm font-bold text-gray-700">➕ Créer un nouveau groupe WhatsApp</h3>
+            <h3 className="text-sm font-bold text-gray-700">{tp('➕ Créer un nouveau groupe WhatsApp')}</h3>
             <div className="flex gap-2">
               <input type="text" value={newGroupName} onChange={e => setNewGroupName(e.target.value)}
-                placeholder="Nom du groupe (ex: 🛒 Clients VIP)"
+                placeholder={tp('Nom du groupe (ex: 🛒 Clients VIP)')}
                 className="flex-1 text-sm border rounded-lg px-3 py-2" />
               <button onClick={createGroup} disabled={creatingGroup || !newGroupName.trim()}
                 className="px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition whitespace-nowrap">
-                {creatingGroup ? 'Création...' : 'Créer'}
+                {creatingGroup ? 'Création...' : tp('Créer')}
               </button>
             </div>
           </div>
@@ -453,7 +454,7 @@ export default function RitaFlows() {
           <div className="bg-white border rounded-2xl p-4 space-y-3">
             <h3 className="text-sm font-bold text-gray-700">📱 Groupes disponibles sur WhatsApp ({whatsappGroups.length})</h3>
             {whatsappGroups.length === 0 && (
-              <p className="text-xs text-gray-400">Aucun groupe trouvé sur l'instance WhatsApp.</p>
+              <p className="text-xs text-gray-400">{tp('Aucun groupe trouvé sur l\'instance WhatsApp.')}</p>
             )}
             <div className="grid gap-2 max-h-60 overflow-y-auto">
               {whatsappGroups.map(g => (
@@ -472,7 +473,7 @@ export default function RitaFlows() {
           <div className="bg-white border rounded-2xl p-4 space-y-4">
             <h3 className="text-sm font-bold text-gray-700">📢 Groupes gérés & Animation</h3>
             {!config.groups?.length && (
-              <p className="text-xs text-gray-400">Crée un groupe ou ajoute-le à tes flows pour le voir ici.</p>
+              <p className="text-xs text-gray-400">{tp('Crée un groupe ou ajoute-le à tes flows pour le voir ici.')}</p>
             )}
             {config.groups?.map((group, gi) => (
               <div key={gi} className="border rounded-xl p-4 space-y-3">
@@ -489,7 +490,7 @@ export default function RitaFlows() {
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold text-gray-500 uppercase">Posts planifiés</span>
+                  <span className="text-xs font-semibold text-gray-500 uppercase">{tp('Posts planifiés')}</span>
                   {(group.scheduledPosts || []).map((post, pi) => (
                     <ScheduledPostRow key={pi} post={post} index={pi} products={products}
                       onChange={p => updateScheduledPost(gi, pi, p)} onRemove={() => removeScheduledPost(gi, pi)} />
@@ -508,15 +509,15 @@ export default function RitaFlows() {
       {/* ═══ Settings Tab ═══ */}
       {tab === 'settings' && (
         <div className="bg-white border rounded-2xl p-5 space-y-5">
-          <h3 className="text-sm font-bold text-gray-700">⚙️ Paramètres globaux</h3>
+          <h3 className="text-sm font-bold text-gray-700">{tp('⚙️ Paramètres globaux')}</h3>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Inactivité par défaut (secondes)</label>
+              <label className="text-sm font-medium text-gray-700">{tp('Inactivité par défaut (secondes)')}</label>
               <input type="number" value={config.settings?.defaultInactivitySeconds || 3600}
                 onChange={e => updateSettings('defaultInactivitySeconds', Number(e.target.value) || 3600)}
                 className="mt-1 w-full text-sm border rounded-lg px-3 py-2" />
-              <p className="text-xs text-gray-400 mt-1">Durée sans message avant de considérer le client comme inactif</p>
+              <p className="text-xs text-gray-400 mt-1">{tp('Durée sans message avant de considérer le client comme inactif')}</p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -524,13 +525,13 @@ export default function RitaFlows() {
                 onChange={e => updateSettings('autoCreateGroupPerProduct', e.target.checked)}
                 className="w-4 h-4 rounded text-primary-600" />
               <div>
-                <span className="text-sm font-medium text-gray-700">Créer un groupe automatiquement par produit</span>
-                <p className="text-xs text-gray-400">Quand une commande est confirmée, Rita crée un groupe pour ce produit</p>
+                <span className="text-sm font-medium text-gray-700">{tp('Créer un groupe automatiquement par produit')}</span>
+                <p className="text-xs text-gray-400">{tp('Quand une commande est confirmée, Rita crée un groupe pour ce produit')}</p>
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Template nom de groupe</label>
+              <label className="text-sm font-medium text-gray-700">{tp('Template nom de groupe')}</label>
               <input type="text" value={config.settings?.groupNameTemplate || '🛒 {productName} — Clients'}
                 onChange={e => updateSettings('groupNameTemplate', e.target.value)}
                 className="mt-1 w-full text-sm border rounded-lg px-3 py-2" />

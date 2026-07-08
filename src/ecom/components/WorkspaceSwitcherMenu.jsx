@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useWorkspaceSwitch, SwitchOverlay } from '../hooks/useWorkspaceSwitch';
 import ecomApi from '../services/ecommApi';
+import { tp } from '../i18n/platform.js';
 
 const PALETTE = [
   'bg-primary-500', 'bg-violet-500', 'bg-blue-500',
@@ -48,7 +49,7 @@ const WorkspaceSwitcherMenu = ({ isSuperAdmin, onWorkspaceSwitch }) => {
       {/* Espace actuel */}
       <div className={`px-4 py-3 border-b ${isSuperAdmin ? 'border-gray-700' : 'border-gray-100'}`}>
         <p className={`text-[10px] font-semibold uppercase tracking-wider mb-2 ${isSuperAdmin ? 'text-gray-500' : 'text-gray-400'}`}>
-          Espace actuel
+          {tp('Espace actuel')}
         </p>
         <div className="flex items-center gap-2.5">
           <div className={`w-7 h-7 rounded-lg ${wsColor(currentWorkspace?.name)} flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0`}>
@@ -62,7 +63,7 @@ const WorkspaceSwitcherMenu = ({ isSuperAdmin, onWorkspaceSwitch }) => {
               <span className="text-[10px] font-medium text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded-full">
                 {roleLabels[currentWorkspace?.role] || currentWorkspace?.role}
               </span>
-              {currentWorkspace?.isOwner && <span className="text-[10px] text-gray-400">Propriétaire</span>}
+              {currentWorkspace?.isOwner && <span className="text-[10px] text-gray-400">{tp('Propriétaire')}</span>}
             </div>
           </div>
           <div className="w-2 h-2 rounded-full bg-primary-500 flex-shrink-0" />
@@ -95,7 +96,7 @@ const WorkspaceSwitcherMenu = ({ isSuperAdmin, onWorkspaceSwitch }) => {
                   }`}>
                     {roleLabels[ws.role] || ws.role}
                   </span>
-                  {ws.isOwner && <span className={`text-[10px] ${isSuperAdmin ? 'text-gray-500' : 'text-gray-400'}`}>Propriétaire</span>}
+                  {ws.isOwner && <span className={`text-[10px] ${isSuperAdmin ? 'text-gray-500' : 'text-gray-400'}`}>{tp('Propriétaire')}</span>}
                 </div>
               </div>
               <svg className={`w-4 h-4 flex-shrink-0 ${isSuperAdmin ? 'text-gray-600' : 'text-gray-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

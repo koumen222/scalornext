@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, FileText, AlertCircle, CheckCircle, X, Download } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
 
 const ProductImportLocal = ({ onImportSuccess, onClose }) => {
   const [file, setFile] = useState(null);
@@ -20,7 +21,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
     if (selectedFile) {
       const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
       if (!['csv', 'xlsx', 'xls'].includes(fileExtension)) {
-        setError('Veuillez sélectionner un fichier CSV ou Excel (.csv, .xlsx, .xls)');
+        setError(tp('Veuillez sélectionner un fichier CSV ou Excel (.csv, .xlsx, .xls)'));
         return;
       }
 
@@ -44,7 +45,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
         const lines = text.split('\n').filter(line => line.trim());
 
         if (lines.length < 2) {
-          setError('Le fichier doit contenir au moins une ligne d\'en-tête et une ligne de données');
+          setError(tp('Le fichier doit contenir au moins une ligne d\'en-tête et une ligne de données'));
           return;
         }
 
@@ -98,7 +99,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
         setShowPreview(true);
       } catch (error) {
         console.error('Erreur parsing CSV:', error);
-        setError('Erreur lors de la lecture du fichier CSV. Vérifiez le format.');
+        setError(tp('Erreur lors de la lecture du fichier CSV. Vérifiez le format.'));
       }
     };
     reader.readAsText(file);
@@ -119,7 +120,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
           const lines = text.split('\n').filter(line => line.trim());
 
           if (lines.length < 2) {
-            setError('Le fichier doit contenir des données à importer');
+            setError(tp('Le fichier doit contenir des données à importer'));
             setLoading(false);
             return;
           }
@@ -198,7 +199,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
           }
 
           if (products.length === 0) {
-            setError('Aucun produit valide à importer');
+            setError(tp('Aucun produit valide à importer'));
             setLoading(false);
             return;
           }
@@ -239,16 +240,16 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
         <div>
           <h3 className="text-[14px] font-bold text-gray-900 flex items-center gap-2">
             <Upload className="w-5 h-5" />
-            Importer des produits (CSV)
+            {tp('Importer des produits (CSV)')}
           </h3>
-          <p className="text-[12px] text-gray-400 mt-1">Importez plusieurs produits à la fois</p>
+          <p className="text-[12px] text-gray-400 mt-1">{tp('Importez plusieurs produits à la fois')}</p>
         </div>
         <button
           onClick={downloadTemplate}
           className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 text-[12px] font-semibold"
         >
           <Download className="w-4 h-4" />
-          Modèle
+          {tp('Modèle')}
         </button>
       </div>
 
@@ -284,10 +285,10 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
         >
           <FileText className="w-8 h-8 text-gray-400 mb-2" />
           <span className="text-[12px] text-gray-600 mb-1">
-            Cliquez pour sélectionner un fichier CSV
+            {tp('Cliquez pour sélectionner un fichier CSV')}
           </span>
           <span className="text-[11px] text-gray-500">
-            Formats: .csv, .xlsx, .xls
+            {tp('Formats: .csv, .xlsx, .xls')}
           </span>
         </label>
       </div>
@@ -314,7 +315,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
 
       {showPreview && preview.length > 0 && (
         <div className="mt-3">
-          <h4 className="text-[12px] font-semibold text-gray-900 mb-2">Aperçu (5 premières lignes):</h4>
+          <h4 className="text-[12px] font-semibold text-gray-900 mb-2">{tp('Aperçu (5 premières lignes):')}</h4>
           <div className="overflow-x-auto border border-gray-200 rounded-lg">
             <table className="min-w-full text-[11px]">
               <thead className="bg-gray-50">
@@ -348,7 +349,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
             onClick={onClose}
             className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-[12px] font-semibold transition-colors"
           >
-            Annuler
+            {tp('Annuler')}
           </button>
         )}
         {file && (
@@ -360,12 +361,12 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
             {loading ? (
               <>
                 <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                Importation...
+                {tp('Importation...')}
               </>
             ) : (
               <>
                 <Upload className="w-4 h-4" />
-                Importer
+                {tp('Importer')}
               </>
             )}
           </button>

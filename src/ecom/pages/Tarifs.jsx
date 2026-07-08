@@ -5,6 +5,7 @@ import { createCheckout, getPublicPlans, checkGlobalPromoCode } from '../service
 import PaymentModalFrame from '../components/PaymentModalFrame.jsx';
 import { PAYMENT_COUNTRY_CODES } from '../constants/paymentCountryCodes.js';
 import { savePendingPlanSelection } from '../utils/pendingPlanFlow.js';
+import { tp } from '../i18n/platform.js';
 
 const fmtFCFA = (n) => Number(n || 0).toLocaleString('fr-FR').replace(/,/g, ' ');
 
@@ -29,7 +30,7 @@ function PublicCheckoutModal({ plan, onClose }) {
     e.preventDefault();
     setError('');
     if (!phoneLocal.trim() || phoneLocal.trim().length < 8) {
-      setError('Entrez un numéro de téléphone valide (min. 8 chiffres).');
+      setError(tp('Entrez un numéro de téléphone valide (min. 8 chiffres).'));
       return;
     }
     if (!clientName.trim() || clientName.trim().length < 2) {
@@ -65,7 +66,7 @@ function PublicCheckoutModal({ plan, onClose }) {
         sessionStorage.setItem('mf_pending_token', result.mfToken);
         window.location.href = result.paymentUrl;
       } else {
-        setError('URL de paiement manquante. Veuillez réessayer.');
+        setError(tp('URL de paiement manquante. Veuillez réessayer.'));
       }
     } catch (err) {
       setError(
@@ -94,19 +95,19 @@ function PublicCheckoutModal({ plan, onClose }) {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid gap-4 rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
           <div>
-            <label className={labelClassName}>Nom complet</label>
+            <label className={labelClassName}>{tp('Nom complet')}</label>
             <input
               type="text"
               value={clientName}
               onChange={e => setClientName(e.target.value)}
-              placeholder="Jean Dupont"
+              placeholder={tp('Jean Dupont')}
               className={inputClassName}
               required
             />
           </div>
 
           <div>
-            <label className={labelClassName}>Numero Mobile Money</label>
+            <label className={labelClassName}>{tp('Numero Mobile Money')}</label>
             <select
               value={country}
               onChange={e => setCountry(e.target.value)}
@@ -137,7 +138,7 @@ function PublicCheckoutModal({ plan, onClose }) {
                 {fullPhone}
               </p>
             ) : (
-              <p className="mt-2 text-xs text-[#6A776F]">Orange Money, MTN Mobile Money, Wave et autres operateurs compatibles.</p>
+              <p className="mt-2 text-xs text-[#6A776F]">{tp('Orange Money, MTN Mobile Money, Wave et autres operateurs compatibles.')}</p>
             )}
           </div>
         </div>
@@ -261,19 +262,19 @@ const Tarifs = () => {
                 onClick={() => navigate('/ecom/why-scalor')}
                 className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
               >
-                Pourquoi choisir Scalor ?
+                {tp('Pourquoi choisir Scalor ?')}
               </button>
               <button 
                 onClick={() => navigate('/ecom')}
                 className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
               >
-                Fonctionnalités
+                {tp('Fonctionnalités')}
               </button>
               <button 
                 onClick={() => navigate('/ecom/tarifs')}
                 className="px-4 py-2 text-sm font-medium text-gray-900 hover:text-primary-600 transition"
               >
-                Tarifs
+                {tp('Tarifs')}
               </button>
             </div>
 
@@ -283,13 +284,13 @@ const Tarifs = () => {
                 onClick={() => navigate('/ecom/login')}
                 className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
               >
-                Connexion
+                {tp('Connexion')}
               </button>
               <button 
                 onClick={() => navigate('/ecom/register')}
                 className="px-6 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition shadow-sm"
               >
-                Commencer
+                {tp('Commencer')}
               </button>
             </div>
           </div>
@@ -300,10 +301,10 @@ const Tarifs = () => {
       <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-primary-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
-            Tarifs <span className="text-primary-600">simples</span> et transparents
+            Tarifs <span className="text-primary-600">{tp('simples')}</span> et transparents
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Commencez gratuitement et évoluez selon vos besoins. 
+            {tp('Commencez gratuitement et évoluez selon vos besoins.')} 
             Aucune carte bancaire requise pour démarrer.
           </p>
 
@@ -313,12 +314,12 @@ const Tarifs = () => {
               <button
                 onClick={() => setIsAnnual(false)}
                 className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                Mensuel
+                {tp('Mensuel')}
               </button>
               <button
                 onClick={() => setIsAnnual(true)}
                 className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                Annuel
+                {tp('Annuel')}
                 <span className="text-[10px] font-black bg-primary-500 text-white px-1.5 py-0.5 rounded-full">-25%</span>
               </button>
             </div>
@@ -333,18 +334,18 @@ const Tarifs = () => {
                 value={promoInput}
                 onChange={e => setPromoInput(e.target.value.toUpperCase())}
                 disabled={promoData !== null}
-                placeholder="Code promo ?"
+                placeholder={tp('Code promo ?')}
                 className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
               />
               {!promoData ? (
                 <button type="submit" disabled={promoLoading || !promoInput.trim()}
                   className="absolute inset-y-1 right-1 px-4 bg-gray-900 hover:bg-gray-700 text-white rounded-full text-xs font-bold transition disabled:opacity-40">
-                  {promoLoading ? '…' : 'Appliquer'}
+                  {promoLoading ? '…' : tp('Appliquer')}
                 </button>
               ) : (
                 <button type="button" onClick={() => { setPromoData(null); setPromoInput(''); setPromoError(''); }}
                   className="absolute inset-y-1 right-1 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full text-xs font-bold transition">
-                  Retirer
+                  {tp('Retirer')}
                 </button>
               )}
             </form>
@@ -358,7 +359,7 @@ const Tarifs = () => {
       <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-10">
         <div className="max-w-screen-2xl mx-auto">
           {plansLoading && (
-            <div className="text-center text-gray-500 py-12">Chargement des offres…</div>
+            <div className="text-center text-gray-500 py-12">{tp('Chargement des offres…')}</div>
           )}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
             {plans.map((plan, index) => (
@@ -393,7 +394,7 @@ const Tarifs = () => {
                   {/* Price */}
                   <div className="mb-1">
                     <p className={`text-xs font-semibold mb-1 ${plan.highlighted ? 'text-gray-400' : 'text-gray-400'}`}>
-                      À partir de
+                      {tp('À partir de')}
                     </p>
                     {(() => {
                       const { displayPerMonth, originalPerMonth, displayTotal, promoApplied } = computePlanPrice(plan);
@@ -409,7 +410,7 @@ const Tarifs = () => {
                               {plan.isFree ? '0' : fmtFCFA(displayPerMonth)}
                             </span>
                             <span className={`text-sm font-semibold mb-1 ${plan.highlighted ? 'text-gray-400' : 'text-gray-400'}`}>
-                              {plan.isFree ? 'FCFA' : 'FCFA/mois'}
+                              {plan.isFree ? 'FCFA' : tp('FCFA/mois')}
                             </span>
                           </div>
                           {promoApplied && (
@@ -423,7 +424,7 @@ const Tarifs = () => {
                             </p>
                           )}
                           <p className={`text-xs mt-1.5 ${plan.highlighted ? 'text-gray-500' : 'text-gray-400'}`}>
-                            {plan.isFree ? 'Sans carte bancaire' : isAnnual ? 'Facturation annuelle' : 'Facturation mensuelle'}
+                            {plan.isFree ? 'Sans carte bancaire' : isAnnual ? 'Facturation annuelle' : tp('Facturation mensuelle')}
                           </p>
                         </>
                       );
@@ -436,7 +437,7 @@ const Tarifs = () => {
                   {/* Features */}
                   <div className="mb-1">
                     <p className={`text-[11px] font-black uppercase tracking-widest mb-3 ${plan.highlighted ? 'text-gray-400' : 'text-gray-400'}`}>
-                      Fonctionnalités clés
+                      {tp('Fonctionnalités clés')}
                     </p>
                     <ul className="space-y-3 flex-1">
                       {plan.features.map((feature, i) => (
@@ -500,7 +501,7 @@ const Tarifs = () => {
       <section className="py-16 sm:py-20 px-4 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-12 text-center">
-            Questions fréquentes
+            {tp('Questions fréquentes')}
           </h2>
           
           <div className="space-y-6">
@@ -539,10 +540,10 @@ const Tarifs = () => {
       <section className="py-16 sm:py-20 px-4 bg-gradient-to-br from-primary-600 to-primary-700">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-6">
-            Prêt à commencer ?
+            {tp('Prêt à commencer ?')}
           </h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Créez votre compte gratuitement en 30 secondes. 
+            {tp('Créez votre compte gratuitement en 30 secondes.')} 
             Aucune carte bancaire requise.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -550,13 +551,13 @@ const Tarifs = () => {
               onClick={() => navigate('/ecom/register')}
               className="w-full sm:w-auto px-8 py-4 bg-white text-primary-700 hover:bg-primary-50 rounded-xl font-bold text-lg transition shadow-xl"
             >
-              Créer mon espace gratuit
+              {tp('Créer mon espace gratuit')}
             </button>
             <button 
               onClick={() => navigate('/ecom/login')}
               className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white border-2 border-white/30 rounded-xl font-semibold text-lg transition backdrop-blur-sm"
             >
-              Se connecter
+              {tp('Se connecter')}
             </button>
           </div>
         </div>
@@ -569,13 +570,13 @@ const Tarifs = () => {
             <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
             <div className="flex items-center gap-6">
               <button onClick={() => navigate('/ecom/privacy')} className="text-sm text-gray-600 hover:text-gray-900 transition">
-                Confidentialité
+                {tp('Confidentialité')}
               </button>
               <button onClick={() => navigate('/ecom/terms')} className="text-sm text-gray-600 hover:text-gray-900 transition">
-                Conditions
+                {tp('Conditions')}
               </button>
               <button onClick={() => navigate('/ecom')} className="text-sm text-gray-600 hover:text-gray-900 transition">
-                Accueil
+                {tp('Accueil')}
               </button>
             </div>
           </div>

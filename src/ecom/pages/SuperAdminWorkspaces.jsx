@@ -11,6 +11,7 @@ import SuperAdminShell from '../components/SuperAdminShell.jsx';
 import ecomApi from '../services/ecommApi.js';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,7 @@ const NAV_ITEMS = [
 const FILTER_TABS = [
   { value: 'all',      label: 'Tous'    },
   { value: 'active',   label: 'Actifs'  },
-  { value: 'inactive', label: 'Inactifs'},
+  { value: 'inactive', label: tp('Inactifs')},
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -80,7 +81,7 @@ const StatusBadge = ({ active }) => (
     active ? 'text-primary-700 bg-primary-50 border-primary-200' : 'text-amber-700 bg-amber-50 border-amber-200'
   }`}>
     {active ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-    {active ? 'Actif' : 'Inactif'}
+    {active ? 'Actif' : tp('Inactif')}
   </span>
 );
 
@@ -148,15 +149,15 @@ const WorkspaceCard = ({
         <div className="grid grid-cols-3 gap-2 mb-4">
           <div className="text-center bg-slate-50 rounded-xl py-2.5 px-1 border border-slate-100">
             <p className="text-lg font-extrabold text-slate-900 leading-none">{ws.memberCount || 0}</p>
-            <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Membres</p>
+            <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{tp('Membres')}</p>
           </div>
           <div className="text-center bg-violet-50 rounded-xl py-2.5 px-1 border border-violet-100">
             <p className="text-lg font-extrabold text-violet-700 leading-none">{ws.freeGenerationsRemaining || 0}</p>
-            <p className="text-[10px] text-violet-500 font-semibold mt-0.5">Gen. libres</p>
+            <p className="text-[10px] text-violet-500 font-semibold mt-0.5">{tp('Gen. libres')}</p>
           </div>
           <div className="text-center bg-indigo-50 rounded-xl py-2.5 px-1 border border-indigo-100">
             <p className="text-lg font-extrabold text-indigo-700 leading-none">{ws.paidGenerationsRemaining || 0}</p>
-            <p className="text-[10px] text-indigo-500 font-semibold mt-0.5">Gen. payées</p>
+            <p className="text-[10px] text-indigo-500 font-semibold mt-0.5">{tp('Gen. payées')}</p>
           </div>
         </div>
 
@@ -164,7 +165,7 @@ const WorkspaceCard = ({
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-[11px] text-slate-500">
           <span className="flex items-center gap-1">
             <Mail className="w-3 h-3" />
-            <span className="font-medium truncate max-w-[160px]">{ws.owner?.email || 'N/A'}</span>
+            <span className="font-medium truncate max-w-[160px]">{ws.owner?.email || tp('N/A')}</span>
           </span>
           <span className="text-slate-200">·</span>
           <span className="flex items-center gap-1">
@@ -200,7 +201,7 @@ const WorkspaceCard = ({
                 : 'bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100'
             }`}
           >
-            {ws.isActive ? <><PowerOff className="w-3.5 h-3.5" /> Désactiver</> : <><Power className="w-3.5 h-3.5" /> Réactiver</>}
+            {ws.isActive ? <><PowerOff className="w-3.5 h-3.5" /> {tp('Désactiver')}</> : <><Power className="w-3.5 h-3.5" /> {tp('Réactiver')}</>}
           </button>
           <button
             onClick={() => onSubscriptionWarning(ws._id, warnActive)}
@@ -211,7 +212,7 @@ const WorkspaceCard = ({
             }`}
           >
             {warnActive ? <BellOff className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
-            <span className="hidden sm:inline">{warnActive ? 'Alerte off' : 'Alerte on'}</span>
+            <span className="hidden sm:inline">{warnActive ? 'Alerte off' : tp('Alerte on')}</span>
             <span className="sm:hidden">{warnActive ? 'Off' : 'On'}</span>
           </button>
           <button
@@ -219,7 +220,7 @@ const WorkspaceCard = ({
             className="flex items-center justify-center gap-1 px-3 py-2 text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition"
           >
             {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            <span>Gérer</span>
+            <span>{tp('Gérer')}</span>
           </button>
         </div>
 
@@ -248,10 +249,10 @@ const WorkspaceCard = ({
                   disabled={selectedPlan === 'free'}
                   className="w-24 text-xs font-bold border border-slate-200 rounded-lg px-2 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-40"
                 >
-                  <option value="1">1 mois</option>
-                  <option value="3">3 mois</option>
-                  <option value="6">6 mois</option>
-                  <option value="12">12 mois</option>
+                  <option value="1">{tp('1 mois')}</option>
+                  <option value="3">{tp('3 mois')}</option>
+                  <option value="6">{tp('6 mois')}</option>
+                  <option value="12">{tp('12 mois')}</option>
                 </select>
               </div>
               <button
@@ -276,54 +277,54 @@ const WorkspaceCard = ({
                 <div className="space-y-2">
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <p className="text-[10px] text-violet-600 font-semibold mb-1">Pages gratuites</p>
+                      <p className="text-[10px] text-violet-600 font-semibold mb-1">{tp('Pages gratuites')}</p>
                       <input type="number" min="0" value={freeGen} onChange={e => setFreeGen(e.target.value)}
                         className="w-full text-xs border border-violet-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-violet-600 font-semibold mb-1">Pages payées</p>
+                      <p className="text-[10px] text-violet-600 font-semibold mb-1">{tp('Pages payées')}</p>
                       <input type="number" min="0" value={paidGen} onChange={e => setPaidGen(e.target.value)}
                         className="w-full text-xs border border-violet-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-pink-600 font-semibold mb-1">Images créatives</p>
+                      <p className="text-[10px] text-pink-600 font-semibold mb-1">{tp('Images créatives')}</p>
                       <input type="number" min="0" value={imgCredits} onChange={e => setImgCredits(e.target.value)}
                         className="w-full text-xs border border-pink-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white" />
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => { onUpdateGenerations(ws._id, freeGen, paidGen, imgCredits); setEditingGen(false); }}
-                      className="flex-1 py-1.5 bg-violet-600 text-white rounded-lg text-xs font-bold hover:bg-violet-700 transition">Valider</button>
+                      className="flex-1 py-1.5 bg-violet-600 text-white rounded-lg text-xs font-bold hover:bg-violet-700 transition">{tp('Valider')}</button>
                     <button onClick={() => {
                         setEditingGen(false);
                         setFreeGen(String(ws.freeGenerationsRemaining||0));
                         setPaidGen(String(ws.paidGenerationsRemaining||0));
                         setImgCredits(String(ws.creativeCreditsRemaining||0));
                       }}
-                      className="flex-1 py-1.5 bg-white border border-violet-200 text-violet-600 rounded-lg text-xs font-bold hover:bg-violet-50 transition">Annuler</button>
+                      className="flex-1 py-1.5 bg-white border border-violet-200 text-violet-600 rounded-lg text-xs font-bold hover:bg-violet-50 transition">{tp('Annuler')}</button>
                   </div>
                 </div>
               ) : (
                 <div>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-violet-500 font-medium">Pages gratuites</span>
+                    <span className="text-violet-500 font-medium">{tp('Pages gratuites')}</span>
                     <span className="font-bold text-primary-600">{ws.freeGenerationsRemaining || 0}</span>
                   </div>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-violet-500 font-medium">Pages payées</span>
+                    <span className="text-violet-500 font-medium">{tp('Pages payées')}</span>
                     <span className="font-bold text-violet-700">{ws.paidGenerationsRemaining || 0}</span>
                   </div>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-pink-500 font-medium">Images créatives</span>
+                    <span className="text-pink-500 font-medium">{tp('Images créatives')}</span>
                     <span className="font-bold text-pink-700">{ws.creativeCreditsRemaining || 0}</span>
                   </div>
                   <div className="flex justify-between text-xs mb-3">
-                    <span className="text-violet-500 font-medium">Pages utilisées</span>
+                    <span className="text-violet-500 font-medium">{tp('Pages utilisées')}</span>
                     <span className="font-bold text-slate-600">{ws.totalGenerations || 0}</span>
                   </div>
                   <button onClick={() => setEditingGen(true)}
                     className="w-full py-1.5 bg-violet-100 text-violet-700 rounded-lg text-xs font-bold hover:bg-violet-200 transition">
-                    Modifier les crédits
+                    {tp('Modifier les crédits')}
                   </button>
                 </div>
               )}
@@ -429,7 +430,7 @@ const SuperAdminWorkspaces = () => {
     } catch (err) { setError(getContextualError(err, 'update_settings')); }
   };
 
-  const copyCode = (code) => { navigator.clipboard?.writeText(code); setSuccess('Code copié !'); };
+  const copyCode = (code) => { navigator.clipboard?.writeText(code); setSuccess(tp('Code copié !')); };
 
   // ── Derived stats ─────────────────────────────────────────────────────────
 
@@ -459,7 +460,7 @@ const SuperAdminWorkspaces = () => {
 
   return (
     <SuperAdminShell
-      title="Gestion des espaces"
+      title={tp('Gestion des espaces')}
       subtitle={`${workspaces.length} espaces · ${totalMembers} membres · ${totalActive} actifs`}
       icon={Building2}
       success={success}
@@ -486,7 +487,7 @@ const SuperAdminWorkspaces = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Rechercher par nom, slug ou email propriétaire…"
+              placeholder={tp('Rechercher par nom, slug ou email propriétaire…')}
               className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm transition-all"
             />
             {searchTerm && (
@@ -524,7 +525,7 @@ const SuperAdminWorkspaces = () => {
             <span><strong className="text-slate-700">{filtered.length}</strong> espace{filtered.length !== 1 ? 's' : ''} affiché{filtered.length !== 1 ? 's' : ''}</span>
             {(searchTerm || filterTab !== 'all') && (
               <button onClick={() => { setSearchTerm(''); setFilterTab('all'); }}
-                className="text-primary-600 font-bold hover:underline ml-1">Réinitialiser</button>
+                className="text-primary-600 font-bold hover:underline ml-1">{tp('Réinitialiser')}</button>
             )}
           </div>
         )}
@@ -539,7 +540,7 @@ const SuperAdminWorkspaces = () => {
             {searchTerm && (
               <button onClick={() => setSearchTerm('')}
                 className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold hover:bg-primary-700 transition">
-                Réinitialiser
+                {tp('Réinitialiser')}
               </button>
             )}
           </div>

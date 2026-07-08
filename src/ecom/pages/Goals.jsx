@@ -2,6 +2,7 @@
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney';
 import ecomApi from '../services/ecommApi';
+import { tp } from '../i18n/platform.js';
 
 // Helper pour obtenir le numéro de semaine ISO-8601
 const getWeekNumber = (d) => {
@@ -229,7 +230,7 @@ const Goals = () => {
   };
 
   const goalTypes = [
-    { value: 'revenue', label: 'Chiffre d\'affaires (Livré)', unit: 'XAF' },
+    { value: 'revenue', get label() { return tp('Chiffre d\'affaires (Livré)'); }, unit: 'XAF' },
     { value: 'orders', label: 'Nombre de commandes', unit: 'Cmds' },
     { value: 'delivery_rate', label: 'Taux de livraison', unit: '%' },
   ];
@@ -255,7 +256,7 @@ const Goals = () => {
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Objectifs</h1>
+                <h1 className="text-lg font-semibold text-gray-900">{tp('Objectifs')}</h1>
                 <p className="text-sm text-gray-500">{goals.length} objectif{goals.length !== 1 ? 's' : ''} · {goals.filter(g => g.progress >= 100).length} atteint{goals.filter(g => g.progress >= 100).length !== 1 ? 's' : ''}</p>
               </div>
 
@@ -265,9 +266,9 @@ const Goals = () => {
                   onChange={e => setPeriod({ ...period, periodType: e.target.value })}
                   className="appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-700 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none"
                 >
-                  <option value="daily">Jour</option>
-                  <option value="weekly">Semaine</option>
-                  <option value="monthly">Mois</option>
+                  <option value="daily">{tp('Jour')}</option>
+                  <option value="weekly">{tp('Semaine')}</option>
+                  <option value="monthly">{tp('Mois')}</option>
                 </select>
 
                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
@@ -296,7 +297,7 @@ const Goals = () => {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    <span className="hidden sm:inline">Nouvel objectif</span>
+                    <span className="hidden sm:inline">{tp('Nouvel objectif')}</span>
                   </button>
                 )}
               </div>
@@ -316,7 +317,7 @@ const Goals = () => {
                 return revenueGoals.length > 0 && (
                   <div className="bg-white rounded-lg border border-gray-200 p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-500">Chiffre d'Affaires</span>
+                      <span className="text-sm font-medium text-gray-500">{tp('Chiffre d\'Affaires')}</span>
                       <span className="text-sm font-semibold text-gray-900">{avgProgress.toFixed(0)}%</span>
                     </div>
                     <p className="text-2xl font-semibold text-gray-900 mb-1">{fmt(totalCurrent)}</p>
@@ -335,7 +336,7 @@ const Goals = () => {
                 return ordersGoals.length > 0 && (
                   <div className="bg-white rounded-lg border border-gray-200 p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-500">Commandes livrées</span>
+                      <span className="text-sm font-medium text-gray-500">{tp('Commandes livrées')}</span>
                       <span className="text-sm font-semibold text-gray-900">{progress.toFixed(0)}%</span>
                     </div>
                     <p className="text-2xl font-semibold text-gray-900 mb-1">{globalOrdersCount}</p>
@@ -355,7 +356,7 @@ const Goals = () => {
                 return deliveryGoals.length > 0 && (
                   <div className="bg-white rounded-lg border border-gray-200 p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-500">Taux de livraison</span>
+                      <span className="text-sm font-medium text-gray-500">{tp('Taux de livraison')}</span>
                       <span className="text-sm font-semibold text-gray-900">{avgProgress.toFixed(0)}%</span>
                     </div>
                     <p className="text-2xl font-semibold text-gray-900 mb-1">{avgCurrent.toFixed(1)}%</p>
@@ -369,13 +370,13 @@ const Goals = () => {
 
               <div className="bg-white rounded-lg border border-gray-200 p-5">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-500">Taux de réussite</span>
+                  <span className="text-sm font-medium text-gray-500">{tp('Taux de réussite')}</span>
                   <span className="text-sm font-semibold text-gray-900">
                     {((goals.filter(g => g.progress >= 100).length / goals.length) * 100).toFixed(0)}%
                   </span>
                 </div>
                 <p className="text-2xl font-semibold text-gray-900 mb-1">{goals.filter(g => g.progress >= 100).length}/{goals.length}</p>
-                <p className="text-xs text-gray-400 mb-3">objectifs atteints</p>
+                <p className="text-xs text-gray-400 mb-3">{tp('objectifs atteints')}</p>
                 <div className="w-full bg-gray-100 rounded-full h-1.5">
                   <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${(goals.filter(g => g.progress >= 100).length / goals.length) * 100}%` }}></div>
                 </div>
@@ -387,8 +388,8 @@ const Goals = () => {
           {goals.length === 0 ? (
             <div className="bg-white border border-dashed border-gray-300 rounded-lg p-12 text-center">
               <svg className="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-              <p className="text-sm font-medium text-gray-900">Aucun objectif défini</p>
-              <p className="text-sm text-gray-500 mt-1">Commencez par fixer vos buts pour cette période.</p>
+              <p className="text-sm font-medium text-gray-900">{tp('Aucun objectif défini')}</p>
+              <p className="text-sm text-gray-500 mt-1">{tp('Commencez par fixer vos buts pour cette période.')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -444,7 +445,7 @@ const Goals = () => {
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0">
                             <h3 className="font-semibold text-gray-900 text-sm">
-                              {productData.product || 'Tous les produits'}
+                              {productData.product || tp('Tous les produits')}
                             </h3>
                             <p className="text-xs text-gray-500 mt-0.5">
                               {productData.goals.length} objectif{productData.goals.length > 1 ? 's' : ''} · {periodLabels[period.periodType]?.toLowerCase() || 'hebdomadaire'}
@@ -467,7 +468,7 @@ const Goals = () => {
                             )}
                             {hasOrders && (
                               <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wide">Cmds</p>
+                                <p className="text-xs text-gray-400 uppercase tracking-wide">{tp('Cmds')}</p>
                                 <p className="text-sm font-semibold text-gray-900">
                                   {productData.summary.orders.current}
                                 </p>
@@ -480,7 +481,7 @@ const Goals = () => {
                             )}
                             {hasDelivery && (
                               <div className="hidden sm:block">
-                                <p className="text-xs text-gray-400 uppercase tracking-wide">Livr.</p>
+                                <p className="text-xs text-gray-400 uppercase tracking-wide">{tp('Livr.')}</p>
                                 <p className="text-sm font-semibold text-gray-900">
                                   {productData.summary.delivery_rate.count > 0
                                     ? (productData.summary.delivery_rate.current / productData.summary.delivery_rate.count).toFixed(1) + '%'
@@ -587,7 +588,7 @@ const Goals = () => {
           <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-gray-900">Nouvel objectif</h2>
+                <h2 className="text-base font-semibold text-gray-900">{tp('Nouvel objectif')}</h2>
                 <button onClick={() => setShowForm(false)} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -600,15 +601,15 @@ const Goals = () => {
               <form id="goal-form" onSubmit={(e) => { handleAddGoal(e); setShowForm(false); }} className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Période</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Période')}</label>
                     <select value={newGoal.periodType} onChange={e => setNewSource({ ...newGoal, periodType: e.target.value })} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
-                      <option value="daily">Journalier</option>
-                      <option value="weekly">Hebdomadaire</option>
-                      <option value="monthly">Mensuel</option>
+                      <option value="daily">{tp('Journalier')}</option>
+                      <option value="weekly">{tp('Hebdomadaire')}</option>
+                      <option value="monthly">{tp('Mensuel')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Type')}</label>
                     <select value={newGoal.type} onChange={e => setNewSource({ ...newGoal, type: e.target.value })} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
                       {goalTypes.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
@@ -618,9 +619,9 @@ const Goals = () => {
                 {newGoal.type === 'revenue' && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Produit</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Produit')}</label>
                       <select value={newGoal.product} onChange={e => handleProductChange(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
-                        <option value="">Sélectionner un produit</option>
+                        <option value="">{tp('Sélectionner un produit')}</option>
                         {products.map(p => (
                           <option key={p._id} value={p.name}>
                             {p.name} — {fmt(p.sellingPrice)}/unité
@@ -630,10 +631,10 @@ const Goals = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Nombre de livraisons</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nombre de livraisons')}</label>
                       <input
                         type="number"
-                        placeholder="Ex: 50"
+                        placeholder={tp('Ex: 50')}
                         value={newGoal.deliveryCount}
                         onChange={e => handleDeliveryCountChange(e.target.value)}
                         className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none"
@@ -663,7 +664,7 @@ const Goals = () => {
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">{goalTypes.find(t => t.value === newGoal.type)?.unit}</span>
                   </div>
                   {newGoal.type === 'revenue' && !newGoal.product && (
-                    <p className="text-xs text-gray-500 mt-1.5">Sélectionnez un produit pour le calcul automatique</p>
+                    <p className="text-xs text-gray-500 mt-1.5">{tp('Sélectionnez un produit pour le calcul automatique')}</p>
                   )}
                 </div>
               </form>
@@ -671,7 +672,7 @@ const Goals = () => {
 
             <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
               <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                Annuler
+                {tp('Annuler')}
               </button>
               <button
                 type="submit"
@@ -679,7 +680,7 @@ const Goals = () => {
                 disabled={saving || !newGoal.targetValue}
                 className="flex-1 px-4 py-2.5 bg-scalor-green text-white rounded-lg text-sm font-medium hover:bg-scalor-green-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {saving ? 'Enregistrement...' : 'Créer'}
+                {saving ? 'Enregistrement...' : tp('Créer')}
               </button>
             </div>
           </div>

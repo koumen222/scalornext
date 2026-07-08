@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 /* ─── Helpers ────────────────────────────────────────────────────────────── */
 
@@ -109,7 +110,7 @@ const RowMenu = ({ product, onDelete }) => {
       <button
         onClick={() => setOpen(o => !o)}
         className={`w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 border border-gray-200 ${T}`}
-        aria-label="Actions"
+        aria-label={tp('Actions')}
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" />
@@ -127,7 +128,7 @@ const RowMenu = ({ product, onDelete }) => {
               <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Modifier
+              {tp('Modifier')}
             </Link>
             <Link
               to={`/ecom/products/${product._id}`}
@@ -138,7 +139,7 @@ const RowMenu = ({ product, onDelete }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-              Voir détails
+              {tp('Voir détails')}
             </Link>
             <div className="border-t border-gray-100" />
             <button
@@ -148,7 +149,7 @@ const RowMenu = ({ product, onDelete }) => {
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              Supprimer
+              {tp('Supprimer')}
             </button>
           </div>
         </>
@@ -194,7 +195,7 @@ export default function ProductsList() {
   };
 
   const remove = async (id) => {
-    if (!confirm('Supprimer ce produit définitivement ?')) return;
+    if (!confirm(tp('Supprimer ce produit définitivement ?'))) return;
     try { await ecomApi.delete(`/products/${id}`); load(); }
     catch (err) { setError(getContextualError(err, 'delete_product')); }
   };
@@ -240,7 +241,7 @@ export default function ProductsList() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between gap-4 sticky top-0 z-10">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">Produits</h1>
+          <h1 className="text-lg font-semibold text-gray-900">{tp('Produits')}</h1>
           <p className="text-sm text-gray-500">{stats.total} produit{stats.total !== 1 ? 's' : ''} · {stats.active} actif{stats.active !== 1 ? 's' : ''}</p>
         </div>
         <Link
@@ -250,7 +251,7 @@ export default function ProductsList() {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          Nouveau produit
+          {tp('Nouveau produit')}
         </Link>
       </div>
 
@@ -259,21 +260,21 @@ export default function ProductsList() {
         {/* KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">Total</p>
+            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Total')}</p>
             <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
           </div>
           <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">Actifs</p>
+            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Actifs')}</p>
             <p className="text-2xl font-semibold text-gray-900">{stats.active}</p>
             <p className="text-xs text-gray-400 mt-0.5">{stats.total - stats.active} inactif{stats.total - stats.active !== 1 ? 's' : ''}</p>
           </div>
           <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">Rentables</p>
+            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Rentables')}</p>
             <p className="text-2xl font-semibold text-gray-900">{stats.profits}</p>
             <p className="text-xs text-gray-400 mt-0.5">{stats.total - stats.profits} déficitaire{stats.total - stats.profits !== 1 ? 's' : ''}</p>
           </div>
           <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">Bénéfice estimé</p>
+            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Bénéfice estimé')}</p>
             <p className={`text-2xl font-semibold ${stats.ben >= 0 ? 'text-gray-900' : 'text-red-600'}`}>{fmt(stats.ben)}</p>
           </div>
         </div>
@@ -288,7 +289,7 @@ export default function ProductsList() {
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Rechercher..."
+              placeholder={tp('Rechercher...')}
               className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-scalor-green transition"
             />
           </div>
@@ -314,9 +315,9 @@ export default function ProductsList() {
             onChange={e => setActive(e.target.value)}
             className="px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-scalor-green transition"
           >
-            <option value="">Tous</option>
-            <option value="true">Actifs</option>
-            <option value="false">Inactifs</option>
+            <option value="">{tp('Tous')}</option>
+            <option value="true">{tp('Actifs')}</option>
+            <option value="false">{tp('Inactifs')}</option>
           </select>
 
           {hasFilters && (
@@ -324,7 +325,7 @@ export default function ProductsList() {
               onClick={() => { setSearch(''); setStatus(''); setActive(''); }}
               className={`px-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-800 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg ${T}`}
             >
-              Effacer filtres
+              {tp('Effacer filtres')}
             </button>
           )}
           {hasFilters && (
@@ -342,10 +343,10 @@ export default function ProductsList() {
         {sorted.length === 0 && (
           <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center">
             <p className="text-sm font-medium text-gray-900">
-              {hasFilters ? 'Aucun produit pour ces critères' : 'Aucun produit'}
+              {hasFilters ? 'Aucun produit pour ces critères' : tp('Aucun produit')}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              {hasFilters ? 'Essayez de modifier vos filtres' : 'Créez votre premier produit pour commencer'}
+              {hasFilters ? 'Essayez de modifier vos filtres' : tp('Créez votre premier produit pour commencer')}
             </p>
             {!hasFilters && (
               <Link
@@ -355,7 +356,7 @@ export default function ProductsList() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                Créer un produit
+                {tp('Créer un produit')}
               </Link>
             )}
           </div>
@@ -384,7 +385,7 @@ export default function ProductsList() {
                           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             <StatusChip status={product.status} />
                             <span className={`text-xs font-medium ${product.isActive ? 'text-scalor-green' : 'text-gray-400'}`}>
-                              {product.isActive ? 'Actif' : 'Inactif'}
+                              {product.isActive ? 'Actif' : tp('Inactif')}
                             </span>
                           </div>
                         </div>
@@ -393,13 +394,13 @@ export default function ProductsList() {
                     </div>
                     <div className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1">
                       <div>
-                        <p className="text-xs text-gray-400">Prix</p>
+                        <p className="text-xs text-gray-400">{tp('Prix')}</p>
                         <p className="text-sm font-semibold tabular-nums text-gray-900">
                           {product.sellingPrice != null ? fmt(product.sellingPrice) : '—'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">Bénéfice</p>
+                        <p className="text-xs text-gray-400">{tp('Bénéfice')}</p>
                         <p className={`text-sm font-semibold tabular-nums ${benefit === null ? 'text-gray-300' : profitable ? 'text-scalor-green' : 'text-red-600'}`}>
                           {benefit === null ? '—' : `${profitable ? '+' : ''}${fmt(benefit)}`}
                         </p>
@@ -436,7 +437,7 @@ export default function ProductsList() {
                       </button>
                     </th>
                     <th className="px-4 py-3 text-right">
-                      <span className="text-xs font-medium text-gray-500">Coût</span>
+                      <span className="text-xs font-medium text-gray-500">{tp('Coût')}</span>
                     </th>
                     <th className="px-4 py-3 text-right">
                       <button onClick={() => toggleSort('benefit')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
@@ -448,7 +449,7 @@ export default function ProductsList() {
                         Marge <SortIcon active={sort.key === 'margin'} dir={sort.dir} />
                       </button>
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500">État</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500">{tp('État')}</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
@@ -515,12 +516,12 @@ export default function ProductsList() {
                           {product.isActive ? (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-primary-50 text-scalor-green">
                               <span className="w-1.5 h-1.5 rounded-full bg-scalor-green" />
-                              Actif
+                              {tp('Actif')}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
                               <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                              Inactif
+                              {tp('Inactif')}
                             </span>
                           )}
                         </td>

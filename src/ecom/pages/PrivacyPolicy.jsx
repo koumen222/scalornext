@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
@@ -350,10 +351,10 @@ Nous publions un rapport de transparence annuel détaillant :
           </button>
           <div className="flex items-center gap-2">
             <button onClick={() => navigate(-1)} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition">
-              Retour
+              {tp('Retour')}
             </button>
             <button onClick={() => navigate('/ecom/login')} className="px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 rounded-xl transition">
-              Connexion
+              {tp('Connexion')}
             </button>
           </div>
         </div>
@@ -370,13 +371,13 @@ Nous publions un rapport de transparence annuel détaillant :
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-            Vos données sont protégées
+            {tp('Vos données sont protégées')}
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-primary-100 to-primary-200 bg-clip-text text-transparent leading-tight">
             Politique de Confidentialité<br />& Sécurité des Données
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
-            Chez Scalor, la sécurité de vos données est notre priorité absolue. 
+            {tp('Chez Scalor, la sécurité de vos données est notre priorité absolue.')} 
             Découvrez comment nous protégeons vos informations, vis-à-vis de nos propres administrateurs.
           </p>
           <p className="text-gray-500 text-sm mt-4">Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
@@ -388,9 +389,9 @@ Nous publions un rapport de transparence annuel détaillant :
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { icon: '🔐', label: 'Chiffrement', desc: 'bcrypt + TLS' },
-            { icon: '🏗️', label: 'Isolation', desc: 'Workspaces cloisonnés' },
-            { icon: '👁️‍🗨️', label: 'Transparence', desc: 'Accès à vos données' },
-            { icon: '🚫', label: 'Zéro tracking', desc: 'Aucun cookie pub' },
+            { icon: '🏗️', label: 'Isolation', get desc() { return tp('Workspaces cloisonnés'); } },
+            { icon: '👁️‍🗨️', label: 'Transparence', get desc() { return tp('Accès à vos données'); } },
+            { icon: '🚫', get label() { return tp('Zéro tracking'); }, desc: 'Aucun cookie pub' },
           ].map((badge, i) => (
             <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center hover:bg-white/10 transition">
               <div className="text-2xl mb-2">{badge.icon}</div>
@@ -422,9 +423,9 @@ Nous publions un rapport de transparence annuel détaillant :
         {/* Acceptation */}
         <div className="bg-gradient-to-r from-primary-600/10 to-primary-700/10 border border-primary-600/20 rounded-2xl p-6 sm:p-8 text-center">
           <div className="text-4xl mb-4">✅</div>
-          <h3 className="text-xl font-bold text-white mb-3">Votre consentement</h3>
+          <h3 className="text-xl font-bold text-white mb-3">{tp('Votre consentement')}</h3>
           <p className="text-gray-400 text-sm max-w-xl mx-auto mb-6">
-            En créant un compte sur Scalor, vous acceptez cette politique de confidentialité. 
+            {tp('En créant un compte sur Scalor, vous acceptez cette politique de confidentialité.')} 
             Vous pouvez retirer votre consentement à tout moment en supprimant votre compte ou en nous contactant.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -432,13 +433,13 @@ Nous publions un rapport de transparence annuel détaillant :
               onClick={() => navigate('/ecom/register')}
               className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 rounded-xl font-semibold text-sm transition shadow-lg shadow-primary-600/20"
             >
-              Créer un compte en toute sécurité
+              {tp('Créer un compte en toute sécurité')}
             </button>
             <button 
               onClick={() => navigate('/ecom/login')}
               className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-semibold text-sm transition"
             >
-              Se connecter
+              {tp('Se connecter')}
             </button>
           </div>
         </div>
@@ -449,9 +450,9 @@ Nous publions un rapport de transparence annuel détaillant :
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} Scalor. Tous droits réservés.</p>
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/ecom/landing')} className="text-xs text-gray-500 hover:text-gray-300 transition">Accueil</button>
+            <button onClick={() => navigate('/ecom/landing')} className="text-xs text-gray-500 hover:text-gray-300 transition">{tp('Accueil')}</button>
             <span className="text-gray-700">•</span>
-            <span className="text-xs text-primary-500">Politique de confidentialité</span>
+            <span className="text-xs text-primary-500">{tp('Politique de confidentialité')}</span>
             <span className="text-gray-700">•</span>
             <button onClick={() => navigate('/ecom/terms')} className="text-xs text-gray-500 hover:text-gray-300 transition">CGU</button>
           </div>

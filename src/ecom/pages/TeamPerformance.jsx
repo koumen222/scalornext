@@ -2,6 +2,7 @@
 import { Link } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const PerfSkeleton = () => (
   <div className="p-4 sm:p-6">
@@ -120,7 +121,7 @@ const TeamPerformance = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/>
               </svg>
             </Link>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Performances Équipe</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('Performances Équipe')}</h1>
           </div>
           <p className="text-sm text-gray-500 ml-8">{global.totalMembers || 0} membres · {global.activeMembers || 0} actifs sur la période</p>
         </div>
@@ -146,19 +147,19 @@ const TeamPerformance = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-gray-900">{fmtNum(global.totalOrders)}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Commandes</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Commandes')}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-green-600">{fmtNum(global.totalDelivered)}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Livrées</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Livrées')}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-primary-600">{global.totalOrders > 0 ? Math.round((global.totalDelivered / global.totalOrders) * 100) : 0}%</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Taux livraison</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Taux livraison')}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
           <div className="text-lg font-bold text-primary-700">{fmtMoney(global.totalRevenue)}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">Revenus</div>
+          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Revenus')}</div>
         </div>
       </div>
 
@@ -204,7 +205,7 @@ const TeamPerformance = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
           </div>
-          <p className="text-sm text-gray-500">Aucun membre dans cette catégorie</p>
+          <p className="text-sm text-gray-500">{tp('Aucun membre dans cette catégorie')}</p>
         </div>
       )}
     </div>
@@ -234,7 +235,7 @@ const MemberCard = ({ member, period }) => {
             <div className="flex items-center gap-2">
               <p className="font-semibold text-gray-900 truncate text-sm">{member.name || member.email.split('@')[0]}</p>
               {isRecentlyActive && (
-                <span className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0" title="Actif récemment"></span>
+                <span className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0" title={tp('Actif récemment')}></span>
               )}
             </div>
             <p className="text-xs text-gray-400 truncate">{member.email}</p>
@@ -244,7 +245,7 @@ const MemberCard = ({ member, period }) => {
           </span>
         </div>
         <div className="mt-2 text-xs text-gray-400">
-          Dernière connexion : <span className="font-medium text-gray-600">{timeAgo(member.lastLogin)}</span>
+          {tp('Dernière connexion :')} <span className="font-medium text-gray-600">{timeAgo(member.lastLogin)}</span>
         </div>
       </div>
 
@@ -253,25 +254,25 @@ const MemberCard = ({ member, period }) => {
         {member.role === 'ecom_livreur' && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Commandes assignées</span>
+              <span className="text-xs text-gray-500">{tp('Commandes assignées')}</span>
               <span className="font-bold text-gray-900">{fmtNum(stats.assigned)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Livrées</span>
+              <span className="text-xs text-gray-500">{tp('Livrées')}</span>
               <span className="font-bold text-green-600">{fmtNum(stats.delivered)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Retours</span>
+              <span className="text-xs text-gray-500">{tp('Retours')}</span>
               <span className="font-bold text-red-500">{fmtNum(stats.returned)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">En cours</span>
+              <span className="text-xs text-gray-500">{tp('En cours')}</span>
               <span className="font-bold text-yellow-600">{fmtNum(stats.pending)}</span>
             </div>
             {/* Barre de taux de livraison */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500">Taux de livraison</span>
+                <span className="text-xs text-gray-500">{tp('Taux de livraison')}</span>
                 <span className={`text-xs font-bold ${
                   (stats.deliveryRate || 0) >= 70 ? 'text-green-600' :
                   (stats.deliveryRate || 0) >= 40 ? 'text-yellow-600' : 'text-red-500'
@@ -289,7 +290,7 @@ const MemberCard = ({ member, period }) => {
             </div>
             <div className="pt-1 border-t border-gray-100">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">Revenus générés</span>
+                <span className="text-xs text-gray-500">{tp('Revenus générés')}</span>
                 <span className="text-xs font-bold text-primary-700">{fmtMoney(stats.revenue)}</span>
               </div>
             </div>
@@ -299,26 +300,26 @@ const MemberCard = ({ member, period }) => {
         {member.role === 'ecom_closeuse' && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Commandes traitées</span>
+              <span className="text-xs text-gray-500">{tp('Commandes traitées')}</span>
               <span className="font-bold text-gray-900">{fmtNum(stats.totalProcessed)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Confirmées</span>
+              <span className="text-xs text-gray-500">{tp('Confirmées')}</span>
               <span className="font-bold text-green-600">{fmtNum(stats.confirmed)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Annulées</span>
+              <span className="text-xs text-gray-500">{tp('Annulées')}</span>
               <span className="font-bold text-red-500">{fmtNum(stats.cancelled)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Injoignables</span>
+              <span className="text-xs text-gray-500">{tp('Injoignables')}</span>
               <span className="font-bold text-yellow-600">{fmtNum(stats.unreachable)}</span>
             </div>
             {/* Taux de confirmation */}
             {stats.totalProcessed > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-500">Taux de confirmation</span>
+                  <span className="text-xs text-gray-500">{tp('Taux de confirmation')}</span>
                   <span className={`text-xs font-bold ${
                     Math.round((stats.confirmed / stats.totalProcessed) * 100) >= 60 ? 'text-green-600' :
                     Math.round((stats.confirmed / stats.totalProcessed) * 100) >= 30 ? 'text-yellow-600' : 'text-red-500'
@@ -339,7 +340,7 @@ const MemberCard = ({ member, period }) => {
             )}
             <div className="pt-1 border-t border-gray-100">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">Valeur confirmée</span>
+                <span className="text-xs text-gray-500">{tp('Valeur confirmée')}</span>
                 <span className="text-xs font-bold text-primary-700">{fmtMoney(stats.revenue)}</span>
               </div>
             </div>
@@ -349,30 +350,30 @@ const MemberCard = ({ member, period }) => {
         {member.role === 'ecom_compta' && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Transactions créées</span>
+              <span className="text-xs text-gray-500">{tp('Transactions créées')}</span>
               <span className="font-bold text-gray-900">{fmtNum(stats.totalTransactions)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Entrées</span>
+              <span className="text-xs text-gray-500">{tp('Entrées')}</span>
               <span className="font-bold text-green-600">{fmtNum(stats.income)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Dépenses</span>
+              <span className="text-xs text-gray-500">{tp('Dépenses')}</span>
               <span className="font-bold text-red-500">{fmtNum(stats.expense)}</span>
             </div>
             <div className="pt-2 border-t border-gray-100">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500">Total entrées</span>
+                <span className="text-xs text-gray-500">{tp('Total entrées')}</span>
                 <span className="text-xs font-bold text-green-600">{fmtMoney(stats.totalIncome)}</span>
               </div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500">Total dépenses</span>
+                <span className="text-xs text-gray-500">{tp('Total dépenses')}</span>
                 <span className="text-xs font-bold text-red-500">{fmtMoney(stats.totalExpense)}</span>
               </div>
             </div>
             <div className="pt-2 border-t border-gray-100">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-700">Solde net</span>
+                <span className="text-xs font-semibold text-gray-700">{tp('Solde net')}</span>
                 <span className={`text-sm font-bold ${
                   (stats.netBalance || 0) >= 0 ? 'text-green-600' : 'text-red-500'
                 }`}>

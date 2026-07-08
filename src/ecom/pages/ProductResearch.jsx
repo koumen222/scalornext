@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 import { 
   Search, 
   TrendingUp, 
@@ -55,7 +56,7 @@ const ProductResearch = () => {
           monthlySales: 150,
           rating: 4.5,
           reviews: 89,
-          description: 'Produit de haute qualité avec forte demande',
+          get description() { return tp('Produit de haute qualité avec forte demande'); },
           pros: ['Forte marge', 'Demande élevée', 'Plusieurs fournisseurs'],
           cons: ['Compétition moyenne', 'Nécessite stock'],
           opportunity: 4,
@@ -97,7 +98,7 @@ const ProductResearch = () => {
           monthlySales: 95,
           rating: 3.8,
           reviews: 67,
-          description: 'Service numérique avec marché saturé',
+          get description() { return tp('Service numérique avec marché saturé'); },
           pros: ['Pas de stock', 'Marge correcte'],
           cons: ['Forte concurrence', 'Service client'],
           opportunity: 2,
@@ -118,7 +119,7 @@ const ProductResearch = () => {
           monthlySales: 180,
           rating: 4.7,
           reviews: 234,
-          description: 'Kit complet pour débutants avec excellent potentiel',
+          get description() { return tp('Kit complet pour débutants avec excellent potentiel'); },
           pros: ['Très bonne niche', 'Forte demande', 'Faible concurrence'],
           cons: ['Assemblage requis', 'Formation client'],
           opportunity: 5,
@@ -139,7 +140,7 @@ const ProductResearch = () => {
           monthlySales: 45,
           rating: 4.9,
           reviews: 45,
-          description: 'Produit luxe pour clientèle premium',
+          get description() { return tp('Produit luxe pour clientèle premium'); },
           pros: ['Marge élevée', 'Clientèle fidèle', 'Exclusivité'],
           cons: ['Faible volume', 'Investissement élevé'],
           opportunity: 4,
@@ -160,7 +161,7 @@ const ProductResearch = () => {
           monthlySales: 320,
           rating: 4.3,
           reviews: 412,
-          description: 'Version mise ù  jour avec fonctionnalités améliorées',
+          get description() { return tp('Version mise ù  jour avec fonctionnalités améliorées'); },
           pros: ['Très forte demande', 'Bonne marge', 'Plusieurs modèles'],
           cons: ['Compétition forte', 'Mises ù  jour fréquentes'],
           opportunity: 4,
@@ -181,7 +182,7 @@ const ProductResearch = () => {
           monthlySales: 195,
           rating: 4.6,
           reviews: 178,
-          description: 'Produit écologique avec forte tendance',
+          get description() { return tp('Produit écologique avec forte tendance'); },
           pros: ['Excellente niche', 'Marge élevée', 'Tendance durable'],
           cons: ['Coût production', 'Certifications'],
           opportunity: 5,
@@ -291,15 +292,15 @@ const ProductResearch = () => {
       
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Achat</p>
+          <p className="text-xs text-gray-500 mb-1">{tp('Achat')}</p>
           <p className="text-sm font-semibold text-red-600">{product.buyPrice.toLocaleString()} FCFA</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Vente</p>
+          <p className="text-xs text-gray-500 mb-1">{tp('Vente')}</p>
           <p className="text-sm font-semibold text-green-600">{product.sellPrice.toLocaleString()} FCFA</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Marge</p>
+          <p className="text-xs text-gray-500 mb-1">{tp('Marge')}</p>
           <p className={`text-sm font-semibold ${product.margin >= 40 ? 'text-green-600' : 'text-yellow-600'}`}>
             {product.margin}%
           </p>
@@ -308,15 +309,15 @@ const ProductResearch = () => {
       
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Demande</p>
+          <p className="text-xs text-gray-500 mb-1">{tp('Demande')}</p>
           <p className={`text-sm font-medium ${getDemandColor(product.demand)}`}>{product.demand}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Compétition</p>
+          <p className="text-xs text-gray-500 mb-1">{tp('Compétition')}</p>
           <p className={`text-sm font-medium ${getCompetitionColor(product.competition)}`}>{product.competition}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Ventes/mois</p>
+          <p className="text-xs text-gray-500 mb-1">{tp('Ventes/mois')}</p>
           <p className="text-sm font-medium text-gray-900">{product.monthlySales}</p>
         </div>
       </div>
@@ -338,7 +339,7 @@ const ProductResearch = () => {
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-xs text-gray-500">{getTrendIcon(product.trend)}</span>
-          <span className="text-xs text-gray-500">{product.seasonality === 'oui' ? 'Saisonnier' : 'Permanent'}</span>
+          <span className="text-xs text-gray-500">{product.seasonality === 'oui' ? 'Saisonnier' : tp('Permanent')}</span>
         </div>
       </div>
     </div>
@@ -377,43 +378,43 @@ const ProductResearch = () => {
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <DollarSign className="mr-2" size={20} />
-                Analyse Financière
+                {tp('Analyse Financière')}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Prix d'achat</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Prix d\'achat')}</p>
                   <p className="text-lg font-semibold text-red-600">{selectedProduct.buyPrice.toLocaleString()} FCFA</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Prix de vente</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Prix de vente')}</p>
                   <p className="text-lg font-semibold text-green-600">{selectedProduct.sellPrice.toLocaleString()} FCFA</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Marge</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Marge')}</p>
                   <p className={`text-lg font-semibold ${selectedProduct.margin >= 40 ? 'text-green-600' : 'text-yellow-600'}`}>
                     {selectedProduct.margin}%
                   </p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Bénéfice/unité</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Bénéfice/unité')}</p>
                   <p className="text-lg font-semibold text-primary-600">
                     {(selectedProduct.sellPrice - selectedProduct.buyPrice).toLocaleString()} FCFA
                   </p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Revenu mensuel</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Revenu mensuel')}</p>
                   <p className="text-lg font-semibold text-gray-900">{monthlyRevenue.toLocaleString()} FCFA</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Bénéfice mensuel</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Bénéfice mensuel')}</p>
                   <p className="text-lg font-semibold text-green-600">{monthlyProfit.toLocaleString()} FCFA</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Revenu annuel</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Revenu annuel')}</p>
                   <p className="text-lg font-semibold text-gray-900">{yearlyRevenue.toLocaleString()} FCFA</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Bénéfice annuel</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Bénéfice annuel')}</p>
                   <p className="text-lg font-semibold text-green-600">{yearlyProfit.toLocaleString()} FCFA</p>
                 </div>
               </div>
@@ -423,31 +424,31 @@ const ProductResearch = () => {
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <TrendingUp className="mr-2" size={20} />
-                Analyse Marché
+                {tp('Analyse Marché')}
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Catégorie</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Catégorie')}</p>
                   <p className="text-base font-medium text-gray-900">{selectedProduct.category}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Demande</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Demande')}</p>
                   <p className={`text-base font-medium ${getDemandColor(selectedProduct.demand)}`}>{selectedProduct.demand}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Compétition</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Compétition')}</p>
                   <p className={`text-base font-medium ${getCompetitionColor(selectedProduct.competition)}`}>{selectedProduct.competition}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Niche</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Niche')}</p>
                   <p className={`text-base font-medium ${getOpportunityColor(selectedProduct.opportunity)}`}>{selectedProduct.niche}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Ventes/mois</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Ventes/mois')}</p>
                   <p className="text-base font-medium text-gray-900">{selectedProduct.monthlySales}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Fournisseurs</p>
+                  <p className="text-sm text-gray-500 mb-1">{tp('Fournisseurs')}</p>
                   <p className="text-base font-medium text-gray-900">{selectedProduct.suppliers}</p>
                 </div>
               </div>
@@ -457,7 +458,7 @@ const ProductResearch = () => {
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Star className="mr-2" size={20} />
-                Avis Clients
+                {tp('Avis Clients')}
               </h3>
               <div className="bg-gray-50 p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
@@ -474,7 +475,7 @@ const ProductResearch = () => {
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <CheckCircle className="mr-2" size={20} />
-                Avantages
+                {tp('Avantages')}
               </h3>
               <div className="space-y-2">
                 {selectedProduct.pros.map((pro, index) => (
@@ -490,7 +491,7 @@ const ProductResearch = () => {
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <AlertTriangle className="mr-2" size={20} />
-                Inconvénients
+                {tp('Inconvénients')}
               </h3>
               <div className="space-y-2">
                 {selectedProduct.cons.map((con, index) => (
@@ -504,7 +505,7 @@ const ProductResearch = () => {
             
             {/* Description */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Description</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{tp('Description')}</h3>
               <p className="text-gray-700 leading-relaxed">{selectedProduct.description}</p>
             </div>
           </div>
@@ -520,9 +521,9 @@ const ProductResearch = () => {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Search className="mr-3" size={28} />
-            Recherche Produits
+            {tp('Recherche Produits')}
           </h1>
-          <p className="text-gray-600 mt-1">Analysez les opportunités de marché</p>
+          <p className="text-gray-600 mt-1">{tp('Analysez les opportunités de marché')}</p>
         </div>
       </div>
       
@@ -534,7 +535,7 @@ const ProductResearch = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Rechercher un produit (ex: téléphone, ordinateur, écologique...)"
+                placeholder={tp('Rechercher un produit (ex: téléphone, ordinateur, écologique...)')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && searchProducts()}
@@ -549,12 +550,12 @@ const ProductResearch = () => {
               {loading ? (
                 <>
                   <div className="w-4 h-4 bg-white/30 rounded animate-pulse mr-2"></div>
-                  Recherche...
+                  {tp('Recherche...')}
                 </>
               ) : (
                 <>
                   <Search size={20} className="mr-2" />
-                  Rechercher
+                  {tp('Rechercher')}
                 </>
               )}
             </button>
@@ -563,7 +564,7 @@ const ProductResearch = () => {
               className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center"
             >
               <Filter size={20} className="mr-2" />
-              Filtres
+              {tp('Filtres')}
             </button>
           </div>
           
@@ -571,23 +572,23 @@ const ProductResearch = () => {
           {showFilters && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-4 bg-gray-50 rounded-lg">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Catégorie')}</label>
                 <select
                   value={filters.category}
                   onChange={(e) => setFilters({...filters, category: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Toutes</option>
-                  <option value="Électronique">Électronique</option>
-                  <option value="Accessoires">Accessoires</option>
-                  <option value="Services">Services</option>
-                  <option value="Kits">Kits</option>
-                  <option value="Luxe">Luxe</option>
-                  <option value="Écologique">Écologique</option>
+                  <option value="">{tp('Toutes')}</option>
+                  <option value="Électronique">{tp('Électronique')}</option>
+                  <option value="Accessoires">{tp('Accessoires')}</option>
+                  <option value="Services">{tp('Services')}</option>
+                  <option value="Kits">{tp('Kits')}</option>
+                  <option value="Luxe">{tp('Luxe')}</option>
+                  <option value="Écologique">{tp('Écologique')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Marge minimale (%)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Marge minimale (%)')}</label>
                 <input
                   type="number"
                   value={filters.minMargin}
@@ -598,7 +599,7 @@ const ProductResearch = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Prix maximum (FCFA)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Prix maximum (FCFA)')}</label>
                 <input
                   type="number"
                   value={filters.maxPrice}
@@ -608,30 +609,30 @@ const ProductResearch = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Compétition</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Compétition')}</label>
                 <select
                   value={filters.competition}
                   onChange={(e) => setFilters({...filters, competition: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Toutes</option>
-                  <option value="Faible">Faible</option>
-                  <option value="Moyenne">Moyenne</option>
-                  <option value="Élevée">Élevée</option>
+                  <option value="">{tp('Toutes')}</option>
+                  <option value="Faible">{tp('Faible')}</option>
+                  <option value="Moyenne">{tp('Moyenne')}</option>
+                  <option value="Élevée">{tp('Élevée')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Demande</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Demande')}</label>
                 <select
                   value={filters.demand}
                   onChange={(e) => setFilters({...filters, demand: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Toutes</option>
-                  <option value="Très élevée">Très élevée</option>
-                  <option value="Élevée">Élevée</option>
-                  <option value="Moyenne">Moyenne</option>
-                  <option value="Faible">Faible</option>
+                  <option value="">{tp('Toutes')}</option>
+                  <option value="Très élevée">{tp('Très élevée')}</option>
+                  <option value="Élevée">{tp('Élevée')}</option>
+                  <option value="Moyenne">{tp('Moyenne')}</option>
+                  <option value="Faible">{tp('Faible')}</option>
                 </select>
               </div>
             </div>
@@ -639,12 +640,12 @@ const ProductResearch = () => {
           
           {/* Sort Options */}
           <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-700">Trier par:</span>
+            <span className="text-sm font-medium text-gray-700">{tp('Trier par:')}</span>
             <div className="flex space-x-2">
               {[
                 { key: 'margin', label: 'Marge', icon: TrendingUp },
                 { key: 'revenue', label: 'Revenu', icon: DollarSign },
-                { key: 'competition', label: 'Compétition', icon: Users },
+                { key: 'competition', get label() { return tp('Compétition'); }, icon: Users },
                 { key: 'demand', label: 'Demande', icon: TrendingUp },
                 { key: 'rating', label: 'Note', icon: Star },
                 { key: 'reviews', label: 'Avis', icon: MessageSquare }
@@ -684,12 +685,12 @@ const ProductResearch = () => {
                 {products.length} produit{products.length > 1 ? 's' : ''} trouvé{products.length > 1 ? 's' : ''}
               </p>
               <div className="text-sm text-gray-500">
-                Trié par: <span className="font-medium text-gray-700">
+                {tp('Trié par:')} <span className="font-medium text-gray-700">
                   {sortBy === 'margin' ? 'Marge' : 
                    sortBy === 'revenue' ? 'Revenu' : 
                    sortBy === 'competition' ? 'Compétition' : 
                    sortBy === 'demand' ? 'Demande' :
-                   sortBy === 'rating' ? 'Note' : 'Avis'}
+                   sortBy === 'rating' ? 'Note' : tp('Avis')}
                 </span>
               </div>
             </div>
@@ -701,7 +702,7 @@ const ProductResearch = () => {
           <div className="flex flex-col items-center justify-center py-12">
             <Search size={48} className="text-gray-400 mb-4" />
             <p className="text-gray-600 text-center">
-              Recherchez des produits pour analyser les opportunités de marché
+              {tp('Recherchez des produits pour analyser les opportunités de marché')}
             </p>
             <p className="text-sm text-gray-500 mt-2">
               Essayez: "téléphone", "ordinateur", "écologique", "accessoires"...

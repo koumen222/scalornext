@@ -4,6 +4,8 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useDmUnread } from '../hooks/useDmUnread';
 import { useStore } from '../contexts/StoreContext.jsx';
 import StoreSwitcher from './StoreSwitcher.jsx';
+import { usePlatformT, usePlatformLang } from '../i18n/platform.js';
+import PlatformLanguageSelector from './PlatformLanguageSelector.jsx';
 
 // ── Boutique Sidebar Navigation ──────────────────────────────────────────────
 const BOUTIQUE_NAV = [
@@ -145,6 +147,8 @@ const MOBILE_TABS = ['Dashboard', 'Commandes', 'Produits', 'Pages', 'Paramètres
 // Next.js (App Router) : le layout reçoit `children` au lieu de rendre <Outlet/>.
 // (children ?? <Outlet/> conservé pour compat — Outlet jette une erreur explicite si utilisé.)
 const BoutiqueLayoutInner = ({ children }) => {
+  const t = usePlatformT();
+  const platformLang = usePlatformLang();
   const location = useLocation();
   const navigate = useNavigate();
   const { user, workspace } = useEcomAuth();
@@ -249,7 +253,7 @@ const BoutiqueLayoutInner = ({ children }) => {
               <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span>Retour à Scalor</span>
+              <span>{t('Retour à Scalor')}</span>
             </button>
             <StoreSwitcher>
               <div className="flex items-center gap-3 rounded-xl px-2 py-1.5 -mx-2 hover:bg-gray-50 transition-colors">
@@ -260,7 +264,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold text-gray-900 truncate">{storeName}</p>
-                  <p className="text-[10px] text-gray-400 font-medium">Module Boutique</p>
+                  <p className="text-[10px] text-gray-400 font-medium">{t('Module Boutique')}</p>
                 </div>
                 <svg className="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
@@ -292,7 +296,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                       <span className={`flex-shrink-0 ${parentActive && !expanded ? 'text-white' : parentActive ? 'text-gray-700' : 'text-gray-400 group-hover:text-gray-600'}`}>
                         {item.icon}
                       </span>
-                      <span className="truncate flex-1 text-left">{item.name}</span>
+                      <span className="truncate flex-1 text-left">{t(item.name)}</span>
                       <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''} ${parentActive && !expanded ? 'text-white/70' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
@@ -313,7 +317,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                               }`}
                               style={childActive ? { backgroundColor: layoutAccentColor } : {}}
                             >
-                              {child.name}
+                              {t(child.name)}
                             </Link>
                           );
                         })}
@@ -339,7 +343,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                   <span className={`flex-shrink-0 ${active ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'}`}>
                     {item.icon}
                   </span>
-                  <span className="truncate flex-1">{item.name}</span>
+                  <span className="truncate flex-1">{t(item.name)}</span>
                 </Link>
               );
             })}
@@ -356,7 +360,7 @@ const BoutiqueLayoutInner = ({ children }) => {
               <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              <span>Voir ma boutique</span>
+              <span>{t('Voir ma boutique')}</span>
             </a>
           </div>
         </div>
@@ -380,7 +384,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                 </div>
-                <span className="text-sm font-bold text-gray-900">Boutique</span>
+                <span className="text-sm font-bold text-gray-900">{t('Boutique')}</span>
               </div>
             </div>
             <a
@@ -399,15 +403,16 @@ const BoutiqueLayoutInner = ({ children }) => {
         {/* Desktop header */}
         {!location.pathname.includes('/form-builder') && <header className="hidden lg:flex border-b h-14 items-center px-6 fixed top-0 left-[240px] right-0 z-20 bg-white border-gray-200">
           <h1 className="text-[15px] font-semibold text-gray-900">
-            {getBoutiquePageTitle(location.pathname)}
+            {getBoutiquePageTitle(location.pathname, t)}
           </h1>
           <div className="flex-1" />
+          <PlatformLanguageSelector compact />
         </header>}
 
         {/* Page content */}
         <main className={`flex-1 overflow-x-hidden pb-20 lg:pb-0 ${location.pathname.includes('/form-builder') ? 'pt-0' : 'pt-14 lg:pt-14'}`}
           style={{ WebkitOverflowScrolling: 'touch', minHeight: 0 }}>
-          <React.Fragment key={activeStore?._id || 'no-active-store'}>{children ?? <Outlet />}</React.Fragment>
+          <React.Fragment key={`${activeStore?._id || 'no-active-store'}-${platformLang}`}>{children ?? <Outlet />}</React.Fragment>
         </main>
       </div>
 
@@ -427,7 +432,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                   {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
                 </span>
                 <span className={`text-[10px] font-medium leading-none transition-colors duration-200 ${active ? 'text-gray-900' : 'text-gray-500'}`}>
-                  {item.name}
+                  {t(item.name)}
                 </span>
               </Link>
             );
@@ -443,7 +448,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01" />
                 <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
               </svg>
-              <span className={`text-[10px] font-medium leading-none ${moreOpen ? 'text-gray-900' : 'text-gray-500'}`}>Plus</span>
+              <span className={`text-[10px] font-medium leading-none ${moreOpen ? 'text-gray-900' : 'text-gray-500'}`}>{t('Plus')}</span>
             </button>
 
             {moreOpen && (
@@ -453,7 +458,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                   <div className="bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl mb-2">
                     <div className="px-5 pt-3 pb-2">
                       <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3" />
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Plus d'options</p>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{t("Plus d'options")}</p>
                     </div>
                     <div className="divide-y divide-gray-100 max-h-[60vh] overflow-y-auto overscroll-contain">
                       {mobileMoreItems.map((item) => {
@@ -470,7 +475,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                                 <span className={`flex-shrink-0 ${groupActive ? '' : 'text-gray-400'}`} style={groupActive ? { color: layoutAccentColor } : {}}>
                                   {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
                                 </span>
-                                <span className="flex-1 truncate">{item.name}</span>
+                                <span className="flex-1 truncate">{t(item.name)}</span>
                                 <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${groupExpanded ? 'rotate-180' : ''} text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
@@ -488,7 +493,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                                         className={`flex items-center gap-3 pl-14 pr-5 py-3 text-[15px] font-medium active:bg-gray-200 transition-colors ${childActive ? '' : 'text-gray-600'}`}
                                         style={childActive ? { color: layoutAccentColor } : {}}
                                       >
-                                        <span className="truncate">{child.name}</span>
+                                        <span className="truncate">{t(child.name)}</span>
                                       </Link>
                                     );
                                   })}
@@ -509,7 +514,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                             <span className={`flex-shrink-0 ${active ? '' : 'text-gray-400'}`} style={active ? { color: layoutAccentColor } : {}}>
                               {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
                             </span>
-                            <span className="flex-1 truncate">{item.name}</span>
+                            <span className="flex-1 truncate">{t(item.name)}</span>
                           </Link>
                         );
                       })}
@@ -546,32 +551,32 @@ const BoutiqueLayoutInner = ({ children }) => {
   );
 };
 
-const getBoutiquePageTitle = (pathname) => {
-  if (pathname === '/ecom/boutique') return 'Dashboard Boutique';
-  if (pathname.includes('/boutique/analyses')) return 'Analyses de données';
-  if (pathname.includes('/boutique/products/new')) return 'Nouveau produit';
-  if (pathname.includes('/boutique/products') && pathname.includes('/edit')) return 'Modifier produit';
-  if (pathname.includes('/boutique/products')) return 'Produits';
-  if (pathname.includes('/boutique/orders')) return 'Commandes';
-  if (pathname.includes('/boutique/page-builder')) return 'Theme Builder';
-  if (pathname.includes('/boutique/theme')) return 'Thème & Apparence';
-  if (pathname.includes('/boutique/pages')) return 'Pages';
-  if (pathname.includes('/boutique/pixel')) return 'Pixel & Tracking';
-  if (pathname.includes('/boutique/payments')) return 'Paiements';
-  if (pathname.includes('/boutique/delivery-zones')) return 'Zones de livraison';
-  if (pathname.includes('/boutique/domains')) return 'Domaines';
-  if (pathname.includes('/boutique/form-builder/quantity-offers')) return 'Offres de quantité';
-  if (pathname.includes('/boutique/form-builder/upsells')) return 'Upsells & Downsells';
-  if (pathname.includes('/boutique/form-builder/integrations')) return 'Intégrations et messagerie';
-  if (pathname.includes('/boutique/form-builder/analytics')) return 'Analytique';
-  if (pathname.includes('/boutique/form-builder/settings')) return 'Paramètres EasySell';
-  if (pathname.includes('/boutique/form-builder/plan')) return 'Forfait';
-  if (pathname.includes('/boutique/form-builder')) return 'Créateur de formulaire';
-  if (pathname.includes('/boutique/product-settings')) return 'Paramètres Page Produit';
-  if (pathname.includes('/boutique/theme')) return 'Thème & Design';
-  if (pathname.includes('/creative-generator')) return 'Générateur de Créas';
-  if (pathname.includes('/boutique/settings')) return 'Paramètres & Branding';
-  return 'Boutique';
+const getBoutiquePageTitle = (pathname, t = (x) => x) => {
+  if (pathname === '/ecom/boutique') return t('Dashboard Boutique');
+  if (pathname.includes('/boutique/analyses')) return t('Analyses de données');
+  if (pathname.includes('/boutique/products/new')) return t('Nouveau produit');
+  if (pathname.includes('/boutique/products') && pathname.includes('/edit')) return t('Modifier produit');
+  if (pathname.includes('/boutique/products')) return t('Produits');
+  if (pathname.includes('/boutique/orders')) return t('Commandes');
+  if (pathname.includes('/boutique/page-builder')) return t('Theme Builder');
+  if (pathname.includes('/boutique/theme')) return t('Thème & Apparence');
+  if (pathname.includes('/boutique/pages')) return t('Pages');
+  if (pathname.includes('/boutique/pixel')) return t('Pixel & Tracking');
+  if (pathname.includes('/boutique/payments')) return t('Paiements');
+  if (pathname.includes('/boutique/delivery-zones')) return t('Zones de livraison');
+  if (pathname.includes('/boutique/domains')) return t('Domaines');
+  if (pathname.includes('/boutique/form-builder/quantity-offers')) return t('Offres de quantité');
+  if (pathname.includes('/boutique/form-builder/upsells')) return t('Upsells & Downsells');
+  if (pathname.includes('/boutique/form-builder/integrations')) return t('Intégrations et messagerie');
+  if (pathname.includes('/boutique/form-builder/analytics')) return t('Analytique');
+  if (pathname.includes('/boutique/form-builder/settings')) return t('Paramètres EasySell');
+  if (pathname.includes('/boutique/form-builder/plan')) return t('Forfait');
+  if (pathname.includes('/boutique/form-builder')) return t('Créateur de formulaire');
+  if (pathname.includes('/boutique/product-settings')) return t('Paramètres Page Produit');
+  if (pathname.includes('/boutique/theme')) return t('Thème & Design');
+  if (pathname.includes('/creative-generator')) return t('Générateur de Créas');
+  if (pathname.includes('/boutique/settings')) return t('Paramètres & Branding');
+  return t('Boutique');
 };
 
 export default BoutiqueLayoutInner;

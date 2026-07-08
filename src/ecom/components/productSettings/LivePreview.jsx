@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { storeManageApi, storeProductsApi } from '../../services/storeApi';
 import { getIconComponent } from './ButtonEditor';
+import { tp } from '../../i18n/platform.js';
 
 const fmt = (n, cur = 'XAF') => `${new Intl.NumberFormat('fr-FR').format(n)} ${cur}`;
 
@@ -33,7 +34,7 @@ const EditableWrap = ({ sectionId, onSectionClick, activeSectionId, children }) 
 
 const PRODUCT_GALLERY_DEFAULTS = {
   title: 'Photos du produit',
-  subtitle: 'Faites défiler les visuels avant de commander',
+  get subtitle() { return tp('Faites défiler les visuels avant de commander'); },
   showHeader: true,
   useProductImages: true,
   images: [],
@@ -161,7 +162,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
       <div style={{ background: '#F1F5F9', borderRadius: 20, border: '1px solid #E2E8F0', padding: '14px 12px', minHeight: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', color: '#94A3B8' }}>
           <Package size={24} style={{ marginBottom: 8, opacity: 0.5 }} />
-          <div style={{ fontSize: 11, fontWeight: 600 }}>Chargement du produit…</div>
+          <div style={{ fontSize: 11, fontWeight: 600 }}>{tp('Chargement du produit…')}</div>
         </div>
       </div>
     );
@@ -172,8 +173,8 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
       <div style={{ background: '#F1F5F9', borderRadius: 20, border: '1px solid #E2E8F0', padding: '14px 12px', minHeight: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', color: '#94A3B8' }}>
           <Package size={24} style={{ marginBottom: 8, opacity: 0.5 }} />
-          <div style={{ fontSize: 11, fontWeight: 600 }}>Aucun produit trouvé</div>
-          <div style={{ fontSize: 9, marginTop: 4 }}>Créez un produit pour voir l'aperçu</div>
+          <div style={{ fontSize: 11, fontWeight: 600 }}>{tp('Aucun produit trouvé')}</div>
+          <div style={{ fontSize: 9, marginTop: 4 }}>{tp('Créez un produit pour voir l\'aperçu')}</div>
         </div>
       </div>
     );
@@ -198,10 +199,10 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
       {/* Label */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <span style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-          Aperçu page produit
+          {tp('Aperçu page produit')}
         </span>
         <span style={{ fontSize: 9, color: '#16A34A', backgroundColor: '#F0FDF4', padding: '2px 7px', borderRadius: 20, fontWeight: 600 }}>
-          {onSectionClick ? 'Cliquez pour modifier' : 'Données réelles'}
+          {onSectionClick ? 'Cliquez pour modifier' : tp('Données réelles')}
         </span>
       </div>
 
@@ -226,7 +227,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
             }}>
               <ShoppingBag size={11} color="#fff" />
             </div>
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#111827' }}>Ma Boutique</span>
+            <span style={{ fontSize: 10, fontWeight: 800, color: '#111827' }}>{tp('Ma Boutique')}</span>
           </div>
           <ShoppingCart size={15} color="#6B7280" />
         </div>
@@ -405,7 +406,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
                       )}
                       <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #E5E7EB', backgroundColor: '#fff' }}>
                         <div style={{ height: Math.min(260, Math.max(120, Math.round(mainHeight / 2))), backgroundColor: '#F3F4F6' }}>
-                          <img src={previewImage} alt={galleryImages[0]?.alt || 'Photo produit'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                          <img src={previewImage} alt={galleryImages[0]?.alt || tp('Photo produit')} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                         </div>
                       </div>
                       {galleryImages.length > 1 && (
@@ -554,7 +555,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
                 return product.description ? (
                   <EditableWrap key={s.id} sectionId={s.id} onSectionClick={onSectionClick} activeSectionId={activeSectionId}>
                     <div style={{ marginBottom: 8, paddingTop: 10, borderTop: '1px solid #F3F4F6' }}>
-                      <div style={{ fontSize: 9.5, fontWeight: 700, color: '#374151', marginBottom: 6 }}>Description du produit</div>
+                      <div style={{ fontSize: 9.5, fontWeight: 700, color: '#374151', marginBottom: 6 }}>{tp('Description du produit')}</div>
                       <p style={{ fontSize: 8, color: '#6B7280', lineHeight: 1.5, margin: '0 0 8px' }}>
                         {product.description.replace(/<[^>]*>/g, '').slice(0, 180)}…
                       </p>
@@ -609,7 +610,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
                 return faqData.length > 0 ? (
                   <EditableWrap key={s.id} sectionId={s.id} onSectionClick={onSectionClick} activeSectionId={activeSectionId}>
                     <div style={{ marginBottom: 8, paddingTop: 10, borderTop: '1px solid #F3F4F6' }}>
-                      <div style={{ fontSize: 9.5, fontWeight: 700, color: '#374151', marginBottom: 6 }}>Questions fréquentes</div>
+                      <div style={{ fontSize: 9.5, fontWeight: 700, color: '#374151', marginBottom: 6 }}>{tp('Questions fréquentes')}</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                         {faqData.slice(0, 3).map((item, i) => (
                           <div key={i} style={{ borderRadius: 8, border: '1px solid #F3F4F6', overflow: 'hidden' }}>
@@ -638,7 +639,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
                   <EditableWrap key={s.id} sectionId={s.id} onSectionClick={onSectionClick} activeSectionId={activeSectionId}>
                     <div style={{ padding: '10px', borderRadius: 10, marginBottom: 8, background: 'linear-gradient(135deg, #F0FDF4, #ECFDF5)', border: '1px solid #D1FAE5' }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: '#065F46', marginBottom: 6, textAlign: 'center' }}>
-                      Ce que disent nos clients
+                      {tp('Ce que disent nos clients')}
                     </div>
                     {testimonialsData.slice(0, 2).map((t, i) => (
                       <div key={i} style={{ padding: '6px 8px', borderRadius: 8, backgroundColor: '#fff', border: '1px solid #E5E7EB', marginBottom: i === 0 ? 4 : 0 }}>
@@ -662,7 +663,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
                 return (
                   <EditableWrap key={s.id} sectionId={s.id} onSectionClick={onSectionClick} activeSectionId={activeSectionId}>
                     <div style={{ marginBottom: 8 }}>
-                    <div style={{ fontSize: 9.5, fontWeight: 700, color: '#374151', marginBottom: 6 }}>Vous aimerez aussi</div>
+                    <div style={{ fontSize: 9.5, fontWeight: 700, color: '#374151', marginBottom: 6 }}>{tp('Vous aimerez aussi')}</div>
                     <div style={{ display: 'flex', gap: 6 }}>
                       {[1, 2, 3].map(i => (
                         <div key={i} style={{ flex: 1, borderRadius: 8, border: '1px solid #F3F4F6', overflow: 'hidden' }}>
@@ -690,8 +691,8 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
                       <Star size={13} color="#7C3AED" />
                     </div>
                     <div>
-                      <div style={{ fontSize: 8.5, fontWeight: 800, color: '#5B21B6' }}>Offre Deluxe</div>
-                      <div style={{ fontSize: 7.5, color: '#7C3AED', marginTop: 1 }}>Pack complet + livraison offerte</div>
+                      <div style={{ fontSize: 8.5, fontWeight: 800, color: '#5B21B6' }}>{tp('Offre Deluxe')}</div>
+                      <div style={{ fontSize: 7.5, color: '#7C3AED', marginTop: 1 }}>{tp('Pack complet + livraison offerte')}</div>
                     </div>
                   </div>
                   </EditableWrap>
@@ -709,8 +710,8 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
                       <Check size={7} color="#fff" />
                     </div>
                     <div>
-                      <div style={{ fontSize: 8.5, fontWeight: 700, color: '#C2410C' }}>Ajouter l'accessoire assorti</div>
-                      <div style={{ fontSize: 7.5, color: '#EA580C', marginTop: 1 }}>Complément recommandé pour ce produit</div>
+                      <div style={{ fontSize: 8.5, fontWeight: 700, color: '#C2410C' }}>{tp('Ajouter l\'accessoire assorti')}</div>
+                      <div style={{ fontSize: 7.5, color: '#EA580C', marginTop: 1 }}>{tp('Complément recommandé pour ce produit')}</div>
                     </div>
                   </div>
                   </EditableWrap>
@@ -737,7 +738,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
         {automation?.whatsapp?.enabled && (
           <div style={{ margin: '8px 12px', display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px', borderRadius: 8, backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0' }}>
             <MessageCircle size={11} color="#16A34A" />
-            <span style={{ fontSize: 8.5, fontWeight: 600, color: '#15803D' }}>Confirmation WhatsApp activée</span>
+            <span style={{ fontSize: 8.5, fontWeight: 600, color: '#15803D' }}>{tp('Confirmation WhatsApp activée')}</span>
           </div>
         )}
 
@@ -757,7 +758,7 @@ const LivePreview = ({ config, product: productProp, onSectionClick, activeSecti
               padding: '6px 12px', borderRadius: 999, fontSize: 8, fontWeight: 800,
               backgroundColor: btnColor, color: '#fff', whiteSpace: 'nowrap',
             }}>
-              Commander
+              {tp('Commander')}
             </div>
           </div>
         )}

@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Upload, FileText, AlertCircle, CheckCircle, X, Download } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const ProductImport = ({ onImportSuccess }) => {
   const [file, setFile] = useState(null);
@@ -22,7 +23,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
       // Vérifier l'extension du fichier
       const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
       if (!['csv', 'xlsx', 'xls'].includes(fileExtension)) {
-        setError('Veuillez sélectionner un fichier CSV ou Excel (.csv, .xlsx, .xls)');
+        setError(tp('Veuillez sélectionner un fichier CSV ou Excel (.csv, .xlsx, .xls)'));
         return;
       }
       
@@ -47,7 +48,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
         const lines = text.split('\n').filter(line => line.trim());
         
         if (lines.length < 2) {
-          setError('Le fichier doit contenir au moins une ligne d\'en-tête et une ligne de données');
+          setError(tp('Le fichier doit contenir au moins une ligne d\'en-tête et une ligne de données'));
           return;
         }
 
@@ -107,7 +108,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
         setShowPreview(true);
       } catch (error) {
         console.error('Erreur parsing CSV:', error);
-        setError('Erreur lors de la lecture du fichier CSV. Vérifiez le format.');
+        setError(tp('Erreur lors de la lecture du fichier CSV. Vérifiez le format.'));
       }
     };
     reader.readAsText(file);
@@ -177,7 +178,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
           const lines = text.split('\n').filter(line => line.trim());
           
           if (lines.length < 2) {
-            setError('Le fichier doit contenir des données ù  importer');
+            setError(tp('Le fichier doit contenir des données ù  importer'));
             setLoading(false);
             return;
           }
@@ -289,7 +290,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
           }
 
           if (products.length === 0) {
-            setError('Aucun produit valide ù  importer');
+            setError(tp('Aucun produit valide ù  importer'));
             setLoading(false);
             return;
           }
@@ -319,7 +320,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
               onImportSuccess();
             }
           } else {
-            setError('Aucun produit n\'a pu être importé');
+            setError(tp('Aucun produit n\'a pu être importé'));
           }
         } catch (error) {
           console.error('Erreur traitement fichier:', error);
@@ -348,14 +349,14 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center">
           <Upload className="mr-2" size={20} />
-          Importer des produits (CSV/Excel)
+          {tp('Importer des produits (CSV/Excel)')}
         </h3>
         <button
           onClick={downloadTemplate}
           className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
         >
           <Download className="w-4 h-4" />
-          Télécharger le modèle
+          {tp('Télécharger le modèle')}
         </button>
       </div>
 
@@ -392,10 +393,10 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
           >
             <FileText className="w-12 h-12 text-gray-400 mb-3" />
             <span className="text-sm text-gray-600 mb-2">
-              Cliquez pour sélectionner un fichier CSV ou Excel
+              {tp('Cliquez pour sélectionner un fichier CSV ou Excel')}
             </span>
             <span className="text-xs text-gray-500">
-              Formats supportés: .csv, .xlsx, .xls
+              {tp('Formats supportés: .csv, .xlsx, .xls')}
             </span>
           </label>
         </div>
@@ -422,7 +423,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
 
         {showPreview && preview.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-2">Aperçu (5 premières lignes):</h4>
+            <h4 className="text-sm font-medium text-gray-900 mb-2">{tp('Aperçu (5 premières lignes):')}</h4>
             <div className="overflow-x-auto">
               <table className="min-w-full text-xs">
                 <thead className="bg-gray-50">
@@ -460,12 +461,12 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Importation...
+                  {tp('Importation...')}
                 </>
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Importer les produits
+                  {tp('Importer les produits')}
                 </>
               )}
             </button>

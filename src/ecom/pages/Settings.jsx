@@ -6,6 +6,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import { usePushNotifications } from '../hooks/usePushNotifications.jsx';
 import ecomApi, { settingsApi, authApi } from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const Settings = () => {
   const { fmt, currency, symbol } = useMoney();
@@ -262,7 +263,7 @@ const Settings = () => {
   const handlePushToggle = async () => {
     try {
       if (!pushSupported) {
-        alert('Les notifications push ne sont pas supportées par votre navigateur.');
+        alert(tp('Les notifications push ne sont pas supportées par votre navigateur.'));
         return;
       }
 
@@ -391,13 +392,13 @@ const Settings = () => {
   }, [activeTab]);
 
   const tabs = [
-    { id: 'general', label: 'Général', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
+    { id: 'general', get label() { return tp('Général'); }, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
     { id: 'currency', label: 'Devise', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
     { id: 'notifications', label: 'Notifications', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg> },
     { id: 'google_sheets', label: 'Google Sheets', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> },
     { id: 'account', label: 'Compte', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
     { id: 'delivery_groups', label: 'Groupes livraison', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
-    { id: 'security', label: 'Sécurité', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg> },
+    { id: 'security', get label() { return tp('Sécurité'); }, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg> },
   ];
 
   const roleLabels = {
@@ -410,10 +411,10 @@ const Settings = () => {
 
   const examples = [
     { label: 'Prix d\'un produit', amount: 15000 },
-    { label: 'Coût de livraison', amount: 2500 },
-    { label: 'Dépense publicitaire', amount: 50000 },
+    { get label() { return tp('Coût de livraison'); }, amount: 2500 },
+    { get label() { return tp('Dépense publicitaire'); }, amount: 50000 },
     { label: 'Chiffre d\'affaires', amount: 250000 },
-    { label: 'Bénéfice net', amount: 45000 }
+    { get label() { return tp('Bénéfice net'); }, amount: 45000 }
   ];
 
   return (
@@ -423,12 +424,12 @@ const Settings = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Paramètres</h1>
-              <p className="mt-1.5 text-sm text-gray-500">Gérez votre compte et les paramètres de votre espace de travail.</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{tp('Paramètres')}</h1>
+              <p className="mt-1.5 text-sm text-gray-500">{tp('Gérez votre compte et les paramètres de votre espace de travail.')}</p>
             </div>
             {hasChanges && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-amber-600 font-medium mr-2">Modifications non sauvegardées</span>
+                <span className="text-sm text-amber-600 font-medium mr-2">{tp('Modifications non sauvegardées')}</span>
               </div>
             )}
           </div>
@@ -467,8 +468,8 @@ const Settings = () => {
               {/* Profil */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-5 border-b border-gray-100">
-                  <h2 className="text-lg font-bold text-gray-900">Profil</h2>
-                  <p className="text-sm text-gray-500 mt-1">Informations de votre compte</p>
+                  <h2 className="text-lg font-bold text-gray-900">{tp('Profil')}</h2>
+                  <p className="text-sm text-gray-500 mt-1">{tp('Informations de votre compte')}</p>
                 </div>
                 <div className="p-6">
                   <div className="flex items-start gap-5 mb-6">
@@ -484,19 +485,19 @@ const Settings = () => {
                           {roleLabels[user?.role] || user?.role}
                         </span>
                         <Link to="/ecom/profile" className="px-4 py-1.5 text-sm font-semibold text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors">
-                          Mon compte
+                          {tp('Mon compte')}
                         </Link>
                       </div>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Nom complet')}</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         </div>
-                        <input type="text" value={profileName} onChange={e => setProfileName(e.target.value)} placeholder="Votre nom" className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" />
+                        <input type="text" value={profileName} onChange={e => setProfileName(e.target.value)} placeholder={tp('Votre nom')} className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" />
                       </div>
                     </div>
                     <div>
@@ -509,7 +510,7 @@ const Settings = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Téléphone')}</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
@@ -518,7 +519,7 @@ const Settings = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Rôle</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Rôle')}</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
@@ -529,14 +530,14 @@ const Settings = () => {
                     <div className="sm:col-span-2 flex items-center justify-between gap-3 pt-1">
                       <div className="flex-1">
                         {profileError && <p className="text-sm text-red-600">{profileError}</p>}
-                        {profileSaved && <p className="text-sm text-primary-600 flex items-center gap-1"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>Profil mis à jour</p>}
+                        {profileSaved && <p className="text-sm text-primary-600 flex items-center gap-1"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>{tp('Profil mis à jour')}</p>}
                       </div>
                       <button
                         onClick={saveProfile}
                         disabled={profileSaving}
                         className="px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
                       >
-                        {profileSaving ? <><svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>Sauvegarde...</> : 'Sauvegarder'}
+                        {profileSaving ? <><svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>{tp('Sauvegarde...')}</> : tp('Sauvegarder')}
                       </button>
                     </div>
                   </div>
@@ -547,32 +548,32 @@ const Settings = () => {
               {workspace && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-100">
-                    <h2 className="text-base font-semibold text-gray-900">Espace de travail</h2>
-                    <p className="text-xs text-gray-500 mt-0.5">Configuration de votre espace</p>
+                    <h2 className="text-base font-semibold text-gray-900">{tp('Espace de travail')}</h2>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('Configuration de votre espace')}</p>
                   </div>
                   <div className="p-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom</label>
+                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Nom')}</label>
                         <p className="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-200">{workspace.name || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Slug</label>
+                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Slug')}</label>
                         <p className="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-200 font-mono">{workspace.slug || '—'}</p>
                       </div>
                       {workspace.inviteCode && user?.role === 'ecom_admin' && (
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Code d'invitation</label>
+                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Code d\'invitation')}</label>
                           <div className="flex items-center gap-2">
                             <p className="flex-1 text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-200 font-mono tracking-widest">{workspace.inviteCode}</p>
                             <button
                               onClick={() => { navigator.clipboard.writeText(workspace.inviteCode); }}
                               className="px-3 py-2.5 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition text-sm font-medium"
                             >
-                              Copier
+                              {tp('Copier')}
                             </button>
                           </div>
-                          <p className="text-xs text-gray-400 mt-1">Partagez ce code pour inviter des membres dans votre espace.</p>
+                          <p className="text-xs text-gray-400 mt-1">{tp('Partagez ce code pour inviter des membres dans votre espace.')}</p>
                         </div>
                       )}
                     </div>
@@ -588,15 +589,15 @@ const Settings = () => {
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">Devise préférée</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">Tous les montants seront convertis et affichés dans cette devise.</p>
+                  <h2 className="text-base font-semibold text-gray-900">{tp('Devise préférée')}</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">{tp('Tous les montants seront convertis et affichés dans cette devise.')}</p>
                 </div>
                 <div className="p-6">
                   <CurrencySelector />
 
                   <div className="mt-6 bg-gray-50 rounded-xl p-5 border border-gray-200">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-semibold text-gray-700">Aperçu de conversion</h3>
+                      <h3 className="text-sm font-semibold text-gray-700">{tp('Aperçu de conversion')}</h3>
                       <span className="text-xs font-medium px-2.5 py-1 bg-primary-100 text-primary-700 rounded-full">{currency} {symbol}</span>
                     </div>
                     <div className="space-y-0 divide-y divide-gray-200">
@@ -619,7 +620,7 @@ const Settings = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <h4 className="text-sm font-medium text-primary-900">Comment ça marche ?</h4>
+                  <h4 className="text-sm font-medium text-primary-900">{tp('Comment ça marche ?')}</h4>
                   <p className="text-sm text-primary-700 mt-1">
                     Les taux de conversion sont basés sur le FCFA (XAF). Quand vous changez de devise,
                     tous les montants dans l'application sont automatiquement convertis.
@@ -639,18 +640,18 @@ const Settings = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                        <h3 className="text-lg font-bold text-gray-900">Activer les notifications push</h3>
+                        <h3 className="text-lg font-bold text-gray-900">{tp('Activer les notifications push')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3">Recevez des notifications en temps réel sur votre appareil, même quand l'application est fermée.</p>
+                      <p className="text-sm text-gray-600 mb-3">{tp('Recevez des notifications en temps réel sur votre appareil, même quand l\'application est fermée.')}</p>
                       {isSubscribed ? (
                         <div className="flex items-center gap-2 text-sm">
                           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                          <span className="text-green-700 font-medium">Notifications push activées</span>
+                          <span className="text-green-700 font-medium">{tp('Notifications push activées')}</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 text-sm">
                           <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                          <span className="text-gray-600">Notifications push désactivées</span>
+                          <span className="text-gray-600">{tp('Notifications push désactivées')}</span>
                         </div>
                       )}
                     </div>
@@ -659,7 +660,7 @@ const Settings = () => {
                       disabled={pushLoading || !pushSupported || pushPermission === 'denied'}
                       className={`px-5 py-2.5 text-white font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 ${isSubscribed ? 'bg-gray-700 hover:bg-gray-800' : 'bg-primary-600 hover:bg-primary-700'}`}
                     >
-                      {pushLoading ? 'Chargement...' : isSubscribed ? 'Désactiver' : 'Activer'}
+                      {pushLoading ? 'Chargement...' : isSubscribed ? 'Désactiver' : tp('Activer')}
                     </button>
                   </div>
                   {pushPermission === 'denied' && (
@@ -669,7 +670,7 @@ const Settings = () => {
                   )}
                   {!pushSupported && (
                     <p className="mt-3 text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
-                      Cet appareil ou navigateur ne supporte pas les notifications push.
+                      {tp('Cet appareil ou navigateur ne supporte pas les notifications push.')}
                     </p>
                   )}
                   {pushError && (
@@ -682,8 +683,8 @@ const Settings = () => {
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">Préférences de notification</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">Choisissez comment et quand vous souhaitez être notifié.</p>
+                  <h2 className="text-base font-semibold text-gray-900">{tp('Préférences de notification')}</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">{tp('Choisissez comment et quand vous souhaitez être notifié.')}</p>
                 </div>
                 <div className="divide-y divide-gray-100">
                   {/* Email notifications */}
@@ -692,13 +693,13 @@ const Settings = () => {
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      Notifications par email
+                      {tp('Notifications par email')}
                     </h3>
                     <div className="space-y-4">
                       {[
-                        { key: 'email_orders', label: 'Nouvelles commandes', desc: 'Recevez un email à chaque nouvelle commande.' },,
-                        { key: 'email_stock', label: 'Alertes de stock', desc: 'Soyez prévenu quand un produit atteint son seuil critique.' },
-                        { key: 'email_reports', label: 'Rapports hebdomadaires', desc: 'Recevez un résumé de vos performances chaque semaine.' },
+                        { key: 'email_orders', label: 'Nouvelles commandes', get desc() { return tp('Recevez un email à chaque nouvelle commande.'); } },,
+                        { key: 'email_stock', label: 'Alertes de stock', get desc() { return tp('Soyez prévenu quand un produit atteint son seuil critique.'); } },
+                        { key: 'email_reports', label: 'Rapports hebdomadaires', get desc() { return tp('Recevez un résumé de vos performances chaque semaine.'); } },
                       ].map(item => (
                         <div key={item.key} className="flex items-center justify-between">
                           <div>
@@ -726,16 +727,16 @@ const Settings = () => {
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                       </svg>
-                      Notifications push (mobile)
+                      {tp('Notifications push (mobile)')}
                     </h3>
                     <div className="space-y-4">
                       {[
-                        { key: 'push_new_orders', label: '🛒 Nouvelles commandes', desc: 'Notification instantanée pour chaque nouvelle commande créée.' },
-                        { key: 'push_status_changes', label: '📋 Changements de statut', desc: 'Alertes quand le statut d\'une commande change (confirmée, expédiée, livrée, etc.).' },
-                        { key: 'push_deliveries', label: '🚚 Assignations livreur', desc: 'Notification quand une commande est assignée à un livreur.' },
+                        { key: 'push_new_orders', label: '🛒 Nouvelles commandes', get desc() { return tp('Notification instantanée pour chaque nouvelle commande créée.'); } },
+                        { key: 'push_status_changes', label: '📋 Changements de statut', get desc() { return tp('Alertes quand le statut d\'une commande change (confirmée, expédiée, livrée, etc.).'); } },
+                        { key: 'push_deliveries', label: '🚚 Assignations livreur', get desc() { return tp('Notification quand une commande est assignée à un livreur.'); } },
                         { key: 'push_stock_updates', label: '📦 Modifications de stock', desc: 'Alertes lors des changements de stock des produits.' },
-                        { key: 'push_low_stock', label: '⚠️ Stock faible', desc: 'Alerte immédiate quand un produit atteint le seuil de stock minimum.' },
-                        { key: 'push_sync_completed', label: '📊 Synchronisations terminées', desc: 'Notification quand une synchro Google Sheets ou un import se termine.' },
+                        { key: 'push_low_stock', label: '⚠️ Stock faible', get desc() { return tp('Alerte immédiate quand un produit atteint le seuil de stock minimum.'); } },
+                        { key: 'push_sync_completed', get label() { return tp('📊 Synchronisations terminées'); }, desc: 'Notification quand une synchro Google Sheets ou un import se termine.' },
                       ].map(item => (
                         <div key={item.key} className="flex items-center justify-between">
                           <div className="flex-1 pr-4">
@@ -773,33 +774,33 @@ const Settings = () => {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                   <div>
-                    <h2 className="text-base font-semibold text-gray-900">Sources Google Sheets</h2>
-                    <p className="text-xs text-gray-500 mt-0.5">Gérez plusieurs feuilles de calcul pour vos commandes.</p>
+                    <h2 className="text-base font-semibold text-gray-900">{tp('Sources Google Sheets')}</h2>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('Gérez plusieurs feuilles de calcul pour vos commandes.')}</p>
                   </div>
                 </div>
 
                 <div className="p-6 space-y-6">
                   {/* Ajouter une source */}
                   <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Ajouter une nouvelle source</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Ajouter une nouvelle source')}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <input
                         type="text"
-                        placeholder="Nom (ex: Boutique A)"
+                        placeholder={tp('Nom (ex: Boutique A)')}
                         value={newSource.name}
                         onChange={e => setNewSource({ ...newSource, name: e.target.value })}
                         className="px-3 py-2 border rounded-lg text-sm"
                       />
                       <input
                         type="text"
-                        placeholder="ID ou URL Spreadsheet"
+                        placeholder={tp('ID ou URL Spreadsheet')}
                         value={newSource.spreadsheetId}
                         onChange={e => setNewSource({ ...newSource, spreadsheetId: e.target.value })}
                         className="px-3 py-2 border rounded-lg text-sm sm:col-span-1"
                       />
                       <input
                         type="text"
-                        placeholder="Nom de l'onglet (ex: Sheet1)"
+                        placeholder={tp('Nom de l\'onglet (ex: Sheet1)')}
                         value={newSource.sheetName}
                         onChange={e => setNewSource({ ...newSource, sheetName: e.target.value })}
                         className="px-3 py-2 border rounded-lg text-sm"
@@ -810,17 +811,17 @@ const Settings = () => {
                       disabled={!newSource.name || !newSource.spreadsheetId}
                       className="mt-3 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
                     >
-                      Ajouter la source
+                      {tp('Ajouter la source')}
                     </button>
                   </div>
 
                   {/* Liste des sources */}
                   <div className="space-y-3">
                     {sourcesLoading ? (
-                      <div className="text-center py-4 text-gray-500 text-sm">Chargement des sources...</div>
+                      <div className="text-center py-4 text-gray-500 text-sm">{tp('Chargement des sources...')}</div>
                     ) : sources.length === 0 ? (
                       <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed text-gray-400 text-sm">
-                        Aucune source configurée
+                        {tp('Aucune source configurée')}
                       </div>
                     ) : (
                       sources.map(source => (
@@ -831,14 +832,14 @@ const Settings = () => {
                               <h4 className="font-semibold text-gray-900 truncate">{source.name}</h4>
                             </div>
                             <p className="text-xs text-gray-500 mt-1 truncate">ID: {source.spreadsheetId}</p>
-                            <p className="text-xs text-gray-400">Onglet: {source.sheetName} • Sync: {source.lastSyncAt ? new Date(source.lastSyncAt).toLocaleString() : 'Jamais'}</p>
+                            <p className="text-xs text-gray-400">Onglet: {source.sheetName} • Sync: {source.lastSyncAt ? new Date(source.lastSyncAt).toLocaleString() : tp('Jamais')}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleUpdateSource(source._id, { isActive: !source.isActive })}
                               className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${source.isActive ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-600 border-green-100'}`}
                             >
-                              {source.isActive ? 'Désactiver' : 'Activer'}
+                              {source.isActive ? 'Désactiver' : tp('Activer')}
                             </button>
                             <button
                               onClick={() => handleDeleteSource(source._id)}
@@ -868,8 +869,8 @@ const Settings = () => {
               <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">Numéro WhatsApp — Rapports</h2>
-              <p className="text-xs text-gray-400">Ce numéro reçoit automatiquement la notification lors de la soumission d'un rapport.</p>
+              <h2 className="text-base font-bold text-gray-900">{tp('Numéro WhatsApp — Rapports')}</h2>
+              <p className="text-xs text-gray-400">{tp('Ce numéro reçoit automatiquement la notification lors de la soumission d\'un rapport.')}</p>
             </div>
           </div>
           <div className="flex gap-3">
@@ -877,7 +878,7 @@ const Settings = () => {
               type="tel"
               value={reportWANumber}
               onChange={e => setReportWANumber(e.target.value)}
-              placeholder="ex : 237699887766"
+              placeholder={tp('ex : 237699887766')}
               className="flex-1 px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white focus:outline-none transition placeholder:text-gray-400"
             />
             <button
@@ -890,10 +891,10 @@ const Settings = () => {
                 ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
                 : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
               }
-              {savingReportWA ? 'Enregistrement…' : 'Enregistrer'}
+              {savingReportWA ? 'Enregistrement…' : tp('Enregistrer')}
             </button>
           </div>
-          {reportWASaved && <p className="mt-2 text-sm text-primary-600 font-medium">✅ Numéro enregistré</p>}
+          {reportWASaved && <p className="mt-2 text-sm text-primary-600 font-medium">{tp('✅ Numéro enregistré')}</p>}
           {reportWAError && <p className="mt-2 text-sm text-red-500">❌ {reportWAError}</p>}
         </div>
 
@@ -904,13 +905,13 @@ const Settings = () => {
               <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">Groupes de Livraison WhatsApp</h2>
-              <p className="text-xs text-gray-400">Ces groupes reçoivent les commandes à livrer quand vous cliquez "Envoyer au groupe".</p>
+              <h2 className="text-base font-bold text-gray-900">{tp('Groupes de Livraison WhatsApp')}</h2>
+              <p className="text-xs text-gray-400">{tp('Ces groupes reçoivent les commandes à livrer quand vous cliquez "Envoyer au groupe".')}</p>
             </div>
           </div>
 
           <div className="my-4 p-3 bg-orange-50 border border-orange-100 rounded-xl text-xs text-orange-700">
-            <strong>Comment ajouter un groupe :</strong> Cliquez <strong>Ajouter un groupe</strong>, sélectionnez un groupe depuis la liste de votre instance WhatsApp, puis cliquez <strong>Enregistrer</strong>. Votre instance WhatsApp doit être connectée et membre du groupe.
+            <strong>{tp('Comment ajouter un groupe :')}</strong> {tp('Cliquez')} <strong>{tp('Ajouter un groupe')}</strong>{tp(', sélectionnez un groupe depuis la liste de votre instance WhatsApp, puis cliquez')} <strong>{tp('Enregistrer')}</strong>. Votre instance WhatsApp doit être connectée et membre du groupe.
           </div>
 
           {loadingGroups ? (
@@ -918,7 +919,7 @@ const Settings = () => {
           ) : (
             <div className="space-y-3 mb-4">
               {deliveryGroups.length === 0 && (
-                <p className="text-sm text-gray-400 italic py-2">Aucun groupe configuré. Ajoutez-en un ci-dessous.</p>
+                <p className="text-sm text-gray-400 italic py-2">{tp('Aucun groupe configuré. Ajoutez-en un ci-dessous.')}</p>
               )}
               {deliveryGroups.map((item, idx) => (
                 <div key={idx} className="bg-orange-50 border border-orange-100 rounded-xl p-3 space-y-2">
@@ -938,7 +939,7 @@ const Settings = () => {
                           }}
                           className="flex-1 px-3 py-2 border border-orange-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none"
                         >
-                          <option value="">— Choisir un groupe WhatsApp —</option>
+                          <option value="">{tp('— Choisir un groupe WhatsApp —')}</option>
                           {waGroups.map(g => (
                             <option key={g.id} value={g.id}>{g.name}</option>
                           ))}
@@ -947,7 +948,7 @@ const Settings = () => {
                           type="button"
                           onClick={() => setDeliveryGroups(prev => prev.map((n, i) => i === idx ? { ...n, _useLinkInput: true } : n))}
                           className="p-2 text-orange-500 hover:text-orange-700 hover:bg-orange-100 rounded-lg transition"
-                          title="Coller un lien d'invitation"
+                          title={tp('Coller un lien d\'invitation')}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                         </button>
@@ -956,7 +957,7 @@ const Settings = () => {
                       <div className="flex-1 flex items-center gap-2">
                         <input
                           type="text"
-                          placeholder="Lien d'invitation (chat.whatsapp.com/...) ou JID"
+                          placeholder={tp('Lien d\'invitation (chat.whatsapp.com/...) ou JID')}
                           value={item.inviteLink || item.phoneNumber || ''}
                           onChange={e => {
                             const val = e.target.value;
@@ -972,7 +973,7 @@ const Settings = () => {
                             disabled={item._resolving}
                             className="px-3 py-2 bg-orange-500 text-white rounded-lg text-xs font-medium hover:bg-orange-600 disabled:opacity-50 transition whitespace-nowrap"
                           >
-                            {item._resolving ? '...' : 'Résoudre'}
+                            {item._resolving ? '...' : tp('Résoudre')}
                           </button>
                         )}
                         {waGroups.length > 0 && (
@@ -980,7 +981,7 @@ const Settings = () => {
                             type="button"
                             onClick={() => setDeliveryGroups(prev => prev.map((n, i) => i === idx ? { ...n, _useLinkInput: false } : n))}
                             className="p-2 text-orange-500 hover:text-orange-700 hover:bg-orange-100 rounded-lg transition"
-                            title="Choisir depuis la liste"
+                            title={tp('Choisir depuis la liste')}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>
                           </button>
@@ -1006,7 +1007,7 @@ const Settings = () => {
                   {/* Nom personnalisé (optionnel, auto-rempli depuis le groupe sélectionné) */}
                   <input
                     type="text"
-                    placeholder="Nom affiché (optionnel — auto-rempli)"
+                    placeholder={tp('Nom affiché (optionnel — auto-rempli)')}
                     value={item.label || ''}
                     onChange={e => setDeliveryGroups(prev => prev.map((n, i) => i === idx ? { ...n, label: e.target.value } : n))}
                     className="w-full px-3 py-2 border border-orange-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none"
@@ -1029,7 +1030,7 @@ const Settings = () => {
               className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-700 border border-orange-200 rounded-xl text-sm font-medium hover:bg-orange-100 transition"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/></svg>
-              Ajouter un groupe
+              {tp('Ajouter un groupe')}
             </button>
             <button
               type="button"
@@ -1041,9 +1042,9 @@ const Settings = () => {
                 ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
                 : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
               }
-              {savingGroups ? 'Enregistrement...' : 'Enregistrer'}
+              {savingGroups ? 'Enregistrement...' : tp('Enregistrer')}
             </button>
-            {groupsSaved && <span className="text-sm text-primary-600 font-medium">✅ Groupes enregistrés</span>}
+            {groupsSaved && <span className="text-sm text-primary-600 font-medium">{tp('✅ Groupes enregistrés')}</span>}
             {groupsError && <span className="text-sm text-red-500">❌ {groupsError}</span>}
           </div>
         </div>
@@ -1058,8 +1059,8 @@ const Settings = () => {
               </svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">Groupes WhatsApp par produit</h2>
-              <p className="text-xs text-gray-400">Chaque nouvelle commande est automatiquement notifiée dans le groupe assigné au produit concerné.</p>
+              <h2 className="text-base font-bold text-gray-900">{tp('Groupes WhatsApp par produit')}</h2>
+              <p className="text-xs text-gray-400">{tp('Chaque nouvelle commande est automatiquement notifiée dans le groupe assigné au produit concerné.')}</p>
             </div>
           </div>
 
@@ -1072,7 +1073,7 @@ const Settings = () => {
           {productGroupsLoading ? (
             <div className="py-8 flex justify-center"><div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"/></div>
           ) : products.length === 0 ? (
-            <p className="text-sm text-gray-400 italic py-2">Aucun produit actif trouvé.</p>
+            <p className="text-sm text-gray-400 italic py-2">{tp('Aucun produit actif trouvé.')}</p>
           ) : (
             <div className="space-y-2">
               {products.map(product => (
@@ -1094,7 +1095,7 @@ const Settings = () => {
                       disabled={!waGroupsConnected || productGroupsSaving[product._id]}
                       className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:outline-none max-w-[200px] disabled:opacity-50"
                     >
-                      <option value="">— Aucun groupe —</option>
+                      <option value="">{tp('— Aucun groupe —')}</option>
                       {waGroups.map(g => (
                         <option key={g.jid} value={g.jid}>{g.name}{g.size ? ` (${g.size})` : ''}</option>
                       ))}
@@ -1119,8 +1120,8 @@ const Settings = () => {
               <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.117 1.533 5.84L0 24l6.335-1.507A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">Message client automatique par produit</h2>
-              <p className="text-xs text-gray-400">À chaque commande, l'instance choisie envoie automatiquement un WhatsApp au client. Sans instance, l'instance par défaut du workspace est utilisée.</p>
+              <h2 className="text-base font-bold text-gray-900">{tp('Message client automatique par produit')}</h2>
+              <p className="text-xs text-gray-400">{tp('À chaque commande, l\'instance choisie envoie automatiquement un WhatsApp au client. Sans instance, l\'instance par défaut du workspace est utilisée.')}</p>
             </div>
           </div>
 
@@ -1140,7 +1141,7 @@ const Settings = () => {
               ) : (
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M15.34 3.4c-.24-.07-.48.04-.55.24l-.83 2.81c-.47-.36-1.05-.56-1.66-.56-1.37 0-2.49 1.16-2.78 2.81-.19-.09-.42-.06-.56.1L7.13 11.1c-.3.35-.25.87.1 1.17l1.52 1.29-.52 1.75c-.1.35.1.72.45.82l2.77.83c.35.1.72-.1.82-.45l2.55-8.62a.56.56 0 00-.04-.45c-.5-1.04-.58-1.7-.24-2.47.18-.4.62-.56 1-.38.07.03.14.07.2.12l.63-2.14c.07-.24-.04-.48-.24-.55l-.59-.17z"/></svg>
               )}
-              {shopifySyncing ? 'Synchronisation...' : 'Importer produits Shopify'}
+              {shopifySyncing ? 'Synchronisation...' : tp('Importer produits Shopify')}
             </button>
             {shopifySyncResult && (
               <span className={`text-xs font-medium ${shopifySyncResult.success ? 'text-emerald-600' : 'text-red-600'}`}>
@@ -1152,7 +1153,7 @@ const Settings = () => {
           {productGroupsLoading ? (
             <div className="py-8 flex justify-center"><div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"/></div>
           ) : products.length === 0 ? (
-            <p className="text-sm text-gray-400 italic py-2">Aucun produit actif trouvé.</p>
+            <p className="text-sm text-gray-400 italic py-2">{tp('Aucun produit actif trouvé.')}</p>
           ) : (
             <div className="space-y-3">
               {products.map(product => (
@@ -1182,7 +1183,7 @@ const Settings = () => {
                       disabled={productClientSaving[product._id]}
                       className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 focus:outline-none max-w-[200px] disabled:opacity-50 ml-auto"
                     >
-                      <option value="">— Instance par défaut —</option>
+                      <option value="">{tp('— Instance par défaut —')}</option>
                       {waInstances.map(i => (
                         <option key={i._id} value={i._id}>{(i.customName || i.instanceName)}{i.status ? ` (${i.status})` : ''}</option>
                       ))}
@@ -1220,25 +1221,25 @@ const Settings = () => {
               {/* Sécurité */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">Sécurité</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">Gérez la sécurité de votre compte.</p>
+                  <h2 className="text-base font-semibold text-gray-900">{tp('Sécurité')}</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">{tp('Gérez la sécurité de votre compte.')}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Mot de passe</p>
-                      <p className="text-xs text-gray-500">Dernière modification : inconnue</p>
+                      <p className="text-sm font-medium text-gray-900">{tp('Mot de passe')}</p>
+                      <p className="text-xs text-gray-500">{tp('Dernière modification : inconnue')}</p>
                     </div>
                     <button className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition">
-                      Modifier
+                      {tp('Modifier')}
                     </button>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Sessions actives</p>
-                      <p className="text-xs text-gray-500">Gérez vos appareils connectés</p>
+                      <p className="text-sm font-medium text-gray-900">{tp('Sessions actives')}</p>
+                      <p className="text-xs text-gray-500">{tp('Gérez vos appareils connectés')}</p>
                     </div>
-                    <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">1 active</span>
+                    <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">{tp('1 active')}</span>
                   </div>
                 </div>
               </div>
@@ -1248,14 +1249,14 @@ const Settings = () => {
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900">Déconnexion</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">Vous serez redirigé vers la page de connexion.</p>
+                      <h3 className="text-sm font-semibold text-gray-900">{tp('Déconnexion')}</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">{tp('Vous serez redirigé vers la page de connexion.')}</p>
                     </div>
                     <button
                       onClick={logout}
                       className="px-4 py-2 text-sm font-medium text-orange-700 bg-orange-50 rounded-lg hover:bg-orange-100 transition border border-orange-200"
                     >
-                      Se déconnecter
+                      {tp('Se déconnecter')}
                     </button>
                   </div>
                 </div>
@@ -1264,20 +1265,20 @@ const Settings = () => {
               {/* Zone de danger */}
               <div className="bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-red-100 bg-red-50">
-                  <h2 className="text-base font-semibold text-red-900">Zone de danger</h2>
-                  <p className="text-xs text-red-600 mt-0.5">Actions irréversibles sur votre compte.</p>
+                  <h2 className="text-base font-semibold text-red-900">{tp('Zone de danger')}</h2>
+                  <p className="text-xs text-red-600 mt-0.5">{tp('Actions irréversibles sur votre compte.')}</p>
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Supprimer toutes mes données</p>
-                      <p className="text-xs text-gray-500">Toutes vos données seront définitivement supprimées.</p>
+                      <p className="text-sm font-medium text-gray-900">{tp('Supprimer toutes mes données')}</p>
+                      <p className="text-xs text-gray-500">{tp('Toutes vos données seront définitivement supprimées.')}</p>
                     </div>
                     <button
                       onClick={() => setShowDeleteConfirm(true)}
                       className="px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition border border-red-200"
                     >
-                      Supprimer
+                      {tp('Supprimer')}
                     </button>
                   </div>
                 </div>
@@ -1292,7 +1293,7 @@ const Settings = () => {
                         <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                           <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900">Supprimer toutes mes données</h3>
+                        <h3 className="text-lg font-bold text-gray-900">{tp('Supprimer toutes mes données')}</h3>
                       </div>
                       <button onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmWord(''); setDeleteError(''); }} className="text-gray-400 hover:text-gray-600 transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1301,24 +1302,24 @@ const Settings = () => {
                     
                     <div className="mb-5">
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                        <p className="text-sm text-red-800 font-medium mb-2">⚠️ Cette action est irréversible !</p>
-                        <p className="text-xs text-red-700">Les données suivantes seront supprimées :</p>
+                        <p className="text-sm text-red-800 font-medium mb-2">{tp('⚠️ Cette action est irréversible !')}</p>
+                        <p className="text-xs text-red-700">{tp('Les données suivantes seront supprimées :')}</p>
                         <ul className="text-xs text-red-700 mt-2 space-y-1 ml-4">
-                          <li>• Toutes vos commandes</li>
-                          <li>• Toutes vos transactions</li>
-                          <li>• Tous vos journaux d'audit</li>
-                          <li>• Votre compte utilisateur</li>
+                          <li>{tp('• Toutes vos commandes')}</li>
+                          <li>{tp('• Toutes vos transactions')}</li>
+                          <li>{tp('• Tous vos journaux d\'audit')}</li>
+                          <li>{tp('• Votre compte utilisateur')}</li>
                         </ul>
                       </div>
                       
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Pour confirmer, tapez le mot : <span className="text-red-600 font-bold text-base">SUPPRIMER</span>
+                        {tp('Pour confirmer, tapez le mot :')} <span className="text-red-600 font-bold text-base">SUPPRIMER</span>
                       </label>
                       <input
                         type="text"
                         value={deleteConfirmWord}
                         onChange={e => { setDeleteConfirmWord(e.target.value); setDeleteError(''); }}
-                        placeholder="Tapez SUPPRIMER"
+                        placeholder={tp('Tapez SUPPRIMER')}
                         className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         disabled={isDeleting}
                       />
@@ -1334,7 +1335,7 @@ const Settings = () => {
                         disabled={isDeleting}
                         className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium transition disabled:opacity-50"
                       >
-                        Annuler
+                        {tp('Annuler')}
                       </button>
                       <button
                         onClick={async () => {
@@ -1352,7 +1353,7 @@ const Settings = () => {
                             });
                             
                             if (res.data.success) {
-                              alert('Toutes vos données ont été supprimées. Vous allez être déconnecté.');
+                              alert(tp('Toutes vos données ont été supprimées. Vous allez être déconnecté.'));
                               logout();
                             }
                           } catch (err) {
@@ -1370,7 +1371,7 @@ const Settings = () => {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                             </svg>
-                            Suppression...
+                            {tp('Suppression...')}
                           </>
                         ) : (
                           'Supprimer définitivement'
@@ -1388,8 +1389,8 @@ const Settings = () => {
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">Tableau de bord sécurité</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">Consultez les journaux d'activité et les alertes de sécurité.</p>
+                  <h2 className="text-base font-semibold text-gray-900">{tp('Tableau de bord sécurité')}</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">{tp('Consultez les journaux d\'activité et les alertes de sécurité.')}</p>
                 </div>
                 <div className="p-6">
                   <Link
@@ -1401,8 +1402,8 @@ const Settings = () => {
                         <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">Ouvrir le tableau de bord sécurité</p>
-                        <p className="text-xs text-gray-500">Journaux d'accès, alertes et activité suspecte</p>
+                        <p className="text-sm font-semibold text-gray-900">{tp('Ouvrir le tableau de bord sécurité')}</p>
+                        <p className="text-xs text-gray-500">{tp('Journaux d\'accès, alertes et activité suspecte')}</p>
                       </div>
                     </div>
                     <svg className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
@@ -1424,7 +1425,7 @@ const Settings = () => {
                 <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
-                <span className="text-sm font-medium text-gray-700">Vous avez des modifications non sauvegardées</span>
+                <span className="text-sm font-medium text-gray-700">{tp('Vous avez des modifications non sauvegardées')}</span>
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -1432,7 +1433,7 @@ const Settings = () => {
                   disabled={isSaving}
                   className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
-                  Annuler
+                  {tp('Annuler')}
                 </button>
                 <button
                   onClick={handleSaveChanges}
@@ -1445,14 +1446,14 @@ const Settings = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                      Enregistrement...
+                      {tp('Enregistrement...')}
                     </>
                   ) : (
                     <>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Enregistrer
+                      {tp('Enregistrer')}
                     </>
                   )}
                 </button>

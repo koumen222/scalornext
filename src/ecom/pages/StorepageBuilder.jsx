@@ -267,9 +267,78 @@ const SECTION_TYPES = {
     category: 'Marketing',
     defaults: { title: 'Restez informé', subtitle: 'Recevez nos offres en exclusivité', placeholder: 'Votre email', buttonText: "S'inscrire", backgroundColor: '' },
   },
+  badges: {
+    label: 'Badges défilants',
+    icon: <Star className="w-4 h-4" />,
+    color: '#0ea5e9',
+    category: 'Social Proof',
+    defaults: {
+      items: [
+        { icon: '🚚', title: 'Livraison rapide', desc: '24h à 72h partout' },
+        { icon: '💳', title: 'Paiement à la livraison', desc: 'Payez à la réception' },
+        { icon: '🛡️', title: 'Qualité garantie', desc: 'Produits vérifiés' },
+        { icon: '💬', title: 'Support réactif', desc: 'WhatsApp 7j/7' },
+      ],
+    },
+  },
+  features: {
+    label: 'Pourquoi nous choisir',
+    icon: <Star className="w-4 h-4" />,
+    color: '#14b8a6',
+    category: 'Contenu',
+    defaults: {
+      title: 'Pourquoi nous choisir ?',
+      subtitle: '',
+      image: '',
+      items: [
+        { icon: '✨', title: 'Qualité premium', desc: 'Des produits sélectionnés avec soin.' },
+        { icon: '🚚', title: 'Livraison rapide', desc: 'Recevez votre commande en 24-72h.' },
+        { icon: '💬', title: 'Support 7j/7', desc: 'Une équipe disponible sur WhatsApp.' },
+      ],
+    },
+  },
+  countdown: {
+    label: 'Compte à rebours',
+    icon: <Zap className="w-4 h-4" />,
+    color: '#f97316',
+    category: 'Marketing',
+    defaults: {
+      title: '⚡ Offre limitée — dépêchez-vous !',
+      endDate: '',
+      expiredText: "L'offre est terminée",
+      ctaText: '',
+      ctaLink: '#products',
+      backgroundColor: '#111827',
+      textColor: '#ffffff',
+    },
+  },
+  logo_list: {
+    label: 'Logos / Partenaires',
+    icon: <Star className="w-4 h-4" />,
+    color: '#64748b',
+    category: 'Social Proof',
+    defaults: {
+      title: 'Ils nous font confiance',
+      logos: [],
+      marquee: true,
+      grayscale: true,
+      backgroundColor: '#ffffff',
+    },
+  },
+  custom_code: {
+    label: 'Code HTML / CSS / JS',
+    icon: <Layout className="w-4 h-4" />,
+    color: '#0f172a',
+    category: 'Avancé',
+    defaults: {
+      html: '<div class="ma-section">\n  <h2>Section personnalisée</h2>\n  <p>Écrivez votre propre HTML ici.</p>\n</div>',
+      css: '.ma-section {\n  padding: 48px 24px;\n  text-align: center;\n}',
+      js: '',
+    },
+  },
 };
 
-const CATEGORIES = ['Marketing', 'E-commerce', 'Contenu', 'Social Proof', 'Support', 'Layout'];
+const CATEGORIES = ['Marketing', 'E-commerce', 'Contenu', 'Social Proof', 'Support', 'Layout', 'Avancé'];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -529,48 +598,50 @@ function SectionCard({ section, isSelected, onSelect, onDelete, onDuplicate, onT
     opacity: isDragging ? 0.4 : 1,
   };
 
+  // Ligne compacte façon Shopify : poignée au survol, icône teintée, libellé,
+  // actions révélées au survol — pas de vignette, la préview vit à droite.
   return (
     <div
       ref={setNodeRef}
       style={style}
       onClick={() => onSelect(section.id)}
-      className={`group relative rounded-xl border-2 cursor-pointer transition-all select-none overflow-hidden ${
+      className={`group relative flex items-center gap-2 pl-1.5 pr-1 py-[7px] rounded-lg cursor-pointer transition-colors select-none ${
         isSelected
-          ? 'border-indigo-500 ring-2 ring-indigo-200 shadow-lg'
-          : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
-      } ${!section.visible ? 'opacity-50' : ''}`}
+          ? 'bg-indigo-50 ring-1 ring-indigo-200'
+          : 'hover:bg-slate-100/80'
+      } ${isDragging ? 'bg-white shadow-lg ring-1 ring-indigo-200 z-10' : ''}`}
     >
-      {/* Header bar */}
-      <div className={`flex items-center gap-2 px-3 py-2 border-b ${isSelected ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-gray-100'}`}>
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-gray-200 text-gray-400"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <GripVertical className="w-3.5 h-3.5" />
-        </div>
-        <div className="w-5 h-5 rounded flex items-center justify-center text-white flex-shrink-0" style={{ background: meta?.color || '#6b7280' }}>
-          {meta?.icon}
-        </div>
-        <span className="text-xs font-semibold text-gray-800 flex-1 truncate">{meta?.label || section.type}</span>
-        {!section.visible && <span className="text-[10px] bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded">Masqué</span>}
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
-          <button onClick={() => onToggleVisible(section.id)} className="p-1 rounded hover:bg-gray-200 text-gray-400" title={section.visible ? 'Masquer' : 'Afficher'}>
-            {section.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-          </button>
-          <button onClick={() => onDuplicate(section.id)} className="p-1 rounded hover:bg-gray-200 text-gray-400" title="Dupliquer">
-            <Copy className="w-3.5 h-3.5" />
-          </button>
-          <button onClick={() => onDelete(section.id)} className="p-1 rounded hover:bg-red-100 text-gray-400 hover:text-red-500" title="Supprimer">
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
+      <div
+        {...attributes}
+        {...listeners}
+        className={`cursor-grab active:cursor-grabbing p-0.5 rounded text-slate-300 hover:text-slate-500 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+        onClick={(e) => e.stopPropagation()}
+        title="Glisser pour réordonner"
+      >
+        <GripVertical className="w-3.5 h-3.5" />
       </div>
-
-      {/* Thumbnail preview */}
-      <div className="relative bg-white" style={{ minHeight: 56 }}>
-        <SectionThumb section={section} />
+      <div
+        className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5"
+        style={{ background: `${meta?.color || '#64748b'}14`, color: meta?.color || '#64748b' }}
+      >
+        {meta?.icon || <Layout className="w-3.5 h-3.5" />}
+      </div>
+      <span className={`flex-1 min-w-0 truncate text-[12.5px] font-semibold ${
+        isSelected ? 'text-indigo-900' : section.visible ? 'text-slate-700' : 'text-slate-400 line-through decoration-slate-300'
+      }`}>
+        {meta?.label || section.type}
+      </span>
+      {!section.visible && <EyeOff className="w-3 h-3 text-slate-300 flex-shrink-0" />}
+      <div className={`flex items-center transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'}`} onClick={(e) => e.stopPropagation()}>
+        <button onClick={() => onToggleVisible(section.id)} className="p-1 rounded-md hover:bg-white text-slate-400 hover:text-slate-700 transition" title={section.visible ? 'Masquer' : 'Afficher'}>
+          {section.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+        </button>
+        <button onClick={() => onDuplicate(section.id)} className="p-1 rounded-md hover:bg-white text-slate-400 hover:text-slate-700 transition" title="Dupliquer">
+          <Copy className="w-3.5 h-3.5" />
+        </button>
+        <button onClick={() => onDelete(section.id)} className="p-1 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-500 transition" title="Supprimer">
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -688,7 +759,122 @@ function GalleryEditor({ images = [], onChange }) {
   );
 }
 
+// ── Options communes à TOUTES les sections (style Shopify) ───────────────────
+const PAD_OPTIONS = [
+  { label: 'Auto', value: '' },
+  { label: '0', value: 0 },
+  { label: 'S — 16px', value: 16 },
+  { label: 'M — 32px', value: 32 },
+  { label: 'L — 64px', value: 64 },
+  { label: 'XL — 96px', value: 96 },
+];
+
+function SectionStyleEditor({ section, onChange }) {
+  const [open, setOpen] = useState(false);
+  const config = section.config || {};
+  const st = config._style || {};
+  const setStyle = (key, val) => onChange({ ...section, config: { ...config, _style: { ...st, [key]: val } } });
+  const codeCls = 'w-full px-3 py-2 text-[12px] leading-relaxed border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-900 text-slate-100 font-mono resize-y placeholder-slate-500';
+
+  return (
+    <div className="mt-4 rounded-xl border border-slate-200 bg-white overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-2.5 text-left hover:bg-slate-50 transition"
+      >
+        <span className="flex items-center gap-2 text-[11.5px] font-bold text-slate-700">
+          <Pencil className="w-3 h-3 text-slate-400" />
+          Apparence & avancé
+        </span>
+        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="px-3 pb-3 pt-1 space-y-4 border-t border-slate-100">
+          {/* Espacements */}
+          <div className="grid grid-cols-2 gap-3">
+            <FieldRow label="Espace haut">
+              <select
+                value={st.paddingTop ?? ''}
+                onChange={(e) => setStyle('paddingTop', e.target.value === '' ? null : Number(e.target.value))}
+                className={inputCls}
+              >
+                {PAD_OPTIONS.map((o) => <option key={o.label} value={o.value}>{o.label}</option>)}
+              </select>
+            </FieldRow>
+            <FieldRow label="Espace bas">
+              <select
+                value={st.paddingBottom ?? ''}
+                onChange={(e) => setStyle('paddingBottom', e.target.value === '' ? null : Number(e.target.value))}
+                className={inputCls}
+              >
+                {PAD_OPTIONS.map((o) => <option key={o.label} value={o.value}>{o.label}</option>)}
+              </select>
+            </FieldRow>
+          </div>
+
+          {/* Couleurs de surcharge */}
+          <div className="grid grid-cols-2 gap-3">
+            <ColorField label="Fond (surcharge)" value={st.backgroundColor || ''} onChange={(v) => setStyle('backgroundColor', v)} />
+            <ColorField label="Texte (surcharge)" value={st.textColor || ''} onChange={(v) => setStyle('textColor', v)} />
+          </div>
+
+          {/* Visibilité par appareil */}
+          <FieldRow label="Visibilité">
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+                <input type="checkbox" checked={!!st.hideMobile} onChange={(e) => setStyle('hideMobile', e.target.checked)} className="rounded" />
+                Masquer sur mobile
+              </label>
+              <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+                <input type="checkbox" checked={!!st.hideDesktop} onChange={(e) => setStyle('hideDesktop', e.target.checked)} className="rounded" />
+                Masquer sur ordinateur
+              </label>
+            </div>
+          </FieldRow>
+
+          {/* Ancre */}
+          <FieldRow label="Ancre (ID pour liens internes)">
+            <input
+              type="text"
+              value={st.anchorId || ''}
+              onChange={(e) => setStyle('anchorId', e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
+              className={inputCls}
+              placeholder="ex: promo → lien #promo"
+            />
+          </FieldRow>
+
+          {/* CSS personnalisé de la section */}
+          <FieldRow label="CSS personnalisé (boutique publiée)">
+            <textarea
+              rows={4}
+              value={st.customCss || ''}
+              onChange={(e) => setStyle('customCss', e.target.value)}
+              className={codeCls}
+              placeholder={`.sec-${String(section.id || '').replace(/[^a-zA-Z0-9_-]/g, '')} h2 {\n  letter-spacing: 2px;\n}`}
+              spellCheck={false}
+            />
+            <p className="text-[10.5px] text-slate-400 mt-1">
+              Classe de cette section : <code className="font-mono text-slate-600 bg-slate-100 px-1 rounded">.sec-{String(section.id || '').replace(/[^a-zA-Z0-9_-]/g, '')}</code> — préfixe tes sélecteurs avec pour cibler uniquement cette section.
+            </p>
+          </FieldRow>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SectionEditor({ section, onChange }) {
+  return (
+    <>
+      <SectionTypeEditor section={section} onChange={onChange} />
+      <SectionStyleEditor section={section} onChange={onChange} />
+    </>
+  );
+}
+
+function SectionTypeEditor({ section, onChange }) {
   const { type, config } = section;
   const set = (key, val) => onChange({ ...section, config: { ...config, [key]: val } });
   const setMulti = (updates) => onChange({ ...section, config: { ...config, ...updates } });
@@ -1070,6 +1256,111 @@ function SectionEditor({ section, onChange }) {
         </div>
       );
 
+    case 'badges':
+      return (
+        <div className="space-y-4">
+          <FieldRow label="Badges (défilement automatique)">
+            <RepeatableEditor
+              items={config.items || []}
+              onChange={(items) => set('items', items)}
+              addLabel="Ajouter un badge"
+              fields={[
+                { key: 'icon', label: 'Icône (emoji)', default: '⭐' },
+                { key: 'title', label: 'Titre' },
+                { key: 'desc', label: 'Sous-titre' },
+              ]}
+            />
+          </FieldRow>
+        </div>
+      );
+
+    case 'features':
+      return (
+        <div className="space-y-4">
+          <FieldRow label="Titre"><input type="text" value={config.title || ''} onChange={(e) => set('title', e.target.value)} className={inputCls} /></FieldRow>
+          <FieldRow label="Sous-titre"><input type="text" value={config.subtitle || ''} onChange={(e) => set('subtitle', e.target.value)} className={inputCls} /></FieldRow>
+          <ImageUploader value={config.image} onChange={(v) => set('image', v)} label="Image (optionnelle)" />
+          <FieldRow label="Avantages">
+            <RepeatableEditor
+              items={config.items || []}
+              onChange={(items) => set('items', items)}
+              addLabel="Ajouter un avantage"
+              fields={[
+                { key: 'icon', label: 'Icône (emoji)', default: '✨' },
+                { key: 'title', label: 'Titre' },
+                { key: 'desc', label: 'Description' },
+              ]}
+            />
+          </FieldRow>
+        </div>
+      );
+
+    case 'countdown':
+      return (
+        <div className="space-y-4">
+          <FieldRow label="Titre"><input type="text" value={config.title || ''} onChange={(e) => set('title', e.target.value)} className={inputCls} /></FieldRow>
+          <FieldRow label="Date et heure de fin">
+            <input
+              type="datetime-local"
+              value={config.endDate || ''}
+              onChange={(e) => set('endDate', e.target.value)}
+              className={inputCls}
+            />
+          </FieldRow>
+          <FieldRow label="Texte une fois expiré"><input type="text" value={config.expiredText || ''} onChange={(e) => set('expiredText', e.target.value)} className={inputCls} /></FieldRow>
+          <FieldRow label="Texte bouton (optionnel)"><input type="text" value={config.ctaText || ''} onChange={(e) => set('ctaText', e.target.value)} className={inputCls} /></FieldRow>
+          {config.ctaText && <FieldRow label="Lien bouton"><input type="text" value={config.ctaLink || ''} onChange={(e) => set('ctaLink', e.target.value)} className={inputCls} placeholder="#products" /></FieldRow>}
+          <div className="grid grid-cols-2 gap-3">
+            <ColorField label="Fond" value={config.backgroundColor} onChange={(v) => set('backgroundColor', v)} />
+            <ColorField label="Texte" value={config.textColor} onChange={(v) => set('textColor', v)} />
+          </div>
+        </div>
+      );
+
+    case 'logo_list':
+      return (
+        <div className="space-y-4">
+          <FieldRow label="Titre"><input type="text" value={config.title || ''} onChange={(e) => set('title', e.target.value)} className={inputCls} /></FieldRow>
+          <FieldRow label="Logos">
+            <GalleryEditor images={config.logos || []} onChange={(imgs) => set('logos', imgs)} />
+          </FieldRow>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+              <input type="checkbox" checked={config.marquee !== false} onChange={(e) => set('marquee', e.target.checked)} className="rounded" />
+              Défilement auto
+            </label>
+            <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+              <input type="checkbox" checked={config.grayscale !== false} onChange={(e) => set('grayscale', e.target.checked)} className="rounded" />
+              Noir & blanc
+            </label>
+          </div>
+          <ColorField label="Fond" value={config.backgroundColor} onChange={(v) => set('backgroundColor', v)} />
+        </div>
+      );
+
+    case 'custom_code': {
+      const codeCls = 'w-full px-3 py-2.5 text-[12px] leading-relaxed border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-900 text-slate-100 font-mono resize-y placeholder-slate-500';
+      return (
+        <div className="space-y-4">
+          <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-50 ring-1 ring-amber-200">
+            <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-amber-800 leading-snug">
+              Section libre type Shopify « Custom Liquid ». Le HTML et le CSS s'affichent dans l'aperçu ; le <b>JS s'exécute uniquement sur la boutique publiée</b>.
+            </p>
+          </div>
+          <FieldRow label="HTML">
+            <textarea rows={8} value={config.html || ''} onChange={(e) => set('html', e.target.value)} className={codeCls} placeholder={'<div>\n  ...\n</div>'} spellCheck={false} />
+          </FieldRow>
+          <FieldRow label="CSS">
+            <textarea rows={6} value={config.css || ''} onChange={(e) => set('css', e.target.value)} className={codeCls} placeholder={'.ma-classe {\n  color: red;\n}'} spellCheck={false} />
+          </FieldRow>
+          <FieldRow label="JavaScript">
+            <textarea rows={5} value={config.js || ''} onChange={(e) => set('js', e.target.value)} className={codeCls} placeholder={"document.querySelector('.ma-classe')..."} spellCheck={false} />
+          </FieldRow>
+        </div>
+      );
+    }
+
     default:
       return <p className="text-sm text-gray-500">Éditeur non disponible pour ce type de section.</p>;
   }
@@ -1109,7 +1400,9 @@ function EditableText({ value, onChange, tag: Tag = 'span', className = '', styl
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       className={`${className} ${editing ? 'outline-none ring-2 ring-indigo-400 ring-offset-1 rounded px-1 bg-white/90' : 'cursor-pointer hover:ring-2 hover:ring-indigo-300/50 hover:ring-offset-1 rounded transition-all'}`}
-      style={{ ...style, minWidth: '20px', display: 'inline-block' }}
+      // ⚠️ h1/p/div doivent rester en block (empilés) — inline-block mettait
+      // titre, sous-titre et bouton du hero sur une seule ligne.
+      style={{ ...style, minWidth: '20px', display: Tag === 'span' ? 'inline-block' : 'block' }}
     >
       {value || placeholder}
     </Tag>
@@ -1333,6 +1626,147 @@ function LiveBanner({ config, selected, onUpdate }) {
   );
 }
 
+// Aperçu badges défilants
+function LiveBadges({ config }) {
+  const items = config.items || [];
+  return (
+    <section style={{ background: '#fff', borderTop: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9', padding: '20px 24px', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', gap: 36, alignItems: 'center', whiteSpace: 'nowrap' }}>
+        {items.slice(0, 6).map((b, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <span style={{ width: 38, height: 38, borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>{b.icon || '⭐'}</span>
+            <div>
+              <p style={{ margin: 0, fontSize: 12.5, fontWeight: 700, color: '#0f172a' }}>{b.title}</p>
+              {(b.desc || b.subtitle) && <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>{b.desc || b.subtitle}</p>}
+            </div>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <div style={{ margin: '0 auto', padding: '10px 18px', border: '1.5px dashed #cbd5e1', borderRadius: 10, fontSize: 12, color: '#94a3b8', fontWeight: 600 }}>
+            Section badges vide — ajoutez des badges dans l'éditeur
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// Aperçu "Pourquoi nous choisir"
+function LiveFeatures({ config }) {
+  const items = config.items || [];
+  return (
+    <section style={{ background: '#fff', padding: '40px 24px', textAlign: 'center' }}>
+      <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>{config.title || 'Pourquoi nous choisir ?'}</h2>
+      {config.subtitle && <p style={{ fontSize: 13, color: '#64748b', margin: '8px 0 0' }}>{config.subtitle}</p>}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginTop: 26, textAlign: 'left' }}>
+        {items.slice(0, 6).map((f, i) => (
+          <div key={i} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 14, padding: '18px 16px' }}>
+            <span style={{ fontSize: 20 }}>{f.icon || '✨'}</span>
+            <p style={{ margin: '10px 0 4px', fontSize: 13.5, fontWeight: 700, color: '#0f172a' }}>{f.title}</p>
+            {f.desc && <p style={{ margin: 0, fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{f.desc}</p>}
+          </div>
+        ))}
+        {items.length === 0 && (
+          <div style={{ gridColumn: '1/-1', justifySelf: 'center', padding: '10px 18px', border: '1.5px dashed #cbd5e1', borderRadius: 10, fontSize: 12, color: '#94a3b8', fontWeight: 600, textAlign: 'center' }}>
+            Section vide — ajoutez des avantages dans l'éditeur
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// Aperçu compte à rebours — tick réel dans le builder
+function LiveCountdown({ config }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const end = config.endDate ? new Date(config.endDate).getTime() : 0;
+  const diff = Math.max(0, end - now);
+  const expired = end > 0 && diff === 0;
+  const dd = Math.floor(diff / 86400000);
+  const hh = Math.floor((diff % 86400000) / 3600000);
+  const mm = Math.floor((diff % 3600000) / 60000);
+  const ss = Math.floor((diff % 60000) / 1000);
+  const pad = (n) => String(n).padStart(2, '0');
+  const blocks = [[dd, 'J'], [hh, 'H'], [mm, 'M'], [ss, 'S']];
+  return (
+    <section style={{ background: config.backgroundColor || '#111827', color: config.textColor || '#fff', padding: '40px 24px', textAlign: 'center' }}>
+      {config.title && <p style={{ fontSize: 18, fontWeight: 800, margin: '0 0 18px' }}>{config.title}</p>}
+      {!end ? (
+        <p style={{ fontSize: 13, opacity: 0.6 }}>Choisissez une date de fin dans l'éditeur →</p>
+      ) : expired ? (
+        <p style={{ fontSize: 15, fontWeight: 700, opacity: 0.85 }}>{config.expiredText || "L'offre est terminée"}</p>
+      ) : (
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+          {blocks.map(([v, l]) => (
+            <div key={l} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, padding: '10px 14px', minWidth: 58 }}>
+              <div style={{ fontSize: 26, fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{pad(v)}</div>
+              <div style={{ fontSize: 10, fontWeight: 700, opacity: 0.6 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {config.ctaText && <span style={{ display: 'inline-block', marginTop: 18, padding: '10px 22px', background: '#fff', color: '#111', borderRadius: 999, fontSize: 13, fontWeight: 800 }}>{config.ctaText}</span>}
+    </section>
+  );
+}
+
+// Aperçu logos partenaires
+function LiveLogoList({ config }) {
+  const logos = (config.logos || []).map((l) => (typeof l === 'string' ? { url: l } : l)).filter((l) => l?.url);
+  return (
+    <section style={{ background: config.backgroundColor || '#fff', padding: '36px 24px', textAlign: 'center', overflow: 'hidden' }}>
+      {config.title && <p style={{ fontSize: 15, fontWeight: 800, color: '#111827', margin: '0 0 20px' }}>{config.title}</p>}
+      {logos.length === 0 ? (
+        <p style={{ fontSize: 13, color: '#9ca3af' }}>Ajoutez des logos dans l'éditeur →</p>
+      ) : (
+        <div style={{ display: 'flex', gap: 36, justifyContent: 'center', alignItems: 'center', flexWrap: config.marquee === false ? 'wrap' : 'nowrap' }}>
+          {logos.slice(0, 8).map((logo, i) => (
+            <img key={i} src={logo.url} alt={logo.alt || ''} style={{ height: 36, objectFit: 'contain', filter: config.grayscale !== false ? 'grayscale(1) opacity(0.65)' : 'none' }} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+// Aperçu code personnalisé — HTML+CSS rendus dans un Shadow DOM (isolation
+// totale : le CSS du marchand ne peut pas casser l'interface du builder).
+// Le JS n'est PAS exécuté dans le builder, uniquement sur la boutique.
+function LiveCustomCode({ config }) {
+  const hostRef = useRef(null);
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    try {
+      const root = host.shadowRoot || host.attachShadow({ mode: 'open' });
+      root.innerHTML = `<style>${config.css || ''}</style>${config.html || ''}`;
+    } catch { /* attachShadow indisponible */ }
+  }, [config.html, config.css]);
+  const hasJs = Boolean((config.js || '').trim());
+  const empty = !(config.html || '').trim();
+  return (
+    <div className="relative" style={{ minHeight: 56 }}>
+      {empty ? (
+        <div className="flex flex-col items-center justify-center py-10 text-center bg-slate-50">
+          <span className="text-[13px] font-mono font-bold text-slate-500">&lt;/&gt; Code personnalisé</span>
+          <span className="text-[11px] text-slate-400 mt-1">Écrivez votre HTML dans l'éditeur →</span>
+        </div>
+      ) : (
+        <div ref={hostRef} />
+      )}
+      {hasJs && (
+        <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 text-[9.5px] font-bold text-amber-800 bg-amber-100 ring-1 ring-amber-200 px-2 py-0.5 rounded-full pointer-events-none">
+          JS exécuté sur la boutique
+        </span>
+      )}
+    </div>
+  );
+}
+
 function LiveSpacer({ config, selected }) {
   return (
     <div className={`${selected ? 'ring-2 ring-inset ring-indigo-400' : ''}`} style={{ height: config.height || 60, background: config.backgroundColor || 'transparent' }} />
@@ -1365,23 +1799,43 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
     case 'contact':     rendered = <LiveContact {...props} />; break;
     case 'banner':      rendered = <LiveBanner {...props} />; break;
     case 'spacer':      rendered = <LiveSpacer {...props} />; break;
+    case 'countdown':   rendered = <LiveCountdown {...props} />; break;
+    case 'logo_list':   rendered = <LiveLogoList {...props} />; break;
+    case 'custom_code': rendered = <LiveCustomCode {...props} />; break;
+    case 'badges':      rendered = <LiveBadges {...props} />; break;
+    case 'features':    rendered = <LiveFeatures {...props} />; break;
     default:
       rendered = <div className="p-6 bg-gray-50 text-sm text-gray-400 text-center">Section : {type}</div>;
   }
 
+  // Surcharges "Apparence & avancé" (espacements, couleurs) — visibles dans le canvas
+  const st = section.config?._style || {};
+  const wrapStyle = {
+    ...(st.paddingTop != null ? { paddingTop: st.paddingTop } : {}),
+    ...(st.paddingBottom != null ? { paddingBottom: st.paddingBottom } : {}),
+    ...(st.backgroundColor ? { background: st.backgroundColor } : {}),
+    ...(st.textColor ? { color: st.textColor } : {}),
+  };
+  const deviceHidden = st.hideMobile || st.hideDesktop;
+
   return (
     <div className="relative cursor-pointer group/live">
-      {rendered}
+      <div style={wrapStyle}>{rendered}</div>
+      {deviceHidden && (
+        <span className="absolute top-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none inline-flex items-center gap-1 text-[9.5px] font-bold text-slate-600 bg-white/90 backdrop-blur ring-1 ring-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+          {st.hideMobile && st.hideDesktop ? 'Masquée partout' : st.hideMobile ? 'Masquée sur mobile' : 'Masquée sur ordinateur'}
+        </span>
+      )}
       {/* Hover overlay — click to select */}
-      <div className={`absolute inset-0 border-2 rounded transition-all pointer-events-none ${selected ? 'border-indigo-500 bg-indigo-500/5' : 'border-transparent group-hover/live:border-indigo-300 group-hover/live:bg-indigo-500/[0.02]'}`} />
+      <div className={`absolute inset-0 border-2 rounded transition-all pointer-events-none ${selected ? 'border-indigo-500 bg-indigo-500/5' : 'border-transparent group-hover/live:border-indigo-300/70 group-hover/live:bg-indigo-500/[0.02]'}`} />
       {/* Hover edit hint */}
       {!selected && (
-        <div className="absolute top-2 right-2 opacity-0 group-hover/live:opacity-100 transition-opacity pointer-events-none flex items-center gap-1 bg-white text-gray-700 text-[10px] font-semibold px-2 py-1 rounded-full shadow-md border border-gray-200 z-20">
+        <div className="absolute top-2 right-2 opacity-0 group-hover/live:opacity-100 transition-opacity pointer-events-none flex items-center gap-1.5 bg-slate-900/90 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg z-20">
           <Pencil className="w-2.5 h-2.5" />Modifier
         </div>
       )}
       {selected && (
-        <div className="absolute top-2 right-2 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-full z-20 pointer-events-none flex items-center gap-1">
+        <div className="absolute top-2 right-2 bg-indigo-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-20 pointer-events-none flex items-center gap-1.5 shadow-lg">
           <Pencil className="w-2.5 h-2.5" />
           {SECTION_TYPES[type]?.label || type}
         </div>
@@ -1435,30 +1889,40 @@ function AddSectionPanel({ onAdd, onClose }) {
 
   return (
     <div className="absolute inset-0 bg-white z-20 flex flex-col">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h3 className="text-sm font-bold text-gray-900">Ajouter une section</h3>
-        <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 text-gray-500"><X className="w-4 h-4" /></button>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center">
+            <Plus className="w-3.5 h-3.5 text-indigo-600" />
+          </div>
+          <h3 className="text-sm font-bold text-slate-900">Ajouter une section</h3>
+        </div>
+        <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition"><X className="w-4 h-4" /></button>
       </div>
       {/* Category tabs */}
-      <div className="flex overflow-x-auto gap-1 px-3 py-2 border-b border-gray-100 scrollbar-none">
+      <div className="flex overflow-x-auto gap-1 px-3 py-2.5 border-b border-slate-100 scrollbar-none">
         {CATEGORIES.map((c) => (
-          <button key={c} onClick={() => setCat(c)} className={`flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full transition ${cat === c ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>{c}</button>
+          <button key={c} onClick={() => setCat(c)} className={`flex-shrink-0 px-3 py-1.5 text-xs font-bold rounded-full transition ${cat === c ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{c}</button>
         ))}
       </div>
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
         {filtered.map(([type, meta]) => (
           <button
             key={type}
             onClick={() => { onAdd(type); onClose(); }}
-            className="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/30 transition text-left group"
+            className="w-full flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 hover:shadow-sm transition text-left group"
           >
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ background: meta.color }}>
+            <div
+              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition group-hover:scale-105"
+              style={{ background: `${meta.color}1A`, color: meta.color }}
+            >
               {meta.icon}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-gray-900 group-hover:text-indigo-700">{meta.label}</p>
+              <p className="text-[13px] font-bold text-slate-800 group-hover:text-indigo-700">{meta.label}</p>
             </div>
-            <Plus className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 ml-auto flex-shrink-0" />
+            <span className="ml-auto flex-shrink-0 w-6 h-6 rounded-md bg-slate-50 group-hover:bg-indigo-600 flex items-center justify-center transition">
+              <Plus className="w-3.5 h-3.5 text-slate-300 group-hover:text-white" />
+            </span>
           </button>
         ))}
       </div>
@@ -1478,6 +1942,44 @@ const StorepageBuilder = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [showAddPanel, setShowAddPanel] = useState(false);
   const [device, setDevice] = useState('desktop');
+
+  // ── Panneau sections : redimensionnable + repliable ─────────────────────────
+  const [panelWidth, setPanelWidth] = useState(() => {
+    if (typeof window === 'undefined') return 320;
+    const saved = Number(window.localStorage.getItem('builderPanelWidth'));
+    return saved >= 240 && saved <= 560 ? saved : 320;
+  });
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const [panelResizing, setPanelResizing] = useState(false);
+
+  const startPanelResize = useCallback((e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = panelWidth;
+    setPanelResizing(true);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    let latest = startW;
+    const onMove = (ev) => {
+      latest = Math.min(560, Math.max(240, startW + (ev.clientX - startX)));
+      setPanelWidth(latest);
+    };
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      setPanelResizing(false);
+      try { window.localStorage.setItem('builderPanelWidth', String(latest)); } catch { /* noop */ }
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }, [panelWidth]);
+
+  const resetPanelWidth = useCallback(() => {
+    setPanelWidth(320);
+    try { window.localStorage.setItem('builderPanelWidth', '320'); } catch { /* noop */ }
+  }, []);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -1844,30 +2346,57 @@ const StorepageBuilder = () => {
     <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
 
       {/* ── Top bar ─────────────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200 flex-shrink-0 z-30">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition font-semibold">
+      <header className="relative flex items-center justify-between h-14 px-3 bg-white/95 backdrop-blur border-b border-slate-200 flex-shrink-0 z-30">
+        {/* Zone gauche : retour + identité + statut */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <button onClick={() => navigate(-1)} title="Retour" className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition">
             <ArrowLeft className="w-4 h-4" />
-            Retour
           </button>
-          <div className="w-px h-5 bg-gray-200" />
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Layers className="w-3.5 h-3.5 text-white" />
-            </div>
-            <h1 className="text-base font-bold text-gray-900">Theme Builder</h1>
+          <div className="w-px h-5 bg-slate-200" />
+          <div className="w-7 h-7 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-sm flex-shrink-0">
+            <Layers className="w-3.5 h-3.5 text-white" />
           </div>
-          {dirty && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Non publié</span>}
+          <div className="min-w-0 leading-tight">
+            <h1 className="text-sm font-bold text-slate-900 truncate">Theme Builder</h1>
+            {subdomain && <p className="text-[10.5px] text-slate-400 font-medium truncate">{subdomain}.scalor.net</p>}
+          </div>
+          <span className={`ml-1 hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+            dirty ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${dirty ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`} />
+            {dirty ? 'Modifications non publiées' : 'À jour'}
+          </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Undo / Redo */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+        {/* Zone centre : bascule d'appareil */}
+        <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center bg-slate-100 rounded-xl p-1 gap-0.5">
+          {[
+            { id: 'desktop', icon: <Monitor className="w-3.5 h-3.5" />, label: 'Desktop' },
+            { id: 'tablet', icon: <Tablet className="w-3.5 h-3.5" />, label: 'Tablette' },
+            { id: 'mobile', icon: <Smartphone className="w-3.5 h-3.5" />, label: 'Mobile' },
+          ].map(({ id, icon, label }) => (
+            <button
+              key={id}
+              onClick={() => setDevice(id)}
+              title={label}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                device === id ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              {icon}
+              <span className="hidden lg:inline">{label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Zone droite : historique + aperçu + publication */}
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center bg-slate-100 rounded-xl p-1">
             <button
               onClick={undo}
               disabled={!canUndo}
               title="Annuler (Ctrl+Z)"
-              className={`p-2 rounded-md transition ${canUndo ? 'text-gray-700 hover:bg-white hover:shadow' : 'text-gray-300 cursor-not-allowed'}`}
+              className={`p-1.5 rounded-lg transition ${canUndo ? 'text-slate-600 hover:bg-white hover:shadow-sm' : 'text-slate-300 cursor-not-allowed'}`}
             >
               <Undo2 className="w-4 h-4" />
             </button>
@@ -1875,40 +2404,34 @@ const StorepageBuilder = () => {
               onClick={redo}
               disabled={!canRedo}
               title="Rétablir (Ctrl+Shift+Z)"
-              className={`p-2 rounded-md transition ${canRedo ? 'text-gray-700 hover:bg-white hover:shadow' : 'text-gray-300 cursor-not-allowed'}`}
+              className={`p-1.5 rounded-lg transition ${canRedo ? 'text-slate-600 hover:bg-white hover:shadow-sm' : 'text-slate-300 cursor-not-allowed'}`}
             >
               <Redo2 className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="w-px h-5 bg-gray-200" />
-
-          {/* Device switcher */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
-            {[
-              { id: 'desktop', icon: <Monitor className="w-3.5 h-3.5" /> },
-              { id: 'tablet', icon: <Tablet className="w-3.5 h-3.5" /> },
-              { id: 'mobile', icon: <Smartphone className="w-3.5 h-3.5" /> },
-            ].map(({ id, icon }) => (
-              <button key={id} onClick={() => setDevice(id)} title={id} className={`p-2 rounded-md transition ${device === id ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>{icon}</button>
-            ))}
-          </div>
-
-          <div className="w-px h-5 bg-gray-200" />
-
           {subdomain && (
-            <a href={`/store/${subdomain}`} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition" title="Ouvrir la boutique">
-              <ExternalLink className="w-4 h-4" />
+            <a
+              href={`/store/${subdomain}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
+              title="Ouvrir la boutique dans un nouvel onglet"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Voir la boutique
             </a>
           )}
 
           <button
             onClick={handleSave}
             disabled={saving}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition shadow-sm ${saved ? 'bg-primary-500' : 'bg-indigo-600 hover:bg-indigo-700'} disabled:opacity-50`}
+            className={`flex items-center gap-2 pl-4 pr-4.5 py-2 text-sm font-bold text-white rounded-xl transition shadow-sm ${
+              saved ? 'bg-emerald-500' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-md active:scale-[0.98]'
+            } disabled:opacity-50`}
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-            {saved ? 'Publié !' : 'Publier'}
+            {saving ? 'Publication...' : saved ? 'Publié !' : 'Publier'}
           </button>
         </div>
       </header>
@@ -1916,34 +2439,76 @@ const StorepageBuilder = () => {
       {/* ── Body ────────────────────────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
 
+        {/* ── Rail replié : ré-ouvre le panneau ─────────────────────────────── */}
+        {panelCollapsed && (
+          <div className="w-12 bg-white border-r border-slate-200 flex flex-col items-center py-3 gap-2 flex-shrink-0 z-20">
+            <button
+              onClick={() => setPanelCollapsed(false)}
+              title="Afficher les sections"
+              className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <div className="w-6 h-px bg-slate-200" />
+            <span className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-bold flex items-center justify-center tabular-nums" title={`${sections.length} sections`}>
+              {sections.length}
+            </span>
+            <button
+              onClick={() => { setPanelCollapsed(false); setShowAddPanel(true); }}
+              title="Ajouter une section"
+              className="p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
         {/* ── Left panel: sections list + inline editor ───────────────────── */}
-        <div className="w-72 xl:w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 relative overflow-hidden">
+        <div
+          className={`bg-white border-r border-slate-200 flex flex-col flex-shrink-0 relative shadow-[1px_0_0_rgba(15,23,42,0.02)] ${panelResizing ? '' : 'transition-[width,margin] duration-200'}`}
+          style={{ width: panelCollapsed ? 0 : panelWidth, marginLeft: panelCollapsed ? -1 : 0, overflow: panelCollapsed ? 'hidden' : 'visible' }}
+        >
+          <div className="flex flex-col h-full overflow-hidden" style={{ minWidth: 240 }}>
 
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-shrink-0">
-            <div>
-              <p className="text-xs font-bold text-gray-900 uppercase tracking-wider">Sections</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">{sections.length} section{sections.length !== 1 ? 's' : ''}</p>
+          <div className="flex items-center justify-between pl-4 pr-2.5 py-3 border-b border-slate-100 flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.12em]">Sections</p>
+              <span className="text-[10.5px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-md tabular-nums">{sections.length}</span>
             </div>
-            <button onClick={() => setShowAddPanel(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition shadow-sm">
-              <Plus className="w-3.5 h-3.5" />Ajouter
-            </button>
+            <div className="flex items-center gap-1">
+              <button onClick={() => setShowAddPanel(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-xs font-bold rounded-lg transition shadow-sm">
+                <Plus className="w-3.5 h-3.5" />Ajouter
+              </button>
+              <button
+                onClick={() => setPanelCollapsed(true)}
+                title="Replier le panneau"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto">
 
             {/* Section list */}
-            <div className="p-3 space-y-1.5">
+            <div className="p-2 space-y-0.5">
               {sections.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-                  <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-3">
-                    <Layers className="w-6 h-6 text-indigo-400" />
+                  <div className="relative mb-4">
+                    <div className="w-14 h-14 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center ring-1 ring-indigo-100">
+                      <Layers className="w-6 h-6 text-indigo-400" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                      <Plus className="w-3.5 h-3.5 text-white" />
+                    </div>
                   </div>
-                  <p className="text-sm font-semibold text-gray-700">Page vide</p>
-                  <p className="text-xs text-gray-400 mt-1">Ajoutez votre première section</p>
-                  <button onClick={() => setShowAddPanel(true)} className="mt-3 px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition">
-                    Commencer
+                  <p className="text-sm font-bold text-slate-800">Page vide</p>
+                  <p className="text-xs text-slate-400 mt-1 max-w-[200px]">Composez votre page d'accueil section par section</p>
+                  <button onClick={() => setShowAddPanel(true)} className="mt-4 px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 active:scale-[0.98] transition shadow-sm">
+                    Ajouter une section
                   </button>
                 </div>
               ) : (
@@ -1960,17 +2525,21 @@ const StorepageBuilder = () => {
                           onToggleVisible={toggleVisible}
                         />
                         {selectedId === sec.id && (
-                          <div className="rounded-xl border border-indigo-200 bg-indigo-50/40 overflow-hidden mb-1">
-                            <div className="flex items-center justify-between px-3 py-2 bg-white border-b border-indigo-100">
-                              <div className="flex items-center gap-1.5">
-                                <div className="w-4 h-4 rounded flex items-center justify-center text-white" style={{ background: SECTION_TYPES[sec.type]?.color || '#6b7280' }}>
+                          <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-1.5">
+                            <div className="h-[3px]" style={{ background: SECTION_TYPES[sec.type]?.color || '#6366f1' }} />
+                            <div className="flex items-center justify-between px-3 py-2.5 border-b border-slate-100">
+                              <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 rounded-md flex items-center justify-center text-white shadow-sm" style={{ background: SECTION_TYPES[sec.type]?.color || '#6b7280' }}>
                                   {SECTION_TYPES[sec.type]?.icon}
                                 </div>
-                                <p className="text-[11px] font-bold text-gray-800">{SECTION_TYPES[sec.type]?.label}</p>
+                                <div className="leading-tight">
+                                  <p className="text-[11.5px] font-bold text-slate-900">{SECTION_TYPES[sec.type]?.label}</p>
+                                  <p className="text-[9.5px] text-slate-400 font-medium uppercase tracking-wide">Édition</p>
+                                </div>
                               </div>
-                              <button onClick={() => setSelectedId(null)} className="p-0.5 rounded hover:bg-gray-100 text-gray-400"><X className="w-3 h-3" /></button>
+                              <button onClick={() => setSelectedId(null)} title="Fermer" className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition"><X className="w-3.5 h-3.5" /></button>
                             </div>
-                            <div className="p-3">
+                            <div className="p-3 bg-slate-50/50">
                               <SectionEditor section={sec} onChange={updateSelected} />
                             </div>
                           </div>
@@ -1985,22 +2554,54 @@ const StorepageBuilder = () => {
 
           {/* Add section overlay */}
           {showAddPanel && <AddSectionPanel onAdd={addSection} onClose={() => setShowAddPanel(false)} />}
+          </div>
+
+          {/* Poignée de redimensionnement — glisser pour élargir/réduire, double-clic pour réinitialiser */}
+          {!panelCollapsed && (
+            <div
+              onMouseDown={startPanelResize}
+              onDoubleClick={resetPanelWidth}
+              title="Glisser pour redimensionner · Double-clic pour réinitialiser"
+              className={`absolute top-0 right-0 bottom-0 w-1.5 -mr-[3px] cursor-col-resize z-30 group/resize ${panelResizing ? 'bg-indigo-400/60' : 'hover:bg-indigo-300/50'} transition-colors`}
+            >
+              <div className="absolute top-1/2 -translate-y-1/2 right-[1px] h-10 w-[3px] rounded-full bg-slate-300 opacity-0 group-hover/resize:opacity-100 transition-opacity" />
+            </div>
+          )}
         </div>
 
         {/* ── Right: live inline preview ───────────────────────────────────── */}
-        <div className="flex-1 overflow-auto bg-gray-100 p-4">
-          <div className={`${iframeContainerCls} bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300`}>
+        <div
+          className="flex-1 overflow-auto p-5"
+          style={{
+            background: '#f1f5f9',
+            backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
+          }}
+        >
+          {/* Badge de largeur du viewport */}
+          <div className={`${iframeContainerCls} flex items-center justify-center mb-2 transition-all duration-300`}>
+            <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-slate-500 bg-white/80 backdrop-blur px-2.5 py-1 rounded-full ring-1 ring-slate-200 shadow-sm tabular-nums">
+              {device === 'mobile' ? <Smartphone className="w-3 h-3" /> : device === 'tablet' ? <Tablet className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
+              {device === 'mobile' ? '390 px' : device === 'tablet' ? '768 px' : 'Pleine largeur'}
+            </span>
+          </div>
+
+          <div className={`${iframeContainerCls} bg-white rounded-2xl shadow-2xl shadow-slate-300/60 ring-1 ring-slate-200 overflow-hidden transition-all duration-300`}>
             {/* Browser chrome */}
-            <div className="h-9 bg-gray-50 border-b border-gray-200 flex items-center px-3 gap-2 flex-shrink-0">
+            <div className="h-9 bg-slate-50 border-b border-slate-200 flex items-center px-3 gap-2.5 flex-shrink-0">
               <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
               </div>
-              <div className="flex-1 bg-white border border-gray-100 rounded px-2 py-0.5 text-[11px] text-gray-400 font-mono truncate">
-                {subdomain ? `${window.location.origin}/store/${subdomain}` : 'Aperçu en direct'}
+              <div className="flex-1 flex items-center gap-1.5 bg-white ring-1 ring-slate-200 rounded-md px-2.5 py-1 text-[11px] text-slate-500 font-medium truncate">
+                <Lock className="w-2.5 h-2.5 text-slate-300 flex-shrink-0" />
+                {subdomain ? `${subdomain}.scalor.net` : 'Aperçu en direct'}
               </div>
-              <span className="text-[10px] text-primary-600 font-semibold bg-primary-50 px-2 py-0.5 rounded-full flex-shrink-0">● Live</span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-bold bg-emerald-50 ring-1 ring-emerald-200 px-2 py-0.5 rounded-full flex-shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live
+              </span>
             </div>
 
             {/* Inline rendered sections — click to select, drag to reorder */}

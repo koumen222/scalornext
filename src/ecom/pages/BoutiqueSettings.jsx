@@ -9,6 +9,8 @@ import { useStore } from '../contexts/StoreContext.jsx';
 import api from '../../lib/api';
 import { storeManageApi } from '../services/storeApi.js';
 import { ExternalLink, Check, Upload, Palette, Type, Store, Megaphone, Sparkles, Loader2, RefreshCw, Settings, Eye } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
+import { WORLD_COUNTRIES as COUNTRIES } from '../constants/countries.js';
 
 const FONTS = [
   { id: 'inter',      name: 'Inter',      sample: 'Modern & Clean' },
@@ -36,12 +38,12 @@ const CURRENCIES = [
   { code: 'NGN', label: 'Naira (NGN)' },
   { code: 'MAD', label: 'Dirham (MAD)' },
   { code: 'TND', label: 'Dinar Tunisien (TND)' },
-  { code: 'DZD', label: 'Dinar Algérien (DZD)' },
+  { code: 'DZD', get label() { return tp('Dinar Algérien (DZD)'); } },
   { code: 'KES', label: 'Shilling Kenyan (KES)' },
   { code: 'ZAR', label: 'Rand (ZAR)' },
   { code: 'RWF', label: 'Franc Rwandais (RWF)' },
   { code: 'CDF', label: 'Franc Congolais (CDF)' },
-  { code: 'GNF', label: 'Franc Guinéen (GNF)' },
+  { code: 'GNF', get label() { return tp('Franc Guinéen (GNF)'); } },
   { code: 'MGA', label: 'Ariary (MGA)' },
   { code: 'MRU', label: 'Ouguiya (MRU)' },
   { code: 'CVE', label: 'Escudo (CVE)' },
@@ -50,36 +52,11 @@ const CURRENCIES = [
   { code: 'CHF', label: 'Franc Suisse (CHF)' },
   { code: 'CNY', label: 'Yuan (CNY)' },
   { code: 'INR', label: 'Roupie Indienne (INR)' },
-  { code: 'BRL', label: 'Réal (BRL)' },
+  { code: 'BRL', get label() { return tp('Réal (BRL)'); } },
   { code: 'AED', label: 'Dirham EAU (AED)' },
 ];
 
-const COUNTRIES = [
-  'Afghanistan','Afrique du Sud','Albanie','Algérie','Allemagne','Andorre','Angola','Antigua-et-Barbuda','Arabie Saoudite','Argentine','Arménie','Australie','Autriche','Azerbaïdjan',
-  'Bahamas','Bahreïn','Bangladesh','Barbade','Belgique','Belize','Bénin','Bhoutan','Biélorussie','Birmanie','Bolivie','Bosnie-Herzégovine','Botswana','Brésil','Brunei','Bulgarie','Burkina Faso','Burundi',
-  'Cambodge','Cameroun','Canada','Cap-Vert','Centrafrique','Chili','Chine','Chypre','Colombie','Comores','Congo','Congo (RDC)','Corée du Nord','Corée du Sud','Costa Rica','Côte d\'Ivoire','Croatie','Cuba',
-  'Danemark','Djibouti','Dominique',
-  'Égypte','Émirats arabes unis','Équateur','Érythrée','Espagne','Estonie','Eswatini','États-Unis','Éthiopie',
-  'Fidji','Finlande','France',
-  'Gabon','Gambie','Géorgie','Ghana','Grèce','Grenade','Guatemala','Guinée','Guinée équatoriale','Guinée-Bissau','Guyana',
-  'Haïti','Honduras','Hongrie',
-  'Inde','Indonésie','Irak','Iran','Irlande','Islande','Israël','Italie',
-  'Jamaïque','Japon','Jordanie',
-  'Kazakhstan','Kenya','Kirghizistan','Kiribati','Koweït',
-  'Laos','Lesotho','Lettonie','Liban','Liberia','Libye','Liechtenstein','Lituanie','Luxembourg',
-  'Macédoine du Nord','Madagascar','Malaisie','Malawi','Maldives','Mali','Malte','Maroc','Maurice','Mauritanie','Mexique','Micronésie','Moldavie','Monaco','Mongolie','Monténégro','Mozambique',
-  'Namibie','Nauru','Népal','Nicaragua','Niger','Nigeria','Norvège','Nouvelle-Zélande',
-  'Oman','Ouganda','Ouzbékistan',
-  'Pakistan','Palaos','Palestine','Panama','Papouasie-Nouvelle-Guinée','Paraguay','Pays-Bas','Pérou','Philippines','Pologne','Portugal',
-  'Qatar',
-  'Roumanie','Royaume-Uni','Russie','Rwanda',
-  'Saint-Kitts-et-Nevis','Saint-Vincent-et-les-Grenadines','Sainte-Lucie','Salomon','Salvador','Samoa','São Tomé-et-Príncipe','Sénégal','Serbie','Seychelles','Sierra Leone','Singapour','Slovaquie','Slovénie','Somalie','Soudan','Soudan du Sud','Sri Lanka','Suède','Suisse','Suriname','Syrie',
-  'Tadjikistan','Tanzanie','Tchad','Tchéquie','Thaïlande','Timor oriental','Togo','Tonga','Trinité-et-Tobago','Tunisie','Turkménistan','Turquie','Tuvalu',
-  'Ukraine','Uruguay',
-  'Vanuatu','Vatican','Venezuela','Viêt Nam',
-  'Yémen',
-  'Zambie','Zimbabwe'
-];
+// COUNTRIES : liste mondiale partagée — voir ../constants/countries.js
 
 const fmt = (n, cur = 'FCFA') => `${new Intl.NumberFormat('fr-FR').format(n)} ${cur}`;
 
@@ -151,7 +128,7 @@ const LogoUploader = ({ value, onChange }) => {
           onClick={() => ref.current?.click()}
           className="px-4 py-2 text-xs font-bold text-[#0A5740] bg-[#E6F2ED] rounded-xl hover:bg-[#C0DDD2] transition"
         >
-          {value ? 'Changer le logo' : 'Uploader un logo'}
+          {value ? 'Changer le logo' : tp('Uploader un logo')}
         </button>
         {value && (
           <button
@@ -159,10 +136,10 @@ const LogoUploader = ({ value, onChange }) => {
             onClick={() => onChange('')}
             className="px-4 py-2 text-xs font-bold text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition"
           >
-            Supprimer
+            {tp('Supprimer')}
           </button>
         )}
-        <p className="text-[11px] text-gray-400">PNG, SVG ou WEBP recommandé</p>
+        <p className="text-[11px] text-gray-400">{tp('PNG, SVG ou WEBP recommandé')}</p>
       </div>
       <input ref={ref} type="file" accept="image/*" className="hidden" onChange={handleFile} />
     </div>
@@ -322,9 +299,9 @@ const BoutiqueSettings = () => {
   }, [form]);
 
   const TABS = [
-    { id: 'general', label: 'Général', icon: <Store size={15} /> },
+    { id: 'general', get label() { return tp('Général'); }, icon: <Store size={15} /> },
     { id: 'apparence', label: 'Apparence', icon: <Palette size={15} /> },
-    { id: 'avance', label: 'Avancé', icon: <Settings size={15} /> },
+    { id: 'avance', get label() { return tp('Avancé'); }, icon: <Settings size={15} /> },
   ];
 
   const handleRegenerate = async () => {
@@ -418,8 +395,8 @@ const BoutiqueSettings = () => {
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Ma Boutique</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Configurez votre boutique en ligne</p>
+          <h1 className="text-xl font-bold text-gray-900">{tp('Ma Boutique')}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{tp('Configurez votre boutique en ligne')}</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {previewUrl && (
@@ -435,12 +412,12 @@ const BoutiqueSettings = () => {
           {/* Auto-save status indicator */}
           <div className="flex items-center gap-2 px-3 py-2.5 h-[42px]">
             {autoSave === 'idle' && (
-              <span className="text-xs text-gray-400">Auto-sauvegarde activée</span>
+              <span className="text-xs text-gray-400">{tp('Auto-sauvegarde activée')}</span>
             )}
             {autoSave === 'saving' && (
               <span className="flex items-center gap-1.5 text-xs text-gray-400">
                 <span className="w-3 h-3 rounded-full border-2 border-gray-200 border-t-[#0F6B4F] animate-spin inline-block flex-shrink-0" />
-                Sauvegarde...
+                {tp('Sauvegarde...')}
               </span>
             )}
             {autoSave === 'saved' && (
@@ -482,7 +459,7 @@ const BoutiqueSettings = () => {
         <>
           <Section
             icon={<Store size={18} />}
-            title="Informations"
+            title={tp('Informations')}
             desc="Le nom et la description que vos clients voient"
           >
             <div className="space-y-4">
@@ -491,7 +468,7 @@ const BoutiqueSettings = () => {
                   type="text"
                   value={form.storeName}
                   onChange={(e) => set('storeName', e.target.value)}
-                  placeholder="Ma Super Boutique"
+                  placeholder={tp('Ma Super Boutique')}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
                 />
               </Field>
@@ -501,7 +478,7 @@ const BoutiqueSettings = () => {
                   rows={3}
                   value={form.storeDescription}
                   onChange={(e) => set('storeDescription', e.target.value)}
-                  placeholder="Découvrez notre sélection de produits soigneusement choisis…"
+                  placeholder={tp('Découvrez notre sélection de produits soigneusement choisis…')}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none resize-none transition"
                 />
               </Field>
@@ -555,9 +532,9 @@ const BoutiqueSettings = () => {
                     onChange={(e) => set('language', e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-white"
                   >
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
+                    <option value="fr">{tp('Français')}</option>
+                    <option value="en">{tp('English')}</option>
+                    <option value="es">{tp('Español')}</option>
                   </select>
                 </Field>
               </div>
@@ -572,7 +549,7 @@ const BoutiqueSettings = () => {
                     >
                       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.isStoreEnabled ? 'translate-x-5' : ''}`} />
                     </button>
-                    <span className="text-sm text-gray-600">{form.isStoreEnabled ? 'En ligne' : 'Hors ligne'}</span>
+                    <span className="text-sm text-gray-600">{form.isStoreEnabled ? 'En ligne' : tp('Hors ligne')}</span>
                   </div>
                 </Field>
               </div>
@@ -580,8 +557,8 @@ const BoutiqueSettings = () => {
               <div className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 space-y-4">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Barre d'annonce</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Affichée en haut de la boutique, y compris sur les pages produit quand elle est activée.</p>
+                    <p className="text-sm font-semibold text-gray-900">{tp('Barre d\'annonce')}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('Affichée en haut de la boutique, y compris sur les pages produit quand elle est activée.')}</p>
                   </div>
                   <div className="flex items-center gap-3 mt-1">
                     <button
@@ -591,7 +568,7 @@ const BoutiqueSettings = () => {
                     >
                       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.announcementEnabled ? 'translate-x-5' : ''}`} />
                     </button>
-                    <span className="text-sm text-gray-600">{form.announcementEnabled ? 'Activée' : 'Désactivée'}</span>
+                    <span className="text-sm text-gray-600">{form.announcementEnabled ? 'Activée' : tp('Désactivée')}</span>
                   </div>
                 </div>
 
@@ -600,7 +577,7 @@ const BoutiqueSettings = () => {
                     type="text"
                     value={form.announcement}
                     onChange={(e) => set('announcement', e.target.value)}
-                    placeholder="Livraison rapide · Paiement à la livraison · Retours faciles"
+                    placeholder={tp('Livraison rapide · Paiement à la livraison · Retours faciles')}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
                   />
                 </Field>
@@ -616,7 +593,7 @@ const BoutiqueSettings = () => {
         <>
           <Section
             icon={<Upload size={18} />}
-            title="Logo"
+            title={tp('Logo')}
             desc="Affiché en header sur toutes les pages de votre boutique"
           >
             <LogoUploader value={form.storeLogo} onChange={(v) => set('storeLogo', v)} />
@@ -624,14 +601,14 @@ const BoutiqueSettings = () => {
 
           <Section
             icon={<Upload size={18} />}
-            title="Favicon"
+            title={tp('Favicon')}
             desc="Petite icône affichée dans l'onglet du navigateur (32x32 ou 64x64 recommandé)"
           >
             <LogoUploader value={form.storeFavicon} onChange={(v) => set('storeFavicon', v)} />
           </Section>
           <Section
             icon={<Type size={18} />}
-            title="Police"
+            title={tp('Police')}
             desc="Appliquée à l'ensemble de votre boutique"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -673,7 +650,7 @@ const BoutiqueSettings = () => {
                 <h3 className="text-lg font-bold flex items-center gap-2 mb-1">
                   <Sparkles size={20} /> Modifier votre boutique
                 </h3>
-                <p className="text-sm text-white/80">Utilisez notre assistant pour configurer votre boutique en détail : cible, ton, audience, localisation, etc.</p>
+                <p className="text-sm text-white/80">{tp('Utilisez notre assistant pour configurer votre boutique en détail : cible, ton, audience, localisation, etc.')}</p>
               </div>
               <button
                 onClick={() => navigate('/ecom/boutique/wizard')}
@@ -690,8 +667,8 @@ const BoutiqueSettings = () => {
                 <Sparkles size={17} />
               </span>
               <div>
-                <h2 className="text-sm font-bold text-gray-900">Régénérer la homepage par IA</h2>
-                <p className="text-xs text-gray-500 mt-0.5">L'IA recrée toute votre page d'accueil en fonction de votre niche, audience et produits.</p>
+                <h2 className="text-sm font-bold text-gray-900">{tp('Régénérer la homepage par IA')}</h2>
+                <p className="text-xs text-gray-500 mt-0.5">{tp('L\'IA recrée toute votre page d\'accueil en fonction de votre niche, audience et produits.')}</p>
               </div>
             </div>
             <button

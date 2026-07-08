@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const WEBHOOK_API_BASE = (() => {
   const apiBase = ecomApi?.defaults?.baseURL || '';
@@ -102,9 +103,9 @@ export default function ConnectShopify() {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Webhook Shopify</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{tp('Webhook Shopify')}</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Recevez automatiquement vos commandes Shopify en temps reel via webhook.
+          {tp('Recevez automatiquement vos commandes Shopify en temps reel via webhook.')}
         </p>
       </div>
 
@@ -141,8 +142,8 @@ export default function ConnectShopify() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Webhook URL</h2>
-            <p className="text-xs text-gray-500">Copiez cette URL et collez-la dans Shopify</p>
+            <h2 className="text-lg font-semibold text-gray-900">{tp('Webhook URL')}</h2>
+            <p className="text-xs text-gray-500">{tp('Copiez cette URL et collez-la dans Shopify')}</p>
           </div>
         </div>
 
@@ -168,12 +169,12 @@ export default function ConnectShopify() {
             {webhookCopied ? (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                Copie !
+                {tp('Copie !')}
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                Copier
+                {tp('Copier')}
               </>
             )}
           </button>
@@ -198,7 +199,7 @@ export default function ConnectShopify() {
               <span className={`w-2 h-2 rounded-full ${webhookStatus.ok ? 'bg-primary-500' : 'bg-red-500'}`} />
               {webhookStatus.message}
               {webhookStatus.ok && webhookStatus.hmac && (
-                <span className="text-gray-400 font-normal ml-1">(HMAC actif)</span>
+                <span className="text-gray-400 font-normal ml-1">{tp('(HMAC actif)')}</span>
               )}
             </span>
           )}
@@ -214,15 +215,15 @@ export default function ConnectShopify() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Tutoriel video</h2>
-            <p className="text-xs text-gray-500">Regardez comment configurer votre webhook Shopify</p>
+            <h2 className="text-lg font-semibold text-gray-900">{tp('Tutoriel video')}</h2>
+            <p className="text-xs text-gray-500">{tp('Regardez comment configurer votre webhook Shopify')}</p>
           </div>
         </div>
         <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: '56.25%' }}>
           <iframe
             className="absolute inset-0 w-full h-full"
             src="https://www.youtube.com/embed/LykzSotpGaM"
-            title="Tutoriel configuration webhook Shopify"
+            title={tp('Tutoriel configuration webhook Shopify')}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
@@ -239,8 +240,8 @@ export default function ConnectShopify() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Configuration dans Shopify</h2>
-            <p className="text-xs text-gray-500">Suivez ces etapes pour activer le webhook</p>
+            <h2 className="text-lg font-semibold text-gray-900">{tp('Configuration dans Shopify')}</h2>
+            <p className="text-xs text-gray-500">{tp('Suivez ces etapes pour activer le webhook')}</p>
           </div>
         </div>
 
@@ -249,9 +250,9 @@ export default function ConnectShopify() {
           <div className="flex gap-3">
             <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Ouvrez les parametres Shopify</p>
+              <p className="text-sm font-medium text-gray-900">{tp('Ouvrez les parametres Shopify')}</p>
               <p className="text-xs text-gray-500 mt-0.5">
-                Allez dans <strong>Shopify Admin</strong> &rarr; <strong>Settings</strong> &rarr; <strong>Notifications</strong>
+                Allez dans <strong>{tp('Shopify Admin')}</strong> &rarr; <strong>{tp('Settings')}</strong> &rarr; <strong>{tp('Notifications')}</strong>
               </p>
             </div>
           </div>
@@ -260,9 +261,9 @@ export default function ConnectShopify() {
           <div className="flex gap-3">
             <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Creez un webhook</p>
+              <p className="text-sm font-medium text-gray-900">{tp('Creez un webhook')}</p>
               <p className="text-xs text-gray-500 mt-0.5">
-                Faites defiler jusqu'a <strong>Webhooks</strong> en bas de page, puis cliquez sur <strong>Create webhook</strong>
+                Faites defiler jusqu'a <strong>{tp('Webhooks')}</strong> {tp('en bas de page, puis cliquez sur')} <strong>{tp('Create webhook')}</strong>
               </p>
             </div>
           </div>
@@ -271,14 +272,14 @@ export default function ConnectShopify() {
           <div className="flex gap-3">
             <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Configurez le webhook</p>
+              <p className="text-sm font-medium text-gray-900">{tp('Configurez le webhook')}</p>
               <div className="mt-2 bg-gray-50 rounded-xl p-3 space-y-2">
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="font-medium text-gray-600 w-16">Event</span>
-                  <code className="bg-white px-2 py-1 rounded-lg border border-gray-200 text-gray-800">Order creation</code>
+                  <span className="font-medium text-gray-600 w-16">{tp('Event')}</span>
+                  <code className="bg-white px-2 py-1 rounded-lg border border-gray-200 text-gray-800">{tp('Order creation')}</code>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="font-medium text-gray-600 w-16">Format</span>
+                  <span className="font-medium text-gray-600 w-16">{tp('Format')}</span>
                   <code className="bg-white px-2 py-1 rounded-lg border border-gray-200 text-gray-800">JSON</code>
                 </div>
                 <div className="flex items-start gap-2 text-xs">
@@ -295,9 +296,9 @@ export default function ConnectShopify() {
           <div className="flex gap-3">
             <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Sauvegardez</p>
+              <p className="text-sm font-medium text-gray-900">{tp('Sauvegardez')}</p>
               <p className="text-xs text-gray-500 mt-0.5">
-                Cliquez sur <strong>Save</strong>. Les nouvelles commandes Shopify seront automatiquement envoyees a Scalor.
+                Cliquez sur <strong>{tp('Save')}</strong>. Les nouvelles commandes Shopify seront automatiquement envoyees a Scalor.
               </p>
             </div>
           </div>
@@ -311,12 +312,12 @@ export default function ConnectShopify() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <h3 className="text-sm font-semibold text-blue-800 mb-1">Comment ca marche ?</h3>
+            <h3 className="text-sm font-semibold text-blue-800 mb-1">{tp('Comment ca marche ?')}</h3>
             <ul className="text-xs text-blue-700 space-y-1">
-              <li>Chaque nouvelle commande Shopify declenche un webhook vers Scalor</li>
-              <li>La commande est automatiquement importee dans votre tableau de bord</li>
-              <li>Vous recevez une notification en temps reel</li>
-              <li>Les doublons sont automatiquement detectes et ignores</li>
+              <li>{tp('Chaque nouvelle commande Shopify declenche un webhook vers Scalor')}</li>
+              <li>{tp('La commande est automatiquement importee dans votre tableau de bord')}</li>
+              <li>{tp('Vous recevez une notification en temps reel')}</li>
+              <li>{tp('Les doublons sont automatiquement detectes et ignores')}</li>
             </ul>
           </div>
         </div>

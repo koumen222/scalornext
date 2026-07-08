@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Link } from '@/lib/router-compat';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
   const { fmt } = useMoney();
@@ -46,7 +47,7 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
               </span>
               {!product.isActive && (
                 <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-medium">
-                  Inactif
+                  {tp('Inactif')}
                 </span>
               )}
             </div>
@@ -56,11 +57,11 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
         {/* Informations principales */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <p className="text-sm text-gray-500">Prix de vente</p>
+            <p className="text-sm text-gray-500">{tp('Prix de vente')}</p>
             <p className="font-semibold text-gray-900">{fmt(product.sellingPrice)}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Stock</p>
+            <p className="text-sm text-gray-500">{tp('Stock')}</p>
             <p className={`font-semibold ${getStockColor(product.stock, product.reorderThreshold)}`}>
               {product.stock} unités
             </p>
@@ -71,19 +72,19 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
         <div className="border-t border-gray-100 pt-4 mb-4">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-500">Coût produit</p>
+              <p className="text-gray-500">{tp('Coût produit')}</p>
               <p className="font-medium">{fmt(product.productCost)}</p>
             </div>
             <div>
-              <p className="text-gray-500">Coût livraison</p>
+              <p className="text-gray-500">{tp('Coût livraison')}</p>
               <p className="font-medium">{fmt(product.deliveryCost)}</p>
             </div>
             <div>
-              <p className="text-gray-500">Coût pub moyen</p>
+              <p className="text-gray-500">{tp('Coût pub moyen')}</p>
               <p className="font-medium">{fmt(product.avgAdsCost)}</p>
             </div>
             <div>
-              <p className="text-gray-500">Marge/unité</p>
+              <p className="text-gray-500">{tp('Marge/unité')}</p>
               <p className={`font-medium ${margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {fmt(margin)}
               </p>
@@ -113,14 +114,14 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
                 to={`/products/${product._id}`}
                 className="px-3 py-1 bg-primary-100 text-primary-700 rounded text-sm font-medium hover:bg-primary-200 transition"
               >
-                Voir
+                {tp('Voir')}
               </Link>
               {onEdit && (
                 <button
                   onClick={() => onEdit(product)}
                   className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm font-medium hover:bg-gray-200 transition"
                 >
-                  Modifier
+                  {tp('Modifier')}
                 </button>
               )}
               {onDelete && (
@@ -128,7 +129,7 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
                   onClick={() => onDelete(product)}
                   className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm font-medium hover:bg-red-200 transition"
                 >
-                  Supprimer
+                  {tp('Supprimer')}
                 </button>
               )}
             </div>

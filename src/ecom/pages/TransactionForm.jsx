@@ -3,6 +3,7 @@ import { useNavigate, useParams } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const categoryLabels = {
   publicite: 'Publicité',
@@ -134,7 +135,7 @@ const TransactionForm = () => {
     <div className="p-3 sm:p-4 lg:p-6 max-w-3xl mx-auto">
       <div className="mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-          {isEditing ? 'Modifier la transaction' : 'Nouvelle transaction'}
+          {isEditing ? 'Modifier la transaction' : tp('Nouvelle transaction')}
         </h1>
       </div>
 
@@ -145,34 +146,34 @@ const TransactionForm = () => {
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-3 sm:p-6 space-y-4 sm:space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Date *')}</label>
             <input type="date" name="date" required value={formData.date} onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Type *')}</label>
             <div className="flex gap-4 mt-1">
               <label className={`flex-1 text-center py-2 rounded-lg border-2 cursor-pointer transition ${
                 formData.type === 'expense' ? 'border-red-500 bg-red-50 text-red-700 font-semibold' : 'border-gray-200 text-gray-500'
               }`}>
                 <input type="radio" name="type" value="expense" checked={formData.type === 'expense'} onChange={handleChange} className="sr-only" />
-                Dépense
+                {tp('Dépense')}
               </label>
               <label className={`flex-1 text-center py-2 rounded-lg border-2 cursor-pointer transition ${
                 formData.type === 'income' ? 'border-green-500 bg-green-50 text-green-700 font-semibold' : 'border-gray-200 text-gray-500'
               }`}>
                 <input type="radio" name="type" value="income" checked={formData.type === 'income'} onChange={handleChange} className="sr-only" />
-                Entrée
+                {tp('Entrée')}
               </label>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Catégorie *')}</label>
             <select name="category" required value={formData.category} onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent">
-              <option value="">Sélectionner une catégorie</option>
+              <option value="">{tp('Sélectionner une catégorie')}</option>
               {availableCategories.map(cat => (
                 <option key={cat} value={cat}>{categoryLabels[cat]}</option>
               ))}
@@ -180,17 +181,17 @@ const TransactionForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Montant (FCFA) *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Montant (FCFA) *')}</label>
             <input type="number" name="amount" required min="0" step="0.01" value={formData.amount} onChange={handleChange}
               placeholder="0.00"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Produit lié (optionnel)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Produit lié (optionnel)')}</label>
             <select name="productId" value={formData.productId} onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent">
-              <option value="">Aucun</option>
+              <option value="">{tp('Aucun')}</option>
               {products.map(p => (
                 <option key={p._id} value={p._id}>{p.name}</option>
               ))}
@@ -198,24 +199,24 @@ const TransactionForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Référence (optionnel)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Référence (optionnel)')}</label>
             <input type="text" name="reference" value={formData.reference} onChange={handleChange}
-              placeholder="N° facture, reçu..."
+              placeholder={tp('N° facture, reçu...')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Description')}</label>
           <textarea name="description" rows="3" value={formData.description} onChange={handleChange}
-            placeholder="Détails de la transaction..."
+            placeholder={tp('Détails de la transaction...')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
         </div>
 
         <div className="flex justify-end space-x-4 pt-2">
           <button type="button" onClick={() => navigate('/ecom/transactions')}
             className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-            Annuler
+            {tp('Annuler')}
           </button>
           <button type="submit" disabled={loading}
             className="px-6 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 disabled:opacity-50">

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { authApi } from '../services/ecommApi.js';
 import { logAuthEvent, logWorkspace, logUserAction } from '../services/prodLogger.js';
+import { tp } from '../i18n/platform.js';
 // Lazy posthog — keeps posthog-js out of the critical auth bundle
 const _ph = () => import('../services/posthog.js');
 const phIdentify = (...a) => _ph().then(m => m.identifyUser(...a)).catch(() => {});
@@ -743,12 +744,12 @@ export const EcomAuthDebug = () => {
       fontSize: '12px',
       zIndex: 9999
     }}>
-      <div>🔐 Debug Auth:</div>
-      <div>Loading: {loading ? 'Oui' : 'Non'}</div>
-      <div>Auth: {isAuthenticated ? 'Oui' : 'Non'}</div>
-      <div>User: {user ? user.email : 'Null'}</div>
-      <div>Role: {user ? user.role : 'Null'}</div>
-      <div>Token: {token ? 'Présent' : 'Absent'}</div>
+      <div>{tp('🔐 Debug Auth:')}</div>
+      <div>Loading: {loading ? 'Oui' : tp('Non')}</div>
+      <div>Auth: {isAuthenticated ? 'Oui' : tp('Non')}</div>
+      <div>User: {user ? user.email : tp('Null')}</div>
+      <div>Role: {user ? user.role : tp('Null')}</div>
+      <div>Token: {token ? 'Présent' : tp('Absent')}</div>
     </div>
   );
 };

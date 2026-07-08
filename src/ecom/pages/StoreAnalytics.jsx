@@ -9,6 +9,7 @@ import ecomApi from '../services/ecommApi.js';
 import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import { useStore } from '../contexts/StoreContext.jsx';
 import { formatMoney } from '../utils/currency.js';
+import { tp } from '../i18n/platform.js';
 
 /**
  * StoreAnalytics — "Analyses de données" (orienté e-commerce COD Afrique).
@@ -16,7 +17,7 @@ import { formatMoney } from '../utils/currency.js';
  * Backed by /store-analytics/dashboard.
  */
 const TABS = [
-  { key: 'summary',   label: 'Résumé',    shortLabel: 'Résumé',  icon: LayoutGrid,  iconClass: 'text-primary-500' },
+  { key: 'summary',   get label() { return tp('Résumé'); },    get shortLabel() { return tp('Résumé'); },  icon: LayoutGrid,  iconClass: 'text-primary-500' },
   { key: 'sales',     label: 'Ventes',    shortLabel: 'Ventes',  icon: ShoppingBag, iconClass: 'text-primary-600' },
   { key: 'orders',    label: 'Commandes', shortLabel: 'Cmd',     icon: Package,     iconClass: 'text-scalor-copper' },
   { key: 'delivery',  label: 'Livraison', shortLabel: 'Livr.',   icon: Truck,       iconClass: 'text-primary-500' },
@@ -26,8 +27,8 @@ const TABS = [
 
 const DATE_PRESETS = [
   { key: 'all', label: 'Tout l\'historique', compute: () => ({ start: new Date(2020, 0, 1), end: new Date() }) },
-  { key: '1h',  label: 'Dernière heure',      compute: () => ({ start: new Date(Date.now() - 60 * 60 * 1000),         end: new Date() }) },
-  { key: '24h', label: 'Dernières 24 heures', compute: () => ({ start: new Date(Date.now() - 24 * 60 * 60 * 1000),    end: new Date() }) },
+  { key: '1h',  get label() { return tp('Dernière heure'); },      compute: () => ({ start: new Date(Date.now() - 60 * 60 * 1000),         end: new Date() }) },
+  { key: '24h', get label() { return tp('Dernières 24 heures'); }, compute: () => ({ start: new Date(Date.now() - 24 * 60 * 60 * 1000),    end: new Date() }) },
   { key: 'today',     label: "Aujourd'hui",   compute: () => { const s = new Date(); s.setHours(0,0,0,0); return { start: s, end: new Date() }; } },
   { key: 'yesterday', label: 'Hier',          compute: () => { const s = new Date(); s.setDate(s.getDate()-1); s.setHours(0,0,0,0); const e = new Date(s); e.setHours(23,59,59,999); return { start: s, end: e }; } },
   { key: '7d',  label: '7 derniers jours',    compute: () => ({ start: new Date(Date.now() - 7  * 86400000), end: new Date() }) },
@@ -35,8 +36,8 @@ const DATE_PRESETS = [
   { key: '90d', label: '3 derniers mois',     compute: () => ({ start: new Date(Date.now() - 90 * 86400000), end: new Date() }) },
   { key: '12m', label: '12 derniers mois',    compute: () => ({ start: new Date(Date.now() - 365 * 86400000), end: new Date() }) },
   { key: 'mtd', label: 'Mois en cours',       compute: () => { const s = new Date(); s.setDate(1); s.setHours(0,0,0,0); return { start: s, end: new Date() }; } },
-  { key: 'ytd', label: 'Année en cours',      compute: () => { const s = new Date(); s.setMonth(0, 1); s.setHours(0,0,0,0); return { start: s, end: new Date() }; } },
-  { key: 'custom', label: 'Personnalisé' },
+  { key: 'ytd', get label() { return tp('Année en cours'); },      compute: () => { const s = new Date(); s.setMonth(0, 1); s.setHours(0,0,0,0); return { start: s, end: new Date() }; } },
+  { key: 'custom', get label() { return tp('Personnalisé'); } },
 ];
 const TODAY_AUTO_REFRESH_MS = 15000;
 
@@ -331,8 +332,8 @@ export default function StoreAnalytics() {
   return (
     <div className="max-w-[1100px] mx-auto px-3 sm:px-4 py-5 sm:py-6 space-y-5 sm:space-y-6 bg-gray-50 min-h-screen">
       <div className="space-y-1">
-        <h1 className="text-[34px] sm:text-2xl font-semibold text-gray-950 leading-none">Analyses</h1>
-        <p className="text-sm text-gray-500">Vue simple des ventes, commandes, livraisons et visites de la boutique.</p>
+        <h1 className="text-[34px] sm:text-2xl font-semibold text-gray-950 leading-none">{tp('Analyses')}</h1>
+        <p className="text-sm text-gray-500">{tp('Vue simple des ventes, commandes, livraisons et visites de la boutique.')}</p>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-4">
@@ -351,7 +352,7 @@ export default function StoreAnalytics() {
             <div className="absolute z-30 mt-2 left-0 right-0 sm:right-auto sm:min-w-[560px] bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden flex flex-col sm:flex-row">
               {/* Presets sidebar */}
               <div className="w-full sm:w-60 bg-gray-50 p-2 sm:border-r border-gray-200">
-                <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Périodes rapides</p>
+                <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">{tp('Périodes rapides')}</p>
                 <ul className="space-y-0.5">
                   {DATE_PRESETS.map(p => {
                     const selected = p.key === presetKey;
@@ -375,10 +376,10 @@ export default function StoreAnalytics() {
               </div>
               {/* Custom range */}
               <div className="flex-1 p-5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Plage personnalisée</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">{tp('Plage personnalisée')}</p>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="flex flex-col text-xs text-gray-600">
-                    Date de début
+                    {tp('Date de début')}
                     <input
                       type="date"
                       value={startDate}
@@ -388,7 +389,7 @@ export default function StoreAnalytics() {
                     />
                   </label>
                   <label className="flex flex-col text-xs text-gray-600">
-                    Date de fin
+                    {tp('Date de fin')}
                     <input
                       type="date"
                       value={endDate}
@@ -404,13 +405,13 @@ export default function StoreAnalytics() {
                     onClick={() => setDatePickerOpen(false)}
                     className="px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-md"
                   >
-                    Annuler
+                    {tp('Annuler')}
                   </button>
                   <button
                     onClick={() => setDatePickerOpen(false)}
                     className="px-4 py-2 bg-gray-900 text-white rounded-md text-xs font-medium hover:bg-gray-800"
                   >
-                    Appliquer
+                    {tp('Appliquer')}
                   </button>
                 </div>
               </div>
@@ -500,7 +501,7 @@ function SummaryTab({ kpi, daily, fmtCurrency }) {
   return (
     <div className="space-y-6">
       <section className="space-y-3">
-        <SectionTitle>Chiffre d'affaires COD</SectionTitle>
+        <SectionTitle>{tp('Chiffre d\'affaires COD')}</SectionTitle>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <Card value={fmtCurrency(kpi.realizedRevenue)}  label="CA encaissé (livré)" accent="green" highlight />
           <Card value={fmtCurrency(kpi.potentialRevenue)} label="CA potentiel (toutes cmd.)" />
@@ -510,7 +511,7 @@ function SummaryTab({ kpi, daily, fmtCurrency }) {
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>Performance COD</SectionTitle>
+        <SectionTitle>{tp('Performance COD')}</SectionTitle>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Card value={fmtPct(kpi.confirmationRate)} label="Taux de confirmation" />
           <Card value={fmtPct(kpi.deliveryRate)}     label="Taux de livraison réussie" accent="green" />
@@ -520,7 +521,7 @@ function SummaryTab({ kpi, daily, fmtCurrency }) {
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>Commandes</SectionTitle>
+        <SectionTitle>{tp('Commandes')}</SectionTitle>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Card value={fmtNumber(kpi.totalOrders)} label="Total commandes" highlight />
           <Card value={fmtNumber(kpi.pending)}     label="À confirmer" accent="copper" />
@@ -530,7 +531,7 @@ function SummaryTab({ kpi, daily, fmtCurrency }) {
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>Revenu encaissé quotidien</SectionTitle>
+        <SectionTitle>{tp('Revenu encaissé quotidien')}</SectionTitle>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <AreaChart data={daily.series} color="#0F6B4F" fill="rgba(15,107,79,0.14)" yFormat={(v) => fmtCompactCurrency(v)} />
         </div>
@@ -567,7 +568,7 @@ function SalesTab({ kpi, daily, fmtCurrency }) {
       </div>
 
       <section className="space-y-3">
-        <SectionTitle>Revenu encaissé quotidien</SectionTitle>
+        <SectionTitle>{tp('Revenu encaissé quotidien')}</SectionTitle>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <AreaChart data={salesSeries} color="#0F6B4F" fill="rgba(15,107,79,0.14)" yFormat={(v) => fmtCompactCurrency(v)} />
         </div>
@@ -575,7 +576,7 @@ function SalesTab({ kpi, daily, fmtCurrency }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="space-y-3">
-          <SectionTitle>Produits les plus vendus</SectionTitle>
+          <SectionTitle>{tp('Produits les plus vendus')}</SectionTitle>
           <RankedCard
             items={kpi.topProductsBySales.map((product) => ({
               label: product.name || 'Sans nom',
@@ -588,7 +589,7 @@ function SalesTab({ kpi, daily, fmtCurrency }) {
         </section>
 
         <section className="space-y-3">
-          <SectionTitle>Produits les moins vendus</SectionTitle>
+          <SectionTitle>{tp('Produits les moins vendus')}</SectionTitle>
           <RankedCard
             items={kpi.leastProductsBySales.map((product) => ({
               label: product.name || 'Sans nom',
@@ -603,7 +604,7 @@ function SalesTab({ kpi, daily, fmtCurrency }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="space-y-3">
-          <SectionTitle>Produits les plus rentables</SectionTitle>
+          <SectionTitle>{tp('Produits les plus rentables')}</SectionTitle>
           <RankedCard
             items={kpi.topProductsByRevenue.map((product) => ({
               label: product.name || 'Sans nom',
@@ -617,10 +618,10 @@ function SalesTab({ kpi, daily, fmtCurrency }) {
         </section>
 
         <section className="space-y-3">
-          <SectionTitle>Ventes par canal</SectionTitle>
+          <SectionTitle>{tp('Ventes par canal')}</SectionTitle>
           <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
             {kpi.channelPerformance.length === 0 ? (
-              <div className="text-sm text-gray-400 text-center py-6">Aucune donnée par canal</div>
+              <div className="text-sm text-gray-400 text-center py-6">{tp('Aucune donnée par canal')}</div>
             ) : kpi.channelPerformance.map((channel) => (
               <div key={channel.channel} className="border border-gray-100 rounded-lg p-3 space-y-2">
                 <div className="flex items-center justify-between gap-3">
@@ -652,10 +653,10 @@ function OrdersTab({ kpi }) {
   const total = kpi.totalOrders || 1;
   const steps = [
     { label: 'Nouvelles',     count: kpi.totalOrders,                              icon: Package,        color: '#6b7280' },
-    { label: 'Confirmées',    count: kpi.totalOrders - kpi.pending,                icon: PhoneCall,      color: '#0F6B4F' },
+    { get label() { return tp('Confirmées'); },    count: kpi.totalOrders - kpi.pending,                icon: PhoneCall,      color: '#0F6B4F' },
     { label: 'En traitement', count: kpi.processing + kpi.shipped + kpi.delivered, icon: Package,        color: '#0F6B4F' },
-    { label: 'Expédiées',     count: kpi.shipped + kpi.delivered,                  icon: Truck,          color: '#14855F' },
-    { label: 'Livrées',       count: kpi.delivered,                                icon: CheckCircle2,   color: '#0A5740' },
+    { get label() { return tp('Expédiées'); },     count: kpi.shipped + kpi.delivered,                  icon: Truck,          color: '#14855F' },
+    { get label() { return tp('Livrées'); },       count: kpi.delivered,                                icon: CheckCircle2,   color: '#0A5740' },
   ];
 
   const whatsapp = kpi.channelStats?.whatsapp || 0;
@@ -672,7 +673,7 @@ function OrdersTab({ kpi }) {
       </div>
 
       <section className="space-y-3">
-        <SectionTitle>Entonnoir COD</SectionTitle>
+        <SectionTitle>{tp('Entonnoir COD')}</SectionTitle>
         <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
           {steps.map((s, i) => {
             const pct = (s.count / total) * 100;
@@ -699,7 +700,7 @@ function OrdersTab({ kpi }) {
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>Canal de commande</SectionTitle>
+        <SectionTitle>{tp('Canal de commande')}</SectionTitle>
         <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
           <ChannelRow
             icon={<MessageCircle className="w-4 h-4 text-[#25D366]" />}
@@ -738,7 +739,7 @@ function DeliveryTab({ kpi, fmtCurrency }) {
       </div>
 
       <section className="space-y-3">
-        <SectionTitle>Top zones de livraison</SectionTitle>
+        <SectionTitle>{tp('Top zones de livraison')}</SectionTitle>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           {cities.length === 0 ? (
             <EmptyRow text="Aucune zone de livraison sur cette période" />
@@ -772,7 +773,7 @@ function DeliveryTab({ kpi, fmtCurrency }) {
       </section>
 
       <section className="space-y-3">
-        <SectionTitle>Performance par statut</SectionTitle>
+        <SectionTitle>{tp('Performance par statut')}</SectionTitle>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
           <StatusCard icon={PhoneCall}    label="En attente"   count={kpi.pending}    tone="gray" />
           <StatusCard icon={CheckCircle2} label="Confirmées"   count={kpi.confirmed}  tone="green" />
@@ -808,7 +809,7 @@ function VisitsTab({ kpi, daily }) {
 
       {/* Daily visits chart */}
       <section className="space-y-3">
-        <SectionTitle>Visites quotidiennes</SectionTitle>
+        <SectionTitle>{tp('Visites quotidiennes')}</SectionTitle>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <AreaChart
             data={daily.visitSeries}
@@ -822,7 +823,7 @@ function VisitsTab({ kpi, daily }) {
       {/* Devices + Browsers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="space-y-3">
-          <SectionTitle>Par type d'appareil</SectionTitle>
+          <SectionTitle>{tp('Par type d\'appareil')}</SectionTitle>
           <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
             <DeviceLine icon={Monitor}    label="Ordinateur" count={desktop} total={deviceTotal} />
             <DeviceLine icon={Smartphone} label="Mobile"     count={mobile}  total={deviceTotal} />
@@ -831,7 +832,7 @@ function VisitsTab({ kpi, daily }) {
         </section>
 
         <section className="space-y-3">
-          <SectionTitle>Par navigateur</SectionTitle>
+          <SectionTitle>{tp('Par navigateur')}</SectionTitle>
           <RankedCard
             items={kpi.browserStats.map(b => ({ label: b._id || 'Inconnu', value: b.count }))}
             icon={Chrome}
@@ -843,7 +844,7 @@ function VisitsTab({ kpi, daily }) {
       {/* Countries + Cities */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="space-y-3">
-          <SectionTitle>Visites par pays</SectionTitle>
+          <SectionTitle>{tp('Visites par pays')}</SectionTitle>
           <RankedCard
             items={kpi.countryStats.map(c => ({ label: countryLabel(c._id), value: c.count }))}
             icon={Globe}
@@ -852,7 +853,7 @@ function VisitsTab({ kpi, daily }) {
         </section>
 
         <section className="space-y-3">
-          <SectionTitle>Visites par ville</SectionTitle>
+          <SectionTitle>{tp('Visites par ville')}</SectionTitle>
           <RankedCard
             items={kpi.cityVisitStats.map(c => ({ label: c._id || 'Inconnu', value: c.count }))}
             icon={MapPin}
@@ -864,7 +865,7 @@ function VisitsTab({ kpi, daily }) {
       {/* Traffic sources + Languages */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="space-y-3">
-          <SectionTitle>Canal / Référent</SectionTitle>
+          <SectionTitle>{tp('Canal / Référent')}</SectionTitle>
           <RankedCard
             items={kpi.trafficSources.map(s => ({
               label: prettifyReferrer(s._id),
@@ -876,7 +877,7 @@ function VisitsTab({ kpi, daily }) {
         </section>
 
         <section className="space-y-3">
-          <SectionTitle>Par langue</SectionTitle>
+          <SectionTitle>{tp('Par langue')}</SectionTitle>
           <RankedCard
             items={kpi.languageStats.map(l => ({ label: l._id || 'Inconnu', value: l.count }))}
             icon={Languages}
@@ -888,7 +889,7 @@ function VisitsTab({ kpi, daily }) {
       {/* Top pages + Top products */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="space-y-3">
-          <SectionTitle>Pages les plus vues</SectionTitle>
+          <SectionTitle>{tp('Pages les plus vues')}</SectionTitle>
           <RankedCard
             items={kpi.topPages.map(p => ({ label: p._id || '/', value: p.count }))}
             icon={FileText}
@@ -897,7 +898,7 @@ function VisitsTab({ kpi, daily }) {
         </section>
 
         <section className="space-y-3">
-          <SectionTitle>Produits les plus vus</SectionTitle>
+          <SectionTitle>{tp('Produits les plus vus')}</SectionTitle>
           <RankedCard
             items={kpi.visitsPerProduct.slice(0, 8).map(p => ({
               label: p.name || 'Sans nom',
@@ -1004,7 +1005,7 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
   const subs = [
     { key: 'all',       label: 'Tous les clients' },
     { key: 'new',       label: 'Nouveaux' },
-    { key: 'returning', label: 'Récurrents' },
+    { key: 'returning', get label() { return tp('Récurrents'); } },
   ];
   const newCustomers = Math.max(0, kpi.uniqueCustomers - kpi.repeatCustomers);
 
@@ -1049,25 +1050,25 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher (nom, téléphone, ville)…"
+          placeholder={tp('Rechercher (nom, téléphone, ville)…')}
           className="ml-auto w-full sm:w-64 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-700 outline-none transition focus:border-gray-400"
         />
       </div>
 
       {rows.length === 0 ? (
-        <EmptyRow text={query ? 'Aucun client ne correspond à la recherche' : 'Aucun client sur la période'} />
+        <EmptyRow text={query ? 'Aucun client ne correspond à la recherche' : tp('Aucun client sur la période')} />
       ) : (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-left text-[11px] uppercase tracking-wide text-gray-400">
-                  <th className="px-4 py-2.5 font-medium">Client</th>
-                  <th className="px-4 py-2.5 font-medium">Téléphone</th>
-                  <th className="px-4 py-2.5 font-medium">Ville</th>
-                  <th className="px-4 py-2.5 font-medium text-right">Commandes</th>
-                  <th className="px-4 py-2.5 font-medium text-right">Total dépensé</th>
-                  <th className="px-4 py-2.5 font-medium text-right">Dernière commande</th>
+                  <th className="px-4 py-2.5 font-medium">{tp('Client')}</th>
+                  <th className="px-4 py-2.5 font-medium">{tp('Téléphone')}</th>
+                  <th className="px-4 py-2.5 font-medium">{tp('Ville')}</th>
+                  <th className="px-4 py-2.5 font-medium text-right">{tp('Commandes')}</th>
+                  <th className="px-4 py-2.5 font-medium text-right">{tp('Total dépensé')}</th>
+                  <th className="px-4 py-2.5 font-medium text-right">{tp('Dernière commande')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -1076,7 +1077,7 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
                     <td className="px-4 py-2.5">
                       <span className="font-medium text-gray-800">{c.name}</span>
                       {c.ordersCount >= 2 && (
-                        <span className="ml-2 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">Récurrent</span>
+                        <span className="ml-2 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">{tp('Récurrent')}</span>
                       )}
                     </td>
                     <td className="px-4 py-2.5 text-gray-600 tabular-nums">{c.phone || '—'}</td>
@@ -1099,7 +1100,7 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
       )}
 
       <section className="space-y-3">
-        <SectionTitle>Meilleures villes</SectionTitle>
+        <SectionTitle>{tp('Meilleures villes')}</SectionTitle>
         {kpi.topCities.length === 0 ? (
           <EmptyRow />
         ) : (
@@ -1163,7 +1164,7 @@ function AreaChart({ data, color = '#10b981', fill = 'rgba(16,185,129,0.15)', yF
   const innerH = H - padT - padB;
 
   if (!data || data.length === 0) {
-    return <div className="h-[260px] flex items-center justify-center text-sm text-gray-400">Aucune donnée</div>;
+    return <div className="h-[260px] flex items-center justify-center text-sm text-gray-400">{tp('Aucune donnée')}</div>;
   }
 
   const max = Math.max(...data.map(d => d.value), 1);

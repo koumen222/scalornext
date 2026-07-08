@@ -1,3 +1,4 @@
+import { tp } from '../i18n/platform.js';
 ﻿import { useState, useEffect } from 'react';
 
 /**
@@ -79,7 +80,7 @@ export default function InstallPrompt() {
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold">Installer Scalor</h3>
+            <h3 className="text-sm font-bold">{tp('Installer Scalor')}</h3>
             <p className="text-xs text-primary-100 mt-0.5 leading-relaxed">
               Ajoutez l'app sur votre écran d'accueil pour un accès rapide et des notifications en temps réel.
             </p>
@@ -98,7 +99,7 @@ export default function InstallPrompt() {
             onClick={dismiss}
             className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-white/10 hover:bg-white/20 transition"
           >
-            Plus tard
+            {tp('Plus tard')}
           </button>
           <button
             onClick={install}
@@ -107,7 +108,7 @@ export default function InstallPrompt() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            Installer
+            {tp('Installer')}
           </button>
         </div>
       </div>

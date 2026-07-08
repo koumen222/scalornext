@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
 import SuperAdminShell from '../components/SuperAdminShell.jsx';
+import { tp } from '../i18n/platform.js';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -41,7 +42,7 @@ function daysAgo(d) {
 // ─── Mini-chart for revenue ──────────────────────────────────────────────────
 
 function MiniBar({ data, height = 60, color = '#059669' }) {
-  if (!data || data.length < 2) return <div className="h-16 flex items-center justify-center text-xs text-slate-300">Pas de donnees</div>;
+  if (!data || data.length < 2) return <div className="h-16 flex items-center justify-center text-xs text-slate-300">{tp('Pas de donnees')}</div>;
   const max = Math.max(...data.map(d => d.total), 1);
   const barW = Math.max(8, Math.floor(280 / data.length) - 4);
   return (
@@ -94,10 +95,10 @@ function KpiCard({ icon: Icon, label, value, sub, accent = 'emerald', trend }) {
 
 function StatusBadge({ status }) {
   const map = {
-    paid:    { label: 'Payé',     cls: 'bg-primary-100 text-primary-700', icon: CheckCircle2 },
+    paid:    { get label() { return tp('Payé'); },     cls: 'bg-primary-100 text-primary-700', icon: CheckCircle2 },
     pending: { label: 'En attente', cls: 'bg-amber-100 text-amber-700',   icon: Clock },
-    failure: { label: 'Echoué',   cls: 'bg-red-100 text-red-700',         icon: XCircle },
-    'no paid': { label: 'Non payé', cls: 'bg-slate-100 text-slate-600',   icon: XCircle },
+    failure: { get label() { return tp('Echoué'); },   cls: 'bg-red-100 text-red-700',         icon: XCircle },
+    'no paid': { get label() { return tp('Non payé'); }, cls: 'bg-slate-100 text-slate-600',   icon: XCircle },
   };
   const info = map[status] || map.pending;
   const I = info.icon;
@@ -408,7 +409,7 @@ const SuperAdminBilling = () => {
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-12 h-12 text-primary-700 animate-spin" />
-          <p className="text-sm text-slate-600 font-semibold">Chargement des donnees facturation...</p>
+          <p className="text-sm text-slate-600 font-semibold">{tp('Chargement des donnees facturation...')}</p>
         </div>
       </div>
     );
@@ -419,8 +420,8 @@ const SuperAdminBilling = () => {
       <div className="flex items-center justify-center h-96">
         <div className="text-center space-y-3">
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto" />
-          <p className="text-sm text-slate-600">{error || 'Impossible de charger les donnees'}</p>
-          <button onClick={() => fetchData()} className="text-sm font-bold text-primary-600 hover:underline">Reessayer</button>
+          <p className="text-sm text-slate-600">{error || tp('Impossible de charger les donnees')}</p>
+          <button onClick={() => fetchData()} className="text-sm font-bold text-primary-600 hover:underline">{tp('Reessayer')}</button>
         </div>
       </div>
     );
@@ -440,7 +441,7 @@ const SuperAdminBilling = () => {
 
   return (
     <SuperAdminShell
-      title="Suivi Facturation"
+      title={tp('Suivi Facturation')}
       subtitle={`${fmtMoney(revenue.total)} F revenus · ${data.activeSubscriptions || 0} abonnés actifs`}
       icon={DollarSign}
       error={error}
@@ -514,7 +515,7 @@ const SuperAdminBilling = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Rechercher par nom, email, telephone, workspace..."
+              placeholder={tp('Rechercher par nom, email, telephone, workspace...')}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-white ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all"
@@ -530,13 +531,13 @@ const SuperAdminBilling = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Revenue by month */}
               <div className="lg:col-span-2 bg-white rounded-2xl ring-2 ring-slate-100 p-6">
-                <SectionHead icon={BarChart3} title="Revenu mensuel" subtitle="12 derniers mois" color="from-primary-600 to-teal-600" />
+                <SectionHead icon={BarChart3} title={tp('Revenu mensuel')} subtitle="12 derniers mois" color="from-primary-600 to-teal-600" />
                 <MiniBar data={revenue.byMonth || []} height={55} />
               </div>
 
               {/* Plan distribution */}
               <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
-                <SectionHead icon={PieChart} title="Repartition plans" color="from-violet-600 to-purple-600" />
+                <SectionHead icon={PieChart} title={tp('Repartition plans')} color="from-violet-600 to-purple-600" />
                 <div className="space-y-3 mt-4">
                   {[
                     { plan: 'free', label: 'Gratuit', count: freeCount, color: 'bg-slate-400' },
@@ -589,7 +590,7 @@ const SuperAdminBilling = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
-                <SectionHead icon={CreditCard} title="Flux de paiements Scalor" subtitle="Tous les achats suivis dans la plateforme" color="from-slate-700 to-slate-900" />
+                <SectionHead icon={CreditCard} title={tp('Flux de paiements Scalor')} subtitle="Tous les achats suivis dans la plateforme" color="from-slate-700 to-slate-900" />
                 <div className="space-y-4 mt-4">
                   {paymentsByType.map(item => (
                     <div key={item._id} className="flex items-center gap-4">
@@ -613,13 +614,13 @@ const SuperAdminBilling = () => {
                     </div>
                   ))}
                   {paymentsByType.length === 0 && (
-                    <p className="text-sm text-slate-400 italic">Aucun paiement enregistre</p>
+                    <p className="text-sm text-slate-400 italic">{tp('Aucun paiement enregistre')}</p>
                   )}
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
-                <SectionHead icon={Phone} title="Methodes encaissees" subtitle="Paiements confirmes par canal de collecte" color="from-primary-600 to-teal-600" />
+                <SectionHead icon={Phone} title={tp('Methodes encaissees')} subtitle="Paiements confirmes par canal de collecte" color="from-primary-600 to-teal-600" />
                 <div className="space-y-4 mt-4">
                   {paymentMethods.map(method => (
                     <div key={method._id} className="flex items-center justify-between gap-4">
@@ -631,7 +632,7 @@ const SuperAdminBilling = () => {
                     </div>
                   ))}
                   {paymentMethods.length === 0 && (
-                    <p className="text-sm text-slate-400 italic">Aucune methode payee enregistree pour le moment</p>
+                    <p className="text-sm text-slate-400 italic">{tp('Aucune methode payee enregistree pour le moment')}</p>
                   )}
                 </div>
               </div>
@@ -649,13 +650,13 @@ const SuperAdminBilling = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Expiring soon (paid plans + active trials) */}
               <div className="bg-white rounded-2xl ring-2 ring-orange-100 p-6">
-                <SectionHead icon={AlertTriangle} title="Expirent bientôt" subtitle="Abonnements & essais" color="from-orange-500 to-amber-500" />
+                <SectionHead icon={AlertTriangle} title={tp('Expirent bientôt')} subtitle="Abonnements & essais" color="from-orange-500 to-amber-500" />
                 {(() => {
                   const paidExpiring = (data.expiringSoon || []).map(ws => ({ ...ws, _kind: 'plan' }));
                   const trialsExpiring = trialWorkspaces.map(ws => ({ ...ws, _kind: 'trial' }));
                   const allExpiring = [...trialsExpiring, ...paidExpiring];
                   if (allExpiring.length === 0) {
-                    return <p className="text-sm text-slate-400 italic mt-4">Aucun abonnement ou essai n'expire bientôt</p>;
+                    return <p className="text-sm text-slate-400 italic mt-4">{tp('Aucun abonnement ou essai n\'expire bientôt')}</p>;
                   }
                   return (
                     <div className="space-y-2 mt-4 max-h-[400px] overflow-y-auto">
@@ -671,7 +672,7 @@ const SuperAdminBilling = () => {
                                 <p className="text-[11px] text-slate-500">{ws.owner?.email}</p>
                               </div>
                               {isTrial ? (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-700">Essai</span>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-700">{tp('Essai')}</span>
                               ) : (
                                 <PlanBadge plan={ws.plan} />
                               )}
@@ -716,7 +717,7 @@ const SuperAdminBilling = () => {
 
               {/* Revenue by offer */}
               <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
-                <SectionHead icon={DollarSign} title="Revenu par offre" subtitle="Plans et credits pages produits" color="from-blue-600 to-indigo-600" />
+                <SectionHead icon={DollarSign} title={tp('Revenu par offre')} subtitle="Plans et credits pages produits" color="from-blue-600 to-indigo-600" />
                 <div className="space-y-4 mt-4">
                   {(revenue.byType || []).map(p => (
                     <div key={p._id} className="flex items-center gap-4">
@@ -739,7 +740,7 @@ const SuperAdminBilling = () => {
                     </div>
                   ))}
                   {(revenue.byType || []).length === 0 && (
-                    <p className="text-sm text-slate-400 italic">Aucun revenu enregistre</p>
+                    <p className="text-sm text-slate-400 italic">{tp('Aucun revenu enregistre')}</p>
                   )}
                 </div>
               </div>
@@ -748,7 +749,7 @@ const SuperAdminBilling = () => {
             {/* Expired paid plans */}
             {(data.expiredPaid || []).length > 0 && (
               <div className="bg-white rounded-2xl ring-2 ring-red-100 p-6">
-                <SectionHead icon={AlertCircle} title="Plans expires" subtitle={`${data.expiredPaid.length} workspace(s) avec plan expire`} color="from-red-500 to-rose-500" />
+                <SectionHead icon={AlertCircle} title={tp('Plans expires')} subtitle={`${data.expiredPaid.length} workspace(s) avec plan expire`} color="from-red-500 to-rose-500" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
                   {(data.expiredPaid || []).map(ws => (
                     <div key={ws._id} className="flex items-center gap-3 p-3 rounded-xl bg-red-50/50 border border-red-100">
@@ -789,19 +790,19 @@ const SuperAdminBilling = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/80">
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Utilisateur</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Workspace</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Offre</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Montant</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Telephone</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Details</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Utilisateur')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Workspace')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Offre')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Montant')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Statut')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Telephone')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Date')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Details')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredPayments.length === 0 ? (
-                      <tr><td colSpan={8} className="px-4 py-12 text-center text-slate-400">Aucun paiement trouve</td></tr>
+                      <tr><td colSpan={8} className="px-4 py-12 text-center text-slate-400">{tp('Aucun paiement trouve')}</td></tr>
                     ) : filteredPayments.map(p => (
                       <React.Fragment key={p._id}>
                         <tr className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
@@ -853,39 +854,39 @@ const SuperAdminBilling = () => {
                             <td colSpan={8} className="px-6 py-4">
                               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Token MF</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Token MF')}</p>
                                   <p className="text-slate-700 font-mono text-[11px] break-all">{p.mfToken || '—'}</p>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">N Transaction</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('N Transaction')}</p>
                                   <p className="text-slate-700">{p.transactionNumber || '—'}</p>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Methode</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Methode')}</p>
                                   <p className="text-slate-700">{p.paymentMethod || '—'}</p>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Frais</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Frais')}</p>
                                   <p className="text-slate-700">{fmtMoney(p.fees || 0)} F</p>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Type</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Type')}</p>
                                   <div><PaymentTypeBadge type={p.paymentType} /></div>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Applique le</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Applique le')}</p>
                                   <p className="text-slate-700">{fmtDatetime(p.appliedAt)}</p>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Detail achat</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Detail achat')}</p>
                                   <p className="text-slate-700">{getPaymentMetaLabel(p)}</p>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Workspace plan actuel</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Workspace plan actuel')}</p>
                                   <p>{p.workspaceId ? <PlanBadge plan={p.workspaceId.plan} /> : '—'}</p>
                                 </div>
                                 <div>
-                                  <p className="text-slate-400 font-semibold mb-1">Expire le</p>
+                                  <p className="text-slate-400 font-semibold mb-1">{tp('Expire le')}</p>
                                   <p className="text-slate-700">{fmtDate(p.workspaceId?.planExpiresAt)}</p>
                                 </div>
                               </div>
@@ -904,19 +905,19 @@ const SuperAdminBilling = () => {
         {/* ═══ TAB: SUBSCRIPTIONS ══════════════════════════════════════════ */}
         {tab === 'subscriptions' && (
           <div className="space-y-4">
-            <SectionHead icon={Crown} title="Abonnements actifs" subtitle={`${data.activeSubscriptions} abonnement(s) en cours`} color="from-blue-600 to-indigo-600" />
+            <SectionHead icon={Crown} title={tp('Abonnements actifs')} subtitle={`${data.activeSubscriptions} abonnement(s) en cours`} color="from-blue-600 to-indigo-600" />
 
             <div className="bg-white rounded-2xl ring-2 ring-slate-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/80">
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Workspace</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Proprietaire</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Plan</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Expire le</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Jours restants</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Contact</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Workspace')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Proprietaire')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Plan')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Expire le')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Jours restants')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Contact')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -970,7 +971,7 @@ const SuperAdminBilling = () => {
             {freeWorkspaces.length > 0 && (
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">Gratuit</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{tp('Gratuit')}</span>
                   {freeWorkspaces.length} compte{freeWorkspaces.length > 1 ? 's' : ''} gratuit{freeWorkspaces.length > 1 ? 's' : ''}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1010,7 +1011,7 @@ const SuperAdminBilling = () => {
             {trialWorkspaces.length > 0 && (
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-700">Trial</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-700">{tp('Trial')}</span>
                   {trialWorkspaces.length} essai{trialWorkspaces.length > 1 ? 's' : ''} en cours
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1082,7 +1083,7 @@ const SuperAdminBilling = () => {
                             onClick={() => handleDeactivateTrial(ws._id, ws.name)}
                             disabled={deactivatingTrial === ws._id}
                             className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors disabled:opacity-50 ml-auto"
-                            title="Désactiver l'essai gratuit"
+                            title={tp('Désactiver l\'essai gratuit')}
                           >
                             {deactivatingTrial === ws._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
                             Désactiver
@@ -1099,7 +1100,7 @@ const SuperAdminBilling = () => {
             {expiredTrials.length > 0 && (
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-red-100 text-red-700">Expiré</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-red-100 text-red-700">{tp('Expiré')}</span>
                   {expiredTrials.length} essai{expiredTrials.length > 1 ? 's' : ''} expiré{expiredTrials.length > 1 ? 's' : ''}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1173,7 +1174,7 @@ const SuperAdminBilling = () => {
                             onClick={() => handleDeactivateTrial(ws._id, ws.name)}
                             disabled={deactivatingTrial === ws._id}
                             className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 hover:bg-slate-100 transition-colors disabled:opacity-50 ml-auto"
-                            title="Réinitialiser l'essai"
+                            title={tp('Réinitialiser l\'essai')}
                           >
                             {deactivatingTrial === ws._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
                             Réinitialiser
@@ -1189,7 +1190,7 @@ const SuperAdminBilling = () => {
             {totalEssais === 0 && (
               <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-12 text-center">
                 <Timer className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-sm text-slate-400">Aucun compte gratuit ou essai en cours</p>
+                <p className="text-sm text-slate-400">{tp('Aucun compte gratuit ou essai en cours')}</p>
               </div>
             )}
           </div>
@@ -1198,25 +1199,25 @@ const SuperAdminBilling = () => {
         {/* ═══ TAB: ALL WORKSPACES ═════════════════════════════════════════ */}
         {tab === 'workspaces' && (
           <div className="space-y-4">
-            <SectionHead icon={Building2} title="Tous les workspaces" subtitle={`${totalWs} workspace(s) enregistre(s)`} color="from-slate-600 to-slate-800" />
+            <SectionHead icon={Building2} title={tp('Tous les workspaces')} subtitle={`${totalWs} workspace(s) enregistre(s)`} color="from-slate-600 to-slate-800" />
 
             <div className="bg-white rounded-2xl ring-2 ring-slate-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/80">
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Workspace</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Proprietaire</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Plan</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Expiration</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Essai</th>
-                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Inscription</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Workspace')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Proprietaire')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Plan')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Statut')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Expiration')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Essai')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{tp('Inscription')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredWorkspaces.length === 0 ? (
-                      <tr><td colSpan={7} className="px-4 py-12 text-center text-slate-400">Aucun workspace trouve</td></tr>
+                      <tr><td colSpan={7} className="px-4 py-12 text-center text-slate-400">{tp('Aucun workspace trouve')}</td></tr>
                     ) : filteredWorkspaces.map(ws => {
                       const isPaid = ws.plan === 'starter' || ws.plan === 'pro' || ws.plan === 'ultra';
                       const isExpired = isPaid && ws.planExpiresAt && new Date(ws.planExpiresAt) <= new Date();
@@ -1249,7 +1250,7 @@ const SuperAdminBilling = () => {
                             )}
                             {!isPaid && !isTrial && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-500">
-                                Gratuit
+                                {tp('Gratuit')}
                               </span>
                             )}
                             {isTrial && (
@@ -1274,11 +1275,11 @@ const SuperAdminBilling = () => {
                           </td>
                           <td className="px-4 py-3">
                             {ws.trialUsed ? (
-                              <span className="text-[11px] text-slate-400">Utilise</span>
+                              <span className="text-[11px] text-slate-400">{tp('Utilise')}</span>
                             ) : ws.trialEndsAt ? (
                               <span className="text-[11px] text-amber-600 font-bold">{daysUntil(ws.trialEndsAt)}j restants</span>
                             ) : (
-                              <span className="text-[11px] text-slate-300">Non utilise</span>
+                              <span className="text-[11px] text-slate-300">{tp('Non utilise')}</span>
                             )}
                           </td>
                           <td className="px-4 py-3">
@@ -1302,38 +1303,38 @@ const SuperAdminBilling = () => {
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl ring-1 ring-slate-200 overflow-hidden">
             <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-black text-slate-900">Rédiger l’email</h3>
+                <h3 className="text-lg font-black text-slate-900">{tp('Rédiger l’email')}</h3>
                 <p className="text-sm text-slate-500 mt-1">Destinataire: {emailComposer.recipientEmail || '—'} · Workspace: {emailComposer.workspaceName}</p>
               </div>
               <button
                 onClick={() => setEmailComposer(null)}
                 className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-sm font-semibold hover:bg-slate-200 transition-colors"
               >
-                Fermer
+                {tp('Fermer')}
               </button>
             </div>
 
             <div className="px-6 py-5 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Sujet</label>
+                <label className="block text-sm font-bold text-slate-700 mb-2">{tp('Sujet')}</label>
                 <input
                   type="text"
                   value={emailComposer.subject}
                   onChange={(e) => setEmailComposer((prev) => ({ ...prev, subject: e.target.value }))}
                   className="w-full px-4 py-3 bg-white ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all"
-                  placeholder="Sujet de l'email"
+                  placeholder={tp('Sujet de l\'email')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Message</label>
+                <label className="block text-sm font-bold text-slate-700 mb-2">{tp('Message')}</label>
                 <textarea
                   value={emailComposer.message}
                   onChange={(e) => setEmailComposer((prev) => ({ ...prev, message: e.target.value }))}
                   className="w-full min-h-[260px] px-4 py-3 bg-white ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all resize-y"
-                  placeholder="Tapez votre email ici, sans HTML"
+                  placeholder={tp('Tapez votre email ici, sans HTML')}
                 />
-                <p className="text-xs text-slate-400 mt-2">Saisissez un texte simple. Scalor mettra automatiquement le message en forme dans l’email.</p>
+                <p className="text-xs text-slate-400 mt-2">{tp('Saisissez un texte simple. Scalor mettra automatiquement le message en forme dans l’email.')}</p>
               </div>
             </div>
 
@@ -1342,7 +1343,7 @@ const SuperAdminBilling = () => {
                 onClick={() => setEmailComposer(null)}
                 className="px-4 py-2 rounded-xl bg-white ring-2 ring-slate-200 text-slate-700 text-sm font-bold hover:ring-slate-300 transition-all"
               >
-                Annuler
+                {tp('Annuler')}
               </button>
               <button
                 onClick={sendComposedEmail}

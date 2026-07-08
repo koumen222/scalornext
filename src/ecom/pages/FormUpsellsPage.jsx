@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowUpDown, Plus, Trash2, Edit3, ChevronUp, ChevronDown, ToggleLeft, ToggleRight, CheckSquare, X, Tag, Zap, AlertTriangle, GripVertical, Check, Package } from 'lucide-react';
 import { storeProductsApi } from '../services/storeApi.js';
+import { tp } from '../i18n/platform.js';
 
 // ── Tab IDs ────────────────────────────────────────────────────────────────
 const TABS = [
-  { id: 'upsells', label: '1-Click Upsells', icon: ArrowUpDown, desc: 'Offres séquentielles avant/après achat' },
-  { id: 'bump', label: 'Order Bump', icon: CheckSquare, desc: 'Case à cocher au checkout' },
-  { id: 'exit', label: 'Offres supplémentaires', icon: AlertTriangle, desc: 'Pop-up de sortie formulaire' },
+  { id: 'upsells', label: '1-Click Upsells', icon: ArrowUpDown, get desc() { return tp('Offres séquentielles avant/après achat'); } },
+  { id: 'bump', label: 'Order Bump', icon: CheckSquare, get desc() { return tp('Case à cocher au checkout'); } },
+  { id: 'exit', get label() { return tp('Offres supplémentaires'); }, icon: AlertTriangle, desc: 'Pop-up de sortie formulaire' },
 ];
 
 // ── Shared helpers ─────────────────────────────────────────────────────────
@@ -166,7 +167,7 @@ const ProductTargetSelector = ({ value, onChange, products, loading, error }) =>
         }}
         className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-white disabled:bg-gray-50 disabled:text-gray-400"
       >
-        <option value="">{loading ? 'Chargement des produits...' : 'Choisir le produit concerné'}</option>
+        <option value="">{loading ? 'Chargement des produits...' : tp('Choisir le produit concerné')}</option>
         {products.map(product => (
           <option key={getProductId(product)} value={getProductId(product)}>
             {getProductName(product)}
@@ -304,9 +305,9 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
           <Zap size={14} className="text-gray-600" strokeWidth={1.75} />
         </div>
         <div>
-          <p className="text-xs font-semibold text-gray-800 mb-0.5">Comment ça marche</p>
+          <p className="text-xs font-semibold text-gray-800 mb-0.5">{tp('Comment ça marche')}</p>
           <p className="text-xs text-gray-500 leading-relaxed">
-            Jusqu'à <strong>5 offres</strong> affichées en séquence. Le client accepte ou refuse — l'offre suivante apparaît. Glissez pour réordonner.
+            Jusqu'à <strong>{tp('5 offres')}</strong> affichées en séquence. Le client accepte ou refuse — l'offre suivante apparaît. Glissez pour réordonner.
           </p>
         </div>
       </div>
@@ -315,7 +316,7 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-gray-800">{offers.length} / 5 offres</span>
-          {offers.length >= 5 && <Badge color="gray">Maximum atteint</Badge>}
+          {offers.length >= 5 && <Badge color="gray">{tp('Maximum atteint')}</Badge>}
         </div>
         <button
           onClick={openNew}
@@ -330,7 +331,7 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
       {offers.length === 0 ? (
         <EmptyState
           icon={ArrowUpDown}
-          title="Aucune offre configurée"
+          title={tp('Aucune offre configurée')}
           subtitle="Créez jusqu'à 5 upsells séquentiels pour maximiser la valeur de chaque commande."
           cta="Créer une offre"
           onCta={openNew}
@@ -360,10 +361,10 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="text-sm font-semibold text-gray-900 truncate">{o.title}</p>
-                    <Badge color={o.isActive ? 'green' : 'gray'}>{o.isActive ? 'Actif' : 'Inactif'}</Badge>
+                    <Badge color={o.isActive ? 'green' : 'gray'}>{o.isActive ? 'Actif' : tp('Inactif')}</Badge>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-gray-500">
-                    <span className="inline-flex items-center gap-1"><Package size={10} /> {o.targetProductName || 'Produit à choisir'}</span>
+                    <span className="inline-flex items-center gap-1"><Package size={10} /> {o.targetProductName || tp('Produit à choisir')}</span>
                     <span className="text-gray-300">·</span>
                     <span>{o.productName || '—'}</span>
                     <span className="text-gray-300">·</span>
@@ -397,13 +398,13 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
       {/* Modal */}
       {showModal && (
         <Modal
-          title={editing ? "Modifier l'offre" : 'Nouvelle offre'}
+          title={editing ? "Modifier l'offre" : tp('Nouvelle offre')}
           subtitle="1-Click Upsell"
           onClose={closeModal}
         >
           <div className="space-y-4">
             <FormField label="Titre de l'offre *">
-              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ex: Protection expédition" />
+              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder={tp('Ex: Protection expédition')} />
             </FormField>
             <FormField label="Produit concerné *" hint="L'upsell sera affiché uniquement quand ce produit est commandé.">
               <ProductTargetSelector
@@ -415,10 +416,10 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
               />
             </FormField>
             <FormField label="Nom du produit">
-              <Input value={form.productName} onChange={e => setForm(f => ({ ...f, productName: e.target.value }))} placeholder="Ex: Pack Protection Premium" />
+              <Input value={form.productName} onChange={e => setForm(f => ({ ...f, productName: e.target.value }))} placeholder={tp('Ex: Pack Protection Premium')} />
             </FormField>
             <FormField label="Description">
-              <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Pourquoi le client devrait accepter cette offre…" />
+              <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder={tp('Pourquoi le client devrait accepter cette offre…')} />
             </FormField>
             <div className="grid grid-cols-2 gap-3">
               <FormField label="Prix original (FCFA)">
@@ -432,18 +433,18 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
               <DiscountTypeSelector value={form.discountType} onChange={v => setForm(f => ({ ...f, discountType: v }))} />
             </FormField>
             {form.discountType !== 'free' && (
-              <FormField label={form.discountType === 'percent' ? 'Pourcentage de remise' : 'Montant de la remise (FCFA)'}>
+              <FormField label={form.discountType === 'percent' ? 'Pourcentage de remise' : tp('Montant de la remise (FCFA)')}>
                 <Input type="number" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} placeholder={form.discountType === 'percent' ? '30' : '1000'} />
               </FormField>
             )}
             <div className="flex items-center justify-between py-2">
-              <span className="text-sm font-medium text-gray-700">Activer cette offre</span>
+              <span className="text-sm font-medium text-gray-700">{tp('Activer cette offre')}</span>
               <Toggle on={form.isActive} onChange={v => setForm(f => ({ ...f, isActive: v }))} />
             </div>
             {formError && <p className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{formError}</p>}
             <div className="flex gap-2 pt-2">
               <button onClick={closeModal} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">
-                Annuler
+                {tp('Annuler')}
               </button>
               <button onClick={save} disabled={saving} className="flex-1 h-11 bg-green-600 text-white rounded-2xl text-sm font-medium hover:bg-green-700 disabled:opacity-60 transition-colors">
                 {saving ? 'Enregistrement...' : editing ? 'Enregistrer' : "Créer l'offre"}
@@ -460,11 +461,11 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
 // Tab 2 — Order Bump (1-Tick)
 // ═══════════════════════════════════════════════════════════════════════════
 const BUMP_PRESETS = [
-  { id: 'shipping', label: 'Protection expédition', desc: 'Protège contre perte ou dommage' },
-  { id: 'priority', label: 'Traitement prioritaire', desc: 'Traitement de la commande en priorité' },
-  { id: 'warranty', label: 'Extension de garantie', desc: 'Prolonger la garantie à 2 ans' },
+  { id: 'shipping', get label() { return tp('Protection expédition'); }, get desc() { return tp('Protège contre perte ou dommage'); } },
+  { id: 'priority', label: 'Traitement prioritaire', get desc() { return tp('Traitement de la commande en priorité'); } },
+  { id: 'warranty', label: 'Extension de garantie', get desc() { return tp('Prolonger la garantie à 2 ans'); } },
   { id: 'gift', label: 'Emballage cadeau', desc: 'Emballage premium avec message' },
-  { id: 'custom', label: 'Personnalisé', desc: 'Définir votre propre offre' },
+  { id: 'custom', get label() { return tp('Personnalisé'); }, get desc() { return tp('Définir votre propre offre'); } },
 ];
 
 const BLANK_BUMP = { preset: 'shipping', targetProductId: '', targetProductName: '', title: '', desc: '', price: '', isActive: false };
@@ -527,7 +528,7 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
           <CheckSquare size={14} className="text-gray-600" strokeWidth={1.75} />
         </div>
         <div>
-          <p className="text-xs font-semibold text-gray-800 mb-0.5">1-Tick Upsell</p>
+          <p className="text-xs font-semibold text-gray-800 mb-0.5">{tp('1-Tick Upsell')}</p>
           <p className="text-xs text-gray-500 leading-relaxed">
             Une case à cocher affichée dans le formulaire. Le client ajoute l'option d'un seul clic — idéal pour des petits suppléments à haute valeur perçue.
           </p>
@@ -537,15 +538,15 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
       {/* Activation toggle */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-gray-900">Activer le Order Bump</p>
-          <p className="text-xs text-gray-400 mt-0.5">Afficher la case à cocher sur le formulaire de commande</p>
+          <p className="text-sm font-semibold text-gray-900">{tp('Activer le Order Bump')}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{tp('Afficher la case à cocher sur le formulaire de commande')}</p>
         </div>
         <Toggle on={bump.isActive} onChange={v => setBump(b => ({ ...b, isActive: v }))} />
       </div>
 
       {/* Preset selector */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Type d'offre</p>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Type d\'offre')}</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {BUMP_PRESETS.map(p => (
             <button
@@ -564,7 +565,7 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
 
       {/* Config */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Configuration</p>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Configuration')}</p>
         <div className="space-y-3">
           <FormField label="Produit concerné *" hint="La case Order Bump sera visible dans le checkout de ce produit.">
             <ProductTargetSelector
@@ -576,10 +577,10 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
             />
           </FormField>
           <FormField label="Titre affiché *">
-            <Input value={bump.title} onChange={e => setBump(b => ({ ...b, title: e.target.value }))} placeholder="Ex: Protection expédition" />
+            <Input value={bump.title} onChange={e => setBump(b => ({ ...b, title: e.target.value }))} placeholder={tp('Ex: Protection expédition')} />
           </FormField>
           <FormField label="Description">
-            <Textarea value={bump.desc} onChange={e => setBump(b => ({ ...b, desc: e.target.value }))} placeholder="Texte affiché à côté de la case…" rows={2} />
+            <Textarea value={bump.desc} onChange={e => setBump(b => ({ ...b, desc: e.target.value }))} placeholder={tp('Texte affiché à côté de la case…')} rows={2} />
           </FormField>
           <FormField label="Prix supplémentaire (FCFA)" hint="Montant ajouté à la commande si coché">
             <Input type="number" value={bump.price} onChange={e => setBump(b => ({ ...b, price: e.target.value }))} placeholder="500" />
@@ -590,7 +591,7 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
       {/* Preview */}
       {bump.title && (
         <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Aperçu dans le formulaire</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Aperçu dans le formulaire')}</p>
           {bump.targetProductName && (
             <p className="mb-2 inline-flex items-center gap-1 rounded-lg bg-gray-100 px-2 py-1 text-[10px] font-semibold text-gray-600">
               <Package size={11} /> Produit : {bump.targetProductName}
@@ -618,7 +619,7 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
           saved ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-green-600 text-white hover:bg-green-700 disabled:opacity-60'
         }`}
       >
-        {saving ? 'Enregistrement...' : saved ? <><Check size={15} /> Enregistré</> : 'Enregistrer le Order Bump'}
+        {saving ? 'Enregistrement...' : saved ? <><Check size={15} /> {tp('Enregistré')}</> : tp('Enregistrer le Order Bump')}
       </button>
       {formError && <p className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{formError}</p>}
     </div>
@@ -723,7 +724,7 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
           <AlertTriangle size={14} className="text-gray-600" strokeWidth={1.75} />
         </div>
         <div>
-          <p className="text-xs font-semibold text-gray-800 mb-0.5">Comment ça marche</p>
+          <p className="text-xs font-semibold text-gray-800 mb-0.5">{tp('Comment ça marche')}</p>
           <p className="text-xs text-gray-500 leading-relaxed">
             Un pop-up s'affiche quand le visiteur tente de fermer le formulaire. Récupérez des ventes perdues en proposant une remise de dernière chance.
           </p>
@@ -745,7 +746,7 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
       {offers.length === 0 ? (
         <EmptyState
           icon={AlertTriangle}
-          title="Aucune offre de sortie"
+          title={tp('Aucune offre de sortie')}
           subtitle="Créez un pop-up d'exit intent pour récupérer les visiteurs qui ferment le formulaire."
           cta="Créer une offre"
           onCta={openNew}
@@ -761,12 +762,12 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="text-sm font-semibold text-gray-900 truncate">{o.title}</p>
-                    <Badge color={o.isActive ? 'green' : 'gray'}>{o.isActive ? 'Actif' : 'Inactif'}</Badge>
+                    <Badge color={o.isActive ? 'green' : 'gray'}>{o.isActive ? 'Actif' : tp('Inactif')}</Badge>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-gray-500">
                     <span className="font-medium text-green-700">{discountLabel(o)}</span>
                     <span className="text-gray-300">·</span>
-                    <span className="inline-flex items-center gap-1"><Package size={10} /> {o.targetProductName || 'Produit à choisir'}</span>
+                    <span className="inline-flex items-center gap-1"><Package size={10} /> {o.targetProductName || tp('Produit à choisir')}</span>
                     {o.couponCode && (
                       <>
                         <span className="text-gray-300">·</span>
@@ -803,13 +804,13 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
       {/* Modal */}
       {showModal && (
         <Modal
-          title={editing ? "Modifier l'offre" : 'Nouvelle offre'}
+          title={editing ? "Modifier l'offre" : tp('Nouvelle offre')}
           subtitle="Pop-up de sortie"
           onClose={closeModal}
         >
           <div className="space-y-4">
             <FormField label="Titre du pop-up *">
-              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ex: Attendez ! Voici 10% de remise" />
+              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder={tp('Ex: Attendez ! Voici 10% de remise')} />
             </FormField>
             <FormField label="Produit concerné *" hint="Le pop-up sera rattaché uniquement à ce produit.">
               <ProductTargetSelector
@@ -821,13 +822,13 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
               />
             </FormField>
             <FormField label="Message">
-              <Textarea value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} placeholder="Texte principal du pop-up…" />
+              <Textarea value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} placeholder={tp('Texte principal du pop-up…')} />
             </FormField>
             <FormField label="Type de réduction">
               <DiscountTypeSelector value={form.discountType} onChange={v => setForm(f => ({ ...f, discountType: v }))} />
             </FormField>
             {form.discountType !== 'free' && (
-              <FormField label={form.discountType === 'percent' ? 'Pourcentage (%)' : 'Montant (FCFA)'}>
+              <FormField label={form.discountType === 'percent' ? 'Pourcentage (%)' : tp('Montant (FCFA)')}>
                 <Input type="number" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} placeholder={form.discountType === 'percent' ? '10' : '2000'} />
               </FormField>
             )}
@@ -838,13 +839,13 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
               <Input type="number" value={form.triggerDelay} onChange={e => setForm(f => ({ ...f, triggerDelay: e.target.value }))} placeholder="3" min="0" max="30" />
             </FormField>
             <div className="flex items-center justify-between py-2">
-              <span className="text-sm font-medium text-gray-700">Activer cette offre</span>
+              <span className="text-sm font-medium text-gray-700">{tp('Activer cette offre')}</span>
               <Toggle on={form.isActive} onChange={v => setForm(f => ({ ...f, isActive: v }))} />
             </div>
             {formError && <p className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{formError}</p>}
             <div className="flex gap-2 pt-2">
               <button onClick={closeModal} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">
-                Annuler
+                {tp('Annuler')}
               </button>
               <button onClick={save} disabled={saving} className="flex-1 h-11 bg-green-600 text-white rounded-2xl text-sm font-medium hover:bg-green-700 disabled:opacity-60 transition-colors">
                 {saving ? 'Enregistrement...' : editing ? 'Enregistrer' : "Créer l'offre"}
@@ -910,7 +911,7 @@ const FormUpsellsPage = () => {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Upsells & Downsells</h1>
-        <p className="text-sm text-gray-400 mt-0.5">Augmentez la valeur de chaque commande avec des offres ciblées</p>
+        <p className="text-sm text-gray-400 mt-0.5">{tp('Augmentez la valeur de chaque commande avec des offres ciblées')}</p>
       </div>
 
       {/* Tabs */}

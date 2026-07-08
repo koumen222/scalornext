@@ -1,6 +1,8 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import ecomApi from '../services/ecommApi.js';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
+import { useSearchParams } from '@/lib/router-compat';
 
 const IconFillLoader = ({ backgroundClassName = 'bg-gray-50' }) => {
   const [p, setP] = useState(0);
@@ -43,8 +45,36 @@ const IconFillLoader = ({ backgroundClassName = 'bg-gray-50' }) => {
   );
 };
 
+// Détermine le type de source (scalor / shopify) à partir du type ou du nom
+const sourceKind = (source) => {
+  if (!source) return null;
+  const type = source.sourceType || source.metadata?.type || '';
+  const name = (source.name || '').toLowerCase();
+  if (type === 'scalor_store' || name.includes('scalor')) return 'scalor';
+  if (type === 'shopify' || name.includes('shopify')) return 'shopify';
+  return null;
+};
+
+// Affiche le logo Scalor/Shopify, sinon retombe sur l'emoji d'origine
+const SourceLogo = ({ source, fallback, className = 'w-4 h-4' }) => {
+  const kind = sourceKind(source);
+  if (kind === 'scalor') {
+    return <img src="/icon.svg" alt="Scalor" className={`${className} object-contain`} />;
+  }
+  if (kind === 'shopify') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="#95BF47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Shopify">
+        <path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z" />
+      </svg>
+    );
+  }
+  return <span>{fallback}</span>;
+};
+
 const AssignmentsManager = () => {
   const { symbol } = useMoney();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const prefillDoneRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const [sources, setSources] = useState([]);
   const [closeuses, setCloseuses] = useState([]);
@@ -72,6 +102,26 @@ const AssignmentsManager = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  // Pre-remplissage : arrive depuis "Ajouter une closeuse" (?closeuse=ID)
+  useEffect(() => {
+    if (loading || prefillDoneRef.current) return;
+    const cid = searchParams.get('closeuse');
+    if (!cid) return;
+    prefillDoneRef.current = true;
+    setEditingAssignment(null);
+    setFormData({
+      closeuseId: cid,
+      orderSources: [],
+      productAssignments: [],
+      notes: '',
+      commission: 0,
+      commissionType: 'percentage'
+    });
+    setShowForm(true);
+    // Nettoyer l'URL pour eviter la reouverture au refresh
+    setSearchParams({}, { replace: true });
+  }, [loading, searchParams, setSearchParams]);
 
   const loadData = async (useCache = true) => {
     try {
@@ -114,7 +164,7 @@ const AssignmentsManager = () => {
       await loadGoogleSheetsInfo(sources);
     } catch (error) {
       console.error('Erreur chargement données:', error);
-      setMessage('Erreur lors du chargement des données');
+      setMessage(tp('Erreur lors du chargement des données'));
       // Assurer que les états sont toujours des tableaux même en cas d'erreur
       setSources([]);
       setCloseuses([]);
@@ -160,10 +210,10 @@ const AssignmentsManager = () => {
       let res;
       if (editingAssignment) {
         res = await ecomApi.put(`/assignments/${editingAssignment._id}`, formData);
-        setMessage('Affectation mise à jour avec succès');
+        setMessage(tp('Affectation mise à jour avec succès'));
       } else {
         res = await ecomApi.post('/assignments', formData);
-        setMessage('Affectation créée avec succès');
+        setMessage(tp('Affectation créée avec succès'));
       }
       console.log('📥 [Submit] Réponse backend:', JSON.stringify(res.data, null, 2));
       
@@ -219,11 +269,11 @@ const AssignmentsManager = () => {
   };
 
   const handleDelete = async (assignmentId) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette affectation ?')) return;
+    if (!confirm(tp('Êtes-vous sûr de vouloir supprimer cette affectation ?'))) return;
     
     try {
       await ecomApi.delete(`/assignments/${assignmentId}`);
-      setMessage('Affectation supprimée avec succès');
+      setMessage(tp('Affectation supprimée avec succès'));
       await loadData();
     } catch (error) {
       setMessage('Erreur lors de la suppression');
@@ -361,7 +411,7 @@ const AssignmentsManager = () => {
       }));
     } catch (error) {
       console.error('Erreur preview sheets:', error);
-      setMessage('Erreur lors de la prévisualisation des données');
+      setMessage(tp('Erreur lors de la prévisualisation des données'));
     }
   };
 
@@ -410,8 +460,8 @@ const AssignmentsManager = () => {
       <div className="mb-4 sm:mb-6">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">Affectations</h1>
-            <p className="text-gray-500 text-xs sm:text-sm mt-0.5 hidden sm:block">Affectez des sources et produits aux closeuses</p>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-800 leading-tight">{tp('Affectations')}</h1>
+            <p className="text-gray-400 text-xs sm:text-sm mt-0.5 hidden sm:block">{tp('Affectez des sources et produits aux closeuses')}</p>
           </div>
           <button
             onClick={() => {
@@ -419,21 +469,21 @@ const AssignmentsManager = () => {
               setFormData({ closeuseId: '', orderSources: [], productAssignments: [], notes: '' });
               setShowForm(true);
             }}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium active:bg-primary-700"
+            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 bg-primary-500 text-white rounded-full text-sm font-medium shadow-sm shadow-primary-200/60 transition hover:bg-primary-600 active:bg-primary-600"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-            <span className="hidden sm:inline">Nouvelle </span>Affectation
+            <span className="hidden sm:inline">{tp('Nouvelle')} </span>Affectation
           </button>
         </div>
         <button
           onClick={handleSyncGoogleSheets}
           disabled={syncing}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 active:bg-green-700"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100 rounded-full text-sm font-medium hover:bg-emerald-100 disabled:opacity-50 transition"
         >
           {syncing ? (
-            <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Synchronisation...</>
+            <><div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>{tp('Synchronisation...')}</>
           ) : (
-            <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>Sync Google Sheets</>
+            <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>{tp('Sync Google Sheets')}</>
           )}
         </button>
       </div>
@@ -448,13 +498,13 @@ const AssignmentsManager = () => {
 
       {/* Sources Google Sheets */}
       {sources.filter(isGoogleSheetsSource).length > 0 && (
-        <div className="mb-6 bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+        <div className="mb-6 bg-white rounded-2xl border border-gray-100 shadow-sm shadow-gray-100/70 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v1a1 1 0 001 1h4a1 1 0 001-1v-1m3-2V8a2 2 0 00-2-2H8a2 2 0 00-2 2v6m9 4h.01" />
               </svg>
-              Sources Google Sheets
+              {tp('Sources Google Sheets')}
             </h2>
           </div>
           <div className="p-6">
@@ -469,18 +519,18 @@ const AssignmentsManager = () => {
                         <h3 className="font-medium text-gray-900">{source.name}</h3>
                       </div>
                       {sheetsInfo?.status === 'connected' ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600">
                           <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <circle cx="10" cy="10" r="6" />
                           </svg>
-                          Connecté
+                          {tp('Connecté')}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-500">
                           <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <circle cx="10" cy="10" r="6" />
                           </svg>
-                          Erreur
+                          {tp('Erreur')}
                         </span>
                       )}
                     </div>
@@ -525,7 +575,7 @@ const AssignmentsManager = () => {
                         onClick={() => handlePreviewSheetsData(source)}
                         className="w-full px-3 py-1.5 bg-primary-50 text-primary-700 rounded text-xs font-medium hover:bg-primary-100 transition"
                       >
-                        Aperçu des données
+                        {tp('Aperçu des données')}
                       </button>
                     </div>
                   </div>
@@ -572,7 +622,7 @@ const AssignmentsManager = () => {
               {googleSheetsData[selectedSource._id]?.preview ? (
                 <div>
                   <div className="mb-4">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Aperçu des données</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2">{tp('Aperçu des données')}</h3>
                     <div className="text-xs text-gray-600">
                       {googleSheetsData[selectedSource._id].preview.metadata?.parsedRows || 0} lignes chargées
                     </div>
@@ -605,7 +655,7 @@ const AssignmentsManager = () => {
                   
                   {Array.isArray(googleSheetsData[selectedSource._id]?.preview?.recommendations) && googleSheetsData[selectedSource._id].preview.recommendations.length > 0 && (
                     <div className="mt-4">
-                      <h4 className="text-sm font-semibold text-gray-900 mb-2">Recommandations</h4>
+                      <h4 className="text-sm font-semibold text-gray-900 mb-2">{tp('Recommandations')}</h4>
                       <div className="space-y-2">
                         {googleSheetsData[selectedSource._id].preview.recommendations.map((rec, index) => (
                           <div key={index} className={`p-3 rounded-lg text-sm ${
@@ -634,7 +684,7 @@ const AssignmentsManager = () => {
       {/* Liste des affectations */}
       <div>
         <div className="flex items-center justify-between mb-3 px-1">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Affectations existantes</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Affectations existantes')}</p>
           {assignments.length > 0 && (
             <span className="text-xs text-gray-400 tabular-nums">{assignments.length}</span>
           )}
@@ -645,8 +695,8 @@ const AssignmentsManager = () => {
             <svg className="w-8 h-8 text-gray-200 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
             </svg>
-            <p className="text-sm font-medium text-gray-700 mb-1">Aucune affectation</p>
-            <p className="text-sm text-gray-400">Créez une affectation pour commencer</p>
+            <p className="text-sm font-medium text-gray-700 mb-1">{tp('Aucune affectation')}</p>
+            <p className="text-sm text-gray-400">{tp('Créez une affectation pour commencer')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -657,19 +707,19 @@ const AssignmentsManager = () => {
                 (pa.productIds?.length || 0) + (pa.sheetProductNames?.length || 0) > 0) || [];
 
               return (
-                <div key={assignment._id} className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
+                <div key={assignment._id} className="bg-white rounded-[26px] border border-gray-100 p-4 shadow-sm shadow-gray-100/70 transition hover:border-primary-100 sm:p-5">
                   {/* Row 1 — identity + actions */}
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 font-semibold text-sm flex-shrink-0">
                       {assignment.closeuseId?.name?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-gray-900 truncate">
+                        <p className="text-sm font-semibold text-gray-800 truncate">
                           {assignment.closeuseId?.name || '—'}
                         </p>
                         {assignment.commission > 0 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-600">
                             {assignment.commission}{assignment.commissionType === 'percentage' ? '%' : ` ${symbol}`} / commande
                           </span>
                         )}
@@ -680,14 +730,14 @@ const AssignmentsManager = () => {
                       <button
                         onClick={() => handleEdit(assignment)}
                         className="w-8 h-8 rounded-full hover:bg-primary-50 flex items-center justify-center text-gray-400 hover:text-primary-600 transition-colors"
-                        title="Modifier"
+                        title={tp('Modifier')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                       </button>
                       <button
                         onClick={() => handleDelete(assignment._id)}
                         className="w-8 h-8 rounded-full hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors"
-                        title="Supprimer"
+                        title={tp('Supprimer')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                       </button>
@@ -707,6 +757,7 @@ const AssignmentsManager = () => {
                             const dbCount = pa?.productIds?.length || 0;
                             const sheetNames = pa?.sheetProductNames || [];
                             const color = os.sourceInfo?.color || '#6366F1';
+                            const fullSource = sources.find(s => String(s._id) === sid) || os.sourceInfo;
                             return (
                               <div key={sid} className="flex items-start gap-2.5">
                                 {/* source chip */}
@@ -714,7 +765,7 @@ const AssignmentsManager = () => {
                                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0"
                                   style={{ backgroundColor: color + '18', color }}
                                 >
-                                  <span>{os.sourceInfo?.icon || '🔗'}</span>
+                                  <SourceLogo source={fullSource} fallback={os.sourceInfo?.icon || '🔗'} className="w-4 h-4" />
                                   <span>{os.sourceInfo?.name || sid}</span>
                                 </span>
                                 {/* product summary */}
@@ -725,12 +776,12 @@ const AssignmentsManager = () => {
                                     </span>
                                   )}
                                   {sheetNames.map((name, nIdx) => (
-                                    <span key={nIdx} className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-50 text-green-700">
+                                    <span key={nIdx} className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-600">
                                       {name}
                                     </span>
                                   ))}
                                   {dbCount === 0 && sheetNames.length === 0 && (
-                                    <span className="text-xs text-gray-400 pt-0.5">Tous les produits</span>
+                                    <span className="text-xs text-gray-400 pt-0.5">{tp('Tous les produits')}</span>
                                   )}
                                 </div>
                               </div>
@@ -776,10 +827,10 @@ const AssignmentsManager = () => {
             {/* Header */}
             <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                  {editingAssignment ? 'Modifier l\'affectation' : 'Nouvelle affectation'}
+                <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+                  {editingAssignment ? 'Modifier l\'affectation' : tp('Nouvelle affectation')}
                 </h2>
-                <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">Sélectionnez une closeuse, ses sources et ses produits</p>
+                <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">{tp('Sélectionnez une closeuse, ses sources et ses produits')}</p>
               </div>
               <button
                 type="button"
@@ -798,8 +849,8 @@ const AssignmentsManager = () => {
                 {/* ÉTAPE 1 — Closeuse */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold">1</span>
-                    <h3 className="text-sm font-semibold text-gray-800">Choisir la closeuse</h3>
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-semibold">1</span>
+                    <h3 className="text-sm font-semibold text-gray-800">{tp('Choisir la closeuse')}</h3>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {Array.isArray(closeuses) && closeuses.map((closeuse) => (
@@ -807,7 +858,7 @@ const AssignmentsManager = () => {
                         key={closeuse._id}
                         className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
                           formData.closeuseId === closeuse._id
-                            ? 'border-primary-600 bg-primary-50'
+                            ? 'border-primary-300 bg-primary-50'
                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                         }`}
                       >
@@ -834,7 +885,7 @@ const AssignmentsManager = () => {
                       </label>
                     ))}
                     {closeuses.length === 0 && (
-                      <p className="text-sm text-gray-400 col-span-2">Aucune closeuse disponible</p>
+                      <p className="text-sm text-gray-400 col-span-2">{tp('Aucune closeuse disponible')}</p>
                     )}
                   </div>
                 </div>
@@ -842,9 +893,9 @@ const AssignmentsManager = () => {
                 {/* ÉTAPE 2 — Sources + Produits par source */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold">2</span>
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-semibold">2</span>
                     <h3 className="text-sm font-semibold text-gray-800">Sources & Produits assignés</h3>
-                    <span className="text-xs text-gray-400">— Cochez les sources puis sélectionnez les produits</span>
+                    <span className="text-xs text-gray-400">{tp('— Cochez les sources puis sélectionnez les produits')}</span>
                   </div>
 
                   <div className="space-y-3">
@@ -868,7 +919,7 @@ const AssignmentsManager = () => {
                         <div
                           key={source._id}
                           className={`rounded-lg border-2 transition-all ${
-                            isSourceChecked ? 'border-primary-500 bg-primary-50/40' : 'border-gray-200 bg-white'
+                            isSourceChecked ? 'border-primary-300 bg-primary-50/40' : 'border-gray-200 bg-white'
                           }`}
                         >
                           {/* Header source */}
@@ -879,15 +930,15 @@ const AssignmentsManager = () => {
                               onChange={() => toggleSource(sid, isSheetSource)}
                               className="w-4 h-4 rounded border-gray-300 text-primary-600 cursor-pointer"
                             />
-                            <span className="text-base">{source.icon}</span>
+                            <SourceLogo source={source} fallback={source.icon} className="w-5 h-5" />
                             <span className="text-sm font-medium text-gray-800 flex-1">{source.name}</span>
                             {isSheetSource && (
-                              <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">Google Sheets</span>
+                              <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">{tp('Google Sheets')}</span>
                             )}
                             {source.sourceType === 'scalor_store' || source.metadata?.type === 'scalor_store' ? (
                               <span className="text-xs px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full font-semibold">Scalor</span>
                             ) : source.sourceType === 'webhook' && !isSheetSource ? (
-                              <span className="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">Webhook</span>
+                              <span className="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">{tp('Webhook')}</span>
                             ) : source.sourceType === 'shopify' ? (
                               <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">Shopify</span>
                             ) : null}
@@ -904,7 +955,7 @@ const AssignmentsManager = () => {
                               {isLoadingProds ? (
                                 <div className="flex items-center gap-2 py-3 text-sm text-gray-500">
                                   <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
-                                  Chargement des produits...
+                                  {tp('Chargement des produits...')}
                                 </div>
                               ) : srcProducts?.error ? (
                                 <div className="mt-3 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-700">
@@ -931,14 +982,14 @@ const AssignmentsManager = () => {
                                       onClick={() => selectAllProducts(sid, [])}
                                       className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
                                     >
-                                      Tout désélectionner
+                                      {tp('Tout désélectionner')}
                                     </button>
                                   </div>
 
                                   {/* Liste produits */}
                                   {availableProducts.length === 0 ? (
                                     <p className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
-                                      {isSheetSource ? 'Aucun produit trouvé dans ce Google Sheet.' : 'Aucun produit disponible.'}
+                                      {isSheetSource ? 'Aucun produit trouvé dans ce Google Sheet.' : tp('Aucun produit disponible.')}
                                     </p>
                                   ) : (
                                     <div className="max-h-44 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-1 pr-1">
@@ -984,55 +1035,55 @@ const AssignmentsManager = () => {
                       );
                     })}
                     {sources.length === 0 && (
-                      <p className="text-sm text-gray-400">Aucune source disponible</p>
+                      <p className="text-sm text-gray-400">{tp('Aucune source disponible')}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes <span className="text-gray-400 font-normal">(optionnel)</span></label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Notes')} <span className="text-gray-400 font-normal">{tp('(optionnel)')}</span></label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                     rows={2}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-transparent"
-                    placeholder="Notes optionnelles..."
+                    placeholder={tp('Notes optionnelles...')}
                   />
                 </div>
 
                 {/* 🆕 Commission */}
                 <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold">3</span>
-                    <h3 className="text-sm font-semibold text-gray-800">Commission de la closeuse</h3>
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-semibold">3</span>
+                    <h3 className="text-sm font-semibold text-gray-800">{tp('Commission de la closeuse')}</h3>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Montant</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">{tp('Montant')}</label>
                       <input
                         type="number"
                         min="0"
                         value={formData.commission}
                         onChange={(e) => setFormData(prev => ({ ...prev, commission: parseFloat(e.target.value) || 0 }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-transparent"
-                        placeholder="Ex: 10"
+                        placeholder={tp('Ex: 10')}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Type</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">{tp('Type')}</label>
                       <select
                         value={formData.commissionType}
                         onChange={(e) => setFormData(prev => ({ ...prev, commissionType: e.target.value }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-transparent bg-white"
                       >
-                        <option value="percentage">% (pourcentage)</option>
+                        <option value="percentage">{tp('% (pourcentage)')}</option>
                         <option value="fixed">{symbol} (montant fixe)</option>
                       </select>
                     </div>
                   </div>
                   <p className="text-xs text-primary-700 mt-2">
-                    La closeuse verra sa commission sur chaque commande traitée.
+                    {tp('La closeuse verra sa commission sur chaque commande traitée.')}
                   </p>
                 </div>
               </div>
@@ -1050,14 +1101,14 @@ const AssignmentsManager = () => {
                     onClick={() => { setShowForm(false); setEditingAssignment(null); setFormData({ closeuseId: '', orderSources: [], productAssignments: [], notes: '', commission: 0, commissionType: 'percentage' }); }}
                     className="flex-1 sm:flex-none px-4 py-2.5 text-sm border border-gray-300 text-gray-700 rounded-lg active:bg-gray-100 font-medium"
                   >
-                    Annuler
+                    {tp('Annuler')}
                   </button>
                   <button
                     type="submit"
                     disabled={!formData.closeuseId}
-                    className="flex-1 sm:flex-none px-5 py-2.5 text-sm bg-primary-600 text-white rounded-lg active:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                    className="flex-1 sm:flex-none px-5 py-2.5 text-sm bg-primary-500 text-white rounded-full shadow-sm shadow-primary-200/60 transition hover:bg-primary-600 active:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                   >
-                    {editingAssignment ? 'Mettre à jour' : 'Créer'}
+                    {editingAssignment ? 'Mettre à jour' : tp('Créer')}
                   </button>
                 </div>
               </div>

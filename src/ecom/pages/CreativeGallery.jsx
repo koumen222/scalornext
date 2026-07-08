@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from '@/lib/router-compat';
 import { Download, Trash2, Loader2, AlertCircle, Sparkles, Image, RefreshCw, ExternalLink, X } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const PAGE_SIZE = 20;
 
@@ -77,8 +78,8 @@ const CreativeGallery = () => {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-6">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Mes Visuels</h1>
-            <p className="text-sm text-gray-400 mt-0.5">Bibliothèque de créatives générées</p>
+            <h1 className="text-xl font-bold text-gray-900">{tp('Mes Visuels')}</h1>
+            <p className="text-sm text-gray-400 mt-0.5">{tp('Bibliothèque de créatives générées')}</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-100 px-2.5 py-1 rounded-md">
@@ -89,7 +90,7 @@ const CreativeGallery = () => {
               className="h-10 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
             >
               <Sparkles size={14} />
-              Générer
+              {tp('Générer')}
             </Link>
           </div>
         </div>
@@ -126,16 +127,16 @@ const CreativeGallery = () => {
             <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mb-5">
               <Image size={28} className="text-green-600" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Aucun visuel stocké</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">{tp('Aucun visuel stocké')}</h2>
             <p className="text-gray-400 text-sm max-w-xs mb-6">
-              Générez vos premières créatives produit pour les retrouver ici et les télécharger.
+              {tp('Générez vos premières créatives produit pour les retrouver ici et les télécharger.')}
             </p>
             <Link
               to="/ecom/creatives"
               className="flex items-center gap-2 bg-green-600 text-white font-medium px-5 py-2.5 rounded-xl hover:bg-green-700 transition-colors text-sm"
             >
               <Sparkles size={14} />
-              Créer mes premiers visuels
+              {tp('Créer mes premiers visuels')}
             </Link>
           </div>
         )}
@@ -183,7 +184,7 @@ const CreativeGallery = () => {
                       className="flex-1 flex items-center justify-center gap-1.5 h-8 bg-green-600 text-white text-[11px] font-medium rounded-lg hover:bg-green-700 transition-colors"
                     >
                       <Download size={11} />
-                      Télécharger
+                      {tp('Télécharger')}
                     </button>
                     <button
                       onClick={() => handleDelete(asset._id)}
@@ -254,7 +255,7 @@ const CreativeGallery = () => {
                   className="flex items-center gap-1.5 bg-green-600 text-white text-sm font-medium h-9 px-4 rounded-xl hover:bg-green-700 transition-colors"
                 >
                   <Download size={14} />
-                  Télécharger
+                  {tp('Télécharger')}
                 </button>
                 <button
                   onClick={() => setLightbox(null)}

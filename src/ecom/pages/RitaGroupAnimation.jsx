@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const DAYS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 const ROLES = [
   { value: 'clients', label: '🛒 Clients' },
   { value: 'prospects', label: '🎯 Prospects' },
   { value: 'vip', label: '⭐ VIP' },
-  { value: 'custom', label: '🔧 Personnalisé' },
+  { value: 'custom', get label() { return tp('🔧 Personnalisé'); } },
 ];
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -26,9 +27,9 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
       <div className="flex items-center gap-3 flex-wrap">
         <select value={post.type} onChange={e => update('type', e.target.value)}
           className="text-sm border rounded-lg px-3 py-1.5 bg-gray-50 font-medium">
-          <option value="text">📝 Texte</option>
-          <option value="image">🖼️ Image (URL)</option>
-          <option value="product">🛍️ Produit</option>
+          <option value="text">{tp('📝 Texte')}</option>
+          <option value="image">{tp('🖼️ Image (URL)')}</option>
+          <option value="product">{tp('🛍️ Produit')}</option>
         </select>
 
         <div className="flex items-center gap-1.5">
@@ -42,10 +43,10 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
             <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${post.enabled !== false ? 'translate-x-4' : 'translate-x-0.5'}`} />
           </div>
           <input type="checkbox" checked={post.enabled !== false} onChange={e => update('enabled', e.target.checked)} className="sr-only" />
-          <span className="text-xs font-medium text-gray-600">{post.enabled !== false ? 'Actif' : 'Pause'}</span>
+          <span className="text-xs font-medium text-gray-600">{post.enabled !== false ? 'Actif' : tp('Pause')}</span>
         </label>
 
-        <button onClick={onRemove} className="text-gray-400 hover:text-red-500 transition p-1" title="Supprimer">
+        <button onClick={onRemove} className="text-gray-400 hover:text-red-500 transition p-1" title={tp('Supprimer')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
         </button>
       </div>
@@ -53,7 +54,7 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
       {/* Contenu selon le type */}
       {post.type === 'text' && (
         <textarea value={post.content || ''} onChange={e => update('content', e.target.value)} rows={3}
-          placeholder="Message à envoyer dans le groupe... 💬"
+          placeholder={tp('Message à envoyer dans le groupe... 💬')}
           className="w-full text-sm border rounded-lg px-3 py-2 resize-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400" />
       )}
       {post.type === 'image' && (
@@ -62,7 +63,7 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
             placeholder="https://example.com/image.jpg"
             className="w-full text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-200 focus:border-primary-400" />
           {post.content && (
-            <img src={post.content} alt="Aperçu" className="h-20 w-20 object-cover rounded-lg border"
+            <img src={post.content} alt={tp('Aperçu')} className="h-20 w-20 object-cover rounded-lg border"
               onError={e => { e.target.style.display = 'none'; }} />
           )}
         </div>
@@ -70,14 +71,14 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
       {post.type === 'product' && (
         <select value={post.productName || ''} onChange={e => update('productName', e.target.value)}
           className="w-full text-sm border rounded-lg px-3 py-1.5 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400">
-          <option value="">— Choisir un produit du catalogue —</option>
+          <option value="">{tp('— Choisir un produit du catalogue —')}</option>
           {products.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
       )}
 
       {/* Jours de la semaine */}
       <div>
-        <span className="text-xs font-medium text-gray-500 mb-1 block">Jours d'envoi :</span>
+        <span className="text-xs font-medium text-gray-500 mb-1 block">{tp('Jours d\'envoi :')}</span>
         <div className="flex flex-wrap gap-1.5">
           {DAYS.map(d => (
             <button key={d} onClick={() => toggleDay(d)}
@@ -86,9 +87,9 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
             </button>
           ))}
           <button onClick={() => update('days', DAYS.slice())}
-            className="text-[10px] px-2 py-0.5 text-primary-600 hover:underline font-medium">Tous</button>
+            className="text-[10px] px-2 py-0.5 text-primary-600 hover:underline font-medium">{tp('Tous')}</button>
           <button onClick={() => update('days', [])}
-            className="text-[10px] px-2 py-0.5 text-gray-400 hover:underline font-medium">Aucun</button>
+            className="text-[10px] px-2 py-0.5 text-gray-400 hover:underline font-medium">{tp('Aucun')}</button>
         </div>
       </div>
 
@@ -184,14 +185,14 @@ function ManagedGroupCard({ group, groupIndex, onUpdate, products, onCopyInvite,
             <div className="flex items-center gap-2 bg-primary-50 rounded-lg px-3 py-2">
               <span className="text-xs text-primary-600 truncate flex-1">{group.inviteUrl}</span>
               <button onClick={() => onRefreshInvite(group.groupJid, groupIndex)}
-                className="text-[10px] text-primary-700 hover:underline font-medium whitespace-nowrap">🔄 Régénérer</button>
+                className="text-[10px] text-primary-700 hover:underline font-medium whitespace-nowrap">{tp('🔄 Régénérer')}</button>
             </div>
           )}
 
           {/* Posts planifiés */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">📢 Posts planifiés</h4>
+              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{tp('📢 Posts planifiés')}</h4>
               <button onClick={addPost}
                 className="text-xs px-3 py-1 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition">
                 + Ajouter
@@ -201,7 +202,7 @@ function ManagedGroupCard({ group, groupIndex, onUpdate, products, onCopyInvite,
             {!postsCount && (
               <div className="text-center py-6 bg-gray-50 rounded-xl">
                 <p className="text-2xl mb-1">📭</p>
-                <p className="text-xs text-gray-400">Aucun post planifié. Rita peut animer ce groupe automatiquement !</p>
+                <p className="text-xs text-gray-400">{tp('Aucun post planifié. Rita peut animer ce groupe automatiquement !')}</p>
                 <button onClick={addPost}
                   className="mt-2 text-xs text-primary-600 font-medium hover:underline">
                   + Créer le premier post
@@ -393,8 +394,8 @@ export default function RitaGroupAnimation() {
       {/* ─── Header ─── */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">📢 Animation des groupes</h1>
-          <p className="text-sm text-gray-500 mt-1">Rita anime automatiquement vos groupes WhatsApp avec du contenu planifié.</p>
+          <h1 className="text-2xl font-extrabold text-gray-900">{tp('📢 Animation des groupes')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{tp('Rita anime automatiquement vos groupes WhatsApp avec du contenu planifié.')}</p>
         </div>
         <button onClick={save} disabled={saving}
           className="px-5 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition shadow-sm">
@@ -413,34 +414,34 @@ export default function RitaGroupAnimation() {
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-white border rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-gray-900">{managedCount}</p>
-          <p className="text-xs text-gray-500">Groupes gérés</p>
+          <p className="text-xs text-gray-500">{tp('Groupes gérés')}</p>
         </div>
         <div className="bg-white border rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-primary-600">{activePosts}</p>
-          <p className="text-xs text-gray-500">Posts actifs</p>
+          <p className="text-xs text-gray-500">{tp('Posts actifs')}</p>
         </div>
         <div className="bg-white border rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-gray-600">{totalPosts - activePosts}</p>
-          <p className="text-xs text-gray-500">Posts en pause</p>
+          <p className="text-xs text-gray-500">{tp('Posts en pause')}</p>
         </div>
       </div>
 
       {/* ─── Ajouter un groupe ─── */}
       <div className="bg-white border rounded-2xl p-5 space-y-4">
-        <h2 className="text-sm font-bold text-gray-700">➕ Ajouter un groupe à animer</h2>
+        <h2 className="text-sm font-bold text-gray-700">{tp('➕ Ajouter un groupe à animer')}</h2>
 
         <div className="flex gap-3 flex-wrap">
           {/* Créer nouveau */}
           <div className="flex-1 min-w-[250px] space-y-2">
-            <span className="text-xs font-medium text-gray-500">Créer un nouveau groupe :</span>
+            <span className="text-xs font-medium text-gray-500">{tp('Créer un nouveau groupe :')}</span>
             <div className="flex gap-2">
               <input type="text" value={newGroupName} onChange={e => setNewGroupName(e.target.value)}
-                placeholder="Ex: 🛒 Clients Premium"
+                placeholder={tp('Ex: 🛒 Clients Premium')}
                 className="flex-1 text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-200 focus:border-primary-400"
                 onKeyDown={e => e.key === 'Enter' && createGroup()} />
               <button onClick={createGroup} disabled={creatingGroup || !newGroupName.trim()}
                 className="px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition whitespace-nowrap">
-                {creatingGroup ? '...' : 'Créer'}
+                {creatingGroup ? '...' : tp('Créer')}
               </button>
             </div>
           </div>
@@ -452,14 +453,14 @@ export default function RitaGroupAnimation() {
               <div className="flex gap-2">
                 <select value={selectedGroupToAdd} onChange={e => setSelectedGroupToAdd(e.target.value)}
                   className="flex-1 text-sm border rounded-lg px-3 py-2 bg-gray-50">
-                  <option value="">— Choisir un groupe —</option>
+                  <option value="">{tp('— Choisir un groupe —')}</option>
                   {unmanagedGroups.map(g => (
                     <option key={g.id} value={g.id}>{g.name} ({g.participants} membres)</option>
                   ))}
                 </select>
                 <button onClick={addExistingGroup} disabled={!selectedGroupToAdd}
                   className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition whitespace-nowrap">
-                  Ajouter
+                  {tp('Ajouter')}
                 </button>
               </div>
             </div>
@@ -471,8 +472,8 @@ export default function RitaGroupAnimation() {
       {!managedCount ? (
         <div className="text-center py-16 bg-white border rounded-2xl">
           <p className="text-5xl mb-3">📢</p>
-          <p className="text-lg font-bold text-gray-700">Aucun groupe à animer</p>
-          <p className="text-sm text-gray-400 mt-1">Créez un groupe ou ajoutez-en un existant pour que Rita l'anime automatiquement.</p>
+          <p className="text-lg font-bold text-gray-700">{tp('Aucun groupe à animer')}</p>
+          <p className="text-sm text-gray-400 mt-1">{tp('Créez un groupe ou ajoutez-en un existant pour que Rita l\'anime automatiquement.')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -489,8 +490,8 @@ export default function RitaGroupAnimation() {
               />
               <button onClick={() => removeGroup(gi)}
                 className="absolute top-3 right-12 text-xs text-gray-400 hover:text-red-500 transition"
-                title="Retirer ce groupe de l'animation">
-                Retirer
+                title={tp('Retirer ce groupe de l\'animation')}>
+                {tp('Retirer')}
               </button>
             </div>
           ))}
@@ -499,12 +500,12 @@ export default function RitaGroupAnimation() {
 
       {/* ─── Info ─── */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-700 space-y-1">
-        <p className="font-bold">💡 Comment fonctionne l'animation ?</p>
+        <p className="font-bold">{tp('💡 Comment fonctionne l\'animation ?')}</p>
         <ul className="list-disc list-inside space-y-0.5 text-blue-600">
-          <li>Rita vérifie toutes les minutes si un post planifié doit être envoyé.</li>
-          <li>Les posts sont envoyés au jour et à l'heure configurés (fuseau Africa/Douala).</li>
-          <li>Pour les posts de type <strong>produit</strong>, Rita envoie automatiquement la fiche + la photo.</li>
-          <li>Vous pouvez mettre un post en pause sans le supprimer avec le switch Actif/Pause.</li>
+          <li>{tp('Rita vérifie toutes les minutes si un post planifié doit être envoyé.')}</li>
+          <li>{tp('Les posts sont envoyés au jour et à l\'heure configurés (fuseau Africa/Douala).')}</li>
+          <li>{tp('Pour les posts de type')} <strong>{tp('produit')}</strong>{tp(', Rita envoie automatiquement la fiche + la photo.')}</li>
+          <li>{tp('Vous pouvez mettre un post en pause sans le supprimer avec le switch Actif/Pause.')}</li>
         </ul>
       </div>
     </div>

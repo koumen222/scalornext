@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../../i18n/platform.js';
 
 const Footer = ({ store, theme }) => {
   const currentYear = new Date().getFullYear();
@@ -22,14 +23,14 @@ const Footer = ({ store, theme }) => {
                 fontFamily: theme?.fontFamily || 'inherit'
               }}
             >
-              {store?.name || 'Ma Boutique'}
+              {store?.name || tp('Ma Boutique')}
             </h3>
             {store?.description && (
               <p className="text-sm text-gray-600 mb-3">{store.description}</p>
             )}
             {store?.phone && (
               <p className="text-sm text-gray-600">
-                <strong>Tél:</strong> {store.phone}
+                <strong>{tp('Tél:')}</strong> {store.phone}
               </p>
             )}
           </div>
@@ -43,7 +44,7 @@ const Footer = ({ store, theme }) => {
                 fontFamily: theme?.fontFamily || 'inherit'
               }}
             >
-              Contact
+              {tp('Contact')}
             </h3>
             {store?.whatsapp && (
               <a 
@@ -82,7 +83,7 @@ const Footer = ({ store, theme }) => {
         </div>
         
         <div className="border-t pt-6 text-center text-sm text-gray-500">
-          <p>© {currentYear} {store?.name || 'Ma Boutique'}. Tous droits réservés.</p>
+          <p>© {currentYear} {store?.name || tp('Ma Boutique')}. Tous droits réservés.</p>
           <p className="mt-2 text-xs">
             Propulsé par <a href="https://scalor.net" className="hover:underline" style={{ color: theme?.ctaColor || '#0F6B4F' }}>Scalor</a>
           </p>

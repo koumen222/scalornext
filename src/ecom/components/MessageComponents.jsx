@@ -1,5 +1,6 @@
 ﻿import React, { useState, useRef } from 'react';
 import { useAudioPlayer } from '../hooks/useAudioRecorder';
+import { tp } from '../i18n/platform.js';
 
 const ROLE_COLORS = { 
   ecom_admin: 'bg-primary-600', 
@@ -92,7 +93,7 @@ export function ImageMessage({ src, alt, onClick }) {
       )}
       <img
         src={src}
-        alt={alt || 'Image'}
+        alt={alt || tp('Image')}
         className={`max-w-full rounded-lg ${loaded ? '' : 'hidden'}`}
         onLoad={() => setLoaded(true)}
         onError={() => setError(true)}
@@ -138,7 +139,7 @@ export function DocumentMessage({ fileName, fileSize, src }) {
         </svg>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate">{fileName || 'Document'}</p>
+        <p className="text-sm font-medium truncate">{fileName || tp('Document')}</p>
         {fileSize && <p className="text-xs opacity-70">{formatSize(fileSize)}</p>}
       </div>
       <svg className="w-5 h-5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,7 +274,7 @@ export function RecordingIndicator({ duration, onCancel, onStop }) {
       <button
         onClick={onCancel}
         className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-100"
-        title="Annuler"
+        title={tp('Annuler')}
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -282,7 +283,7 @@ export function RecordingIndicator({ duration, onCancel, onStop }) {
       <button
         onClick={onStop}
         className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
-        title="Envoyer"
+        title={tp('Envoyer')}
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -327,7 +328,7 @@ export function UploadProgress({ progress, fileName, onCancel }) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-primary-700 truncate">{fileName}</p>
-        <p className="text-xs text-primary-600">Envoi en cours...</p>
+        <p className="text-xs text-primary-600">{tp('Envoi en cours...')}</p>
       </div>
       {onCancel && (
         <button

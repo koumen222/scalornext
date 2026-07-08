@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { tp } from '../i18n/platform.js';
 import { useSearchParams } from '@/lib/router-compat';
 import {
   scalorGetDashboard, scalorCreateInstance, scalorGetQrCode,
@@ -96,10 +97,10 @@ const Alert = ({ type = 'error', msg, onClose }) => {
 
 const TABS = [
   { id: 'instances', label: 'Instances WhatsApp' },
-  { id: 'api-keys',  label: 'Clés API' },
+  { id: 'api-keys',  get label() { return tp('Clés API'); } },
   { id: 'logs',      label: 'Logs' },
   { id: 'provider',  label: 'Provider' },
-  { id: 'docs',      label: 'Référence API' },
+  { id: 'docs',      get label() { return tp('Référence API'); } },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -359,7 +360,7 @@ export default function DeveloperSection() {
   };
 
   const handleDeleteKey = async (id) => {
-    if (!confirm('Révoquer cette clé ?')) return;
+    if (!confirm(tp('Révoquer cette clé ?'))) return;
     setDataLoading(true); setDataError('');
     try {
       await scalorDeleteApiKey(id);
@@ -460,7 +461,7 @@ export default function DeveloperSection() {
     <div className="space-y-5 pb-10">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">API Développeur</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{tp('API Développeur')}</h1>
         <p className="text-sm text-gray-500 mt-1">
           Gérez vos instances WhatsApp, clés API et intégrations via l'API Scalor v1.
         </p>
@@ -501,7 +502,7 @@ export default function DeveloperSection() {
               .then(d => { setScalorToken(d.token); setScalorUser(d.user); })
               .catch(() => setScalorAuthError('Connexion échouée. Vérifiez le serveur.'))
               .finally(() => setScalorAuthLoading(false));
-          }}>Réessayer</Btn>
+          }}>{tp('Réessayer')}</Btn>
         </Card>
       )}
 
@@ -510,28 +511,28 @@ export default function DeveloperSection() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-semibold text-gray-900">Vos instances WhatsApp</h2>
+              <h2 className="font-semibold text-gray-900">{tp('Vos instances WhatsApp')}</h2>
               <p className="text-xs text-gray-400 mt-0.5">{instances.length} instance{instances.length > 1 ? 's' : ''}</p>
             </div>
             <div className="flex gap-2">
-              <Btn variant="outline" onClick={loadInstances} disabled={dataLoading}>Rafraîchir</Btn>
-              <Btn onClick={() => setShowCreateInst(true)}>+ Nouvelle instance</Btn>
+              <Btn variant="outline" onClick={loadInstances} disabled={dataLoading}>{tp('Rafraîchir')}</Btn>
+              <Btn onClick={() => setShowCreateInst(true)}>{tp('+ Nouvelle instance')}</Btn>
             </div>
           </div>
 
           {/* Create form */}
           {showCreateInst && (
             <Card className="p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">Créer une instance</h3>
+              <h3 className="font-semibold text-gray-900 mb-3">{tp('Créer une instance')}</h3>
               <form onSubmit={handleCreateInstance} className="flex flex-wrap gap-3 items-end">
                 <div className="flex-1 min-w-48">
-                  <Input label="Nom de l'instance" placeholder="Ex: Support Client" required value={instForm.displayName}
+                  <Input label="Nom de l'instance" placeholder={tp('Ex: Support Client')} required value={instForm.displayName}
                     onChange={e => setInstForm({ displayName: e.target.value })} />
                 </div>
                 <Btn type="submit" disabled={dataLoading}>
-                  {dataLoading ? 'Création...' : 'Créer'}
+                  {dataLoading ? 'Création...' : tp('Créer')}
                 </Btn>
-                <Btn variant="secondary" onClick={() => setShowCreateInst(false)}>Annuler</Btn>
+                <Btn variant="secondary" onClick={() => setShowCreateInst(false)}>{tp('Annuler')}</Btn>
               </form>
             </Card>
           )}
@@ -540,16 +541,16 @@ export default function DeveloperSection() {
           {qrData && (
             <Card className="p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">Scanner le QR code</h3>
+                <h3 className="font-semibold text-gray-900">{tp('Scanner le QR code')}</h3>
                 <div className="flex items-center gap-2">
-                  <Btn variant="secondary" size="sm" onClick={() => handleGetQr(qrData.instanceId, true)}>Actualiser QR</Btn>
-                  <Btn variant="secondary" size="sm" onClick={() => setQrData(null)}>Fermer</Btn>
+                  <Btn variant="secondary" size="sm" onClick={() => handleGetQr(qrData.instanceId, true)}>{tp('Actualiser QR')}</Btn>
+                  <Btn variant="secondary" size="sm" onClick={() => setQrData(null)}>{tp('Fermer')}</Btn>
                 </div>
               </div>
               {qrData.qr ? (
                 <img src={qrData.qr} alt="QR Code WhatsApp" className="w-48 h-48 mx-auto" />
               ) : (
-                <p className="text-sm text-gray-500 text-center">QR en attente de génération…</p>
+                <p className="text-sm text-gray-500 text-center">{tp('QR en attente de génération…')}</p>
               )}
             </Card>
           )}
@@ -557,14 +558,14 @@ export default function DeveloperSection() {
           {/* Webhook edit */}
           {webhookEdit && (
             <Card className="p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">Configurer le webhook</h3>
+              <h3 className="font-semibold text-gray-900 mb-3">{tp('Configurer le webhook')}</h3>
               <form onSubmit={handleSetWebhook} className="flex flex-wrap gap-3 items-end">
                 <div className="flex-1 min-w-60">
                   <Input label="URL Webhook" type="url" placeholder="https://votre-serveur.com/webhook" required value={webhookEdit.url}
                     onChange={e => setWebhookEdit(w => ({ ...w, url: e.target.value }))} />
                 </div>
-                <Btn type="submit" disabled={dataLoading}>Enregistrer</Btn>
-                <Btn variant="secondary" onClick={() => setWebhookEdit(null)}>Annuler</Btn>
+                <Btn type="submit" disabled={dataLoading}>{tp('Enregistrer')}</Btn>
+                <Btn variant="secondary" onClick={() => setWebhookEdit(null)}>{tp('Annuler')}</Btn>
               </form>
             </Card>
           )}
@@ -573,7 +574,7 @@ export default function DeveloperSection() {
           <Card>
             {instances.length === 0 ? (
               <div className="p-10 text-center">
-                <p className="text-gray-400 text-sm">Aucune instance — créez-en une pour commencer.</p>
+                <p className="text-gray-400 text-sm">{tp('Aucune instance — créez-en une pour commencer.')}</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
@@ -593,23 +594,23 @@ export default function DeveloperSection() {
                         </div>
                         {(inst.messagesSentToday > 0 || inst.messagesSentThisMonth > 0) && (
                           <div className="flex gap-3 mt-1.5 text-xs text-gray-400">
-                            <span>Aujourd'hui: <strong className="text-gray-600">{inst.messagesSentToday || 0}</strong> msg</span>
-                            <span>Ce mois: <strong className="text-gray-600">{inst.messagesSentThisMonth || 0}</strong> msg</span>
+                            <span>{tp('Aujourd\'hui:')} <strong className="text-gray-600">{inst.messagesSentToday || 0}</strong> {tp('msg')}</span>
+                            <span>{tp('Ce mois:')} <strong className="text-gray-600">{inst.messagesSentThisMonth || 0}</strong> {tp('msg')}</span>
                           </div>
                         )}
                       </div>
                       <div className="flex flex-wrap gap-1.5 shrink-0">
-                        <Btn variant="outline" size="sm" onClick={() => handleTestStatus(inst._id)}>Tester statut</Btn>
-                        <Btn variant="outline" size="sm" onClick={() => handleGetQr(inst._id)}>QR Code</Btn>
-                        <Btn variant="outline" size="sm" onClick={() => setWebhookEdit({ instanceId: inst._id, url: inst.webhookUrl || '' })}>Webhook</Btn>
-                        <Btn variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(inst._id); setDataMsg('ID copié : ' + inst._id); }}>Copier ID</Btn>
+                        <Btn variant="outline" size="sm" onClick={() => handleTestStatus(inst._id)}>{tp('Tester statut')}</Btn>
+                        <Btn variant="outline" size="sm" onClick={() => handleGetQr(inst._id)}>{tp('QR Code')}</Btn>
+                        <Btn variant="outline" size="sm" onClick={() => setWebhookEdit({ instanceId: inst._id, url: inst.webhookUrl || '' })}>{tp('Webhook')}</Btn>
+                        <Btn variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(inst._id); setDataMsg('ID copié : ' + inst._id); }}>{tp('Copier ID')}</Btn>
                         {(inst.status === 'connected' || inst.status === 'open') && (
-                          <Btn variant="secondary" size="sm" onClick={() => handleDisconnectInstance(inst._id)}>Déconnecter</Btn>
+                          <Btn variant="secondary" size="sm" onClick={() => handleDisconnectInstance(inst._id)}>{tp('Déconnecter')}</Btn>
                         )}
                         {(inst.status === 'disconnected' || inst.status === 'close' || inst.status === 'error') && (
-                          <Btn variant="secondary" size="sm" onClick={() => handleRestartInstance(inst._id)}>Redémarrer</Btn>
+                          <Btn variant="secondary" size="sm" onClick={() => handleRestartInstance(inst._id)}>{tp('Redémarrer')}</Btn>
                         )}
-                        <Btn variant="danger" size="sm" onClick={() => handleDeleteInstance(inst._id)}>Supprimer</Btn>
+                        <Btn variant="danger" size="sm" onClick={() => handleDeleteInstance(inst._id)}>{tp('Supprimer')}</Btn>
                       </div>
                     </div>
                   </div>
@@ -625,12 +626,12 @@ export default function DeveloperSection() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-semibold text-gray-900">Clés API</h2>
+              <h2 className="font-semibold text-gray-900">{tp('Clés API')}</h2>
               <p className="text-xs text-gray-400 mt-0.5">{apiKeys.length} clé{apiKeys.length > 1 ? 's' : ''} · max 5</p>
             </div>
             <div className="flex gap-2">
-              <Btn variant="outline" onClick={loadApiKeys} disabled={dataLoading}>Rafraîchir</Btn>
-              <Btn onClick={() => setShowCreateKey(true)}>+ Nouvelle clé</Btn>
+              <Btn variant="outline" onClick={loadApiKeys} disabled={dataLoading}>{tp('Rafraîchir')}</Btn>
+              <Btn onClick={() => setShowCreateKey(true)}>{tp('+ Nouvelle clé')}</Btn>
             </div>
           </div>
 
@@ -640,14 +641,14 @@ export default function DeveloperSection() {
               <div className="flex items-start gap-3">
                 <span className="text-primary-600 text-lg mt-0.5">🔑</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-primary-700 mb-1.5">Votre nouvelle clé API (copiez-la maintenant, elle ne sera plus visible) :</p>
+                  <p className="text-xs font-semibold text-primary-700 mb-1.5">{tp('Votre nouvelle clé API (copiez-la maintenant, elle ne sera plus visible) :')}</p>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 font-mono text-sm break-all bg-white rounded-lg px-3 py-2 border border-primary-200 select-all">
                       {newRawKey}
                     </code>
                     <Btn variant="primary" size="sm"
                       onClick={() => { navigator.clipboard.writeText(newRawKey); setDataMsg('Clé copiée dans le presse-papier !'); }}>
-                      Copier
+                      {tp('Copier')}
                     </Btn>
                   </div>
                   <Btn variant="secondary" size="sm" className="mt-2"
@@ -662,24 +663,24 @@ export default function DeveloperSection() {
           {/* Create form */}
           {showCreateKey && (
             <Card className="p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">Créer une clé API</h3>
+              <h3 className="font-semibold text-gray-900 mb-3">{tp('Créer une clé API')}</h3>
               <form onSubmit={handleCreateKey} className="flex flex-wrap gap-3 items-end">
                 <div className="flex-1 min-w-40">
-                  <Input label="Nom de la clé" placeholder="Ex: Production, Test, Webhook" required value={keyForm.name}
+                  <Input label="Nom de la clé" placeholder={tp('Ex: Production, Test, Webhook')} required value={keyForm.name}
                     onChange={e => setKeyForm(f => ({ ...f, name: e.target.value }))} />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Type</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Type')}</label>
                   <select value={keyForm.type} onChange={e => setKeyForm(f => ({ ...f, type: e.target.value }))}
                     className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20">
-                    <option value="live">Live</option>
-                    <option value="test">Test</option>
+                    <option value="live">{tp('Live')}</option>
+                    <option value="test">{tp('Test')}</option>
                   </select>
                 </div>
                 <Btn type="submit" disabled={dataLoading}>
-                  {dataLoading ? 'Création...' : 'Créer'}
+                  {dataLoading ? 'Création...' : tp('Créer')}
                 </Btn>
-                <Btn variant="secondary" onClick={() => setShowCreateKey(false)}>Annuler</Btn>
+                <Btn variant="secondary" onClick={() => setShowCreateKey(false)}>{tp('Annuler')}</Btn>
               </form>
             </Card>
           )}
@@ -688,7 +689,7 @@ export default function DeveloperSection() {
           <Card>
             {apiKeys.length === 0 ? (
               <div className="p-10 text-center">
-                <p className="text-gray-400 text-sm">Aucune clé API — créez-en une pour commencer.</p>
+                <p className="text-gray-400 text-sm">{tp('Aucune clé API — créez-en une pour commencer.')}</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
@@ -697,9 +698,9 @@ export default function DeveloperSection() {
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-gray-900">{key.name || 'Clé sans nom'}</p>
+                          <p className="font-medium text-gray-900">{key.name || tp('Clé sans nom')}</p>
                           <Badge color={key.isActive !== false ? 'green' : 'red'}>
-                            {key.isActive !== false ? 'Active' : 'Révoquée'}
+                            {key.isActive !== false ? 'Active' : tp('Révoquée')}
                           </Badge>
                         </div>
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-gray-400">
@@ -724,9 +725,9 @@ export default function DeveloperSection() {
                         <Btn variant="outline" size="sm" onClick={() => {
                           navigator.clipboard.writeText(key.keyPrefix);
                           setDataMsg('Préfixe copié : ' + key.keyPrefix);
-                        }}>Copier préfixe</Btn>
+                        }}>{tp('Copier préfixe')}</Btn>
                         {key.isActive !== false && (
-                          <Btn variant="danger" size="sm" onClick={() => handleDeleteKey(key._id)}>Révoquer</Btn>
+                          <Btn variant="danger" size="sm" onClick={() => handleDeleteKey(key._id)}>{tp('Révoquer')}</Btn>
                         )}
                       </div>
                     </div>
@@ -742,8 +743,8 @@ export default function DeveloperSection() {
       {activeTab === 'logs' && scalorToken && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">Logs de messages</h2>
-            <Btn variant="outline" onClick={loadLogs}>Rafraîchir</Btn>
+            <h2 className="font-semibold text-gray-900">{tp('Logs de messages')}</h2>
+            <Btn variant="outline" onClick={loadLogs}>{tp('Rafraîchir')}</Btn>
           </div>
           <Card className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -756,7 +757,7 @@ export default function DeveloperSection() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {logs.length === 0 && (
-                  <tr><td colSpan={6} className="px-4 py-10 text-center text-gray-400">Aucun log</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-10 text-center text-gray-400">{tp('Aucun log')}</td></tr>
                 )}
                 {logs.map(log => (
                   <tr key={log._id} className="hover:bg-gray-50">
@@ -784,9 +785,9 @@ export default function DeveloperSection() {
       {activeTab === 'provider' && (
         <div className="space-y-5">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">Provider Console</h2>
+            <h2 className="font-semibold text-gray-900">{tp('Provider Console')}</h2>
             {provToken && (
-              <Btn variant="danger" size="sm" onClick={handleProvLogout}>Déconnexion provider</Btn>
+              <Btn variant="danger" size="sm" onClick={handleProvLogout}>{tp('Déconnexion provider')}</Btn>
             )}
           </div>
 
@@ -799,11 +800,11 @@ export default function DeveloperSection() {
               {provInitLoading ? (
                 <div className="flex items-center gap-3 text-sm text-gray-500">
                   <div className="w-4 h-4 border-2 border-gray-300 border-t-[#0F6B4F] rounded-full animate-spin" />
-                  Initialisation automatique du Provider...
+                  {tp('Initialisation automatique du Provider...')}
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600">Connexion automatique Provider indisponible.</p>
+                  <p className="text-sm text-gray-600">{tp('Connexion automatique Provider indisponible.')}</p>
                   <Btn variant="outline" onClick={() => {
                     setProvError('');
                     setProvInitLoading(true);
@@ -815,7 +816,7 @@ export default function DeveloperSection() {
                       .catch((err) => setProvError(err.message || 'Connexion provider automatique impossible'))
                       .finally(() => setProvInitLoading(false));
                   }}>
-                    Réessayer
+                    {tp('Réessayer')}
                   </Btn>
                 </div>
               )}
@@ -828,7 +829,7 @@ export default function DeveloperSection() {
               {/* Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Card className="p-4">
-                  <p className="text-xs text-gray-500 mb-1">Token</p>
+                  <p className="text-xs text-gray-500 mb-1">{tp('Token')}</p>
                   <p className="font-mono text-sm text-gray-800 break-all">
                     {provToken.length > 24 ? `${provToken.slice(0,12)}…${provToken.slice(-8)}` : provToken}
                   </p>
@@ -839,16 +840,16 @@ export default function DeveloperSection() {
                       catch (err) { setProvError(err.message); }
                       finally { setProvLoading(false); }
                     }}>
-                    Rafraîchir token
+                    {tp('Rafraîchir token')}
                   </Btn>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-xs text-gray-500 mb-1">Entreprise</p>
+                  <p className="text-xs text-gray-500 mb-1">{tp('Entreprise')}</p>
                   <p className="font-semibold text-gray-900">{provProfile?.company || '-'}</p>
                   <p className="text-sm text-gray-500">{provProfile?.email || '-'}</p>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-xs text-gray-500 mb-1">Instances</p>
+                  <p className="text-xs text-gray-500 mb-1">{tp('Instances')}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {provInstances.length}
                     <span className="text-sm font-normal text-gray-400"> / {provProfile?.limits?.instanceLimit ?? 10}</span>
@@ -858,7 +859,7 @@ export default function DeveloperSection() {
 
               {/* Create instance */}
               <Card className="p-5">
-                <h3 className="font-semibold text-gray-900 mb-4">Créer une instance</h3>
+                <h3 className="font-semibold text-gray-900 mb-4">{tp('Créer une instance')}</h3>
                 <form onSubmit={handleProvCreateInst} className="flex flex-wrap gap-3 items-end">
                   <div className="flex-1 min-w-40">
                     <Input label="Nom" required value={provInstForm.name}
@@ -869,7 +870,7 @@ export default function DeveloperSection() {
                       onChange={e => setProvInstForm(f => ({ ...f, subdomain: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'') }))} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Devise</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Devise')}</label>
                     <select value={provInstForm.currency}
                       onChange={e => setProvInstForm(f => ({ ...f, currency: e.target.value }))}
                       className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20">
@@ -885,14 +886,14 @@ export default function DeveloperSection() {
               {/* Provider instances list */}
               <Card>
                 <div className="flex items-center justify-between p-4 border-b border-gray-50">
-                  <h3 className="font-semibold text-gray-900">Mes instances</h3>
+                  <h3 className="font-semibold text-gray-900">{tp('Mes instances')}</h3>
                   <Btn variant="outline" size="sm" onClick={loadProviderDashboard} disabled={provLoading}>
-                    Rafraîchir
+                    {tp('Rafraîchir')}
                   </Btn>
                 </div>
                 <div className="divide-y divide-gray-50">
                   {provInstances.length === 0 && (
-                    <div className="p-10 text-center text-gray-400 text-sm">Aucune instance provider.</div>
+                    <div className="p-10 text-center text-gray-400 text-sm">{tp('Aucune instance provider.')}</div>
                   )}
                   {provInstances.map(inst => (
                     <div key={String(inst.id)} className="p-4">
@@ -908,7 +909,7 @@ export default function DeveloperSection() {
                           )}
                         </div>
                         <div className="flex gap-2">
-                          <Btn variant="danger" size="sm" onClick={() => handleProvDeleteInst(inst.id)}>Supprimer</Btn>
+                          <Btn variant="danger" size="sm" onClick={() => handleProvDeleteInst(inst.id)}>{tp('Supprimer')}</Btn>
                         </div>
                       </div>
                     </div>
@@ -923,25 +924,25 @@ export default function DeveloperSection() {
       {/* ═══════════════ DOCS TAB ═══════════════ */}
       {activeTab === 'docs' && (
         <div className="space-y-5">
-          <h2 className="font-semibold text-gray-900">Référence API v1</h2>
+          <h2 className="font-semibold text-gray-900">{tp('Référence API v1')}</h2>
 
           {/* Base URL & Auth */}
           <Card className="p-6 space-y-5 text-sm">
             <div>
-              <p className="font-semibold text-gray-700 mb-2">Base URL (API publique)</p>
+              <p className="font-semibold text-gray-700 mb-2">{tp('Base URL (API publique)')}</p>
               <code className="block bg-gray-50 rounded-xl px-4 py-3 text-[#0F6B4F] font-mono">
-                https://api.scalor.net/api/v1
+                {tp('https://api.scalor.net/api/v1')}
               </code>
             </div>
             <div>
-              <p className="font-semibold text-gray-700 mb-2">Authentification</p>
-              <p className="text-gray-500 mb-2">Chaque requête doit contenir votre clé API dans le header Authorization :</p>
+              <p className="font-semibold text-gray-700 mb-2">{tp('Authentification')}</p>
+              <p className="text-gray-500 mb-2">{tp('Chaque requête doit contenir votre clé API dans le header Authorization :')}</p>
               <code className="block bg-gray-50 rounded-xl px-4 py-3 font-mono text-gray-700">
                 Authorization: Bearer sk_live_xxxxxxxxxxxxxxxx
               </code>
             </div>
             <div>
-              <p className="font-semibold text-gray-700 mb-2">Exemple curl</p>
+              <p className="font-semibold text-gray-700 mb-2">{tp('Exemple curl')}</p>
               <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl -X POST https://api.scalor.net/api/v1/message/send \\
   -H "Authorization: Bearer sk_live_xxx" \\
@@ -953,7 +954,7 @@ export default function DeveloperSection() {
 
           {/* Pricing */}
           <Card className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">💰 Tarifs (FCFA / mois)</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{tp('💰 Tarifs (FCFA / mois)')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[
                 { plan: 'Starter', price: 'Gratuit', instances: '1', daily: '500', monthly: '10 000', rate: '30 req/min', highlight: false },
@@ -977,14 +978,14 @@ export default function DeveloperSection() {
 
           {/* API Endpoints */}
           <Card className="p-6 space-y-4 text-sm">
-            <h3 className="font-semibold text-gray-900">Endpoints</h3>
+            <h3 className="font-semibold text-gray-900">{tp('Endpoints')}</h3>
 
             {/* Account */}
             <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Compte</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Compte')}</p>
               {[
                 { method:'GET', path:'/account', desc:'Voir votre compte et usage courant.', body:null },
-                { method:'GET', path:'/usage', desc:'Statistiques détaillées (30 derniers jours).', body:null },
+                { method:'GET', path:'/usage', get desc() { return tp('Statistiques détaillées (30 derniers jours).'); }, body:null },
               ].map(({ method, path, desc, body }) => (
                 <div key={path} className="border border-gray-100 rounded-xl overflow-hidden mb-2">
                   <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50">
@@ -1001,16 +1002,16 @@ export default function DeveloperSection() {
 
             {/* Instances */}
             <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Instances WhatsApp</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Instances WhatsApp')}</p>
               {[
-                { method:'POST', path:'/instance/create', desc:'Créer une instance WhatsApp.', body:'{ "name": "Support Client" }' },
+                { method:'POST', path:'/instance/create', get desc() { return tp('Créer une instance WhatsApp.'); }, body:'{ "name": "Support Client" }' },
                 { method:'GET',  path:'/instance', desc:'Lister toutes vos instances.', body:null },
-                { method:'GET',  path:'/instance/:id', desc:'Détails d\'une instance (avec statut live).', body:null },
+                { method:'GET',  path:'/instance/:id', get desc() { return tp('Détails d\'une instance (avec statut live).'); }, body:null },
                 { method:'GET',  path:'/instance/:id/qrcode', desc:'Obtenir le QR code pour connecter WhatsApp.', body:null },
                 { method:'DELETE', path:'/instance/:id', desc:'Supprimer une instance.', body:null },
-                { method:'POST', path:'/instance/:id/disconnect', desc:'Déconnecter WhatsApp.', body:null },
-                { method:'POST', path:'/instance/:id/restart', desc:'Redémarrer une instance.', body:null },
-                { method:'PUT',  path:'/instance/:id/webhook', desc:'Configurer un webhook pour recevoir les événements.', body:'{ "url": "https://votre-serveur.com/webhook", "events": ["messages.upsert", "connection.update"] }' },
+                { method:'POST', path:'/instance/:id/disconnect', get desc() { return tp('Déconnecter WhatsApp.'); }, body:null },
+                { method:'POST', path:'/instance/:id/restart', get desc() { return tp('Redémarrer une instance.'); }, body:null },
+                { method:'PUT',  path:'/instance/:id/webhook', get desc() { return tp('Configurer un webhook pour recevoir les événements.'); }, body:'{ "url": "https://votre-serveur.com/webhook", "events": ["messages.upsert", "connection.update"] }' },
               ].map(({ method, path, desc, body }) => (
                 <div key={method+path} className="border border-gray-100 rounded-xl overflow-hidden mb-2">
                   <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50">
@@ -1027,14 +1028,14 @@ export default function DeveloperSection() {
 
             {/* Messages */}
             <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Messages</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Messages')}</p>
               {[
-                { method:'POST', path:'/message/send', desc:'Envoyer un message (texte, image, audio, vidéo, document).', body:'{ "instanceId": "...", "number": "237690000000", "text": "Bonjour !" }' },
+                { method:'POST', path:'/message/send', get desc() { return tp('Envoyer un message (texte, image, audio, vidéo, document).'); }, body:'{ "instanceId": "...", "number": "237690000000", "text": "Bonjour !" }' },
                 { method:'POST', path:'/message/send', desc:'Envoyer une image.', body:'{ "instanceId": "...", "number": "237...", "mediaUrl": "https://...", "caption": "Voici le produit" }' },
                 { method:'POST', path:'/message/send', desc:'Envoyer un audio.', body:'{ "instanceId": "...", "number": "237...", "audioUrl": "https://..." }' },
                 { method:'POST', path:'/message/send/bulk', desc:'Envoi en masse (max 100 messages).', body:'{ "instanceId": "...", "messages": [{ "number": "237...", "text": "Promo !" }] }' },
-                { method:'POST', path:'/message/check-number', desc:'Vérifier si un numéro est sur WhatsApp.', body:'{ "instanceId": "...", "numbers": ["237690000000"] }' },
-                { method:'GET',  path:'/message/logs', desc:'Historique des messages (paginé).', body:null },
+                { method:'POST', path:'/message/check-number', get desc() { return tp('Vérifier si un numéro est sur WhatsApp.'); }, body:'{ "instanceId": "...", "numbers": ["237690000000"] }' },
+                { method:'GET',  path:'/message/logs', get desc() { return tp('Historique des messages (paginé).'); }, body:null },
               ].map(({ method, path, desc, body }, i) => (
                 <div key={path+i} className="border border-gray-100 rounded-xl overflow-hidden mb-2">
                   <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50">
@@ -1052,14 +1053,14 @@ export default function DeveloperSection() {
 
           {/* Quick Start */}
           <Card className="p-6 space-y-4 text-sm">
-            <h3 className="font-semibold text-gray-900">🚀 Démarrage rapide</h3>
+            <h3 className="font-semibold text-gray-900">{tp('🚀 Démarrage rapide')}</h3>
             <div className="space-y-3">
               <div>
-                <p className="font-medium text-gray-700 mb-1">1. Obtenez votre clé API</p>
-                <p className="text-gray-500">Allez dans l'onglet "Clés API" et créez une clé. Copiez-la immédiatement.</p>
+                <p className="font-medium text-gray-700 mb-1">{tp('1. Obtenez votre clé API')}</p>
+                <p className="text-gray-500">{tp('Allez dans l\'onglet "Clés API" et créez une clé. Copiez-la immédiatement.')}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">2. Créez une instance</p>
+                <p className="font-medium text-gray-700 mb-1">{tp('2. Créez une instance')}</p>
                 <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl -X POST https://api.scalor.net/api/v1/instance/create \\
   -H "Authorization: Bearer sk_live_xxx" \\
@@ -1068,14 +1069,14 @@ export default function DeveloperSection() {
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">3. Scannez le QR code</p>
+                <p className="font-medium text-gray-700 mb-1">{tp('3. Scannez le QR code')}</p>
                 <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl https://api.scalor.net/api/v1/instance/INSTANCE_ID/qrcode \\
   -H "Authorization: Bearer sk_live_xxx"`}
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">4. Envoyez un message !</p>
+                <p className="font-medium text-gray-700 mb-1">{tp('4. Envoyez un message !')}</p>
                 <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl -X POST https://api.scalor.net/api/v1/message/send \\
   -H "Authorization: Bearer sk_live_xxx" \\
@@ -1088,10 +1089,10 @@ export default function DeveloperSection() {
 
           {/* Response format */}
           <Card className="p-6 space-y-4 text-sm">
-            <h3 className="font-semibold text-gray-900">Format des réponses</h3>
+            <h3 className="font-semibold text-gray-900">{tp('Format des réponses')}</h3>
             <div className="space-y-3">
               <div>
-                <p className="font-medium text-gray-700 mb-1">✅ Succès</p>
+                <p className="font-medium text-gray-700 mb-1">{tp('✅ Succès')}</p>
                 <pre className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-600 overflow-x-auto">
 {`{
   "success": true,
@@ -1103,7 +1104,7 @@ export default function DeveloperSection() {
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">❌ Erreur</p>
+                <p className="font-medium text-gray-700 mb-1">{tp('❌ Erreur')}</p>
                 <pre className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-600 overflow-x-auto">
 {`{
   "error": "daily_limit_exceeded",
@@ -1114,11 +1115,11 @@ export default function DeveloperSection() {
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">🔒 Headers utiles</p>
+                <p className="font-medium text-gray-700 mb-1">{tp('🔒 Headers utiles')}</p>
                 <div className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-600 space-y-1">
-                  <p><code className="text-gray-800">X-RateLimit-Limit</code> — Nombre max de requêtes/min</p>
-                  <p><code className="text-gray-800">X-RateLimit-Remaining</code> — Requêtes restantes</p>
-                  <p><code className="text-gray-800">Retry-After</code> — Secondes avant de pouvoir réessayer (si 429)</p>
+                  <p><code className="text-gray-800">{tp('X-RateLimit-Limit')}</code> {tp('— Nombre max de requêtes/min')}</p>
+                  <p><code className="text-gray-800">{tp('X-RateLimit-Remaining')}</code> {tp('— Requêtes restantes')}</p>
+                  <p><code className="text-gray-800">{tp('Retry-After')}</code> {tp('— Secondes avant de pouvoir réessayer (si 429)')}</p>
                 </div>
               </div>
             </div>

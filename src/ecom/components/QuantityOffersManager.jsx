@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit3, Loader2, Package, EyeOff } from 'lucide-react';
 import { quantityOffersApi } from '../services/storeApi.js';
 import { Link } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 /**
  * QuantityOffersManager — Affiche les campagnes d'offres liées à un produit
@@ -35,7 +36,7 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
   if (!productId) {
     return (
       <div className="text-sm text-gray-400 italic py-4">
-        Enregistrez le produit pour gérer les offres de quantité.
+        {tp('Enregistrez le produit pour gérer les offres de quantité.')}
       </div>
     );
   }
@@ -46,7 +47,7 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="w-5 h-5 text-purple-600" />
-          <h3 className="text-sm font-bold text-gray-800">Offres de quantité</h3>
+          <h3 className="text-sm font-bold text-gray-800">{tp('Offres de quantité')}</h3>
           <span className="text-xs text-gray-400">({offers.length})</span>
         </div>
         {!readOnly && (
@@ -55,7 +56,7 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
             className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Créer
+            {tp('Créer')}
           </Link>
         )}
       </div>
@@ -74,7 +75,7 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
         </div>
       ) : offers.length === 0 ? (
         <div className="text-sm text-gray-500 text-center py-6">
-          Aucune offre configurée pour ce produit.
+          {tp('Aucune offre configurée pour ce produit.')}
         </div>
       ) : (
         /* Offers list */

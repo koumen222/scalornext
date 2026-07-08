@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
   const [activeTab, setActiveTab] = useState('analyze');
@@ -97,7 +98,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
 
   const handleSendByCountry = async () => {
     if (!selectedInstance) {
-      alert('Veuillez sélectionner une instance WhatsApp');
+      alert(tp('Veuillez sélectionner une instance WhatsApp'));
       return;
     }
 
@@ -148,7 +149,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                 Envoi par pays - {campaign?.name}
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Analysez et envoyez votre campagne en fonction des indicatifs pays
+                {tp('Analysez et envoyez votre campagne en fonction des indicatifs pays')}
               </p>
             </div>
             <button
@@ -209,31 +210,31 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                   {/* Résumé */}
                   {countryAnalysis?.overview && (
                     <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-                      <h3 className="font-medium text-primary-900 mb-3">Résumé de l'analyse</h3>
+                      <h3 className="font-medium text-primary-900 mb-3">{tp('Résumé de l\'analyse')}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                           <div className="text-2xl font-bold text-primary-600">
                             {countryAnalysis.overview.totalRecipients}
                           </div>
-                          <div className="text-sm text-primary-700">Total destinataires</div>
+                          <div className="text-sm text-primary-700">{tp('Total destinataires')}</div>
                         </div>
                         <div>
                           <div className="text-2xl font-bold text-primary-600">
                             {countryAnalysis.overview.validRecipients}
                           </div>
-                          <div className="text-sm text-primary-700">Numéros valides</div>
+                          <div className="text-sm text-primary-700">{tp('Numéros valides')}</div>
                         </div>
                         <div>
                           <div className="text-2xl font-bold text-primary-600">
                             {countryAnalysis.overview.countryCount}
                           </div>
-                          <div className="text-sm text-primary-700">Pays concernés</div>
+                          <div className="text-sm text-primary-700">{tp('Pays concernés')}</div>
                         </div>
                         <div>
                           <div className="text-2xl font-bold text-primary-600">
                             {Math.round((countryAnalysis.overview.validRecipients / countryAnalysis.overview.totalRecipients) * 100)}%
                           </div>
-                          <div className="text-sm text-primary-700">Taux de validité</div>
+                          <div className="text-sm text-primary-700">{tp('Taux de validité')}</div>
                         </div>
                       </div>
                     </div>
@@ -242,16 +243,16 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                   {/* Pays */}
                   {getCountryStats().length > 0 && (
                     <div>
-                      <h3 className="font-medium text-gray-900 mb-3">Répartition par pays</h3>
+                      <h3 className="font-medium text-gray-900 mb-3">{tp('Répartition par pays')}</h3>
                       <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
                           <thead className="bg-gray-50">
                             <tr>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pays</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Destinataires</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pourcentage</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inclure</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exclure</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Pays')}</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Destinataires')}</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Pourcentage')}</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Inclure')}</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Exclure')}</th>
                             </tr>
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
@@ -296,7 +297,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                   {/* Recommandations */}
                   {countryAnalysis?.recommendations?.length > 0 && (
                     <div>
-                      <h3 className="font-medium text-gray-900 mb-3">Recommandations</h3>
+                      <h3 className="font-medium text-gray-900 mb-3">{tp('Recommandations')}</h3>
                       <div className="space-y-2">
                         {countryAnalysis.recommendations.map((rec, index) => (
                           <div key={index} className="bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -314,14 +315,14 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                   {/* Instance WhatsApp */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Instance WhatsApp
+                      {tp('Instance WhatsApp')}
                     </label>
                     <select
                       value={selectedInstance}
                       onChange={(e) => setSelectedInstance(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
-                      <option value="">Sélectionner une instance</option>
+                      <option value="">{tp('Sélectionner une instance')}</option>
                       {whatsappInstances.map((instance) => (
                         <option key={instance._id} value={instance._id}>
                           {instance.customName || instance.instanceName} - {instance.status}
@@ -344,7 +345,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                           onChange={(e) => setSendStrategy(e.target.value)}
                           className="mr-2"
                         />
-                        <span className="text-sm">Envoyer à tous les pays (ordre par nombre décroissant)</span>
+                        <span className="text-sm">{tp('Envoyer à tous les pays (ordre par nombre décroissant)')}</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -354,7 +355,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                           onChange={(e) => setSendStrategy(e.target.value)}
                           className="mr-2"
                         />
-                        <span className="text-sm">Ordre prioritaire (sélectionner les pays ci-dessous)</span>
+                        <span className="text-sm">{tp('Ordre prioritaire (sélectionner les pays ci-dessous)')}</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -364,7 +365,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                           onChange={(e) => setSendStrategy(e.target.value)}
                           className="mr-2"
                         />
-                        <span className="text-sm">Séquentiel (un par un dans l'ordre)</span>
+                        <span className="text-sm">{tp('Séquentiel (un par un dans l\'ordre)')}</span>
                       </label>
                     </div>
                   </div>
@@ -373,7 +374,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                   {sendStrategy === 'priority' && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Ordre prioritaire des pays
+                        {tp('Ordre prioritaire des pays')}
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                         {priorityCountryOptions.map((country) => (
@@ -396,7 +397,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                   {/* Délai entre pays */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Délai entre les pays (secondes)
+                      {tp('Délai entre les pays (secondes)')}
                     </label>
                     <input
                       type="number"
@@ -407,14 +408,14 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      Pause recommandée pour éviter les limitations anti-spam (5-30s)
+                      {tp('Pause recommandée pour éviter les limitations anti-spam (5-30s)')}
                     </p>
                   </div>
 
                   {/* Filtres actifs */}
                   {(includeCountries.length > 0 || excludeCountries.length > 0) && (
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Filtres actifs</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">{tp('Filtres actifs')}</h4>
                       {includeCountries.length > 0 && (
                         <div className="mb-2">
                           <span className="text-sm font-medium text-primary-600">Pays inclus ({includeCountries.length}):</span>
@@ -454,33 +455,33 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                 <div className="space-y-6">
                   {/* Résumé de l'envoi */}
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <h3 className="font-medium text-yellow-900 mb-3">Résumé de l'envoi</h3>
+                    <h3 className="font-medium text-yellow-900 mb-3">{tp('Résumé de l\'envoi')}</h3>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-yellow-800">Instance WhatsApp:</span>
+                        <span className="text-sm text-yellow-800">{tp('Instance WhatsApp:')}</span>
                         <span className="text-sm font-medium">
-                          {whatsappInstances.find(i => i._id === selectedInstance)?.customName || 'Non sélectionnée'}
+                          {whatsappInstances.find(i => i._id === selectedInstance)?.customName || tp('Non sélectionnée')}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-yellow-800">Stratégie:</span>
+                        <span className="text-sm text-yellow-800">{tp('Stratégie:')}</span>
                         <span className="text-sm font-medium">
                           {sendStrategy === 'all' ? 'Tous les pays' : 
-                           sendStrategy === 'priority' ? 'Ordre prioritaire' : 'Séquentiel'}
+                           sendStrategy === 'priority' ? 'Ordre prioritaire' : tp('Séquentiel')}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-yellow-800">Délai entre pays:</span>
+                        <span className="text-sm text-yellow-800">{tp('Délai entre pays:')}</span>
                         <span className="text-sm font-medium">{delayBetweenCountries}s</span>
                       </div>
                       {countryAnalysis?.filteredSummary && (
                         <>
                           <div className="flex justify-between">
-                            <span className="text-sm text-yellow-800">Destinataires filtrés:</span>
+                            <span className="text-sm text-yellow-800">{tp('Destinataires filtrés:')}</span>
                             <span className="text-sm font-medium">{countryAnalysis.filteredSummary.validRecipients}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-sm text-yellow-800">Pays concernés:</span>
+                            <span className="text-sm text-yellow-800">{tp('Pays concernés:')}</span>
                             <span className="text-sm font-medium">{Object.keys(countryAnalysis.filteredCountries || {}).length}</span>
                           </div>
                         </>
@@ -490,13 +491,13 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
 
                   {/* Confirmation */}
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h3 className="font-medium text-red-900 mb-2">⚠️ Confirmation requise</h3>
+                    <h3 className="font-medium text-red-900 mb-2">{tp('⚠️ Confirmation requise')}</h3>
                     <p className="text-sm text-red-800 mb-3">
                       Vous allez envoyer cette campagne à {countryAnalysis?.filteredSummary?.validRecipients || countryAnalysis?.overview?.validRecipients} destinataires 
                       répartis dans {Object.keys(countryAnalysis?.filteredCountries || countryAnalysis?.countries || {}).length} pays.
                     </p>
                     <p className="text-sm text-red-800">
-                      Cette action est irréversible. Les messages seront envoyés immédiatement.
+                      {tp('Cette action est irréversible. Les messages seront envoyés immédiatement.')}
                     </p>
                   </div>
 
@@ -506,7 +507,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                       onClick={onClose}
                       className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                     >
-                      Annuler
+                      {tp('Annuler')}
                     </button>
                     <button
                       onClick={handleSendByCountry}
@@ -516,7 +517,7 @@ const CampaignCountryModal = ({ campaign, isOpen, onClose, onSend }) => {
                       {sending ? (
                         <>
                           <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Envoi en cours...
+                          {tp('Envoi en cours...')}
                         </>
                       ) : (
                         '🚀 Envoyer par pays'

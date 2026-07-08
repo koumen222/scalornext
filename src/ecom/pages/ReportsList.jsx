@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { tp } from '../i18n/platform.js';
 import { Link, useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
@@ -115,15 +116,15 @@ const ReportRow = ({ report, isAdmin, isCloseuse, fmt, onDelete }) => {
             onClick={(e) => e.stopPropagation()}
             className={`text-sm font-semibold text-gray-900 truncate block hover:text-primary-600 hover:underline underline-offset-2 ${T}`}
           >
-            {report.productId?.name || 'Produit inconnu'}
+            {report.productId?.name || tp('Produit inconnu')}
           </Link>
         ) : (
           <p className="text-sm font-semibold text-gray-900 truncate">
-            {report.productId?.name || 'Produit inconnu'}
+            {report.productId?.name || tp('Produit inconnu')}
           </p>
         )}
         <p className="text-xs text-gray-500 mt-0.5 tabular-nums">
-          {report.ordersDelivered}/{report.ordersReceived} livrées · {rate}%
+          {report.ordersDelivered}/{report.ordersReceived} {tp('livrées')} · {rate}%
         </p>
       </div>
 
@@ -144,7 +145,7 @@ const ReportRow = ({ report, isAdmin, isCloseuse, fmt, onDelete }) => {
             <button
               onClick={(e) => { e.stopPropagation(); setMenuOpen(m => !m); }}
               className={`w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 ${T}`}
-              aria-label="Actions"
+              aria-label={tp('Actions')}
             >
               <MoreHorizontal size={16} />
             </button>
@@ -156,13 +157,13 @@ const ReportRow = ({ report, isAdmin, isCloseuse, fmt, onDelete }) => {
                     onClick={(e) => { e.stopPropagation(); setMenuOpen(false); navigate(`/ecom/reports/${report._id}/edit`); }}
                     className={`block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 ${T}`}
                   >
-                    Modifier
+                    {tp('Modifier')}
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onDelete(report._id); }}
                     className={`block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 ${T}`}
                   >
-                    Supprimer
+                    {tp('Supprimer')}
                   </button>
                 </div>
               </>
@@ -190,12 +191,12 @@ const InsightList = ({ title, link, items, render }) => (
       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{title}</h3>
       {link && (
         <Link to={link} className={`text-xs font-medium text-primary-500 hover:text-primary-600 inline-flex items-center gap-0.5 ${T}`}>
-          Voir tout <ChevronRight size={11} />
+          {tp('Voir tout')} <ChevronRight size={11} />
         </Link>
       )}
     </div>
     {items.length === 0 ? (
-      <p className="text-xs text-gray-400 px-1 py-3">Aucune donnée</p>
+      <p className="text-xs text-gray-400 px-1 py-3">{tp('Aucune donnée')}</p>
     ) : (
       <div className="space-y-px">{items.map(render)}</div>
     )}
@@ -496,12 +497,12 @@ const ReportsList = () => {
       <header className="sticky top-0 z-30 bg-white border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="py-3 flex items-center justify-between gap-4">
-            <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Rapports</h1>
+            <h1 className="text-xl font-semibold text-gray-900 tracking-tight">{tp('Rapports')}</h1>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowFilters(true)}
                 className={`relative w-9 h-9 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-700 ${T}`}
-                aria-label="Filtres"
+                aria-label={tp('Filtres')}
               >
                 <Filter size={16} strokeWidth={2} />
                 {activeFiltersCount > 0 && (
@@ -513,14 +514,14 @@ const ReportsList = () => {
                 className={`hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 ${T}`}
               >
                 <Zap size={14} strokeWidth={2} />
-                Auto
+                {tp('Auto')}
               </button>
               <Link
                 to="/ecom/reports/new"
                 className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
               >
                 <Plus size={15} strokeWidth={2.5} />
-                <span className="hidden xs:inline">Nouveau</span>
+                <span className="hidden xs:inline">{tp('Nouveau')}</span>
               </Link>
             </div>
           </div>
@@ -528,10 +529,10 @@ const ReportsList = () => {
           {/* Period chips */}
           <div className="pb-2.5 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-0.5 w-max">
-              <Chip active={dateRangePreset === 'all'} onClick={() => setPeriodPreset('all')}>Tout</Chip>
-              <Chip active={dateRangePreset === 'today'} onClick={() => setPeriodPreset('today')}>Aujourd'hui</Chip>
-              <Chip active={dateRangePreset === 'week'} onClick={() => setPeriodPreset('week')}>7 jours</Chip>
-              <Chip active={dateRangePreset === 'month'} onClick={() => setPeriodPreset('month')}>Ce mois</Chip>
+              <Chip active={dateRangePreset === 'all'} onClick={() => setPeriodPreset('all')}>{tp('Tout')}</Chip>
+              <Chip active={dateRangePreset === 'today'} onClick={() => setPeriodPreset('today')}>{tp('Aujourd\'hui')}</Chip>
+              <Chip active={dateRangePreset === 'week'} onClick={() => setPeriodPreset('week')}>{tp('7 jours')}</Chip>
+              <Chip active={dateRangePreset === 'month'} onClick={() => setPeriodPreset('month')}>{tp('Ce mois')}</Chip>
               <button
                 onClick={() => setShowFilters(true)}
                 className={`shrink-0 px-3 h-8 inline-flex items-center gap-1 text-sm font-medium rounded-full ${T} ${
@@ -560,7 +561,7 @@ const ReportsList = () => {
         {/* ═══ HERO METRIC — un seul chiffre dominant ═══════════════════════ */}
         {!isCloseuse && (
           <section className="pt-5 pb-4">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Bénéfice net</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Bénéfice net')}</p>
             <div className="flex items-baseline gap-3 flex-wrap">
               <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight tabular-nums leading-none ${profitPositive ? 'text-primary-500' : 'text-red-600'}`}>
                 {profitPositive ? '+' : ''}{fmt(totals.totalProfit)}
@@ -568,12 +569,12 @@ const ReportsList = () => {
               {hasComparison && <Delta value={deltas.profit} />}
             </div>
             <p className="text-sm text-gray-500 mt-1.5">
-              {dateRangePreset === 'all' && 'Toute la période'}
-              {dateRangePreset === 'today' && "Aujourd'hui"}
-              {dateRangePreset === 'week' && '7 derniers jours'}
-              {dateRangePreset === 'month' && 'Ce mois-ci'}
-              {dateRangePreset === 'custom' && 'Période personnalisée'}
-              {hasComparison && <span className="text-gray-400"> · vs période précédente</span>}
+              {dateRangePreset === 'all' && tp('Toute la période')}
+              {dateRangePreset === 'today' && tp("Aujourd'hui")}
+              {dateRangePreset === 'week' && tp('7 derniers jours')}
+              {dateRangePreset === 'month' && tp('Ce mois-ci')}
+              {dateRangePreset === 'custom' && tp('Période personnalisée')}
+              {hasComparison && <span className="text-gray-400"> {tp('· vs période précédente')}</span>}
             </p>
           </section>
         )}
@@ -583,7 +584,7 @@ const ReportsList = () => {
           {!isCloseuse && (
             <div className="px-4 sm:px-0">
               <Stat
-                label="Chiffre d'affaires"
+                label={tp('Chiffre d\'affaires')}
                 value={fmt(totals.totalRevenue)}
                 delta={hasComparison ? deltas.revenue : undefined}
               />
@@ -591,13 +592,13 @@ const ReportsList = () => {
           )}
           <div className="px-4 sm:px-0">
             <Stat
-              label="Cmd livrées"
+              label={tp('Cmd livrées')}
               value={`${totals.totalDelivered}`}
             />
           </div>
           <div className="px-4 sm:px-0">
             <Stat
-              label="Taux livraison"
+              label={tp('Taux livraison')}
               value={`${totals.deliveryRate.toFixed(0)}%`}
               delta={hasComparison ? deltas.deliveryRate : undefined}
             />
@@ -605,7 +606,7 @@ const ReportsList = () => {
           {!isCloseuse && (
             <div className="px-4 sm:px-0">
               <Stat
-                label="ROAS"
+                label={tp('ROAS')}
                 value={totals.roas > 0 ? totals.roas.toFixed(2) : '—'}
                 delta={hasComparison ? deltas.roas : undefined}
               />
@@ -614,7 +615,7 @@ const ReportsList = () => {
           {isCloseuse && (
             <div className="px-4 sm:px-0">
               <Stat
-                label="Cmd reçues"
+                label={tp('Cmd reçues')}
                 value={`${totals.totalReceived}`}
               />
             </div>
@@ -625,7 +626,7 @@ const ReportsList = () => {
         {totals.totalCost > 0 && !isCloseuse && (
           <section className="py-5 border-b border-gray-100">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Coûts</p>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{tp('Coûts')}</p>
               <p className="text-sm font-medium text-gray-900 tabular-nums">{fmt(totals.totalCost)}</p>
             </div>
             <div className="flex h-1.5 rounded-full overflow-hidden gap-px bg-gray-100">
@@ -636,15 +637,15 @@ const ReportsList = () => {
             <div className="flex flex-wrap gap-x-5 gap-y-1 mt-2 text-xs">
               <span className="flex items-center gap-1.5 text-gray-700">
                 <span className="w-1.5 h-1.5 bg-gray-900 rounded-full" />
-                Produits <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalProductCost)}</strong>
+                {tp('Produits')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalProductCost)}</strong>
               </span>
               <span className="flex items-center gap-1.5 text-gray-700">
                 <span className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
-                Livraison <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalDeliveryCost)}</strong>
+                {tp('Livraison')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalDeliveryCost)}</strong>
               </span>
               <span className="flex items-center gap-1.5 text-gray-700">
                 <span className="w-1.5 h-1.5 bg-gray-300 rounded-full" />
-                Publicité <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalAdSpend)}</strong>
+                {tp('Publicité')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalAdSpend)}</strong>
               </span>
             </div>
           </section>
@@ -656,12 +657,12 @@ const ReportsList = () => {
             onClick={() => setShowInsights(s => !s)}
             className={`lg:hidden w-full flex items-center justify-between mb-3 ${T}`}
           >
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Top 3</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Top 3')}</p>
             <ChevronDown size={14} className={`text-gray-400 ${T} ${showInsights ? 'rotate-180' : ''}`} />
           </button>
           <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${showInsights ? 'block' : 'hidden lg:grid'}`}>
             <InsightList
-              title="Jours rentables"
+              title={tp('Jours rentables')}
               link="/ecom/reports/insights?tab=days"
               items={topProfitDays}
               render={(day, i) => (
@@ -678,20 +679,20 @@ const ReportsList = () => {
               )}
             />
             <InsightList
-              title="Agences efficaces"
+              title={tp('Agences efficaces')}
               link="/ecom/reports/insights?tab=agencies"
               items={topAgencies}
               render={(a, i) => (
                 <div key={a.agencyName} className={`flex items-center gap-3 py-2 hover:bg-gray-50 -mx-2 px-2 rounded-lg ${T}`}>
                   <span className="w-4 shrink-0 flex justify-center"><Rank n={i + 1} /></span>
                   <span className="flex-1 min-w-0 text-sm text-gray-900 truncate">{a.agencyName}</span>
-                  <span className="text-xs text-gray-400 tabular-nums">{a.ordersDelivered} liv.</span>
+                  <span className="text-xs text-gray-400 tabular-nums">{a.ordersDelivered} {tp('liv.')}</span>
                   <span className="text-sm font-medium text-gray-900 tabular-nums shrink-0">{fmt(a.deliveryCost)}</span>
                 </div>
               )}
             />
             <InsightList
-              title="Top produits"
+              title={tp('Top produits')}
               link="/ecom/stats-rapports"
               items={topProducts}
               render={(p, i) => (
@@ -713,7 +714,7 @@ const ReportsList = () => {
         {/* ═══ REPORTS LIST — table-like rows, hairlines ════════════════════ */}
         <section className="py-5">
           <div className="flex items-center justify-between mb-2 px-1">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Tous les rapports</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Tous les rapports')}</p>
             {reports.length > 0 && (
               <p className="text-xs text-gray-400 tabular-nums">{reports.length}</p>
             )}
@@ -722,11 +723,11 @@ const ReportsList = () => {
           {reports.length === 0 ? (
             <div className="py-16 text-center">
               <Package size={28} className="text-gray-200 mx-auto mb-4" strokeWidth={1.5} />
-              <p className="text-sm font-medium text-gray-700 mb-1">Aucun rapport</p>
+              <p className="text-sm font-medium text-gray-700 mb-1">{tp('Aucun rapport')}</p>
               <p className="text-sm text-gray-500 mb-6">
                 {activeFiltersCount > 0 || dateRangePreset !== 'all'
                   ? 'Essayez d\'élargir vos filtres'
-                  : 'Créez votre premier rapport pour commencer'}
+                  : tp('Créez votre premier rapport pour commencer')}
               </p>
               <Link
                 to="/ecom/reports/new"
@@ -756,16 +757,16 @@ const ReportsList = () => {
       <button
         onClick={openAutoModal}
         className={`sm:hidden fixed bottom-6 right-5 z-20 w-12 h-12 rounded-full bg-primary-500 text-white shadow-lg active:scale-95 flex items-center justify-center ${T}`}
-        aria-label="Rapport automatique"
+        aria-label={tp('Rapport automatique')}
       >
         <Zap size={18} strokeWidth={2} />
       </button>
 
       {/* ═══ FILTERS SHEET ════════════════════════════════════════════════ */}
-      <Sheet open={showFilters} onClose={() => setShowFilters(false)} title="Filtres">
+      <Sheet open={showFilters} onClose={() => setShowFilters(false)} title={tp('Filtres')}>
         <div className="space-y-5">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-2">Date début</label>
+            <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Date début')}</label>
             <input
               type="date"
               value={filter.dateStart}
@@ -774,7 +775,7 @@ const ReportsList = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-2">Date fin</label>
+            <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Date fin')}</label>
             <input
               type="date"
               value={filter.dateEnd}
@@ -783,15 +784,15 @@ const ReportsList = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-2">Statut</label>
+            <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Statut')}</label>
             <select
               value={filter.status}
               onChange={(e) => setFilter(p => ({ ...p, status: e.target.value }))}
               className={`w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white ${T}`}
             >
-              <option value="">Tous</option>
-              <option value="validated">Validé</option>
-              <option value="pending">En attente</option>
+              <option value="">{tp('Tous')}</option>
+              <option value="validated">{tp('Validé')}</option>
+              <option value="pending">{tp('En attente')}</option>
             </select>
           </div>
           <div className="flex gap-2 pt-2">
@@ -802,13 +803,13 @@ const ReportsList = () => {
               }}
               className={`flex-1 h-10 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 ${T}`}
             >
-              Réinitialiser
+              {tp('Réinitialiser')}
             </button>
             <button
               onClick={() => setShowFilters(false)}
               className={`flex-1 h-10 rounded-xl bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
             >
-              Appliquer
+              {tp('Appliquer')}
             </button>
           </div>
         </div>
@@ -827,7 +828,7 @@ const ReportsList = () => {
       >
         {autoStep === 'config' && (
           <div className="space-y-5">
-            <p className="text-sm text-gray-500">Génère un rapport depuis les commandes livrées.</p>
+            <p className="text-sm text-gray-500">{tp('Génère un rapport depuis les commandes livrées.')}</p>
 
             <div className="inline-flex p-1 bg-gray-100 rounded-full">
               <button onClick={() => setAutoMode('day')} className={`px-4 h-8 rounded-full text-sm font-medium ${T} ${autoMode === 'day' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>Un jour</button>
@@ -836,17 +837,17 @@ const ReportsList = () => {
 
             {autoMode === 'day' ? (
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-2">Date</label>
+                <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Date')}</label>
                 <input type="date" value={autoDate} onChange={e => setAutoDate(e.target.value)} className={`w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none ${T}`} />
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">Début</label>
+                  <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Début')}</label>
                   <input type="date" value={autoStartDate} onChange={e => setAutoStartDate(e.target.value)} className={`w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none ${T}`} />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">Fin</label>
+                  <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Fin')}</label>
                   <input type="date" value={autoEndDate} onChange={e => setAutoEndDate(e.target.value)} className={`w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none ${T}`} />
                 </div>
               </div>
@@ -885,7 +886,7 @@ const ReportsList = () => {
                     onChange={e => setAutoMappings(p => ({ ...p, [item.productName]: e.target.value }))}
                     className={`w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white ${T}`}
                   >
-                    <option value="">— Ignorer —</option>
+                    <option value="">{tp('— Ignorer —')}</option>
                     {autoProducts.map(p => (
                       <option key={p._id} value={p._id}>{p.name}</option>
                     ))}
@@ -901,7 +902,7 @@ const ReportsList = () => {
                 disabled={autoLoading}
                 className={`flex-[2] h-10 rounded-xl bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 disabled:opacity-40 ${T}`}
               >
-                {autoLoading ? 'Génération...' : 'Confirmer'}
+                {autoLoading ? 'Génération...' : tp('Confirmer')}
               </button>
             </div>
           </div>
@@ -914,7 +915,7 @@ const ReportsList = () => {
                 <CheckCircle2 size={18} className="text-primary-500" strokeWidth={2} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">Rapport généré</p>
+                <p className="text-sm font-semibold text-gray-900">{tp('Rapport généré')}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{autoResult?.message}</p>
               </div>
             </div>
@@ -942,7 +943,7 @@ const ReportsList = () => {
               onClick={() => { setAutoModal(false); setAutoResult(null); setAutoStep('config'); }}
               className={`w-full h-11 rounded-xl bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
             >
-              Terminé
+              {tp('Terminé')}
             </button>
           </div>
         )}

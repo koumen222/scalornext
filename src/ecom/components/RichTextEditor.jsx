@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { storeProductsApi } from '../services/storeApi.js';
+import { tp } from '../i18n/platform.js';
 
 // ─── Toolbar button ───────────────────────────────────────────────────────────
 const Btn = ({ title, onClick, active, children }) => (
@@ -25,7 +26,7 @@ const LinkModal = ({ onConfirm, onClose }) => {
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40">
       <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-5 w-80">
-        <p className="text-sm font-semibold text-gray-900 mb-3">Insérer un lien</p>
+        <p className="text-sm font-semibold text-gray-900 mb-3">{tp('Insérer un lien')}</p>
         <input
           autoFocus
           type="url"
@@ -36,7 +37,7 @@ const LinkModal = ({ onConfirm, onClose }) => {
           onKeyDown={e => { if (e.key === 'Enter') onConfirm(url); if (e.key === 'Escape') onClose(); }}
         />
         <div className="flex gap-2 mt-3">
-          <button type="button" onClick={onClose} className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">Annuler</button>
+          <button type="button" onClick={onClose} className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">{tp('Annuler')}</button>
           <button type="button" onClick={() => onConfirm(url)} className="flex-1 px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-semibold">OK</button>
         </div>
       </div>
@@ -62,7 +63,7 @@ const ImageModal = ({ onInsert, onClose, onUpload, uploading }) => {
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40">
       <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-5 w-96">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-semibold text-gray-900">Insérer une image</p>
+          <p className="text-sm font-semibold text-gray-900">{tp('Insérer une image')}</p>
           <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100">
             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -92,14 +93,14 @@ const ImageModal = ({ onInsert, onClose, onUpload, uploading }) => {
               className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50 transition"
             >
               {uploading ? (
-                <p className="text-sm text-primary-600 font-medium">Upload en cours…</p>
+                <p className="text-sm text-primary-600 font-medium">{tp('Upload en cours…')}</p>
               ) : (
                 <>
                   <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <p className="text-sm text-gray-600">Cliquer pour choisir une image</p>
-                  <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP — max 5 Mo</p>
+                  <p className="text-sm text-gray-600">{tp('Cliquer pour choisir une image')}</p>
+                  <p className="text-xs text-gray-400 mt-1">{tp('JPG, PNG, WebP — max 5 Mo')}</p>
                 </>
               )}
             </div>
@@ -119,7 +120,7 @@ const ImageModal = ({ onInsert, onClose, onUpload, uploading }) => {
               type="text"
               value={alt}
               onChange={e => setAlt(e.target.value)}
-              placeholder="Texte alternatif (optionnel)"
+              placeholder={tp('Texte alternatif (optionnel)')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
             <button
@@ -128,7 +129,7 @@ const ImageModal = ({ onInsert, onClose, onUpload, uploading }) => {
               onClick={() => onInsert(url.trim(), alt.trim())}
               className="w-full py-2 text-sm font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition disabled:opacity-40"
             >
-              Insérer
+              {tp('Insérer')}
             </button>
           </div>
         )}
@@ -163,7 +164,7 @@ const VideoModal = ({ onInsert, onClose }) => {
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40">
       <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-5 w-96">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-semibold text-gray-900">Insérer une vidéo</p>
+          <p className="text-sm font-semibold text-gray-900">{tp('Insérer une vidéo')}</p>
           <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100">
             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -176,17 +177,17 @@ const VideoModal = ({ onInsert, onClose }) => {
             type="url"
             value={url}
             onChange={e => setUrl(e.target.value)}
-            placeholder="URL YouTube, Vimeo ou vidéo directe (.mp4)"
+            placeholder={tp('URL YouTube, Vimeo ou vidéo directe (.mp4)')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
-          <p className="text-xs text-gray-400">YouTube, Vimeo, ou lien direct .mp4 / .webm</p>
+          <p className="text-xs text-gray-400">{tp('YouTube, Vimeo, ou lien direct .mp4 / .webm')}</p>
           <button
             type="button"
             disabled={!url.trim() || !buildEmbed(url)}
             onClick={handleInsert}
             className="w-full py-2 text-sm font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition disabled:opacity-40"
           >
-            Insérer
+            {tp('Insérer')}
           </button>
         </div>
       </div>
@@ -252,7 +253,7 @@ const ColorPicker = ({ onColor }) => {
     <div className="relative">
       <button
         type="button"
-        title="Couleur du texte"
+        title={tp('Couleur du texte')}
         onMouseDown={e => { e.preventDefault(); setOpen(o => !o); }}
         className="p-1.5 rounded hover:bg-gray-200 transition flex items-center gap-0.5"
       >
@@ -338,7 +339,7 @@ const ImageResizeToolbar = ({ imageEl, onResize, onClose }) => {
           type="button"
           onMouseDown={e => { e.preventDefault(); e.stopPropagation(); onClose(); }}
           className="p-1 rounded hover:bg-gray-100 text-gray-400"
-          title="Fermer"
+          title={tp('Fermer')}
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -569,62 +570,62 @@ const RichTextEditor = ({
       <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 bg-gray-50 border-b border-gray-200">
         <HeadingSelect onSelect={() => editorRef.current?.focus()} />
         <Sep />
-        <Btn title="Gras (Ctrl+B)" onClick={() => cmd('bold')}><strong className="text-xs">B</strong></Btn>
-        <Btn title="Italique (Ctrl+I)" onClick={() => cmd('italic')}><em className="text-xs">I</em></Btn>
-        <Btn title="Souligné (Ctrl+U)" onClick={() => cmd('underline')}><span className="text-xs underline">U</span></Btn>
-        <Btn title="Barré" onClick={() => cmd('strikeThrough')}><span className="text-xs line-through">S</span></Btn>
+        <Btn title={tp('Gras (Ctrl+B)')} onClick={() => cmd('bold')}><strong className="text-xs">B</strong></Btn>
+        <Btn title={tp('Italique (Ctrl+I)')} onClick={() => cmd('italic')}><em className="text-xs">I</em></Btn>
+        <Btn title={tp('Souligné (Ctrl+U)')} onClick={() => cmd('underline')}><span className="text-xs underline">U</span></Btn>
+        <Btn title={tp('Barré')} onClick={() => cmd('strikeThrough')}><span className="text-xs line-through">S</span></Btn>
         <Sep />
         <ColorPicker onColor={() => handleInput()} />
         <Sep />
-        <Btn title="Liste à puces" onClick={() => cmd('insertUnorderedList')}>
+        <Btn title={tp('Liste à puces')} onClick={() => cmd('insertUnorderedList')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
           </svg>
         </Btn>
-        <Btn title="Liste numérotée" onClick={() => cmd('insertOrderedList')}>
+        <Btn title={tp('Liste numérotée')} onClick={() => cmd('insertOrderedList')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 6h13M7 12h13M7 18h13M3 6h.01M3 12h.01M3 18h.01" />
           </svg>
         </Btn>
-        <Btn title="Aligner à gauche" onClick={() => cmd('justifyLeft')}>
+        <Btn title={tp('Aligner à gauche')} onClick={() => cmd('justifyLeft')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h10M4 14h14M4 18h10" />
           </svg>
         </Btn>
-        <Btn title="Centrer" onClick={() => cmd('justifyCenter')}>
+        <Btn title={tp('Centrer')} onClick={() => cmd('justifyCenter')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M7 10h10M4 14h16M7 18h10" />
           </svg>
         </Btn>
         <Sep />
-        <Btn title="Insérer un lien" onClick={() => { saveSelection(); setShowLink(true); }}>
+        <Btn title={tp('Insérer un lien')} onClick={() => { saveSelection(); setShowLink(true); }}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
           </svg>
         </Btn>
-        <Btn title="Supprimer le lien" onClick={() => cmd('unlink')}>
+        <Btn title={tp('Supprimer le lien')} onClick={() => cmd('unlink')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728M5.636 5.636a9 9 0 000 12.728M9 9l6 6M9 15l6-6" />
           </svg>
         </Btn>
-        <Btn title="Insérer une image / GIF" onClick={() => { saveSelection(); setShowImage(true); }}>
+        <Btn title={tp('Insérer une image / GIF')} onClick={() => { saveSelection(); setShowImage(true); }}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </Btn>
-        <Btn title="Insérer une vidéo" onClick={() => { saveSelection(); setShowVideo(true); }}>
+        <Btn title={tp('Insérer une vidéo')} onClick={() => { saveSelection(); setShowVideo(true); }}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </Btn>
         <Sep />
-        <Btn title="Ligne horizontale" onClick={() => { cmd('insertHorizontalRule'); }}>
+        <Btn title={tp('Ligne horizontale')} onClick={() => { cmd('insertHorizontalRule'); }}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
           </svg>
         </Btn>
-        <Btn title="Effacer la mise en forme" onClick={() => cmd('removeFormat')}>
+        <Btn title={tp('Effacer la mise en forme')} onClick={() => cmd('removeFormat')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>

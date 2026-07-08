@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from '@/lib/router-compat';
 import { affiliatePortalApi, setAffiliateToken, getAffiliateToken } from '../services/affiliatePortalApi.js';
 import { loadGsi, renderGsiButton } from '../utils/googleGsi.js';
+import { tp } from '../i18n/platform.js';
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '559924689181-rpkv8ji3029kvrtsvt3qceusmsh1i4p2.apps.googleusercontent.com';
 
@@ -93,21 +94,21 @@ export default function AffiliateRegister() {
           <Link to="/ecom" className="group flex items-center gap-3">
             <img src="/logo.png" alt="Scalor" className="h-10 object-contain" />
             <div>
-              <span className="text-[9px] font-medium text-gray-500 uppercase tracking-[0.2em]">Programme d'affiliation</span>
+              <span className="text-[9px] font-medium text-gray-500 uppercase tracking-[0.2em]">{tp('Programme d\'affiliation')}</span>
             </div>
           </Link>
         </div>
         <div className="relative">
           <h2 className="text-4xl font-black text-gray-900 leading-tight mb-4">
             Devenez partenaire<br />
-            <span className="text-[#0F6B4F]">de l'E-commerce Africain.</span>
+            <span className="text-[#0F6B4F]">{tp('de l\'E-commerce Africain.')}</span>
           </h2>
           <p className="text-gray-600 text-base leading-relaxed max-w-sm mb-8">
             Créez votre compte, recevez votre lien personnalisé et commencez à gagner des commissions sur chaque vente.
           </p>
           <div className="flex items-center gap-6">
             {[
-              { number: '1', label: 'Créez votre compte' },
+              { number: '1', get label() { return tp('Créez votre compte'); } },
               { number: '2', label: 'Partagez votre lien' },
               { number: '3', label: 'Recevez vos gains' },
             ].map((stat, i) => (
@@ -121,10 +122,10 @@ export default function AffiliateRegister() {
         <div className="relative flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-xs text-primary-600">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-            Inscription gratuite
+            {tp('Inscription gratuite')}
           </div>
           <span className="text-gray-300">•</span>
-          <span className="text-xs text-gray-500">Sans engagement</span>
+          <span className="text-xs text-gray-500">{tp('Sans engagement')}</span>
         </div>
       </div>
 
@@ -140,8 +141,8 @@ export default function AffiliateRegister() {
 
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Rejoindre le programme affilié</h1>
-            <p className="mt-1 text-gray-600 text-sm">Recevez votre lien, suivez vos ventes et vos gains.</p>
+            <h1 className="text-2xl font-bold text-gray-900">{tp('Rejoindre le programme affilié')}</h1>
+            <p className="mt-1 text-gray-600 text-sm">{tp('Recevez votre lien, suivez vos ventes et vos gains.')}</p>
           </div>
 
           {/* Form card */}
@@ -156,7 +157,7 @@ export default function AffiliateRegister() {
                 }`}
               >
                 <img src="/logo.png" alt="" className="w-4 h-4 object-contain" />
-                Avec Scalor
+                {tp('Avec Scalor')}
               </button>
               <button
                 type="button"
@@ -166,7 +167,7 @@ export default function AffiliateRegister() {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                Nouveau compte
+                {tp('Nouveau compte')}
               </button>
             </div>
 
@@ -185,17 +186,17 @@ export default function AffiliateRegister() {
                 </p>
                 <form className="space-y-4" onSubmit={submitScalor}>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Scalor</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Email Scalor')}</label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                       </span>
-                      <input value={scalorForm.email} onChange={(e) => setScalorForm(f => ({ ...f, email: e.target.value }))} type="email" required placeholder="votre@email.com" autoComplete="email"
+                      <input value={scalorForm.email} onChange={(e) => setScalorForm(f => ({ ...f, email: e.target.value }))} type="email" required placeholder={tp('votre@email.com')} autoComplete="email"
                         className="block w-full pl-10 pr-3.5 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe Scalor</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Mot de passe Scalor')}</label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -209,9 +210,9 @@ export default function AffiliateRegister() {
                   </div>
                   <button disabled={loading} className="w-full py-3 rounded-xl bg-[#0F6B4F] hover:bg-[#0a5040] text-white font-semibold text-sm disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20">
                     {loading ? (
-                      <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> Connexion...</>
+                      <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> {tp('Connexion...')}</>
                     ) : (
-                      <><img src="/logo.png" alt="" className="w-4 h-4 object-contain brightness-0 invert" /> Rejoindre avec mon compte Scalor</>
+                      <><img src="/logo.png" alt="" className="w-4 h-4 object-contain brightness-0 invert" /> {tp('Rejoindre avec mon compte Scalor')}</>
                     )}
                   </button>
                 </form>
@@ -222,27 +223,27 @@ export default function AffiliateRegister() {
             {mode === 'new' && (
               <form className="space-y-4" onSubmit={submitNew}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Nom complet</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom complet')}</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     </span>
-                    <input value={form.name} onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))} required placeholder="Votre nom"
+                    <input value={form.name} onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))} required placeholder={tp('Votre nom')}
                       className="block w-full pl-10 pr-3.5 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Adresse email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Adresse email')}</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                     </span>
-                    <input value={form.email} onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))} type="email" required placeholder="votre@email.com" autoComplete="email"
+                    <input value={form.email} onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))} type="email" required placeholder={tp('votre@email.com')} autoComplete="email"
                       className="block w-full pl-10 pr-3.5 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Numéro Mobile Money</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Numéro Mobile Money')}</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
@@ -252,7 +253,7 @@ export default function AffiliateRegister() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Mot de passe')}</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -266,8 +267,8 @@ export default function AffiliateRegister() {
                 </div>
                 <button disabled={loading} className="w-full py-3 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-semibold text-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                   {loading ? (
-                    <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> Création...</>
-                  ) : 'Créer mon compte affilié'}
+                    <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> {tp('Création...')}</>
+                  ) : tp('Créer mon compte affilié')}
                 </button>
               </form>
             )}
@@ -294,7 +295,7 @@ export default function AffiliateRegister() {
           {/* Login link */}
           <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-xs text-gray-500">Déjà affilié ?</span>
+            <span className="text-xs text-gray-500">{tp('Déjà affilié ?')}</span>
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
@@ -302,14 +303,14 @@ export default function AffiliateRegister() {
             to="/affiliate/login"
             className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-xl text-sm font-medium text-gray-700 transition text-center flex items-center justify-center gap-2"
           >
-            Se connecter
+            {tp('Se connecter')}
           </Link>
 
           {/* Footer */}
           <div className="mt-6 flex items-center justify-center gap-3 text-xs text-gray-500">
             <span>&copy; {new Date().getFullYear()} Scalor</span>
             <span>•</span>
-            <Link to="/ecom/privacy" className="text-gray-500 hover:text-gray-700 transition">Confidentialité</Link>
+            <Link to="/ecom/privacy" className="text-gray-500 hover:text-gray-700 transition">{tp('Confidentialité')}</Link>
           </div>
         </div>
       </div>

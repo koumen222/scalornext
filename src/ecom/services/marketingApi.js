@@ -8,6 +8,7 @@ export const marketingApi = {
   updateCampaign: (id, data) => ecomApi.put(`marketing/campaigns/${id}`, data),
   deleteCampaign: (id) => ecomApi.delete(`marketing/campaigns/${id}`),
   sendCampaign: (id, data = {}) => ecomApi.post(`marketing/campaigns/${id}/send`, data),
+  stopCampaign: (id) => ecomApi.post(`marketing/campaigns/${id}/stop`),
   testCampaign: (id, testEmail) => ecomApi.post(`marketing/campaigns/${id}/test`, { testEmail }),
   duplicateCampaign: (id) => ecomApi.post(`marketing/campaigns/${id}/duplicate`),
   getCampaignResults: (id, params = {}) => ecomApi.get(`marketing/campaigns/${id}/results`, { params }),

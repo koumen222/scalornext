@@ -21,6 +21,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import ecomApi, { productsApi, ordersApi, transactionsApi } from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 /**
  * Centre de contrôle — branché sur les vraies données Scalor.
@@ -365,7 +366,7 @@ export default function ControlCenter() {
     else failed.push('équipe');
 
     if (failed.length === results.length) {
-      setError('Impossible de charger les données Scalor. Vérifiez votre connexion puis réessayez.');
+      setError(tp('Impossible de charger les données Scalor. Vérifiez votre connexion puis réessayez.'));
     } else if (failed.length) {
       setPartialError(`Données partielles : échec du chargement de ${failed.join(', ')}.`);
     }
@@ -438,7 +439,7 @@ export default function ControlCenter() {
         rentability = { label: 'Inactif', tone: 'gray' };
         decision = { label: 'En pause', tone: 'gray' };
       } else if (p.status === 'stop') {
-        rentability = { label: 'Arrêté', tone: 'red' };
+        rentability = { get label() { return tp('Arrêté'); }, tone: 'red' };
         decision = { label: 'Couper', tone: 'red' };
       } else if (stock <= 0) {
         rentability = { label: 'Rupture', tone: 'red' };
@@ -447,8 +448,8 @@ export default function ControlCenter() {
         rentability = { label: 'Rentable', tone: 'green' };
         decision = stock <= threshold ? { label: 'Recommander', tone: 'orange' } : { label: 'Pousser', tone: 'green' };
       } else if (netProfit >= 2500) {
-        rentability = { label: 'À surveiller', tone: 'orange' };
-        decision = { label: 'Réduire', tone: 'orange' };
+        rentability = { get label() { return tp('À surveiller'); }, tone: 'orange' };
+        decision = { get label() { return tp('Réduire'); }, tone: 'orange' };
       } else {
         rentability = { label: 'Non rentable', tone: 'red' };
         decision = { label: 'Couper', tone: 'red' };
@@ -715,10 +716,10 @@ export default function ControlCenter() {
     { id: 'products', label: 'Produits', icon: Package },
     { id: 'stock', label: 'Stock', icon: PackageCheck },
     { id: 'orders', label: 'Commandes', icon: ShoppingCart },
-    { id: 'ads', label: 'Publicités', icon: Megaphone },
+    { id: 'ads', get label() { return tp('Publicités'); }, icon: Megaphone },
     { id: 'deliveries', label: 'Livraisons', icon: Truck },
     { id: 'finances', label: 'Finances', icon: Wallet },
-    { id: 'team', label: 'Équipe', icon: Users },
+    { id: 'team', get label() { return tp('Équipe'); }, icon: Users },
     { id: 'report', label: 'Rapport', icon: FileText },
   ];
 
@@ -730,7 +731,7 @@ export default function ControlCenter() {
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-gray-500">
           <Loader2 className="h-7 w-7 animate-spin text-primary-600" aria-hidden="true" />
-          <p className="text-sm font-semibold">Chargement des données Scalor…</p>
+          <p className="text-sm font-semibold">{tp('Chargement des données Scalor…')}</p>
         </div>
       </div>
     );
@@ -748,7 +749,7 @@ export default function ControlCenter() {
             className="mt-4 inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
           >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            Réessayer
+            {tp('Réessayer')}
           </button>
         </div>
       </div>
@@ -760,8 +761,8 @@ export default function ControlCenter() {
       <div className="mx-auto max-w-7xl space-y-5">
         <header className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs font-bold uppercase text-primary-600">Pilotage COD — données Scalor en direct</p>
-            <h1 className="mt-1 text-2xl font-bold text-gray-900">Centre de contrôle</h1>
+            <p className="text-xs font-bold uppercase text-primary-600">{tp('Pilotage COD — données Scalor en direct')}</p>
+            <h1 className="mt-1 text-2xl font-bold text-gray-900">{tp('Centre de contrôle')}</h1>
             {lastUpdated && (
               <p className="mt-1 text-xs text-gray-400">
                 Mis à jour à {lastUpdated.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
@@ -790,7 +791,7 @@ export default function ControlCenter() {
               className="inline-flex min-h-[40px] items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-60"
             >
               <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} aria-hidden="true" />
-              Actualiser
+              {tp('Actualiser')}
             </button>
           </div>
         </header>
@@ -828,19 +829,19 @@ export default function ControlCenter() {
         {activeTab === 'dashboard' && (
           <div className="space-y-5">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-              <KpiCard title="CA encaissé" value={money(derived.collectedRevenue)} detail={`Livré & encaissé · ${periodLabel}`} icon={Wallet} tone="green" />
-              <KpiCard title="Bénéfice estimé" value={money(derived.estimatedProfit)} detail={`Cible nette ${money(PROFIT_TARGET)} / vente`} icon={TrendingUp} tone={derived.estimatedProfit >= 0 ? 'green' : 'red'} />
-              <KpiCard title="Budget pub dépensé" value={money(derived.adSpent)} detail={derived.adSpentManual ? 'Saisie manuelle' : 'Transactions « publicité »'} icon={Megaphone} tone="orange" />
-              <KpiCard title="Commandes générées" value={derived.generated.toLocaleString('fr-FR')} detail={`${derived.confirmed} confirmées`} icon={ShoppingCart} tone="gray" />
-              <KpiCard title="Commandes livrées" value={derived.delivered.toLocaleString('fr-FR')} detail={`Taux livraison ${percent(derived.deliveryRate)}`} icon={Truck} tone={derived.deliveryRate >= 70 ? 'green' : 'orange'} />
-              <KpiCard title="Produits en rupture" value={derived.stockOut.length.toLocaleString('fr-FR')} detail="Stock à zéro" icon={AlertTriangle} tone={derived.stockOut.length ? 'red' : 'green'} />
-              <KpiCard title="Produits à couper" value={derived.productsToCut.length.toLocaleString('fr-FR')} detail="Non rentable ou arrêté" icon={Ban} tone={derived.productsToCut.length ? 'red' : 'green'} />
-              <KpiCard title="Stock à recommander" value={derived.productsToReorder.length.toLocaleString('fr-FR')} detail="Sous le seuil" icon={Package} tone={derived.productsToReorder.length ? 'orange' : 'green'} />
-              <KpiCard title="Solde caisse" value={money(derived.cashAvailable)} detail="Net transactions récentes" icon={Wallet} tone={derived.cashAvailable >= 0 ? 'green' : 'red'} />
-              <KpiCard title="Budget pub max" value={money(derived.maxAdBudget)} detail="Plafond prudent" icon={TrendingUp} tone="green" />
+              <KpiCard title={tp('CA encaissé')} value={money(derived.collectedRevenue)} detail={`Livré & encaissé · ${periodLabel}`} icon={Wallet} tone="green" />
+              <KpiCard title={tp('Bénéfice estimé')} value={money(derived.estimatedProfit)} detail={`Cible nette ${money(PROFIT_TARGET)} / vente`} icon={TrendingUp} tone={derived.estimatedProfit >= 0 ? 'green' : 'red'} />
+              <KpiCard title={tp('Budget pub dépensé')} value={money(derived.adSpent)} detail={derived.adSpentManual ? 'Saisie manuelle' : 'Transactions « publicité »'} icon={Megaphone} tone="orange" />
+              <KpiCard title={tp('Commandes générées')} value={derived.generated.toLocaleString('fr-FR')} detail={`${derived.confirmed} confirmées`} icon={ShoppingCart} tone="gray" />
+              <KpiCard title={tp('Commandes livrées')} value={derived.delivered.toLocaleString('fr-FR')} detail={`Taux livraison ${percent(derived.deliveryRate)}`} icon={Truck} tone={derived.deliveryRate >= 70 ? 'green' : 'orange'} />
+              <KpiCard title={tp('Produits en rupture')} value={derived.stockOut.length.toLocaleString('fr-FR')} detail="Stock à zéro" icon={AlertTriangle} tone={derived.stockOut.length ? 'red' : 'green'} />
+              <KpiCard title={tp('Produits à couper')} value={derived.productsToCut.length.toLocaleString('fr-FR')} detail="Non rentable ou arrêté" icon={Ban} tone={derived.productsToCut.length ? 'red' : 'green'} />
+              <KpiCard title={tp('Stock à recommander')} value={derived.productsToReorder.length.toLocaleString('fr-FR')} detail="Sous le seuil" icon={Package} tone={derived.productsToReorder.length ? 'orange' : 'green'} />
+              <KpiCard title={tp('Solde caisse')} value={money(derived.cashAvailable)} detail="Net transactions récentes" icon={Wallet} tone={derived.cashAvailable >= 0 ? 'green' : 'red'} />
+              <KpiCard title={tp('Budget pub max')} value={money(derived.maxAdBudget)} detail="Plafond prudent" icon={TrendingUp} tone="green" />
             </div>
 
-            <Panel title="Décision du jour">
+            <Panel title={tp('Décision du jour')}>
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 {[
                   ['Produit à pousser', derived.productToPush?.name || 'À confirmer', derived.productToPush ? 'green' : 'gray'],
@@ -870,18 +871,18 @@ export default function ControlCenter() {
             <TableShell>
               <thead>
                 <tr>
-                  <Th>Produit</Th>
-                  <Th>Statut</Th>
-                  <Th align="right">Prix</Th>
-                  <Th align="right">Coût</Th>
-                  <Th align="right">Livraison</Th>
-                  <Th align="right">Coût pub moy.</Th>
-                  <Th align="right">Marge brute</Th>
-                  <Th align="right">Bénéfice net</Th>
-                  <Th align="right">Stock</Th>
-                  <Th align="right">Vendus</Th>
-                  <Th>Rentabilité</Th>
-                  <Th>Décision</Th>
+                  <Th>{tp('Produit')}</Th>
+                  <Th>{tp('Statut')}</Th>
+                  <Th align="right">{tp('Prix')}</Th>
+                  <Th align="right">{tp('Coût')}</Th>
+                  <Th align="right">{tp('Livraison')}</Th>
+                  <Th align="right">{tp('Coût pub moy.')}</Th>
+                  <Th align="right">{tp('Marge brute')}</Th>
+                  <Th align="right">{tp('Bénéfice net')}</Th>
+                  <Th align="right">{tp('Stock')}</Th>
+                  <Th align="right">{tp('Vendus')}</Th>
+                  <Th>{tp('Rentabilité')}</Th>
+                  <Th>{tp('Décision')}</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 bg-white">
@@ -910,24 +911,24 @@ export default function ControlCenter() {
 
         {/* ─────────────── Stock ─────────────── */}
         {activeTab === 'stock' && (
-          <Panel title="Stock par produit">
+          <Panel title={tp('Stock par produit')}>
             <TableShell>
               <thead>
                 <tr>
-                  <Th>Produit</Th>
-                  <Th align="right">Stock actuel</Th>
-                  <Th align="right">Seuil</Th>
-                  <Th align="right">Valeur stock</Th>
+                  <Th>{tp('Produit')}</Th>
+                  <Th align="right">{tp('Stock actuel')}</Th>
+                  <Th align="right">{tp('Seuil')}</Th>
+                  <Th align="right">{tp('Valeur stock')}</Th>
                   <Th align="right">Vendus ({periodLabel})</Th>
-                  <Th>Statut stock</Th>
-                  <Th>Décision pub</Th>
+                  <Th>{tp('Statut stock')}</Th>
+                  <Th>{tp('Décision pub')}</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 bg-white">
                 {derived.productRows.length === 0 && <EmptyRow colSpan={7} label="Aucun produit dans Scalor." />}
                 {derived.productRows.map((p) => {
                   const pubDecision =
-                    p.stockTone === 'red' ? { label: 'Coupée', tone: 'red' } : p.stockTone === 'orange' ? { label: 'Réduite', tone: 'orange' } : { label: 'Autorisée', tone: 'green' };
+                    p.stockTone === 'red' ? { get label() { return tp('Coupée'); }, tone: 'red' } : p.stockTone === 'orange' ? { get label() { return tp('Réduite'); }, tone: 'orange' } : { get label() { return tp('Autorisée'); }, tone: 'green' };
                   return (
                     <tr key={p._id} className="hover:bg-gray-50">
                       <Td className="font-semibold text-gray-900">{p.name}</Td>
@@ -942,7 +943,7 @@ export default function ControlCenter() {
                 })}
               </tbody>
             </TableShell>
-            <p className="mt-3 text-xs text-gray-400">Règle : stock ≤ seuil → pub coupée · stock ≤ 2× seuil → pub réduite. Seuil par défaut 10 si non défini sur la fiche produit.</p>
+            <p className="mt-3 text-xs text-gray-400">{tp('Règle : stock ≤ seuil → pub coupée · stock ≤ 2× seuil → pub réduite. Seuil par défaut 10 si non défini sur la fiche produit.')}</p>
           </Panel>
         )}
 
@@ -952,14 +953,14 @@ export default function ControlCenter() {
             <TableShell>
               <thead>
                 <tr>
-                  <Th>Date</Th>
-                  <Th>Client</Th>
-                  <Th>Téléphone</Th>
-                  <Th>Ville</Th>
-                  <Th>Produit</Th>
-                  <Th align="right">Qté</Th>
-                  <Th align="right">Montant</Th>
-                  <Th>Statut</Th>
+                  <Th>{tp('Date')}</Th>
+                  <Th>{tp('Client')}</Th>
+                  <Th>{tp('Téléphone')}</Th>
+                  <Th>{tp('Ville')}</Th>
+                  <Th>{tp('Produit')}</Th>
+                  <Th align="right">{tp('Qté')}</Th>
+                  <Th align="right">{tp('Montant')}</Th>
+                  <Th>{tp('Statut')}</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 bg-white">
@@ -994,14 +995,14 @@ export default function ControlCenter() {
               <span>Le budget pub Facebook/TikTok est saisi à la main (Scalor ne le stocke pas). Les commandes générées, confirmées, livrées et le coût par vente livrée sont calculés automatiquement à partir des vraies commandes du même jour, produit et ville.</span>
             </div>
 
-            <Panel title="Ajouter une dépense pub">
+            <Panel title={tp('Ajouter une dépense pub')}>
               <form onSubmit={submitAd} className="grid gap-3 md:grid-cols-6">
                 <Input label="Date" type="date" value={adForm.date} onChange={(e) => setAdForm((f) => ({ ...f, date: e.target.value }))} />
                 <Select label="Produit" value={adForm.productId} onChange={(e) => setAdForm((f) => ({ ...f, productId: e.target.value }))}>
-                  <option value="">Tous produits</option>
+                  <option value="">{tp('Tous produits')}</option>
                   {products.map((p) => <option key={p._id} value={p._id}>{p.name}</option>)}
                 </Select>
-                <Input label="Ville ciblée" list="cc-cities" value={adForm.city} onChange={(e) => setAdForm((f) => ({ ...f, city: e.target.value }))} placeholder="Toutes" />
+                <Input label="Ville ciblée" list="cc-cities" value={adForm.city} onChange={(e) => setAdForm((f) => ({ ...f, city: e.target.value }))} placeholder={tp('Toutes')} />
                 <datalist id="cc-cities">
                   {knownCities.map((c) => <option key={c} value={c} />)}
                 </datalist>
@@ -1012,28 +1013,28 @@ export default function ControlCenter() {
                 <div className="flex items-end">
                   <button type="submit" className="inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-700">
                     <Plus className="h-4 w-4" aria-hidden="true" />
-                    Ajouter
+                    {tp('Ajouter')}
                   </button>
                 </div>
                 <Input label="Note" value={adForm.note} onChange={(e) => setAdForm((f) => ({ ...f, note: e.target.value }))} className="md:col-span-6" />
               </form>
             </Panel>
 
-            <Panel title="Publicités">
+            <Panel title={tp('Publicités')}>
               <TableShell>
                 <thead>
                   <tr>
-                    <Th>Date</Th>
-                    <Th>Produit</Th>
-                    <Th>Ville</Th>
-                    <Th align="right">Budget</Th>
-                    <Th align="right">Générées</Th>
-                    <Th align="right">Confirmées</Th>
-                    <Th align="right">Livrées</Th>
-                    <Th align="right">CA livré</Th>
-                    <Th align="right">Coût / commande</Th>
-                    <Th align="right">Coût / vente</Th>
-                    <Th>Suggestion</Th>
+                    <Th>{tp('Date')}</Th>
+                    <Th>{tp('Produit')}</Th>
+                    <Th>{tp('Ville')}</Th>
+                    <Th align="right">{tp('Budget')}</Th>
+                    <Th align="right">{tp('Générées')}</Th>
+                    <Th align="right">{tp('Confirmées')}</Th>
+                    <Th align="right">{tp('Livrées')}</Th>
+                    <Th align="right">{tp('CA livré')}</Th>
+                    <Th align="right">{tp('Coût / commande')}</Th>
+                    <Th align="right">{tp('Coût / vente')}</Th>
+                    <Th>{tp('Suggestion')}</Th>
                     <Th align="center">—</Th>
                   </tr>
                 </thead>
@@ -1043,7 +1044,7 @@ export default function ControlCenter() {
                     <tr key={ad.id} className="hover:bg-gray-50">
                       <Td>{ad.date}</Td>
                       <Td className="font-semibold text-gray-900">{ad.productName}</Td>
-                      <Td>{ad.city || 'Toutes'}</Td>
+                      <Td>{ad.city || tp('Toutes')}</Td>
                       <Td align="right" className="tabular-nums">{money(ad.budget)}</Td>
                       <Td align="right" className="tabular-nums">{ad.generated}</Td>
                       <Td align="right" className="tabular-nums">{ad.confirmed}</Td>
@@ -1053,7 +1054,7 @@ export default function ControlCenter() {
                       <Td align="right" className="tabular-nums">{ad.costPerDelivered == null ? '—' : money(ad.costPerDelivered)}</Td>
                       <Td><Badge tone={ad.tone}>{ad.suggestion}</Badge></Td>
                       <Td align="center">
-                        <button type="button" onClick={() => deleteAd(ad.id)} title="Supprimer" aria-label="Supprimer la dépense pub" className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600">
+                        <button type="button" onClick={() => deleteAd(ad.id)} title={tp('Supprimer')} aria-label={tp('Supprimer la dépense pub')} className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600">
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </button>
                       </Td>
@@ -1068,16 +1069,16 @@ export default function ControlCenter() {
         {/* ─────────────── Livraisons ─────────────── */}
         {activeTab === 'deliveries' && (
           <div className="space-y-5">
-            <Panel title="Livraisons par ville">
+            <Panel title={tp('Livraisons par ville')}>
               <TableShell>
                 <thead>
                   <tr>
-                    <Th>Ville</Th>
-                    <Th align="right">Confirmées</Th>
-                    <Th align="right">Livrées</Th>
-                    <Th align="right">Retours</Th>
-                    <Th align="right">CA livré</Th>
-                    <Th>Taux livraison</Th>
+                    <Th>{tp('Ville')}</Th>
+                    <Th align="right">{tp('Confirmées')}</Th>
+                    <Th align="right">{tp('Livrées')}</Th>
+                    <Th align="right">{tp('Retours')}</Th>
+                    <Th align="right">{tp('CA livré')}</Th>
+                    <Th>{tp('Taux livraison')}</Th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 bg-white">
@@ -1099,17 +1100,17 @@ export default function ControlCenter() {
               </TableShell>
             </Panel>
 
-            <Panel title="Performance des livreurs (90 derniers jours)">
+            <Panel title={tp('Performance des livreurs (90 derniers jours)')}>
               <TableShell>
                 <thead>
                   <tr>
-                    <Th>Livreur</Th>
-                    <Th align="right">Assignées</Th>
-                    <Th align="right">Livrées</Th>
-                    <Th align="right">Retours</Th>
-                    <Th align="right">En cours</Th>
-                    <Th align="right">CA livré</Th>
-                    <Th>Taux</Th>
+                    <Th>{tp('Livreur')}</Th>
+                    <Th align="right">{tp('Assignées')}</Th>
+                    <Th align="right">{tp('Livrées')}</Th>
+                    <Th align="right">{tp('Retours')}</Th>
+                    <Th align="right">{tp('En cours')}</Th>
+                    <Th align="right">{tp('CA livré')}</Th>
+                    <Th>{tp('Taux')}</Th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 bg-white">
@@ -1139,15 +1140,15 @@ export default function ControlCenter() {
         {activeTab === 'finances' && (
           <div className="space-y-5">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <KpiCard title="Entrées" value={money(derived.income)} detail={`Transactions · ${periodLabel}`} icon={TrendingUp} tone="green" />
-              <KpiCard title="Dépenses" value={money(derived.expense)} detail={`Dont pub ${money(derived.byCategory.publicite || 0)}`} icon={TrendingDown} tone="red" />
-              <KpiCard title="Bénéfice réel" value={money(derived.realNetProfit)} detail="Entrées − dépenses" icon={Wallet} tone={derived.realNetProfit >= 0 ? 'green' : 'red'} />
-              <KpiCard title="Solde caisse" value={money(derived.cashAvailable)} detail="Net transactions récentes" icon={Wallet} tone={derived.cashAvailable >= 0 ? 'green' : 'red'} />
+              <KpiCard title={tp('Entrées')} value={money(derived.income)} detail={`Transactions · ${periodLabel}`} icon={TrendingUp} tone="green" />
+              <KpiCard title={tp('Dépenses')} value={money(derived.expense)} detail={`Dont pub ${money(derived.byCategory.publicite || 0)}`} icon={TrendingDown} tone="red" />
+              <KpiCard title={tp('Bénéfice réel')} value={money(derived.realNetProfit)} detail="Entrées − dépenses" icon={Wallet} tone={derived.realNetProfit >= 0 ? 'green' : 'red'} />
+              <KpiCard title={tp('Solde caisse')} value={money(derived.cashAvailable)} detail="Net transactions récentes" icon={Wallet} tone={derived.cashAvailable >= 0 ? 'green' : 'red'} />
             </div>
 
-            <Panel title="Dépenses par catégorie">
+            <Panel title={tp('Dépenses par catégorie')}>
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                {Object.keys(derived.byCategory).length === 0 && <p className="text-sm text-gray-400">Aucune transaction sur cette période.</p>}
+                {Object.keys(derived.byCategory).length === 0 && <p className="text-sm text-gray-400">{tp('Aucune transaction sur cette période.')}</p>}
                 {Object.entries(derived.byCategory)
                   .sort((a, b) => b[1] - a[1])
                   .map(([cat, amount]) => (
@@ -1163,11 +1164,11 @@ export default function ControlCenter() {
               <TableShell>
                 <thead>
                   <tr>
-                    <Th>Date</Th>
-                    <Th>Type</Th>
-                    <Th>Catégorie</Th>
-                    <Th>Description</Th>
-                    <Th align="right">Montant</Th>
+                    <Th>{tp('Date')}</Th>
+                    <Th>{tp('Type')}</Th>
+                    <Th>{tp('Catégorie')}</Th>
+                    <Th>{tp('Description')}</Th>
+                    <Th align="right">{tp('Montant')}</Th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 bg-white">
@@ -1179,7 +1180,7 @@ export default function ControlCenter() {
                     .map((t) => (
                       <tr key={t._id} className="hover:bg-gray-50">
                         <Td>{dayKey(t.date || t.createdAt) || '—'}</Td>
-                        <Td><Badge tone={t.type === 'income' ? 'green' : 'red'}>{t.type === 'income' ? 'Entrée' : 'Dépense'}</Badge></Td>
+                        <Td><Badge tone={t.type === 'income' ? 'green' : 'red'}>{t.type === 'income' ? 'Entrée' : tp('Dépense')}</Badge></Td>
                         <Td>{CATEGORY_LABELS[t.category] || t.category}</Td>
                         <Td className="max-w-[260px] truncate">{t.description || '—'}</Td>
                         <Td align="right" className={`tabular-nums font-semibold ${t.type === 'income' ? 'text-green-700' : 'text-red-600'}`}>{t.type === 'income' ? '+' : '−'}{money(t.amount)}</Td>
@@ -1194,17 +1195,17 @@ export default function ControlCenter() {
         {/* ─────────────── Équipe ─────────────── */}
         {activeTab === 'team' && (
           <div className="space-y-5">
-            <Panel title="Closeuses (90 derniers jours)">
+            <Panel title={tp('Closeuses (90 derniers jours)')}>
               <TableShell>
                 <thead>
                   <tr>
-                    <Th>Nom</Th>
-                    <Th align="right">Traitées</Th>
-                    <Th align="right">Confirmées</Th>
-                    <Th align="right">Annulées</Th>
-                    <Th align="right">Injoignables</Th>
-                    <Th align="right">CA confirmé</Th>
-                    <Th>Taux confirmation</Th>
+                    <Th>{tp('Nom')}</Th>
+                    <Th align="right">{tp('Traitées')}</Th>
+                    <Th align="right">{tp('Confirmées')}</Th>
+                    <Th align="right">{tp('Annulées')}</Th>
+                    <Th align="right">{tp('Injoignables')}</Th>
+                    <Th align="right">{tp('CA confirmé')}</Th>
+                    <Th>{tp('Taux confirmation')}</Th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 bg-white">
@@ -1232,11 +1233,11 @@ export default function ControlCenter() {
               <TableShell>
                 <thead>
                   <tr>
-                    <Th>Nom</Th>
-                    <Th>Rôle</Th>
-                    <Th align="right">Entrées</Th>
-                    <Th align="right">Dépenses</Th>
-                    <Th align="right">Solde net</Th>
+                    <Th>{tp('Nom')}</Th>
+                    <Th>{tp('Rôle')}</Th>
+                    <Th align="right">{tp('Entrées')}</Th>
+                    <Th align="right">{tp('Dépenses')}</Th>
+                    <Th align="right">{tp('Solde net')}</Th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 bg-white">
@@ -1289,13 +1290,13 @@ export default function ControlCenter() {
               </div>
             </Panel>
 
-            <Panel title="Résumé automatique">
+            <Panel title={tp('Résumé automatique')}>
               <div className="rounded-lg border border-primary-100 bg-primary-50 p-4 text-sm font-medium leading-6 text-primary-900">
                 {reportSummary}
               </div>
             </Panel>
 
-            <Panel title="Règles business actives">
+            <Panel title={tp('Règles business actives')}>
               <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
                 {[
                   ['Stock ≤ seuil = pub coupée', CheckCircle2],
@@ -1321,21 +1322,21 @@ export default function ControlCenter() {
           <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-700 shadow-sm">
             <div className="flex items-center gap-2 font-bold text-gray-900">
               <MapPin className="h-4 w-4 text-primary-700" aria-hidden="true" />
-              Données en direct
+              {tp('Données en direct')}
             </div>
-            <p className="mt-1 text-xs text-gray-500">Produits, commandes, finances et équipe proviennent de votre espace Scalor.</p>
+            <p className="mt-1 text-xs text-gray-500">{tp('Produits, commandes, finances et équipe proviennent de votre espace Scalor.')}</p>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-700 shadow-sm">
             <div className="flex items-center gap-2 font-bold text-gray-900">
               <TrendingDown className="h-4 w-4 text-red-600" aria-hidden="true" />
-              Coupure rapide
+              {tp('Coupure rapide')}
             </div>
-            <p className="mt-1 text-xs text-gray-500">Les badges rouges signalent les produits, villes ou livreurs à arrêter.</p>
+            <p className="mt-1 text-xs text-gray-500">{tp('Les badges rouges signalent les produits, villes ou livreurs à arrêter.')}</p>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-700 shadow-sm">
             <div className="flex items-center gap-2 font-bold text-gray-900">
               <TrendingUp className="h-4 w-4 text-green-600" aria-hidden="true" />
-              Objectif net
+              {tp('Objectif net')}
             </div>
             <p className="mt-1 text-xs text-gray-500">Le seuil de rentabilité est fixé à {money(PROFIT_TARGET)} par vente.</p>
           </div>

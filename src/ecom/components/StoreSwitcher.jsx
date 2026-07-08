@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from '@/lib/router-compat';
 import { useStore } from '../contexts/StoreContext.jsx';
 import { storesApi } from '../services/storeApi.js';
+import { tp } from '../i18n/platform.js';
 
 const StoreSwitcher = ({ children }) => {
   const { stores, activeStore, switchStore, refreshStores } = useStore();
@@ -77,9 +78,9 @@ const StoreSwitcher = ({ children }) => {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute left-0 top-full mt-1.5 z-50 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 min-w-[220px]">
-            <p className="px-3 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Mes boutiques</p>
+            <p className="px-3 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Mes boutiques')}</p>
             {!hasStores && (
-              <p className="px-3 py-3 text-sm text-gray-400 text-center">Aucune boutique</p>
+              <p className="px-3 py-3 text-sm text-gray-400 text-center">{tp('Aucune boutique')}</p>
             )}
             {hasStores && stores.map(s => {
               const name = s.storeSettings?.storeName || s.name;
@@ -98,7 +99,7 @@ const StoreSwitcher = ({ children }) => {
                         disabled={isDeleting}
                         className="text-xs px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors font-medium"
                       >
-                        {isDeleting ? '...' : 'Oui'}
+                        {isDeleting ? '...' : tp('Oui')}
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setConfirmId(null); }}
@@ -135,7 +136,7 @@ const StoreSwitcher = ({ children }) => {
                         <button
                           onClick={(e) => handleDeleteClick(e, s._id)}
                           className="opacity-0 group-hover:opacity-100 p-1 rounded text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all flex-shrink-0"
-                          title="Supprimer cette boutique"
+                          title={tp('Supprimer cette boutique')}
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -160,10 +161,10 @@ const StoreSwitcher = ({ children }) => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </span>
-                  <span className="font-medium">{hasStores ? 'Nouvelle boutique' : 'Créer une boutique'}</span>
+                  <span className="font-medium">{hasStores ? 'Nouvelle boutique' : tp('Créer une boutique')}</span>
                 </Link>
               ) : (
-                <p className="px-3 py-2 text-xs text-gray-400 text-center">Maximum 3 boutiques atteint</p>
+                <p className="px-3 py-2 text-xs text-gray-400 text-center">{tp('Maximum 3 boutiques atteint')}</p>
               )}
             </div>
           </div>

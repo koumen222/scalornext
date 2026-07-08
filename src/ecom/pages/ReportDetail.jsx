@@ -4,6 +4,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const ReportDetail = () => {
   const { id } = useParams();
@@ -42,7 +43,7 @@ const ReportDetail = () => {
   };
 
   const deleteReport = async () => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce rapport ?')) return;
+    if (!confirm(tp('Êtes-vous sûr de vouloir supprimer ce rapport ?'))) return;
 
     try {
       await ecomApi.delete(`/reports/${id}`);
@@ -74,7 +75,7 @@ const ReportDetail = () => {
     return (
       <div className="p-3 sm:p-4 lg:p-6">
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-          Rapport non trouvé
+          {tp('Rapport non trouvé')}
         </div>
       </div>
     );
@@ -85,9 +86,9 @@ const ReportDetail = () => {
       <div className="mb-4 sm:mb-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Détails du rapport</h1>
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{tp('Détails du rapport')}</h1>
             <p className="text-gray-600 mt-2">
-              Rapport du {formatDate(report.date)} pour {report.productId?.name || 'Produit inconnu'}
+              Rapport du {formatDate(report.date)} pour {report.productId?.name || tp('Produit inconnu')}
             </p>
           </div>
           <div className="flex space-x-4">
@@ -95,7 +96,7 @@ const ReportDetail = () => {
               onClick={() => navigate(`/ecom/reports/${id}/edit`)}
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
             >
-              Modifier
+              {tp('Modifier')}
             </button>
             {report.whatsappNumber && (
               <button
@@ -130,7 +131,7 @@ const ReportDetail = () => {
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                   <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.387 0-4.594-.822-6.34-2.2l-.442-.352-3.2 1.073 1.073-3.2-.352-.442A9.935 9.935 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
                 </svg>
-                Envoyer via WhatsApp
+                {tp('Envoyer via WhatsApp')}
               </button>
             )}
             {(user.role === 'ecom_admin' || user.role === 'ecom_closeuse') && (
@@ -138,14 +139,14 @@ const ReportDetail = () => {
                 onClick={deleteReport}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
-                Supprimer
+                {tp('Supprimer')}
               </button>
             )}
             <button
               onClick={() => navigate('/ecom/reports')}
               className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
             >
-              Retour
+              {tp('Retour')}
             </button>
           </div>
         </div>
@@ -161,14 +162,14 @@ const ReportDetail = () => {
         {/* Informations principales */}
         <div className="lg:col-span-2">
           <div className="bg-white shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Informations principales</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Informations principales')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">Date</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Date')}</label>
                 <p className="text-lg text-gray-900">{formatDate(report.date)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Produit</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Produit')}</label>
                 {report.productId?._id ? (
                   <Link to={`/ecom/reports/product/${report.productId._id}`} className="text-lg text-primary-600 hover:text-primary-800 hover:underline">{report.productId.name}</Link>
                 ) : (
@@ -176,15 +177,15 @@ const ReportDetail = () => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Rapporté par</label>
-                <p className="text-lg text-gray-900">{report.reportedBy?.email || 'N/A'}</p>
+                <label className="block text-sm font-medium text-gray-500">{tp('Rapporté par')}</label>
+                <p className="text-lg text-gray-900">{report.reportedBy?.email || tp('N/A')}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-500">WhatsApp</label>
-                <p className="text-lg text-gray-900">{report.whatsappNumber || 'Non renseigné'}</p>
+                <p className="text-lg text-gray-900">{report.whatsappNumber || tp('Non renseigné')}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Date de création</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Date de création')}</label>
                 <p className="text-lg text-gray-900">{formatDate(report.createdAt)}</p>
               </div>
             </div>
@@ -192,24 +193,24 @@ const ReportDetail = () => {
 
           {/* Commandes */}
           <div className="bg-white shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Commandes</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Commandes')}</h2>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">Commandes reçues</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Commandes reçues')}</label>
                 <p className="text-2xl font-bold text-primary-600">{report.ordersReceived || 0}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Commandes livrées</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Commandes livrées')}</label>
                 <p className="text-2xl font-bold text-green-600">{report.ordersDelivered || 0}</p>
               </div>
               {(report.ordersReturned || 0) > 0 && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500">Retours / Remboursements</label>
+                    <label className="block text-sm font-medium text-gray-500">{tp('Retours / Remboursements')}</label>
                     <p className="text-2xl font-bold text-red-600">-{report.ordersReturned}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500">Taux de retour</label>
+                    <label className="block text-sm font-medium text-gray-500">{tp('Taux de retour')}</label>
                     <p className="text-2xl font-bold text-red-600">
                       {report.ordersDelivered > 0 ? ((report.ordersReturned / report.ordersDelivered) * 100).toFixed(1) : 0}%
                     </p>
@@ -219,7 +220,7 @@ const ReportDetail = () => {
             </div>
             {report.ordersReceived > 0 && (
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-500">Taux de livraison</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Taux de livraison')}</label>
                 <div className="mt-1">
                   <div className="flex items-center">
                     <div className="flex-1 bg-gray-200 rounded-full h-2">
@@ -239,7 +240,7 @@ const ReportDetail = () => {
             {/* Livraisons par agence */}
             {report.deliveries && report.deliveries.length > 0 && (
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <label className="block text-sm font-medium text-gray-700 mb-3">Livraisons par agence</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">{tp('Livraisons par agence')}</label>
                 <div className="space-y-2">
                   {report.deliveries.map((delivery, idx) => (
                     <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -259,7 +260,7 @@ const ReportDetail = () => {
                   ))}
                   {report.deliveries.length > 0 && (
                     <div className="flex items-center justify-between px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg mt-1">
-                      <span className="text-xs font-semibold text-amber-700">Total frais livraison</span>
+                      <span className="text-xs font-semibold text-amber-700">{tp('Total frais livraison')}</span>
                       <span className="text-sm font-bold text-amber-700">
                         {fmt(report.deliveries.reduce((s, d) => s + (d.deliveryCost || 0), 0))}
                       </span>
@@ -273,7 +274,7 @@ const ReportDetail = () => {
           {/* Notes */}
           {report.notes && (
             <div className="bg-white shadow rounded-lg p-3 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Notes</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Notes')}</h2>
               <p className="text-gray-700 whitespace-pre-wrap">{report.notes}</p>
             </div>
           )}
@@ -282,45 +283,45 @@ const ReportDetail = () => {
         {/* Métriques financières */}
         <div className="lg:col-span-1">
           <div className="bg-white shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Métriques financières</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Métriques financières')}</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">Revenu total</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Revenu total')}</label>
                 <p className={`text-lg font-bold ${(report.metrics?.revenue || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(report.metrics?.revenue || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Dépenses publicitaires</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Dépenses publicitaires')}</label>
                 <p className="text-lg font-bold text-red-600">{fmt(report.adSpend || 0)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Coût produit total</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Coût produit total')}</label>
                 <p className="text-lg font-bold text-red-600">
                   {fmt(report.metrics?.productCostTotal || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Coût livraison total</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Coût livraison total')}</label>
                 <p className="text-lg font-bold text-red-600">
                   {fmt(report.metrics?.deliveryCostTotal || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Coût total</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Coût total')}</label>
                 <p className="text-lg font-bold text-red-600">
                   {fmt(report.metrics?.totalCost || 0)}
                 </p>
               </div>
               <hr className="border-gray-200" />
               <div>
-                <label className="block text-sm font-medium text-gray-500">Profit net</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Profit net')}</label>
                 <p className={`text-xl font-bold ${(report.metrics?.profit || 0) > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(report.metrics?.profit || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Profit par commande</label>
+                <label className="block text-sm font-medium text-gray-500">{tp('Profit par commande')}</label>
                 <p className={`text-lg font-bold ${(report.metrics?.profitPerOrder || 0) > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(report.metrics?.profitPerOrder || 0)}
                 </p>
@@ -328,7 +329,7 @@ const ReportDetail = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-500">ROAS</label>
                 <p className="text-lg font-semibold text-primary-600">
-                  {report.metrics?.roas ? report.metrics.roas.toFixed(2) : 'N/A'}
+                  {report.metrics?.roas ? report.metrics.roas.toFixed(2) : tp('N/A')}
                 </p>
               </div>
             </div>
@@ -337,28 +338,28 @@ const ReportDetail = () => {
           {/* Informations sur le produit */}
           {report.productId && (
             <div className="bg-white shadow rounded-lg p-3 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Informations sur le produit</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Informations sur le produit')}</h2>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Prix de vente</label>
+                  <label className="block text-sm font-medium text-gray-500">{tp('Prix de vente')}</label>
                   <p className="text-lg font-semibold text-gray-900">
                     {fmt(report.productId.sellingPrice || 0)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Coût du produit</label>
+                  <label className="block text-sm font-medium text-gray-500">{tp('Coût du produit')}</label>
                   <p className="text-lg font-semibold text-gray-900">
                     {fmt(report.productId.productCost || 0)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Coût de livraison</label>
+                  <label className="block text-sm font-medium text-gray-500">{tp('Coût de livraison')}</label>
                   <p className="text-lg font-semibold text-gray-900">
                     {fmt(report.productId.deliveryCost || 0)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Coût publicitaire moyen</label>
+                  <label className="block text-sm font-medium text-gray-500">{tp('Coût publicitaire moyen')}</label>
                   <p className="text-lg font-semibold text-gray-900">
                     {fmt(report.productId.avgAdsCost || 0)}
                   </p>

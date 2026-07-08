@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useStore } from '../contexts/StoreContext.jsx';
 import api from '../../lib/api';
+import { tp } from '../i18n/platform.js';
 
 // IP fixe du VPS Caddy — à mettre à jour ici si le serveur change
 const VPS_IP = '89.117.58.183';
@@ -20,7 +21,7 @@ function CopyButton({ value }) {
       onClick={copy}
       className="ml-1 px-2 py-0.5 text-[10px] font-bold bg-gray-200 hover:bg-gray-300 text-gray-600 rounded transition"
     >
-      {copied ? '✓' : 'Copier'}
+      {copied ? '✓' : tp('Copier')}
     </button>
   );
 }
@@ -225,7 +226,7 @@ const BoutiqueDomains = () => {
   };
 
   const disconnectDomain = async () => {
-    if (!confirm('Déconnecter ce domaine personnalisé ?')) return;
+    if (!confirm(tp('Déconnecter ce domaine personnalisé ?'))) return;
     setSaving(true);
     try {
       const res = await api.put('/store/domains', { subdomain: subdomain.trim().toLowerCase(), customDomain: '' });
@@ -291,8 +292,8 @@ const BoutiqueDomains = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Domaines</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Configurez l'adresse de votre boutique</p>
+          <h1 className="text-xl font-bold text-gray-900">{tp('Domaines')}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{tp('Configurez l\'adresse de votre boutique')}</p>
         </div>
         <button
           onClick={() => handleSave()}
@@ -303,7 +304,7 @@ const BoutiqueDomains = () => {
             'bg-[#0F6B4F] hover:bg-[#0A5740]'
           } disabled:opacity-60`}
         >
-          {saving ? 'Enregistrement...' : saved ? '✓ Sauvegardé' : 'Sauvegarder'}
+          {saving ? 'Enregistrement...' : saved ? '✓ Sauvegardé' : tp('Sauvegarder')}
         </button>
       </div>
 
@@ -316,8 +317,8 @@ const BoutiqueDomains = () => {
             </svg>
           </div>
           <div>
-            <h2 className="text-sm font-bold text-gray-900">Sous-domaine gratuit</h2>
-            <p className="text-xs text-gray-500">Votre boutique est accessible immédiatement</p>
+            <h2 className="text-sm font-bold text-gray-900">{tp('Sous-domaine gratuit')}</h2>
+            <p className="text-xs text-gray-500">{tp('Votre boutique est accessible immédiatement')}</p>
           </div>
         </div>
 
@@ -328,7 +329,7 @@ const BoutiqueDomains = () => {
                 type="text"
                 value={subdomainInput}
                 onChange={(e) => { setSubdomainInput(e.target.value.replace(/[^a-z0-9-]/gi, '').toLowerCase()); setSaved(false); }}
-                placeholder="boutique"
+                placeholder={tp('boutique')}
                 className={`w-full px-3 py-2.5 pr-8 text-sm border rounded-xl focus:ring-2 focus:border-transparent transition bg-gray-50 focus:bg-white font-mono ${
                   subdomainStatus === 'taken' ? 'border-red-400 focus:ring-red-400' :
                   subdomainStatus === 'available' ? 'border-green-400 focus:ring-green-400' :
@@ -347,16 +348,16 @@ const BoutiqueDomains = () => {
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-red-500 text-base leading-none">✗</span>
               )}
             </div>
-            <span className="text-sm font-semibold text-gray-500 whitespace-nowrap">.scalor.net</span>
+            <span className="text-sm font-semibold text-gray-500 whitespace-nowrap">{tp('.scalor.net')}</span>
           </div>
           {subdomainStatus === 'taken' && (
-            <p className="text-xs text-red-600 font-medium">Ce sous-domaine est déjà pris — choisissez-en un autre</p>
+            <p className="text-xs text-red-600 font-medium">{tp('Ce sous-domaine est déjà pris — choisissez-en un autre')}</p>
           )}
           {subdomainStatus === 'available' && (
-            <p className="text-xs text-green-600 font-medium">Disponible ✓</p>
+            <p className="text-xs text-green-600 font-medium">{tp('Disponible ✓')}</p>
           )}
           {subdomainStatus === 'invalid' && (
-            <p className="text-xs text-amber-600 font-medium">3 à 30 caractères, lettres, chiffres et tirets uniquement</p>
+            <p className="text-xs text-amber-600 font-medium">{tp('3 à 30 caractères, lettres, chiffres et tirets uniquement')}</p>
           )}
 
           <button
@@ -365,15 +366,15 @@ const BoutiqueDomains = () => {
             className="w-full px-4 py-2 text-xs font-bold text-[#0A5740] bg-[#E6F2ED] rounded-xl hover:bg-[#C0DDD2] transition disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {generating ? (
-              <><svg className="animate-spin h-3 w-3" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>Génération...</>
+              <><svg className="animate-spin h-3 w-3" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>{tp('Génération...')}</>
             ) : (
-              <><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Générer depuis le nom de la boutique</>
+              <><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>{tp('Générer depuis le nom de la boutique')}</>
             )}
           </button>
 
           {preferredStoreName && (
             <div className="text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
-              Basé sur : <span className="font-medium text-gray-700">"{preferredStoreName}"</span>
+              {tp('Basé sur :')} <span className="font-medium text-gray-700">"{preferredStoreName}"</span>
             </div>
           )}
         </div>
@@ -388,7 +389,7 @@ const BoutiqueDomains = () => {
         ) : (
           <div className="mt-3 flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5">
             <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span className="text-sm text-gray-500">Votre boutique : <span className="font-mono text-gray-700">{subdomain || 'votre-boutique'}.scalor.net</span></span>
+            <span className="text-sm text-gray-500">{tp('Votre boutique :')} <span className="font-mono text-gray-700">{subdomain || 'votre-boutique'}.scalor.net</span></span>
           </div>
         )}
       </div>
@@ -400,8 +401,8 @@ const BoutiqueDomains = () => {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">🌐</div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900">Domaine personnalisé</h2>
-              <p className="text-xs text-gray-500">Connectez votre propre nom de domaine à Scalor</p>
+              <h2 className="text-sm font-bold text-gray-900">{tp('Domaine personnalisé')}</h2>
+              <p className="text-xs text-gray-500">{tp('Connectez votre propre nom de domaine à Scalor')}</p>
             </div>
           </div>
           {isConnected && (
@@ -442,7 +443,7 @@ const BoutiqueDomains = () => {
           {activeStep === 0 && (
             <div className="space-y-3">
               <p className="text-sm text-gray-600">
-                Entrez le nom de domaine que vous souhaitez connecter à votre boutique Scalor.
+                {tp('Entrez le nom de domaine que vous souhaitez connecter à votre boutique Scalor.')}
               </p>
               <div className="flex gap-2">
                 <input
@@ -450,7 +451,7 @@ const BoutiqueDomains = () => {
                   value={domainInput}
                   onChange={(e) => { setDomainInput(e.target.value); setDomainError(''); }}
                   onKeyDown={(e) => e.key === 'Enter' && validateAndNextStep()}
-                  placeholder="maboutique.com"
+                  placeholder={tp('maboutique.com')}
                   className={`flex-1 px-3 py-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent transition bg-gray-50 focus:bg-white font-mono ${
                     domainError ? 'border-red-300' : 'border-gray-200'
                   }`}
@@ -464,7 +465,7 @@ const BoutiqueDomains = () => {
               </div>
               {domainError && <p className="text-xs text-red-600">{domainError}</p>}
               <p className="text-[11px] text-gray-400">
-                Sans www. — exemple : <span className="font-mono">maboutique.com</span> ou <span className="font-mono">shop.monsite.fr</span>
+                Sans www. — exemple : <span className="font-mono">{tp('maboutique.com')}</span> ou <span className="font-mono">{tp('shop.monsite.fr')}</span>
               </p>
             </div>
           )}
@@ -477,13 +478,13 @@ const BoutiqueDomains = () => {
                   Ajoutez ces enregistrements DNS chez votre registrar pour{' '}
                   <span className="font-mono font-semibold text-gray-900">{customDomain}</span> :
                 </p>
-                <button onClick={() => setActiveStep(0)} className="text-xs text-gray-400 hover:text-gray-600 underline">Changer</button>
+                <button onClick={() => setActiveStep(0)} className="text-xs text-gray-400 hover:text-gray-600 underline">{tp('Changer')}</button>
               </div>
 
               {/* Option 1 : A record */}
               <div className="space-y-2">
                 <p className="text-[11px] font-semibold text-gray-600 flex items-center gap-1.5">
-                  <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-bold">RECOMMANDÉ</span>
+                  <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-bold">{tp('RECOMMANDÉ')}</span>
                   Enregistrement A — fonctionne partout, SSL automatique
                 </p>
                 <div className="space-y-1.5">
@@ -493,14 +494,14 @@ const BoutiqueDomains = () => {
               </div>
 
               <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-[11px] text-amber-700 space-y-1">
-                <p className="font-semibold">Comment configurer chez mon registrar ?</p>
+                <p className="font-semibold">{tp('Comment configurer chez mon registrar ?')}</p>
                 <ul className="list-disc list-inside space-y-0.5 text-amber-600">
-                  <li><span className="font-semibold">Namecheap :</span> Domain List → Manage → Advanced DNS</li>
-                  <li><span className="font-semibold">GoDaddy :</span> My Products → DNS → Add record</li>
-                  <li><span className="font-semibold">OVH :</span> Domaines → Zone DNS → Ajouter une entrée</li>
-                  <li><span className="font-semibold">Cloudflare :</span> DNS → Records → Add record (proxy OFF)</li>
+                  <li><span className="font-semibold">{tp('Namecheap :')}</span> {tp('Domain List → Manage → Advanced DNS')}</li>
+                  <li><span className="font-semibold">{tp('GoDaddy :')}</span> {tp('My Products → DNS → Add record')}</li>
+                  <li><span className="font-semibold">OVH :</span> {tp('Domaines → Zone DNS → Ajouter une entrée')}</li>
+                  <li><span className="font-semibold">{tp('Cloudflare :')}</span> {tp('DNS → Records → Add record (proxy OFF)')}</li>
                 </ul>
-                <p className="text-amber-500 mt-1">La propagation DNS peut prendre jusqu'à 48h. SSL généré automatiquement.</p>
+                <p className="text-amber-500 mt-1">{tp('La propagation DNS peut prendre jusqu\'à 48h. SSL généré automatiquement.')}</p>
               </div>
 
               <div className="flex gap-2 pt-1">
@@ -525,7 +526,7 @@ const BoutiqueDomains = () => {
                     <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">DNS OK</span>
                   )}
                 </div>
-                <button onClick={() => setActiveStep(1)} className="text-xs text-gray-400 hover:text-gray-600 underline">Modifier les DNS</button>
+                <button onClick={() => setActiveStep(1)} className="text-xs text-gray-400 hover:text-gray-600 underline">{tp('Modifier les DNS')}</button>
               </div>
 
               {/* Vérification en cours */}
@@ -536,8 +537,8 @@ const BoutiqueDomains = () => {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                   </svg>
                   <div>
-                    <p className="text-sm font-semibold text-blue-700">Vérification DNS en cours…</p>
-                    <p className="text-[11px] text-blue-500">Interrogation des serveurs DNS pour <span className="font-mono">{customDomain}</span></p>
+                    <p className="text-sm font-semibold text-blue-700">{tp('Vérification DNS en cours…')}</p>
+                    <p className="text-[11px] text-blue-500">{tp('Interrogation des serveurs DNS pour')} <span className="font-mono">{customDomain}</span></p>
                   </div>
                 </div>
               )}
@@ -554,19 +555,19 @@ const BoutiqueDomains = () => {
                   <div className="flex items-center gap-2">
                     {dnsResult.ok && sslStatus === 'active' ? (
                       <><svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                      <span className="text-sm text-green-700 font-semibold">Domaine actif — <a href={`https://${customDomain}`} target="_blank" rel="noopener noreferrer" className="hover:underline">https://{customDomain}</a></span></>
+                      <span className="text-sm text-green-700 font-semibold">{tp('Domaine actif —')} <a href={`https://${customDomain}`} target="_blank" rel="noopener noreferrer" className="hover:underline">https://{customDomain}</a></span></>
                     ) : dnsResult.ok ? (
                       <><svg className="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m0 3.75h.008v.008H12V16.5zm9-4.5a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      <span className="text-sm text-amber-700 font-semibold">DNS détecté — SSL en attente</span></>
+                      <span className="text-sm text-amber-700 font-semibold">{tp('DNS détecté — SSL en attente')}</span></>
                     ) : (
                       <><svg className="w-4 h-4 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                      <span className="text-sm text-red-700 font-semibold">En attente de validation</span></>
+                      <span className="text-sm text-red-700 font-semibold">{tp('En attente de validation')}</span></>
                     )}
                   </div>
 
                   {dnsResult.aRecords?.length > 0 && (
                     <div className="text-xs text-gray-600">
-                      <span className="font-semibold">A records :</span> {dnsResult.aRecords.join(', ')}
+                      <span className="font-semibold">{tp('A records :')}</span> {dnsResult.aRecords.join(', ')}
                       {dnsResult.aOk ? <span className="text-green-600 ml-1">✓</span> : <span className="text-red-600 ml-1">✗</span>}
                     </div>
                   )}
@@ -582,10 +583,10 @@ const BoutiqueDomains = () => {
                     </p>
                   )}
                   {!dnsResult.ok && !dnsResult.aRecords?.length && !dnsResult.cnameRecords?.length && (
-                    <p className="text-xs text-red-600">Aucun enregistrement détecté. Vérifiez votre configuration DNS.</p>
+                    <p className="text-xs text-red-600">{tp('Aucun enregistrement détecté. Vérifiez votre configuration DNS.')}</p>
                   )}
                   {!dnsResult.ok && (
-                    <p className="text-xs text-gray-500 mt-1">Cible attendue : <span className="font-mono">{dnsResult.expected?.cnameTarget || CNAME_TARGET}</span></p>
+                    <p className="text-xs text-gray-500 mt-1">{tp('Cible attendue :')} <span className="font-mono">{dnsResult.expected?.cnameTarget || CNAME_TARGET}</span></p>
                   )}
                 </div>
               )}
@@ -611,7 +612,7 @@ const BoutiqueDomains = () => {
                 </svg>
                 SSL :&nbsp;
                 <span className={`font-bold ${sslStatus === 'active' ? 'text-green-700' : 'text-gray-400'}`}>
-                  {sslStatus === 'active' ? 'Actif — HTTPS activé' : 'En attente (sera provisonné après validation DNS)'}
+                  {sslStatus === 'active' ? 'Actif — HTTPS activé' : tp('En attente (sera provisonné après validation DNS)')}
                 </span>
               </div>
 
@@ -622,9 +623,9 @@ const BoutiqueDomains = () => {
                   className="flex-1 px-4 py-2.5 bg-[#0F6B4F] hover:bg-[#0A5740] text-white text-sm font-bold rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {checking ? (
-                    <><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Vérification…</>
+                    <><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>{tp('Vérification…')}</>
                   ) : (
-                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>Relancer la vérification</>
+                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>{tp('Relancer la vérification')}</>
                   )}
                 </button>
                 <button
@@ -632,7 +633,7 @@ const BoutiqueDomains = () => {
                   disabled={saving}
                   className="px-4 py-2.5 border border-red-200 text-red-600 hover:bg-red-50 text-sm font-semibold rounded-xl transition disabled:opacity-60"
                 >
-                  Déconnecter
+                  {tp('Déconnecter')}
                 </button>
               </div>
 
@@ -654,13 +655,13 @@ const BoutiqueDomains = () => {
               </svg>
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900">Certificat SSL</h2>
-              <p className="text-xs text-gray-500">HTTPS automatique et gratuit sur tous les domaines</p>
+              <h2 className="text-sm font-bold text-gray-900">{tp('Certificat SSL')}</h2>
+              <p className="text-xs text-gray-500">{tp('HTTPS automatique et gratuit sur tous les domaines')}</p>
             </div>
             <span className={`ml-auto px-3 py-1 text-[10px] font-bold rounded-full uppercase ${
               sslStatus === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
             }`}>
-              {sslStatus === 'active' ? 'Actif' : 'En attente'}
+              {sslStatus === 'active' ? 'Actif' : tp('En attente')}
             </span>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Loader2, Star, Trash2, Plus, RefreshCw, Save, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { storeProductsApi } from '../services/storeApi.js';
+import { tp } from '../i18n/platform.js';
 
 /**
  * ReviewGenerator — Génère des avis clients authentiques via IA.
@@ -26,7 +27,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
 
   const handleGenerate = async () => {
     if (!productDescription.trim()) {
-      setError('Ajoutez une description au produit avant de générer des avis.');
+      setError(tp('Ajoutez une description au produit avant de générer des avis.'));
       return;
     }
 
@@ -114,7 +115,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
       >
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-amber-500" />
-          <h3 className="text-base font-semibold text-gray-900">Avis clients</h3>
+          <h3 className="text-base font-semibold text-gray-900">{tp('Avis clients')}</h3>
           {existingTestimonials.length > 0 && (
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
               {existingTestimonials.length}
@@ -129,7 +130,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
           {/* Existing testimonials */}
           {existingTestimonials.length > 0 && (
             <div className="space-y-2 pt-4">
-              <div className="text-sm font-medium text-gray-700">Avis existants</div>
+              <div className="text-sm font-medium text-gray-700">{tp('Avis existants')}</div>
               {existingTestimonials.map((t, i) => (
                 <div key={i} className="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
                   <div className="flex-1 min-w-0">
@@ -137,7 +138,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                       <span className="text-sm font-medium text-gray-900">{t.name}</span>
                       {renderStars(t.rating)}
                       {t.verified && (
-                        <span className="text-[10px] text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded font-medium">Vérifié</span>
+                        <span className="text-[10px] text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded font-medium">{tp('Vérifié')}</span>
                       )}
                     </div>
                     <p className="text-sm text-gray-600 line-clamp-2">{t.text}</p>
@@ -151,7 +152,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                   <button
                     onClick={() => handleRemoveExisting(i)}
                     className="p-1 text-gray-400 hover:text-red-500 transition-colors shrink-0"
-                    title="Supprimer"
+                    title={tp('Supprimer')}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -164,53 +165,53 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
           <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-4 space-y-3 mt-2">
             <div className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-amber-500" />
-              Générer des avis IA
+              {tp('Générer des avis IA')}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Pays</label>
+                <label className="block text-xs text-gray-500 mb-1">{tp('Pays')}</label>
                 <input
                   type="text"
                   value={country}
                   onChange={e => setCountry(e.target.value)}
-                  placeholder="Ex: Cameroun"
+                  placeholder={tp('Ex: Cameroun')}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Nombre d'avis</label>
+                <label className="block text-xs text-gray-500 mb-1">{tp('Nombre d\'avis')}</label>
                 <select
                   value={count}
                   onChange={e => setCount(parseInt(e.target.value))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
                 >
-                  <option value={3}>3 avis</option>
-                  <option value={4}>4 avis</option>
-                  <option value={5}>5 avis</option>
-                  <option value={6}>6 avis</option>
+                  <option value={3}>{tp('3 avis')}</option>
+                  <option value={4}>{tp('4 avis')}</option>
+                  <option value={5}>{tp('5 avis')}</option>
+                  <option value={6}>{tp('6 avis')}</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Villes (séparées par des virgules)</label>
+              <label className="block text-xs text-gray-500 mb-1">{tp('Villes (séparées par des virgules)')}</label>
               <input
                 type="text"
                 value={citiesInput}
                 onChange={e => setCitiesInput(e.target.value)}
-                placeholder="Ex: Douala, Yaoundé, Bafoussam"
+                placeholder={tp('Ex: Douala, Yaoundé, Bafoussam')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Prénoms (séparés par des virgules)</label>
+              <label className="block text-xs text-gray-500 mb-1">{tp('Prénoms (séparés par des virgules)')}</label>
               <input
                 type="text"
                 value={namesInput}
                 onChange={e => setNamesInput(e.target.value)}
-                placeholder="Ex: Awa, Koffi, Mireille, Armand"
+                placeholder={tp('Ex: Awa, Koffi, Mireille, Armand')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
             </div>
@@ -234,7 +235,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  Générer les avis
+                  {tp('Générer les avis')}
                 </>
               )}
             </button>
@@ -253,7 +254,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                   className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${generating ? 'animate-spin' : ''}`} />
-                  Régénérer
+                  {tp('Régénérer')}
                 </button>
               </div>
 
@@ -277,7 +278,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                       <span className="text-sm font-medium text-gray-900">{review.name}</span>
                       {renderStars(review.rating)}
                       {review.verified && (
-                        <span className="text-[10px] text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded font-medium">Vérifié</span>
+                        <span className="text-[10px] text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded font-medium">{tp('Vérifié')}</span>
                       )}
                     </div>
                     <p className="text-sm text-gray-600">{review.text}</p>

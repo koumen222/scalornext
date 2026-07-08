@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { storeDeliveryZonesApi } from '../services/storeApi.js';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
+import { WORLD_COUNTRIES } from '../constants/countries.js';
 
 const IcoTruck = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,12 +36,8 @@ const IcoMapPin = () => (
   </svg>
 );
 
-// Common African countries for quick selection
-const SUGGESTED_COUNTRIES = [
-  'Cameroun', 'Côte d\'Ivoire', 'Sénégal', 'Gabon', 'Congo', 'RDC',
-  'Mali', 'Burkina Faso', 'Guinée', 'Bénin', 'Togo', 'Niger', 'Tchad',
-  'France', 'Belgique', 'Canada'
-];
+// Tous les pays du monde, pour l'autocomplétion à l'ajout d'un pays de vente.
+const SUGGESTED_COUNTRIES = WORLD_COUNTRIES;
 
 const BoutiqueDeliveryZones = () => {
   const { workspace } = useEcomAuth();
@@ -166,7 +164,7 @@ const BoutiqueDeliveryZones = () => {
             <IcoTruck /> Zones de livraison
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Définissez les pays et zones où vous livrez, avec les frais de livraison
+            {tp('Définissez les pays et zones où vous livrez, avec les frais de livraison')}
           </p>
         </div>
         <button
@@ -179,7 +177,7 @@ const BoutiqueDeliveryZones = () => {
           ) : saved ? (
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           ) : null}
-          {saving ? 'Sauvegarde...' : saved ? 'Sauvegardé !' : 'Sauvegarder'}
+          {saving ? 'Sauvegarde...' : saved ? 'Sauvegardé !' : tp('Sauvegarder')}
         </button>
       </div>
 
@@ -195,8 +193,8 @@ const BoutiqueDeliveryZones = () => {
           <div className="flex items-center gap-2">
             <IcoTruck />
             <div>
-              <h2 className="text-sm font-bold text-gray-900">Frais de livraison forfaitaires</h2>
-              <p className="text-xs text-gray-500">Un montant fixe ajouté automatiquement à chaque commande sur le formulaire de paiement.</p>
+              <h2 className="text-sm font-bold text-gray-900">{tp('Frais de livraison forfaitaires')}</h2>
+              <p className="text-xs text-gray-500">{tp('Un montant fixe ajouté automatiquement à chaque commande sur le formulaire de paiement.')}</p>
             </div>
           </div>
           <button
@@ -213,7 +211,7 @@ const BoutiqueDeliveryZones = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1 block">
-                  Montant des frais de livraison
+                  {tp('Montant des frais de livraison')}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -229,7 +227,7 @@ const BoutiqueDeliveryZones = () => {
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1 block">
-                  Livraison gratuite à partir de (optionnel)
+                  {tp('Livraison gratuite à partir de (optionnel)')}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -237,12 +235,12 @@ const BoutiqueDeliveryZones = () => {
                     value={freeShippingThreshold}
                     onChange={(e) => setFreeShippingThreshold(Math.max(0, Number(e.target.value) || 0))}
                     min="0"
-                    placeholder="0 = désactivé"
+                    placeholder={tp('0 = désactivé')}
                     className="flex-1 px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                   />
                   <span className="text-sm font-semibold text-gray-500">{symbol}</span>
                 </div>
-                <p className="text-[10px] text-gray-400 mt-1">Laisser à 0 pour ne pas activer la livraison gratuite.</p>
+                <p className="text-[10px] text-gray-400 mt-1">{tp('Laisser à 0 pour ne pas activer la livraison gratuite.')}</p>
               </div>
             </div>
 
@@ -252,8 +250,8 @@ const BoutiqueDeliveryZones = () => {
               </svg>
               <div>
                 {flatShippingFee > 0
-                  ? <>Frais de <strong>{new Intl.NumberFormat('fr-FR').format(flatShippingFee)} {symbol}</strong> appliqués à chaque commande.
-                    {freeShippingThreshold > 0 && <> Gratuit dès <strong>{new Intl.NumberFormat('fr-FR').format(freeShippingThreshold)} {symbol}</strong> d'achat.</>}
+                  ? <>{tp('Frais de')} <strong>{new Intl.NumberFormat('fr-FR').format(flatShippingFee)} {symbol}</strong> appliqués à chaque commande.
+                    {freeShippingThreshold > 0 && <> {tp('Gratuit dès')} <strong>{new Intl.NumberFormat('fr-FR').format(freeShippingThreshold)} {symbol}</strong> {tp('d\'achat.')}</>}
                     {' '}Les zones spécifiques ci-dessous remplacent ce tarif pour les villes configurées.</>
                   : 'Définissez un montant supérieur à 0 pour activer les frais forfaitaires.'}
               </div>
@@ -267,8 +265,8 @@ const BoutiqueDeliveryZones = () => {
         <div className="flex items-center gap-2">
           <IcoGlobe />
           <div>
-            <h2 className="text-sm font-bold text-gray-900">Pays de vente</h2>
-            <p className="text-xs text-gray-500">Sélectionnez les pays où vous vendez. Si un client est hors de ces pays, il verra un message d'indisponibilité.</p>
+            <h2 className="text-sm font-bold text-gray-900">{tp('Pays de vente')}</h2>
+            <p className="text-xs text-gray-500">{tp('Sélectionnez les pays où vous vendez. Si un client est hors de ces pays, il verra un message d\'indisponibilité.')}</p>
           </div>
         </div>
 
@@ -297,7 +295,7 @@ const BoutiqueDeliveryZones = () => {
               onFocus={() => setShowCountrySuggestions(true)}
               onBlur={() => setTimeout(() => setShowCountrySuggestions(false), 200)}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCountry(newCountry); } }}
-              placeholder="Ajouter un pays..."
+              placeholder={tp('Ajouter un pays...')}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
             />
             <button
@@ -370,7 +368,7 @@ const BoutiqueDeliveryZones = () => {
                       type="text"
                       value={zone.city}
                       onChange={(e) => updateZone(zone.id, 'city', e.target.value)}
-                      placeholder="Nom de la ville (ex: Douala)"
+                      placeholder={tp('Nom de la ville (ex: Douala)')}
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                     />
                     <div className="flex items-center gap-1">
@@ -404,13 +402,13 @@ const BoutiqueDeliveryZones = () => {
                 {/* Aliases */}
                 <div>
                   <label className="text-xs font-semibold text-gray-600 mb-1 block">
-                    Variantes du nom (séparées par des virgules)
+                    {tp('Variantes du nom (séparées par des virgules)')}
                   </label>
                   <input
                     type="text"
                     value={(zone.aliases || []).join(', ')}
                     onChange={(e) => handleAliasChange(zone.id, e.target.value)}
-                    placeholder="Ex: Dla, douala, DOUALA, Doualla, doula"
+                    placeholder={tp('Ex: Dla, douala, DOUALA, Doualla, doula')}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                   />
                   <p className="text-[10px] text-gray-400 mt-1">
@@ -425,23 +423,23 @@ const BoutiqueDeliveryZones = () => {
 
       {/* How it works */}
       <div className="bg-gray-50 rounded-2xl border border-gray-200 p-5 space-y-3">
-        <h3 className="text-sm font-bold text-gray-900">Comment ça fonctionne</h3>
+        <h3 className="text-sm font-bold text-gray-900">{tp('Comment ça fonctionne')}</h3>
         <div className="space-y-2 text-xs text-gray-600">
           <div className="flex items-start gap-2">
             <span className="w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">1</span>
-            <p><strong>Pays définis</strong> — Seuls les clients dans ces pays peuvent commander. Message d'erreur sinon.</p>
+            <p><strong>{tp('Pays définis')}</strong> {tp('— Seuls les clients dans ces pays peuvent commander. Message d\'erreur sinon.')}</p>
           </div>
           <div className="flex items-start gap-2">
             <span className="w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">2</span>
-            <p><strong>Zone de livraison</strong> — Si la ville du client correspond à une zone, la livraison est proposée avec paiement à la réception + frais de livraison définis.</p>
+            <p><strong>{tp('Zone de livraison')}</strong> {tp('— Si la ville du client correspond à une zone, la livraison est proposée avec paiement à la réception + frais de livraison définis.')}</p>
           </div>
           <div className="flex items-start gap-2">
             <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">3</span>
-            <p><strong>Hors zone</strong> — Si la ville n'est dans aucune zone (mais le pays est ok), l'expédition est proposée : le client doit payer avant l'envoi.</p>
+            <p><strong>{tp('Hors zone')}</strong> {tp('— Si la ville n\'est dans aucune zone (mais le pays est ok), l\'expédition est proposée : le client doit payer avant l\'envoi.')}</p>
           </div>
           <div className="flex items-start gap-2">
             <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">4</span>
-            <p><strong>Pays non couvert</strong> — Message : « Nous ne livrons pas dans ce pays. »</p>
+            <p><strong>{tp('Pays non couvert')}</strong> {tp('— Message : « Nous ne livrons pas dans ce pays. »')}</p>
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { livreurApi } from '../services/livreurApi.js';
+import { tp } from '../../i18n/platform.js';
 
 export default function AvailableOrders() {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ export default function AvailableOrders() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-gray-900">Courses disponibles</h1>
+          <h1 className="text-xl font-bold text-gray-900">{tp('Courses disponibles')}</h1>
           <button
             onClick={loadOrders}
             className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center active:scale-95 transition-transform"
@@ -88,7 +89,7 @@ export default function AvailableOrders() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Rechercher..."
+            placeholder={tp('Rechercher...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-300"
@@ -100,7 +101,7 @@ export default function AvailableOrders() {
           <Filter size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Filtrer par ville..."
+            placeholder={tp('Filtrer par ville...')}
             value={filterCity}
             onChange={(e) => setFilterCity(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && loadOrders()}
@@ -138,8 +139,8 @@ export default function AvailableOrders() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Package size={48} className="text-gray-200 mb-3" />
-            <p className="text-gray-500 font-medium">Aucune course disponible</p>
-            <p className="text-gray-400 text-sm mt-1">Revenez dans quelques instants</p>
+            <p className="text-gray-500 font-medium">{tp('Aucune course disponible')}</p>
+            <p className="text-gray-400 text-sm mt-1">{tp('Revenez dans quelques instants')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -180,7 +181,7 @@ function OrderAvailableCard({ order, onAccept, accepting, onView }) {
           <div>
             <span className="text-xs font-mono text-gray-400">{order.orderId}</span>
             <h3 className="font-semibold text-gray-900 text-base mt-0.5">
-              {order.clientName || 'Client'}
+              {order.clientName || tp('Client')}
             </h3>
           </div>
           <div className="flex items-center gap-1 text-gray-400 text-xs">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { tp } from '../i18n/platform.js';
 
 /**
  * Bannière d'erreur professionnelle avec lien vers le support.
@@ -40,7 +41,7 @@ const ErrorBanner = ({ message, detail, onDismiss, className = '' }) => {
             onClick={openSupport}
             className="font-semibold underline underline-offset-2 hover:text-red-800 transition-colors"
           >
-            contactez le support
+            {tp('contactez le support')}
           </button>
           {' '}— nous répondons rapidement.
         </p>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { tp } from '../i18n/platform.js';
 import { pushApi } from '../services/ecommApi';
 
 /**
@@ -74,7 +75,7 @@ export function usePushNotifications() {
   // Demander la permission et s'abonner
   const subscribeToPush = useCallback(async () => {
     if (!isSupported || !swRegistration) {
-      setError('Push notifications non supportées sur cet appareil');
+      setError(tp('Push notifications non supportées sur cet appareil'));
       return false;
     }
 
@@ -87,7 +88,7 @@ export function usePushNotifications() {
       setPermission(perm);
 
       if (perm !== 'granted') {
-        setError('Permission refusée. Activez les notifications dans les paramètres du navigateur.');
+        setError(tp('Permission refusée. Activez les notifications dans les paramètres du navigateur.'));
         setLoading(false);
         return false;
       }
@@ -99,13 +100,13 @@ export function usePushNotifications() {
         vapidPublicKey = res.data?.publicKey;
       } catch (e) {
         console.error('❌ Erreur récupération clé VAPID:', e);
-        setError('Impossible de récupérer la configuration push du serveur');
+        setError(tp('Impossible de récupérer la configuration push du serveur'));
         setLoading(false);
         return false;
       }
 
       if (!vapidPublicKey) {
-        setError('Clé VAPID non configurée sur le serveur');
+        setError(tp('Clé VAPID non configurée sur le serveur'));
         setLoading(false);
         return false;
       }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const STATUS_LABELS = {
   delivered: 'Livrée', returned: 'Retour', cancelled: 'Annulée',
@@ -15,9 +16,9 @@ const STATUS_META = {
 
 const TABS = [
   { key: 'all', label: 'Tout' },
-  { key: 'delivered', label: 'Livré' },
+  { key: 'delivered', get label() { return tp('Livré'); } },
   { key: 'returned', label: 'Retour' },
-  { key: 'cancelled', label: 'Annulé' },
+  { key: 'cancelled', get label() { return tp('Annulé'); } },
 ];
 
 const LivreurHistoryPage = () => {
@@ -58,8 +59,8 @@ const LivreurHistoryPage = () => {
   return (
     <div className="p-3 sm:p-6 max-w-[900px] mx-auto space-y-5">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">📋 Historique</h1>
-        <p className="text-sm text-gray-400 mt-0.5">Toutes vos livraisons terminées</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('📋 Historique')}</h1>
+        <p className="text-sm text-gray-400 mt-0.5">{tp('Toutes vos livraisons terminées')}</p>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
@@ -76,12 +77,12 @@ const LivreurHistoryPage = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center h-48 gap-3">
           <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-          <p className="text-sm text-gray-400">Chargement…</p>
+          <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
-          <p className="text-gray-500 font-medium">Aucun historique</p>
-          <p className="text-xs text-gray-400 mt-1">Vos livraisons terminées apparaîtront ici</p>
+          <p className="text-gray-500 font-medium">{tp('Aucun historique')}</p>
+          <p className="text-xs text-gray-400 mt-1">{tp('Vos livraisons terminées apparaîtront ici')}</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -94,7 +95,7 @@ const LivreurHistoryPage = () => {
                   return (
                     <Link key={order._id} to={`/ecom/livreur/delivery/${order._id}`} className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-semibold text-gray-900">{order.clientName || order.clientPhone || 'Client'}</span>
+                        <span className="text-sm font-semibold text-gray-900">{order.clientName || order.clientPhone || tp('Client')}</span>
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: sm.bg, color: sm.text }}>
                           {STATUS_LABELS[order.status] || order.status}
                         </span>

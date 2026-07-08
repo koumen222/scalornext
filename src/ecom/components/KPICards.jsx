@@ -1,4 +1,5 @@
 ﻿import React from 'react';
+import { tp } from '../i18n/platform.js';
 
 const KPICards = ({ stats, fmt }) => {
   const deliveryRate = stats.total ? ((stats.delivered || 0) / stats.total * 100).toFixed(1) : 0;
@@ -31,7 +32,7 @@ const KPICards = ({ stats, fmt }) => {
     {
       title: 'Taux retour',
       value: `${returnRate}%`,
-      subtitle: 'Retours traités',
+      get subtitle() { return tp('Retours traités'); },
       color: 'orange',
       icon: (
         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

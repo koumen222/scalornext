@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { tp } from '../i18n/platform.js';
 import { safeHtml } from '../utils/sanitize';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -121,14 +122,14 @@ const SortableSection = ({ section, isSelected, onSelect, onDelete, onDuplicate 
           <button
             onClick={(e) => { e.stopPropagation(); onDuplicate(section.id); }}
             className="p-1.5 hover:bg-gray-100 rounded-lg transition"
-            title="Dupliquer"
+            title={tp('Dupliquer')}
           >
             <Copy className="w-3.5 h-3.5 text-gray-500" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(section.id); }}
             className="p-1.5 hover:bg-red-100 rounded-lg transition"
-            title="Supprimer"
+            title={tp('Supprimer')}
           >
             <Trash2 className="w-3.5 h-3.5 text-red-500" />
           </button>
@@ -144,7 +145,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
     return (
       <div className="p-6 text-center text-gray-500">
         <Settings className="w-12 h-12 mx-auto mb-2 opacity-50" />
-        <p>Sélectionnez une section pour la modifier</p>
+        <p>{tp('Sélectionnez une section pour la modifier')}</p>
       </div>
     );
   }
@@ -163,47 +164,47 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           <span>{SECTION_TEMPLATES[section.type]?.icon}</span>
           {section.label || section.type}
         </h3>
-        <p className="text-xs text-gray-500 mt-1">Personnalisez cette section</p>
+        <p className="text-xs text-gray-500 mt-1">{tp('Personnalisez cette section')}</p>
       </div>
 
       {/* Hero Section Properties */}
       {section.type === 'hero' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Titre</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
               onChange={(e) => updateConfig('title', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Titre principal"
+              placeholder={tp('Titre principal')}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Sous-titre</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Sous-titre')}</label>
             <textarea
               value={section.config.subtitle || ''}
               onChange={(e) => updateConfig('subtitle', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows={2}
-              placeholder="Description"
+              placeholder={tp('Description')}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Texte du bouton</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Texte du bouton')}</label>
             <input
               type="text"
               value={section.config.ctaText || ''}
               onChange={(e) => updateConfig('ctaText', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Voir nos produits"
+              placeholder={tp('Voir nos produits')}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Image de fond</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Image de fond')}</label>
             <input
               type="url"
               value={section.config.bgImage || ''}
@@ -214,16 +215,16 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Hauteur</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Hauteur')}</label>
             <select
               value={section.config.height || 'large'}
               onChange={(e) => updateConfig('height', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="small">Petite</option>
-              <option value="medium">Moyenne</option>
-              <option value="large">Grande</option>
-              <option value="full">Plein écran</option>
+              <option value="small">{tp('Petite')}</option>
+              <option value="medium">{tp('Moyenne')}</option>
+              <option value="large">{tp('Grande')}</option>
+              <option value="full">{tp('Plein écran')}</option>
             </select>
           </div>
         </>
@@ -233,18 +234,18 @@ const PropertyEditor = ({ section, onChange, theme }) => {
       {section.type === 'featured_products' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Titre</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
               onChange={(e) => updateConfig('title', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Nos Produits"
+              placeholder={tp('Nos Produits')}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Nombre de produits</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Nombre de produits')}</label>
             <input
               type="number"
               value={section.config.count || 8}
@@ -256,16 +257,16 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Colonnes</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Colonnes')}</label>
             <select
               value={section.config.columns || 4}
               onChange={(e) => updateConfig('columns', parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="2">2 colonnes</option>
-              <option value="3">3 colonnes</option>
-              <option value="4">4 colonnes</option>
-              <option value="5">5 colonnes</option>
+              <option value="2">{tp('2 colonnes')}</option>
+              <option value="3">{tp('3 colonnes')}</option>
+              <option value="4">{tp('4 colonnes')}</option>
+              <option value="5">{tp('5 colonnes')}</option>
             </select>
           </div>
         </>
@@ -275,24 +276,24 @@ const PropertyEditor = ({ section, onChange, theme }) => {
       {section.type === 'text' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Titre</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
               onChange={(e) => updateConfig('title', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Titre de section"
+              placeholder={tp('Titre de section')}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Contenu</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Contenu')}</label>
             <textarea
               value={section.config.content || ''}
               onChange={(e) => updateConfig('content', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows={4}
-              placeholder="Votre contenu ici..."
+              placeholder={tp('Votre contenu ici...')}
             />
           </div>
         </>
@@ -302,29 +303,29 @@ const PropertyEditor = ({ section, onChange, theme }) => {
       {section.type === 'cta' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Titre</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
               onChange={(e) => updateConfig('title', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Prêt à commander ?"
+              placeholder={tp('Prêt à commander ?')}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Texte du bouton</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Texte du bouton')}</label>
             <input
               type="text"
               value={section.config.buttonText || ''}
               onChange={(e) => updateConfig('buttonText', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Commander maintenant"
+              placeholder={tp('Commander maintenant')}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Lien du bouton</label>
+            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Lien du bouton')}</label>
             <input
               type="text"
               value={section.config.buttonUrl || ''}
@@ -371,7 +372,7 @@ const SectionPreview = ({ section, theme }) => {
                 fontFamily: theme?.font || 'Inter'
               }}
             >
-              {config.title || 'Titre du hero'}
+              {config.title || tp('Titre du hero')}
             </h1>
             {config.subtitle && (
               <p 
@@ -404,7 +405,7 @@ const SectionPreview = ({ section, theme }) => {
               className="text-3xl md:text-4xl font-black text-center mb-10"
               style={{ color: theme?.text || '#111827', fontFamily: theme?.font || 'Inter' }}
             >
-              {config.title || 'Nos Produits'}
+              {config.title || tp('Nos Produits')}
             </h2>
             <div className={`grid gap-6 grid-cols-${config.columns || 4}`}>
               {Array.from({ length: Math.min(config.count || 8, 8) }).map((_, i) => (
@@ -413,8 +414,8 @@ const SectionPreview = ({ section, theme }) => {
                     <span className="text-gray-400 text-sm">Produit {i + 1}</span>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-2">Produit exemple</h3>
-                    <p className="text-lg font-black" style={{ color: theme?.cta || '#0F6B4F' }}>25,000 XAF</p>
+                    <h3 className="font-semibold text-gray-900 mb-2">{tp('Produit exemple')}</h3>
+                    <p className="text-lg font-black" style={{ color: theme?.cta || '#0F6B4F' }}>{tp('25,000 XAF')}</p>
                   </div>
                 </div>
               ))}
@@ -478,7 +479,7 @@ const SectionPreview = ({ section, theme }) => {
         <section className="py-8 px-4 bg-gray-50 border-2 border-dashed border-gray-300">
           <div className="text-center text-gray-500">
             <p>Section: {section.type}</p>
-            <p className="text-sm">Aperçu non disponible</p>
+            <p className="text-sm">{tp('Aperçu non disponible')}</p>
           </div>
         </section>
       );
@@ -573,13 +574,13 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
       {/* Left Sidebar - Sections List */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-bold text-gray-900">Site Builder</h2>
-          <p className="text-sm text-gray-500">Glissez-déposez pour réorganiser</p>
+          <h2 className="text-lg font-bold text-gray-900">{tp('Site Builder')}</h2>
+          <p className="text-sm text-gray-500">{tp('Glissez-déposez pour réorganiser')}</p>
         </div>
         
         {/* Add Section Templates */}
         <div className="p-4 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Ajouter une section</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Ajouter une section')}</h3>
           <div className="grid grid-cols-2 gap-2">
             {Object.entries(SECTION_TEMPLATES).map(([key, template]) => (
               <button
@@ -624,7 +625,7 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold transition hover:bg-blue-700 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+            {saving ? 'Sauvegarde...' : tp('Sauvegarder')}
           </button>
         </div>
       </div>
@@ -634,7 +635,7 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
         {/* Preview Toolbar */}
         <div className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
-            <h3 className="font-semibold text-gray-900">Aperçu</h3>
+            <h3 className="font-semibold text-gray-900">{tp('Aperçu')}</h3>
             
             {/* Device Selector */}
             <div className="flex items-center border border-gray-200 rounded-lg p-1">
@@ -671,7 +672,7 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
               {sections.length === 0 ? (
                 <div className="py-20 text-center text-gray-500">
                   <Layout className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Ajoutez des sections pour voir l'aperçu</p>
+                  <p>{tp('Ajoutez des sections pour voir l\'aperçu')}</p>
                 </div>
               ) : (
                 sections.map((section) => (
@@ -702,7 +703,7 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
       {/* Right Sidebar - Properties */}
       <div className="w-80 bg-white border-l border-gray-200">
         <div className="p-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">Propriétés</h3>
+          <h3 className="font-semibold text-gray-900">{tp('Propriétés')}</h3>
         </div>
         <div className="overflow-y-auto">
           <PropertyEditor 

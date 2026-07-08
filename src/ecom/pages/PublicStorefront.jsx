@@ -1687,6 +1687,94 @@ const AiSpacerSection = ({ cfg }) => (
   <div style={{ height: cfg.height || 40, backgroundColor: cfg.backgroundColor || 'transparent' }} />
 );
 
+// ─── COMPTE À REBOURS ──────────────────────────────────────────────────────────
+const AiCountdown = ({ cfg }) => {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const end = cfg.endDate ? new Date(cfg.endDate).getTime() : 0;
+  if (!end) return null;
+  const diff = Math.max(0, end - now);
+  const expired = diff === 0;
+  const pad = (n) => String(n).padStart(2, '0');
+  const blocks = [
+    [Math.floor(diff / 86400000), 'Jours'],
+    [Math.floor((diff % 86400000) / 3600000), 'Heures'],
+    [Math.floor((diff % 3600000) / 60000), 'Min'],
+    [Math.floor((diff % 60000) / 1000), 'Sec'],
+  ];
+  return (
+    <section style={{ background: cfg.backgroundColor || '#111827', color: cfg.textColor || '#fff', padding: 'clamp(40px, 6vw, 64px) 24px', textAlign: 'center', fontFamily: 'var(--s-font)' }}>
+      {cfg.title && <h2 style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontWeight: 900, margin: '0 0 24px', letterSpacing: '-0.02em' }}>{cfg.title}</h2>}
+      {expired ? (
+        <p style={{ fontSize: 16, fontWeight: 700, opacity: 0.85, margin: 0 }}>{cfg.expiredText || "L'offre est terminée"}</p>
+      ) : (
+        <div style={{ display: 'flex', gap: 'clamp(8px, 2vw, 14px)', justifyContent: 'center' }}>
+          {blocks.map(([v, l]) => (
+            <div key={l} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 14, padding: 'clamp(10px, 2vw, 16px) clamp(12px, 2.5vw, 20px)', minWidth: 'clamp(58px, 14vw, 84px)' }}>
+              <div style={{ fontSize: 'clamp(24px, 5vw, 38px)', fontWeight: 900, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{pad(v)}</div>
+              <div style={{ fontSize: 'clamp(9px, 1.8vw, 11px)', fontWeight: 700, opacity: 0.6, marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {cfg.ctaText && !expired && (
+        <a href={cfg.ctaLink || '#products'} style={{ display: 'inline-block', marginTop: 26, padding: '13px 28px', background: '#fff', color: '#111', borderRadius: 999, fontSize: 14, fontWeight: 800, textDecoration: 'none' }}>{cfg.ctaText}</a>
+      )}
+    </section>
+  );
+};
+
+// ─── LOGOS / PARTENAIRES ───────────────────────────────────────────────────────
+const AiLogoList = ({ cfg }) => {
+  const logos = (cfg.logos || []).map((l) => (typeof l === 'string' ? { url: l } : l)).filter((l) => l?.url);
+  if (logos.length === 0) return null;
+  const marquee = cfg.marquee !== false && logos.length > 2;
+  const imgStyle = { height: 'clamp(30px, 5vw, 44px)', objectFit: 'contain', filter: cfg.grayscale !== false ? 'grayscale(1) opacity(0.65)' : 'none', flexShrink: 0 };
+  const row = logos.map((logo, i) => <img key={i} src={logo.url} alt={logo.alt || ''} style={imgStyle} loading="lazy" />);
+  return (
+    <section style={{ background: cfg.backgroundColor || '#fff', padding: 'clamp(32px, 5vw, 52px) 0', textAlign: 'center', overflow: 'hidden', fontFamily: 'var(--s-font)' }}>
+      {cfg.title && <h2 style={{ fontSize: 'clamp(14px, 2.2vw, 17px)', fontWeight: 800, color: 'var(--s-text2)', margin: '0 0 26px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{cfg.title}</h2>}
+      {marquee ? (
+        <div style={{ display: 'flex', overflow: 'hidden' }}>
+          <style>{`@keyframes logos-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+          <div style={{ display: 'flex', gap: 'clamp(40px, 8vw, 72px)', alignItems: 'center', animation: 'logos-scroll 28s linear infinite', paddingRight: 'clamp(40px, 8vw, 72px)' }}>
+            {row}
+            {logos.map((logo, i) => <img key={`dup-${i}`} src={logo.url} alt="" aria-hidden="true" style={imgStyle} loading="lazy" />)}
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: 'clamp(28px, 6vw, 56px)', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', padding: '0 24px' }}>{row}</div>
+      )}
+    </section>
+  );
+};
+
+// ─── CODE PERSONNALISÉ (HTML / CSS / JS) — équivalent "Custom Liquid" Shopify ──
+const AiCustomCode = ({ cfg }) => {
+  const jsRef = useRef(null);
+  useEffect(() => {
+    const code = String(cfg.js || '').trim();
+    if (!code || !jsRef.current) return undefined;
+    // Exécution du JS marchand après le rendu du HTML de la section
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.text = `try {\n${code}\n} catch (e) { console.error('[Section code perso]', e); }`;
+    jsRef.current.appendChild(script);
+    return () => { try { script.remove(); } catch { /* noop */ } };
+  }, [cfg.js]);
+
+  if (!(cfg.html || '').trim() && !(cfg.js || '').trim()) return null;
+  return (
+    <section ref={jsRef}>
+      {(cfg.css || '').trim() && <style dangerouslySetInnerHTML={{ __html: cfg.css }} />}
+      {(cfg.html || '').trim() && <div dangerouslySetInnerHTML={{ __html: cfg.html }} />}
+    </section>
+  );
+};
+
 // Labels lisibles pour les types de sections
 const SECTION_TYPE_LABELS = {
   hero: 'Hero',
@@ -1707,6 +1795,9 @@ const SECTION_TYPE_LABELS = {
   featured_collection: 'Collection vedette',
   multicolumn: 'Multicolonne',
   icon_bar: 'Barre icônes',
+  countdown: 'Compte à rebours',
+  logo_list: 'Logos / Partenaires',
+  custom_code: 'Code personnalisé',
   before_after: 'Avant / Après',
   video: 'Vidéo',
   pricing_table: 'Tableau de prix',
@@ -1771,9 +1862,35 @@ const SectionRenderer = ({ section, store, products, prefix }) => {
       case 'video':             return <AiVideoSection cfg={cfg} />;
       case 'pricing_table':     return <AiPricingTable cfg={cfg} />;
       case 'ticker':            return <AiTicker cfg={cfg} />;
+      case 'countdown':         return <AiCountdown cfg={cfg} />;
+      case 'logo_list':         return <AiLogoList cfg={cfg} />;
+      case 'custom_code':       return <AiCustomCode cfg={cfg} />;
       default:                  return null;
     }
   };
+
+  // ── Options "Apparence & avancé" du Theme Builder (cfg._style) ──────────────
+  // Espacements, couleurs de surcharge, visibilité par appareil, ancre, CSS scoped.
+  const st = cfg?._style || {};
+  const styleWrap = {
+    ...(st.paddingTop != null && st.paddingTop !== '' ? { paddingTop: st.paddingTop } : {}),
+    ...(st.paddingBottom != null && st.paddingBottom !== '' ? { paddingBottom: st.paddingBottom } : {}),
+    ...(st.backgroundColor ? { background: st.backgroundColor } : {}),
+    ...(st.textColor ? { color: st.textColor } : {}),
+  };
+  const scopeClass = `sec-${String(sectionId || section.type).replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const visibilityClass = `${st.hideMobile ? ' sf-hide-mobile' : ''}${st.hideDesktop ? ' sf-hide-desktop' : ''}`;
+  const hasStyleWrap = Object.keys(styleWrap).length > 0 || visibilityClass || st.anchorId || st.customCss;
+
+  const content = hasStyleWrap ? (
+    <div id={st.anchorId || undefined} className={`${scopeClass}${visibilityClass}`} style={styleWrap}>
+      {(st.hideMobile || st.hideDesktop) && (
+        <style>{'@media (max-width:767px){.sf-hide-mobile{display:none !important}}@media (min-width:768px){.sf-hide-desktop{display:none !important}}'}</style>
+      )}
+      {st.customCss && <style dangerouslySetInnerHTML={{ __html: `.${scopeClass} { }\n${st.customCss}` }} />}
+      {renderSection()}
+    </div>
+  ) : renderSection();
 
   return (
     <EditableWrapper
@@ -1784,7 +1901,7 @@ const SectionRenderer = ({ section, store, products, prefix }) => {
       canDelete={section.type !== 'hero' && section.type !== 'products'}
       canHide={section.type !== 'hero'}
     >
-      {renderSection()}
+      {content}
     </EditableWrapper>
   );
 };
@@ -2357,7 +2474,7 @@ const ProductCard = ({ product, prefix, store, subdomain }) => {
               color: 'var(--s-primary)', 
               fontFamily: 'var(--s-font)' 
             }}>
-              {fmt(product.price, store?.currency || product.currency || 'XAF')}
+              {fmt(product.price, store?.currency || 'XAF')}
             </span>
             {hasDiscount && (
               <span style={{ 
@@ -2366,7 +2483,7 @@ const ProductCard = ({ product, prefix, store, subdomain }) => {
                 textDecoration: 'line-through',
                 fontFamily: 'var(--s-font)',
               }}>
-                {fmt(product.compareAtPrice, store?.currency || product.currency || 'XAF')}
+                {fmt(product.compareAtPrice, store?.currency || 'XAF')}
               </span>
             )}
           </div>
@@ -2472,11 +2589,11 @@ const CollectionProductCard = React.memo(({ product, prefix, store, subdomain })
 
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 21, fontWeight: 900, color: 'var(--s-text)' }}>
-              {fmt(product.price, store?.currency || product.currency || 'XAF')}
+              {fmt(product.price, store?.currency || 'XAF')}
             </span>
             {hasDiscount && (
               <span style={{ fontSize: 13, color: 'var(--s-text2)', textDecoration: 'line-through' }}>
-                {fmt(product.compareAtPrice, store?.currency || product.currency || 'XAF')}
+                {fmt(product.compareAtPrice, store?.currency || 'XAF')}
               </span>
             )}
           </div>

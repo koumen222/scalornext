@@ -2,6 +2,7 @@
 import { useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const DecisionForm = () => {
   const navigate = useNavigate();
@@ -79,8 +80,8 @@ const DecisionForm = () => {
   return (
     <div className="p-3 sm:p-4 lg:p-6">
       <div className="mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Nouvelle décision</h1>
-        <p className="text-gray-600 mt-2">Prenez une décision stratégique pour un produit</p>
+        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{tp('Nouvelle décision')}</h1>
+        <p className="text-gray-600 mt-2">{tp('Prenez une décision stratégique pour un produit')}</p>
       </div>
 
       {error && (
@@ -102,7 +103,7 @@ const DecisionForm = () => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-600 focus:border-primary-600"
             >
-              <option value="">Sélectionnez un produit</option>
+              <option value="">{tp('Sélectionnez un produit')}</option>
               {products.map((product) => (
                 <option key={product._id} value={product._id}>
                   {product.name}
@@ -122,9 +123,9 @@ const DecisionForm = () => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-600 focus:border-primary-600"
             >
-              <option value="continue">Continuer</option>
-              <option value="scale">Scaler</option>
-              <option value="stop">Arrêter</option>
+              <option value="continue">{tp('Continuer')}</option>
+              <option value="scale">{tp('Scaler')}</option>
+              <option value="stop">{tp('Arrêter')}</option>
             </select>
             {formData.type && (
               <p className="mt-1 text-sm text-gray-500">{getTypeDescription()}</p>
@@ -142,22 +143,22 @@ const DecisionForm = () => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-600 focus:border-primary-600"
             >
-              <option value="low">Basse</option>
-              <option value="medium">Moyenne</option>
-              <option value="high">Haute</option>
+              <option value="low">{tp('Basse')}</option>
+              <option value="medium">{tp('Moyenne')}</option>
+              <option value="high">{tp('Haute')}</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Assigné ù 
+              {tp('Assigné ù')} 
             </label>
             <input
               type="text"
               name="assignedTo"
               value={formData.assignedTo}
               onChange={handleChange}
-              placeholder="Nom de la personne assignée"
+              placeholder={tp('Nom de la personne assignée')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-600 focus:border-primary-600"
             />
           </div>
@@ -173,21 +174,21 @@ const DecisionForm = () => {
             rows="4"
             value={formData.reason}
             onChange={handleChange}
-            placeholder="Expliquez pourquoi vous prenez cette décision..."
+            placeholder={tp('Expliquez pourquoi vous prenez cette décision...')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-600 focus:border-primary-600"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Notes supplémentaires
+            {tp('Notes supplémentaires')}
           </label>
           <textarea
             name="notes"
             rows="3"
             value={formData.notes}
             onChange={handleChange}
-            placeholder="Informations complémentaires, actions ù  prendre, etc..."
+            placeholder={tp('Informations complémentaires, actions ù  prendre, etc...')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-600 focus:border-primary-600"
           />
         </div>
@@ -195,12 +196,12 @@ const DecisionForm = () => {
         {/* Aperçu de la décision */}
         {formData.productId && formData.type && (
           <div className="bg-primary-50 p-4 rounded-lg">
-            <h3 className="text-sm font-medium text-primary-900 mb-2">Aperçu de la décision</h3>
+            <h3 className="text-sm font-medium text-primary-900 mb-2">{tp('Aperçu de la décision')}</h3>
             <div className="text-sm text-primary-700">
-              <p><strong>Produit:</strong> {products.find(p => p._id === formData.productId)?.name}</p>
-              <p><strong>Action:</strong> {formData.type === 'scale' ? 'Scaler le produit' : formData.type === 'stop' ? 'Arrêter le produit' : 'Continuer le produit'}</p>
-              <p><strong>Priorité:</strong> {formData.priority === 'high' ? 'Haute' : formData.priority === 'medium' ? 'Moyenne' : 'Basse'}</p>
-              {formData.assignedTo && <p><strong>Assigné ù :</strong> {formData.assignedTo}</p>}
+              <p><strong>{tp('Produit:')}</strong> {products.find(p => p._id === formData.productId)?.name}</p>
+              <p><strong>{tp('Action:')}</strong> {formData.type === 'scale' ? 'Scaler le produit' : formData.type === 'stop' ? 'Arrêter le produit' : tp('Continuer le produit')}</p>
+              <p><strong>{tp('Priorité:')}</strong> {formData.priority === 'high' ? 'Haute' : formData.priority === 'medium' ? 'Moyenne' : tp('Basse')}</p>
+              {formData.assignedTo && <p><strong>{tp('Assigné ù :')}</strong> {formData.assignedTo}</p>}
             </div>
           </div>
         )}
@@ -211,14 +212,14 @@ const DecisionForm = () => {
             onClick={() => navigate('/ecom/decisions')}
             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
           >
-            Annuler
+            {tp('Annuler')}
           </button>
           <button
             type="submit"
             disabled={loading}
             className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
           >
-            {loading ? 'Création...' : 'Créer la décision'}
+            {loading ? 'Création...' : tp('Créer la décision')}
           </button>
         </div>
       </form>

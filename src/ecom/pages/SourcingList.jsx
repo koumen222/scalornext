@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { tp } from '../i18n/platform.js';
 import { useNavigate } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi';
 import { useMoney } from '../hooks/useMoney';
@@ -106,9 +107,9 @@ const Sheet = ({ open, onClose, title, children, size = 'sm' }) => {
 // ─── Status pill — pill propre avec bg + icône (style Linear/Stripe) ──
 const StatusPill = ({ status }) => {
   const cfg = {
-    in_transit: { bg: 'bg-amber-50',    text: 'text-amber-800',   ring: 'ring-amber-200/60',   Icon: Plane,   label: 'En transit' },
-    received:   { bg: 'bg-primary-50',  text: 'text-primary-700', ring: 'ring-primary-200/60', Icon: Check,   label: 'Reçue' },
-    cancelled:  { bg: 'bg-gray-100',    text: 'text-gray-600',    ring: 'ring-gray-200',       Icon: XCircle, label: 'Annulée' },
+    in_transit: { bg: 'bg-amber-50',    text: 'text-amber-800',   ring: 'ring-amber-200/60',   Icon: Plane,   get label() { return tp('En transit'); } },
+    received:   { bg: 'bg-primary-50',  text: 'text-primary-700', ring: 'ring-primary-200/60', Icon: Check,   get label() { return tp('Reçue'); } },
+    cancelled:  { bg: 'bg-gray-100',    text: 'text-gray-600',    ring: 'ring-gray-200',       Icon: XCircle, get label() { return tp('Annulée'); } },
   }[status] || { bg: 'bg-gray-100', text: 'text-gray-600', ring: 'ring-gray-200', Icon: Circle, label: status };
   const { bg, text, ring, Icon, label } = cfg;
 
@@ -128,7 +129,7 @@ const PaymentPill = ({ paid, label }) => (
       : 'bg-red-50 text-red-700 ring-red-200/60'
   }`}>
     {paid ? <Check size={11} strokeWidth={2.5} /> : <XCircle size={11} strokeWidth={2.5} />}
-    {label || (paid ? 'Payé' : 'Impayé')}
+    {label || (paid ? tp('Payé') : tp('Impayé'))}
   </span>
 );
 
@@ -136,7 +137,7 @@ const PaymentPill = ({ paid, label }) => (
 const SourcingPill = ({ sourcing }) => (
   <span className="inline-flex items-center gap-1 px-2 h-[22px] rounded-md text-[11px] font-medium bg-gray-100 text-gray-700 ring-1 ring-inset ring-gray-200">
     <span className="text-[10px]">{sourcing === 'chine' ? '🇨🇳' : '🇨🇲'}</span>
-    {sourcing === 'chine' ? 'Chine' : 'Local'}
+    {sourcing === 'chine' ? 'Chine' : tp('Local')}
   </span>
 );
 
@@ -148,7 +149,7 @@ const RowMenu = ({ order, onOpen, onStatusChange, onDelete }) => {
       <button
         onClick={() => setOpen(o => !o)}
         className={`w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 border border-gray-200 ${T}`}
-        aria-label="Actions"
+        aria-label={tp('Actions')}
       >
         <MoreHorizontal size={15} />
       </button>
@@ -158,23 +159,23 @@ const RowMenu = ({ order, onOpen, onStatusChange, onDelete }) => {
           <div className="absolute right-0 top-9 z-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden min-w-[170px]">
             <button onClick={() => { setOpen(false); onOpen(order); }}
               className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 ${T}`}>
-              Modifier
+              {tp('Modifier')}
             </button>
             {order.status === 'in_transit' && (
               <button onClick={() => { setOpen(false); onStatusChange(order._id, 'receive'); }}
                 className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-primary-700 hover:bg-primary-50 border-t border-gray-100 ${T}`}>
-                Marquer reçue
+                {tp('Marquer reçue')}
               </button>
             )}
             {order.status === 'received' && (
               <button onClick={() => { setOpen(false); onStatusChange(order._id, 'back-to-transit'); }}
                 className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-amber-700 hover:bg-amber-50 border-t border-gray-100 ${T}`}>
-                Repasser en transit
+                {tp('Repasser en transit')}
               </button>
             )}
             <button onClick={() => { setOpen(false); onDelete(order._id); }}
               className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 ${T}`}>
-              Supprimer
+              {tp('Supprimer')}
             </button>
           </div>
         </>
@@ -196,7 +197,7 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
         <div key={order._id} className="bg-white px-4 py-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-gray-900 text-sm leading-tight">{order.productName || 'Produit sans nom'}</p>
+              <p className="font-semibold text-gray-900 text-sm leading-tight">{order.productName || tp('Produit sans nom')}</p>
               {order.supplierName && <p className="text-xs text-gray-400 mt-0.5">{order.supplierName}</p>}
             </div>
             <RowMenu order={order} onOpen={onOpen} onStatusChange={onStatusChange} onDelete={onDelete} />
@@ -208,11 +209,11 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {order.sourcing === 'chine' ? (
               <>
-                <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? 'Achat payé' : 'Achat impayé'} />
-                <PaymentPill paid={order.paidTransport} label={order.paidTransport ? 'Transport payé' : 'Transport impayé'} />
+                <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? tp('Achat payé') : tp('Achat impayé')} />
+                <PaymentPill paid={order.paidTransport} label={order.paidTransport ? tp('Transport payé') : tp('Transport impayé')} />
               </>
             ) : (
-              <PaymentPill paid={order.paid} label={order.paid ? 'Payé' : 'Impayé'} />
+              <PaymentPill paid={order.paid} label={order.paid ? tp('Payé') : tp('Impayé')} />
             )}
           </div>
           <div className="mt-2.5 flex items-center gap-4 text-xs text-gray-500">
@@ -241,7 +242,7 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
       </colgroup>
       <thead>
         <tr className="bg-gray-50">
-          {['Produit', 'Sourcing', 'Qté', 'Achat', 'Transport', 'Total', 'Paiement', 'Statut', 'Actions'].map(h => (
+          {[tp('Produit'), tp('Sourcing'), tp('Qté'), tp('Achat'), tp('Transport'), tp('Total'), tp('Paiement'), tp('Statut'), tp('Actions')].map(h => (
             <th key={h} className="px-3 py-2.5 text-left text-xs font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap border-b border-gray-200">
               {h}
             </th>
@@ -259,7 +260,7 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
               {/* Produit */}
               <td className="px-3 py-3 align-top">
                 <p className="font-semibold text-gray-900 leading-tight break-words">
-                  {order.productName || 'Produit sans nom'}
+                  {order.productName || tp('Produit sans nom')}
                 </p>
                 {order.supplierName && (
                   <p className="text-xs text-gray-400 mt-0.5 break-words">{order.supplierName}</p>
@@ -298,11 +299,11 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
               <td className="px-3 py-3 align-top">
                 {order.sourcing === 'chine' ? (
                   <div className="flex flex-col gap-1">
-                    <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? 'Achat payé' : 'Achat impayé'} />
-                    <PaymentPill paid={order.paidTransport} label={order.paidTransport ? 'Transport payé' : 'Transport impayé'} />
+                    <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? tp('Achat payé') : tp('Achat impayé')} />
+                    <PaymentPill paid={order.paidTransport} label={order.paidTransport ? tp('Transport payé') : tp('Transport impayé')} />
                   </div>
                 ) : (
-                  <PaymentPill paid={order.paid} label={order.paid ? 'Payé' : 'Impayé'} />
+                  <PaymentPill paid={order.paid} label={order.paid ? tp('Payé') : tp('Impayé')} />
                 )}
               </td>
 
@@ -367,11 +368,11 @@ const SupplierRow = ({ supplier, fmt, onOpen, onEdit, onDelete }) => {
       {/* Stats */}
       <div className="hidden sm:flex items-center gap-6 shrink-0">
         <div className="text-right">
-          <p className="text-xs text-gray-500">Commandes</p>
+          <p className="text-xs text-gray-500">{tp('Commandes')}</p>
           <p className="text-sm font-semibold text-gray-900 tabular-nums">{supplier.stats?.totalOrders || 0}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-500">Dépenses</p>
+          <p className="text-xs text-gray-500">{tp('Dépenses')}</p>
           <p className="text-sm font-semibold text-gray-900 tabular-nums">{fmt(supplier.stats?.totalSpent || 0)}</p>
         </div>
       </div>
@@ -381,7 +382,7 @@ const SupplierRow = ({ supplier, fmt, onOpen, onEdit, onDelete }) => {
         <button
           onClick={(e) => { e.stopPropagation(); setMenuOpen(m => !m); }}
           className={`w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 ${T}`}
-          aria-label="Actions"
+          aria-label={tp('Actions')}
         >
           <MoreHorizontal size={16} />
         </button>
@@ -391,11 +392,11 @@ const SupplierRow = ({ supplier, fmt, onOpen, onEdit, onDelete }) => {
             <div className="absolute right-0 top-9 z-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
               <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onEdit(); }}
                 className={`block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 ${T}`}>
-                Modifier
+                {tp('Modifier')}
               </button>
               <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onDelete(); }}
                 className={`block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 ${T}`}>
-                Supprimer
+                {tp('Supprimer')}
               </button>
             </div>
           </>
@@ -630,7 +631,7 @@ export default function SourcingList() {
   };
 
   const deleteOrder = async (orderId) => {
-    if (!window.confirm('Supprimer cette commande ? Cette action est irréversible.')) return;
+    if (!window.confirm(tp('Supprimer cette commande ? Cette action est irréversible.'))) return;
     try {
       await ecomApi.delete(`/sourcing/orders/${orderId}`);
       loadOrders();
@@ -658,21 +659,21 @@ export default function SourcingList() {
       <header className="sticky top-0 z-30 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="py-4 flex items-center justify-between gap-4">
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Sourcing</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">{tp('Sourcing')}</h1>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/ecom/sourcing/stats')}
                 className={`hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 ${T}`}
               >
                 <BarChart3 size={14} strokeWidth={2} />
-                Stats
+                {tp('Stats')}
               </button>
               <button
                 onClick={() => activeTab === 'commandes' ? openOrderModal() : openSupplierModal()}
                 className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
               >
                 <Plus size={15} strokeWidth={2.5} />
-                <span className="hidden xs:inline">{activeTab === 'commandes' ? 'Commande' : 'Fournisseur'}</span>
+                <span className="hidden xs:inline">{activeTab === 'commandes' ? 'Commande' : tp('Fournisseur')}</span>
               </button>
             </div>
           </div>
@@ -681,10 +682,10 @@ export default function SourcingList() {
           <div className="pb-3 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-1 w-max">
               <Chip active={activeTab === 'commandes'} onClick={() => setActiveTab('commandes')}>
-                Commandes <span className="ml-1.5 text-xs opacity-60 tabular-nums">{orders.length}</span>
+                {tp('Commandes')} <span className="ml-1.5 text-xs opacity-60 tabular-nums">{orders.length}</span>
               </Chip>
               <Chip active={activeTab === 'fournisseurs'} onClick={() => setActiveTab('fournisseurs')}>
-                Fournisseurs <span className="ml-1.5 text-xs opacity-60 tabular-nums">{suppliers.length}</span>
+                {tp('Fournisseurs')} <span className="ml-1.5 text-xs opacity-60 tabular-nums">{suppliers.length}</span>
               </Chip>
             </div>
           </div>
@@ -709,19 +710,19 @@ export default function SourcingList() {
           {activeTab === 'commandes' && (
             <>
               <div className="flex items-center justify-between mb-2 px-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Commandes</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Commandes')}</p>
                 {orders.length > 0 && (
                   <p className="text-xs text-gray-400 tabular-nums">{orders.length}</p>
                 )}
               </div>
 
               {ordersLoading ? (
-                <div className="py-16 text-center text-sm text-gray-400">Chargement...</div>
+                <div className="py-16 text-center text-sm text-gray-400">{tp('Chargement...')}</div>
               ) : orders.length === 0 ? (
                 <div className="py-16 text-center">
                   <Package2 size={28} className="text-gray-200 mx-auto mb-4" strokeWidth={1.5} />
-                  <p className="text-sm font-medium text-gray-700 mb-1">Aucune commande</p>
-                  <p className="text-sm text-gray-500 mb-6">Créez votre première commande fournisseur</p>
+                  <p className="text-sm font-medium text-gray-700 mb-1">{tp('Aucune commande')}</p>
+                  <p className="text-sm text-gray-500 mb-6">{tp('Créez votre première commande fournisseur')}</p>
                   <button
                     onClick={() => openOrderModal()}
                     className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
@@ -757,7 +758,7 @@ export default function SourcingList() {
 
               {/* ═══ HERO METRIC — À prévoir ════════════════════════════════ */}
               <section className="pt-8 pb-2">
-                <p className="text-xs font-medium text-primary-600 uppercase tracking-wider mb-2">À prévoir</p>
+                <p className="text-xs font-medium text-primary-600 uppercase tracking-wider mb-2">{tp('À prévoir')}</p>
                 <div className="flex items-baseline gap-3 flex-wrap">
                   <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight tabular-nums leading-none ${amountToPlan > 0 ? 'text-primary-600' : 'text-gray-400'}`}>
                     {fmt(amountToPlan)}
@@ -769,13 +770,13 @@ export default function SourcingList() {
                 {(chinaPurchaseToPlan > 0 || chinaTransportToPlan > 0 || localToPlan > 0) && (
                   <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs">
                     {chinaPurchaseToPlan > 0 && (
-                      <span className="text-gray-700">Achat Chine <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaPurchaseToPlan)}</strong></span>
+                      <span className="text-gray-700">{tp('Achat Chine')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaPurchaseToPlan)}</strong></span>
                     )}
                     {chinaTransportToPlan > 0 && (
-                      <span className="text-gray-700">Transport <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaTransportToPlan)}</strong></span>
+                      <span className="text-gray-700">{tp('Transport')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaTransportToPlan)}</strong></span>
                     )}
                     {localToPlan > 0 && (
-                      <span className="text-gray-700">Local <strong className="font-semibold text-gray-900 tabular-nums">{fmt(localToPlan)}</strong></span>
+                      <span className="text-gray-700">{tp('Local')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(localToPlan)}</strong></span>
                     )}
                   </div>
                 )}
@@ -790,7 +791,7 @@ export default function SourcingList() {
                 <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" strokeWidth={2} />
                 <input
                   type="text"
-                  placeholder="Rechercher un fournisseur..."
+                  placeholder={tp('Rechercher un fournisseur...')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className={`w-full h-10 pl-9 pr-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white ${T}`}
@@ -798,20 +799,20 @@ export default function SourcingList() {
               </div>
 
               <div className="flex items-center justify-between mb-2 px-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Fournisseurs</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Fournisseurs')}</p>
                 {filteredSuppliers.length > 0 && (
                   <p className="text-xs text-gray-400 tabular-nums">{filteredSuppliers.length}</p>
                 )}
               </div>
 
               {loading ? (
-                <div className="py-16 text-center text-sm text-gray-400">Chargement...</div>
+                <div className="py-16 text-center text-sm text-gray-400">{tp('Chargement...')}</div>
               ) : filteredSuppliers.length === 0 ? (
                 <div className="py-16 text-center">
                   <Building2 size={28} className="text-gray-200 mx-auto mb-4" strokeWidth={1.5} />
-                  <p className="text-sm font-medium text-gray-700 mb-1">Aucun fournisseur</p>
+                  <p className="text-sm font-medium text-gray-700 mb-1">{tp('Aucun fournisseur')}</p>
                   <p className="text-sm text-gray-500 mb-6">
-                    {search ? 'Aucun résultat pour cette recherche' : 'Ajoutez votre premier fournisseur'}
+                    {search ? 'Aucun résultat pour cette recherche' : tp('Ajoutez votre premier fournisseur')}
                   </p>
                   {!search && (
                     <button
@@ -845,7 +846,7 @@ export default function SourcingList() {
       <button
         onClick={() => navigate('/ecom/sourcing/stats')}
         className={`sm:hidden fixed bottom-6 right-5 z-20 w-12 h-12 rounded-full bg-primary-500 text-white shadow-lg active:scale-95 flex items-center justify-center ${T}`}
-        aria-label="Statistiques"
+        aria-label={tp('Statistiques')}
       >
         <BarChart3 size={18} strokeWidth={2} />
       </button>
@@ -854,22 +855,22 @@ export default function SourcingList() {
       <Sheet
         open={showSupplierModal}
         onClose={closeSupplierModal}
-        title={editingId ? 'Modifier le fournisseur' : 'Nouveau fournisseur'}
+        title={editingId ? 'Modifier le fournisseur' : tp('Nouveau fournisseur')}
       >
         <form onSubmit={handleSubmit} className="px-6 py-6 space-y-5">
           <div>
-            <label className={labelCls}>Nom *</label>
+            <label className={labelCls}>{tp('Nom *')}</label>
             <input
               type="text" required
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
               className={inputCls}
-              placeholder="Ex: Alibaba"
+              placeholder={tp('Ex: Alibaba')}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelCls}>Téléphone</label>
+              <label className={labelCls}>{tp('Téléphone')}</label>
               <input
                 type="text"
                 value={formData.phone}
@@ -885,12 +886,12 @@ export default function SourcingList() {
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                 className={inputCls}
-                placeholder="contact@..."
+                placeholder={tp('contact@...')}
               />
             </div>
           </div>
           <div>
-            <label className={labelCls}>Lien</label>
+            <label className={labelCls}>{tp('Lien')}</label>
             <input
               type="text"
               value={formData.link}
@@ -900,13 +901,13 @@ export default function SourcingList() {
             />
           </div>
           <div>
-            <label className={labelCls}>Notes</label>
+            <label className={labelCls}>{tp('Notes')}</label>
             <textarea
               value={formData.notes}
               onChange={e => setFormData({ ...formData, notes: e.target.value })}
               className={`w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white resize-none ${T}`}
               rows="3"
-              placeholder="Notes..."
+              placeholder={tp('Notes...')}
             />
           </div>
           <div className="flex gap-2 pt-2">
@@ -915,13 +916,13 @@ export default function SourcingList() {
               onClick={closeSupplierModal}
               className={`flex-1 h-10 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 ${T}`}
             >
-              Annuler
+              {tp('Annuler')}
             </button>
             <button
               type="submit"
               className={`flex-1 h-10 rounded-xl bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
             >
-              Enregistrer
+              {tp('Enregistrer')}
             </button>
           </div>
         </form>
@@ -931,7 +932,7 @@ export default function SourcingList() {
       <Sheet
         open={showOrderModal}
         onClose={closeOrderModal}
-        title={editingOrderId ? 'Modifier la commande' : 'Nouvelle commande'}
+        title={editingOrderId ? 'Modifier la commande' : tp('Nouvelle commande')}
         size="lg"
       >
         <form id="order-form" onSubmit={handleOrderSubmit} className="px-6 py-6 space-y-6">
@@ -944,10 +945,10 @@ export default function SourcingList() {
 
           {/* Section: Produit & sourcing */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Produit</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{tp('Produit')}</p>
             <div className="space-y-3">
               <div>
-                <label className={labelCls}>Produit *</label>
+                <label className={labelCls}>{tp('Produit *')}</label>
                 <select
                   required
                   value={orderFormData.productId}
@@ -957,24 +958,24 @@ export default function SourcingList() {
                   }}
                   className={inputCls}
                 >
-                  <option value="">Sélectionnez un produit</option>
+                  <option value="">{tp('Sélectionnez un produit')}</option>
                   {products.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={labelCls}>Sourcing *</label>
+                  <label className={labelCls}>{tp('Sourcing *')}</label>
                   <select
                     value={orderFormData.sourcing}
                     onChange={(e) => setOrderFormData(prev => ({ ...prev, sourcing: e.target.value }))}
                     className={inputCls}
                   >
-                    <option value="local">🇨🇲 Local</option>
-                    <option value="chine">🇨🇳 Chine</option>
+                    <option value="local">{tp('🇨🇲 Local')}</option>
+                    <option value="chine">{tp('🇨🇳 Chine')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className={labelCls}>Quantité *</label>
+                  <label className={labelCls}>{tp('Quantité *')}</label>
                   <input
                     type="number" required min="1"
                     value={orderFormData.quantity}
@@ -985,13 +986,13 @@ export default function SourcingList() {
                 </div>
               </div>
               <div>
-                <label className={labelCls}>Fournisseur</label>
+                <label className={labelCls}>{tp('Fournisseur')}</label>
                 <input
                   type="text"
                   value={orderFormData.supplierName}
                   onChange={(e) => setOrderFormData(prev => ({ ...prev, supplierName: e.target.value }))}
                   className={inputCls}
-                  placeholder="Nom du fournisseur"
+                  placeholder={tp('Nom du fournisseur')}
                 />
               </div>
             </div>
@@ -1002,7 +1003,7 @@ export default function SourcingList() {
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Prix &amp; poids</p>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className={labelCls}>Poids total (kg)</label>
+                <label className={labelCls}>{tp('Poids total (kg)')}</label>
                 <input
                   type="number" step="0.01"
                   value={orderFormData.weightKg}
@@ -1012,7 +1013,7 @@ export default function SourcingList() {
                 />
               </div>
               <div>
-                <label className={labelCls}>Prix par kg (FCFA)</label>
+                <label className={labelCls}>{tp('Prix par kg (FCFA)')}</label>
                 <input
                   type="number"
                   value={orderFormData.pricePerKg}
@@ -1022,7 +1023,7 @@ export default function SourcingList() {
                 />
               </div>
               <div>
-                <label className={labelCls}>Prix d'achat unitaire *</label>
+                <label className={labelCls}>{tp('Prix d\'achat unitaire *')}</label>
                 <input
                   type="number" required
                   value={orderFormData.purchasePrice}
@@ -1032,7 +1033,7 @@ export default function SourcingList() {
                 />
               </div>
               <div>
-                <label className={labelCls}>Prix de vente unitaire *</label>
+                <label className={labelCls}>{tp('Prix de vente unitaire *')}</label>
                 <input
                   type="number" required
                   value={orderFormData.sellingPrice}
@@ -1046,7 +1047,7 @@ export default function SourcingList() {
 
           {/* Section: Paiement */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Statut de paiement</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{tp('Statut de paiement')}</p>
             {orderFormData.sourcing === 'chine' ? (
               <div className="space-y-2">
                 <label className={`flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 ${T}`}>
@@ -1057,8 +1058,8 @@ export default function SourcingList() {
                     className="w-4 h-4 mt-0.5 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Achat Chine payé</p>
-                    <p className="text-xs text-gray-500 mt-0.5">L'achat en Chine a été payé</p>
+                    <p className="text-sm font-medium text-gray-900">{tp('Achat Chine payé')}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('L\'achat en Chine a été payé')}</p>
                   </div>
                 </label>
                 <label className={`flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 ${T}`}>
@@ -1069,8 +1070,8 @@ export default function SourcingList() {
                     className="w-4 h-4 mt-0.5 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Transport payé</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Le transport a été payé</p>
+                    <p className="text-sm font-medium text-gray-900">{tp('Transport payé')}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('Le transport a été payé')}</p>
                   </div>
                 </label>
               </div>
@@ -1083,8 +1084,8 @@ export default function SourcingList() {
                   className="w-4 h-4 mt-0.5 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Commande payée</p>
-                  <p className="text-xs text-gray-500 mt-0.5">La commande locale a été payée</p>
+                  <p className="text-sm font-medium text-gray-900">{tp('Commande payée')}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{tp('La commande locale a été payée')}</p>
                 </div>
               </label>
             )}
@@ -1092,10 +1093,10 @@ export default function SourcingList() {
 
           {/* Section: Compléments */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Informations complémentaires</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{tp('Informations complémentaires')}</p>
             <div className="space-y-3">
               <div>
-                <label className={labelCls}>Date d'arrivée prévue</label>
+                <label className={labelCls}>{tp('Date d\'arrivée prévue')}</label>
                 <input
                   type="date"
                   value={orderFormData.expectedArrival}
@@ -1104,23 +1105,23 @@ export default function SourcingList() {
                 />
               </div>
               <div>
-                <label className={labelCls}>Numéro de suivi</label>
+                <label className={labelCls}>{tp('Numéro de suivi')}</label>
                 <input
                   type="text"
                   value={orderFormData.trackingNumber}
                   onChange={(e) => setOrderFormData(prev => ({ ...prev, trackingNumber: e.target.value }))}
                   className={inputCls}
-                  placeholder="Tracking..."
+                  placeholder={tp('Tracking...')}
                 />
               </div>
               <div>
-                <label className={labelCls}>Notes</label>
+                <label className={labelCls}>{tp('Notes')}</label>
                 <textarea
                   value={orderFormData.notes}
                   onChange={(e) => setOrderFormData(prev => ({ ...prev, notes: e.target.value }))}
                   className={`w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white resize-none ${T}`}
                   rows="2"
-                  placeholder="Notes..."
+                  placeholder={tp('Notes...')}
                 />
               </div>
             </div>
@@ -1133,7 +1134,7 @@ export default function SourcingList() {
             onClick={closeOrderModal}
             className={`flex-1 h-10 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 ${T}`}
           >
-            Annuler
+            {tp('Annuler')}
           </button>
           <button
             type="submit"

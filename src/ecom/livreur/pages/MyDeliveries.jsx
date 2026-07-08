@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useEcomAuth } from '../../hooks/useEcomAuth.jsx';
 import { livreurApi } from '../services/livreurApi.js';
+import { tp } from '../../i18n/platform.js';
 
 const STATUS_CONFIG = {
   confirmed: {
@@ -67,7 +68,7 @@ export default function MyDeliveries() {
 
   const tabs = [
     { id: 'all', label: 'Toutes', count: orders.length },
-    { id: 'confirmed', label: 'Acceptées', count: orders.filter((o) => o.status === 'confirmed').length },
+    { id: 'confirmed', get label() { return tp('Acceptées'); }, count: orders.filter((o) => o.status === 'confirmed').length },
     { id: 'shipped', label: 'En transit', count: orders.filter((o) => o.status === 'shipped').length },
   ];
 
@@ -76,7 +77,7 @@ export default function MyDeliveries() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-gray-900">Mes livraisons</h1>
+          <h1 className="text-xl font-bold text-gray-900">{tp('Mes livraisons')}</h1>
           <button
             onClick={loadOrders}
             className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center active:scale-95"
@@ -128,7 +129,7 @@ export default function MyDeliveries() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Truck size={48} className="text-gray-200 mb-3" />
-            <p className="text-gray-500 font-medium">Aucune livraison active</p>
+            <p className="text-gray-500 font-medium">{tp('Aucune livraison active')}</p>
             <Link
               to="/ecom/livreur/available"
               className="mt-3 text-indigo-600 text-sm font-medium"
@@ -205,7 +206,7 @@ function ActiveDeliveryCard({ order, onClick }) {
       {config.next && (
         <div className="mt-3 pt-3 border-t border-gray-100">
           <p className="text-xs text-gray-400 font-medium">
-            Prochaine action : <span className="text-gray-600">{config.next}</span>
+            {tp('Prochaine action :')} <span className="text-gray-600">{config.next}</span>
           </p>
         </div>
       )}

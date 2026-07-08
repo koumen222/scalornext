@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { CreditCard, Truck } from 'lucide-react';
 import EmbeddedOrderForm from './EmbeddedOrderForm';
 import { formatMoney } from '../utils/currency.js';
+import { tp } from '../i18n/platform.js';
 
 const DEFAULT_FORM_TEXTS = {
   headline: 'Remplissez le formulaire, on vous appelle pour valider votre commande',
@@ -53,7 +54,7 @@ const StoreProductPageInfographics = ({ product, store, productPageConfig, subdo
 
   const displayImages = infographics.length > 0 ? infographics : fallbackImages;
 
-  const currency = product?.currency || store?.currency || 'XAF';
+  const currency = store?.currency || 'XAF';
   const hasDiscount = product?.compareAtPrice && product.compareAtPrice > product.price;
 
   const design = productPageConfig?.design || {};
@@ -125,10 +126,10 @@ const StoreProductPageInfographics = ({ product, store, productPageConfig, subdo
           lineHeight: 1.4,
         }}>
           <Truck size={18} />
-          <span>Livraison gratuite</span>
+          <span>{tp('Livraison gratuite')}</span>
           <span style={{ opacity: 0.45 }}>•</span>
           <CreditCard size={18} />
-          <span>Paiement à la livraison</span>
+          <span>{tp('Paiement à la livraison')}</span>
         </div>
       </div>
 
@@ -136,7 +137,7 @@ const StoreProductPageInfographics = ({ product, store, productPageConfig, subdo
       <div style={{ display: 'flex', flexDirection: 'column', gap: 0, width: '100%' }}>
         {displayImages.length === 0 ? (
           <div style={{ aspectRatio: '9 / 16', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF', fontSize: 14, fontWeight: 600, padding: 24, textAlign: 'center' }}>
-            Aucune infographie générée pour ce produit.
+            {tp('Aucune infographie générée pour ce produit.')}
           </div>
         ) : (
           displayImages.map((img, idx) => (
@@ -221,7 +222,7 @@ const StoreProductPageInfographics = ({ product, store, productPageConfig, subdo
           }}>
             <span style={{ fontSize: 14 }}>🛒</span>
             <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.2, textTransform: 'uppercase' }}>
-              Commande en ligne
+              {tp('Commande en ligne')}
             </span>
           </div>
           <h2 style={{

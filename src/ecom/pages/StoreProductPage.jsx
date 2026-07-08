@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react';
+import React, { useContext, useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react';
 import { safeHtml } from '../utils/sanitize';
 import { Link, useLocation, useParams } from '@/lib/router-compat';
 import {
@@ -18,7 +18,7 @@ const QuickOrderModal = lazy(() => import('../components/QuickOrderModal'));
 const EmbeddedOrderForm = lazy(() => import('../components/EmbeddedOrderForm'));
 const StoreProductPageInfographics = lazy(() => import('../components/StoreProductPageInfographics'));
 const StoreProductPagePremium = lazy(() => import('../components/StoreProductPagePremium'));
-import { useStorefrontT, useMerchantTextLocalizer } from '../i18n/storefront.js';
+import { useStorefrontT, useMerchantTextLocalizer, getStorefrontT, localizeMerchantDefault, StorefrontLangContext } from '../i18n/storefront.js';
 // socket.io-client chargé dynamiquement pour ne pas bloquer le rendu initial
 import { setDocumentMeta } from '../utils/pageMeta';
 import { trackStorefrontEvent } from '../utils/pixelTracking';
@@ -906,6 +906,47 @@ const ProductDescription = ({ content, design = {} }) => {
   );
 };
 
+// Barre d'annonce défilante — identique à la page d'accueil, partagée par
+// tous les types de page produit (classique, premium, infographies)
+const StoreAnnouncementBar = ({ store }) => {
+  const msg = String(store?.announcement || '').trim();
+  if (!store?.announcementEnabled || !msg) return null;
+  return (
+    <div style={{
+      backgroundColor: store?.primaryColor || store?.themeColor || 'var(--s-primary)',
+      color: '#fff',
+      padding: '10px 0',
+      overflow: 'hidden',
+      fontSize: 13,
+      fontWeight: 600,
+      fontFamily: 'var(--s-font, inherit)',
+      whiteSpace: 'nowrap',
+    }}>
+      <div style={{ display: 'inline-block', animation: 'sp-marquee 18s linear infinite' }}>
+        <span>{msg}</span>
+        <span style={{ padding: '0 60px' }}>✦</span>
+        <span>{msg}</span>
+        <span style={{ padding: '0 60px' }}>✦</span>
+      </div>
+      <style>{`@keyframes sp-marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }`}</style>
+    </div>
+  );
+};
+
+// GIFs de démo (marchand ou générateur) — affichés sous la description
+const DescriptionGifs = ({ gifs }) => {
+  if (!gifs?.length) return null;
+  return (
+    <div style={{ display: 'grid', gap: 14, marginTop: 18 }}>
+      {gifs.map((url, i) => (
+        <div key={`${url}-${i}`} style={{ border: '1px solid var(--s-border)', borderRadius: 16, overflow: 'hidden', background: '#000' }}>
+          <img src={url} alt={`Démo ${i + 1}`} loading="lazy" style={{ width: '100%', display: 'block' }} />
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // Extraire les raisons d'achat depuis le HTML (bloc "Pourquoi choisir ce produit ?")
 const extractRaisonsFromHtml = (html = '') => {
   if (!html || typeof DOMParser === 'undefined') return [];
@@ -1505,7 +1546,7 @@ const buildAiGalleryImages = (product) => {
 // ── Related Products ─────────────────────────────────────────────────────────
 const RelatedCard = ({ product, prefix, store, subdomain }) => {
   const [hovered, setHovered] = useState(false);
-  const displayCurrency = product?.currency || store?.currency || 'XAF';
+  const displayCurrency = store?.currency || 'XAF';
   const handlePrefetch = () => {
     preloadStoreProductRoute();
     if (subdomain && product?.slug) {
@@ -1552,8 +1593,7 @@ const RelatedCard = ({ product, prefix, store, subdomain }) => {
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 const StoreProductPage = () => {
-  const t = useStorefrontT();
-  const lm = useMerchantTextLocalizer();
+  const ctxLang = useContext(StorefrontLangContext);
   const { subdomain: paramSubdomain, slug } = useParams();
   const location = useLocation();
   const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
@@ -1561,9 +1601,14 @@ const StoreProductPage = () => {
   const prefix = isStoreDomain ? '' : (subdomain ? `/store/${subdomain}` : '');
 
   const { store, pixels, product, related, loading, error } = useStoreProduct(subdomain, slug);
+  // Langue de la PAGE : réglage par produit (pageLanguage, renvoyé traduit par l'API) > langue boutique
+  const pageLang = product?.pageLanguage || store?.language || ctxLang;
+  const t = getStorefrontT(pageLang);
+  const lm = (v) => localizeMerchantDefault(pageLang, v);
+  const storeForPage = React.useMemo(() => (store ? { ...store, language: pageLang } : store), [store, pageLang]);
   const { cartCount } = useStoreCart(subdomain);
   const { trackPageView, trackProductView, trackAddToCart } = useStoreAnalytics(subdomain);
-  const effectiveCurrency = product?.currency || store?.currency || 'XAF';
+  const effectiveCurrency = store?.currency || 'XAF';
 
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [showStickyOrderBar, setShowStickyOrderBar] = useState(false);
@@ -2245,9 +2290,10 @@ const StoreProductPage = () => {
   if (isPremiumProductPage) {
     return (
       <Suspense fallback={<div style={{ minHeight: '100vh', background: store?.backgroundColor || '#fff' }} />}>
+        <StoreAnnouncementBar store={storeForPage} />
         <StoreProductPagePremium
           product={product}
-          store={store}
+          store={storeForPage}
           productPageConfig={premiumProductPageConfig}
           subdomain={subdomain}
           pixels={pixels}
@@ -2260,9 +2306,10 @@ const StoreProductPage = () => {
   if (ppTheme === 'infographics') {
     return (
       <Suspense fallback={<ProductPageSkeleton />}>
+        <StoreAnnouncementBar store={storeForPage} />
         <StoreProductPageInfographics
           product={product}
-          store={store}
+          store={storeForPage}
           productPageConfig={productPageConfig}
           subdomain={subdomain}
         />
@@ -2271,6 +2318,7 @@ const StoreProductPage = () => {
   }
 
   return (
+    <StorefrontLangContext.Provider value={pageLang}>
     <div className={ppTheme === 'landing' ? 'theme-landing-active' : ''} style={{
       minHeight: '100vh',
       background: 'var(--s-bg)',
@@ -2527,29 +2575,7 @@ const StoreProductPage = () => {
       `}</style>
 
       {/* Barre d'annonce défilante */}
-      {store?.announcementEnabled && store?.announcement && (
-        <div style={{
-          backgroundColor: 'var(--s-primary)',
-          color: '#fff',
-          padding: '10px 0',
-          overflow: 'hidden',
-          fontSize: 13,
-          fontWeight: 600,
-          fontFamily: 'var(--s-font)',
-          whiteSpace: 'nowrap',
-        }}>
-          <div style={{
-            display: 'inline-block',
-            animation: 'sp-marquee 18s linear infinite',
-          }}>
-            <span>{store.announcement}</span>
-            <span style={{ padding: '0 60px' }}>✦</span>
-            <span>{store.announcement}</span>
-            <span style={{ padding: '0 60px' }}>✦</span>
-          </div>
-          <style>{`@keyframes sp-marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }`}</style>
-        </div>
-      )}
+      <StoreAnnouncementBar store={store} />
 
       <div className="sf-header">
         <StorefrontHeader store={store} cartCount={cartCount} prefix={prefix} />
@@ -2719,7 +2745,7 @@ const StoreProductPage = () => {
                               <EmbeddedOrderForm
                                 product={product}
                                 subdomain={subdomain}
-                                store={store}
+                                store={storeForPage}
                                 pixels={pixels}
                                 productPageConfig={productPageConfig}
                               />
@@ -2932,9 +2958,14 @@ const StoreProductPage = () => {
                     case 'description': {
                       const descCustom = sectionContentMap.description?.text?.trim();
                       const raw = descCustom || product.description?.toString().trim() || '';
-                      return raw ? (
+                      // GIFs ajoutés depuis l'édition produit — dédupliqués si déjà incrustés dans le HTML
+                      const pageGifs = (Array.isArray(product._pageData?.descriptionGifs) ? product._pageData.descriptionGifs : [])
+                        .map((g) => (typeof g === 'string' ? g : g?.url || ''))
+                        .filter((u) => u && !raw.includes(u));
+                      return (raw || pageGifs.length > 0) ? (
                         <div key={sectionId} style={{ borderTop: '1px solid var(--s-border)', marginTop: 8, paddingTop: 16, paddingBottom: 8 }}>
-                          <ProductDescription content={raw} design={ppDesign} />
+                          {raw ? <ProductDescription content={raw} design={ppDesign} /> : null}
+                          <DescriptionGifs gifs={pageGifs} />
                         </div>
                       ) : null;
                     }
@@ -3110,7 +3141,7 @@ const StoreProductPage = () => {
           <QuickOrderModal
             isOpen={showOrderModal}
             product={product}
-            store={store}
+            store={storeForPage}
             subdomain={subdomain}
             pixels={pixels}
             onClose={() => setShowOrderModal(false)}
@@ -3120,6 +3151,7 @@ const StoreProductPage = () => {
         </Suspense>
       )}
     </div>
+    </StorefrontLangContext.Provider>
   );
 };
 

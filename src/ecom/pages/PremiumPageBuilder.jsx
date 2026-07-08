@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, useParams } from '@/lib/router-compat';
 import {
   ArrowLeft, Save, Loader2, Check, Plus, Trash2, ChevronDown, ChevronUp,
@@ -21,8 +22,17 @@ function hydrateFromPageData(product) {
   }
   const asArr = (v) => (Array.isArray(v) ? v : []);
   const name = product?.name || product?.title || '';
+  // Contenu du générateur PREMIUM (spécifique au produit) — prioritaire sur les champs classiques.
+  // Sans ça, ouvrir le builder sur un produit premium partait de champs vides/génériques
+  // et la sauvegarde écrasait le contenu généré (premiumPage > _pageData.premium_page à l'affichage).
+  const gen = (pd.premium_page && typeof pd.premium_page === 'object' ? pd.premium_page : null)
+    || (pd.premiumPage && typeof pd.premiumPage === 'object' ? pd.premiumPage : null)
+    || {};
 
-  const testimonials = asArr(pd.testimonials).slice(0, 6).map((t) => ({
+  const testimonials = (asArr(gen.testimonialGallery?.items).length
+    ? asArr(gen.testimonialGallery.items)
+    : asArr(pd.testimonials)
+  ).slice(0, 6).map((t) => ({
     name: t.name || 'Client vérifié',
     text: t.text || '',
     rating: t.rating || 5,
@@ -31,27 +41,36 @@ function hydrateFromPageData(product) {
   }));
 
   const faqItems = (() => {
-    const src = pd.faq;
-    if (Array.isArray(src)) return src.slice(0, 6).map(f => ({ question: f.question || '', answer: f.answer || '' }));
-    if (src?.items) return asArr(src.items).slice(0, 6).map(f => ({ question: f.question || '', answer: f.answer || '' }));
+    const src = asArr(gen.faq?.items).length ? gen.faq.items : pd.faq;
+    if (Array.isArray(src)) return src.slice(0, 6).map(f => ({ question: f.question || '', answer: f.answer || f.reponse || '' }));
+    if (src?.items) return asArr(src.items).slice(0, 6).map(f => ({ question: f.question || '', answer: f.answer || f.reponse || '' }));
     return [];
   })();
 
-  const raisons = asArr(pd.raisons_acheter || pd.hero_benefits);
-  const painPoints = asArr(pd.problem_section?.pain_points);
+  const raisons = asArr(gen.hero?.benefits).length ? asArr(gen.hero.benefits) : asArr(pd.raisons_acheter || pd.hero_benefits);
+  const painPoints = asArr(gen.problemSection?.bullets).length ? asArr(gen.problemSection.bullets) : asArr(pd.problem_section?.pain_points);
 
-  const ritualSteps = asArr(pd.guide_utilisation?.etapes).slice(0, 4).map((s, i) => ({
-    label: `Étape ${s.numero || i + 1}`,
-    title: s.action || '',
-    description: s.detail || '',
-  }));
+  const ritualSteps = asArr(gen.ritualSection?.steps).length
+    ? asArr(gen.ritualSection.steps).slice(0, 4).map((s, i) => ({
+      label: s.label || `Étape ${i + 1}`,
+      title: s.title || s.action || '',
+      description: s.description || s.detail || '',
+    }))
+    : asArr(pd.guide_utilisation?.etapes).slice(0, 4).map((s, i) => ({
+      label: `Étape ${s.numero || i + 1}`,
+      title: s.action || '',
+      description: s.detail || '',
+    }));
 
-  const scienceItems = asArr(pd.ingredients || pd.science_items).slice(0, 4).map((s) => ({
+  const scienceItems = (asArr(gen.scienceSection?.items).length
+    ? asArr(gen.scienceSection.items)
+    : asArr(pd.ingredients || pd.science_items)
+  ).slice(0, 4).map((s) => ({
     name: typeof s === 'string' ? s : (s.name || s.label || ''),
     description: typeof s === 'string' ? '' : (s.description || s.role || ''),
   }));
 
-  const reassurance = asArr(pd.reassurance?.points).slice(0, 3);
+  const reassurance = asArr(gen.hero?.reassurance).length ? asArr(gen.hero.reassurance).slice(0, 3) : asArr(pd.reassurance?.points).slice(0, 3);
 
   const existing = product?.productPageConfig || {};
 
@@ -87,62 +106,63 @@ function hydrateFromPageData(product) {
     premiumPage: {
       ...(existing.premiumPage || {}),
       hero: {
-        eyebrow: pd.hero_baseline || pd.urgency_badge || '',
-        headline: pd.hero_headline || name,
-        subheadline: pd.hero_slogan || '',
-        ctaLabel: pd.hero_cta || 'Commander',
+        eyebrow: gen.hero?.eyebrow || pd.hero_baseline || pd.urgency_badge || '',
+        headline: gen.hero?.headline || pd.hero_headline || name,
+        subheadline: gen.hero?.subheadline || pd.hero_slogan || '',
+        ctaLabel: gen.hero?.ctaLabel || pd.hero_cta || 'Commander',
         benefits: raisons.slice(0, 5),
         reassurance: reassurance.length ? reassurance : ['Paiement à la livraison', 'Livraison rapide', 'Support WhatsApp'],
-        accordions: asArr(pd.hero_accordions),
+        accordions: asArr(gen.hero?.accordions).length ? asArr(gen.hero.accordions) : asArr(pd.hero_accordions),
         ...(existing.premiumPage?.hero || {}),
       },
       testimonialGallery: {
-        headline: pd.hero_slogan || `Ils ont choisi ${name} avec confiance`,
-        subheadline: '',
+        headline: gen.testimonialGallery?.headline || pd.hero_slogan || `Ils ont choisi ${name} avec confiance`,
+        subheadline: gen.testimonialGallery?.subheadline || '',
         items: testimonials,
         ...(existing.premiumPage?.testimonialGallery || {}),
       },
       problemSection: {
-        headline: pd.problem_section?.title || '',
+        headline: gen.problemSection?.headline || pd.problem_section?.title || '',
         bullets: painPoints.slice(0, 5),
         ...(existing.premiumPage?.problemSection || {}),
       },
       mechanismSection: {
-        headline: pd.solution_section?.title || '',
-        body: pd.solution_section?.description || '',
+        headline: gen.mechanismSection?.headline || pd.solution_section?.title || '',
+        body: gen.mechanismSection?.body || pd.solution_section?.description || '',
         ...(existing.premiumPage?.mechanismSection || {}),
       },
       scienceSection: {
-        headline: 'Ce qui rend la formule efficace',
-        subheadline: '',
+        headline: gen.scienceSection?.headline || 'Ce qui rend la formule efficace',
+        subheadline: gen.scienceSection?.subheadline || '',
         items: scienceItems,
         ...(existing.premiumPage?.scienceSection || {}),
       },
       ritualSection: {
-        headline: pd.guide_utilisation?.titre || 'Votre rituel simple au quotidien',
-        subheadline: '',
+        headline: gen.ritualSection?.headline || pd.guide_utilisation?.titre || 'Votre rituel simple au quotidien',
+        subheadline: gen.ritualSection?.subheadline || '',
         steps: ritualSteps,
-        resultsTimeline: [],
+        resultsTimeline: asArr(gen.ritualSection?.resultsTimeline),
         ...(existing.premiumPage?.ritualSection || {}),
       },
       faq: {
-        headline: 'Questions fréquentes',
-        subheadline: 'Tout ce que vous devez savoir avant de commander.',
+        headline: gen.faq?.headline || 'Questions fréquentes',
+        subheadline: gen.faq?.subheadline || 'Tout ce que vous devez savoir avant de commander.',
         items: faqItems,
         ...(existing.premiumPage?.faq || {}),
       },
       closingSection: {
-        headline: pd.hero_headline || `Pourquoi choisir ${name}`,
-        subheadline: pd.hero_slogan || '',
-        bullets: raisons.slice(0, 4),
+        headline: gen.closingSection?.headline || pd.hero_headline || `Pourquoi choisir ${name}`,
+        subheadline: gen.closingSection?.subheadline || pd.hero_slogan || '',
+        bullets: asArr(gen.closingSection?.bullets).length ? asArr(gen.closingSection.bullets).slice(0, 4) : raisons.slice(0, 4),
         ...(existing.premiumPage?.closingSection || {}),
       },
       comparisonSection: {
-        columns: [name, 'Solution classique', 'Alternative basique'],
-        rows: raisons.slice(0, 5).map((r) => ({ label: r, values: [true, false, false] })),
+        headline: gen.comparisonSection?.headline || '',
+        columns: asArr(gen.comparisonSection?.columns).length ? asArr(gen.comparisonSection.columns) : [name, 'Solution classique', 'Alternative basique'],
+        rows: asArr(gen.comparisonSection?.rows).length ? asArr(gen.comparisonSection.rows) : raisons.slice(0, 5).map((r) => ({ label: r, values: [true, false, false] })),
         ...(existing.premiumPage?.comparisonSection || {}),
       },
-      rating: existing.premiumPage?.rating || { score: '4,9/5', count: '+1 000', label: 'clients satisfaits' },
+      rating: existing.premiumPage?.rating || gen.rating || { score: '4,9/5', count: '+1 000', label: 'clients satisfaits' },
     },
   };
 }
@@ -210,10 +230,11 @@ function getMediaPreviewType(url) {
 
 function ImageField({ label, value, onChange, onUpload }) {
   const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [showUrl, setShowUrl] = useState(false);
   const inputRef = useRef(null);
   const mediaType = getMediaPreviewType(value);
-  const handleFile = async (e) => {
-    const file = e.target.files?.[0];
+  const uploadFile = async (file) => {
     if (!file) return;
     setUploading(true);
     try {
@@ -227,28 +248,41 @@ function ImageField({ label, value, onChange, onUpload }) {
       if (inputRef.current) inputRef.current.value = '';
     }
   };
+  const handleFile = (e) => uploadFile(e.target.files?.[0]);
+  const handleDrop = (e) => { e.preventDefault(); setDragOver(false); uploadFile(e.dataTransfer?.files?.[0]); };
   return (
     <div className="space-y-1.5">
       {label && <label className="block text-xs font-semibold text-gray-600">{label}</label>}
-      <div className="flex items-start gap-2">
-        <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center flex-shrink-0">
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => { if (!uploading) inputRef.current?.click(); }}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        className={`flex items-center gap-3 p-2 rounded-xl border-2 border-dashed cursor-pointer transition ${dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'}`}
+      >
+        <div className="w-14 h-14 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
           {value
             ? mediaType === 'video'
               ? <video src={value} muted className="w-full h-full object-cover" />
               : <img src={value} alt="" className="w-full h-full object-cover" />
             : <ImageIcon className="w-5 h-5 text-gray-300" />}
         </div>
-        <div className="flex-1 space-y-1.5 min-w-0">
-          <input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="Coller une URL (image, GIF, vidéo)" className={inputCls} />
-          <div className="flex items-center gap-2">
-            <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading} className="px-2.5 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1.5 disabled:opacity-50">
-              {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}{uploading ? 'Envoi...' : 'Importer'}
-            </button>
-            {value && <button type="button" onClick={() => onChange('')} className="px-2 py-1.5 text-xs text-red-500 hover:text-red-700">Retirer</button>}
-          </div>
-          <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} onChange={handleFile} className="hidden" />
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold text-gray-700">{uploading ? 'Envoi...' : value ? "Remplacer l'image" : 'Ajouter une image'}</p>
+          <p className="text-[11px] text-gray-400 truncate">{uploading ? '' : 'Cliquer ou glisser-déposer un fichier'}</p>
         </div>
+        {uploading && <Loader2 className="w-4 h-4 animate-spin text-indigo-500 flex-shrink-0" />}
+        {value && !uploading && (
+          <button type="button" title="Retirer" onClick={(e) => { e.stopPropagation(); onChange(''); }} className="flex-shrink-0 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+        )}
+        <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} onChange={handleFile} className="hidden" />
       </div>
+      <button type="button" onClick={() => setShowUrl((v) => !v)} className="text-[11px] font-medium text-gray-400 hover:text-indigo-600">{showUrl ? "Masquer l'URL" : 'Coller une URL à la place'}</button>
+      {showUrl && (
+        <input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="https://... (image, GIF, vidéo)" className={inputCls} />
+      )}
     </div>
   );
 }
@@ -317,6 +351,14 @@ const ORDERABLE_SECTION_IDS = ['guide', 'testimonials', 'problem', 'mechanism', 
 const FIXED_TOP_IDS = ['design', 'hero', 'accordions'];
 const FIXED_BOTTOM_IDS = ['upsells'];
 
+const SECTION_GROUP = {
+  design: 'Structure & design', hero: 'Structure & design', accordions: 'Structure & design',
+  guide: 'Contenu', problem: 'Contenu', mechanism: 'Contenu', science: 'Contenu', ritual: 'Contenu',
+  testimonials: 'Preuve sociale', comparison: 'Preuve sociale',
+  faq: 'Questions & clôture', closing: 'Questions & clôture',
+  upsells: 'Offre & upsells',
+};
+
 const normalizeSectionOrder = (order) => {
   const configured = Array.isArray(order)
     ? order.filter((id) => ORDERABLE_SECTION_IDS.includes(id))
@@ -326,6 +368,48 @@ const normalizeSectionOrder = (order) => {
 };
 
 const MAX_HISTORY = 50;
+
+// Aperçu fidèle sur mobile : on rend la page dans un iframe dont le viewport vaut sa
+// largeur (390px). Ainsi les media queries et unités vw de la page réagissent enfin au
+// format mobile (le rendu inline utilisait le viewport desktop et débordait).
+function DevicePreviewFrame({ children }) {
+  const iframeRef = useRef(null);
+  const [body, setBody] = useState(null);
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return undefined;
+    const setup = () => {
+      const d = iframe.contentDocument;
+      if (!d || !d.body) return;
+      d.documentElement.style.height = '100%';
+      d.body.style.margin = '0';
+      d.body.style.minHeight = '100%';
+      d.body.style.background = '#fff';
+      if (!d.head.querySelector('meta[name="viewport"]')) {
+        const meta = d.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, initial-scale=1';
+        d.head.appendChild(meta);
+      }
+      if (!d.head.querySelector('[data-preview-styles]')) {
+        document.querySelectorAll('style, link[rel="stylesheet"]').forEach((node) => {
+          const clone = node.cloneNode(true);
+          clone.setAttribute('data-preview-styles', '');
+          d.head.appendChild(clone);
+        });
+      }
+      setBody(d.body);
+    };
+    setup();
+    iframe.addEventListener('load', setup);
+    return () => iframe.removeEventListener('load', setup);
+  }, []);
+  return (
+    <iframe ref={iframeRef} title="Aperçu mobile" style={{ width: '100%', height: '100%', border: 0, display: 'block' }}>
+      {body && createPortal(children, body)}
+    </iframe>
+  );
+}
 
 const PremiumPageBuilder = () => {
   const navigate = useNavigate();
@@ -345,6 +429,8 @@ const PremiumPageBuilder = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const historyIndexRef = useRef(-1);
   const skipHistoryRef = useRef(false);
+  const lastSavedRef = useRef('');
+  const previewRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -355,6 +441,7 @@ const PremiumPageBuilder = () => {
           setProduct(p);
           const initialConfig = hydrateFromPageData(p);
           setConfig(initialConfig);
+          lastSavedRef.current = JSON.stringify(initialConfig);
           setHistory([initialConfig]);
           setHistoryIndex(0);
           historyIndexRef.current = 0;
@@ -420,8 +507,38 @@ const PremiumPageBuilder = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [undo, redo]);
 
+  // Clic sur une section de l'aperçu → ouvre son panneau d'édition
+  const handlePreviewSectionClick = useCallback((sid) => {
+    if (SECTIONS.some((sec) => sec.id === sid)) setActiveSection(sid);
+  }, []);
+
+  // Sélection d'une section → fait défiler l'aperçu jusqu'à elle
+  useEffect(() => {
+    if (!activeSection || !previewRef.current) return;
+    const el = previewRef.current.querySelector(`[data-premium-section="${activeSection}"]`);
+    if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [activeSection]);
+
   const safeConfig = config || {};
+  const isDirty = !!config && lastSavedRef.current !== JSON.stringify(config);
   const premium = safeConfig.premiumPage || product?._pageData?.premium_page || product?._pageData?.premiumPage || {};
+  const isSectionFilled = (sid) => {
+    const pp = premium || {};
+    switch (sid) {
+      case 'hero': return !!(pp.hero?.headline || pp.hero?.subheadline);
+      case 'problem': return !!(pp.problemSection?.headline || (pp.problemSection?.bullets || []).length);
+      case 'mechanism': return !!(pp.mechanismSection?.headline || pp.mechanismSection?.body);
+      case 'science': return !!((pp.scienceSection?.items || []).length || pp.scienceSection?.headline);
+      case 'ritual': return !!((pp.ritualSection?.steps || []).length || pp.ritualSection?.headline);
+      case 'testimonials': return !!((pp.testimonialGallery?.items || []).length);
+      case 'comparison': return !!((pp.comparisonSection?.rows || pp.comparisonSection?.items || []).length);
+      case 'faq': return !!((pp.faq || safeConfig.faq || []).length);
+      case 'closing': return !!(pp.closingSection?.headline || pp.closingSection?.subheadline);
+      case 'guide': return !!(safeConfig.ebook || product?.ebook || product?._pageData?.ebook);
+      case 'upsells': return !!((safeConfig.upsells?.offers || []).length || safeConfig.upsells?.bump?.isActive);
+      default: return true;
+    }
+  };
   const design = safeConfig.design || {};
   const accent = design.ctaButtonColor || design.buttonColor || '#0F766E';
   const sectionOrder = normalizeSectionOrder(safeConfig.sectionOrder);
@@ -551,6 +668,7 @@ const PremiumPageBuilder = () => {
     setSaving(true);
     try {
       await storeProductsApi.updateProduct(id, { productPageConfig: config });
+      lastSavedRef.current = JSON.stringify(config);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch {
@@ -941,6 +1059,10 @@ const PremiumPageBuilder = () => {
             ))}
           </div>
           <div className="w-px h-5 bg-gray-200" />
+          <span className={`hidden sm:flex items-center gap-1.5 text-xs font-semibold ${isDirty ? 'text-amber-600' : 'text-gray-400'}`} title={isDirty ? 'Modifications non enregistrées' : 'Tout est enregistré'}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isDirty ? 'bg-amber-500' : 'bg-green-500'}`} />
+            {isDirty ? 'Non enregistré' : 'Enregistré'}
+          </span>
           {previewUrl && (
             <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition" title="Ouvrir dans un nouvel onglet">
               <ExternalLink className="w-4 h-4" />
@@ -971,11 +1093,20 @@ const PremiumPageBuilder = () => {
                 ...sectionOrder.map(id => orderableMap[id]).filter(Boolean),
                 ...SECTIONS.filter(s => FIXED_BOTTOM_IDS.includes(s.id)),
               ];
+              let lastGroup = null;
               return orderedSections.map((s) => {
                 const isOrderable = ORDERABLE_SECTION_IDS.includes(s.id);
                 const orderIdx = sectionOrder.indexOf(s.id);
                 const isVisible = !isOrderable || !hiddenSections.includes(s.id);
-                return (
+                const grp = SECTION_GROUP[s.id] || 'Autres';
+                const showHeader = grp !== lastGroup;
+                lastGroup = grp;
+                const filled = isSectionFilled(s.id);
+                return [
+                  showHeader ? (
+                    <p key={`grp-${s.id}`} className="px-1 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">{grp}</p>
+                  ) : null,
+                  (
                   <div
                     key={s.id}
                     draggable={isOrderable}
@@ -1000,6 +1131,7 @@ const PremiumPageBuilder = () => {
                           {s.icon}
                         </div>
                         <span className="text-sm font-semibold text-gray-900 flex-1">{s.label}</span>
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${filled ? 'bg-green-400' : 'bg-gray-300'}`} title={filled ? 'Contenu présent' : 'Section vide'} />
                         {activeSection === s.id ? <ChevronUp className="w-4 h-4 text-indigo-500" /> : <ChevronDown className="w-4 h-4 text-gray-300" />}
                       </button>
                       {isOrderable && (
@@ -1040,7 +1172,8 @@ const PremiumPageBuilder = () => {
                       </div>
                     )}
                   </div>
-                );
+                  ),
+                ];
               });
             })()}
           </div>
@@ -1063,15 +1196,34 @@ const PremiumPageBuilder = () => {
             </div>
 
             {/* Live rendered premium page */}
-            <div className="flex-1 overflow-y-auto">
-              <StoreProductPagePremium
-                product={product}
-                store={activeStore}
-                productPageConfig={liveProductPageConfig}
-                subdomain={subdomain}
-                pixels={null}
-                prefix=""
-              />
+            <div ref={previewRef} className="flex-1 overflow-hidden">
+              {device === 'mobile' ? (
+                <DevicePreviewFrame>
+                  <StoreProductPagePremium
+                    product={product}
+                    store={activeStore}
+                    productPageConfig={liveProductPageConfig}
+                    subdomain={subdomain}
+                    pixels={null}
+                    prefix=""
+                    onSectionClick={handlePreviewSectionClick}
+                    activeSection={activeSection}
+                  />
+                </DevicePreviewFrame>
+              ) : (
+                <div className="h-full overflow-y-auto">
+                  <StoreProductPagePremium
+                    product={product}
+                    store={activeStore}
+                    productPageConfig={liveProductPageConfig}
+                    subdomain={subdomain}
+                    pixels={null}
+                    prefix=""
+                    onSectionClick={handlePreviewSectionClick}
+                    activeSection={activeSection}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1095,6 +1247,11 @@ const PremiumPageBuilder = () => {
                 ...(next.problemSection ? { problemSection: { ...(existing.problemSection || {}), ...next.problemSection } } : {}),
                 ...(next.mechanismSection ? { mechanismSection: { ...(existing.mechanismSection || {}), ...next.mechanismSection } } : {}),
                 ...(next.closingSection ? { closingSection: { ...(existing.closingSection || {}), ...next.closingSection } } : {}),
+                ...(next.ritualSection ? { ritualSection: { ...(existing.ritualSection || {}), ...next.ritualSection } } : {}),
+                ...(next.scienceSection ? { scienceSection: { ...(existing.scienceSection || {}), ...next.scienceSection } } : {}),
+                ...(next.testimonialGallery ? { testimonialGallery: { ...(existing.testimonialGallery || {}), ...next.testimonialGallery } } : {}),
+                ...(next.comparisonSection ? { comparisonSection: { ...(existing.comparisonSection || {}), ...next.comparisonSection } } : {}),
+                ...(next.rating ? { rating: { ...(existing.rating || {}), ...next.rating } } : {}),
               };
             }
             if (patch.premiumImages) updated.premiumImages = { ...(updated.premiumImages || {}), ...patch.premiumImages };

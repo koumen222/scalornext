@@ -10,6 +10,7 @@ import {
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
+import { tp } from '../i18n/platform.js';
 
 const roleLabels = {
   super_admin: 'Super Admin',
@@ -103,7 +104,7 @@ const SuperAdminUserDetail = () => {
     if (!confirm(`Supprimer définitivement ${user.email} ?`)) return;
     try {
       await ecomApi.delete(`/super-admin/users/${id}`);
-      setSuccess('Utilisateur supprimé');
+      setSuccess(tp('Utilisateur supprimé'));
       setTimeout(() => navigate('/ecom/super-admin/users'), 1500);
     } catch (err) {
       setError(getContextualError(err, 'delete_user'));
@@ -119,13 +120,13 @@ const SuperAdminUserDetail = () => {
     <div className="flex items-center justify-center h-96">
       <div className="text-center">
         <AlertCircle className="w-16 h-16 text-amber-500 mx-auto mb-4" />
-        <p className="text-lg font-black text-slate-900">Utilisateur introuvable</p>
+        <p className="text-lg font-black text-slate-900">{tp('Utilisateur introuvable')}</p>
         <button
           onClick={() => navigate('/ecom/super-admin/users')}
           className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-primary-700 text-white rounded-xl font-bold hover:bg-primary-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour à la liste
+          {tp('Retour à la liste')}
         </button>
       </div>
     </div>
@@ -157,7 +158,7 @@ const SuperAdminUserDetail = () => {
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour à la liste
+          {tp('Retour à la liste')}
         </button>
 
         {/* User Header */}
@@ -210,7 +211,7 @@ const SuperAdminUserDetail = () => {
                       : 'text-primary-700 bg-primary-50 hover:bg-primary-100 hover:shadow-md ring-primary-600/20'
                     }`}
                 >
-                  {user.isActive ? <><XCircle className="w-4 h-4" /> Bloquer</> : <><CheckCircle2 className="w-4 h-4" /> Activer</>}
+                  {user.isActive ? <><XCircle className="w-4 h-4" /> {tp('Bloquer')}</> : <><CheckCircle2 className="w-4 h-4" /> {tp('Activer')}</>}
                 </button>
                 <button
                   onClick={handleDeleteUser}
@@ -218,7 +219,7 @@ const SuperAdminUserDetail = () => {
                   className="inline-flex items-center gap-2 px-4 py-2.5 text-sm rounded-xl font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 hover:shadow-md ring-2 ring-inset ring-amber-600/20 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Supprimer
+                  {tp('Supprimer')}
                 </button>
               </div>
             </div>
@@ -233,7 +234,7 @@ const SuperAdminUserDetail = () => {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-700 to-primary-700 flex items-center justify-center shadow-md">
                 <Shield className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-lg font-black text-slate-900">Informations du compte</h2>
+              <h2 className="text-lg font-black text-slate-900">{tp('Informations du compte')}</h2>
             </div>
 
             <div className="space-y-4">
@@ -249,7 +250,7 @@ const SuperAdminUserDetail = () => {
                 <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                   <Smartphone className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Téléphone</p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Téléphone')}</p>
                     <p className="text-sm font-bold text-slate-900">{user.phone}</p>
                   </div>
                 </div>
@@ -258,18 +259,18 @@ const SuperAdminUserDetail = () => {
               <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                 <Shield className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Rôle</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{tp('Rôle')}</p>
                   <select
                     value={user.role}
                     onChange={(e) => handleChangeRole(e.target.value)}
                     disabled={user._id === currentUser?.id}
                     className="w-full text-sm font-bold px-3 py-2 bg-white border-2 border-slate-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all"
                   >
-                    <option value="super_admin">Super Admin</option>
-                    <option value="ecom_admin">Admin</option>
-                    <option value="ecom_closeuse">Closeuse</option>
-                    <option value="ecom_compta">Comptable</option>
-                    <option value="ecom_livreur">Livreur</option>
+                    <option value="super_admin">{tp('Super Admin')}</option>
+                    <option value="ecom_admin">{tp('Admin')}</option>
+                    <option value="ecom_closeuse">{tp('Closeuse')}</option>
+                    <option value="ecom_compta">{tp('Comptable')}</option>
+                    <option value="ecom_livreur">{tp('Livreur')}</option>
                   </select>
                 </div>
               </div>
@@ -277,8 +278,8 @@ const SuperAdminUserDetail = () => {
               <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                 <Building2 className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Workspace</p>
-                  <p className="text-sm font-bold text-slate-900">{user.workspaceId?.name || 'Aucun workspace'}</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Workspace')}</p>
+                  <p className="text-sm font-bold text-slate-900">{user.workspaceId?.name || tp('Aucun workspace')}</p>
                   {user.workspaceId?.slug && (
                     <p className="text-xs text-slate-400 font-mono mt-1">{user.workspaceId.slug}</p>
                   )}
@@ -288,13 +289,13 @@ const SuperAdminUserDetail = () => {
               <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                 <Activity className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Statut</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Statut')}</p>
                   <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${user.isActive
                       ? 'bg-primary-100 text-primary-700'
                       : 'bg-amber-100 text-amber-700'
                     }`}>
                     {user.isActive ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                    {user.isActive ? 'Actif' : 'Bloqué'}
+                    {user.isActive ? 'Actif' : tp('Bloqué')}
                   </span>
                 </div>
               </div>
@@ -307,14 +308,14 @@ const SuperAdminUserDetail = () => {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-primary-600 flex items-center justify-center shadow-md">
                 <Clock className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-lg font-black text-slate-900">Activité</h2>
+              <h2 className="text-lg font-black text-slate-900">{tp('Activité')}</h2>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                 <Calendar className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Créé le</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Créé le')}</p>
                   <p className="text-sm font-bold text-slate-900">
                     {new Date(user.createdAt).toLocaleDateString('fr-FR', {
                       day: '2-digit',
@@ -330,7 +331,7 @@ const SuperAdminUserDetail = () => {
               <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                 <Clock className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Dernière connexion</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Dernière connexion')}</p>
                   <p className="text-sm font-bold text-slate-900">
                     {user.lastLogin
                       ? new Date(user.lastLogin).toLocaleDateString('fr-FR', {
@@ -351,8 +352,8 @@ const SuperAdminUserDetail = () => {
                   <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                     <Smartphone className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Appareil</p>
-                      <p className="text-sm font-bold text-slate-900">{user.deviceInfo.platform || 'Inconnu'}</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Appareil')}</p>
+                      <p className="text-sm font-bold text-slate-900">{user.deviceInfo.platform || tp('Inconnu')}</p>
                       {user.deviceInfo.deviceId && (
                         <p className="text-xs text-slate-400 font-mono mt-1 truncate">{user.deviceInfo.deviceId}</p>
                       )}
@@ -363,7 +364,7 @@ const SuperAdminUserDetail = () => {
                     <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
                       <Activity className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                       <div className="flex-1">
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Dernière activité</p>
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Dernière activité')}</p>
                         <p className="text-sm font-bold text-slate-900">
                           {new Date(user.deviceInfo.lastSeen).toLocaleDateString('fr-FR', {
                             day: '2-digit',
@@ -398,8 +399,8 @@ const SuperAdminUserDetail = () => {
                     <Building2 className="w-4 h-4 text-slate-400" />
                     <p className="text-sm font-bold text-slate-900">Workspace {i + 1}</p>
                   </div>
-                  <p className="text-xs text-slate-500 mb-1">Rôle: <span className="font-bold text-slate-700">{roleLabels[ws.role] || ws.role}</span></p>
-                  <p className="text-xs text-slate-500">Rejoint: <span className="font-bold text-slate-700">{new Date(ws.joinedAt).toLocaleDateString('fr-FR')}</span></p>
+                  <p className="text-xs text-slate-500 mb-1">{tp('Rôle:')} <span className="font-bold text-slate-700">{roleLabels[ws.role] || ws.role}</span></p>
+                  <p className="text-xs text-slate-500">{tp('Rejoint:')} <span className="font-bold text-slate-700">{new Date(ws.joinedAt).toLocaleDateString('fr-FR')}</span></p>
                   <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 ${ws.status === 'active' ? 'bg-primary-100 text-primary-700' : 'bg-amber-100 text-amber-700'
                     }`}>
                     {ws.status}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Palette } from 'lucide-react';
 import ToggleSwitch from './ToggleSwitch';
+import { tp } from '../../i18n/platform.js';
 
 const ColorField = ({ label, value, onChange }) => (
   <div>
@@ -35,7 +36,7 @@ const DesignSettings = ({ config, onChange }) => {
       <div>
         <div className="text-xs font-bold text-gray-700 mb-3 flex items-center gap-2">
           <Palette size={14} className="text-primary-600" />
-          Couleurs
+          {tp('Couleurs')}
         </div>
         <div className="grid grid-cols-2 gap-3">
           <ColorField label="Bouton / Accent" value={config.ctaButtonColor || config.formButtonColor || config.buttonColor} onChange={(v) => onChange({ ...config, buttonColor: v, ctaButtonColor: v, formButtonColor: v })} />
@@ -47,10 +48,10 @@ const DesignSettings = ({ config, onChange }) => {
 
       {/* Typography */}
       <div className="pt-4 border-t border-gray-100">
-        <div className="text-xs font-bold text-gray-700 mb-3">Typographie</div>
+        <div className="text-xs font-bold text-gray-700 mb-3">{tp('Typographie')}</div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Taille de base</label>
+            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Taille de base')}</label>
             <div className="flex items-center gap-2">
               <input
                 type="range" min="12" max="18"
@@ -62,17 +63,17 @@ const DesignSettings = ({ config, onChange }) => {
             </div>
           </div>
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Épaisseur</label>
+            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Épaisseur')}</label>
             <select
               value={config.fontWeight || '600'}
               onChange={(e) => update('fontWeight', e.target.value)}
               className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
             >
-              <option value="400">Normal</option>
-              <option value="500">Medium</option>
-              <option value="600">Semi-bold</option>
-              <option value="700">Bold</option>
-              <option value="800">Extra-bold</option>
+              <option value="400">{tp('Normal')}</option>
+              <option value="500">{tp('Medium')}</option>
+              <option value="600">{tp('Semi-bold')}</option>
+              <option value="700">{tp('Bold')}</option>
+              <option value="800">{tp('Extra-bold')}</option>
             </select>
           </div>
         </div>
@@ -82,7 +83,7 @@ const DesignSettings = ({ config, onChange }) => {
       <div className="pt-4 border-t border-gray-100">
         <div className="text-xs font-bold text-gray-700 mb-3">Bordure & Ombre</div>
         <div>
-          <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Rayon des coins</label>
+          <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Rayon des coins')}</label>
           <div className="flex items-center gap-3">
             <input
               type="range" min="0" max="24"

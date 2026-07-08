@@ -3,6 +3,7 @@ import { ShoppingCart, Search, ChevronLeft, ChevronRight, Loader2, AlertCircle, 
 import { storeOrdersApi } from '../services/storeApi.js';
 import { Link, useNavigate } from '@/lib/router-compat';
 import { formatMoney } from '../utils/currency.js';
+import { tp } from '../i18n/platform.js';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Toutes' },
@@ -90,7 +91,7 @@ const StoreOrdersDashboard = () => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: newStatus } : o));
       if (selectedOrder?._id === orderId) setSelectedOrder(prev => ({ ...prev, status: newStatus }));
     } catch {
-      setError('Erreur lors de la mise à jour');
+      setError(tp('Erreur lors de la mise à jour'));
     } finally {
       setUpdatingStatus(false);
     }
@@ -130,7 +131,7 @@ const StoreOrdersDashboard = () => {
       setSelectedOrders([]);
       setShowBulkMenu(false);
     } catch {
-      setError('Erreur lors de la mise à jour');
+      setError(tp('Erreur lors de la mise à jour'));
     }
   };
 
@@ -190,11 +191,11 @@ const StoreOrdersDashboard = () => {
       <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 bg-white">
         <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
           <ShoppingCart className="w-5 h-5 text-gray-700" />
-          Commandes
+          {tp('Commandes')}
           <span className="text-sm font-normal text-gray-400">({pagination.total})</span>
         </h1>
         <div className="flex items-center gap-2">
-          <button className="hidden sm:inline-flex px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Exporter</button>
+          <button className="hidden sm:inline-flex px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition">{tp('Exporter')}</button>
           {selectedOrders.length > 0 && (
             <div className="relative">
               <button
@@ -205,7 +206,7 @@ const StoreOrdersDashboard = () => {
               </button>
               {showBulkMenu && (
                 <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1">
-                  <p className="px-3 py-1.5 text-xs text-gray-400 font-medium">Changer le statut</p>
+                  <p className="px-3 py-1.5 text-xs text-gray-400 font-medium">{tp('Changer le statut')}</p>
                   {ALL_STATUSES.map(s => (
                     <button key={s.value} onClick={() => handleBulkStatus(s.value)} className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{s.label}</button>
                   ))}
@@ -219,8 +220,8 @@ const StoreOrdersDashboard = () => {
           )}
           <Link to="/ecom/boutique/orders/new" className="px-3 py-1.5 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition flex items-center gap-1.5">
             <Plus size={14} />
-            <span className="hidden sm:inline">Créer une commande</span>
-            <span className="sm:hidden">Nouvelle</span>
+            <span className="hidden sm:inline">{tp('Créer une commande')}</span>
+            <span className="sm:hidden">{tp('Nouvelle')}</span>
           </Link>
         </div>
       </div>
@@ -262,7 +263,7 @@ const StoreOrdersDashboard = () => {
       <div className="px-4 sm:px-6 py-3 bg-white flex items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher des commandes"
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={tp('Rechercher des commandes')}
             className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 bg-gray-50" />
         </div>
         <div className="flex items-center gap-1">
@@ -292,7 +293,7 @@ const StoreOrdersDashboard = () => {
         ) : orders.length === 0 ? (
           <div className="text-center py-16">
             <ShoppingCart className="w-12 h-12 text-gray-300 mx-auto" />
-            <p className="text-gray-500 mt-3 text-sm">Aucune commande</p>
+            <p className="text-gray-500 mt-3 text-sm">{tp('Aucune commande')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -303,15 +304,15 @@ const StoreOrdersDashboard = () => {
                     <input type="checkbox" checked={selectedOrders.length === orders.length && orders.length > 0} onChange={toggleSelectAll}
                       className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500" />
                   </th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Commande</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Date ↓</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Client</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Canal</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Total</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Statut du paiement</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Statut du traitement</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Articles</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">Livraison</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Commande')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Date ↓')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Client')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Canal')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Total')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Statut du paiement')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Statut du traitement')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Articles')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Livraison')}</th>
                   <th className="px-2 py-2.5 text-xs font-medium text-gray-500 w-8"></th>
                 </tr>
               </thead>
@@ -333,7 +334,7 @@ const StoreOrdersDashboard = () => {
                       <td className="px-2 py-2.5 text-gray-900 whitespace-nowrap">{order.customerName || '-'}</td>
                       <td className="px-2 py-2.5 text-gray-500 whitespace-nowrap">
                         {order.status === 'abandoned' ? (
-                          <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800">Relance</span>
+                          <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800">{tp('Relance')}</span>
                         ) : (
                           order.channel || order.source || ''
                         )}
@@ -354,7 +355,7 @@ const StoreOrdersDashboard = () => {
                       </td>
                       <td className="px-2 py-2.5">
                         <button onClick={(e) => { e.stopPropagation(); handleDelete(order._id); }}
-                          className="p-1 text-gray-400 hover:text-red-500 rounded transition" title="Supprimer">
+                          className="p-1 text-gray-400 hover:text-red-500 rounded transition" title={tp('Supprimer')}>
                           <Trash2 size={14} />
                         </button>
                       </td>
@@ -402,7 +403,7 @@ const StoreOrdersDashboard = () => {
             <div className="px-5 py-4 space-y-5">
               {/* Status Change */}
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1.5 block">Statut de la commande</label>
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">{tp('Statut de la commande')}</label>
                 <div className="flex flex-wrap gap-1.5">
                   {ALL_STATUSES.map(s => (
                     <button key={s.value} onClick={() => handleStatusChange(selectedOrder._id, s.value)} disabled={updatingStatus}
@@ -419,7 +420,7 @@ const StoreOrdersDashboard = () => {
 
               {/* Customer Info */}
               <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Client</h3>
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">{tp('Client')}</h3>
                 <p className="text-sm font-semibold text-gray-900">{selectedOrder.customerName || '-'}</p>
                 {selectedOrder.phone && (
                   <p className="text-sm text-gray-600 flex items-center gap-1.5">
@@ -438,7 +439,7 @@ const StoreOrdersDashboard = () => {
 
               {/* Products */}
               <div>
-                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Articles</h3>
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">{tp('Articles')}</h3>
                 <div className="space-y-2">
                   {selectedOrder.products?.map((p, i) => (
                     <div key={i} className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
@@ -455,14 +456,14 @@ const StoreOrdersDashboard = () => {
 
               {/* Total */}
               <div className="flex items-center justify-between py-3 border-t border-gray-200">
-                <span className="text-sm font-medium text-gray-500">Total</span>
+                <span className="text-sm font-medium text-gray-500">{tp('Total')}</span>
                 <span className="text-lg font-bold text-gray-900">{formatPrice(selectedOrder.total, selectedOrder.currency)}</span>
               </div>
 
               {/* Notes */}
               {selectedOrder.notes && (
                 <div className="bg-yellow-50 rounded-xl p-3">
-                  <p className="text-xs font-medium text-yellow-700 mb-1">Notes</p>
+                  <p className="text-xs font-medium text-yellow-700 mb-1">{tp('Notes')}</p>
                   <p className="text-sm text-yellow-800">{selectedOrder.notes}</p>
                 </div>
               )}
@@ -477,7 +478,7 @@ const StoreOrdersDashboard = () => {
                 )}
                 <button onClick={() => handleDelete(selectedOrder._id)} disabled={deleting}
                   className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-medium hover:bg-red-100 transition disabled:opacity-50">
-                  <Trash2 size={16} /> {deleting ? 'Suppression...' : 'Supprimer'}
+                  <Trash2 size={16} /> {deleting ? 'Suppression...' : tp('Supprimer')}
                 </button>
               </div>
             </div>

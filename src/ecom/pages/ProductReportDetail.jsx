@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const ProductReportDetail = () => {
   const { productId } = useParams();
@@ -49,11 +50,11 @@ const ProductReportDetail = () => {
       console.error('❌ Erreur chargement rapport produit:', err);
       
       if (err.response?.status === 404) {
-        setError('Produit non trouvé');
+        setError(tp('Produit non trouvé'));
       } else if (err.response?.status === 400) {
         setError('ID de produit invalide');
       } else if (err.response?.status === 500) {
-        setError('Erreur serveur - Veuillez réessayer plus tard');
+        setError(tp('Erreur serveur - Veuillez réessayer plus tard'));
       } else {
         setError('Erreur lors du chargement du rapport produit');
       }
@@ -93,9 +94,9 @@ const ProductReportDetail = () => {
   };
 
   const getDeliveryRateBadge = (rate) => {
-    if (rate >= 75) return { color: 'bg-green-500', label: 'Excellent' };
-    if (rate >= 50) return { color: 'bg-orange-500', label: 'Moyen' };
-    return { color: 'bg-red-500', label: 'Faible' };
+    if (rate >= 75) return { color: 'bg-green-500', get label() { return tp('Excellent'); } };
+    if (rate >= 50) return { color: 'bg-orange-500', get label() { return tp('Moyen'); } };
+    return { color: 'bg-red-500', get label() { return tp('Faible'); } };
   };
 
   if (loading) return (
@@ -113,7 +114,7 @@ const ProductReportDetail = () => {
     return (
       <div className="p-6">
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-          Produit non trouvé
+          {tp('Produit non trouvé')}
         </div>
       </div>
     );
@@ -146,11 +147,11 @@ const ProductReportDetail = () => {
             </svg>
           </button>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Rapport détaillé : {product.name}
+            {tp('Rapport détaillé :')} {product.name}
           </h1>
         </div>
         <p className="text-sm text-gray-500 ml-7">
-          Analyse complète des performances du produit
+          {tp('Analyse complète des performances du produit')}
         </p>
       </div>
 
@@ -163,7 +164,7 @@ const ProductReportDetail = () => {
       {/* Filtre période */}
       <div className="bg-white p-4 rounded-lg shadow mb-6">
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Période d'analyse</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Période d\'analyse')}</label>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => {
@@ -172,7 +173,7 @@ const ProductReportDetail = () => {
               }}
               className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'all' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
-              Toute la période
+              {tp('Toute la période')}
             </button>
             <button
               onClick={() => {
@@ -194,7 +195,7 @@ const ProductReportDetail = () => {
               }}
               className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'month' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
-              Ce mois
+              {tp('Ce mois')}
             </button>
             <button
               onClick={() => {
@@ -202,13 +203,13 @@ const ProductReportDetail = () => {
               }}
               className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'custom' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
-              Personnalisé
+              {tp('Personnalisé')}
             </button>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Date début</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date début')}</label>
             <input
               type="date"
               value={filter.dateStart}
@@ -220,7 +221,7 @@ const ProductReportDetail = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Date fin</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date fin')}</label>
             <input
               type="date"
               value={filter.dateEnd}
@@ -236,7 +237,7 @@ const ProductReportDetail = () => {
               onClick={exportToCSV}
               className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
             >
-              📥 Exporter CSV
+              📥 {tp('Exporter CSV')}
             </button>
           </div>
         </div>
@@ -245,15 +246,15 @@ const ProductReportDetail = () => {
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">Commandes reçues</p>
+          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Commandes reçues')}</p>
           <p className="text-2xl font-bold text-primary-600 mt-1">{stats.totalReceived || 0}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">Commandes livrées</p>
+          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Commandes livrées')}</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{stats.totalDelivered || 0}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">Taux de livraison</p>
+          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Taux de livraison')}</p>
           <div className="flex items-center gap-2 mt-1">
             <p className={`text-2xl font-bold ${deliveryRate >= 75 ? 'text-green-600' : deliveryRate >= 50 ? 'text-orange-600' : 'text-red-600'}`}>
               {deliveryRate}%
@@ -270,7 +271,7 @@ const ProductReportDetail = () => {
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">Quantité vendue</p>
+          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Quantité vendue')}</p>
           <p className="text-2xl font-bold text-primary-700 mt-1">{stats.totalQuantity || 0}</p>
         </div>
       </div>
@@ -279,19 +280,19 @@ const ProductReportDetail = () => {
       {user?.role !== 'ecom_closeuse' && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">Chiffre d'affaires</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Chiffre d\'affaires')}</p>
             <p className="text-2xl font-bold text-primary-600 mt-1">{fmt(stats.totalRevenue)}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">Frais livraison</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Frais livraison')}</p>
             <p className="text-2xl font-bold text-yellow-600 mt-1">{fmt(stats.totalDeliveryCost)}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">Dépenses pub</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Dépenses pub')}</p>
             <p className="text-2xl font-bold text-red-600 mt-1">{fmt(stats.totalAdSpend)}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">Bénéfice net</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Bénéfice net')}</p>
             <p className={`text-2xl font-bold mt-1 ${(stats.totalProfit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {fmt(stats.totalProfit)}
             </p>
@@ -308,7 +309,7 @@ const ProductReportDetail = () => {
       {/* Graphiques simples (texte pour l'instant - à remplacer par Chart.js) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Évolution des commandes</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Évolution des commandes')}</h3>
           <div className="h-48 flex items-end justify-around gap-1">
             {chartData.map((item, idx) => {
               const height = maxOrders > 0 ? ((item.ordersReceived || 0) / maxOrders) * 100 : 0;
@@ -326,7 +327,7 @@ const ProductReportDetail = () => {
         
         {user?.role !== 'ecom_closeuse' && (
           <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Évolution du CA</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Évolution du CA')}</h3>
             <div className="h-48 flex items-end justify-around gap-1">
               {chartData.map((item, idx) => {
                 const height = maxRevenue > 0 ? ((item.revenue || 0) / maxRevenue) * 100 : 0;
@@ -347,21 +348,21 @@ const ProductReportDetail = () => {
       {/* Tableau historique */}
       <div className="bg-white rounded-lg shadow overflow-x-auto">
         <div className="px-4 py-3 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Historique détaillé</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{tp('Historique détaillé')}</h3>
         </div>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reçues</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Livrées</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Taux</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Date')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Reçues')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Livrées')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Taux')}</th>
               {user?.role !== 'ecom_closeuse' && (
                 <>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pub</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Frais liv.</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">CA</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bénéfice</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Pub')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Frais liv.')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('CA')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Bénéfice')}</th>
                 </>
               )}
             </tr>
@@ -370,7 +371,7 @@ const ProductReportDetail = () => {
             {historicalData.length === 0 ? (
               <tr>
                 <td colSpan={user?.role === 'ecom_closeuse' ? 4 : 8} className="px-6 py-8 text-center text-gray-500">
-                  Aucune donnée disponible pour cette période
+                  {tp('Aucune donnée disponible pour cette période')}
                 </td>
               </tr>
             ) : (

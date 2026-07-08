@@ -7,6 +7,7 @@ import {
   deletePromoCode
 } from '../services/billingApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const PLAN_OPTIONS = [
   { key: 'starter', label: 'Scalor (starter)' },
@@ -144,10 +145,10 @@ const SuperAdminPromoCodes = () => {
 
       if (editingId) {
         await updatePromoCode(editingId, payload);
-        setSuccess('Code mis à jour');
+        setSuccess(tp('Code mis à jour'));
       } else {
         await createPromoCode(payload);
-        setSuccess('Code créé');
+        setSuccess(tp('Code créé'));
       }
       closeForm();
       fetchCodes();
@@ -162,7 +163,7 @@ const SuperAdminPromoCodes = () => {
     if (!confirm(`Supprimer le code "${code}" ?`)) return;
     try {
       await deletePromoCode(id);
-      setSuccess('Code supprimé');
+      setSuccess(tp('Code supprimé'));
       fetchCodes();
     } catch (err) {
       setError(getContextualError(err, 'update_settings'));
@@ -192,7 +193,7 @@ const SuperAdminPromoCodes = () => {
             <Tag className="text-purple-600" /> Codes promo
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Créez et gérez les codes promo applicables aux abonnements.
+            {tp('Créez et gérez les codes promo applicables aux abonnements.')}
           </p>
         </div>
         <button
@@ -206,15 +207,15 @@ const SuperAdminPromoCodes = () => {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase">Codes</p>
+          <p className="text-xs text-gray-500 uppercase">{tp('Codes')}</p>
           <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase">Actifs</p>
+          <p className="text-xs text-gray-500 uppercase">{tp('Actifs')}</p>
           <p className="text-2xl font-bold text-green-600">{stats.active}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase">Utilisations totales</p>
+          <p className="text-xs text-gray-500 uppercase">{tp('Utilisations totales')}</p>
           <p className="text-2xl font-bold text-purple-600">{stats.used}</p>
         </div>
       </div>
@@ -228,12 +229,12 @@ const SuperAdminPromoCodes = () => {
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Rechercher un code…"
+              placeholder={tp('Rechercher un code…')}
               className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
           <button type="submit" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm">
-            Rechercher
+            {tp('Rechercher')}
           </button>
         </form>
         <select
@@ -241,9 +242,9 @@ const SuperAdminPromoCodes = () => {
           onChange={e => setActiveFilter(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
         >
-          <option value="all">Tous</option>
-          <option value="active">Actifs</option>
-          <option value="inactive">Désactivés</option>
+          <option value="all">{tp('Tous')}</option>
+          <option value="active">{tp('Actifs')}</option>
+          <option value="inactive">{tp('Désactivés')}</option>
         </select>
       </div>
 
@@ -266,20 +267,20 @@ const SuperAdminPromoCodes = () => {
             <Loader2 className="animate-spin text-purple-600" size={28} />
           </div>
         ) : codes.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">Aucun code promo</div>
+          <div className="p-12 text-center text-gray-500">{tp('Aucun code promo')}</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 text-gray-600 text-xs uppercase">
                 <tr>
-                  <th className="px-4 py-3 text-left">Code</th>
-                  <th className="px-4 py-3 text-left">Réduction</th>
-                  <th className="px-4 py-3 text-left">Plans</th>
-                  <th className="px-4 py-3 text-left">Durées</th>
-                  <th className="px-4 py-3 text-left">Utilisations</th>
-                  <th className="px-4 py-3 text-left">Validité</th>
-                  <th className="px-4 py-3 text-left">Actif</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-4 py-3 text-left">{tp('Code')}</th>
+                  <th className="px-4 py-3 text-left">{tp('Réduction')}</th>
+                  <th className="px-4 py-3 text-left">{tp('Plans')}</th>
+                  <th className="px-4 py-3 text-left">{tp('Durées')}</th>
+                  <th className="px-4 py-3 text-left">{tp('Utilisations')}</th>
+                  <th className="px-4 py-3 text-left">{tp('Validité')}</th>
+                  <th className="px-4 py-3 text-left">{tp('Actif')}</th>
+                  <th className="px-4 py-3 text-right">{tp('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -295,7 +296,7 @@ const SuperAdminPromoCodes = () => {
                         : <span>-{c.discountValue.toLocaleString('fr-FR')} FCFA</span>}
                     </td>
                     <td className="px-4 py-3 text-xs">
-                      {c.applicablePlans?.length ? c.applicablePlans.join(', ') : 'Tous'}
+                      {c.applicablePlans?.length ? c.applicablePlans.join(', ') : tp('Tous')}
                     </td>
                     <td className="px-4 py-3 text-xs">
                       {c.applicableDurations?.length ? c.applicableDurations.map(d => `${d}m`).join(', ') : 'Toutes'}
@@ -309,7 +310,7 @@ const SuperAdminPromoCodes = () => {
                           <div>du {fmtDate(c.validFrom)}</div>
                           <div>au {fmtDate(c.validUntil)}</div>
                         </>
-                      ) : 'Sans limite'}
+                      ) : tp('Sans limite')}
                     </td>
                     <td className="px-4 py-3">
                       <button
@@ -320,7 +321,7 @@ const SuperAdminPromoCodes = () => {
                             : 'bg-gray-100 text-gray-600'
                         }`}
                       >
-                        {c.isActive ? 'Actif' : 'Désactivé'}
+                        {c.isActive ? 'Actif' : tp('Désactivé')}
                       </button>
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -329,12 +330,12 @@ const SuperAdminPromoCodes = () => {
                           onClick={() => openEdit(c)}
                           className="px-3 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
                         >
-                          Modifier
+                          {tp('Modifier')}
                         </button>
                         <button
                           onClick={() => handleDelete(c._id, c.code)}
                           className="p-1 text-red-600 hover:bg-red-50 rounded"
-                          title="Supprimer"
+                          title={tp('Supprimer')}
                         >
                           <Trash2 size={16} />
                         </button>
@@ -354,7 +355,7 @@ const SuperAdminPromoCodes = () => {
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b">
               <h2 className="text-lg font-bold">
-                {editingId ? 'Modifier le code' : 'Nouveau code promo'}
+                {editingId ? 'Modifier le code' : tp('Nouveau code promo')}
               </h2>
               <button onClick={closeForm} className="p-1 hover:bg-gray-100 rounded">
                 <X size={20} />
@@ -365,7 +366,7 @@ const SuperAdminPromoCodes = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Code <span className="text-red-500">*</span>
+                    {tp('Code')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -379,33 +380,33 @@ const SuperAdminPromoCodes = () => {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Description')}</label>
                   <input
                     type="text"
                     value={form.description}
                     onChange={e => setForm({ ...form, description: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    placeholder="Promo de bienvenue 10%"
+                    placeholder={tp('Promo de bienvenue 10%')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Type de réduction <span className="text-red-500">*</span>
+                    {tp('Type de réduction')} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={form.discountType}
                     onChange={e => setForm({ ...form, discountType: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
-                    <option value="percentage">Pourcentage (%)</option>
-                    <option value="fixed">Montant fixe (FCFA)</option>
+                    <option value="percentage">{tp('Pourcentage (%)')}</option>
+                    <option value="fixed">{tp('Montant fixe (FCFA)')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Valeur <span className="text-red-500">*</span>
+                    {tp('Valeur')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -469,7 +470,7 @@ const SuperAdminPromoCodes = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Utilisations max <span className="text-xs text-gray-400">(global)</span>
+                    Utilisations max <span className="text-xs text-gray-400">{tp('(global)')}</span>
                   </label>
                   <input
                     type="number"
@@ -482,7 +483,7 @@ const SuperAdminPromoCodes = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Max / workspace
+                    {tp('Max / workspace')}
                   </label>
                   <input
                     type="number"
@@ -495,7 +496,7 @@ const SuperAdminPromoCodes = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Montant min FCFA
+                    {tp('Montant min FCFA')}
                   </label>
                   <input
                     type="number"
@@ -511,7 +512,7 @@ const SuperAdminPromoCodes = () => {
               {/* Validité */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Valide à partir du</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Valide à partir du')}</label>
                   <input
                     type="date"
                     value={form.validFrom}
@@ -520,7 +521,7 @@ const SuperAdminPromoCodes = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Valide jusqu'au</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Valide jusqu\'au')}</label>
                   <input
                     type="date"
                     value={form.validUntil}
@@ -537,7 +538,7 @@ const SuperAdminPromoCodes = () => {
                   onChange={e => setForm({ ...form, isActive: e.target.checked })}
                   className="w-4 h-4"
                 />
-                <span className="text-sm">Code actif</span>
+                <span className="text-sm">{tp('Code actif')}</span>
               </label>
 
               <div className="flex justify-end gap-2 pt-4 border-t">
@@ -546,7 +547,7 @@ const SuperAdminPromoCodes = () => {
                   onClick={closeForm}
                   className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
                 >
-                  Annuler
+                  {tp('Annuler')}
                 </button>
                 <button
                   type="submit"
@@ -554,7 +555,7 @@ const SuperAdminPromoCodes = () => {
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
-                  {editingId ? 'Mettre à jour' : 'Créer'}
+                  {editingId ? 'Mettre à jour' : tp('Créer')}
                 </button>
               </div>
             </form>

@@ -2,6 +2,7 @@
 import { useParams, useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { authApi } from '../services/ecommApi';
+import { tp } from '../i18n/platform.js';
 
 const InviteAccept = () => {
   const { token } = useParams();
@@ -70,7 +71,7 @@ const InviteAccept = () => {
 
   const roles = [
     { value: 'ecom_closeuse', label: 'Closeuse', desc: 'Commandes & ventes' },
-    { value: 'ecom_admin', label: 'Administrateur', desc: 'Accès complet' },
+    { value: 'ecom_admin', label: 'Administrateur', get desc() { return tp('Accès complet'); } },
     { value: 'ecom_compta', label: 'Comptable', desc: 'Finances & rapports' },
     { value: 'ecom_livreur', label: 'Livreur', desc: 'Livraisons' },
   ];
@@ -97,10 +98,10 @@ const InviteAccept = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Rejoindre l'équipe</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{tp('Rejoindre l\'équipe')}</h1>
           <p className="text-gray-400 mb-6">{error}</p>
           <button onClick={() => navigate('/ecom/login')} className="px-4 py-2 bg-primary-600 hover:bg-primary-600 text-white rounded-lg transition">
-            Retour à la connexion
+            {tp('Retour à la connexion')}
           </button>
         </div>
       </div>
@@ -125,7 +126,7 @@ const InviteAccept = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-white">Invitation à rejoindre</h1>
+          <h1 className="text-xl font-bold text-white">{tp('Invitation à rejoindre')}</h1>
           <p className="text-gray-400 text-sm mt-1">
             {inviteData?.workspaceName ? `Vous êtes invité à rejoindre « ${inviteData.workspaceName} »` : 'Rejoignez une équipe'}
           </p>
@@ -137,22 +138,22 @@ const InviteAccept = () => {
         <div className="bg-[#1A1C22]/70 border border-white/8 rounded-2xl p-6 backdrop-blur-xl shadow-2xl">
           {!isAuthenticated ? (
             <div className="text-center">
-              <p className="text-gray-300 mb-4">Vous devez d'abord créer un compte ou vous connecter</p>
+              <p className="text-gray-300 mb-4">{tp('Vous devez d\'abord créer un compte ou vous connecter')}</p>
               <div className="space-y-3">
                 <button onClick={() => navigate(`/ecom/register?invite=${token}`)}
                   className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-600 transition">
-                  Créer un compte
+                  {tp('Créer un compte')}
                 </button>
                 <button onClick={() => navigate(`/ecom/login?invite=${token}`)}
                   className="w-full py-3 rounded-xl text-sm font-medium text-gray-300 border border-[#2A2C33] hover:border-gray-600 transition">
-                  Se connecter
+                  {tp('Se connecter')}
                 </button>
               </div>
             </div>
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wide">Votre rôle</label>
+                <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wide">{tp('Votre rôle')}</label>
                 <div className="grid grid-cols-2 gap-2">
                   {roles.map(r => (
                     <button key={r.value} type="button" onClick={() => setSelectedRole(r.value)}
@@ -171,11 +172,11 @@ const InviteAccept = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                     </svg>
-                    Acceptation...
+                    {tp('Acceptation...')}
                   </>
                 ) : (
                   <>
-                    <span>Accepter l'invitation</span>
+                    <span>{tp('Accepter l\'invitation')}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -187,7 +188,7 @@ const InviteAccept = () => {
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-700">
-          <button onClick={() => navigate('/ecom/privacy')} className="hover:text-gray-500 transition">Confidentialité</button>
+          <button onClick={() => navigate('/ecom/privacy')} className="hover:text-gray-500 transition">{tp('Confidentialité')}</button>
           <span>•</span>
           <span>&copy; {new Date().getFullYear()} Scalor</span>
         </div>

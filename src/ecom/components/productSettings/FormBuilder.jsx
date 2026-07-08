@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ListChecks, ChevronUp, ChevronDown, GripVertical, ChevronRight, Settings2 } from 'lucide-react';
 import SectionCard from './SectionCard';
 import { ICONS, ANIMATIONS, ButtonAnimationStyles, getAnimationClass } from './ButtonEditor';
+import { tp } from '../../i18n/platform.js';
 
 // Fields that support inline editing
 const EDITABLE_FIELD_TYPES = new Set(['text', 'textarea', 'address', 'city_select', 'cta_button']);
@@ -21,13 +22,13 @@ const FieldEditor = ({ field, onChange }) => {
       {/* Label / text preview */}
       <div>
         <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-          {isCta ? 'Texte du bouton' : 'Label du champ'}
+          {isCta ? 'Texte du bouton' : tp('Label du champ')}
         </label>
         <input
           type="text"
           value={field.label || ''}
           onChange={e => update('label', e.target.value)}
-          placeholder={isCta ? 'ACHETER MAINTENANT - {total}' : field.name === 'address' ? 'Lieu de livraison' : 'Label'}
+          placeholder={isCta ? 'ACHETER MAINTENANT - {total}' : field.name === 'address' ? 'Lieu de livraison' : tp('Label')}
           className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] font-medium focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
         />
       </div>
@@ -35,12 +36,12 @@ const FieldEditor = ({ field, onChange }) => {
       {/* Placeholder */}
       {!isCta && (
         <div>
-          <label className="block text-[11px] font-semibold text-gray-500 mb-1">Placeholder</label>
+          <label className="block text-[11px] font-semibold text-gray-500 mb-1">{tp('Placeholder')}</label>
           <input
             type="text"
             value={field.placeholder || ''}
             onChange={e => update('placeholder', e.target.value)}
-            placeholder="Ex: Votre quartier, rue..."
+            placeholder={tp('Ex: Votre quartier, rue...')}
             className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] text-gray-500 focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
           />
         </div>
@@ -48,7 +49,7 @@ const FieldEditor = ({ field, onChange }) => {
 
       {/* Icon picker */}
       <div>
-        <label className="block text-[11px] font-semibold text-gray-500 mb-1.5">Icône</label>
+        <label className="block text-[11px] font-semibold text-gray-500 mb-1.5">{tp('Icône')}</label>
         <div className="grid grid-cols-6 gap-1">
           {ICONS.map(({ id, label, Icon }) => (
             <button
@@ -73,7 +74,7 @@ const FieldEditor = ({ field, onChange }) => {
       {isCta && (
         <>
           <div>
-            <label className="block text-[11px] font-semibold text-gray-500 mb-1.5">Animation</label>
+            <label className="block text-[11px] font-semibold text-gray-500 mb-1.5">{tp('Animation')}</label>
             <div className="grid grid-cols-3 gap-1">
               {ANIMATIONS.map(({ id, label }) => (
                 <button
@@ -95,7 +96,7 @@ const FieldEditor = ({ field, onChange }) => {
           {/* Live CTA button preview */}
           <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100 p-3">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 text-center">
-              Aperçu du bouton
+              {tp('Aperçu du bouton')}
             </div>
             <div className="flex justify-center">
               <button
@@ -143,7 +144,7 @@ const FormBuilder = ({ config, onChange }) => {
 
   return (
     <div className="space-y-5">
-      <SectionCard icon={<ListChecks size={18} />} title="Form Builder" description="Choisissez les champs du formulaire, personnalisez-les et réorganisez-les.">
+      <SectionCard icon={<ListChecks size={18} />} title={tp('Form Builder')} description="Choisissez les champs du formulaire, personnalisez-les et réorganisez-les.">
         <div className="space-y-2">
           {fields.map((field, index) => {
             const editable = isEditable(field);
@@ -175,7 +176,7 @@ const FormBuilder = ({ config, onChange }) => {
                       <button
                         type="button"
                         onClick={() => setExpandedField(isExpanded ? null : index)}
-                        title="Personnaliser"
+                        title={tp('Personnaliser')}
                         className={`p-1.5 rounded-lg transition-colors ${
                           isExpanded
                             ? 'bg-primary-100 text-primary-600'
@@ -190,7 +191,7 @@ const FormBuilder = ({ config, onChange }) => {
                       onClick={() => moveField(index, -1)}
                       disabled={index === 0}
                       className="p-1 rounded-lg hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                      aria-label="Move up"
+                      aria-label={tp('Move up')}
                     >
                       <ChevronUp size={14} className="text-gray-500" />
                     </button>
@@ -198,7 +199,7 @@ const FormBuilder = ({ config, onChange }) => {
                       onClick={() => moveField(index, 1)}
                       disabled={index === fields.length - 1}
                       className="p-1 rounded-lg hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                      aria-label="Move down"
+                      aria-label={tp('Move down')}
                     >
                       <ChevronDown size={14} className="text-gray-500" />
                     </button>

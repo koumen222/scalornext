@@ -6,6 +6,7 @@ import {
   getAffiliateToken
 } from '../services/affiliatePortalApi.js';
 import AffiliateLayout from '../components/AffiliateLayout.jsx';
+import { tp } from '../i18n/platform.js';
 
 const fmt = (n) => (n || 0).toLocaleString('fr-FR');
 
@@ -62,7 +63,7 @@ export default function AffiliateConversions() {
         <div className="flex items-center justify-center h-[80vh]">
           <div className="flex flex-col items-center gap-3">
             <svg className="w-8 h-8 animate-spin text-[#0F6B4F]" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-            <p className="text-sm text-gray-500">Chargement...</p>
+            <p className="text-sm text-gray-500">{tp('Chargement...')}</p>
           </div>
         </div>
       </AffiliateLayout>
@@ -83,21 +84,21 @@ export default function AffiliateConversions() {
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <p className="text-2xl font-bold text-gray-900">{pagination.total}</p>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">Total conversions</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">{tp('Total conversions')}</p>
           </div>
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <p className="text-2xl font-bold text-gray-900">{fmt(totals.sales)} <span className="text-sm font-medium text-gray-500">F</span></p>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">Ventes générées</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">{tp('Ventes générées')}</p>
           </div>
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <p className="text-2xl font-bold text-[#0F6B4F]">{fmt(totals.commissions)} <span className="text-sm font-medium text-[#0F6B4F]/60">F</span></p>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">Commissions</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">{tp('Commissions')}</p>
           </div>
         </div>
 
         {/* Filter */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-medium text-gray-500">Filtrer :</span>
+          <span className="text-xs font-medium text-gray-500">{tp('Filtrer :')}</span>
           {['', 'pending', 'approved', 'paid', 'rejected'].map(s => (
             <button
               key={s}
@@ -108,7 +109,7 @@ export default function AffiliateConversions() {
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              {s ? statusLabels[s] : 'Toutes'}
+              {s ? statusLabels[s] : tp('Toutes')}
             </button>
           ))}
         </div>
@@ -119,11 +120,11 @@ export default function AffiliateConversions() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Commande</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Montant</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Commission</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Commande')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Montant')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Commission')}</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statut')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Date')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">

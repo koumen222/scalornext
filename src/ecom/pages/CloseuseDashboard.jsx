@@ -3,28 +3,29 @@ import { Link } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const S = {
-  delivered: { label:'Livrée',      color:'#10B981', bg:'#ecfdf5', text:'#065f46' },
-  confirmed: { label:'Confirmée',   color:'#3B82F6', bg:'#eff6ff', text:'#1e40af' },
+  delivered: { get label() { return tp('Livrée'); },      color:'#10B981', bg:'#ecfdf5', text:'#065f46' },
+  confirmed: { get label() { return tp('Confirmée'); },   color:'#3B82F6', bg:'#eff6ff', text:'#1e40af' },
   pending:   { label:'En attente',  color:'#F59E0B', bg:'#fffbeb', text:'#92400e' },
-  called:    { label:'Appelée',     color:'#8B5CF6', bg:'#f5f3ff', text:'#6b21a8' },
-  shipped:   { label:'Expédiée',    color:'#0EA5E9', bg:'#f0f9ff', text:'#0369a1' },
-  postponed: { label:'Reportée',    color:'#EC4899', bg:'#fdf2f8', text:'#9d174d' },
+  called:    { get label() { return tp('Appelée'); },     color:'#8B5CF6', bg:'#f5f3ff', text:'#6b21a8' },
+  shipped:   { get label() { return tp('Expédiée'); },    color:'#0EA5E9', bg:'#f0f9ff', text:'#0369a1' },
+  postponed: { get label() { return tp('Reportée'); },    color:'#EC4899', bg:'#fdf2f8', text:'#9d174d' },
   unreachable:{ label:'Injoignable',color:'#94A3B8', bg:'#f8fafc', text:'#475569' },
   returned:  { label:'Retour',      color:'#F97316', bg:'#fff7ed', text:'#9a3412' },
-  cancelled: { label:'Annulée',     color:'#EF4444', bg:'#fef2f2', text:'#991b1b' },
+  cancelled: { get label() { return tp('Annulée'); },     color:'#EF4444', bg:'#fef2f2', text:'#991b1b' },
 };
 const ORDER = ['delivered','confirmed','pending','called','shipped','postponed','unreachable','returned','cancelled'];
-const PERIODS = [{k:'today',l:"Aujourd'hui"},{k:'week',l:'Semaine'},{k:'month',l:'Mois'},{k:'30days',l:'30j'}];
+const PERIODS = [{k:'today',l:"Aujourd'hui"},{k:'week',l: tp('Semaine')},{k:'month',l: tp('Mois')},{k:'30days',l:'30j'}];
 const GOAL = 80;
 
 const getBadge = r => {
   if(r>=80) return {emoji:'🏆',label:'Champion',color:'#F59E0B'};
   if(r>=60) return {emoji:'🥇',label:'Expert',   color:'#94A3B8'};
-  if(r>=40) return {emoji:'🥈',label:'Confirmée',color:'#CD7F32'};
-  if(r>=20) return {emoji:'🥉',label:'En progrès',color:'#10B981'};
-  return           {emoji:'🌱',label:'Débutante', color:'#6EE7B7'};
+  if(r>=40) return {emoji:'🥈',get label() { return tp('Confirmée'); },color:'#CD7F32'};
+  if(r>=20) return {emoji:'🥉',get label() { return tp('En progrès'); },color:'#10B981'};
+  return           {emoji:'🌱',get label() { return tp('Débutante'); }, color:'#6EE7B7'};
 };
 
 const SparkLine = ({data,color='#10B981'}) => {
@@ -68,8 +69,8 @@ export default function CloseuseDashboard() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="text-center">
         <div className="text-4xl mb-4">🏢</div>
-        <h2 className="text-lg font-bold text-gray-900 mb-2">Aucun espace configuré</h2>
-        <Link to="/ecom/workspace-setup" className="inline-block px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold">Créer un espace</Link>
+        <h2 className="text-lg font-bold text-gray-900 mb-2">{tp('Aucun espace configuré')}</h2>
+        <Link to="/ecom/workspace-setup" className="inline-block px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold">{tp('Créer un espace')}</Link>
       </div>
     </div>
   );
@@ -117,7 +118,7 @@ export default function CloseuseDashboard() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-primary-500 animate-spin"/>
-        <p className="text-sm text-gray-400">Chargement…</p>
+        <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
       </div>
     </div>
   );
@@ -174,7 +175,7 @@ export default function CloseuseDashboard() {
             </p>
             <h1 className="text-2xl font-black text-gray-900">Bonjour {firstName} 👋</h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              {period==='today'?"Aujourd'hui":period==='week'?'Cette semaine':period==='30days'?'30 derniers jours':'Ce mois'}
+              {period==='today'?"Aujourd'hui":period==='week'?'Cette semaine':period==='30days'?'30 derniers jours': tp('Ce mois')}
             </p>
           </div>
           {/* Badge niveau */}
@@ -199,7 +200,7 @@ export default function CloseuseDashboard() {
           {/* Commandes */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Commandes</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Commandes')}</span>
               <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
                 <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -213,7 +214,7 @@ export default function CloseuseDashboard() {
           {/* Taux */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Taux</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Taux')}</span>
               <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{background:`${rateColor}18`}}>
                 <svg className="w-4 h-4" style={{color:rateColor}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -227,7 +228,7 @@ export default function CloseuseDashboard() {
           {/* Commission */}
           <div className="col-span-2 sm:col-span-1 rounded-2xl border shadow-sm p-4 relative overflow-hidden" style={{background:'linear-gradient(135deg,#065f46 0%,#047857 100%)',borderColor:'#047857'}}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-primary-200 uppercase tracking-wide">Commission</span>
+              <span className="text-[10px] font-bold text-primary-200 uppercase tracking-wide">{tp('Commission')}</span>
               <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -242,7 +243,7 @@ export default function CloseuseDashboard() {
           {/* Aujourd'hui */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Aujourd'hui</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Aujourd\'hui')}</span>
               <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center">
                 <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -258,7 +259,7 @@ export default function CloseuseDashboard() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-sm font-bold text-gray-800">Progression objectif</h3>
+              <h3 className="text-sm font-bold text-gray-800">{tp('Progression objectif')}</h3>
               <p className="text-xs text-gray-400">Objectif livraison : {GOAL}%</p>
             </div>
             <div className="text-right">
@@ -285,7 +286,7 @@ export default function CloseuseDashboard() {
         {/* ── SPARKLINE ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold text-gray-800">Activité 7 jours</h3>
+            <h3 className="text-sm font-bold text-gray-800">{tp('Activité 7 jours')}</h3>
             <span className="text-xs text-gray-400">{weekOrders.filter(o=>o.status==='delivered').length} livrées</span>
           </div>
           <SparkLine data={trend} color="#10B981"/>
@@ -304,7 +305,7 @@ export default function CloseuseDashboard() {
 
           {/* Statuts */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h3 className="text-sm font-bold text-gray-800 mb-4">Répartition statuts</h3>
+            <h3 className="text-sm font-bold text-gray-800 mb-4">{tp('Répartition statuts')}</h3>
             <div className="space-y-2.5">
               {ORDER.filter(s=>(stats[s]||0)>0).map(s=>{
                 const meta=S[s];
@@ -321,16 +322,16 @@ export default function CloseuseDashboard() {
                 );
               })}
               {ORDER.every(s=>!(stats[s]||0))&&(
-                <p className="text-sm text-gray-400 text-center py-4">Aucune donnée</p>
+                <p className="text-sm text-gray-400 text-center py-4">{tp('Aucune donnée')}</p>
               )}
             </div>
           </div>
 
           {/* Top produits */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h3 className="text-sm font-bold text-gray-800 mb-4">🏅 Top produits</h3>
+            <h3 className="text-sm font-bold text-gray-800 mb-4">{tp('🏅 Top produits')}</h3>
             {topProducts.length===0?(
-              <p className="text-sm text-gray-400 text-center py-4">Aucune livraison</p>
+              <p className="text-sm text-gray-400 text-center py-4">{tp('Aucune livraison')}</p>
             ):(
               <div className="space-y-3">
                 {topProducts.map(([name,count],i)=>{
@@ -357,11 +358,11 @@ export default function CloseuseDashboard() {
         {/* ── COMMANDES RÉCENTES ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-gray-800">Commandes récentes</h3>
-            <Link to="/ecom/orders" className="text-xs text-primary-600 font-semibold hover:text-primary-700">Voir tout →</Link>
+            <h3 className="text-sm font-bold text-gray-800">{tp('Commandes récentes')}</h3>
+            <Link to="/ecom/orders" className="text-xs text-primary-600 font-semibold hover:text-primary-700">{tp('Voir tout →')}</Link>
           </div>
           {recentOrders.length===0?(
-            <p className="text-sm text-gray-400 text-center py-6">Aucune commande</p>
+            <p className="text-sm text-gray-400 text-center py-6">{tp('Aucune commande')}</p>
           ):(
             <div className="space-y-1">
               {recentOrders.map(order=>{

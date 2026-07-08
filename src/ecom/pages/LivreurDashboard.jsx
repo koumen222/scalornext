@@ -4,6 +4,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { playConfirmSound, playNewOrderSound, startOrderAlarm, stopOrderAlarm } from '../services/soundService.js';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const STATUS_LABELS = {
   pending: 'En attente', confirmed: 'Acceptée', shipped: 'En cours',
@@ -30,10 +31,10 @@ const NoWorkspace = ({ user }) => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
     <div className="max-w-sm w-full text-center">
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center mx-auto mb-5 text-3xl">🚚</div>
-      <h2 className="text-xl font-bold text-gray-900 mb-2">Aucun espace configuré</h2>
-      <p className="text-sm text-gray-500 mb-6">Rejoignez une équipe existante via un lien d'invitation ou créez votre espace.</p>
-      <Link to="/ecom/workspace-setup" className="block py-3 bg-amber-600 text-white rounded-xl font-semibold text-sm hover:bg-amber-700 transition">Créer un espace</Link>
-      <p className="text-xs text-gray-400 mt-4">Pour rejoindre un espace, demandez un lien d'invitation à votre administrateur.</p>
+      <h2 className="text-xl font-bold text-gray-900 mb-2">{tp('Aucun espace configuré')}</h2>
+      <p className="text-sm text-gray-500 mb-6">{tp('Rejoignez une équipe existante via un lien d\'invitation ou créez votre espace.')}</p>
+      <Link to="/ecom/workspace-setup" className="block py-3 bg-amber-600 text-white rounded-xl font-semibold text-sm hover:bg-amber-700 transition">{tp('Créer un espace')}</Link>
+      <p className="text-xs text-gray-400 mt-4">{tp('Pour rejoindre un espace, demandez un lien d\'invitation à votre administrateur.')}</p>
     </div>
   </div>
 );
@@ -41,7 +42,7 @@ const NoWorkspace = ({ user }) => (
 const Loader = () => (
   <div className="flex flex-col items-center justify-center h-64 gap-4">
     <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-    <p className="text-sm text-gray-400 font-medium">Chargement…</p>
+    <p className="text-sm text-gray-400 font-medium">{tp('Chargement…')}</p>
   </div>
 );
 
@@ -122,7 +123,7 @@ const LivreurDashboard = () => {
     setSuccess('');
     try {
       await ecomApi.post(`/orders/${orderId}/refuse`);
-      setSuccess('Course refusée.');
+      setSuccess(tp('Course refusée.'));
       stopOrderAlarm();
       setAvailableOrders((prev) => prev.filter((order) => order._id !== orderId));
       loadData(true);
@@ -189,7 +190,7 @@ const LivreurDashboard = () => {
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{greeting}, {firstName} 🚚</h1>
           <p className="text-sm text-gray-400 capitalize mt-0.5">{today}</p>
         </div>
-        <button onClick={loadData} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">↻ Actualiser</button>
+        <button onClick={loadData} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">{tp('↻ Actualiser')}</button>
       </div>
 
       {/* Messages */}
@@ -213,13 +214,13 @@ const LivreurDashboard = () => {
               )}
             </h2>
           </div>
-          <Link to="/ecom/livreur/available" className={`text-xs font-medium hover:underline flex-shrink-0 ${availableOrders.length > 0 ? 'text-white/80' : 'text-[#0F6B4F]'}`}>Tout voir →</Link>
+          <Link to="/ecom/livreur/available" className={`text-xs font-medium hover:underline flex-shrink-0 ${availableOrders.length > 0 ? 'text-white/80' : 'text-[#0F6B4F]'}`}>{tp('Tout voir →')}</Link>
         </div>
         <div className="bg-white">
           {availableOrders.length === 0 ? (
             <div className="text-center py-8 px-5">
-              <p className="text-gray-400 text-sm">Aucune course disponible pour le moment</p>
-              <p className="text-xs text-gray-300 mt-1">Les nouvelles courses apparaîtront ici automatiquement</p>
+              <p className="text-gray-400 text-sm">{tp('Aucune course disponible pour le moment')}</p>
+              <p className="text-xs text-gray-300 mt-1">{tp('Les nouvelles courses apparaîtront ici automatiquement')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
@@ -229,16 +230,16 @@ const LivreurDashboard = () => {
                 return (
                   <div key={order._id} className="p-4 hover:bg-amber-50/30 transition">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-gray-900 truncate">{order.clientName || order.clientPhone || 'Client'}</span>
+                      <span className="text-sm font-semibold text-gray-900 truncate">{order.clientName || order.clientPhone || tp('Client')}</span>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
                         <span className="text-xs font-mono text-gray-300">{order.orderId}</span>
-                        {meta.isTargeted && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Ciblée</span>}
+                        {meta.isTargeted && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">{tp('Ciblée')}</span>}
                         {remaining && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">{remaining}</span>}
                       </div>
                     </div>
                     <p className="text-xs text-gray-400 truncate">{order.city || order.address || '—'}{order.product ? ` · ${order.product}` : ''}</p>
                     {meta.destination && <p className="text-xs text-gray-400 truncate mt-0.5">🎯 {meta.destination}</p>}
-                    {(meta.gainLabel || meta.estimatedDistanceLabel) && <p className="text-xs text-gray-400 truncate mt-0.5">💸 Montant : {meta.gainLabel || '—'} · 📏 {meta.estimatedDistanceLabel || 'À estimer'}</p>}
+                    {(meta.gainLabel || meta.estimatedDistanceLabel) && <p className="text-xs text-gray-400 truncate mt-0.5">💸 Montant : {meta.gainLabel || '—'} · 📏 {meta.estimatedDistanceLabel || tp('À estimer')}</p>}
                     {order.price && <p className="text-xs font-semibold text-[#0F6B4F] mt-0.5">{fmt(order.price)}</p>}
                     <div className="mt-2.5 flex gap-2">
                       <button onClick={() => handleAssign(order._id)} disabled={assigning[order._id]} className="text-xs px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition disabled:opacity-50 flex-1">
@@ -282,16 +283,16 @@ const LivreurDashboard = () => {
       {stats && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">💰 Montant encaissé</h2>
-            <Link to="/ecom/livreur/earnings" className="text-xs text-[#0F6B4F] font-medium hover:underline">Voir tout →</Link>
+            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{tp('💰 Montant encaissé')}</h2>
+            <Link to="/ecom/livreur/earnings" className="text-xs text-[#0F6B4F] font-medium hover:underline">{tp('Voir tout →')}</Link>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-gray-400">Ce mois</p>
+              <p className="text-xs text-gray-400">{tp('Ce mois')}</p>
               <p className="text-2xl font-black text-gray-900">{fmt(stats.thisMonth?.amount || 0)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-400">Total cumulé</p>
+              <p className="text-xs text-gray-400">{tp('Total cumulé')}</p>
               <p className="text-2xl font-black text-[#0F6B4F]">{fmt(stats.allTime?.amount || 0)}</p>
             </div>
           </div>
@@ -301,13 +302,13 @@ const LivreurDashboard = () => {
       {/* Mes livraisons en cours */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🚚 En cours</h2>
-            <Link to="/ecom/livreur/deliveries" className="text-xs text-[#0F6B4F] font-medium hover:underline">Tout voir →</Link>
+            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{tp('🚚 En cours')}</h2>
+            <Link to="/ecom/livreur/deliveries" className="text-xs text-[#0F6B4F] font-medium hover:underline">{tp('Tout voir →')}</Link>
           </div>
           {myOrders.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-400 text-sm">Aucune livraison active</p>
-              <Link to="/ecom/livreur/available" className="text-xs text-[#0F6B4F] font-medium mt-2 inline-block">Accepter une course →</Link>
+              <p className="text-gray-400 text-sm">{tp('Aucune livraison active')}</p>
+              <Link to="/ecom/livreur/available" className="text-xs text-[#0F6B4F] font-medium mt-2 inline-block">{tp('Accepter une course →')}</Link>
             </div>
           ) : (
             <div className="space-y-2">
@@ -316,7 +317,7 @@ const LivreurDashboard = () => {
                 return (
                   <div key={order._id} className="rounded-xl border border-gray-100 p-3 hover:bg-gray-50 transition">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-gray-900 truncate">{order.clientName || order.clientPhone || 'Client'}</span>
+                      <span className="text-sm font-semibold text-gray-900 truncate">{order.clientName || order.clientPhone || tp('Client')}</span>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: sm.bg, color: sm.text }}>{STATUS_LABELS[order.status] || order.status}</span>
                     </div>
                     <p className="text-xs text-gray-400 truncate">{order.address || order.city || '—'}</p>
@@ -331,7 +332,7 @@ const LivreurDashboard = () => {
                           {assigning[order._id] ? '…' : '✅ Livré'}
                         </button>
                       )}
-                      <Link to={`/ecom/livreur/delivery/${order._id}`} className="text-xs px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-lg font-medium hover:bg-gray-100 transition">Détails</Link>
+                      <Link to={`/ecom/livreur/delivery/${order._id}`} className="text-xs px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-lg font-medium hover:bg-gray-100 transition">{tp('Détails')}</Link>
                     </div>
                   </div>
                 );
@@ -345,7 +346,7 @@ const LivreurDashboard = () => {
         {[
           { href: '/ecom/livreur/available', icon: '📦', label: 'Courses disponibles', sub: 'Accepter de nouvelles courses' },
           { href: '/ecom/livreur/history', icon: '📋', label: 'Historique', sub: 'Toutes vos livraisons terminées' },
-          { href: '/ecom/livreur/earnings', icon: '💰', label: 'Montant encaissé', sub: 'Détail de vos encaissements' },
+          { href: '/ecom/livreur/earnings', icon: '💰', get label() { return tp('Montant encaissé'); }, sub: 'Détail de vos encaissements' },
         ].map((a, i) => (
           <Link key={i} to={a.href} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition group flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-xl shrink-0">{a.icon}</div>

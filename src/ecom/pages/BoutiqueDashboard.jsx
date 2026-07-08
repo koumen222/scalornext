@@ -14,6 +14,7 @@ import ecomApi from '../services/ecommApi.js';
 import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import { useStore } from '../contexts/StoreContext.jsx';
 import StoreCreationWizard from './StoreCreationWizard.jsx';
+import { tp } from '../i18n/platform.js';
 
 /* ─── tiny helpers ─────────────────────────────────────────────────── */
 const fmt = (n) => new Intl.NumberFormat('fr-FR').format(n || 0);
@@ -161,7 +162,12 @@ const BoutiqueDashboard = () => {
   const isMounted = useRef(true);
   useEffect(() => { isMounted.current = true; return () => { isMounted.current = false; }; }, []);
 
-  const currency = activeStore?.storeSettings?.storeCurrency
+  // Devise = celle renvoyée par l'API stats (`storeCurrency`), dans laquelle les revenus
+  // ont DÉJÀ été convertis côté serveur. Sinon repli sur la devise configurée du store.
+  const currency = analytics?.storeCurrency
+    || activeStore?.storeSettings?.storeCurrency
+    || activeStore?.storeSettings?.currency
+    || activeStore?.currency
     || workspace?.storeSettings?.storeCurrency
     || 'XAF';
 
@@ -259,11 +265,11 @@ const BoutiqueDashboard = () => {
   // health checks
   const store = stores?.[0] || activeStore || null;
   const healthChecks = [
-    { label: 'Boutique activée',      done: !!store?.isActive,                   href: '/ecom/boutique/settings' },
+    { get label() { return tp('Boutique activée'); },      done: !!store?.isActive,                   href: '/ecom/boutique/settings' },
     { label: 'Logo & branding',       done: !!store?.storeSettings?.storeLogo,   href: '/ecom/boutique/settings' },
     { label: 'Page d\'accueil',       done: !!store?.hasHomepage,                href: '/ecom/boutique/pages' },
-    { label: 'Paiements configurés',  done: !!(store?.storePayments && Object.keys(store.storePayments || {}).length > 0), href: '/ecom/boutique/payments' },
-    { label: 'Domaine personnalisé',  done: !!store?.customDomain,               href: '/ecom/boutique/domains' },
+    { get label() { return tp('Paiements configurés'); },  done: !!(store?.storePayments && Object.keys(store.storePayments || {}).length > 0), href: '/ecom/boutique/payments' },
+    { get label() { return tp('Domaine personnalisé'); },  done: !!store?.customDomain,               href: '/ecom/boutique/domains' },
     { label: 'Pixel & tracking',      done: !!store?.storePixels,               href: '/ecom/boutique/pixel' },
   ];
   const healthScore = Math.round((healthChecks.filter(h => h.done).length / healthChecks.length) * 100);
@@ -301,7 +307,7 @@ const BoutiqueDashboard = () => {
                 <h1 className="text-white font-black text-lg lg:text-xl tracking-tight">{storeName}</h1>
                 <div className="flex items-center gap-1 bg-primary-500/20 border border-primary-500/30 text-primary-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
                   <span className="w-1 h-1 rounded-full bg-primary-400 animate-pulse" />
-                  LIVE
+                  {tp('LIVE')}
                 </div>
               </div>
               {storeUrl ? (
@@ -312,7 +318,7 @@ const BoutiqueDashboard = () => {
                   <ExternalLink size={10} />
                 </a>
               ) : (
-                <span className="text-white/30 text-xs">Boutique en ligne</span>
+                <span className="text-white/30 text-xs">{tp('Boutique en ligne')}</span>
               )}
             </div>
           </div>
@@ -333,8 +339,8 @@ const BoutiqueDashboard = () => {
                 <span className="absolute inset-0 flex items-center justify-center text-[9px] font-black text-white">{healthScore}</span>
               </div>
               <div>
-                <p className="text-[10px] text-white/40 font-semibold uppercase tracking-wider">Score</p>
-                <p className="text-xs text-white font-bold">{healthScore >= 80 ? 'Excellent' : healthScore >= 50 ? 'À améliorer' : 'À configurer'}</p>
+                <p className="text-[10px] text-white/40 font-semibold uppercase tracking-wider">{tp('Score')}</p>
+                <p className="text-xs text-white font-bold">{healthScore >= 80 ? 'Excellent' : healthScore >= 50 ? 'À améliorer' : tp('À configurer')}</p>
               </div>
             </div>
 
@@ -350,7 +356,7 @@ const BoutiqueDashboard = () => {
               <a href={storeUrl} target="_blank" rel="noreferrer"
                 className="flex items-center gap-2 bg-[#0F6B4F] hover:bg-[#0A5740] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors shadow-lg shadow-primary-900/30">
                 <Eye size={13} />
-                Voir la boutique
+                {tp('Voir la boutique')}
               </a>
             )}
           </div>
@@ -362,10 +368,10 @@ const BoutiqueDashboard = () => {
             { label: 'Produits',   href: '/ecom/boutique/products', icon: Package },
             { label: 'Commandes',  href: '/ecom/boutique/orders',   icon: ShoppingCart },
             { label: 'Pages',      href: '/ecom/boutique/pages',    icon: Layout },
-            { label: 'Thème',      href: '/ecom/boutique/theme',    icon: Sparkles },
+            { get label() { return tp('Thème'); },      href: '/ecom/boutique/theme',    icon: Sparkles },
             { label: 'Domaines',   href: '/ecom/boutique/domains',  icon: Globe },
             { label: 'Paiements',  href: '/ecom/boutique/payments', icon: CreditCard },
-            { label: 'Paramètres', href: '/ecom/boutique/settings', icon: Settings },
+            { get label() { return tp('Paramètres'); }, href: '/ecom/boutique/settings', icon: Settings },
           ].map(({ label, href, icon: Icon }) => (
             <Link key={label} to={href}
               className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/60 hover:text-white/90 text-[11px] font-semibold px-3 py-1.5 rounded-lg transition-all">
@@ -420,7 +426,7 @@ const BoutiqueDashboard = () => {
           <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ShoppingCart size={15} className="text-gray-400" />
-              <h2 className="text-sm font-bold text-gray-900">Dernières commandes</h2>
+              <h2 className="text-sm font-bold text-gray-900">{tp('Dernières commandes')}</h2>
             </div>
             <Link to="/ecom/boutique/orders"
               className="flex items-center gap-1 text-xs font-semibold text-[#0F6B4F] hover:text-[#0A5740] transition-colors">
@@ -433,8 +439,8 @@ const BoutiqueDashboard = () => {
               <div className="w-12 h-12 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center">
                 <ShoppingCart size={20} className="text-gray-300" />
               </div>
-              <p className="text-sm font-semibold text-gray-400">Aucune commande</p>
-              <p className="text-xs text-gray-300">Les commandes de votre boutique apparaîtront ici</p>
+              <p className="text-sm font-semibold text-gray-400">{tp('Aucune commande')}</p>
+              <p className="text-xs text-gray-300">{tp('Les commandes de votre boutique apparaîtront ici')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
@@ -445,7 +451,7 @@ const BoutiqueDashboard = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-900 truncate">
-                      {order.customerName || order.customer?.name || 'Client'}
+                      {order.customerName || order.customer?.name || tp('Client')}
                     </p>
                     <p className="text-[11px] text-gray-400 truncate">
                       {order.items?.map(it => it.name || it.productName).join(', ') || order.product || '—'}
@@ -471,7 +477,7 @@ const BoutiqueDashboard = () => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Shield size={14} className="text-primary-500" />
-                <h3 className="text-sm font-bold text-gray-900">Santé boutique</h3>
+                <h3 className="text-sm font-bold text-gray-900">{tp('Santé boutique')}</h3>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="h-1.5 w-16 rounded-full bg-gray-100 overflow-hidden">
@@ -499,8 +505,8 @@ const BoutiqueDashboard = () => {
               <Plus size={18} className="text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-white font-bold text-sm">Ajouter un produit</p>
-              <p className="text-white/60 text-[11px]">Développez votre catalogue</p>
+              <p className="text-white font-bold text-sm">{tp('Ajouter un produit')}</p>
+              <p className="text-white/60 text-[11px]">{tp('Développez votre catalogue')}</p>
             </div>
             <ChevronRight size={14} className="text-white/50 group-hover:translate-x-0.5 transition-transform" />
           </Link>
@@ -510,7 +516,7 @@ const BoutiqueDashboard = () => {
 
       {/* ── QUICK ACTIONS GRID ────────────────────────────────────────── */}
       <div>
-        <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Accès rapide</h2>
+        <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">{tp('Accès rapide')}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Action label="Produits"      desc="Gérer le catalogue"         href="/ecom/boutique/products"       icon={Package}    color="#0F6B4F" />
           <Action label="Commandes"     desc="Suivi des ventes"           href="/ecom/boutique/orders"         icon={ShoppingCart} color="#2563EB" />

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const IconFillLoader = ({ backgroundClassName = 'bg-gray-50' }) => {
   const [p, setP] = useState(0);
@@ -57,15 +58,15 @@ const ClientsList = () => {
   const [syncStatuses, setSyncStatuses] = useState(['delivered', 'confirmed', 'pending', 'shipped']);
 
   const availableSyncStatuses = [
-    { key: 'delivered', label: 'Livré', dot: 'bg-green-500', clientStatus: 'Client' },
-    { key: 'confirmed', label: 'Confirmé', dot: 'bg-gray-700', clientStatus: 'Confirmé' },
-    { key: 'shipped', label: 'Expédié', dot: 'bg-gray-500', clientStatus: 'Expédié' },
+    { key: 'delivered', get label() { return tp('Livré'); }, dot: 'bg-green-500', clientStatus: 'Client' },
+    { key: 'confirmed', get label() { return tp('Confirmé'); }, dot: 'bg-gray-700', clientStatus: 'Confirmé' },
+    { key: 'shipped', get label() { return tp('Expédié'); }, dot: 'bg-gray-500', clientStatus: 'Expédié' },
     { key: 'pending', label: 'En attente', dot: 'bg-yellow-500', clientStatus: 'En attente' },
     { key: 'returned', label: 'Retour', dot: 'bg-orange-400', clientStatus: 'Retour' },
-    { key: 'cancelled', label: 'Annulé', dot: 'bg-red-400', clientStatus: 'Annulé' },
+    { key: 'cancelled', get label() { return tp('Annulé'); }, dot: 'bg-red-400', clientStatus: 'Annulé' },
     { key: 'unreachable', label: 'Injoignable', dot: 'bg-gray-400', clientStatus: 'Injoignable' },
-    { key: 'called', label: 'Appelé', dot: 'bg-gray-400', clientStatus: 'Appelé' },
-    { key: 'postponed', label: 'Reporté', dot: 'bg-gray-400', clientStatus: 'Reporté' },
+    { key: 'called', get label() { return tp('Appelé'); }, dot: 'bg-gray-400', clientStatus: 'Appelé' },
+    { key: 'postponed', get label() { return tp('Reporté'); }, dot: 'bg-gray-400', clientStatus: 'Reporté' },
   ];
 
   const fetchClients = async () => {
@@ -84,7 +85,7 @@ const ClientsList = () => {
   };
 
   const handleSyncClients = async () => {
-    if (syncStatuses.length === 0) { setError('Veuillez sélectionner au moins un statut'); return; }
+    if (syncStatuses.length === 0) { setError(tp('Veuillez sélectionner au moins un statut')); return; }
     setSyncing(true); setError(''); setSuccess('');
     try {
       const res = await ecomApi.post('/orders/sync-clients', { statuses: syncStatuses });
@@ -107,8 +108,8 @@ const ClientsList = () => {
   };
 
   const handleDeleteAll = async () => {
-    if (!confirm('Supprimer TOUS les clients ? Action irréversible.')) return;
-    if (!confirm('Confirmez la suppression définitive de tous les clients.')) return;
+    if (!confirm(tp('Supprimer TOUS les clients ? Action irréversible.'))) return;
+    if (!confirm(tp('Confirmez la suppression définitive de tous les clients.'))) return;
     setDeletingAll(true); setError('');
     try { const res = await ecomApi.delete('/ecom/clients/bulk'); setSuccess(res.data.message); fetchClients(); }
     catch (err) { setError(err.response?.data?.message || 'Erreur suppression'); }
@@ -140,8 +141,8 @@ const ClientsList = () => {
   const statsRow = [
     { label: 'Total', value: stats.total || 0 },
     { label: 'Prospects', value: stats.prospects || 0 },
-    { label: 'Confirmés', value: stats.confirmed || 0 },
-    { label: 'Livrés', value: stats.delivered || 0, green: true },
+    { get label() { return tp('Confirmés'); }, value: stats.confirmed || 0 },
+    { get label() { return tp('Livrés'); }, value: stats.delivered || 0, green: true },
     { label: 'Retours', value: stats.returned || 0 },
   ];
 
@@ -161,8 +162,8 @@ const ClientsList = () => {
       <div className="mb-5">
         <div className="flex items-center justify-between gap-3 mb-5">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Clients</h1>
-            <p className="text-sm text-gray-400 mt-0.5">Base de contacts et segments</p>
+            <h1 className="text-xl font-bold text-gray-900">{tp('Clients')}</h1>
+            <p className="text-sm text-gray-400 mt-0.5">{tp('Base de contacts et segments')}</p>
           </div>
           <div className="flex items-center gap-2">
             {user?.role === 'ecom_admin' && (
@@ -176,7 +177,7 @@ const ClientsList = () => {
                 ) : (
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 )}
-                <span className="hidden sm:inline">{syncing ? 'Sync...' : 'Sync'}</span>
+                <span className="hidden sm:inline">{syncing ? 'Sync...' : tp('Sync')}</span>
               </button>
             )}
             {user?.role === 'ecom_admin' && (stats.total || 0) > 0 && (
@@ -186,7 +187,7 @@ const ClientsList = () => {
                 className="h-10 px-3.5 bg-white border border-gray-200 text-red-500 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                <span className="hidden sm:inline">{deletingAll ? 'Suppression...' : 'Tout supprimer'}</span>
+                <span className="hidden sm:inline">{deletingAll ? 'Suppression...' : tp('Tout supprimer')}</span>
               </button>
             )}
             <Link
@@ -194,7 +195,7 @@ const ClientsList = () => {
               className="h-10 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 4v16m8-8H4"/></svg>
-              <span>Client</span>
+              <span>{tp('Client')}</span>
             </Link>
           </div>
         </div>
@@ -214,14 +215,14 @@ const ClientsList = () => {
         {/* Sidebar filtres */}
         <aside className="space-y-3 lg:sticky lg:top-4">
           <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Filtres</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Filtres')}</p>
 
             {/* Recherche */}
             <div className="relative mb-3">
               <svg className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
               <input
                 type="text"
-                placeholder="Nom, téléphone, ville..."
+                placeholder={tp('Nom, téléphone, ville...')}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full h-10 pl-9 pr-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all"
@@ -231,22 +232,22 @@ const ClientsList = () => {
             {/* Statut + Source */}
             <div className="grid grid-cols-2 gap-2 mb-3">
               <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
-                <option value="">Tous statuts</option>
-                <option value="prospect">Prospect</option>
-                <option value="confirmed">Confirmé</option>
-                <option value="delivered">Livré</option>
-                <option value="returned">Retour</option>
-                <option value="blocked">Bloqué</option>
+                <option value="">{tp('Tous statuts')}</option>
+                <option value="prospect">{tp('Prospect')}</option>
+                <option value="confirmed">{tp('Confirmé')}</option>
+                <option value="delivered">{tp('Livré')}</option>
+                <option value="returned">{tp('Retour')}</option>
+                <option value="blocked">{tp('Bloqué')}</option>
               </select>
               <select value={filterSource} onChange={e => setFilterSource(e.target.value)} className="h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
-                <option value="">Toutes sources</option>
+                <option value="">{tp('Toutes sources')}</option>
                 <option value="facebook">Facebook</option>
                 <option value="instagram">Instagram</option>
                 <option value="tiktok">TikTok</option>
                 <option value="whatsapp">WhatsApp</option>
-                <option value="site">Site web</option>
-                <option value="referral">Parrainage</option>
-                <option value="other">Autre</option>
+                <option value="site">{tp('Site web')}</option>
+                <option value="referral">{tp('Parrainage')}</option>
+                <option value="other">{tp('Autre')}</option>
               </select>
             </div>
 
@@ -257,7 +258,7 @@ const ClientsList = () => {
             >
               <span className="flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                Filtres avancés
+                {tp('Filtres avancés')}
               </span>
               {activeFilters.length > 0 && (
                 <span className="w-5 h-5 bg-white/20 rounded-full text-xs font-bold flex items-center justify-center">{activeFilters.length}</span>
@@ -267,15 +268,15 @@ const ClientsList = () => {
             {showFilters && (
               <div className="mt-3 space-y-2">
                 <select value={filterCity} onChange={e => setFilterCity(e.target.value)} className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
-                  <option value="">Toutes les villes</option>
+                  <option value="">{tp('Toutes les villes')}</option>
                   {uniqueCities.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <select value={filterProduct} onChange={e => setFilterProduct(e.target.value)} className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
-                  <option value="">Tous les produits</option>
+                  <option value="">{tp('Tous les produits')}</option>
                   {uniqueProducts.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
                 <select value={filterTag} onChange={e => setFilterTag(e.target.value)} className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer">
-                  <option value="">Tous les tags</option>
+                  <option value="">{tp('Tous les tags')}</option>
                   {uniqueTags.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
@@ -285,8 +286,8 @@ const ClientsList = () => {
             {activeFilters.length > 0 && (
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-gray-400 font-medium">Actifs</p>
-                  <button onClick={resetAllFilters} className="text-xs font-medium text-red-500 hover:text-red-600">Tout effacer</button>
+                  <p className="text-xs text-gray-400 font-medium">{tp('Actifs')}</p>
+                  <button onClick={resetAllFilters} className="text-xs font-medium text-red-500 hover:text-red-600">{tp('Tout effacer')}</button>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {activeFilters.map(f => (
@@ -301,14 +302,14 @@ const ClientsList = () => {
 
           {/* Mini stats sidebar */}
           <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Vue actuelle</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Vue actuelle')}</p>
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-0.5">Affichés</p>
+                <p className="text-xs text-gray-400 mb-0.5">{tp('Affichés')}</p>
                 <p className="text-xl font-bold text-gray-900">{clients.length}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-0.5">Filtres</p>
+                <p className="text-xs text-gray-400 mb-0.5">{tp('Filtres')}</p>
                 <p className="text-xl font-bold text-gray-900">{activeFilters.length}</p>
               </div>
             </div>
@@ -334,13 +335,13 @@ const ClientsList = () => {
                 <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                   <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 </div>
-                <p className="text-sm font-semibold text-gray-800 mb-1">{activeFilters.length > 0 ? 'Aucun résultat' : 'Aucun client'}</p>
-                <p className="text-sm text-gray-400 mb-4">{activeFilters.length > 0 ? 'Modifie les filtres pour élargir la recherche.' : 'Ajoute un premier client pour démarrer.'}</p>
+                <p className="text-sm font-semibold text-gray-800 mb-1">{activeFilters.length > 0 ? 'Aucun résultat' : tp('Aucun client')}</p>
+                <p className="text-sm text-gray-400 mb-4">{activeFilters.length > 0 ? 'Modifie les filtres pour élargir la recherche.' : tp('Ajoute un premier client pour démarrer.')}</p>
                 <div className="flex items-center justify-center gap-2">
                   {activeFilters.length > 0 && (
-                    <button onClick={resetAllFilters} className="h-9 px-4 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">Effacer les filtres</button>
+                    <button onClick={resetAllFilters} className="h-9 px-4 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">{tp('Effacer les filtres')}</button>
                   )}
-                  <Link to="/ecom/clients/new" className="h-9 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors">Ajouter un client</Link>
+                  <Link to="/ecom/clients/new" className="h-9 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors">{tp('Ajouter un client')}</Link>
                 </div>
               </div>
             ) : (
@@ -395,7 +396,7 @@ const ClientsList = () => {
                           {/* Segment */}
                           <div className="flex flex-wrap gap-1.5 lg:flex-col">
                             <span className="inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-gray-600">
-                              {srcLabel[c.source] || 'Inconnu'}
+                              {srcLabel[c.source] || tp('Inconnu')}
                             </span>
                             <span className="inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-gray-600">
                               {c.totalOrders || 0} cmd{(c.totalOrders || 0) > 1 ? 's' : ''}
@@ -427,14 +428,14 @@ const ClientsList = () => {
                               onChange={e => handleStatusChange(c._id, e.target.value)}
                               className="h-8 px-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer"
                             >
-                              <option value="prospect">Prospect</option>
-                              <option value="confirmed">Confirmé</option>
-                              <option value="delivered">Livré</option>
-                              <option value="returned">Retour</option>
-                              <option value="blocked">Bloqué</option>
+                              <option value="prospect">{tp('Prospect')}</option>
+                              <option value="confirmed">{tp('Confirmé')}</option>
+                              <option value="delivered">{tp('Livré')}</option>
+                              <option value="returned">{tp('Retour')}</option>
+                              <option value="blocked">{tp('Bloqué')}</option>
                             </select>
                             <Link to={`/ecom/clients/${c._id}/edit`} className="h-8 px-3 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors flex items-center">
-                              Modifier
+                              {tp('Modifier')}
                             </Link>
                             {user?.role === 'ecom_admin' && (
                               <button onClick={() => handleDelete(c._id, `${c.firstName} ${c.lastName}`)} className="h-8 w-8 flex items-center justify-center bg-gray-50 border border-gray-200 text-red-400 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors">
@@ -464,12 +465,12 @@ const ClientsList = () => {
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">Synchroniser les clients</h3>
-                  <p className="text-xs text-gray-400">Importer les contacts depuis les commandes</p>
+                  <h3 className="text-sm font-bold text-gray-900">{tp('Synchroniser les clients')}</h3>
+                  <p className="text-xs text-gray-400">{tp('Importer les contacts depuis les commandes')}</p>
                 </div>
               </div>
 
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Statuts à synchroniser</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Statuts à synchroniser')}</p>
               <div className="space-y-1.5 mb-5 max-h-60 overflow-y-auto">
                 {availableSyncStatuses.map(s => (
                   <label key={s.key} className={`flex items-center gap-3 h-10 px-3 rounded-xl border cursor-pointer transition-colors ${syncStatuses.includes(s.key) ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:bg-gray-50'}`}>
@@ -487,14 +488,14 @@ const ClientsList = () => {
               </div>
 
               <div className="flex gap-2.5">
-                <button onClick={() => setShowSyncModal(false)} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-200 transition-colors">Annuler</button>
+                <button onClick={() => setShowSyncModal(false)} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
                 <button
                   onClick={handleSyncClients}
                   disabled={syncing || syncStatuses.length === 0}
                   className="flex-1 h-11 bg-gray-900 text-white rounded-2xl text-sm font-semibold hover:bg-gray-800 disabled:opacity-40 flex items-center justify-center gap-2 transition-colors"
                 >
                   {syncing ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/> : null}
-                  {syncing ? 'Sync...' : 'Lancer la sync'}
+                  {syncing ? 'Sync...' : tp('Lancer la sync')}
                 </button>
               </div>
             </div>

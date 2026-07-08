@@ -3,6 +3,7 @@ import { useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const SetupSuperAdmin = () => {
   const navigate = useNavigate();
@@ -42,8 +43,8 @@ const SetupSuperAdmin = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(formData.password)) {
+      setError(tp('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'));
       setLoading(false);
       return;
     }
@@ -90,13 +91,13 @@ const SetupSuperAdmin = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Accès verrouillé</h1>
-          <p className="text-gray-400 mb-8">Le compte Super Administrateur a déjà été créé. Cette page n'est plus accessible.</p>
+          <h1 className="text-2xl font-bold text-white mb-2">{tp('Accès verrouillé')}</h1>
+          <p className="text-gray-400 mb-8">{tp('Le compte Super Administrateur a déjà été créé. Cette page n\'est plus accessible.')}</p>
           <button
             onClick={() => navigate('/ecom/login')}
             className="px-6 py-2.5 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition text-sm font-medium"
           >
-            Retour à la connexion
+            {tp('Retour à la connexion')}
           </button>
         </div>
       </div>
@@ -112,8 +113,8 @@ const SetupSuperAdmin = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white">Configuration initiale</h1>
-          <p className="mt-2 text-gray-400 text-sm">Créez le compte Super Administrateur</p>
+          <h1 className="text-2xl font-bold text-white">{tp('Configuration initiale')}</h1>
+          <p className="mt-2 text-gray-400 text-sm">{tp('Créez le compte Super Administrateur')}</p>
         </div>
 
         {/* Warning */}
@@ -123,7 +124,7 @@ const SetupSuperAdmin = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-red-300">Compte unique</p>
+              <p className="text-sm font-medium text-red-300">{tp('Compte unique')}</p>
               <p className="text-xs text-red-400/80 mt-1">Ce compte ne peut être créé qu'une seule fois. Il aura un accès total à la plateforme, tous les espaces et tous les utilisateurs. Conservez bien vos identifiants.</p>
             </div>
           </div>
@@ -139,7 +140,7 @@ const SetupSuperAdmin = () => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1.5">
-                Email du Super Admin
+                {tp('Email du Super Admin')}
               </label>
               <input
                 id="email"
@@ -147,7 +148,7 @@ const SetupSuperAdmin = () => {
                 type="email"
                 autoComplete="email"
                 required
-                placeholder="admin@votreplateforme.com"
+                placeholder={tp('admin@votreplateforme.com')}
                 value={formData.email}
                 onChange={handleInputChange}
                 className="block w-full px-3.5 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
@@ -156,14 +157,14 @@ const SetupSuperAdmin = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1.5">
-                Mot de passe
+                {tp('Mot de passe')}
               </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 required
-                placeholder="Min. 6 caractères"
+                placeholder={tp('Min. 8 caractères')}
                 value={formData.password}
                 onChange={handleInputChange}
                 className="block w-full px-3.5 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
@@ -172,14 +173,14 @@ const SetupSuperAdmin = () => {
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1.5">
-                Confirmer le mot de passe
+                {tp('Confirmer le mot de passe')}
               </label>
               <input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 required
-                placeholder="Retapez le mot de passe"
+                placeholder={tp('Retapez le mot de passe')}
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 className="block w-full px-3.5 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
@@ -197,7 +198,7 @@ const SetupSuperAdmin = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Création en cours...
+                  {tp('Création en cours...')}
                 </span>
               ) : (
                 'Créer le compte Super Admin'
@@ -208,7 +209,7 @@ const SetupSuperAdmin = () => {
 
         {/* Privileges list */}
         <div className="mt-6 bg-gray-900/50 border border-gray-800 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Privilèges du Super Admin</h3>
+          <h3 className="text-sm font-medium text-gray-300 mb-3">{tp('Privilèges du Super Admin')}</h3>
           <ul className="space-y-2">
             {[
               'Voir et gérer tous les utilisateurs de la plateforme',
@@ -232,7 +233,7 @@ const SetupSuperAdmin = () => {
             onClick={() => navigate('/ecom/login')}
             className="text-sm text-gray-500 hover:text-gray-300 transition"
           >
-            Retour à la connexion
+            {tp('Retour à la connexion')}
           </button>
         </div>
       </div>

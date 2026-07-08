@@ -11,6 +11,7 @@ import InfographicsGeneratorPanel from './InfographicsGeneratorPanel.jsx';
 import ErrorBanner from './ErrorBanner.jsx';
 import DigitalProductEbookModal from './DigitalProductEbookModal.jsx';
 import { useStore } from '../contexts/StoreContext.jsx';
+import { tp } from '../i18n/platform.js';
 
 // Product-generator is mounted at /api/ai/product-generator (outside /api/ecom).
 // We must always use API origin only, never a base path like /api/ecom.
@@ -99,7 +100,7 @@ function CopyButton({ text }) {
         });
       }}
       className="p-1 text-gray-400 hover:text-scalor-green transition"
-      title="Copier"
+      title={tp('Copier')}
     >
       {copied ? <CheckCircle className="w-3.5 h-3.5 text-scalor-green" /> : <Copy className="w-3.5 h-3.5" />}
     </button>
@@ -112,14 +113,14 @@ function ImagePreview({ src, label, className = '' }) {
     <div className={`flex items-center justify-center bg-gray-100 rounded-xl border border-dashed border-gray-300 ${className}`}>
       <div className="text-center text-gray-400 p-4">
         <ImageIcon className="w-8 h-8 mx-auto mb-1 opacity-40" />
-        <p className="text-xs">Image non disponible</p>
+        <p className="text-xs">{tp('Image non disponible')}</p>
       </div>
     </div>
   );
   return (
     <div className="space-y-2">
       <div className={`relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 ${className}`}>
-        <img src={src} alt={label || 'Product image'} className="w-full h-full object-cover" />
+        <img src={src} alt={label || tp('Product image')} className="w-full h-full object-cover" />
       </div>
       {label && <p className="text-xs font-medium text-gray-500 px-1">{label}</p>}
     </div>
@@ -133,7 +134,7 @@ function GifPreview({ src, label, className = '' }) {
       <div className={`relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 ${className}`}>
         <img
           src={src}
-          alt={label || 'GIF généré'}
+          alt={label || tp('GIF généré')}
           className="w-full h-full object-cover"
         />
       </div>
@@ -192,17 +193,17 @@ const FASHION_COLORS = [
   { name: 'Argenté', hex: '#C0C0C0' },
 ];
 const FASHION_AVATAR_OPTIONS = [
-  { value: 'female', label: 'Femme', icon: '👩', hint: 'Portée par une silhouette féminine' },
-  { value: 'male', label: 'Homme', icon: '👨', hint: 'Portée par une silhouette masculine' },
+  { value: 'female', label: 'Femme', icon: '👩', get hint() { return tp('Portée par une silhouette féminine'); } },
+  { value: 'male', label: 'Homme', icon: '👨', get hint() { return tp('Portée par une silhouette masculine'); } },
 ];
 
 const VISUAL_TEMPLATES = [
-  { id: 'beauty', label: 'Beauté & Cosmétique', icon: Sparkles, desc: 'Crèmes, sérums, soins peau, cheveux, maquillage', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
-  { id: 'health', label: 'Santé & Nutrition', icon: Shield, desc: 'Compléments, vitamines, minceur, bien-être', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
-  { id: 'tech', label: 'Tech & Électronique', icon: Smartphone, desc: 'Gadgets, accessoires, appareils, audio', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
-  { id: 'fashion', label: 'Mode & Accessoires', icon: Crown, desc: 'Vêtements, bijoux, sacs, chaussures, wax', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
-  { id: 'home', label: 'Maison & Cuisine', icon: Package, desc: 'Déco, cuisine, électroménager, nettoyage', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
-  { id: 'general', label: 'Autre / Général', icon: Layers, desc: 'Tout type de produit - template polyvalent', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
+  { id: 'beauty', get label() { return tp('Beauté & Cosmétique'); }, icon: Sparkles, get desc() { return tp('Crèmes, sérums, soins peau, cheveux, maquillage'); }, border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
+  { id: 'health', get label() { return tp('Santé & Nutrition'); }, icon: Shield, get desc() { return tp('Compléments, vitamines, minceur, bien-être'); }, border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
+  { id: 'tech', get label() { return tp('Tech & Électronique'); }, icon: Smartphone, desc: 'Gadgets, accessoires, appareils, audio', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
+  { id: 'fashion', label: 'Mode & Accessoires', icon: Crown, get desc() { return tp('Vêtements, bijoux, sacs, chaussures, wax'); }, border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
+  { id: 'home', label: 'Maison & Cuisine', icon: Package, get desc() { return tp('Déco, cuisine, électroménager, nettoyage'); }, border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
+  { id: 'general', get label() { return tp('Autre / Général'); }, icon: Layers, desc: 'Tout type de produit - template polyvalent', border: 'border-slate-300', bg: 'bg-slate-50', iconWrap: 'bg-slate-100 text-slate-700' },
 ];
 
 const TEMPLATE_THEME_PRESETS = {
@@ -379,7 +380,7 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
           <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FDE68A' }} />
           <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#6EE7B7' }} />
         </div>
-        <div style={{ fontSize: 11, fontWeight: 700, color: textSoft }}>boutique-preview.scalor.app</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: textSoft }}>{tp('boutique-preview.scalor.app')}</div>
         <div style={{ fontSize: 10, fontWeight: 800, color: accent, background: accentLight, padding: '2px 10px', borderRadius: 20 }}>{selectedTemplate.label}</div>
       </div>
 
@@ -412,7 +413,7 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
                   </span>
                 )}
                 <span style={{ fontSize: 10, fontWeight: 800, background: '#f0fdf4', color: '#15803d', borderRadius: 20, padding: '3px 10px', border: '1px solid #bbf7d0' }}>
-                  Paiement à la livraison
+                  {tp('Paiement à la livraison')}
                 </span>
               </div>
               {product.hero_cta && (
@@ -434,7 +435,7 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
             <div style={{ padding: '14px' }}>
               <div style={labelStyle}>{benefits.length} bénéfices clés</div>
               <h3 style={{ margin: '4px 0 12px', fontSize: 15, fontWeight: 900, color: textDark }}>
-                DANS <span style={{ color: accent }}>CHAQUE UTILISATION</span>
+                {tp('DANS')} <span style={{ color: accent }}>CHAQUE UTILISATION</span>
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {benefits.slice(0, 6).map((b, i) => (
@@ -450,9 +451,9 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
           {/* ── Panel 3: Composition / Ingrédients ── */}
           <div style={{ ...panelStyle, background: '#FFFBF5' }}>
             <div style={{ padding: '16px' }}>
-              <div style={labelStyle}>Composition</div>
+              <div style={labelStyle}>{tp('Composition')}</div>
               <h3 style={{ margin: '4px 0 14px', fontSize: 15, fontWeight: 900, color: textDark }}>
-                {product.solution_section?.title || 'FORMULE PUISSANTE'}
+                {product.solution_section?.title || tp('FORMULE PUISSANTE')}
               </h3>
               {/* Product image center + ingredients around */}
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -479,19 +480,19 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
           {/* ── Panel 4: Avant / Après ── */}
           <div style={panelStyle}>
             <div style={{ padding: '14px 14px 0' }}>
-              <div style={labelStyle}>Résultats</div>
+              <div style={labelStyle}>{tp('Résultats')}</div>
               <h3 style={{ margin: '4px 0 12px', fontSize: 15, fontWeight: 900, color: textDark }}>
-                VISIBLE EN <span style={{ color: accent }}>QUELQUES JOURS !</span>
+                VISIBLE EN <span style={{ color: accent }}>{tp('QUELQUES JOURS !')}</span>
               </h3>
             </div>
             {beforeAfterGallery[0]?.url ? (
               <div style={{ margin: '0 14px 14px', borderRadius: 14, overflow: 'hidden', border: `1.5px solid ${accentMid}` }}>
-                <img src={beforeAfterGallery[0].url} alt="avant/après" style={{ width: '100%', display: 'block', objectFit: 'cover' }} />
+                <img src={beforeAfterGallery[0].url} alt={tp('avant/après')} style={{ width: '100%', display: 'block', objectFit: 'cover' }} />
               </div>
             ) : (
               <div style={{ margin: '0 14px 14px', borderRadius: 14, overflow: 'hidden', border: `1.5px dashed ${accentMid}`, height: 120, background: accentLight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
                 <span style={{ fontSize: 24 }}>🔄</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: accent }}>Avant / Après</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: accent }}>{tp('Avant / Après')}</span>
               </div>
             )}
             {/* Stat bar below */}
@@ -513,9 +514,9 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
               </div>
             )}
             <div style={{ padding: '14px' }}>
-              <div style={labelStyle}>Usage</div>
+              <div style={labelStyle}>{tp('Usage')}</div>
               <h3 style={{ margin: '4px 0 12px', fontSize: 15, fontWeight: 900, color: textDark }}>
-                {product.hero_baseline || <><span style={{ color: accent }}>IDÉAL POUR</span> TOUTE LA FAMILLE</>}
+                {product.hero_baseline || <><span style={{ color: accent }}>{tp('IDÉAL POUR')}</span> TOUTE LA FAMILLE</>}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
                 {(conversionBlocks.length > 0 ? conversionBlocks.map(b => b.text) : benefits).slice(0, 5).map((item, i) => (
@@ -531,9 +532,9 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
           {/* ── Panel 6: Formule propre / checklist ── */}
           <div style={{ ...panelStyle, background: '#F9FAFB' }}>
             <div style={{ padding: '16px' }}>
-              <div style={labelStyle}>Formule</div>
+              <div style={labelStyle}>{tp('Formule')}</div>
               <h3 style={{ margin: '4px 0 14px', fontSize: 15, fontWeight: 900, color: textDark }}>
-                PROPRE <span style={{ color: accent }}>& ÉTHIQUE</span>
+                {tp('PROPRE')} <span style={{ color: accent }}>& ÉTHIQUE</span>
               </h3>
               {/* Negatives */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 10 }}>
@@ -566,7 +567,7 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
         {/* ── Section témoignages (pleine largeur) ── */}
         {testimonials.length > 0 && (
           <div style={{ marginTop: 14, background: '#fff', borderRadius: 20, border: `1.5px solid ${accentMid}`, padding: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.05)' }}>
-            <div style={labelStyle}>Avis clients</div>
+            <div style={labelStyle}>{tp('Avis clients')}</div>
             <div style={{ marginTop: 4 }}>
               <TestimonialsCarousel
                 testimonials={testimonials.map((t) => ({
@@ -582,7 +583,7 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
         {/* ── FAQ ── */}
         {faq.length > 0 && (
           <div style={{ marginTop: 14, background: '#fff', borderRadius: 20, border: `1.5px solid ${accentMid}`, padding: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.05)' }}>
-            <div style={labelStyle}>Questions fréquentes</div>
+            <div style={labelStyle}>{tp('Questions fréquentes')}</div>
             <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {faq.map((item, i) => (
                 <div key={i} style={{ borderRadius: 14, border: `1px solid ${accentMid}`, background: accentLight, padding: '10px 14px' }}>
@@ -603,9 +604,9 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
 }
 
 const PRODUCT_SUBSTEPS = [
-  { id: 1, label: 'Direction', title: 'Direction visuelle', description: 'Choisis l\'univers visuel des affiches et visuels générés. Le thème final de la page suivra celui de la boutique.', icon: Layers },
-  { id: 2, label: 'Source', title: 'Source du produit', description: 'Choisis le mode puis ajoute le lien ou la description à analyser.', icon: Globe },
-  { id: 3, label: 'Photos', title: 'Photos réelles du produit', description: 'Ajoute les photos réelles qui serviront de base aux visuels générés.', icon: Upload },
+  { id: 1, label: 'Direction', title: 'Direction visuelle', get description() { return tp('Choisis l\'univers visuel des affiches et visuels générés. Le thème final de la page suivra celui de la boutique.'); }, icon: Layers },
+  { id: 2, label: 'Source', title: 'Source du produit', get description() { return tp('Choisis le mode puis ajoute le lien ou la description à analyser.'); }, icon: Globe },
+  { id: 3, label: 'Photos', title: 'Photos réelles du produit', get description() { return tp('Ajoute les photos réelles qui serviront de base aux visuels générés.'); }, icon: Upload },
 ];
 
 const COPYWRITING_APPROACHES = [
@@ -613,14 +614,14 @@ const COPYWRITING_APPROACHES = [
     value: 'PAS',
     label: 'PAS',
     icon: Target,
-    desc: 'Problème -> Agitation -> Solution',
+    get desc() { return tp('Problème -> Agitation -> Solution'); },
     detail: 'Montre le problème, amplifie la douleur, puis présente ton produit comme la solution évidente.'
   },
   {
     value: 'AIDA',
     label: 'AIDA',
     icon: Zap,
-    desc: 'Attention -> Intérêt -> Désir -> Action',
+    get desc() { return tp('Attention -> Intérêt -> Désir -> Action'); },
     detail: 'Capte l\'attention, éveille la curiosité, crée l\'envie et pousse à l\'achat.'
   },
   {
@@ -636,14 +637,14 @@ const COPYWRITING_SUBSTEPS = ['Méthode'];
 const TARGETING_SUBSTEPS = ['Avatar', 'Problème'];
 
 const TARGET_GENDER_OPTIONS = [
-  { value: 'auto', label: 'Auto', hint: 'L’IA déduit selon le produit' },
-  { value: 'female', label: 'Femme', hint: 'Audience majoritairement féminine' },
+  { value: 'auto', label: 'Auto', get hint() { return tp('L’IA déduit selon le produit'); } },
+  { value: 'female', label: 'Femme', get hint() { return tp('Audience majoritairement féminine'); } },
   { value: 'male', label: 'Homme', hint: 'Audience majoritairement masculine' },
   { value: 'mixed', label: 'Les deux', hint: 'Audience mixte / unisexe' },
 ];
 
 const TARGET_AGE_OPTIONS = [
-  { value: 'auto', label: 'Âge auto' },
+  { value: 'auto', get label() { return tp('Âge auto'); } },
   { value: '18-24', label: '18-24 ans' },
   { value: '25-34', label: '25-34 ans' },
   { value: '35-44', label: '35-44 ans' },
@@ -656,7 +657,7 @@ const TARGET_PROFILE_OPTIONS = [
   { value: 'general', label: 'Grand public' },
   { value: 'urban_active', label: 'Actif urbain' },
   { value: 'parent', label: 'Parent / maman / papa' },
-  { value: 'student', label: 'Étudiant / jeune actif' },
+  { value: 'student', get label() { return tp('Étudiant / jeune actif'); } },
   { value: 'professional', label: 'Professionnel' },
   { value: 'sporty', label: 'Sportif / lifestyle actif' },
   { value: 'premium', label: 'Client premium' },
@@ -696,12 +697,12 @@ const IMAGE_GENERATION_MODES = [
   {
     id: 'standard',
     label: 'Visuels IA classiques',
-    description: 'Le modèle génère les visuels dans un cadrage standard, plus polyvalent pour la boutique.',
+    get description() { return tp('Le modèle génère les visuels dans un cadrage standard, plus polyvalent pour la boutique.'); },
   },
   {
     id: 'ad_4_5',
     label: 'Visuels IA en 4:5',
-    description: 'Le modèle génère les visuels en vertical 4:5, plus adaptés aux creatives publicitaires.',
+    get description() { return tp('Le modèle génère les visuels en vertical 4:5, plus adaptés aux creatives publicitaires.'); },
   },
 ];
 
@@ -835,6 +836,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
   const [showTaskList, setShowTaskList] = useState(false);
   const fileInputRef = useRef(null);
   const abortRef = useRef(null);
+  // Watchdog anti-blocage : si la requête de génération ne répond jamais
+  // (timeout serveur/KIE, coupure réseau), on récupère via la tâche en base.
+  const genStartedAtRef = useRef(0);
+  const watchdogFiredRef = useRef(false);
+  // Erreur détectée via la tâche serveur pendant que le POST est encore en vol
+  const taskErrorRef = useRef('');
   const readerRef = useRef(null);
   const isGeneratingRef = useRef(false);
   const taskPollRef = useRef(null);
@@ -1063,7 +1070,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
     const fetchTasks = async () => {
       try {
-        const resp = await fetch(`${API_ORIGIN}/api/ai/product-generator/tasks`, {
+        // light=1 : statut seulement — évite de transférer product/images complets toutes les 10s
+        const resp = await fetch(`${API_ORIGIN}/api/ai/product-generator/tasks?light=1`, {
           headers: authHeaders,
         });
         if (!resp.ok) return;
@@ -1108,7 +1116,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
           || data.task.product.layout === 'premium_product_page'
           || data.task.product.theme === 'premium_product'
           || data.task.product.premium_page) {
-          setError('Cette génération est une page produit premium. Ouvre-la avec le générateur premium séparé.');
+          setError(tp('Cette génération est une page produit premium. Ouvre-la avec le générateur premium séparé.'));
           setShowTaskList(false);
           return;
         }
@@ -1166,6 +1174,81 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
       handleLoadTask(initialTaskId);
     }
   }, [initialTaskId]);
+
+  // ── Sync temps réel avec la tâche serveur pendant la phase texte ───────────
+  // L'animation de progression est simulée ; la tâche en base, elle, connaît
+  // l'étape réelle et les erreurs. Pendant que le POST est en vol, on lit la
+  // tâche toutes les 8s : étape réelle affichée, erreur remontée immédiatement.
+  useEffect(() => {
+    if (phase !== 'loading') return undefined;
+
+    const timer = setInterval(async () => {
+      // Uniquement pendant la phase texte (POST en vol) — la phase images a son propre polling
+      if (!genStartedAtRef.current || !isGeneratingRef.current) return;
+      try {
+        const resp = await fetch(`${API_ORIGIN}/api/ai/product-generator/tasks?light=1`, { headers: getAuthHeaders() });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const task = (data?.tasks || []).find((t) => new Date(t.createdAt).getTime() >= genStartedAtRef.current - 90000);
+        if (!task || !isGeneratingRef.current) return;
+
+        if (task.status === 'error') {
+          // La génération a échoué côté serveur — inutile d'attendre le POST
+          taskErrorRef.current = task.errorMessage || 'La génération a échoué. Réessaie.';
+          abortRef.current?.abort();
+          return;
+        }
+        // Affiche l'étape réelle du serveur à la place du texte simulé
+        if (task.currentStep) setBuildMessage(task.currentStep);
+      } catch { /* silencieux — simple sync d'affichage */ }
+    }, 8000);
+
+    return () => clearInterval(timer);
+  }, [phase]);
+
+  // ── Récupération anti-blocage ──────────────────────────────────────────────
+  // La requête POST est morte (timeout/réseau) mais le backend, lui, continue :
+  // la tâche existe en base. On la retrouve et on reprend dessus au lieu de
+  // laisser l'écran gelé à 95%. Retourne true si une reprise a eu lieu.
+  const recoverFromTask = async () => {
+    const startedAt = genStartedAtRef.current;
+    if (!startedAt) return false;
+
+    setPhase('loading');
+    setBuildMessage('Connexion interrompue — reprise de la génération en cours...');
+
+    const findRecentTask = async () => {
+      try {
+        const resp = await fetch(`${API_ORIGIN}/api/ai/product-generator/tasks?light=1`, { headers: getAuthHeaders() });
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        const tasks = data?.tasks || [];
+        // Tâche la plus récente créée autour de notre soumission (marge 90s)
+        return tasks.find((t) => new Date(t.createdAt).getTime() >= startedAt - 90000) || null;
+      } catch { return null; }
+    };
+
+    // Jusqu'à ~5 min d'attente si le texte est encore en cours côté serveur
+    for (let attempt = 0; attempt < 30; attempt += 1) {
+      const task = await findRecentTask();
+      if (!task) break;
+
+      if (task.status === 'error') {
+        setError(task.errorMessage || tp('La génération a échoué. Réessaie.'));
+        setPhase('input');
+        setBuildStep(0); setBuildProgress(0); setBuildMessage(''); setShowConfetti(false);
+        return true;
+      }
+      if (['done', 'generating_images'].includes(task.status)) {
+        await handleLoadTask(task._id);
+        return true;
+      }
+      // pending / generating_text → le serveur travaille encore, on patiente
+      setBuildMessage(`Le serveur génère toujours ta page (${task.currentStep || 'en cours'})...`);
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+    }
+    return false;
+  };
 
   // Validation des étapes
   const isStep1Valid = () => {
@@ -1503,55 +1586,73 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
     setShowConfetti(false);
     isGeneratingRef.current = true;
 
-    const token = localStorage.getItem('ecomToken');
-    const wsId = getWsId();
-
-    const formData = new FormData();
-    
-    // Mode URL Produit (Amazon, Alibaba, AliExpress, etc.)
-    if (inputMode === 'url') {
-      formData.append('url', url.trim());
-    }
-    // Mode description directe
-    else {
-      formData.append('description', description.trim());
-      formData.append('skipScraping', 'true');
-    }
-    
-    formData.append('withImages', 'true'); // hero_page still generates the hero image via AI
-    formData.append('pageStyle', pageStyle);
-    if (pageStyle === 'hero_page') formData.append('heroMode', 'true');
-    formData.append('imageGenerationMode', imageGenerationMode);
-    formData.append('imageAspectRatio', imageGenerationMode === 'ad_4_5' ? '4:5' : '1:1');
-    formData.append('marketingApproach', marketingApproach);
-    formData.append('visualTemplate', visualTemplate);
-    formData.append('themeColor', templateTheme.primary);
-    if (customPrimaryColor) formData.append('customThemeColor', customPrimaryColor);
-    if (visualTemplate === 'fashion') {
-      formData.append('fashionAvatar', fashionAvatar);
-      formData.append('fashionMinimalist', fashionMinimalist ? 'true' : 'false');
-      if (fashionSizes.length) formData.append('fashionSizes', JSON.stringify(fashionSizes));
-      if (fashionColors.length) formData.append('fashionColors', JSON.stringify(fashionColors));
-    }
-    if (heroVisualDirection.trim()) formData.append('heroVisualDirection', heroVisualDirection.trim());
-    if (decorationDirection.trim()) formData.append('decorationDirection', decorationDirection.trim());
-    // Paramètres copywriting simplifiés
-    formData.append('tone', tone);
-    formData.append('language', generationLanguage);
-    if (targetAvatarSummary) formData.append('targetAvatar', targetAvatarSummary);
-    formData.append('targetGender', targetGender);
-    formData.append('targetAgeRange', targetAgeRange);
-    formData.append('targetProfile', targetProfile);
-    if (mainProblem.trim()) formData.append('mainProblem', mainProblem.trim());
-    
-    photos.forEach(f => formData.append('images', f));
-    
     const controller = new AbortController();
     abortRef.current = controller;
 
+    // Watchdog : au-delà de 6,5 min sans réponse (timeout KIE serveur = 5 min),
+    // on coupe la requête et on bascule sur la récupération via la tâche.
+    genStartedAtRef.current = Date.now();
+    watchdogFiredRef.current = false;
+    const watchdogTimer = setTimeout(() => {
+      watchdogFiredRef.current = true;
+      controller.abort();
+    }, 6.5 * 60 * 1000);
+
     try {
-      console.log('🚀 Starting Product Page Generation:', { url: url.trim(), photosCount: photos.length });
-      
+      // ⚠️ Construction de la requête DANS le try : toute erreur ici (photo invalide,
+      // état corrompu…) doit afficher un message — avant, elle gelait l'écran à 95%
+      // sans qu'aucune requête ne parte.
+      const token = localStorage.getItem('ecomToken');
+      const wsId = getWsId();
+
+      const formData = new FormData();
+
+      // Mode URL Produit (Amazon, Alibaba, AliExpress, etc.)
+      if (inputMode === 'url') {
+        formData.append('url', url.trim());
+      }
+      // Mode description directe
+      else {
+        formData.append('description', description.trim());
+        formData.append('skipScraping', 'true');
+      }
+
+      formData.append('withImages', 'true'); // hero_page still generates the hero image via AI
+      formData.append('pageStyle', pageStyle);
+      if (pageStyle === 'hero_page') formData.append('heroMode', 'true');
+      formData.append('imageGenerationMode', imageGenerationMode);
+      formData.append('imageAspectRatio', imageGenerationMode === 'ad_4_5' ? '4:5' : '1:1');
+      formData.append('marketingApproach', marketingApproach);
+      formData.append('visualTemplate', visualTemplate);
+      formData.append('themeColor', templateTheme?.primary || '#0F6B4F');
+      if (customPrimaryColor) formData.append('customThemeColor', customPrimaryColor);
+      if (visualTemplate === 'fashion') {
+        formData.append('fashionAvatar', fashionAvatar);
+        formData.append('fashionMinimalist', fashionMinimalist ? 'true' : 'false');
+        if (fashionSizes.length) formData.append('fashionSizes', JSON.stringify(fashionSizes));
+        if (fashionColors.length) formData.append('fashionColors', JSON.stringify(fashionColors));
+      }
+      if (heroVisualDirection.trim()) formData.append('heroVisualDirection', heroVisualDirection.trim());
+      if (decorationDirection.trim()) formData.append('decorationDirection', decorationDirection.trim());
+      // Paramètres copywriting simplifiés
+      formData.append('tone', tone);
+      formData.append('language', generationLanguage);
+      if (targetAvatarSummary) formData.append('targetAvatar', targetAvatarSummary);
+      formData.append('targetGender', targetGender);
+      formData.append('targetAgeRange', targetAgeRange);
+      formData.append('targetProfile', targetProfile);
+      if (mainProblem.trim()) formData.append('mainProblem', mainProblem.trim());
+
+      // Photos : uniquement des File/Blob valides (une photo perdue après un
+      // refresh/restore ne doit pas faire planter l'envoi silencieusement)
+      const validPhotos = photos.filter((f) => typeof Blob !== 'undefined' && f instanceof Blob);
+      if (inputMode === 'description' && validPhotos.length === 0) {
+        throw new Error('Tes photos ne sont plus disponibles (page rechargée ?). Re-sélectionne au moins une photo produit.');
+      }
+      validPhotos.forEach(f => formData.append('images', f));
+
+      console.log('🚀 Starting Product Page Generation:', { url: url.trim(), photosCount: validPhotos.length });
+
       const resp = await fetch(`${API_ORIGIN}/api/ai/product-generator`, {
         method: 'POST',
         signal: controller.signal,
@@ -1572,7 +1673,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
             setPhase('input');
             abortRef.current = null;
             isGeneratingRef.current = false;
-            setError('Session expirée. Reconnecte-toi et réessaie.');
+            setError(tp('Session expirée. Reconnecte-toi et réessaie.'));
             return;
           }
 
@@ -1642,9 +1743,28 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
     } catch (error) {
       if (error.name === 'AbortError') {
+        // Abort déclenché par la sync tâche : erreur serveur déjà connue → affichage direct
+        if (taskErrorRef.current) {
+          const message = taskErrorRef.current;
+          taskErrorRef.current = '';
+          setError(message);
+          setPhase('input');
+          setBuildStep(0); setBuildProgress(0); setBuildMessage(''); setShowConfetti(false);
+          return;
+        }
+        // Abort déclenché par le watchdog (pas par l'utilisateur) → récupération via la tâche
+        if (watchdogFiredRef.current) {
+          console.log('⚠️ Watchdog: requête sans réponse — tentative de reprise via la tâche');
+          const recovered = await recoverFromTask();
+          if (recovered) return;
+          setError(tp('Le serveur ne répond plus. La génération continue peut-être en arrière-plan — vérifie « Mes générations » dans une minute.'));
+          setPhase('input');
+          setBuildStep(0); setBuildProgress(0); setBuildMessage(''); setShowConfetti(false);
+          return;
+        }
         console.log('⚠️ Product generation aborted by user or timeout');
         if (!error.message.includes('Timeout')) {
-          setError('Génération annulée');
+          setError(tp('Génération annulée'));
           setPhase('input');
           // Réinitialiser les states d'animation
           setBuildStep(0);
@@ -1654,12 +1774,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
         }
         return;
       }
-      
+
       console.error('❌ Product generation error:', error);
-      
+
+      // Coupure réseau en plein vol : le backend continue probablement → reprise via la tâche
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError') || error.message.includes('ERR_NETWORK')) {
+        const recovered = await recoverFromTask();
+        if (recovered) return;
+      }
+
       // Clear, explicit error messages
       let errorMessage = error.message;
-      
+
       if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
         errorMessage = 'Erreur de connexion: impossible de contacter le serveur. Vérifiez votre connexion internet.';
       } else if (error.message.includes('OpenAI')) {
@@ -1680,6 +1806,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
       setBuildMessage('');
       setShowConfetti(false);
     } finally {
+      clearTimeout(watchdogTimer);
       abortRef.current = null;
       isGeneratingRef.current = false;
     }
@@ -1748,7 +1875,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
   const handleInfographicsGenerated = (result) => {
     if (!result?.infographics?.length) {
-      setError('Aucune infographie générée. Vérifie le quota image et réessaie.');
+      setError(tp('Aucune infographie générée. Vérifie le quota image et réessaie.'));
       return;
     }
     const productImages = result.infographics
@@ -1849,7 +1976,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
     // ── Raisons d'acheter ──────────────────────────────────────────────────────
     if (product.raisons_acheter?.length) {
       descHtml += `<div style="margin:32px 0;padding:24px;background:${themeSoftBackground};border-radius:16px;border:1px solid ${themeSoftBorder};">`;
-      descHtml += `<h3 style="font-size:18px;font-weight:800;color:${themePrimaryToken};margin:0 0 16px;"><strong>✅ Pourquoi choisir ce produit ?</strong></h3>`;
+      descHtml += `<h3 style="font-size:18px;font-weight:800;color:${themePrimaryToken};margin:0 0 16px;"><strong>{tp('✅ Pourquoi choisir ce produit ?')}</strong></h3>`;
       descHtml += `<ul style="margin:0;padding:0;list-style:none;">`;
       product.raisons_acheter.forEach(r => {
         descHtml += `<li style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;color:${themeTextToken};"><span style="margin-top:2px;flex-shrink:0;color:${themePrimaryToken};">✓</span><span>${r}</span></li>`;
@@ -1969,7 +2096,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
   const openDigitalProductModal = () => {
     if (!currentTaskId) {
-      setError('Recharge cette génération depuis le Studio pour créer le produit digital.');
+      setError(tp('Recharge cette génération depuis le Studio pour créer le produit digital.'));
       return;
     }
     setDigitalProductError('');
@@ -2207,7 +2334,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label={tp('Fermer')}
             className={pageMode ? 'absolute right-5 top-5 z-20 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900' : 'absolute right-6 top-6 z-20 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'}
           >
             <X className="w-4 h-4" />
@@ -2225,16 +2352,16 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-50"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
-                  Retour catalogue
+                  {tp('Retour catalogue')}
                 </button>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#0F6B4F] px-3 py-1.5 text-xs font-semibold text-white">
                   <Sparkles className="h-3.5 w-3.5" />
-                  Générateur de page produit
+                  {tp('Générateur de page produit')}
                 </span>
                 {pageStyle === 'hero_page' ? (
                   <span className="inline-flex items-center gap-2 rounded-full border border-primary-300 bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary-700">
                     <CheckCircle className="h-3.5 w-3.5" />
-                    Gratuit
+                    {tp('Gratuit')}
                   </span>
                 ) : generationsInfo && (
                   <span className="inline-flex items-center gap-2 rounded-full border border-[#96C7B5] bg-[#E6F2ED] px-3 py-1.5 text-xs font-semibold text-[#0A5740]">
@@ -2246,10 +2373,10 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
               <div className="mt-4 max-w-3xl">
                 <h2 className="text-[28px] font-black leading-tight tracking-[-0.03em] text-black sm:text-[34px]">
-                  Crée une page produit simple, propre et prête à publier.
+                  {tp('Crée une page produit simple, propre et prête à publier.')}
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-gray-600">
-                  Produit, copywriting, ciblage, puis génération.
+                  {tp('Produit, copywriting, ciblage, puis génération.')}
                 </p>
               </div>
 
@@ -2289,8 +2416,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <Sparkles className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xl font-black text-gray-900 leading-tight">Générateur de page produit IA</h2>
-                      <p className="mt-0.5 text-xs text-gray-600">Crée une page produit claire, simple et prête à publier.</p>
+                      <h2 className="text-xl font-black text-gray-900 leading-tight">{tp('Générateur de page produit IA')}</h2>
+                      <p className="mt-0.5 text-xs text-gray-600">{tp('Crée une page produit claire, simple et prête à publier.')}</p>
                     </div>
                   </div>
                 </div>
@@ -2302,7 +2429,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <div className="flex items-center gap-2 text-[11px] font-bold">
                           <span className="text-violet-600">{generationsInfo.remaining || 0} crédit{(generationsInfo.remaining || 0) > 1 ? 's' : ''}</span>
                         </div>
-                        <span className="text-[10px] text-violet-600">crédits restants</span>
+                        <span className="text-[10px] text-violet-600">{tp('crédits restants')}</span>
                       </div>
                     </div>
                   )}
@@ -2321,7 +2448,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               <div className="rounded-2xl border border-gray-200 bg-white p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Layers className="h-4 w-4 text-gray-400" />
-                  <label className="text-sm font-bold text-gray-900">Style de page</label>
+                  <label className="text-sm font-bold text-gray-900">{tp('Style de page')}</label>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <button
@@ -2329,27 +2456,63 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     onClick={() => { setPageStyle('classic'); setInfographicsTaskResult(null); }}
                     className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'classic' ? 'border-scalor-green bg-[#E6F2ED]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
                   >
-                    <p className="text-sm font-bold text-gray-900">Classique</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Hero, bénéfices, avis, FAQ, blocs conversion</p>
+                    <p className="text-sm font-bold text-gray-900">{tp('Classique')}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('Hero, bénéfices, avis, FAQ, blocs conversion')}</p>
                   </button>
                   <button
                     type="button"
                     onClick={() => setPageStyle('infographics')}
                     className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'infographics' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
                   >
-                    <p className="text-sm font-bold text-gray-900">Infographies 9:16</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Pile d'infographies verticales + formulaire minimal</p>
+                    <p className="text-sm font-bold text-gray-900">{tp('Infographies 9:16')}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('Pile d\'infographies verticales + formulaire minimal')}</p>
                   </button>
                   <button
                     type="button"
                     onClick={() => { setPageStyle('hero_page'); setInfographicsTaskResult(null); }}
                     className={`relative text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'hero_page' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
                   >
-                    <span className="absolute -top-2 -right-2 text-[10px] font-black bg-primary-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">Gratuit</span>
-                    <p className="text-sm font-bold text-gray-900">Page Complète — Image réduite</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Page IA complète + hero généré par IA — sans images d'angles ni GIFs</p>
+                    <span className="absolute -top-2 -right-2 text-[10px] font-black bg-primary-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">{tp('Gratuit')}</span>
+                    <p className="text-sm font-bold text-gray-900">{tp('Page Complète — Image réduite')}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{tp('Page IA complète + hero généré par IA — sans images d\'angles ni GIFs')}</p>
                   </button>
                 </div>
+
+                {/* Langue du contenu généré — visible sur tout le wizard (gratuit + pro + infographies) */}
+                {(usesStandardProductGenerator || pageStyle === 'infographics') && (
+                  <div className="mt-4 border-t border-gray-100 pt-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <label className="text-sm font-bold text-gray-900">{tp('Langue du contenu généré')}</label>
+                          <p className="text-xs text-gray-500">{tp('Par défaut : la langue de la boutique. S\'applique à toute la page générée.')}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {[
+                          { code: 'fr', get label() { return tp('Français'); }, flag: '🇫🇷' },
+                          { code: 'en', label: 'English', flag: '🇬🇧' },
+                          { code: 'es', get label() { return tp('Español'); }, flag: '🇪🇸' },
+                        ].map((l) => {
+                          const isActive = effectiveLanguageCode === l.code;
+                          return (
+                            <button
+                              key={l.code}
+                              type="button"
+                              onClick={() => setGenLanguage(l.code)}
+                              className={`rounded-xl border px-3 py-2 text-center transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-gray-200 bg-white hover:border-[#96C7B5]'}`}
+                            >
+                              <span className="text-sm leading-none">{l.flag}</span>
+                              <span className={`ml-1.5 text-xs font-semibold ${isActive ? 'text-[#0F6B4F]' : 'text-slate-900'}`}>{l.label}</span>
+                              {l.code === storeLanguageCode && <span className="ml-1 text-[10px] text-gray-400">{tp('(boutique)')}</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* ── Hero Image Builder (gratuit, canvas) ────────────────────────────── */}
@@ -2361,8 +2524,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <ImageIcon className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">Image Hero — Gratuit</p>
-                      <p className="text-xs text-primary-700">Compose une image 1080×1080 avec ta photo + texte. Aucun crédit requis.</p>
+                      <p className="text-sm font-bold text-gray-900">{tp('Image Hero — Gratuit')}</p>
+                      <p className="text-xs text-primary-700">{tp('Compose une image 1080×1080 avec ta photo + texte. Aucun crédit requis.')}</p>
                     </div>
                   </div>
 
@@ -2372,7 +2535,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                       {/* Photo upload */}
                       <div>
-                        <label className="text-xs font-bold text-gray-700 mb-1.5 block">Photo du produit</label>
+                        <label className="text-xs font-bold text-gray-700 mb-1.5 block">{tp('Photo du produit')}</label>
                         <div
                           onDragOver={(e) => { e.preventDefault(); setHeroDragOver(true); }}
                           onDragLeave={() => setHeroDragOver(false)}
@@ -2385,14 +2548,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             <div className="flex items-center gap-3 w-full">
                               <img src={heroImg.src} alt="preview" className="w-16 h-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />
                               <div className="min-w-0">
-                                <p className="text-xs font-semibold text-gray-800 truncate">{heroFile?.name || 'Image chargée'}</p>
-                                <button type="button" className="text-[11px] text-primary-600 font-semibold mt-0.5" onClick={(e)=>{ e.stopPropagation(); setHeroFile(null); setHeroImg(null); }}>Changer d'image</button>
+                                <p className="text-xs font-semibold text-gray-800 truncate">{heroFile?.name || tp('Image chargée')}</p>
+                                <button type="button" className="text-[11px] text-primary-600 font-semibold mt-0.5" onClick={(e)=>{ e.stopPropagation(); setHeroFile(null); setHeroImg(null); }}>{tp('Changer d\'image')}</button>
                               </div>
                             </div>
                           ) : (
                             <>
                               <Upload className="w-6 h-6 text-gray-400" />
-                              <p className="text-xs text-gray-500 text-center">Glisse ta photo ici ou <span className="text-primary-600 font-semibold">clique pour choisir</span></p>
+                              <p className="text-xs text-gray-500 text-center">{tp('Glisse ta photo ici ou')} <span className="text-primary-600 font-semibold">{tp('clique pour choisir')}</span></p>
                             </>
                           )}
                         </div>
@@ -2421,7 +2584,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                         {/* Accent color */}
                         <div>
-                          <label className="text-[11px] font-semibold text-gray-600 mb-1.5 block">Couleur accent</label>
+                          <label className="text-[11px] font-semibold text-gray-600 mb-1.5 block">{tp('Couleur accent')}</label>
                           <div className="flex items-center gap-3">
                             <input type="color" value={heroAccent} onChange={(e) => setHeroAccent(e.target.value)} className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer p-0.5" />
                             {['#0F6B4F','#1877F2','#DC2626','#7C3AED','#B45309','#000000'].map(c => (
@@ -2434,7 +2597,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                     {/* Right: canvas preview + download */}
                     <div className="p-5 flex flex-col items-center gap-4 bg-gray-50">
-                      <p className="text-xs font-bold text-gray-600 self-start">Aperçu (1080×1080)</p>
+                      <p className="text-xs font-bold text-gray-600 self-start">{tp('Aperçu (1080×1080)')}</p>
                       <canvas
                         ref={heroCanvasRef}
                         style={{ width: '100%', maxWidth: 340, aspectRatio: '1/1', borderRadius: 16, border: '1.5px solid #e5e7eb', boxShadow: '0 4px 24px rgba(0,0,0,0.10)' }}
@@ -2448,9 +2611,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0F6B4F'}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        Télécharger PNG (1080×1080)
+                        {tp('Télécharger PNG (1080×1080)')}
                       </button>
-                      <p className="text-[11px] text-gray-400 text-center max-w-[300px]">Image haute résolution prête pour Facebook Ads, TikTok ou votre boutique. 100% gratuit, aucun crédit.</p>
+                      <p className="text-[11px] text-gray-400 text-center max-w-[300px]">{tp('Image haute résolution prête pour Facebook Ads, TikTok ou votre boutique. 100% gratuit, aucun crédit.')}</p>
                     </div>
                   </div>
                 </div>
@@ -2463,6 +2626,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   onContinueInBackground={handleContinueInBackground}
                   initialResult={infographicsTaskResult}
                   onResetPreview={() => setInfographicsTaskResult(null)}
+                  language={generationLanguage}
                 />
               )}
 
@@ -2482,7 +2646,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <span className="text-sm font-semibold text-[#0A5740]">
                       {backgroundTasks.filter(t => !['done', 'error'].includes(t.status)).length > 0
                         ? `${backgroundTasks.filter(t => !['done', 'error'].includes(t.status)).length} génération(s) en cours`
-                        : 'Générations terminées'}
+                        : tp('Générations terminées')}
                     </span>
                   </div>
                   <ChevronRight className={`w-4 h-4 text-[#0F6B4F] transition-transform ${showTaskList ? 'rotate-90' : ''}`} />
@@ -2495,7 +2659,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {backgroundTasks.map(task => (
                     <div key={task._id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{task.productName || 'Produit'}</p>
+                        <p className="text-sm font-semibold text-gray-900 truncate">{task.productName || tp('Produit')}</p>
                         <p className="text-xs text-gray-500">
                           {task.status === 'done' ? '✅ Terminé' :
                            task.status === 'error' ? '❌ Erreur' :
@@ -2508,7 +2672,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           onClick={() => handleLoadTask(task._id)}
                           className="ml-3 shrink-0 rounded-lg bg-[#0F6B4F] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#0A5740]"
                         >
-                          {task.product?.layout === 'infographics' ? 'Voir le résultat' : 'Voir la page'}
+                          {task.product?.layout === 'infographics' ? 'Voir le résultat' : tp('Voir la page')}
                         </button>
                       )}
                       {task.status === 'error' && (
@@ -2519,10 +2683,10 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                               onClick={() => handleLoadTask(task._id)}
                               className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 transition hover:bg-amber-100"
                             >
-                              {task.product?.layout === 'infographics' ? 'Ouvrir résultat' : 'Ouvrir contenu'}
+                              {task.product?.layout === 'infographics' ? 'Ouvrir résultat' : tp('Ouvrir contenu')}
                             </button>
                           )}
-                          <span className="text-xs text-red-500">{task.errorMessage || 'Erreur'}</span>
+                          <span className="text-xs text-red-500">{task.errorMessage || tp('Erreur')}</span>
                         </div>
                       )}
                     </div>
@@ -2536,7 +2700,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-xl shrink-0">💾</span>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-amber-900 truncate">Génération sauvegardée : &ldquo;{draftBanner.product?.title || 'Page produit'}&rdquo;</p>
+                      <p className="text-sm font-semibold text-amber-900 truncate">Génération sauvegardée : &ldquo;{draftBanner.product?.title || tp('Page produit')}&rdquo;</p>
                       <p className="text-xs text-amber-700">Reprend là où tu t&apos;es arrêté</p>
                     </div>
                   </div>
@@ -2552,14 +2716,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       }}
                       className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-600 transition"
                     >
-                      Reprendre
+                      {tp('Reprendre')}
                     </button>
                     <button
                       type="button"
                       onClick={() => { clearDraft(); setDraftBanner(null); }}
                       className="rounded-lg border border-amber-300 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition"
                     >
-                      Ignorer
+                      {tp('Ignorer')}
                     </button>
                   </div>
                 </div>
@@ -2573,9 +2737,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6">
                     <div className="flex items-center gap-2 mb-1">
                       <Layers className="h-4 w-4 text-gray-400" />
-                      <label className="text-sm font-semibold text-gray-800">Template visuel</label>
+                      <label className="text-sm font-semibold text-gray-800">{tp('Template visuel')}</label>
                     </div>
-                    <p className="text-xs text-gray-400 mb-4">Choisie le type de produit — chaque template a son propre style d'images</p>
+                    <p className="text-xs text-gray-400 mb-4">{tp('Choisie le type de produit — chaque template a son propre style d\'images')}</p>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {VISUAL_TEMPLATES.map(t => {
                         const isActive = visualTemplate === t.id;
@@ -2620,7 +2784,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
                           <div className="w-5 h-5 rounded-full border border-gray-200 flex-shrink-0" style={{ background: templateTheme.primary }} />
-                          <span className="text-xs font-semibold text-gray-800">Couleur de votre thème</span>
+                          <span className="text-xs font-semibold text-gray-800">{tp('Couleur de votre thème')}</span>
                         </div>
                         {customPrimaryColor && (
                           <button
@@ -2628,7 +2792,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             onClick={() => setCustomPrimaryColor(null)}
                             className="text-[10px] text-gray-400 hover:text-red-500 transition underline"
                           >
-                            Réinitialiser
+                            {tp('Réinitialiser')}
                           </button>
                         )}
                       </div>
@@ -2682,11 +2846,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           <Crown className="h-4 w-4 text-purple-700" />
                           <h4 className="text-sm font-bold text-purple-900">Configuration Mode & Vêtements</h4>
                         </div>
-                        <p className="text-xs text-purple-700/80 mb-4">L'IA habillera l'avatar avec les photos de vêtements que tu fournis. Page produit minimaliste dédiée.</p>
+                        <p className="text-xs text-purple-700/80 mb-4">{tp('L\'IA habillera l\'avatar avec les photos de vêtements que tu fournis. Page produit minimaliste dédiée.')}</p>
 
                         {/* Avatar gender */}
                         <div className="mb-5">
-                          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-purple-800">Avatar / Mannequin</label>
+                          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-purple-800">{tp('Avatar / Mannequin')}</label>
                           <div className="grid grid-cols-2 gap-2">
                             {FASHION_AVATAR_OPTIONS.map(opt => (
                               <button
@@ -2706,7 +2870,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         {/* Tailles */}
                         <div className="mb-5">
                           <div className="flex items-center justify-between mb-2">
-                            <label className="text-xs font-semibold uppercase tracking-wider text-purple-800">Tailles disponibles</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-purple-800">{tp('Tailles disponibles')}</label>
                             <span className="text-[10px] text-gray-500">{fashionSizes.length} sélectionnée{fashionSizes.length > 1 ? 's' : ''}</span>
                           </div>
                           <div className="space-y-2">
@@ -2759,7 +2923,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         {/* Couleurs */}
                         <div className="mb-5">
                           <div className="flex items-center justify-between mb-2">
-                            <label className="text-xs font-semibold uppercase tracking-wider text-purple-800">Couleurs disponibles</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-purple-800">{tp('Couleurs disponibles')}</label>
                             <span className="text-[10px] text-gray-500">{fashionColors.length} sélectionnée{fashionColors.length > 1 ? 's' : ''}</span>
                           </div>
                           <div className="flex flex-wrap gap-2">
@@ -2790,8 +2954,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             className="mt-0.5 w-4 h-4 accent-purple-600"
                           />
                           <div className="flex-1">
-                            <p className="text-xs font-semibold text-gray-800">Page produit minimaliste</p>
-                            <p className="text-[11px] text-gray-500 mt-0.5">Layout éditorial épuré : focus silhouette, détails matière, moins de sections marketing. Recommandé pour la mode.</p>
+                            <p className="text-xs font-semibold text-gray-800">{tp('Page produit minimaliste')}</p>
+                            <p className="text-[11px] text-gray-500 mt-0.5">{tp('Layout éditorial épuré : focus silhouette, détails matière, moins de sections marketing. Recommandé pour la mode.')}</p>
                           </div>
                         </label>
                       </div>
@@ -2805,7 +2969,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <div>
                       <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
                         <Globe className="h-4 w-4 text-slate-700" />
-                        Source du produit
+                        {tp('Source du produit')}
                       </label>
                       <div className="flex gap-2 rounded-[18px] border border-gray-200 bg-gray-50 p-1.5 shadow-sm">
                         <button
@@ -2819,7 +2983,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         >
                           <span className="inline-flex items-center gap-2">
                             <Globe className="h-4 w-4" />
-                            Lien du produit
+                            {tp('Lien du produit')}
                           </span>
                         </button>
                         <button
@@ -2833,7 +2997,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         >
                           <span className="inline-flex items-center gap-2">
                             <FileText className="h-4 w-4" />
-                            Description directe
+                            {tp('Description directe')}
                           </span>
                         </button>
                       </div>
@@ -2843,7 +3007,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <div className="rounded-[22px] border border-gray-200 bg-white p-4 shadow-sm">
                         <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
                           <Globe className="h-4 w-4 text-slate-700" />
-                          Lien du produit (Amazon, Alibaba, AliExpress, etc.)
+                          {tp('Lien du produit (Amazon, Alibaba, AliExpress, etc.)')}
                         </label>
                         <div className="relative">
                           <input
@@ -2864,7 +3028,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <div className="rounded-[22px] border border-gray-200 bg-white p-4 shadow-sm">
                         <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
                           <FileText className="h-4 w-4 text-slate-700" />
-                          Description du produit
+                          {tp('Description du produit')}
                         </label>
                         <textarea
                           value={description}
@@ -2886,7 +3050,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <div className="rounded-[30px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
                     <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <Upload className="h-4 w-4 text-slate-700" />
-                      Tes vraies photos du produit <span className="font-normal text-gray-500">(3–8 recommandées)</span>
+                      Tes vraies photos du produit <span className="font-normal text-gray-500">{tp('(3–8 recommandées)')}</span>
                     </label>
                     <div
                       onDrop={handleDrop}
@@ -2898,8 +3062,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       }`}
                     >
                       <Upload className="w-7 h-7 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm font-medium text-gray-600">Glisse tes photos ici ou <span className="text-scalor-green">clique pour sélectionner</span></p>
-                      <p className="text-xs text-gray-400 mt-1">JPG, PNG, WEBP — max 10MB chaque — jusqu'à 8 photos</p>
+                      <p className="text-sm font-medium text-gray-600">{tp('Glisse tes photos ici ou')} <span className="text-scalor-green">{tp('clique pour sélectionner')}</span></p>
+                      <p className="text-xs text-gray-400 mt-1">{tp('JPG, PNG, WEBP — max 10MB chaque — jusqu\'à 8 photos')}</p>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -2927,7 +3091,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                               <X className="w-3 h-3" />
                             </button>
                             {i === 0 && (
-                              <div className="absolute bottom-0 left-0 right-0 bg-scalor-green/90 text-white text-xs text-center py-0.5">Hero</div>
+                              <div className="absolute bottom-0 left-0 right-0 bg-scalor-green/90 text-white text-xs text-center py-0.5">{tp('Hero')}</div>
                             )}
                           </div>
                         ))}
@@ -2953,9 +3117,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* 3 Méthodes Copywriting */}
                   <div className="rounded-[30px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Choisis ta méthode copywriting
+                      {tp('Choisis ta méthode copywriting')}
                     </label>
-                    <p className="text-xs text-gray-500 mb-3">La méthode choisie pilote tout : texte, images, structure de la page</p>
+                    <p className="text-xs text-gray-500 mb-3">{tp('La méthode choisie pilote tout : texte, images, structure de la page')}</p>
                     <div className="grid grid-cols-1 gap-3">
                       {COPYWRITING_APPROACHES.map(approach => (
                         <button
@@ -3000,18 +3164,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <div className="text-center space-y-2 mb-4">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-stone-200 bg-stone-50">
                       <Star className="w-4 h-4 text-slate-600" />
-                      <span className="text-sm font-bold text-slate-800">Optionnel</span>
+                      <span className="text-sm font-bold text-slate-800">{tp('Optionnel')}</span>
                     </div>
-                    <p className="text-xs text-gray-500">Ces infos aident l'IA a mieux cibler ta page produit</p>
+                    <p className="text-xs text-gray-500">{tp('Ces infos aident l\'IA a mieux cibler ta page produit')}</p>
                   </div>
 
                   <div className="space-y-3 rounded-[28px] border border-gray-200 bg-white p-5 mb-4 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
                     <div>
                       <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
                         <ImageIcon className="h-3.5 w-3.5 text-scalor-green" />
-                        Visuels de la page
+                        {tp('Visuels de la page')}
                       </label>
-                      <p className="text-xs text-gray-500">Choisis le type de visuels que le modèle doit générer pour cette page produit.</p>
+                      <p className="text-xs text-gray-500">{tp('Choisis le type de visuels que le modèle doit générer pour cette page produit.')}</p>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -3043,47 +3207,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     )}
                   </div>
 
-                  {/* Langue du contenu généré */}
-                  <div className="space-y-3 rounded-[28px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1.5">Langue du contenu généré</label>
-                      <p className="text-xs text-gray-500">Par défaut : la langue de la boutique. Tu peux la changer pour cette génération.</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { code: 'fr', label: 'Français', flag: '🇫🇷' },
-                        { code: 'en', label: 'English', flag: '🇬🇧' },
-                        { code: 'es', label: 'Español', flag: '🇪🇸' },
-                      ].map((l) => {
-                        const isActive = effectiveLanguageCode === l.code;
-                        return (
-                          <button
-                            key={l.code}
-                            type="button"
-                            onClick={() => setGenLanguage(l.code)}
-                            className={`rounded-[16px] border px-3 py-2.5 text-center transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-gray-200 bg-white hover:border-[#96C7B5]'}`}
-                          >
-                            <span className="text-base leading-none">{l.flag}</span>
-                            <p className={`mt-1 text-xs font-semibold ${isActive ? 'text-[#0F6B4F]' : 'text-slate-900'}`}>{l.label}</p>
-                            {l.code === storeLanguageCode && <p className="text-[10px] text-gray-400">boutique</p>}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
                   {/* Avatar cible */}
                   <div className="space-y-4 rounded-[28px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
                     <div>
                       <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
                         <User className="h-3.5 w-3.5 text-scalor-green" />
-                        Avatar client cible
+                        {tp('Avatar client cible')}
                       </label>
-                      <p className="text-xs text-gray-500">Choisis le genre, l’âge et le profil sans devoir tout écrire à la main.</p>
+                      <p className="text-xs text-gray-500">{tp('Choisis le genre, l’âge et le profil sans devoir tout écrire à la main.')}</p>
                     </div>
 
                     <div>
-                      <p className="mb-2 text-xs font-semibold text-gray-700">Genre</p>
+                      <p className="mb-2 text-xs font-semibold text-gray-700">{tp('Genre')}</p>
                       <div className="grid gap-2 sm:grid-cols-2">
                         {TARGET_GENDER_OPTIONS.map((option) => {
                           const isActive = targetGender === option.value;
@@ -3109,7 +3244,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div>
-                        <label className="mb-1.5 block text-xs font-semibold text-gray-700">Tranche d’âge</label>
+                        <label className="mb-1.5 block text-xs font-semibold text-gray-700">{tp('Tranche d’âge')}</label>
                         <select
                           value={targetAgeRange}
                           onChange={(e) => setTargetAgeRange(e.target.value)}
@@ -3122,7 +3257,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       </div>
 
                       <div>
-                        <label className="mb-1.5 block text-xs font-semibold text-gray-700">Profil</label>
+                        <label className="mb-1.5 block text-xs font-semibold text-gray-700">{tp('Profil')}</label>
                         <select
                           value={targetProfile}
                           onChange={(e) => setTargetProfile(e.target.value)}
@@ -3136,24 +3271,24 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     </div>
 
                     <div className="rounded-[18px] border border-dashed border-[#96C7B5] bg-gray-50 px-3 py-3 shadow-sm">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">Résumé avatar</p>
-                      <p className="mt-1 text-sm font-medium text-slate-800">{targetAvatarSummary || 'Auto selon le produit et les photos'}</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">{tp('Résumé avatar')}</p>
+                      <p className="mt-1 text-sm font-medium text-slate-800">{targetAvatarSummary || tp('Auto selon le produit et les photos')}</p>
                     </div>
 
                     {/* Probleme principal */}
                     <div>
                       <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
                         <AlertTriangle className="h-3.5 w-3.5 text-scalor-green" />
-                        Problème principal
+                        {tp('Problème principal')}
                       </label>
                       <textarea
                         value={mainProblem}
                         onChange={(e) => setMainProblem(e.target.value)}
-                        placeholder="Ex: Peau terne avec des taches, perte de confiance en soi..."
+                        placeholder={tp('Ex: Peau terne avec des taches, perte de confiance en soi...')}
                         rows={2}
                         className="w-full px-3 py-2.5 border border-gray-200 rounded-[16px] text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-[#96C7B5] resize-none bg-white"
                       />
-                      <p className="text-xs text-gray-400 mt-1">Quel probleme ton produit resout ?</p>
+                      <p className="text-xs text-gray-400 mt-1">{tp('Quel probleme ton produit resout ?')}</p>
                     </div>
                   </div>
                 </>
@@ -3171,12 +3306,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <Zap className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-sm font-bold text-gray-900">Tu n'as plus de crédits</h3>
-                        <p className="text-xs text-gray-500">Achète des crédits pour générer des pages produit IA.</p>
+                        <h3 className="text-sm font-bold text-gray-900">{tp('Tu n\'as plus de crédits')}</h3>
+                        <p className="text-xs text-gray-500">{tp('Achète des crédits pour générer des pages produit IA.')}</p>
                       </div>
                       <button type="button" onClick={() => openCreditsPaymentModal('Tu n\'as plus de crédits. Choisis un pack pour acheter de nouveaux crédits.')}
                         className="px-4 py-2 bg-scalor-copper text-white font-bold rounded-xl hover:bg-scalor-copper-dark transition text-sm shadow-lg whitespace-nowrap">
-                        Acheter des crédits
+                        {tp('Acheter des crédits')}
                       </button>
                     </div>
                   ) : error.includes('Session expirée') ? (
@@ -3185,12 +3320,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <Lock className="w-5 h-5 text-red-500" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-sm font-bold text-gray-900">Session expirée</h3>
-                        <p className="text-xs text-gray-500">Reconnecte-toi pour continuer à générer des pages.</p>
+                        <h3 className="text-sm font-bold text-gray-900">{tp('Session expirée')}</h3>
+                        <p className="text-xs text-gray-500">{tp('Reconnecte-toi pour continuer à générer des pages.')}</p>
                       </div>
                       <button type="button" onClick={() => { window.location.href = '/ecom/login'; }}
                         className="px-4 py-2 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition text-sm shadow-lg whitespace-nowrap">
-                        Se reconnecter
+                        {tp('Se reconnecter')}
                       </button>
                     </div>
                   ) : (
@@ -3210,7 +3345,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 <PaymentModalFrame
                   onClose={() => setShowPaymentForm(false)}
                   eyebrow="Credits IA"
-                  title="Acheter des credits"
+                  title={tp('Acheter des credits')}
                   subtitle="Rechargez vos credits de generation pour reprendre la creation de pages produit sans quitter le modal."
                   icon={<Zap className="h-full w-full" />}
                   headerClassName="bg-gradient-to-br from-[#8E471D] via-[#C56A2D] to-[#E18A44]"
@@ -3240,8 +3375,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                 <Loader2 className="h-4 w-4 animate-spin text-scalor-green" />
                               </div>
                               <div>
-                                <p className="text-sm font-bold text-[#0A5740]">Paiement en attente de confirmation</p>
-                                <p className="mt-1 text-xs text-[#0A5740]/80">Finalise le paiement dans la fenêtre MoneyFusion ouverte. Dès que le prestataire confirme, tes crédits seront ajoutés automatiquement ici.</p>
+                                <p className="text-sm font-bold text-[#0A5740]">{tp('Paiement en attente de confirmation')}</p>
+                                <p className="mt-1 text-xs text-[#0A5740]/80">{tp('Finalise le paiement dans la fenêtre MoneyFusion ouverte. Dès que le prestataire confirme, tes crédits seront ajoutés automatiquement ici.')}</p>
                                 {pendingGenerationPayment?.amount ? (
                                   <p className="mt-2 text-xs font-semibold text-[#0A5740]">
                                     Recharge en attente: {pendingGenerationPayment.amount} FCFA pour {pendingGenerationPayment.quantity || 1} crédit{(pendingGenerationPayment.quantity || 1) > 1 ? 's' : ''}
@@ -3265,7 +3400,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             {pendingGenerationPayment?.amount ? (
                               <><Zap className="w-4 h-4" /> Continuer le paiement {pendingGenerationPayment.amount} FCFA</>
                             ) : (
-                              <><Zap className="w-4 h-4" /> Continuer le paiement</>
+                              <><Zap className="w-4 h-4" /> {tp('Continuer le paiement')}</>
                             )}
                           </button>
 
@@ -3276,9 +3411,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold transition hover:bg-gray-50 text-sm disabled:opacity-50"
                           >
                             {paymentChecking ? (
-                              <><Loader2 className="w-4 h-4 animate-spin" /> Vérification...</>
+                              <><Loader2 className="w-4 h-4 animate-spin" /> {tp('Vérification...')}</>
                             ) : (
-                              <><RefreshCw className="w-4 h-4" /> Vérifier le statut</>
+                              <><RefreshCw className="w-4 h-4" /> {tp('Vérifier le statut')}</>
                             )}
                           </button>
 
@@ -3296,8 +3431,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                 <Zap className={`w-4 h-4 ${selectedPack === 'unit' ? 'text-white' : 'text-scalor-green'}`} />
                               </div>
                               <div className="flex-1">
-                                <p className={`text-sm font-bold ${selectedPack === 'unit' ? 'text-white' : 'text-gray-900'}`}>1 crédit</p>
-                                <p className={`text-xs ${selectedPack === 'unit' ? 'text-white/70' : 'text-gray-500'}`}>1 page produit complète avec visuels IA</p>
+                                <p className={`text-sm font-bold ${selectedPack === 'unit' ? 'text-white' : 'text-gray-900'}`}>{tp('1 crédit')}</p>
+                                <p className={`text-xs ${selectedPack === 'unit' ? 'text-white/70' : 'text-gray-500'}`}>{tp('1 page produit complète avec visuels IA')}</p>
                               </div>
                               <span className={`text-sm font-bold ${selectedPack === 'unit' ? 'text-white' : 'text-gray-900'}`}>{pricing.unit} FCFA</span>
                             </button>
@@ -3308,7 +3443,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                 <Zap className={`w-4 h-4 ${selectedPack === 'pack3' ? 'text-white' : 'text-scalor-green'}`} />
                               </div>
                               <div className="flex-1">
-                                <p className={`text-sm font-bold ${selectedPack === 'pack3' ? 'text-white' : 'text-gray-900'}`}>Pack 3 crédits</p>
+                                <p className={`text-sm font-bold ${selectedPack === 'pack3' ? 'text-white' : 'text-gray-900'}`}>{tp('Pack 3 crédits')}</p>
                                 <p className={`text-xs ${selectedPack === 'pack3' ? 'text-white/70' : 'text-gray-500'}`}>Économise {pricing.unit * 3 - pricing.pack3} FCFA sur 3 crédits</p>
                               </div>
                               <span className={`text-sm font-bold ${selectedPack === 'pack3' ? 'text-white' : 'text-gray-900'}`}>{pricing.pack3} FCFA</span>
@@ -3318,15 +3453,15 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           {/* Formulaire paiement */}
                           <div className="space-y-3 pt-1">
                             <div>
-                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-500"><Phone className="h-3.5 w-3.5 text-scalor-green" />Numéro de téléphone</label>
+                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-500"><Phone className="h-3.5 w-3.5 text-scalor-green" />{tp('Numéro de téléphone')}</label>
                               <input type="tel" value={paymentPhone} onChange={(e) => setPaymentPhone(e.target.value)}
-                                placeholder="Ex: 0707070707"
+                                placeholder={tp('Ex: 0707070707')}
                                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-scalor-green" />
                             </div>
                             <div>
-                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-500"><User className="h-3.5 w-3.5 text-scalor-green" />Votre nom</label>
+                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-500"><User className="h-3.5 w-3.5 text-scalor-green" />{tp('Votre nom')}</label>
                               <input type="text" value={paymentName} onChange={(e) => setPaymentName(e.target.value)}
-                                placeholder="Ex: Jean Dupont"
+                                placeholder={tp('Ex: Jean Dupont')}
                                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-scalor-green" />
                             </div>
                           </div>
@@ -3341,7 +3476,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           <button type="button" onClick={handleBuyGeneration} disabled={paymentLoading || !selectedPack}
                             className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-scalor-green text-white font-bold rounded-xl hover:bg-scalor-green-dark transition text-sm disabled:opacity-40">
                             {paymentLoading ? (
-                              <><Loader2 className="w-4 h-4 animate-spin" /> Chargement...</>
+                              <><Loader2 className="w-4 h-4 animate-spin" /> {tp('Chargement...')}</>
                             ) : (
                               <><Zap className="w-4 h-4" /> Payer {selectedPack === 'pack3' ? pricing.pack3 : pricing.unit} FCFA</>
                             )}
@@ -3364,10 +3499,10 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
           {phase === 'loading' && (() => {
             const STEPS = [
               { icon: Search,     label: 'Analyse',     desc: 'Analyse du produit' },
-              { icon: Zap,        label: 'Contenu',     desc: 'Rédaction marketing' },
+              { icon: Zap,        label: 'Contenu',     get desc() { return tp('Rédaction marketing'); } },
               { icon: Layers,     label: 'Design',      desc: 'Mise en page' },
-              { icon: CheckCircle,label: 'Finalisation',desc: 'Vérification finale' },
-              { icon: ImageIcon,  label: 'Visuels',     desc: 'Génération des images' },
+              { icon: CheckCircle,label: 'Finalisation',get desc() { return tp('Vérification finale'); } },
+              { icon: ImageIcon,  label: 'Visuels',     get desc() { return tp('Génération des images'); } },
             ];
             const activeStep = Math.min(buildStep, STEPS.length - 1);
             return (
@@ -3439,7 +3574,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <span className={`text-[11px] font-semibold tracking-wide uppercase ${
                       imageGenerationFailed ? 'text-red-700' : 'text-primary-700'
                     }`}>
-                      {imageGenerationFailed ? 'Échec génération images' : 'IA en cours'}
+                      {imageGenerationFailed ? 'Échec génération images' : tp('IA en cours')}
                     </span>
                   </div>
 
@@ -3463,7 +3598,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {!imageGenerationFailed && (
                     <div className="w-full mb-7">
                       <div className="flex items-center justify-between text-[11px] font-medium text-gray-400 mb-1.5">
-                        <span>Progression</span>
+                        <span>{tp('Progression')}</span>
                         <span className="text-gray-900 font-semibold">{Math.round(buildProgress)}%</span>
                       </div>
                       <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
@@ -3576,7 +3711,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         }}
                         className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 transition"
                       >
-                        Voir quand même le contenu texte
+                        {tp('Voir quand même le contenu texte')}
                       </button>
                       <button
                         type="button"
@@ -3591,7 +3726,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         }}
                         className="text-xs text-gray-400 hover:text-gray-600 transition px-2 py-2"
                       >
-                        Annuler
+                        {tp('Annuler')}
                       </button>
                     </div>
                   ) : (
@@ -3601,14 +3736,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         onClick={handleContinueInBackground}
                         className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 hover:border-gray-300 transition"
                       >
-                        Continuer en arrière-plan
+                        {tp('Continuer en arrière-plan')}
                       </button>
                       <button
                         type="button"
                         onClick={() => { abortRef.current?.abort(); setPhase('input'); setBuildStep(0); setBuildProgress(0); setBuildMessage(''); setShowConfetti(false); }}
                         className="text-xs text-gray-400 hover:text-gray-600 transition px-2 py-2"
                       >
-                        Annuler
+                        {tp('Annuler')}
                       </button>
                     </div>
                   )}
@@ -3628,9 +3763,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <CheckCircle className="w-7 h-7 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className={pageMode ? 'mb-1 text-lg font-black text-[#0A5740]' : 'text-base font-bold text-[#0A5740] mb-1'}>Génération terminée avec succès</h3>
+                    <h3 className={pageMode ? 'mb-1 text-lg font-black text-[#0A5740]' : 'text-base font-bold text-[#0A5740] mb-1'}>{tp('Génération terminée avec succès')}</h3>
                     <p className={pageMode ? 'text-sm leading-6 text-[#2e6f59]' : 'text-sm text-[#0F6B4F]'}>
-                      Voici l'aperçu de votre page produit générée par IA. Explorez les onglets ci-dessous puis cliquez sur <strong>"Appliquer"</strong> pour l'utiliser.
+                      Voici l'aperçu de votre page produit générée par IA. Explorez les onglets ci-dessous puis cliquez sur <strong>{tp('"Appliquer"')}</strong> pour l'utiliser.
                     </p>
                   </div>
                 </div>
@@ -3673,7 +3808,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <div className="flex items-center gap-3 rounded-xl border border-[#96C7B5] bg-white p-3">
                       <Loader2 className="w-4 h-4 text-scalor-green animate-spin shrink-0" />
                       <span className="text-sm font-medium text-[#0A5740]">
-                        Les images sont en cours de génération en arrière-plan...
+                        {tp('Les images sont en cours de génération en arrière-plan...')}
                       </span>
                     </div>
                   )}
@@ -3702,7 +3837,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <div className="border border-gray-200 rounded-xl overflow-hidden">
                       <ImagePreview src={product.heroPosterImage} label="Affiche publicitaire hero" className="w-full aspect-square" />
                       <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-                        <p className="text-xs text-gray-500">🎨 Visuel affiche — idéal pour publicités Facebook/Instagram</p>
+                        <p className="text-xs text-gray-500">{tp('🎨 Visuel affiche — idéal pour publicités Facebook/Instagram')}</p>
                       </div>
                     </div>
                   )}
@@ -3745,7 +3880,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* Problem / Solution */}
                   {product.problem_section && (
                     <div className="p-4 bg-white rounded-xl border border-gray-200">
-                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><AlertTriangle className="h-3.5 w-3.5" />Problème</p>
+                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><AlertTriangle className="h-3.5 w-3.5" />{tp('Problème')}</p>
                       {product.problem_section.title && (
                         <div className="flex items-start justify-between gap-2 mb-3">
                           <p className="text-sm font-bold text-gray-900">{product.problem_section.title}</p>
@@ -3765,7 +3900,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {product.solution_section && (
                     <div className="p-4 bg-white rounded-xl border border-gray-200">
-                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><CheckCircle className="h-3.5 w-3.5" />Solution</p>
+                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><CheckCircle className="h-3.5 w-3.5" />{tp('Solution')}</p>
                       {product.solution_section.title && (
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <p className="text-sm font-bold text-gray-900">{product.solution_section.title}</p>
@@ -3799,7 +3934,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* Offer Block */}
                   {product.offer_block && (
                     <div className="p-4 bg-white rounded-xl border border-gray-200">
-                      <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Package className="h-3.5 w-3.5" />Offre</p>
+                      <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Package className="h-3.5 w-3.5" />{tp('Offre')}</p>
                       <div className="space-y-2">
                         {product.offer_block.offer_label && (
                           <div className="flex items-start justify-between gap-2">
@@ -3816,7 +3951,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         {product.offer_block.countdown && (
                           <div className="inline-flex items-center gap-1 px-2 py-1 bg-[#E6F2ED] rounded-lg text-xs text-[#0A5740] font-medium">
                             <Clock3 className="h-3.5 w-3.5" />
-                            Compte à rebours activé
+                            {tp('Compte à rebours activé')}
                           </div>
                         )}
                       </div>
@@ -3848,7 +3983,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         )}
                         {product.seo.slug && (
                           <div>
-                            <p className="text-xs text-gray-400 mb-1">URL slug</p>
+                            <p className="text-xs text-gray-400 mb-1">{tp('URL slug')}</p>
                             <div className="flex items-center justify-between gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200">
                               <code className="text-xs text-scalor-green font-mono">/products/{product.seo.slug}</code>
                               <CopyButton text={product.seo.slug} />
@@ -3862,12 +3997,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* Urgency Elements */}
                   {product.urgency_elements && (
                     <div className="p-4 bg-white rounded-xl border border-gray-200">
-                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Zap className="h-3.5 w-3.5" />Urgence psychologique</p>
+                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Zap className="h-3.5 w-3.5" />{tp('Urgence psychologique')}</p>
                       <div className="space-y-2 text-sm">
                         {product.urgency_elements.stock_limited && (
                           <div className="flex items-center gap-2 text-gray-700">
                             <Package className="h-4 w-4" />
-                            <span>Stock limité activé</span>
+                            <span>{tp('Stock limité activé')}</span>
                           </div>
                         )}
                         {product.urgency_elements.social_proof_count && (
@@ -3903,7 +4038,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* 4 Angles marketing */}
                   <div>
-                    <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Target className="h-3.5 w-3.5" />4 arguments marketing</p>
+                    <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Target className="h-3.5 w-3.5" />{tp('4 arguments marketing')}</p>
                     {(product.angles || []).map((angle, i) => (
                       <div key={i} className="mb-3 border border-gray-200 rounded-xl overflow-hidden bg-white">
                         {angle.poster_url && (
@@ -3926,7 +4061,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* Raisons d'acheter */}
                   {product.raisons_acheter?.length > 0 && (
                     <div className="p-4 bg-white rounded-xl border border-gray-200">
-                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><CheckCircle className="h-3.5 w-3.5" />Raisons d'acheter</p>
+                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><CheckCircle className="h-3.5 w-3.5" />{tp('Raisons d\'acheter')}</p>
                       <div className="space-y-2">
                         {product.raisons_acheter.map((r, i) => (
                           <div key={i} className="flex items-start gap-2">
@@ -3943,11 +4078,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               {/* Tab: Affiches publicitaires */}
               {activeTab === 'affiches' && (
                 <div className="space-y-4">
-                  <p className="text-xs text-gray-500 font-medium">5 visuels d'angles marketing, simples et sans surcharge de texte</p>
+                  <p className="text-xs text-gray-500 font-medium">{tp('5 visuels d\'angles marketing, simples et sans surcharge de texte')}</p>
                   {!imagesLoading && (product.angles || []).every(a => !a.poster_url) && (
                     <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
                       <ImageIcon className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                      <p className="text-xs text-amber-700">Les affiches nécessitent une photo du produit. Relancez la génération en uploadant une photo ou en fournissant une URL contenant une image.</p>
+                      <p className="text-xs text-amber-700">{tp('Les affiches nécessitent une photo du produit. Relancez la génération en uploadant une photo ou en fournissant une URL contenant une image.')}</p>
                     </div>
                   )}
                   {(product.angles || []).map((angle, i) => (
@@ -3959,12 +4094,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       ) : imagesLoading ? (
                         <div className="p-6 bg-gray-50 text-center">
                           <Loader2 className="w-6 h-6 mx-auto mb-2 text-gray-300 animate-spin" />
-                          <p className="text-xs text-gray-400">Génération en cours...</p>
+                          <p className="text-xs text-gray-400">{tp('Génération en cours...')}</p>
                         </div>
                       ) : (
                         <div className="p-6 bg-gray-50 text-center">
                           <ImageIcon className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                          <p className="text-xs text-gray-400">Affiche non générée</p>
+                          <p className="text-xs text-gray-400">{tp('Affiche non générée')}</p>
                         </div>
                       )}
                         <div className="p-3 bg-white">
@@ -4001,7 +4136,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* FAQ */}
                   <div>
-                    <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-gray-600"><AlertCircle className="h-3.5 w-3.5" />FAQ - 5 questions</p>
+                    <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-gray-600"><AlertCircle className="h-3.5 w-3.5" />{tp('FAQ - 5 questions')}</p>
                     <div className="space-y-2">
                       {(product.faq || []).map((item, i) => (
                         <div key={i} className="border border-gray-100 rounded-xl overflow-hidden">
@@ -4043,25 +4178,25 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <div className="flex items-center gap-3 rounded-xl border border-[#96C7B5] bg-[#E6F2ED] p-3">
                       <Loader2 className="w-4 h-4 text-scalor-green animate-spin" />
                       <span className="text-sm font-medium text-[#0A5740]">
-                        Images en cours de génération... Elles apparaîtront ici automatiquement.
+                        {tp('Images en cours de génération... Elles apparaîtront ici automatiquement.')}
                       </span>
                     </div>
                   )}
                   {/* Visuels IA galerie principale */}
                   {(product.heroImage || product.heroPosterImage) && (
                     <div>
-                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><ImageIcon className="h-3.5 w-3.5" />Visuels galerie principale</p>
+                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><ImageIcon className="h-3.5 w-3.5" />{tp('Visuels galerie principale')}</p>
                       <div className="grid grid-cols-2 gap-3">
                         {product.heroImage && (
                           <div>
                             <ImagePreview src={product.heroImage} label="Hero — Showcase produit" className="aspect-square" />
-                            <p className="text-xs text-center text-gray-400 mt-1">1ère image galerie</p>
+                            <p className="text-xs text-center text-gray-400 mt-1">{tp('1ère image galerie')}</p>
                           </div>
                         )}
                         {product.heroPosterImage && (
                           <div>
                             <ImagePreview src={product.heroPosterImage} label="Affiche Hero" className="aspect-square" />
-                            <p className="text-xs text-center text-gray-400 mt-1">Affiche publicitaire</p>
+                            <p className="text-xs text-center text-gray-400 mt-1">{tp('Affiche publicitaire')}</p>
                           </div>
                         )}
                       </div>
@@ -4069,12 +4204,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   )}
                   {(product.socialProofImages || []).length > 0 && (
                     <div>
-                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Users className="h-3.5 w-3.5" />Preuve sociale générée</p>
+                      <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Users className="h-3.5 w-3.5" />{tp('Preuve sociale générée')}</p>
                       <div className="grid grid-cols-2 gap-3">
                         {(product.socialProofImages || []).map((imgUrl, i) => (
                           <div key={`sp-${i}`}>
                             <ImagePreview src={imgUrl} label={`Preuve sociale ${i + 1}`} className="aspect-square" />
-                            <p className="text-xs text-center text-gray-400 mt-1">Carré 1:1 pour le carousel</p>
+                            <p className="text-xs text-center text-gray-400 mt-1">{tp('Carré 1:1 pour le carousel')}</p>
                           </div>
                         ))}
                       </div>
@@ -4097,7 +4232,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* Affiches générées */}
                   {(product.angles || []).some(a => a.poster_url) && (
                     <div>
-                      <p className="text-xs text-gray-500 font-medium mb-2">Affiches publicitaires IA</p>
+                      <p className="text-xs text-gray-500 font-medium mb-2">{tp('Affiches publicitaires IA')}</p>
                       <div className="grid grid-cols-2 gap-3">
                         {(product.angles || []).filter(a => a.poster_url).map((angle, i) => (
                           <ImagePreview
@@ -4114,8 +4249,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {(product.descriptionGifs || []).length > 0 && (
                     <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 space-y-4">
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">GIFs dans la description</p>
-                        <p className="text-xs text-gray-500 mt-1">2 clips générés automatiquement et injectés dans la description finale.</p>
+                        <p className="text-sm font-semibold text-gray-900">{tp('GIFs dans la description')}</p>
+                        <p className="text-xs text-gray-500 mt-1">{tp('2 clips générés automatiquement et injectés dans la description finale.')}</p>
                       </div>
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {(product.descriptionGifs || []).map((gif, index) => (
@@ -4144,7 +4279,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 <div className="mb-3 rounded-lg border border-primary-200 bg-primary-50 p-3">
                   <div className="flex items-center gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-primary-600 shrink-0" />
-                    <span className="font-medium text-primary-800">Mode gratuit — page complète + hero IA, sans images d'angles ni GIFs</span>
+                    <span className="font-medium text-primary-800">{tp('Mode gratuit — page complète + hero IA, sans images d\'angles ni GIFs')}</span>
                   </div>
                 </div>
               )}
@@ -4187,7 +4322,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     className={pageMode ? 'min-w-[180px] py-3 border border-gray-200 bg-white text-gray-700 rounded-2xl font-semibold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2' : 'flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2'}
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    Précédent
+                    {tp('Précédent')}
                   </button>
                 )}
                 
@@ -4213,7 +4348,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       className={`w-full py-3 text-white font-bold text-sm transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg ${pageMode ? 'rounded-2xl bg-[linear-gradient(135deg,#0A5740,#14855F)] hover:brightness-105' : 'bg-scalor-green rounded-xl hover:bg-scalor-green-dark'}`}
                     >
                       {(hasNoCredits && pageStyle !== 'hero_page') ? <Zap className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                      {(hasNoCredits && pageStyle !== 'hero_page') ? 'Acheter des crédits' : pageStyle === 'hero_page' ? 'Générer — Gratuit' : 'Générer ma page produit'}
+                      {(hasNoCredits && pageStyle !== 'hero_page') ? 'Acheter des crédits' : pageStyle === 'hero_page' ? 'Générer — Gratuit' : tp('Générer ma page produit')}
                     </button>
                   </div>
                 )}
@@ -4226,14 +4361,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               {/* Info message — clean, neutre */}
               <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5">
                 <p className="text-xs text-gray-700 text-center">
-                  Aperçu ci-dessus. Cliquez sur <strong className="text-primary-700">"Utiliser cette page"</strong> pour l'appliquer à votre produit.
+                  Aperçu ci-dessus. Cliquez sur <strong className="text-primary-700">{tp('"Utiliser cette page"')}</strong> pour l'appliquer à votre produit.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-emerald-950">Produit digital lié</p>
+                    <p className="text-sm font-bold text-emerald-950">{tp('Produit digital lié')}</p>
                     {product?.ebook ? (
                       <p className="mt-0.5 text-xs font-bold text-emerald-700 truncate">{product.ebook.title || "Ebook généré"}</p>
                     ) : (
@@ -4244,11 +4379,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     )}
                   </div>
                   {product?.ebook && (
-                    <span className="flex-shrink-0 px-2 py-0.5 bg-emerald-200 text-emerald-800 text-[10px] font-black rounded-full">Actif</span>
+                    <span className="flex-shrink-0 px-2 py-0.5 bg-emerald-200 text-emerald-800 text-[10px] font-black rounded-full">{tp('Actif')}</span>
                   )}
                 </div>
                 {product?.ebook?.pdf?.url && (
-                  <a href={product.ebook.pdf.url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-emerald-600 hover:underline">Voir le PDF</a>
+                  <a href={product.ebook.pdf.url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-emerald-600 hover:underline">{tp('Voir le PDF')}</a>
                 )}
                 <button
                   type="button"
@@ -4258,7 +4393,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 >
                   {digitalProductLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
                   {product?.ebook ? "Régénérer l'ebook" : "Produit digital de ce produit"}
-                  <span className="ml-1 px-1.5 py-0.5 bg-white/20 text-white text-[10px] font-black rounded-full leading-none border border-white/30">3 crédits</span>
+                  <span className="ml-1 px-1.5 py-0.5 bg-white/20 text-white text-[10px] font-black rounded-full leading-none border border-white/30">{tp('3 crédits')}</span>
                 </button>
               </div>
 
@@ -4269,7 +4404,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   className="flex-1 py-3 border border-gray-200 bg-white text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition flex items-center justify-center gap-2"
                 >
                   <RefreshCw className="h-4 w-4" />
-                  Recommencer
+                  {tp('Recommencer')}
                 </button>
                 <button
                   type="button"
@@ -4277,7 +4412,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   className="flex-[2] py-3.5 rounded-xl bg-[#0F6B4F] text-white font-bold text-sm transition flex items-center justify-center gap-2 hover:bg-[#0A5740] shadow-[0_4px_14px_rgba(15,107,79,0.25)] hover:shadow-[0_6px_20px_rgba(15,107,79,0.35)]"
                 >
                   <CheckCircle className="w-5 h-5" />
-                  Utiliser cette page
+                  {tp('Utiliser cette page')}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

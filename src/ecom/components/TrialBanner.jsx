@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Zap, X } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
 
 const TrialBanner = ({ plan, trialEndsAt, onClose }) => {
   const [daysLeft, setDaysLeft] = useState(0);
@@ -72,12 +73,12 @@ const TrialBanner = ({ plan, trialEndsAt, onClose }) => {
             className="px-4 py-2 bg-white text-primary-700 font-bold rounded-lg hover:bg-gray-100 transition-colors text-sm flex items-center gap-2"
           >
             <Zap className="w-4 h-4" />
-            Passer à un plan payant
+            {tp('Passer à un plan payant')}
           </a>
           <button
             onClick={() => setHidden(true)}
             className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
-            title="Masquer"
+            title={tp('Masquer')}
           >
             <X className="w-5 h-5" />
           </button>

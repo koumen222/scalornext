@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
+import { tp } from '../i18n/platform.js';
 
 export default function RitaPerformance() {
   const { user } = useAuth();
@@ -67,7 +68,7 @@ export default function RitaPerformance() {
       alert(`${response.data.count} contacts seront ciblés par cette campagne`);
     } catch (error) {
       console.error('Erreur preview:', error);
-      alert('Erreur lors de la prévisualisation');
+      alert(tp('Erreur lors de la prévisualisation'));
     }
   };
 
@@ -82,7 +83,7 @@ export default function RitaPerformance() {
         userId: user._id,
         ...campaignForm
       });
-      alert('Campagne créée avec succès !');
+      alert(tp('Campagne créée avec succès !'));
       setShowNewCampaign(false);
       loadCampaigns();
       // Reset form
@@ -104,20 +105,20 @@ export default function RitaPerformance() {
       });
     } catch (error) {
       console.error('Erreur création campagne:', error);
-      alert('Erreur lors de la création de la campagne');
+      alert(tp('Erreur lors de la création de la campagne'));
     }
   };
 
   const startCampaign = async (campaignId) => {
-    if (!confirm('Êtes-vous sûr de vouloir démarrer cette campagne ?')) return;
+    if (!confirm(tp('Êtes-vous sûr de vouloir démarrer cette campagne ?'))) return;
 
     try {
       await api.post(`/ecom/rita/followup/campaigns/${campaignId}/start`);
-      alert('Campagne démarrée !');
+      alert(tp('Campagne démarrée !'));
       loadCampaigns();
     } catch (error) {
       console.error('Erreur démarrage:', error);
-      alert('Erreur lors du démarrage de la campagne');
+      alert(tp('Erreur lors du démarrage de la campagne'));
     }
   };
 
@@ -133,11 +134,11 @@ export default function RitaPerformance() {
   };
 
   const deleteCampaign = async (campaignId) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette campagne ?')) return;
+    if (!confirm(tp('Êtes-vous sûr de vouloir supprimer cette campagne ?'))) return;
 
     try {
       await api.delete(`/ecom/rita/followup/campaigns/${campaignId}`);
-      alert('Campagne supprimée');
+      alert(tp('Campagne supprimée'));
       loadCampaigns();
     } catch (error) {
       console.error('Erreur suppression:', error);
@@ -150,7 +151,7 @@ export default function RitaPerformance() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Chargement des statistiques...</p>
+          <p className="mt-4 text-gray-600">{tp('Chargement des statistiques...')}</p>
         </div>
       </div>
     );
@@ -164,70 +165,70 @@ export default function RitaPerformance() {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">👥 Contacts</h3>
+            <h3 className="text-lg font-semibold mb-4">{tp('👥 Contacts')}</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Total</span>
+                <span className="text-gray-600">{tp('Total')}</span>
                 <span className="font-bold">{stats.contacts.total}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Prospects</span>
+                <span className="text-gray-600">{tp('Prospects')}</span>
                 <span className="font-bold text-yellow-600">{stats.contacts.prospects}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Clients</span>
+                <span className="text-gray-600">{tp('Clients')}</span>
                 <span className="font-bold text-green-600">{stats.contacts.clients}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Programmés</span>
+                <span className="text-gray-600">{tp('Programmés')}</span>
                 <span className="font-bold text-blue-600">{stats.contacts.scheduled}</span>
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">📦 Commandes</h3>
+            <h3 className="text-lg font-semibold mb-4">{tp('📦 Commandes')}</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Total</span>
+                <span className="text-gray-600">{tp('Total')}</span>
                 <span className="font-bold">{stats.orders.total}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">En attente</span>
+                <span className="text-gray-600">{tp('En attente')}</span>
                 <span className="font-bold text-orange-600">{stats.orders.pending}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Acceptées</span>
+                <span className="text-gray-600">{tp('Acceptées')}</span>
                 <span className="font-bold text-blue-600">{stats.orders.accepted}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Livrées</span>
+                <span className="text-gray-600">{tp('Livrées')}</span>
                 <span className="font-bold text-green-600">{stats.orders.delivered}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Programmées</span>
+                <span className="text-gray-600">{tp('Programmées')}</span>
                 <span className="font-bold text-purple-600">{stats.orders.scheduled}</span>
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">💰 Ventes</h3>
+            <h3 className="text-lg font-semibold mb-4">{tp('💰 Ventes')}</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Total ventes</span>
+                <span className="text-gray-600">{tp('Total ventes')}</span>
                 <span className="font-bold text-green-600">{stats.sales.total}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Revenu</span>
+                <span className="text-gray-600">{tp('Revenu')}</span>
                 <span className="font-bold">{stats.sales.revenue.toLocaleString()} FCFA</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Taux conversion</span>
+                <span className="text-gray-600">{tp('Taux conversion')}</span>
                 <span className="font-bold text-blue-600">{stats.sales.conversionRate}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Commande → Vente</span>
+                <span className="text-gray-600">{tp('Commande → Vente')}</span>
                 <span className="font-bold text-purple-600">{stats.sales.orderToSaleRate}%</span>
               </div>
             </div>
@@ -238,7 +239,7 @@ export default function RitaPerformance() {
       {/* Campagnes de relance */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">📢 Campagnes de relance</h2>
+          <h2 className="text-2xl font-bold">{tp('📢 Campagnes de relance')}</h2>
           <button
             onClick={() => setShowNewCampaign(!showNewCampaign)}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition"
@@ -250,7 +251,7 @@ export default function RitaPerformance() {
         {/* Formulaire nouvelle campagne */}
         {showNewCampaign && (
           <div className="bg-gray-50 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4">Créer une campagne de relance</h3>
+            <h3 className="text-xl font-semibold mb-4">{tp('Créer une campagne de relance')}</h3>
             
             <div className="space-y-4">
               <div>
@@ -262,7 +263,7 @@ export default function RitaPerformance() {
                   value={campaignForm.name}
                   onChange={(e) => setCampaignForm({ ...campaignForm, name: e.target.value })}
                   className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                  placeholder="Ex: Relance prospects inactifs mars 2026"
+                  placeholder={tp('Ex: Relance prospects inactifs mars 2026')}
                 />
               </div>
 
@@ -274,7 +275,7 @@ export default function RitaPerformance() {
                   value={campaignForm.followUpMessage}
                   onChange={(e) => setCampaignForm({ ...campaignForm, followUpMessage: e.target.value })}
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 h-32"
-                  placeholder="Salut ! On a remarqué que tu n'as pas finalisé ta commande. Tu as besoin d'aide ?"
+                  placeholder={tp('Salut ! On a remarqué que tu n\'as pas finalisé ta commande. Tu as besoin d\'aide ?')}
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   Variables disponibles: {'{nom}'}, {'{ville}'}
@@ -284,7 +285,7 @@ export default function RitaPerformance() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Cibler
+                    {tp('Cibler')}
                   </label>
                   <select
                     multiple
@@ -298,15 +299,15 @@ export default function RitaPerformance() {
                     }}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2"
                   >
-                    <option value="prospect">Prospects</option>
-                    <option value="client">Clients</option>
-                    <option value="scheduled">Programmés</option>
+                    <option value="prospect">{tp('Prospects')}</option>
+                    <option value="client">{tp('Clients')}</option>
+                    <option value="scheduled">{tp('Programmés')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Inactivité (jours min)
+                    {tp('Inactivité (jours min)')}
                   </label>
                   <input
                     type="number"
@@ -324,7 +325,7 @@ export default function RitaPerformance() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Délai entre messages (minutes)
+                    {tp('Délai entre messages (minutes)')}
                   </label>
                   <input
                     type="number"
@@ -338,7 +339,7 @@ export default function RitaPerformance() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Messages max/jour
+                    {tp('Messages max/jour')}
                   </label>
                   <input
                     type="number"
@@ -383,7 +384,7 @@ export default function RitaPerformance() {
         {/* Liste des campagnes */}
         <div className="space-y-4">
           {campaigns.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Aucune campagne pour le moment</p>
+            <p className="text-gray-500 text-center py-8">{tp('Aucune campagne pour le moment')}</p>
           ) : (
             campaigns.map((campaign) => (
               <div key={campaign._id} className="border border-gray-200 rounded-lg p-4">
@@ -404,19 +405,19 @@ export default function RitaPerformance() {
                 
                 <div className="grid grid-cols-4 gap-4 mt-4 text-sm">
                   <div>
-                    <span className="text-gray-600">Ciblés:</span>
+                    <span className="text-gray-600">{tp('Ciblés:')}</span>
                     <span className="font-bold ml-2">{campaign.targetedCount}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Envoyés:</span>
+                    <span className="text-gray-600">{tp('Envoyés:')}</span>
                     <span className="font-bold ml-2">{campaign.sentCount}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Réponses:</span>
+                    <span className="text-gray-600">{tp('Réponses:')}</span>
                     <span className="font-bold ml-2">{campaign.respondedCount}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Délai:</span>
+                    <span className="text-gray-600">{tp('Délai:')}</span>
                     <span className="font-bold ml-2">{campaign.delayBetweenMessages}min</span>
                   </div>
                 </div>

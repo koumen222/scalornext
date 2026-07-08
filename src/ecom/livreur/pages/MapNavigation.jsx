@@ -10,6 +10,7 @@ import {
   Truck,
 } from 'lucide-react';
 import { livreurApi } from '../services/livreurApi.js';
+import { tp } from '../../i18n/platform.js';
 
 export default function MapNavigation() {
   const { id } = useParams();
@@ -62,7 +63,7 @@ export default function MapNavigation() {
           </button>
           <div>
             <p className="text-white/80 text-xs">{order?.orderId}</p>
-            <h1 className="text-white font-bold text-lg leading-tight">Navigation</h1>
+            <h1 className="text-white font-bold text-lg leading-tight">{tp('Navigation')}</h1>
           </div>
         </div>
       </div>
@@ -81,12 +82,12 @@ export default function MapNavigation() {
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="Carte de livraison"
+            title={tp('Carte de livraison')}
           />
         ) : (
           <div className="absolute inset-0 bg-gray-800 flex flex-col items-center justify-center text-center px-8">
             <MapPin size={48} className="text-gray-500 mb-3" />
-            <p className="text-gray-400 text-sm">Adresse non disponible pour afficher la carte</p>
+            <p className="text-gray-400 text-sm">{tp('Adresse non disponible pour afficher la carte')}</p>
           </div>
         )}
       </div>
@@ -103,7 +104,7 @@ export default function MapNavigation() {
                 <Truck size={18} className="text-indigo-600" />
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="font-bold text-gray-900">{order.clientName || 'Client'}</h2>
+                <h2 className="font-bold text-gray-900">{order.clientName || tp('Client')}</h2>
                 {address && (
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <MapPin size={13} className="text-gray-400 shrink-0" />
@@ -126,14 +127,14 @@ export default function MapNavigation() {
                 className="py-3 rounded-xl bg-indigo-600 text-white text-sm font-semibold flex items-center justify-center gap-2 active:scale-95"
               >
                 <Navigation size={16} />
-                Google Maps
+                {tp('Google Maps')}
               </button>
               <button
                 onClick={openWaze}
                 className="py-3 rounded-xl bg-sky-500 text-white text-sm font-semibold flex items-center justify-center gap-2 active:scale-95"
               >
                 <ExternalLink size={16} />
-                Waze
+                {tp('Waze')}
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -143,7 +144,7 @@ export default function MapNavigation() {
                 className="py-3 rounded-xl bg-green-600 text-white text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 disabled:opacity-40"
               >
                 <Phone size={16} />
-                Appeler
+                {tp('Appeler')}
               </button>
               <button
                 onClick={copyAddress}
@@ -151,12 +152,12 @@ export default function MapNavigation() {
                 className="py-3 rounded-xl bg-gray-100 text-gray-700 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 disabled:opacity-40"
               >
                 <Copy size={16} />
-                {copied ? 'Copié !' : 'Copier adresse'}
+                {copied ? 'Copié !' : tp('Copier adresse')}
               </button>
             </div>
           </>
         ) : (
-          <p className="text-center text-gray-400 text-sm py-4">Données introuvables</p>
+          <p className="text-center text-gray-400 text-sm py-4">{tp('Données introuvables')}</p>
         )}
       </div>
     </div>

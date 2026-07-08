@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 const TermsOfService = () => {
   const navigate = useNavigate();
@@ -394,10 +395,10 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
           </button>
           <div className="flex items-center gap-2">
             <button onClick={() => navigate(-1)} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition">
-              Retour
+              {tp('Retour')}
             </button>
             <button onClick={() => navigate('/ecom/login')} className="px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 rounded-xl transition">
-              Connexion
+              {tp('Connexion')}
             </button>
           </div>
         </div>
@@ -414,7 +415,7 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            Conditions légales
+            {tp('Conditions légales')}
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-primary-100 to-primary-200 bg-clip-text text-transparent leading-tight">
             Conditions Générales<br />d'Utilisation
@@ -432,12 +433,12 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
       {/* Quick Links */}
       <div className="max-w-5xl mx-auto px-4 mb-16">
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h3 className="text-sm font-semibold text-white mb-4">Accès rapide</h3>
+          <h3 className="text-sm font-semibold text-white mb-4">{tp('Accès rapide')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: 'Tarification', section: 4 },
               { label: 'Vos droits', section: 6 },
-              { label: 'Confidentialité', section: 7 },
+              { get label() { return tp('Confidentialité'); }, section: 7 },
               { label: 'Contact', section: 10 },
             ].map((link, i) => (
               <button
@@ -477,7 +478,7 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
         {/* Acceptation */}
         <div className="bg-gradient-to-r from-primary-600/10 to-primary-700/10 border border-primary-600/20 rounded-2xl p-6 sm:p-8 text-center">
           <div className="text-4xl mb-4">✍️</div>
-          <h3 className="text-xl font-bold text-white mb-3">Acceptation des conditions</h3>
+          <h3 className="text-xl font-bold text-white mb-3">{tp('Acceptation des conditions')}</h3>
           <p className="text-gray-400 text-sm max-w-xl mx-auto mb-6">
             En créant un compte sur SCALOR, vous acceptez ces Conditions Générales d'Utilisation ainsi que notre Politique de Confidentialité. 
             Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser le Service.
@@ -487,13 +488,13 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
               onClick={() => navigate('/ecom/register')}
               className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 rounded-xl font-semibold text-sm transition shadow-lg shadow-primary-600/20"
             >
-              Créer un compte
+              {tp('Créer un compte')}
             </button>
             <button 
               onClick={() => navigate('/ecom/privacy')}
               className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-semibold text-sm transition"
             >
-              Voir la politique de confidentialité
+              {tp('Voir la politique de confidentialité')}
             </button>
           </div>
         </div>
@@ -505,11 +506,11 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
           <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} SCALOR. Tous droits réservés.</p>
           <div className="flex items-center gap-4">
             <button onClick={() => navigate('/ecom/landing')} className="text-xs text-gray-500 hover:text-gray-300 transition">
-              Accueil
+              {tp('Accueil')}
             </button>
             <span className="text-gray-700">•</span>
             <button onClick={() => navigate('/ecom/privacy')} className="text-xs text-gray-500 hover:text-gray-300 transition">
-              Confidentialité
+              {tp('Confidentialité')}
             </button>
             <span className="text-gray-700">•</span>
             <span className="text-xs text-primary-500">CGU</span>

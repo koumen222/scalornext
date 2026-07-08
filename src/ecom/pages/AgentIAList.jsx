@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { tp } from '../i18n/platform.js';
 import { useNavigate } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
 import { getCurrentPlan } from '../services/billingApi.js';
@@ -83,7 +84,7 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
       {isFreePlan && (
         <div className="absolute inset-0 rounded-2xl bg-white/70 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 gap-2">
           <span className="text-2xl">🔒</span>
-          <p className="text-xs font-bold text-gray-600 text-center px-4">Passez à Pro pour activer cet agent</p>
+          <p className="text-xs font-bold text-gray-600 text-center px-4">{tp('Passez à Pro pour activer cet agent')}</p>
         </div>
       )}
       {/* Delete button */}
@@ -149,7 +150,7 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
       <div className={`mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold ${
         status.color === 'emerald' ? 'text-primary-600' : 'text-gray-500'
       }`}>
-        <span>{pct === 100 ? 'Voir les stats' : 'Continuer la configuration'}</span>
+        <span>{pct === 100 ? 'Voir les stats' : tp('Continuer la configuration')}</span>
         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
       </div>
 
@@ -159,7 +160,7 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
         className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-xl transition-colors"
       >
         <MessageSquare className="w-3.5 h-3.5" />
-        Conversations
+        {tp('Conversations')}
       </button>
     </div>
   );
@@ -172,16 +173,16 @@ function EmptyState({ onCreateClick }) {
       <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
         🤖
       </div>
-      <h3 className="text-lg font-black text-gray-900 mb-2">Aucun agent créé</h3>
+      <h3 className="text-lg font-black text-gray-900 mb-2">{tp('Aucun agent créé')}</h3>
       <p className="text-gray-500 text-sm mb-6 max-w-xs mx-auto">
-        Créez votre premier commercial IA et commencez à vendre automatiquement sur WhatsApp.
+        {tp('Créez votre premier commercial IA et commencez à vendre automatiquement sur WhatsApp.')}
       </p>
       <button
         onClick={onCreateClick}
         className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200"
       >
         <Plus className="w-4 h-4" />
-        Créer mon premier agent
+        {tp('Créer mon premier agent')}
       </button>
     </div>
   );
@@ -205,8 +206,8 @@ function PlanBar({ planInfo, agentCount, agentLimit, onUpgrade, onBilling }) {
         <div className="flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-slate-400 flex-shrink-0" />
           <div>
-            <p className="font-bold text-slate-700 text-sm">Agents désactivés — {plan === 'starter' ? 'Plan Scalor' : 'Plan gratuit'}</p>
-            <p className="text-slate-500 text-xs">Passez à Scalor + IA pour activer vos agents commerciaux IA.</p>
+            <p className="font-bold text-slate-700 text-sm">Agents désactivés — {plan === 'starter' ? 'Plan Scalor' : tp('Plan gratuit')}</p>
+            <p className="text-slate-500 text-xs">{tp('Passez à Scalor + IA pour activer vos agents commerciaux IA.')}</p>
           </div>
         </div>
         <button onClick={onUpgrade} className="text-xs font-bold px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition">
@@ -225,7 +226,7 @@ function PlanBar({ planInfo, agentCount, agentLimit, onUpgrade, onBilling }) {
         <div className="flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
           <div>
-            <p className="font-bold text-red-800 text-sm">Abonnement expiré</p>
+            <p className="font-bold text-red-800 text-sm">{tp('Abonnement expiré')}</p>
             <p className="text-red-600 text-xs">Votre plan {plan} a expiré — vous êtes sur le plan gratuit.</p>
           </div>
         </div>
@@ -266,9 +267,9 @@ function PlanBar({ planInfo, agentCount, agentLimit, onUpgrade, onBilling }) {
         <div className="flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0" />
           <div>
-            <p className="font-bold text-amber-800 text-sm">Limite d'agents atteinte</p>
+            <p className="font-bold text-amber-800 text-sm">{tp('Limite d\'agents atteinte')}</p>
             <p className="text-amber-600 text-xs">
-              Plan {plan === 'pro' ? 'Pro' : 'Gratuit'} : {agentLimit} agent{agentLimit > 1 ? 's' : ''} max.
+              Plan {plan === 'pro' ? 'Pro' : tp('Gratuit')} : {agentLimit} agent{agentLimit > 1 ? 's' : ''} max.
               Passez à Ultra pour en créer jusqu'à 5.
             </p>
           </div>
@@ -388,15 +389,15 @@ export default function AgentIAList() {
         {/* ── TOP BAR ─────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-gray-900">Commerciaux IA</h1>
-            <p className="text-gray-500 text-sm mt-0.5">Gérez vos agents WhatsApp et suivez leurs performances</p>
+            <h1 className="text-3xl font-black text-gray-900">{tp('Commerciaux IA')}</h1>
+            <p className="text-gray-500 text-sm mt-0.5">{tp('Gérez vos agents WhatsApp et suivez leurs performances')}</p>
           </div>
           <button
             onClick={handleCreate}
             className="inline-flex items-center gap-2 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200 text-sm"
           >
             <Plus className="w-4 h-4" />
-            Nouvel agent
+            {tp('Nouvel agent')}
           </button>
         </div>
 
@@ -411,14 +412,14 @@ export default function AgentIAList() {
 
         {/* ── STATS ───────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Statistiques du jour</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statistiques du jour')}</p>
           <button
             onClick={loadStats}
             disabled={kpisLoading}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${kpisLoading ? 'animate-spin' : ''}`} />
-            {kpisLoading ? 'Chargement...' : 'Actualiser'}
+            {kpisLoading ? 'Chargement...' : tp('Actualiser')}
           </button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -457,7 +458,7 @@ export default function AgentIAList() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-black text-gray-900">
-              Mes agents
+              {tp('Mes agents')}
               {agents.length > 0 && (
                 <span className="ml-2 text-sm font-semibold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full">
                   {agents.length}/{agentLimit}
@@ -471,7 +472,7 @@ export default function AgentIAList() {
                 className="text-sm font-bold text-primary-600 hover:text-primary-700 disabled:text-gray-300 flex items-center gap-1 transition-colors"
               >
                 <Plus className="w-4 h-4" />
-                Ajouter
+                {tp('Ajouter')}
               </button>
             )}
           </div>
@@ -517,13 +518,13 @@ export default function AgentIAList() {
         {/* ── ONBOARDING GUIDE (si aucun agent actif) ─────────────────────── */}
         {!loading && agents.length > 0 && activeAgents === 0 && (
           <div className="bg-white rounded-2xl ring-2 ring-primary-100 p-6 sm:p-8">
-            <h3 className="font-black text-gray-900 mb-1">3 étapes pour commencer à vendre</h3>
-            <p className="text-gray-500 text-sm mb-6">Suivez ces étapes pour activer votre commercial IA</p>
+            <h3 className="font-black text-gray-900 mb-1">{tp('3 étapes pour commencer à vendre')}</h3>
+            <p className="text-gray-500 text-sm mb-6">{tp('Suivez ces étapes pour activer votre commercial IA')}</p>
             <div className="grid sm:grid-cols-3 gap-4">
               {[
                 { icon: Package,    num: 1, title: 'Ajoutez vos produits', desc: 'Importez votre catalogue ou ajoutez-les manuellement dans la config.' },
-                { icon: Smartphone, num: 2, title: 'Connectez WhatsApp',   desc: 'Scannez le QR code pour lier votre numéro WhatsApp à l\'agent.' },
-                { icon: Zap,        num: 3, title: 'Activez l\'agent',     desc: 'Basculez le switch ON et votre commercial répond automatiquement.' },
+                { icon: Smartphone, num: 2, title: 'Connectez WhatsApp',   get desc() { return tp('Scannez le QR code pour lier votre numéro WhatsApp à l\'agent.'); } },
+                { icon: Zap,        num: 3, title: 'Activez l\'agent',     get desc() { return tp('Basculez le switch ON et votre commercial répond automatiquement.'); } },
               ].map(step => (
                 <div key={step.num} className="flex gap-4">
                   <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary-700 font-black text-lg flex-shrink-0">

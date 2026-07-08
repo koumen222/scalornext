@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Upload, X, Image as ImageIcon, Video, Play, Plus, GripVertical } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { tp } from '../i18n/platform.js';
 
 /**
  * Gestionnaire de médias pour les produits (images + vidéos)
@@ -72,7 +73,7 @@ export default function ProductMediaManager({
 
   const addVideo = () => {
     if (!videoForm.url) {
-      alert('URL vidéo requise');
+      alert(tp('URL vidéo requise'));
       return;
     }
 
@@ -154,10 +155,10 @@ export default function ProductMediaManager({
               </div>
               <div>
                 <p className="text-lg font-medium text-gray-900">
-                  {uploadingImages ? 'Upload en cours...' : 'Ajouter des images'}
+                  {uploadingImages ? 'Upload en cours...' : tp('Ajouter des images')}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Cliquez ou glissez-déposez vos images ici
+                  {tp('Cliquez ou glissez-déposez vos images ici')}
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
                   JPG, PNG, WEBP jusqu'à 10MB
@@ -204,7 +205,7 @@ export default function ProductMediaManager({
                             {/* Badge première image */}
                             {index === 0 && (
                               <div className="absolute top-2 right-2 bg-primary-500 text-white text-xs font-bold px-2 py-1 rounded">
-                                Principal
+                                {tp('Principal')}
                               </div>
                             )}
 
@@ -221,7 +222,7 @@ export default function ProductMediaManager({
                               type="text"
                               value={image.alt || ''}
                               onChange={(e) => updateImageAlt(index, e.target.value)}
-                              placeholder="Texte alternatif..."
+                              placeholder={tp('Texte alternatif...')}
                               className="mt-2 w-full text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-primary-500 focus:border-transparent"
                             />
                           </div>
@@ -237,7 +238,7 @@ export default function ProductMediaManager({
 
           {images.length === 0 && (
             <div className="text-center py-8 text-gray-500">
-              Aucune image ajoutée
+              {tp('Aucune image ajoutée')}
             </div>
           )}
         </div>
@@ -257,9 +258,9 @@ export default function ProductMediaManager({
                   <Plus className="text-primary-600" size={32} />
                 </div>
                 <div>
-                  <p className="text-lg font-medium text-gray-900">Ajouter une vidéo</p>
+                  <p className="text-lg font-medium text-gray-900">{tp('Ajouter une vidéo')}</p>
                   <p className="text-sm text-gray-500 mt-1">
-                    YouTube, Vimeo ou lien direct
+                    {tp('YouTube, Vimeo ou lien direct')}
                   </p>
                 </div>
               </div>
@@ -269,11 +270,11 @@ export default function ProductMediaManager({
           {/* Video Form */}
           {showVideoForm && (
             <div className="bg-gray-50 rounded-xl p-6 space-y-4">
-              <h3 className="font-semibold text-gray-900">Ajouter une vidéo</h3>
+              <h3 className="font-semibold text-gray-900">{tp('Ajouter une vidéo')}</h3>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Type de vidéo
+                  {tp('Type de vidéo')}
                 </label>
                 <select
                   value={videoForm.type}
@@ -281,8 +282,8 @@ export default function ProductMediaManager({
                   className="w-full border border-gray-300 rounded-lg px-4 py-2"
                 >
                   <option value="youtube">YouTube</option>
-                  <option value="vimeo">Vimeo</option>
-                  <option value="direct">Lien direct (MP4)</option>
+                  <option value="vimeo">{tp('Vimeo')}</option>
+                  <option value="direct">{tp('Lien direct (MP4)')}</option>
                 </select>
               </div>
 
@@ -301,13 +302,13 @@ export default function ProductMediaManager({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre (optionnel)
+                  {tp('Titre (optionnel)')}
                 </label>
                 <input
                   type="text"
                   value={videoForm.title}
                   onChange={(e) => setVideoForm({ ...videoForm, title: e.target.value })}
-                  placeholder="Démonstration du produit"
+                  placeholder={tp('Démonstration du produit')}
                   className="w-full border border-gray-300 rounded-lg px-4 py-2"
                 />
               </div>
@@ -317,7 +318,7 @@ export default function ProductMediaManager({
                   onClick={addVideo}
                   className="flex-1 bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition"
                 >
-                  Ajouter
+                  {tp('Ajouter')}
                 </button>
                 <button
                   onClick={() => {
@@ -326,7 +327,7 @@ export default function ProductMediaManager({
                   }}
                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                 >
-                  Annuler
+                  {tp('Annuler')}
                 </button>
               </div>
             </div>
@@ -356,7 +357,7 @@ export default function ProductMediaManager({
                   {/* Info */}
                   <div className="p-3">
                     <p className="font-medium text-sm text-gray-900 truncate">
-                      {video.title || 'Vidéo sans titre'}
+                      {video.title || tp('Vidéo sans titre')}
                     </p>
                     <p className="text-xs text-gray-500 mt-1 truncate">{video.url}</p>
                     <span className="inline-block mt-2 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
@@ -378,7 +379,7 @@ export default function ProductMediaManager({
 
           {videos.length === 0 && !showVideoForm && (
             <div className="text-center py-8 text-gray-500">
-              Aucune vidéo ajoutée
+              {tp('Aucune vidéo ajoutée')}
             </div>
           )}
         </div>

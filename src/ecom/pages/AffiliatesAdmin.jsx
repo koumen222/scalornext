@@ -4,6 +4,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
 import { affiliateAdminApi } from '../services/affiliateAdminApi.js';
+import { tp } from '../i18n/platform.js';
 
 const fmt = (n) => (n || 0).toLocaleString('fr-FR');
 
@@ -164,11 +165,11 @@ export default function AffiliatesAdmin() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Programme d'affiliation</h1>
-            <p className="text-sm text-gray-500">Gestion complète des affiliés, liens et commissions.</p>
+            <h1 className="text-2xl font-bold text-gray-900">{tp('Programme d\'affiliation')}</h1>
+            <p className="text-sm text-gray-500">{tp('Gestion complète des affiliés, liens et commissions.')}</p>
           </div>
           <button onClick={load} className="px-3 py-1.5 text-xs rounded-lg border bg-white hover:bg-gray-50">
-            Actualiser
+            {tp('Actualiser')}
           </button>
         </div>
 
@@ -190,7 +191,7 @@ export default function AffiliatesAdmin() {
         </div>
 
         {loading ? (
-          <div className="p-8 bg-white rounded-xl border text-center text-sm text-gray-400">Chargement...</div>
+          <div className="p-8 bg-white rounded-xl border text-center text-sm text-gray-400">{tp('Chargement...')}</div>
         ) : (
           <>
             {/* ───── ONGLET APERÇU ───── */}
@@ -213,9 +214,9 @@ export default function AffiliatesAdmin() {
 
                   {/* Clics par jour */}
                   <div className="bg-white border border-gray-200 rounded-xl p-4">
-                    <h2 className="text-sm font-semibold text-gray-700 mb-4">Clics par jour (30 derniers jours)</h2>
+                    <h2 className="text-sm font-semibold text-gray-700 mb-4">{tp('Clics par jour (30 derniers jours)')}</h2>
                     {clicksByDay.length === 0 ? (
-                      <div className="h-48 flex items-center justify-center text-xs text-gray-400">Aucune donnée</div>
+                      <div className="h-48 flex items-center justify-center text-xs text-gray-400">{tp('Aucune donnée')}</div>
                     ) : (
                       <ResponsiveContainer width="100%" height={200}>
                         <LineChart data={clicksByDay} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
@@ -251,7 +252,7 @@ export default function AffiliatesAdmin() {
                       Top affiliés par {barMetric === 'clicks' ? 'clics' : 'conversions'}
                     </h2>
                     {clicksByAffiliate.length === 0 ? (
-                      <div className="h-48 flex items-center justify-center text-xs text-gray-400">Aucune donnée</div>
+                      <div className="h-48 flex items-center justify-center text-xs text-gray-400">{tp('Aucune donnée')}</div>
                     ) : (
                       <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={clicksByAffiliate} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
@@ -259,7 +260,7 @@ export default function AffiliatesAdmin() {
                           <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#9ca3af' }} />
                           <YAxis tick={{ fontSize: 9, fill: '#9ca3af' }} allowDecimals={false} />
                           <Tooltip content={<CustomTooltip />} />
-                          <Bar dataKey={barMetric} name={barMetric === 'clicks' ? 'Clics' : 'Conversions'} radius={[4, 4, 0, 0]}>
+                          <Bar dataKey={barMetric} name={barMetric === 'clicks' ? 'Clics' : tp('Conversions')} radius={[4, 4, 0, 0]}>
                             {clicksByAffiliate.map((_, i) => (
                               <Cell key={i} fill={i === 0 ? '#6366f1' : i === 1 ? '#8b5cf6' : '#a78bfa'} />
                             ))}
@@ -272,21 +273,21 @@ export default function AffiliatesAdmin() {
 
                 {/* Classement meilleurs affiliés */}
                 <div className="bg-white border border-gray-200 rounded-xl p-4">
-                  <h2 className="text-sm font-semibold text-gray-700 mb-4">Classement des meilleurs affiliés</h2>
+                  <h2 className="text-sm font-semibold text-gray-700 mb-4">{tp('Classement des meilleurs affiliés')}</h2>
                   {topAffiliates.length === 0 ? (
-                    <p className="text-xs text-gray-400">Aucun affilié actif</p>
+                    <p className="text-xs text-gray-400">{tp('Aucun affilié actif')}</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs">
                         <thead>
                           <tr className="bg-gray-50 border-b">
                             <th className="px-3 py-2 text-left text-gray-500 font-medium w-8">#</th>
-                            <th className="px-3 py-2 text-left text-gray-500 font-medium">Affilié</th>
-                            <th className="px-3 py-2 text-right text-gray-500 font-medium">Clics</th>
-                            <th className="px-3 py-2 text-right text-gray-500 font-medium">Conversions</th>
-                            <th className="px-3 py-2 text-right text-gray-500 font-medium">Taux</th>
-                            <th className="px-3 py-2 text-right text-gray-500 font-medium">Commissions</th>
-                            <th className="px-3 py-2 text-left text-gray-500 font-medium">Statut</th>
+                            <th className="px-3 py-2 text-left text-gray-500 font-medium">{tp('Affilié')}</th>
+                            <th className="px-3 py-2 text-right text-gray-500 font-medium">{tp('Clics')}</th>
+                            <th className="px-3 py-2 text-right text-gray-500 font-medium">{tp('Conversions')}</th>
+                            <th className="px-3 py-2 text-right text-gray-500 font-medium">{tp('Taux')}</th>
+                            <th className="px-3 py-2 text-right text-gray-500 font-medium">{tp('Commissions')}</th>
+                            <th className="px-3 py-2 text-left text-gray-500 font-medium">{tp('Statut')}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -309,7 +310,7 @@ export default function AffiliatesAdmin() {
                                 <td className="px-3 py-2 text-right font-semibold text-green-700">{fmt(Math.round(a.totalCommissions))} FCFA</td>
                                 <td className="px-3 py-2">
                                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${a.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                    {a.isActive ? 'Actif' : 'Inactif'}
+                                    {a.isActive ? 'Actif' : tp('Inactif')}
                                   </span>
                                 </td>
                               </tr>
@@ -329,17 +330,17 @@ export default function AffiliatesAdmin() {
 
                 {/* Créer un affilié */}
                 <div className="bg-white border border-gray-200 rounded-xl p-4">
-                  <h2 className="text-sm font-semibold text-gray-700 mb-3">Créer un affilié</h2>
+                  <h2 className="text-sm font-semibold text-gray-700 mb-3">{tp('Créer un affilié')}</h2>
                   <form onSubmit={createAffiliate} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
-                    <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Nom" required className="px-3 py-2 border rounded-lg text-sm" />
+                    <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder={tp('Nom')} required className="px-3 py-2 border rounded-lg text-sm" />
                     <input value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="Email" type="email" required className="px-3 py-2 border rounded-lg text-sm" />
-                    <input value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder="Mot de passe initial" className="px-3 py-2 border rounded-lg text-sm" />
+                    <input value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder={tp('Mot de passe initial')} className="px-3 py-2 border rounded-lg text-sm" />
                     <select value={form.commissionType} onChange={(e) => setForm((p) => ({ ...p, commissionType: e.target.value }))} className="px-3 py-2 border rounded-lg text-sm">
-                      <option value="fixed">Fixe (FCFA)</option>
-                      <option value="percentage">Pourcentage (%)</option>
+                      <option value="fixed">{tp('Fixe (FCFA)')}</option>
+                      <option value="percentage">{tp('Pourcentage (%)')}</option>
                     </select>
-                    <input value={form.commissionValue} onChange={(e) => setForm((p) => ({ ...p, commissionValue: Number(e.target.value || 0) }))} type="number" placeholder="Valeur" className="px-3 py-2 border rounded-lg text-sm" />
-                    <button className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800">Créer affilié</button>
+                    <input value={form.commissionValue} onChange={(e) => setForm((p) => ({ ...p, commissionValue: Number(e.target.value || 0) }))} type="number" placeholder={tp('Valeur')} className="px-3 py-2 border rounded-lg text-sm" />
+                    <button className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800">{tp('Créer affilié')}</button>
                   </form>
                 </div>
 
@@ -348,7 +349,7 @@ export default function AffiliatesAdmin() {
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-sm font-semibold text-gray-700">Affiliés ({affiliates.length})</h2>
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="text-gray-500">Trier par:</span>
+                      <span className="text-gray-500">{tp('Trier par:')}</span>
                       {[['clicks', 'Clics'], ['conversions', 'Conversions'], ['commissions', 'Commissions']].map(([k, l]) => (
                         <button
                           key={k}
@@ -384,10 +385,10 @@ export default function AffiliatesAdmin() {
                             </div>
                             <div className="flex items-center gap-2">
                               <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${a.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                {a.isActive ? 'Actif' : 'Inactif'}
+                                {a.isActive ? 'Actif' : tp('Inactif')}
                               </span>
                               <button onClick={() => updateAffiliate(a, { isActive: !a.isActive })} className="px-2 py-1 text-xs rounded border hover:bg-gray-50">
-                                {a.isActive ? 'Désactiver' : 'Activer'}
+                                {a.isActive ? 'Désactiver' : tp('Activer')}
                               </button>
                             </div>
                           </div>
@@ -395,23 +396,23 @@ export default function AffiliatesAdmin() {
                           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3">
                             <div className="bg-blue-50 rounded-lg p-2 text-center">
                               <p className="text-lg font-bold text-blue-700">{fmt(s.totalClicks)}</p>
-                              <p className="text-[10px] text-blue-600">Clics</p>
+                              <p className="text-[10px] text-blue-600">{tp('Clics')}</p>
                             </div>
                             <div className="bg-purple-50 rounded-lg p-2 text-center">
                               <p className="text-lg font-bold text-purple-700">{fmt(s.totalConversions)}</p>
-                              <p className="text-[10px] text-purple-600">Conversions</p>
+                              <p className="text-[10px] text-purple-600">{tp('Conversions')}</p>
                             </div>
                             <div className="bg-amber-50 rounded-lg p-2 text-center">
                               <p className="text-lg font-bold text-amber-700">{fmt(s.totalSales)}</p>
-                              <p className="text-[10px] text-amber-600">Ventes (FCFA)</p>
+                              <p className="text-[10px] text-amber-600">{tp('Ventes (FCFA)')}</p>
                             </div>
                             <div className="bg-green-50 rounded-lg p-2 text-center">
                               <p className="text-lg font-bold text-green-700">{fmt(s.totalCommissions)}</p>
-                              <p className="text-[10px] text-green-600">Commissions</p>
+                              <p className="text-[10px] text-green-600">{tp('Commissions')}</p>
                             </div>
                             <div className="bg-slate-50 rounded-lg p-2 text-center">
                               <p className="text-lg font-bold text-slate-700">{rate}%</p>
-                              <p className="text-[10px] text-slate-500">Taux conv.</p>
+                              <p className="text-[10px] text-slate-500">{tp('Taux conv.')}</p>
                             </div>
                           </div>
 
@@ -429,7 +430,7 @@ export default function AffiliatesAdmin() {
                             ) : (
                               <>
                                 <span>•</span>
-                                <span className="text-gray-400 italic">Jamais connecté</span>
+                                <span className="text-gray-400 italic">{tp('Jamais connecté')}</span>
                               </>
                             )}
                           </div>
@@ -457,12 +458,12 @@ export default function AffiliatesAdmin() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="bg-gray-50 border-b">
-                        <th className="px-2 py-2 text-left">Affilié</th>
-                        <th className="px-2 py-2 text-left">Commande</th>
-                        <th className="px-2 py-2 text-right">Montant</th>
-                        <th className="px-2 py-2 text-right">Commission</th>
-                        <th className="px-2 py-2 text-left">Statut</th>
-                        <th className="px-2 py-2 text-left">Action</th>
+                        <th className="px-2 py-2 text-left">{tp('Affilié')}</th>
+                        <th className="px-2 py-2 text-left">{tp('Commande')}</th>
+                        <th className="px-2 py-2 text-right">{tp('Montant')}</th>
+                        <th className="px-2 py-2 text-right">{tp('Commission')}</th>
+                        <th className="px-2 py-2 text-left">{tp('Statut')}</th>
+                        <th className="px-2 py-2 text-left">{tp('Action')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -502,27 +503,27 @@ export default function AffiliatesAdmin() {
             {/* ───── ONGLET CONFIGURATION ───── */}
             {tab === 'Configuration' && (
               <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
-                <h2 className="text-sm font-semibold text-gray-700">Configuration globale</h2>
+                <h2 className="text-sm font-semibold text-gray-700">{tp('Configuration globale')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Type de commission</label>
+                    <label className="block text-xs text-gray-500 mb-1">{tp('Type de commission')}</label>
                     <select value={config?.baseCommissionType || 'fixed'} onChange={(e) => setConfig((p) => ({ ...p, baseCommissionType: e.target.value }))} className="w-full px-3 py-2 border rounded-lg text-sm">
-                      <option value="fixed">Montant fixe (FCFA)</option>
-                      <option value="percentage">Pourcentage (%)</option>
+                      <option value="fixed">{tp('Montant fixe (FCFA)')}</option>
+                      <option value="percentage">{tp('Pourcentage (%)')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Valeur de commission</label>
+                    <label className="block text-xs text-gray-500 mb-1">{tp('Valeur de commission')}</label>
                     <input value={config?.baseCommissionValue ?? 500} onChange={(e) => setConfig((p) => ({ ...p, baseCommissionValue: Number(e.target.value || 0) }))} type="number" className="w-full px-3 py-2 border rounded-lg text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">URL destination par défaut</label>
+                    <label className="block text-xs text-gray-500 mb-1">{tp('URL destination par défaut')}</label>
                     <input value={config?.defaultLandingUrl || ''} onChange={(e) => setConfig((p) => ({ ...p, defaultLandingUrl: e.target.value }))} placeholder="https://..." className="w-full px-3 py-2 border rounded-lg text-sm" />
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <button onClick={saveConfig} className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800">
-                    Sauvegarder configuration
+                    {tp('Sauvegarder configuration')}
                   </button>
                   <p className="text-xs text-gray-500">
                     Commission actuelle: {fmt(config?.baseCommissionValue)} {config?.baseCommissionType === 'fixed' ? 'FCFA' : '%'}

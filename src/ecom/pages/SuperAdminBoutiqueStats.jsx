@@ -6,6 +6,7 @@ import {
 import { superAdminApi } from '../services/ecommApi.js';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
 import SuperAdminShell from '../components/SuperAdminShell';
+import { tp } from '../i18n/platform.js';
 
 /* ── helpers ── */
 const nFmt = new Intl.NumberFormat('fr-FR');
@@ -94,7 +95,7 @@ function PeriodSection({ label, stats, top, icon: Icon }) {
           {/* Status breakdown */}
           {statusEntries.length > 0 && (
             <div>
-              <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Statuts</p>
+              <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">{tp('Statuts')}</p>
               <div className="flex flex-wrap gap-1.5">
                 {statusEntries.map(([s, v]) => (
                   <span key={s} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusColor(s)}`}>
@@ -108,7 +109,7 @@ function PeriodSection({ label, stats, top, icon: Icon }) {
           {/* Top 3 closers */}
           {top?.length > 0 && (
             <div>
-              <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Top vendeurs</p>
+              <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">{tp('Top vendeurs')}</p>
               <div className="flex flex-col gap-1.5">
                 {top.map((v, i) => (
                   <div key={v.userId || i}
@@ -130,7 +131,7 @@ function PeriodSection({ label, stats, top, icon: Icon }) {
           )}
 
           {(!top || top.length === 0) && (
-            <p className="text-xs text-slate-400 italic">Aucun vendeur sur cette période</p>
+            <p className="text-xs text-slate-400 italic">{tp('Aucun vendeur sur cette période')}</p>
           )}
         </div>
       </div>
@@ -192,8 +193,8 @@ const SuperAdminBoutiqueStats = () => {
 
   return (
     <SuperAdminShell
-      title="Stats Boutique"
-      subtitle={selectedWorkspace ? wsName : 'Sélectionnez une boutique'}
+      title={tp('Stats Boutique')}
+      subtitle={selectedWorkspace ? wsName : tp('Sélectionnez une boutique')}
       icon={Store}
       refreshing={refreshing}
       onRefresh={selectedWorkspace ? () => loadStats(selectedWorkspace, selectedStore, true) : undefined}
@@ -210,7 +211,7 @@ const SuperAdminBoutiqueStats = () => {
             style={{ background: '#fff', border: '1px solid #d1d9e0', minWidth: 220 }}
             disabled={listLoading}
           >
-            <option value="">— Choisir une workspace —</option>
+            <option value="">{tp('— Choisir une workspace —')}</option>
             {listData?.workspaces?.map(w => (
               <option key={w._id} value={w._id}>{w.name || w.subdomain || String(w._id).slice(-6)}</option>
             ))}
@@ -227,7 +228,7 @@ const SuperAdminBoutiqueStats = () => {
               className="appearance-none pl-4 pr-8 py-2.5 rounded-xl text-sm font-semibold text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-400"
               style={{ background: '#fff', border: '1px solid #d1d9e0', minWidth: 180 }}
             >
-              <option value="">Toutes les stores</option>
+              <option value="">{tp('Toutes les stores')}</option>
               {filteredStores.map(s => (
                 <option key={s._id} value={s._id}>{s.name || s.subdomain || String(s._id).slice(-6)}</option>
               ))}
@@ -247,8 +248,8 @@ const SuperAdminBoutiqueStats = () => {
             <Store className="w-8 h-8 text-primary-400" />
           </div>
           <div>
-            <p className="font-bold text-slate-700">Sélectionnez une boutique</p>
-            <p className="text-sm text-slate-400 mt-1">Choisissez une workspace dans le menu ci-dessus pour voir les statistiques</p>
+            <p className="font-bold text-slate-700">{tp('Sélectionnez une boutique')}</p>
+            <p className="text-sm text-slate-400 mt-1">{tp('Choisissez une workspace dans le menu ci-dessus pour voir les statistiques')}</p>
           </div>
         </div>
       )}
@@ -272,7 +273,7 @@ const SuperAdminBoutiqueStats = () => {
             </div>
             <div className="flex items-center gap-1.5">
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statsData.workspace?.isActive ? 'bg-primary-500/20 text-primary-300' : 'bg-red-500/20 text-red-300'}`}>
-                {statsData.workspace?.isActive ? 'Active' : 'Inactive'}
+                {statsData.workspace?.isActive ? 'Active' : tp('Inactive')}
               </span>
             </div>
           </div>
@@ -292,7 +293,7 @@ const SuperAdminBoutiqueStats = () => {
                    style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-slate-400" />
-                  <span className="font-bold text-sm text-slate-700">Commandes du jour</span>
+                  <span className="font-bold text-sm text-slate-700">{tp('Commandes du jour')}</span>
                 </div>
                 <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                   {statsData.todayOrders.length} cmdes
@@ -302,11 +303,11 @@ const SuperAdminBoutiqueStats = () => {
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th className="text-left px-4 py-2.5 font-semibold text-slate-500">Client</th>
-                      <th className="text-left px-4 py-2.5 font-semibold text-slate-500">Produit</th>
-                      <th className="text-right px-4 py-2.5 font-semibold text-slate-500">Prix</th>
-                      <th className="text-center px-4 py-2.5 font-semibold text-slate-500">Statut</th>
-                      <th className="text-right px-4 py-2.5 font-semibold text-slate-500">Heure</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-slate-500">{tp('Client')}</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-slate-500">{tp('Produit')}</th>
+                      <th className="text-right px-4 py-2.5 font-semibold text-slate-500">{tp('Prix')}</th>
+                      <th className="text-center px-4 py-2.5 font-semibold text-slate-500">{tp('Statut')}</th>
+                      <th className="text-right px-4 py-2.5 font-semibold text-slate-500">{tp('Heure')}</th>
                     </tr>
                   </thead>
                   <tbody>

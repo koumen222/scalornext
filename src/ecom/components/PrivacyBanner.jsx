@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@/lib/router-compat';
 import { setConsent } from '../services/posthog.js';
+import { tp } from '../i18n/platform.js';
 
 const PrivacyBanner = () => {
   const [visible, setVisible] = useState(false);
@@ -50,16 +51,16 @@ const PrivacyBanner = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-white mb-1">Protection de vos données</h3>
+                <h3 className="text-sm font-semibold text-white mb-1">{tp('Protection de vos données')}</h3>
                 <p className="text-xs text-gray-400 leading-relaxed max-w-2xl">
-                  Scalor utilise uniquement des cookies essentiels pour votre authentification. 
+                  {tp('Scalor utilise uniquement des cookies essentiels pour votre authentification.')} 
                   Aucun cookie publicitaire ni outil de tracking tiers n'est utilisé. 
                   Vos données sont chiffrées et isolées par espace de travail.{' '}
                   <button 
                     onClick={() => navigate('/ecom/privacy')} 
                     className="text-primary-500 hover:text-primary-400 underline underline-offset-2 transition"
                   >
-                    Politique de confidentialité complète
+                    {tp('Politique de confidentialité complète')}
                   </button>
                 </p>
               </div>
@@ -71,7 +72,7 @@ const PrivacyBanner = () => {
                 onClick={handleDecline}
                 className="flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition"
               >
-                Refuser
+                {tp('Refuser')}
               </button>
               <button
                 onClick={handleAccept}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Zap, Globe, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import api from '../../lib/api';
+import { tp } from '../i18n/platform.js';
 
 /**
  * DemoPage - Page de démonstration pour la génération de noms de domaine
@@ -58,11 +59,11 @@ const DemoPage = () => {
             <Globe className="w-8 h-8 text-primary-600" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Générateur de Noms de Domaine
+            {tp('Générateur de Noms de Domaine')}
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Transformez automatiquement le nom de votre boutique en un domaine web professionnel au format 
-            <span className="font-semibold text-primary-600"> nom-boutique.scalor.net</span>
+            <span className="font-semibold text-primary-600"> {tp('nom-boutique.scalor.net')}</span>
           </p>
         </div>
 
@@ -70,14 +71,14 @@ const DemoPage = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
           <div className="mb-6">
             <label className="block text-lg font-semibold text-gray-900 mb-3">
-              Nom de votre boutique
+              {tp('Nom de votre boutique')}
             </label>
             <div className="flex gap-3">
               <input
                 type="text"
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
-                placeholder="Ex: Ma Belle Boutique"
+                placeholder={tp('Ex: Ma Belle Boutique')}
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 onKeyPress={(e) => e.key === 'Enter' && generateDomain(storeName)}
               />
@@ -89,12 +90,12 @@ const DemoPage = () => {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Génération...
+                    {tp('Génération...')}
                   </>
                 ) : (
                   <>
                     <Zap className="w-5 h-5" />
-                    Générer
+                    {tp('Générer')}
                   </>
                 )}
               </button>
@@ -114,20 +115,20 @@ const DemoPage = () => {
             <div className="p-6 bg-primary-50 border border-primary-200 rounded-xl">
               <div className="flex items-center gap-3 mb-4">
                 <CheckCircle className="w-6 h-6 text-primary-600" />
-                <h3 className="text-lg font-semibold text-primary-900">Domaine généré avec succès!</h3>
+                <h3 className="text-lg font-semibold text-primary-900">{tp('Domaine généré avec succès!')}</h3>
               </div>
               
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                  <span className="text-sm text-gray-600">Sous-domaine:</span>
+                  <span className="text-sm text-gray-600">{tp('Sous-domaine:')}</span>
                   <span className="font-mono font-semibold text-gray-900">{generatedDomain.subdomain}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                  <span className="text-sm text-gray-600">Domaine complet:</span>
+                  <span className="text-sm text-gray-600">{tp('Domaine complet:')}</span>
                   <span className="font-mono font-semibold text-gray-900">{generatedDomain.fullDomain}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                  <span className="text-sm text-gray-600">URL de la boutique:</span>
+                  <span className="text-sm text-gray-600">{tp('URL de la boutique:')}</span>
                   <a 
                     href={generatedDomain.storeUrl}
                     target="_blank"
@@ -144,7 +145,7 @@ const DemoPage = () => {
 
         {/* Examples */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Exemples à tester</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">{tp('Exemples à tester')}</h2>
           <p className="text-gray-600 mb-6">
             Cliquez sur ces exemples pour voir comment la génération fonctionne avec différents types de noms:
           </p>
@@ -178,9 +179,9 @@ const DemoPage = () => {
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
               <Zap className="w-6 h-6 text-blue-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Génération Instantanée</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{tp('Génération Instantanée')}</h3>
             <p className="text-gray-600 text-sm">
-              Transformez automatiquement votre nom en domaine URL-friendly en quelques secondes.
+              {tp('Transformez automatiquement votre nom en domaine URL-friendly en quelques secondes.')}
             </p>
           </div>
           
@@ -188,7 +189,7 @@ const DemoPage = () => {
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
               <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Vérification Disponibilité</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{tp('Vérification Disponibilité')}</h3>
             <p className="text-gray-600 text-sm">
               Le système vérifie automatiquement si le domaine est disponible et ajoute des suffixes si nécessaire.
             </p>
@@ -198,9 +199,9 @@ const DemoPage = () => {
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
               <Globe className="w-6 h-6 text-purple-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Format Professionnel</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{tp('Format Professionnel')}</h3>
             <p className="text-gray-600 text-sm">
-              Obtenez un domaine au format nom-boutique.scalor.net, professionnel et mémorisable.
+              {tp('Obtenez un domaine au format nom-boutique.scalor.net, professionnel et mémorisable.')}
             </p>
           </div>
         </div>

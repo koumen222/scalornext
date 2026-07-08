@@ -15,6 +15,7 @@ import AutomationSettings from '../components/productSettings/AutomationSettings
 import ToggleSwitch from '../components/productSettings/ToggleSwitch';
 import LivePreview from '../components/productSettings/LivePreview';
 import FormThemePicker from '../components/productSettings/FormThemeSelector';
+import { tp } from '../i18n/platform.js';
 
 const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
@@ -114,34 +115,34 @@ const FieldInlineEditor = ({ field, onFieldChange }) => {
       {/* Label */}
       <div>
         <div className="text-[11px] font-semibold text-gray-500 mb-1">
-          {isCta ? 'Texte du bouton' : 'Label du champ'}
+          {isCta ? 'Texte du bouton' : tp('Label du champ')}
         </div>
         <input type="text" value={field.label || ''} onChange={e => update('label', e.target.value)}
-          placeholder={isCta ? 'ACHETER MAINTENANT - {total}' : 'Label'}
+          placeholder={isCta ? 'ACHETER MAINTENANT - {total}' : tp('Label')}
           className={inputCls + ' font-medium'} />
       </div>
 
       {/* Subtext — cta only */}
       {isCta && (
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Sous-titre du bouton</div>
+          <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Sous-titre du bouton')}</div>
           <input type="text" value={field.subtext || ''} onChange={e => update('subtext', e.target.value)}
-            placeholder="Ex: Il n'y a plus assez de pièces" className={inputCls} />
+            placeholder={tp('Ex: Il n\'y a plus assez de pièces')} className={inputCls} />
         </div>
       )}
 
       {/* Placeholder — non-cta */}
       {!isCta && (
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Placeholder</div>
+          <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Placeholder')}</div>
           <input type="text" value={field.placeholder || ''} onChange={e => update('placeholder', e.target.value)}
-            placeholder="Ex: Votre quartier, rue..." className={inputCls} />
+            placeholder={tp('Ex: Votre quartier, rue...')} className={inputCls} />
         </div>
       )}
 
       {/* Icon picker */}
       <div>
-        <div className="text-[11px] font-semibold text-gray-500 mb-1.5">Icône</div>
+        <div className="text-[11px] font-semibold text-gray-500 mb-1.5">{tp('Icône')}</div>
         <div className="grid grid-cols-6 gap-1">
           {ICONS.map(({ id, label, Icon }) => (
             <button key={id} type="button" onClick={() => update('icon', id)} title={label}
@@ -163,7 +164,7 @@ const FieldInlineEditor = ({ field, onFieldChange }) => {
         <div className="grid grid-cols-3 gap-2">
           <ColorRow label="Couleur du texte" value={textColor} onChange={v => update('textColor', v)} />
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Taille</div>
+            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Taille')}</div>
             <div className="flex items-center gap-1">
               <input type="number" min="10" max="30" className={inputCls + ' text-center w-14'}
                 value={fontSize} onChange={e => update('fontSize', parseInt(e.target.value) || 15)} />
@@ -171,7 +172,7 @@ const FieldInlineEditor = ({ field, onFieldChange }) => {
             </div>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Style</div>
+            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Style')}</div>
             <div className="flex gap-1">
               <button type="button"
                 className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${bold ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
@@ -187,7 +188,7 @@ const FieldInlineEditor = ({ field, onFieldChange }) => {
         <div className="grid grid-cols-2 gap-2">
           <ColorRow label="Couleur du bouton" value={bg} onChange={v => update('bgColor', v)} />
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Animation</div>
+            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Animation')}</div>
             <select className={inputCls} value={animId} onChange={e => update('animation', e.target.value)}>
               {ANIMATIONS.map(a => <option key={a.id} value={a.id}>{a.label}</option>)}
             </select>
@@ -227,7 +228,7 @@ const FieldInlineEditor = ({ field, onFieldChange }) => {
         {/* Live preview */}
         <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100 p-3">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 text-center">
-            Aperçu en direct
+            {tp('Aperçu en direct')}
           </div>
           <div className="flex justify-center">
             <button type="button"
@@ -301,11 +302,11 @@ const FormFieldsEditor = ({ config, onChange }) => {
 
       {/* ── Form type ── */}
       <div>
-        <div className="text-xs font-bold text-gray-700 mb-2.5">Type d'affichage</div>
+        <div className="text-xs font-bold text-gray-700 mb-2.5">{tp('Type d\'affichage')}</div>
         <div className="flex gap-2">
           {[
             { id: 'popup', label: 'Popup', icon: '💬' },
-            { id: 'embedded', label: 'Intégré', icon: '📋' },
+            { id: 'embedded', get label() { return tp('Intégré'); }, icon: '📋' },
           ].map(({ id, label, icon }) => (
             <button key={id} onClick={() => updateGeneral('formType', id)}
               className={`flex-1 flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium border-2 transition-all ${
@@ -317,7 +318,7 @@ const FormFieldsEditor = ({ config, onChange }) => {
               <div className="text-left">
                 <div className="font-bold text-[13px]">{label}</div>
                 <div className="text-[10px] opacity-60 font-normal">
-                  {id === 'popup' ? 'Modale au clic' : 'Affiché sur la page'}
+                  {id === 'popup' ? 'Modale au clic' : tp('Affiché sur la page')}
                 </div>
               </div>
             </button>
@@ -327,7 +328,7 @@ const FormFieldsEditor = ({ config, onChange }) => {
 
       {/* ── Regular fields ── */}
       <div>
-        <div className="text-xs font-bold text-gray-700 mb-2.5">Champs du formulaire</div>
+        <div className="text-xs font-bold text-gray-700 mb-2.5">{tp('Champs du formulaire')}</div>
         <div className="space-y-1.5">
           {regularFields.map((field) => {
             const index = fields.indexOf(field);
@@ -394,8 +395,8 @@ const FormFieldsEditor = ({ config, onChange }) => {
                 <MousePointerClick size={14} className="text-primary-600" />
               </div>
               <div>
-                <div className="text-[13px] font-bold text-gray-800">Bouton du formulaire</div>
-                <div className="text-[10px] text-gray-400">Personnalisez l'apparence du bouton de commande</div>
+                <div className="text-[13px] font-bold text-gray-800">{tp('Bouton du formulaire')}</div>
+                <div className="text-[10px] text-gray-400">{tp('Personnalisez l\'apparence du bouton de commande')}</div>
               </div>
             </div>
             {/* Enable/disable toggle */}
@@ -433,7 +434,7 @@ const ProductSelector = ({ products, selected, onSelect, storeSubdomain }) => {
     <div className="border-b border-gray-100 px-4 py-3 bg-gray-50/60">
       {/* Selector row */}
       <div className="flex items-center gap-2">
-        <span className="text-[11px] font-semibold text-gray-500 shrink-0">Aperçu avec :</span>
+        <span className="text-[11px] font-semibold text-gray-500 shrink-0">{tp('Aperçu avec :')}</span>
         <div className="relative flex-1 min-w-0">
           <button
             onClick={() => setOpen(o => !o)}
@@ -480,7 +481,7 @@ const ProductSelector = ({ products, selected, onSelect, storeSubdomain }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 text-primary-600 hover:text-primary-800 transition-colors"
-            title="Voir la page produit"
+            title={tp('Voir la page produit')}
           >
             <ExternalLink size={11} />
           </a>
@@ -569,7 +570,7 @@ const ProductSettingsPage = () => {
           <div className="w-12 h-12 rounded-2xl bg-primary-50 flex items-center justify-center">
             <Loader2 size={24} className="animate-spin text-primary-500" />
           </div>
-          <span className="text-sm font-medium text-gray-500">Chargement du builder…</span>
+          <span className="text-sm font-medium text-gray-500">{tp('Chargement du builder…')}</span>
         </div>
       </div>
     );
@@ -636,10 +637,10 @@ const ProductSettingsPage = () => {
             </div>
             <div className="min-w-0">
               <h1 className="text-[15px] font-extrabold text-gray-900 tracking-tight leading-tight">
-                Product Page Builder
+                {tp('Product Page Builder')}
               </h1>
               <p className="text-[10px] text-gray-400 font-medium leading-tight hidden sm:block">
-                Personnalisez votre page produit en temps réel
+                {tp('Personnalisez votre page produit en temps réel')}
               </p>
             </div>
           </div>
@@ -668,7 +669,7 @@ const ProductSettingsPage = () => {
                 className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
               >
                 <ExternalLink size={12} />
-                Voir en direct
+                {tp('Voir en direct')}
               </a>
             )}
 
@@ -690,7 +691,7 @@ const ProductSettingsPage = () => {
               }`}
             >
               {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-              {saving ? 'Sauvegarde…' : saved ? 'Enregistré !' : 'Enregistrer'}
+              {saving ? 'Sauvegarde…' : saved ? 'Enregistré !' : tp('Enregistrer')}
             </button>
           </div>
         </div>

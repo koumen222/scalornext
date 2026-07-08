@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import api from '../../lib/api';
+import { tp } from '../i18n/platform.js';
 
 const IcoCash = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>;
 const IcoZap = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>;
@@ -14,7 +15,7 @@ const PROVIDERS = [
     name: 'Paiement à la livraison',
     icon: <IcoCash />,
     color: '#059669',
-    desc: 'Le client paie en espèces à la réception',
+    get desc() { return tp('Le client paie en espèces à la réception'); },
     fields: [],
     popular: true,
   },
@@ -25,8 +26,8 @@ const PROVIDERS = [
     color: '#F5A623',
     desc: 'Mobile Money, Carte bancaire — Afrique',
     fields: [
-      { key: 'flutterwavePublicKey', label: 'Clé publique', placeholder: 'FLWPUBK-...' },
-      { key: 'flutterwaveSecretKey', label: 'Clé secrète', placeholder: 'FLWSECK-...' },
+      { key: 'flutterwavePublicKey', get label() { return tp('Clé publique'); }, placeholder: 'FLWPUBK-...' },
+      { key: 'flutterwaveSecretKey', get label() { return tp('Clé secrète'); }, placeholder: 'FLWSECK-...' },
     ],
     popular: true,
   },
@@ -50,8 +51,8 @@ const PROVIDERS = [
     color: '#635BFF',
     desc: 'Carte bancaire internationale — Visa, Mastercard',
     fields: [
-      { key: 'stripePublishableKey', label: 'Clé publiable', placeholder: 'pk_live_...' },
-      { key: 'stripeSecretKey', label: 'Clé secrète', placeholder: 'sk_live_...' },
+      { key: 'stripePublishableKey', get label() { return tp('Clé publiable'); }, placeholder: 'pk_live_...' },
+      { key: 'stripeSecretKey', get label() { return tp('Clé secrète'); }, placeholder: 'sk_live_...' },
     ],
     popular: false,
   },
@@ -62,7 +63,7 @@ const PROVIDERS = [
     color: '#25D366',
     desc: 'Le client commande via WhatsApp',
     fields: [
-      { key: 'whatsappNumber', label: 'Numéro WhatsApp', placeholder: '+237612345678' },
+      { key: 'whatsappNumber', get label() { return tp('Numéro WhatsApp'); }, placeholder: '+237612345678' },
     ],
     popular: true,
   },
@@ -162,8 +163,8 @@ const BoutiquePayments = () => {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Paiements</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Configurez vos modes de paiement</p>
+          <h1 className="text-xl font-bold text-gray-900">{tp('Paiements')}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{tp('Configurez vos modes de paiement')}</p>
         </div>
         <button
           onClick={handleSave}
@@ -172,7 +173,7 @@ const BoutiquePayments = () => {
             saved ? 'bg-green-500' : 'bg-[#0F6B4F] hover:bg-[#0A5740]'
           } disabled:opacity-60`}
         >
-          {saving ? 'Enregistrement...' : saved ? '✓ Sauvegardé' : 'Sauvegarder'}
+          {saving ? 'Enregistrement...' : saved ? '✓ Sauvegardé' : tp('Sauvegarder')}
         </button>
       </div>
 
@@ -194,7 +195,7 @@ const BoutiquePayments = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
         <div>
-          <p className="text-xs font-semibold text-gray-700">Sécurité des données</p>
+          <p className="text-xs font-semibold text-gray-700">{tp('Sécurité des données')}</p>
           <p className="text-xs text-gray-500 mt-0.5">
             Vos clés API sont chiffrées et stockées de manière sécurisée. Elles ne sont jamais exposées côté client.
           </p>

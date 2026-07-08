@@ -4,6 +4,7 @@ import ecomApi from '../services/ecommApi.js';
 import { useMoney } from '../hooks/useMoney.js';
 import { ArrowLeft, CalendarDays, Truck, AlertCircle } from 'lucide-react';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const ReportsInsightsPage = () => {
   const navigate = useNavigate();
@@ -116,8 +117,8 @@ const ReportsInsightsPage = () => {
             <ArrowLeft size={18} className="text-gray-600" />
           </button>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">📈 Insights mensuels</h3>
-            <p className="text-sm text-gray-500">Classement détaillé des jours rentables et des agences</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{tp('📈 Insights mensuels')}</h3>
+            <p className="text-sm text-gray-500">{tp('Classement détaillé des jours rentables et des agences')}</p>
           </div>
         </div>
       </div>
@@ -127,13 +128,13 @@ const ReportsInsightsPage = () => {
           to="/ecom/reports/insights?tab=days"
           className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'days' ? 'bg-primary-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
         >
-          Jours rentables
+          {tp('Jours rentables')}
         </Link>
         <Link
           to="/ecom/reports/insights?tab=agencies"
           className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'agencies' ? 'bg-primary-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
         >
-          Agences efficaces
+          {tp('Agences efficaces')}
         </Link>
       </div>
 
@@ -150,11 +151,11 @@ const ReportsInsightsPage = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
             <CalendarDays size={16} className="text-primary-600" />
-            <h2 className="text-sm font-semibold text-gray-700">Tous les jours classés par rentabilité</h2>
+            <h2 className="text-sm font-semibold text-gray-700">{tp('Tous les jours classés par rentabilité')}</h2>
           </div>
           <div className="divide-y divide-gray-100">
             {topProfitDays.length === 0 ? (
-              <p className="px-4 py-6 text-sm text-gray-500">Aucune donnée disponible</p>
+              <p className="px-4 py-6 text-sm text-gray-500">{tp('Aucune donnée disponible')}</p>
             ) : (
               topProfitDays.map((day, idx) => (
                 <div key={day.date} className="px-4 py-3 flex items-center justify-between">
@@ -175,12 +176,12 @@ const ReportsInsightsPage = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
             <Truck size={16} className="text-primary-700" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">🔍 Recommandations</h3>
-            <h2 className="text-sm font-semibold text-gray-700"> les agences classées par efficacité</h2>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{tp('🔍 Recommandations')}</h3>
+            <h2 className="text-sm font-semibold text-gray-700"> {tp('les agences classées par efficacité')}</h2>
           </div>
           <div className="divide-y divide-gray-100">
             {topAgencies.length === 0 ? (
-              <p className="px-4 py-6 text-sm text-gray-500">Aucune donnée d'agence disponible</p>
+              <p className="px-4 py-6 text-sm text-gray-500">{tp('Aucune donnée d\'agence disponible')}</p>
             ) : (
               topAgencies.map((agency, idx) => (
                 <div key={agency.agencyName} className="px-4 py-3 flex items-center justify-between">
@@ -190,7 +191,7 @@ const ReportsInsightsPage = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-primary-700">{fmt(agency.deliveryCost)}</p>
-                    <p className="text-xs text-gray-500">Total livraisons</p>
+                    <p className="text-xs text-gray-500">{tp('Total livraisons')}</p>
                   </div>
                 </div>
               ))

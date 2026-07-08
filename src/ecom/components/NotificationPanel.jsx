@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from '@/lib/router-compat';
 import { notificationsApi } from '../services/ecommApi';
+import { tp } from '../i18n/platform.js';
 
 const ICON_MAP = {
   order: (
@@ -211,7 +212,7 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2.5">
-            <h3 className="text-base font-bold text-gray-900">Notifications</h3>
+            <h3 className="text-base font-bold text-gray-900">{tp('Notifications')}</h3>
             {unreadCount > 0 && (
               <span className="px-2 py-1 rounded-full bg-primary-600 text-white text-xs font-bold">
                 {unreadCount}
@@ -227,14 +228,14 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
               }}
               className="text-sm text-gray-600 font-semibold px-3 py-1.5 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
             >
-              Voir tout
+              {tp('Voir tout')}
             </button>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
                 className="text-sm text-primary-600 font-semibold px-3 py-1.5 rounded-lg hover:bg-primary-50 active:bg-primary-100 transition-colors"
               >
-                Tout lu
+                {tp('Tout lu')}
               </button>
             )}
             <button
@@ -259,8 +260,8 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
-              <p className="text-sm font-medium text-gray-500">Aucune notification</p>
-              <p className="text-xs text-gray-400 mt-1">Vous êtes ù  jour !</p>
+              <p className="text-sm font-medium text-gray-500">{tp('Aucune notification')}</p>
+              <p className="text-xs text-gray-400 mt-1">{tp('Vous êtes ù  jour !')}</p>
             </div>
           ) : (
             notifications.map((notif) => {
@@ -296,7 +297,7 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
                           <button
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleMarkAsRead(notif._id); }}
                             className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-200 active:bg-gray-300 text-gray-500 transition-colors"
-                            title="Marquer comme lu"
+                            title={tp('Marquer comme lu')}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
@@ -306,7 +307,7 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
                         <button
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(notif._id); }}
                           className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 active:bg-red-100 text-gray-400 hover:text-red-600 transition-colors"
-                          title="Supprimer"
+                          title={tp('Supprimer')}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />

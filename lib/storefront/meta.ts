@@ -19,6 +19,31 @@ function normalizeText(value: unknown): string {
   return String(value).replace(/\s+/g, ' ').trim();
 }
 
+/** Retire balises HTML et entités courantes — les descriptions produit sont du HTML riche. */
+function stripHtml(value: unknown): string {
+  if (!value) return '';
+  return String(value)
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#0?39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>');
+}
+
+/** Base publique de la boutique : domaine custom sinon sous-domaine scalor.net. */
+export function storePublicBase(store: Record<string, any> | null | undefined): string | null {
+  const custom = normalizeText(store?.customDomain).toLowerCase().replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  if (custom) return `https://${custom}`;
+  const sub = normalizeText(store?.subdomain).toLowerCase();
+  return sub ? `https://${sub}.scalor.net` : null;
+}
+
+const OG_LOCALES: Record<string, string> = { fr: 'fr_FR', en: 'en_US', es: 'es_ES' };
+
 function truncateText(value: unknown, max = 180): string {
   const text = normalizeText(value);
   if (text.length <= max) return text;
@@ -45,18 +70,24 @@ interface MetaInput {
   siteName: string;
   type?: 'website';
   icon?: string;
+  canonical?: string | null;
+  locale?: string;
+  other?: Record<string, string>;
 }
 
-function toMetadata({ title, description, image, siteName, type = 'website', icon }: MetaInput): Metadata {
+function toMetadata({ title, description, image, siteName, type = 'website', icon, canonical, locale, other }: MetaInput): Metadata {
   return {
     title,
     description,
     icons: icon ? { icon: [{ url: icon }] } : undefined,
+    alternates: canonical ? { canonical } : undefined,
     openGraph: {
       title,
       description,
       siteName,
       type,
+      locale,
+      url: canonical || undefined,
       images: image ? [image] : undefined,
     },
     twitter: {
@@ -65,6 +96,7 @@ function toMetadata({ title, description, image, siteName, type = 'website', ico
       description,
       images: image ? [image] : undefined,
     },
+    other,
   };
 }
 
@@ -81,6 +113,8 @@ export function storeMetadata(payload: StorePayload, pageType: StorePageType = '
   const store = payload?.store || payload;
   if (!store) return platformFallbackMetadata();
   const { name, description, logo, image } = storeFields(store);
+  const base = storePublicBase(store);
+  const locale = OG_LOCALES[normalizeText((store as Record<string, any>)?.language).slice(0, 2).toLowerCase()];
 
   if (pageType === 'products') {
     return toMetadata({
@@ -89,6 +123,8 @@ export function storeMetadata(payload: StorePayload, pageType: StorePageType = '
       image,
       siteName: name,
       icon: logo || '/icon.png',
+      canonical: base ? `${base}/products` : null,
+      locale,
     });
   }
 
@@ -99,15 +135,18 @@ export function storeMetadata(payload: StorePayload, pageType: StorePageType = '
       image,
       siteName: name,
       icon: logo || '/icon.png',
+      locale,
     });
   }
 
   return toMetadata({
     title: name,
-    description,
+    description: truncateText(stripHtml(description), 180) || description,
     image,
     siteName: name,
     icon: logo || '/icon.png',
+    canonical: base ? `${base}/` : null,
+    locale,
   });
 }
 
@@ -119,13 +158,29 @@ export function productMetadata(payload: ProductPagePayload): Metadata {
 
   const productImage: string = product.images?.[0]?.url || product.image || '';
   const title =
-    normalizeText(product.seoTitle) || `${normalizeText(product.name)} — ${storeName}`;
+    normalizeText(stripHtml(product.seoTitle)) || `${normalizeText(product.name)} — ${storeName}`;
   const description = truncateText(
-    normalizeText(product.seoDescription || product.description) ||
+    normalizeText(stripHtml(product.seoDescription || product.description)) ||
       storeDescription ||
       `Découvrez ${product.name} chez ${storeName}.`,
     180
   );
+
+  // Canonical : consolide les alias /product/, /produit/, /products/ et le mode
+  // path (/store/{sub}/…) sur l'URL du sitemap boutique.
+  const base = storePublicBase(store);
+  const canonical = base && product.slug ? `${base}/products/${encodeURIComponent(product.slug)}` : null;
+  const lang = normalizeText(product.pageLanguage || store?.language).slice(0, 2).toLowerCase();
+
+  // Prix pour les cartes produit WhatsApp/Facebook (og product tags)
+  const price = Number(product.price);
+  const priceMeta = Number.isFinite(price) && price > 0
+    ? {
+        'product:price:amount': String(price),
+        'product:price:currency': normalizeText(product.currency || store?.currency) || 'XAF',
+        'product:availability': Number.isFinite(Number(product.stock)) && Number(product.stock) <= 0 ? 'out of stock' : 'in stock',
+      }
+    : undefined;
 
   return toMetadata({
     title,
@@ -136,5 +191,8 @@ export function productMetadata(payload: ProductPagePayload): Metadata {
     // (impact SEO négligeable, noté dans MIGRATION_LOG.md)
     type: 'website',
     icon: logo || '/icon.png',
+    canonical,
+    locale: OG_LOCALES[lang],
+    other: priceMeta,
   });
 }

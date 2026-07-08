@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const LivreurEarningsPage = () => {
   const { user } = useEcomAuth();
@@ -22,7 +23,7 @@ const LivreurEarningsPage = () => {
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-64 gap-3">
       <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-      <p className="text-sm text-gray-400">Chargement…</p>
+      <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
     </div>
   );
 
@@ -36,17 +37,17 @@ const LivreurEarningsPage = () => {
     <div className="p-3 sm:p-6 max-w-[900px] mx-auto space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">💰 Mes gains</h1>
-          <p className="text-sm text-gray-400 mt-0.5">Récapitulatif de vos revenus</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('💰 Mes gains')}</h1>
+          <p className="text-sm text-gray-400 mt-0.5">{tp('Récapitulatif de vos revenus')}</p>
         </div>
-        <button onClick={loadStats} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">↻ Actualiser</button>
+        <button onClick={loadStats} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">{tp('↻ Actualiser')}</button>
       </div>
 
       {stats && (
         <>
           {/* Total cumulé */}
           <div className="bg-gradient-to-br from-[#0F6B4F] to-[#0a5740] rounded-2xl p-6 text-white shadow-lg">
-            <p className="text-xs font-medium text-white/70 uppercase tracking-wider">Total cumulé</p>
+            <p className="text-xs font-medium text-white/70 uppercase tracking-wider">{tp('Total cumulé')}</p>
             <p className="text-4xl font-black mt-2">{(stats.allTime?.amount || 0).toLocaleString('fr-FR')}</p>
             <p className="text-sm text-white/60 mt-1">FCFA</p>
             <div className="mt-4 flex items-center gap-2 text-xs text-white/80">
@@ -57,7 +58,7 @@ const LivreurEarningsPage = () => {
           {/* Aujourd'hui */}
           <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-bold text-amber-500 uppercase tracking-wider">☀️ Aujourd'hui</p>
+              <p className="text-xs font-bold text-amber-500 uppercase tracking-wider">{tp('☀️ Aujourd\'hui')}</p>
             </div>
             <p className="text-3xl font-black text-amber-600">{(stats.today?.amount || 0).toLocaleString('fr-FR')}</p>
             <p className="text-xs text-amber-400 mt-1">FCFA · {stats.today?.delivered || 0} livraison{(stats.today?.delivered || 0) !== 1 ? 's' : ''}</p>
@@ -68,7 +69,7 @@ const LivreurEarningsPage = () => {
             {/* Ce mois */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ce mois</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{tp('Ce mois')}</p>
                 <div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center">
                   <svg className="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 </div>
@@ -80,7 +81,7 @@ const LivreurEarningsPage = () => {
             {/* Cette semaine */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Cette semaine</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{tp('Cette semaine')}</p>
                 <div className="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center">
                   <svg className="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 </div>
@@ -94,13 +95,13 @@ const LivreurEarningsPage = () => {
           {(stats.recentDeliveries || []).length > 0 && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50">
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🕓 Dernières livraisons</h2>
+                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{tp('🕓 Dernières livraisons')}</h2>
               </div>
               <div className="divide-y divide-gray-50">
                 {(stats.recentDeliveries || []).map((d, i) => (
                   <div key={i} className="flex items-center justify-between px-5 py-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-gray-800 truncate">{d.clientName || 'Client'}</p>
+                      <p className="text-sm font-semibold text-gray-800 truncate">{d.clientName || tp('Client')}</p>
                       <p className="text-[11px] text-gray-400 mt-0.5 truncate">
                         {d.city ? `📍 ${d.city}` : ''}{d.deliveryDistanceKm ? ` · ${d.deliveryDistanceKm} km` : ''}
                       </p>
@@ -119,10 +120,10 @@ const LivreurEarningsPage = () => {
 
           {/* Statistiques */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">📊 Statistiques</h2>
+            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">{tp('📊 Statistiques')}</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'Total livrées', value: stats.allTime?.delivered || 0, color: 'text-primary-600' },
+                { get label() { return tp('Total livrées'); }, value: stats.allTime?.delivered || 0, color: 'text-primary-600' },
                 { label: 'En cours', value: stats.inProgress || 0, color: 'text-indigo-600' },
                 { label: 'Disponibles', value: stats.available || 0, color: 'text-amber-600' },
                 { label: 'Mois en cours', value: stats.thisMonth?.delivered || 0, color: 'text-violet-600' },
@@ -138,7 +139,7 @@ const LivreurEarningsPage = () => {
           {/* Moyenne */}
           {stats.allTime?.delivered > 0 && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">💡 Revenu moyen par livraison</h2>
+              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">{tp('💡 Revenu moyen par livraison')}</h2>
               <p className="text-3xl font-black text-[#0F6B4F]">
                 {Math.round((stats.allTime?.amount || 0) / stats.allTime.delivered).toLocaleString('fr-FR')}
                 <span className="text-sm font-medium text-gray-400 ml-1">FCFA</span>

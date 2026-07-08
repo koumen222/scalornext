@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const ComptaDashboard = () => {
   const { user, logout } = useEcomAuth();
@@ -18,7 +19,7 @@ const ComptaDashboard = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Aucun espace configuré</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{tp('Aucun espace configuré')}</h2>
           <p className="text-gray-600 mb-6">
             {user?.role === 'ecom_admin' 
               ? 'Créez votre propre espace pour commencer à utiliser Scalor.'
@@ -26,7 +27,7 @@ const ComptaDashboard = () => {
           </p>
           <div className="space-y-3">
             <Link to="/ecom/workspace-setup" className="block w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition">
-              Créer un espace
+              {tp('Créer un espace')}
             </Link>
             {user?.role !== 'ecom_admin' && (
               <div className="p-3 bg-gray-100 rounded-lg text-xs text-gray-600">
@@ -119,7 +120,7 @@ const ComptaDashboard = () => {
         {/* Actions rapides */}
         <div className="mb-4 sm:mb-8 bg-white rounded-lg shadow">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Actions rapides</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">{tp('Actions rapides')}</h3>
           </div>
           <div className="p-3 sm:p-6">
             <div className="grid grid-cols-3 gap-2 sm:gap-4">
@@ -129,11 +130,11 @@ const ComptaDashboard = () => {
               </Link>
               <Link to="/ecom/transactions"
                 className="px-3 py-2.5 sm:px-4 sm:py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-center font-medium text-xs sm:text-sm block">
-                Transactions
+                {tp('Transactions')}
               </Link>
               <Link to="/ecom/reports"
                 className="px-3 py-2.5 sm:px-4 sm:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-center font-medium text-xs sm:text-sm block">
-                Rapports
+                {tp('Rapports')}
               </Link>
             </div>
           </div>
@@ -141,10 +142,10 @@ const ComptaDashboard = () => {
 
         {/* Sélecteur de période */}
         <div className="bg-white rounded-lg shadow p-3 sm:p-6 mb-4 sm:mb-8">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Période d'analyse</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Période d\'analyse')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Date de début')}</label>
               <input
                 type="date"
                 value={dateRange.startDate}
@@ -153,7 +154,7 @@ const ComptaDashboard = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Date de fin')}</label>
               <input
                 type="date"
                 value={dateRange.endDate}
@@ -187,7 +188,7 @@ const ComptaDashboard = () => {
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Chiffre d'Affaires</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Chiffre d\'Affaires')}</p>
                 <p className="text-lg sm:text-2xl font-bold text-gray-900">
                   {fmt(financialStats.totalRevenue)}
                 </p>
@@ -203,7 +204,7 @@ const ComptaDashboard = () => {
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Coûts Totaux</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Coûts Totaux')}</p>
                 <p className="text-lg sm:text-2xl font-bold text-gray-900">
                   {fmt(financialStats.totalCost)}
                 </p>
@@ -219,7 +220,7 @@ const ComptaDashboard = () => {
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Bénéfice Net</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Bénéfice Net')}</p>
                 <p className={`text-lg sm:text-2xl font-bold ${getProfitColor(financialStats.totalProfit)}`}>
                   {fmt(financialStats.totalProfit)}
                 </p>
@@ -235,7 +236,7 @@ const ComptaDashboard = () => {
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Marge Nette</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Marge Nette')}</p>
                 <p className={`text-lg sm:text-2xl font-bold ${getProfitColor(financialStats.totalProfit / financialStats.totalRevenue)}`}>
                   {financialStats.totalRevenue > 0 ? 
                     formatPercent(financialStats.totalProfit / financialStats.totalRevenue) : '0%'}
@@ -249,13 +250,13 @@ const ComptaDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mb-4 sm:mb-8">
           <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Répartition des Coûts</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{tp('Répartition des Coûts')}</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">Coûts Produits</span>
+                    <span className="text-gray-600">{tp('Coûts Produits')}</span>
                     <span className="font-semibold">{fmt(financialStats.totalProductCost)}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -268,7 +269,7 @@ const ComptaDashboard = () => {
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">Coûts Livraison</span>
+                    <span className="text-gray-600">{tp('Coûts Livraison')}</span>
                     <span className="font-semibold">{fmt(financialStats.totalDeliveryCost)}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -281,7 +282,7 @@ const ComptaDashboard = () => {
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">Dépenses Pub</span>
+                    <span className="text-gray-600">{tp('Dépenses Pub')}</span>
                     <span className="font-semibold">{fmt(financialStats.totalAdSpend)}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -298,33 +299,33 @@ const ComptaDashboard = () => {
           {/* Indicateurs de performance */}
           <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Indicateurs de Performance</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{tp('Indicateurs de Performance')}</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">ROAS (Return on Ad Spend)</span>
+                  <span className="text-gray-600">{tp('ROAS (Return on Ad Spend)')}</span>
                   <span className={`font-semibold ${getROASColor(financialStats.roas)}`}>
                     {financialStats.roas?.toFixed(2) || '0.00'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Taux de Livraison</span>
+                  <span className="text-gray-600">{tp('Taux de Livraison')}</span>
                   <span className="font-semibold">{formatPercent(financialStats.deliveryRate)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Commandes Totales</span>
+                  <span className="text-gray-600">{tp('Commandes Totales')}</span>
                   <span className="font-semibold">{financialStats.totalOrdersDelivered || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Panier Moyen</span>
+                  <span className="text-gray-600">{tp('Panier Moyen')}</span>
                   <span className="font-semibold">
                     {fmt(financialStats.totalOrdersDelivered > 0 ? 
                       financialStats.totalRevenue / financialStats.totalOrdersDelivered : 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Coût par Commande</span>
+                  <span className="text-gray-600">{tp('Coût par Commande')}</span>
                   <span className="font-semibold">
                     {fmt(financialStats.totalOrdersDelivered > 0 ? 
                       financialStats.totalCost / financialStats.totalOrdersDelivered : 0)}
@@ -338,7 +339,7 @@ const ComptaDashboard = () => {
         {/* Statuts des produits */}
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Produits par Statut</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{tp('Produits par Statut')}</h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
@@ -368,7 +369,7 @@ const ComptaDashboard = () => {
         {/* Bilan Transactions */}
         <div className="mt-8 bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-900">Flux de Trésorerie</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{tp('Flux de Trésorerie')}</h3>
             <Link to="/ecom/transactions" className="text-sm text-primary-700 hover:text-primary-900 font-medium">
               Voir tout &rarr;
             </Link>
@@ -376,22 +377,22 @@ const ComptaDashboard = () => {
           <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
               <div className="bg-green-50 rounded-lg p-4 text-center">
-                <p className="text-xs font-medium text-green-700 uppercase">Entrées</p>
+                <p className="text-xs font-medium text-green-700 uppercase">{tp('Entrées')}</p>
                 <p className="text-xl font-bold text-green-600 mt-1">{fmt(txSummary.totalIncome)}</p>
                 <p className="text-xs text-green-500 mt-1">{txSummary.incomeCount || 0} transactions</p>
               </div>
               <div className="bg-red-50 rounded-lg p-4 text-center">
-                <p className="text-xs font-medium text-red-700 uppercase">Dépenses</p>
+                <p className="text-xs font-medium text-red-700 uppercase">{tp('Dépenses')}</p>
                 <p className="text-xl font-bold text-red-600 mt-1">{fmt(txSummary.totalExpense)}</p>
                 <p className="text-xs text-red-500 mt-1">{txSummary.expenseCount || 0} transactions</p>
               </div>
               <div className={`rounded-lg p-4 text-center ${(txSummary.balance || 0) >= 0 ? 'bg-primary-50' : 'bg-orange-50'}`}>
-                <p className={`text-xs font-medium uppercase ${(txSummary.balance || 0) >= 0 ? 'text-primary-700' : 'text-orange-700'}`}>Solde</p>
+                <p className={`text-xs font-medium uppercase ${(txSummary.balance || 0) >= 0 ? 'text-primary-700' : 'text-orange-700'}`}>{tp('Solde')}</p>
                 <p className={`text-xl font-bold mt-1 ${(txSummary.balance || 0) >= 0 ? 'text-primary-600' : 'text-orange-600'}`}>
                   {fmt(txSummary.balance)}
                 </p>
                 <p className={`text-xs mt-1 ${(txSummary.balance || 0) >= 0 ? 'text-primary-600' : 'text-orange-500'}`}>
-                  {(txSummary.balance || 0) >= 0 ? 'Excédent' : 'Déficit'}
+                  {(txSummary.balance || 0) >= 0 ? 'Excédent' : tp('Déficit')}
                 </p>
               </div>
             </div>
@@ -399,7 +400,7 @@ const ComptaDashboard = () => {
             {/* Dernières transactions */}
             {recentTransactions.length > 0 && (
               <div className="border-t pt-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">Dernières transactions</h4>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">{tp('Dernières transactions')}</h4>
                 <div className="space-y-2">
                   {recentTransactions.map(tx => (
                     <Link key={tx._id} to={`/ecom/transactions/${tx._id}`} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded -mx-2 px-2 transition">
@@ -424,14 +425,14 @@ const ComptaDashboard = () => {
 
         {/* Informations importantes */}
         <div className="mt-8 bg-primary-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-primary-900 mb-3">ℹ️ Informations Comptables</h3>
+          <h3 className="text-lg font-semibold text-primary-900 mb-3">{tp('ℹ️ Informations Comptables')}</h3>
           <div className="space-y-2 text-sm text-primary-900">
-            <p>• <strong>Période actuelle:</strong> Du {new Date(dateRange.startDate).toLocaleDateString('fr-FR')} 
+            <p>• <strong>{tp('Période actuelle:')}</strong> Du {new Date(dateRange.startDate).toLocaleDateString('fr-FR')} 
                au {new Date(dateRange.endDate).toLocaleDateString('fr-FR')}</p>
-            <p>• <strong>Méthode de calcul:</strong> Comptabilité d'engagement sur commandes livrées</p>
-            <p>• <strong>Coûts inclus:</strong> Coûts produits + frais de livraison + dépenses publicitaires</p>
-            <p>• <strong>ROAS idéal:</strong> Supérieur à 3.0 (3x le CA par rapport aux dépenses pub)</p>
-            <p>• <strong>Taux de livraison minimum:</strong> 70% pour maintenir la rentabilité</p>
+            <p>• <strong>{tp('Méthode de calcul:')}</strong> {tp('Comptabilité d\'engagement sur commandes livrées')}</p>
+            <p>• <strong>{tp('Coûts inclus:')}</strong> {tp('Coûts produits + frais de livraison + dépenses publicitaires')}</p>
+            <p>• <strong>{tp('ROAS idéal:')}</strong> {tp('Supérieur à 3.0 (3x le CA par rapport aux dépenses pub)')}</p>
+            <p>• <strong>{tp('Taux de livraison minimum:')}</strong> {tp('70% pour maintenir la rentabilité')}</p>
           </div>
         </div>
     </div>

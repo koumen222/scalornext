@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Link } from '@/lib/router-compat';
 import { useMoney } from '../hooks/useMoney.js';
+import { tp } from '../i18n/platform.js';
 
 const StockAlert = ({ alerts, onDismiss }) => {
   const { fmt } = useMoney();
@@ -60,7 +61,7 @@ const StockAlert = ({ alerts, onDismiss }) => {
           <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
-          <span className="text-green-800 font-medium">Aucune alerte de stock</span>
+          <span className="text-green-800 font-medium">{tp('Aucune alerte de stock')}</span>
         </div>
       </div>
     );
@@ -97,16 +98,16 @@ const StockAlert = ({ alerts, onDismiss }) => {
                   {alert.product && (
                     <div className="grid grid-cols-2 gap-4 text-xs text-gray-600 mb-3">
                       <div>
-                        <span className="font-medium">Stock actuel:</span> {alert.product.stock} unités
+                        <span className="font-medium">{tp('Stock actuel:')}</span> {alert.product.stock} unités
                       </div>
                       <div>
-                        <span className="font-medium">Seuil:</span> {alert.product.reorderThreshold} unités
+                        <span className="font-medium">{tp('Seuil:')}</span> {alert.product.reorderThreshold} unités
                       </div>
                       <div>
-                        <span className="font-medium">Valeur stock:</span> {fmt(alert.product.stock * alert.product.sellingPrice)}
+                        <span className="font-medium">{tp('Valeur stock:')}</span> {fmt(alert.product.stock * alert.product.sellingPrice)}
                       </div>
                       <div>
-                        <span className="font-medium">Statut:</span> 
+                        <span className="font-medium">{tp('Statut:')}</span> 
                         <span className="ml-1 capitalize">{alert.product.status}</span>
                       </div>
                     </div>
@@ -121,7 +122,7 @@ const StockAlert = ({ alerts, onDismiss }) => {
                       <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z" />
                       </svg>
-                      Commander
+                      {tp('Commander')}
                     </Link>
                     <Link
                       to={`/products/${alert.product?._id || alert.productId}`}
@@ -131,14 +132,14 @@ const StockAlert = ({ alerts, onDismiss }) => {
                         <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                         <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                       </svg>
-                      Détails
+                      {tp('Détails')}
                     </Link>
                     {onDismiss && (
                       <button
                         onClick={() => onDismiss(alert)}
                         className="inline-flex items-center px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium rounded hover:bg-gray-50 transition"
                       >
-                        Ignorer
+                        {tp('Ignorer')}
                       </button>
                     )}
                   </div>

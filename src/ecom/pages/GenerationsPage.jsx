@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import DigitalProductEbookModal from '../components/DigitalProductEbookModal.jsx';
 import { storeManageApi } from '../services/storeApi.js';
+import { tp } from '../i18n/platform.js';
 
 const API_ORIGIN = (process.env.NODE_ENV !== 'production') ? '' : (process.env.NEXT_PUBLIC_API_URL || '');
 
@@ -311,7 +312,7 @@ export default function GenerationsPage() {
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 border border-primary-100">
             <Layers3 className="w-3.5 h-3.5" />
-            Product Page Studio
+            {tp('Product Page Studio')}
           </div>
           <h1 className="mt-3 text-2xl font-black text-gray-900">{pageMeta.title}</h1>
           <p className="text-sm text-gray-500 mt-1 max-w-2xl">{pageMeta.description}</p>
@@ -321,17 +322,17 @@ export default function GenerationsPage() {
           <button
             onClick={fetchTasks}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
-            title="Rafraichir"
+            title={tp('Rafraichir')}
           >
             <RefreshCw className="w-4 h-4" />
-            Rafraichir
+            {tp('Rafraichir')}
           </button>
           <button
             onClick={() => navigate('/ecom/boutique/product-page-studio')}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
           >
             <Wand2 className="w-4 h-4" />
-            Vue studio
+            {tp('Vue studio')}
           </button>
           {storeTemplate === 'magazine' ? (
             <button
@@ -339,7 +340,7 @@ export default function GenerationsPage() {
               className="inline-flex items-center gap-2 px-4 py-2 border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-sm font-black rounded-xl transition"
             >
               <Crown className="w-4 h-4" />
-              Nouvelle page Premium
+              {tp('Nouvelle page Premium')}
             </button>
           ) : (
             <>
@@ -348,14 +349,14 @@ export default function GenerationsPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition"
               >
                 <Plus className="w-4 h-4" />
-                Nouvelle generation
+                {tp('Nouvelle generation')}
               </button>
               <button
                 onClick={() => navigate('/ecom/boutique/products/premium-generator', { state: { from: location.pathname } })}
                 className="inline-flex items-center gap-2 px-4 py-2 border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-sm font-black rounded-xl transition"
               >
                 <Crown className="w-4 h-4" />
-                Nouvelle premium
+                {tp('Nouvelle premium')}
               </button>
             </>
           )}
@@ -377,11 +378,11 @@ export default function GenerationsPage() {
           <button
             onClick={syncCredits}
             disabled={syncing}
-            title="J'ai payé mais mes crédits n'ont pas été ajoutés"
+            title={tp('J\'ai payé mais mes crédits n\'ont pas été ajoutés')}
             className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-700 text-[10px] font-bold transition disabled:opacity-60"
           >
             <RotateCw className={`w-3 h-3 ${syncing ? 'animate-spin' : ''}`} />
-            {syncing ? 'Sync…' : 'Sync crédits'}
+            {syncing ? 'Sync…' : tp('Sync crédits')}
           </button>
           {syncResult && (
             <div className={`absolute -bottom-8 left-0 right-0 text-center text-[11px] font-semibold px-2 py-1 rounded-lg ${syncResult.startsWith('✓') ? 'bg-primary-50 text-primary-700' : 'bg-red-50 text-red-600'}`}>
@@ -434,7 +435,7 @@ export default function GenerationsPage() {
               }`}
             >
               {storeTemplate === 'magazine' ? <Crown className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-              {storeTemplate === 'magazine' ? 'Lancer une generation Premium' : 'Lancer une generation'}
+              {storeTemplate === 'magazine' ? 'Lancer une generation Premium' : tp('Lancer une generation')}
             </button>
           </div>
         ) : (
@@ -529,7 +530,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-semibold text-gray-900 truncate max-w-full">
-              {task.productName || task.product?.title || 'Generation sans nom'}
+              {task.productName || task.product?.title || tp('Generation sans nom')}
             </h3>
             <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${config.color}`}>
               <StatusIcon className={`w-3 h-3 ${config.animate ? 'animate-spin' : ''}`} />
@@ -538,19 +539,19 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
             {isPremium && (
               <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
                 <Crown className="w-3 h-3" />
-                Premium
+                {tp('Premium')}
               </span>
             )}
             {hasDigitalProduct && (
               <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                 <FileText className="w-3 h-3" />
-                Digital
+                {tp('Digital')}
               </span>
             )}
             {isError && hasSavedContent && (
               <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
                 <AlertCircle className="w-3 h-3" />
-                Contenu sauve
+                {tp('Contenu sauve')}
               </span>
             )}
           </div>
@@ -558,7 +559,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
           {isActive && (
             <div>
               <div className="flex items-center justify-between text-[11px] text-gray-500 mb-1">
-                <span>{task.currentStep || 'En cours...'}</span>
+                <span>{task.currentStep || tp('En cours...')}</span>
                 <span>{task.progressPercent || 0}%</span>
               </div>
               <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -595,10 +596,10 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
             <button
               onClick={() => onOpen(task._id)}
               className="inline-flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-semibold rounded-xl transition"
-              title="Ouvrir le contenu genere"
+              title={tp('Ouvrir le contenu genere')}
             >
               <Eye className="w-3.5 h-3.5" />
-              Voir contenu
+              {tp('Voir contenu')}
             </button>
           )}
 
@@ -611,7 +612,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
                   ? 'border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                   : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
-              title="Produit digital de ce produit"
+              title={tp('Produit digital de ce produit')}
             >
               {digitalProductLoading === task._id ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -626,10 +627,10 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
             <button
               onClick={() => onApply(task._id)}
               className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-xl transition"
-              title="Utiliser cette generation"
+              title={tp('Utiliser cette generation')}
             >
               <ArrowRight className="w-3.5 h-3.5" />
-              Utiliser
+              {tp('Utiliser')}
             </button>
           )}
 
@@ -638,7 +639,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
               onClick={() => onRetry(task._id)}
               disabled={retrying === task._id}
               className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white text-xs font-semibold rounded-xl transition"
-              title="Reprendre cette generation"
+              title={tp('Reprendre cette generation')}
             >
               {retrying === task._id ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -653,7 +654,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
             onClick={() => onDelete(task._id)}
             disabled={deleting === task._id}
             className="inline-flex items-center gap-1.5 px-3 py-2 border border-red-100 text-red-500 hover:bg-red-50 disabled:opacity-50 text-xs font-semibold rounded-xl transition"
-            title="Supprimer"
+            title={tp('Supprimer')}
           >
             {deleting === task._id ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />

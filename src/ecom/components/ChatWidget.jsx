@@ -2,6 +2,7 @@
 import { useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import api from '../../lib/api.js';
+import { tp } from '../i18n/platform.js';
 
 const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
 
@@ -321,7 +322,7 @@ export default function ChatWidget() {
                     <div className="fixed inset-0 z-10" onClick={() => setShowChannels(false)} />
                     <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-20">
                       {channels.length === 0 ? (
-                        <p className="px-3 py-3 text-xs text-gray-400 text-center">Aucun canal</p>
+                        <p className="px-3 py-3 text-xs text-gray-400 text-center">{tp('Aucun canal')}</p>
                       ) : channels.map(ch => {
                         const unread = unreadCounts[ch.slug] || 0;
                         return (
@@ -349,7 +350,7 @@ export default function ChatWidget() {
 
             <div className="flex items-center gap-1">
               {/* Plein écran */}
-              <a href="/ecom/chat" title="Ouvrir en plein écran"
+              <a href="/ecom/chat" title={tp('Ouvrir en plein écran')}
                 className="p-1.5 text-gray-400 hover:text-white rounded-lg transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -370,7 +371,7 @@ export default function ChatWidget() {
               <div className="flex justify-center mb-2">
                 <button onClick={() => loadMessages(activeChannel, page + 1, true)} disabled={loadingMore}
                   className="text-xs text-primary-600 hover:text-primary-700 font-medium px-3 py-1 rounded-full border border-primary-200 hover:bg-primary-50 disabled:opacity-50">
-                  {loadingMore ? '...' : 'Charger plus'}
+                  {loadingMore ? '...' : tp('Charger plus')}
                 </button>
               </div>
             )}
@@ -382,8 +383,8 @@ export default function ChatWidget() {
             ) : messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center py-8">
                 <span className="text-3xl mb-2">{channels.find(c => c.slug === activeChannel)?.emoji || '💬'}</span>
-                <p className="text-sm text-gray-500 font-medium">Aucun message</p>
-                <p className="text-xs text-gray-400 mt-0.5">Soyez le premier à écrire !</p>
+                <p className="text-sm text-gray-500 font-medium">{tp('Aucun message')}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{tp('Soyez le premier à écrire !')}</p>
               </div>
             ) : (
               messages.map((msg, idx) => {
@@ -423,30 +424,30 @@ export default function ChatWidget() {
                             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEdit(msg._id); } if (e.key === 'Escape') { setEditingId(null); setEditContent(''); } }}
                             className="w-full px-2.5 py-1.5 border border-primary-500 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-primary-600 resize-none" rows={2} autoFocus />
                           <div className="flex gap-2 mt-0.5 justify-end">
-                            <button onClick={() => { setEditingId(null); setEditContent(''); }} className="text-[10px] text-gray-500 hover:text-gray-700">Annuler</button>
-                            <button onClick={() => saveEdit(msg._id)} className="text-[10px] text-primary-600 font-medium hover:text-primary-700">Sauvegarder</button>
+                            <button onClick={() => { setEditingId(null); setEditContent(''); }} className="text-[10px] text-gray-500 hover:text-gray-700">{tp('Annuler')}</button>
+                            <button onClick={() => saveEdit(msg._id)} className="text-[10px] text-primary-600 font-medium hover:text-primary-700">{tp('Sauvegarder')}</button>
                           </div>
                         </div>
                       ) : (
                         <div className={`px-3 py-1.5 rounded-2xl text-xs leading-relaxed break-words ${own ? 'bg-primary-600 text-white rounded-tr-sm' : 'bg-white text-gray-800 border border-gray-200 rounded-tl-sm shadow-sm'}`}>
                           {renderContent(msg.content, own)}
-                          {msg.edited && <span className={`text-[9px] ml-1 ${own ? 'text-primary-200' : 'text-gray-400'}`}>(modifié)</span>}
+                          {msg.edited && <span className={`text-[9px] ml-1 ${own ? 'text-primary-200' : 'text-gray-400'}`}>{tp('(modifié)')}</span>}
                         </div>
                       )}
                     </div>
 
                     {/* Actions rapides au hover */}
                     <div className={`flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity self-center ${own ? 'flex-row' : 'flex-row-reverse'}`}>
-                      <button onClick={() => setReplyTo(msg)} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200" title="Répondre">
+                      <button onClick={() => setReplyTo(msg)} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200" title={tp('Répondre')}>
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
                       </button>
                       {isOwnMessage(msg) && (
-                        <button onClick={() => { setEditingId(msg._id); setEditContent(msg.content); }} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200" title="Modifier">
+                        <button onClick={() => { setEditingId(msg._id); setEditContent(msg.content); }} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200" title={tp('Modifier')}>
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                         </button>
                       )}
                       {(isOwnMessage(msg) || isAdmin) && (
-                        <button onClick={() => deleteMessage(msg._id)} className="p-1 text-gray-400 hover:text-red-500 rounded hover:bg-red-50" title="Supprimer">
+                        <button onClick={() => deleteMessage(msg._id)} className="p-1 text-gray-400 hover:text-red-500 rounded hover:bg-red-50" title={tp('Supprimer')}>
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                       )}
@@ -491,7 +492,7 @@ export default function ChatWidget() {
                 value={newMessage}
                 onChange={e => handleMentionInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Écrire un message... (@mention)"
+                placeholder={tp('Écrire un message... (@mention)')}
                 className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent resize-none leading-relaxed bg-gray-50"
                 rows={1}
                 style={{ minHeight: '36px', maxHeight: '80px' }}
@@ -514,7 +515,7 @@ export default function ChatWidget() {
       <button
         onClick={handleToggle}
         className="w-12 h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 relative"
-        title="Chat Équipe"
+        title={tp('Chat Équipe')}
       >
         {open ? (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

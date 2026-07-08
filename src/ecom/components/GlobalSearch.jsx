@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -186,7 +187,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Rechercher tout..."
+                    placeholder={tp('Rechercher tout...')}
                     className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
                   />
                 </div>
@@ -206,7 +207,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                     <div className="divide-y divide-gray-100">
                       {results.orders.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Commandes</p>
+                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Commandes')}</p>
                           {results.orders.map(order => (
                             <button
                               key={order._id}
@@ -222,7 +223,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
 
                       {results.products.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Produits</p>
+                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Produits')}</p>
                           {results.products.map(product => (
                             <button
                               key={product._id}
@@ -238,7 +239,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
 
                       {results.clients.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Clients</p>
+                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Clients')}</p>
                           {results.clients.map(client => (
                             <button
                               key={client._id}
@@ -254,7 +255,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
 
                       {results.users.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Utilisateurs</p>
+                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Utilisateurs')}</p>
                           {results.users.map(user => (
                             <button
                               key={user._id}
@@ -294,7 +295,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          placeholder="Rechercher tout..."
+          placeholder={tp('Rechercher tout...')}
           className={`block w-full pl-9 pr-3 py-1.5 rounded-lg leading-5 text-sm focus:outline-none focus:ring-1 ${
             isSuperAdmin
               ? 'bg-gray-800 border border-gray-700 text-gray-200 placeholder-gray-500 focus:border-primary-600 focus:ring-primary-600'

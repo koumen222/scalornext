@@ -7,6 +7,7 @@ import ecomApi from '../services/ecommApi.js';
 // import { getCache, setCache } from '../utils/cacheUtils.js';
 import WhatsAppInstanceSelector from '../components/WhatsAppInstanceSelector.jsx';
 import ErrorBanner from '../components/ErrorBanner.jsx';
+import { tp } from '../i18n/platform.js';
 // WhatsAppConfigModal supprimé
 
 const IconFillLoader = ({ backgroundClassName = 'bg-gray-50' }) => {
@@ -111,7 +112,7 @@ const Badge = ({ status }) => {
 const Spin = () => (
   <div className="flex items-center gap-2 text-sm text-gray-500 py-2">
     <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-    Chargement...
+    {tp('Chargement...')}
   </div>
 );
 
@@ -419,7 +420,7 @@ const CampaignsList = () => {
     setPausingCampaignId(id);
     try {
       await ecomApi.post(`/marketing/campaigns/${id}/pause`);
-      setSuccess('Pause demandée, arrêt après le message en cours...');
+      setSuccess(tp('Pause demandée, arrêt après le message en cours...'));
       // Rafraîchir la liste après quelques secondes pour refléter le nouveau statut
       setTimeout(() => fetchCampaigns(), 3000);
     } catch (err) {
@@ -453,7 +454,7 @@ const CampaignsList = () => {
   };
 
   const handleRestart = async (id) => {
-    if (!confirm('Relancer la campagne depuis le début ?')) return;
+    if (!confirm(tp('Relancer la campagne depuis le début ?'))) return;
     try {
       await ecomApi.post(`/marketing/campaigns/${id}/restart`);
       setPendingCampaignId(id);
@@ -471,7 +472,7 @@ const CampaignsList = () => {
     if (!confirm(`Supprimer la campagne "${name}" ?`)) return;
     try {
       await ecomApi.delete(`/campaigns/${id}`);
-      setSuccess('Campagne supprimée');
+      setSuccess(tp('Campagne supprimée'));
       fetchCampaigns();
     } catch { setError('Erreur suppression'); }
   };
@@ -550,17 +551,17 @@ const CampaignsList = () => {
       <div className="mb-5">
         <div className="flex items-center justify-between gap-3 mb-5">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Campagnes</h1>
-            <p className="text-sm text-gray-400 mt-0.5">Relances et diffusions WhatsApp</p>
+            <h1 className="text-xl font-bold text-gray-900">{tp('Campagnes')}</h1>
+            <p className="text-sm text-gray-400 mt-0.5">{tp('Relances et diffusions WhatsApp')}</p>
           </div>
           <div className="flex items-center gap-2">
             <Link to="/ecom/campaigns/stats" className="h-10 px-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-              <span className="hidden sm:inline">Stats</span>
+              <span className="hidden sm:inline">{tp('Stats')}</span>
             </Link>
             <Link to="/ecom/campaigns/new" className="h-10 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 4v16m8-8H4"/></svg>
-              <span>Campagne</span>
+              <span>{tp('Campagne')}</span>
             </Link>
           </div>
         </div>
@@ -570,7 +571,7 @@ const CampaignsList = () => {
           {[
             { label: 'Total', value: stats.total || 0 },
             { label: 'En cours', value: liveCount, active: liveCount > 0 },
-            { label: 'Envoyés', value: totalSentCount, green: true },
+            { get label() { return tp('Envoyés'); }, value: totalSentCount, green: true },
             { label: 'En pause', value: pausedCount },
           ].map(s => (
             <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4">
@@ -609,18 +610,18 @@ const CampaignsList = () => {
           <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
             <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
           </div>
-          <p className="text-sm font-semibold text-gray-800 mb-1">Aucune campagne</p>
-          <p className="text-sm text-gray-400 mb-4">Créez votre première campagne de relance WhatsApp.</p>
+          <p className="text-sm font-semibold text-gray-800 mb-1">{tp('Aucune campagne')}</p>
+          <p className="text-sm text-gray-400 mb-4">{tp('Créez votre première campagne de relance WhatsApp.')}</p>
           <Link to="/ecom/campaigns/new" className="inline-flex items-center gap-2 h-10 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 4v16m8-8H4"/></svg>
-            Créer une campagne
+            {tp('Créer une campagne')}
           </Link>
         </div>
       ) : filteredCampaigns.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 px-6 py-12 text-center">
-          <p className="text-sm font-semibold text-gray-800 mb-1">Aucune campagne dans ce segment</p>
-          <p className="text-sm text-gray-400 mb-4">Changez le filtre pour voir d'autres campagnes.</p>
-          <button onClick={() => setCampaignStatusFilter('all')} className="h-9 px-4 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">Tout afficher</button>
+          <p className="text-sm font-semibold text-gray-800 mb-1">{tp('Aucune campagne dans ce segment')}</p>
+          <p className="text-sm text-gray-400 mb-4">{tp('Changez le filtre pour voir d\'autres campagnes.')}</p>
+          <button onClick={() => setCampaignStatusFilter('all')} className="h-9 px-4 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">{tp('Tout afficher')}</button>
         </div>
       ) : (
         <div className="space-y-3">
@@ -658,19 +659,19 @@ const CampaignsList = () => {
                   {/* Stats 4 blocs */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
                     <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Ciblés</p>
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{tp('Ciblés')}</p>
                       <p className="text-xl font-bold text-gray-900">{targetedCount}</p>
                     </div>
                     <div className="bg-green-50 rounded-lg p-3 border border-green-100">
-                      <p className="text-[10px] font-semibold text-green-500 uppercase tracking-wide mb-1">Envoyés</p>
+                      <p className="text-[10px] font-semibold text-green-500 uppercase tracking-wide mb-1">{tp('Envoyés')}</p>
                       <p className="text-xl font-bold text-green-700">{sentCount}</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Échecs</p>
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{tp('Échecs')}</p>
                       <p className="text-xl font-bold text-red-500">{failedCount}</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Progression</p>
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{tp('Progression')}</p>
                       <p className="text-xl font-bold text-gray-900">{pct}%</p>
                     </div>
                   </div>
@@ -710,23 +711,23 @@ const CampaignsList = () => {
                     {(c.status === 'draft' || c.status === 'scheduled') && (<>
                       <button onClick={() => handlePreview(c._id)} disabled={sending === c._id} className="h-9 px-3 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-gray-200 transition-colors disabled:opacity-50">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        Aperçu
+                        {tp('Aperçu')}
                       </button>
                       <button onClick={() => handleSend(c._id)} disabled={sending === c._id} className="h-9 px-3 bg-green-600 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-green-700 transition-colors disabled:opacity-50">
-                        {sending === c._id ? <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"/> Envoi...</> : <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>{c.status === 'scheduled' ? 'Envoyer maintenant' : 'Envoyer'}</>}
+                        {sending === c._id ? <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"/> {tp('Envoi...')}</> : <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>{c.status === 'scheduled' ? 'Envoyer maintenant' : tp('Envoyer')}</>}
                       </button>
                     </>)}
 
                     {c.status === 'sending' && sending === c._id && (
                       <button onClick={() => handlePause(c._id)} disabled={pausingCampaignId === c._id} className="h-9 px-3 bg-orange-500 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-orange-600 transition-colors disabled:opacity-60">
-                        {pausingCampaignId === c._id ? <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"/> Arrêt...</> : <><svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pause</>}
+                        {pausingCampaignId === c._id ? <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"/> {tp('Arrêt...')}</> : <><svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>{tp('Pause')}</>}
                       </button>
                     )}
 
                     {c.status === 'sending' && sending !== c._id && (<>
                       <button onClick={() => handleResume(c._id)} className="h-9 px-3 bg-gray-900 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-gray-800 transition-colors">
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-                        Reprendre
+                        {tp('Reprendre')}
                       </button>
                       <button onClick={() => handleForceReset(c._id)} className="h-9 px-3 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-gray-200 transition-colors">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M6 18L18 6M6 6l12 12"/></svg>
@@ -737,28 +738,28 @@ const CampaignsList = () => {
                     {['paused', 'interrupted', 'failed'].includes(c.status) && (<>
                       <button onClick={() => handleResume(c._id)} className="h-9 px-3 bg-gray-900 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-gray-800 transition-colors">
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-                        Reprendre
+                        {tp('Reprendre')}
                       </button>
                       <button onClick={() => handleRestart(c._id)} className="h-9 px-3 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-gray-200 transition-colors">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        Relancer
+                        {tp('Relancer')}
                       </button>
                     </>)}
 
                     {c.status === 'sent' && (<>
                       <Link to={`/ecom/campaigns/${c._id}`} className="h-9 px-3 bg-green-50 text-green-700 rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-green-100 transition-colors border border-green-100">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        Activité
+                        {tp('Activité')}
                       </Link>
                       <button onClick={() => handleRestart(c._id)} className="h-9 px-3 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-gray-200 transition-colors">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        Relancer
+                        {tp('Relancer')}
                       </button>
                     </>)}
 
                     {c.status !== 'sending' && (
                       <Link to={`/ecom/campaigns/${c._id}/edit`} className="h-9 px-3 bg-white border border-gray-200 text-gray-600 rounded-lg text-xs font-medium flex items-center hover:bg-gray-50 transition-colors">
-                        Modifier
+                        {tp('Modifier')}
                       </Link>
                     )}
                     {isAdmin && c.status !== 'sending' && (
@@ -784,7 +785,7 @@ const CampaignsList = () => {
             <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between z-10">
               <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto absolute top-2 left-1/2 -translate-x-1/2 sm:hidden"/>
               <div>
-                <h3 className="text-sm font-bold text-gray-900">Aperçu campagne</h3>
+                <h3 className="text-sm font-bold text-gray-900">{tp('Aperçu campagne')}</h3>
                 <p className="text-xs text-gray-400">{previewData.clients?.length || 0} destinataire{(previewData.clients?.length || 0) > 1 ? 's' : ''} ciblé{(previewData.clients?.length || 0) > 1 ? 's' : ''}</p>
               </div>
               <button onClick={closePreviewModal} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors">
@@ -797,32 +798,32 @@ const CampaignsList = () => {
               <div className="overflow-y-auto border-b xl:border-b-0 xl:border-r border-gray-100 p-5 space-y-4 bg-gray-50">
                 <div className="bg-white rounded-xl border border-gray-200 p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Message</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Message')}</p>
                     <span className="text-xs text-gray-400">{previewData.messageTemplate?.length || 0} car.</span>
                   </div>
                   <p className="whitespace-pre-wrap text-sm leading-6 text-gray-700 bg-gray-50 rounded-lg p-3">{previewData.messageTemplate}</p>
                 </div>
 
                 <div className="bg-white rounded-xl border border-gray-200 p-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Envoi manuel</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Envoi manuel')}</p>
                   <div className="space-y-2.5">
-                    <input type="text" value={manualName} onChange={e => setManualName(e.target.value)} placeholder="Nom du destinataire" className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"/>
-                    <input type="tel" inputMode="numeric" value={manualPhone} onChange={e => { setManualPhone(e.target.value); setSelectedClient(null); }} placeholder="Numéro WhatsApp" className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"/>
+                    <input type="text" value={manualName} onChange={e => setManualName(e.target.value)} placeholder={tp('Nom du destinataire')} className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"/>
+                    <input type="tel" inputMode="numeric" value={manualPhone} onChange={e => { setManualPhone(e.target.value); setSelectedClient(null); }} placeholder={tp('Numéro WhatsApp')} className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"/>
                     <button onClick={() => handleSend(showPreview)} disabled={sending === showPreview || !manualPhone.trim()} className="w-full h-10 bg-gray-900 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 disabled:opacity-40 transition-colors">
-                      {sending === showPreview && manualPhone.trim() ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>Envoi...</> : <>Envoyer à ce numéro</>}
+                      {sending === showPreview && manualPhone.trim() ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>{tp('Envoi...')}</> : <>{tp('Envoyer à ce numéro')}</>}
                     </button>
                   </div>
                 </div>
 
                 {(selectedClient || manualPhone.trim()) && (
                   <div className="bg-green-50 rounded-xl border border-green-100 p-4">
-                    <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">Sélection active</p>
+                    <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">{tp('Sélection active')}</p>
                     <p className="text-sm font-semibold text-green-900">
                       {manualPhone.trim() ? `${manualName.trim() || 'Destinataire'} (${manualPhone.trim()})` : `${selectedClient.firstName} ${selectedClient.lastName}`}
                     </p>
                     <button onClick={() => handleSend(showPreview)} disabled={sending === showPreview} className="mt-3 w-full h-10 bg-green-600 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2 hover:bg-green-700 disabled:opacity-40 transition-colors">
                       {sending === showPreview ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>}
-                      {sending === showPreview ? 'Envoi...' : 'Envoyer'}
+                      {sending === showPreview ? 'Envoi...' : tp('Envoyer')}
                     </button>
                   </div>
                 )}
@@ -831,7 +832,7 @@ const CampaignsList = () => {
               {/* Colonne droite — liste clients */}
               <div className="overflow-y-auto p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Clients ciblés</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Clients ciblés')}</p>
                   <span className="text-xs text-gray-400">{previewData.clients?.length || 0} profil{(previewData.clients?.length || 0) > 1 ? 's' : ''}</span>
                 </div>
                 <div className="space-y-2">
@@ -846,7 +847,7 @@ const CampaignsList = () => {
                           </div>
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                             <button onClick={e => { e.stopPropagation(); setSelectedClient(client); setManualPhone(''); }} className={`h-7 px-2.5 rounded-lg text-xs font-medium transition-colors ${isSel ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-                              {isSel ? 'Choisi' : 'Choisir'}
+                              {isSel ? 'Choisi' : tp('Choisir')}
                             </button>
                             <button onClick={e => { e.stopPropagation(); handlePreviewSend(client); }} disabled={previewSending} className="h-7 px-2.5 bg-gray-900 text-white rounded-lg text-xs font-medium hover:bg-gray-800 disabled:opacity-40 transition-colors flex items-center gap-1">
                               {previewSending ? <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"/> : <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>}
@@ -875,8 +876,8 @@ const CampaignsList = () => {
                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               </div>
               <div className="flex-1">
-                <h2 className="text-sm font-bold text-gray-900">Envoyer la campagne</h2>
-                <p className="text-xs text-gray-400">Choisissez l'instance WhatsApp</p>
+                <h2 className="text-sm font-bold text-gray-900">{tp('Envoyer la campagne')}</h2>
+                <p className="text-xs text-gray-400">{tp('Choisissez l\'instance WhatsApp')}</p>
               </div>
               <button onClick={() => { setShowInstanceSelector(false); setPendingCampaignId(null); }} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
@@ -890,24 +891,24 @@ const CampaignsList = () => {
                 </p>
                 <button onClick={refreshInstancesStatus} disabled={loadingInstances} className="text-xs font-medium text-gray-500 hover:text-gray-700 flex items-center gap-1 disabled:opacity-40">
                   <svg className={`w-3.5 h-3.5 ${loadingInstances ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                  Actualiser
+                  {tp('Actualiser')}
                 </button>
               </div>
 
               {loadingInstances && instances.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3">
                   <div className="w-8 h-8 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"/>
-                  <p className="text-xs text-gray-400">Chargement...</p>
+                  <p className="text-xs text-gray-400">{tp('Chargement...')}</p>
                 </div>
               ) : instances.length === 0 ? (
                 <div className="text-center py-10">
                   <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 rounded-xl flex items-center justify-center">
                     <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                   </div>
-                  <p className="text-sm font-semibold text-gray-800 mb-1">Aucune instance</p>
-                  <p className="text-xs text-gray-400 mb-4">Connectez WhatsApp pour envoyer des campagnes</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-1">{tp('Aucune instance')}</p>
+                  <p className="text-xs text-gray-400 mb-4">{tp('Connectez WhatsApp pour envoyer des campagnes')}</p>
                   <a href="/ecom/whatsapp/service" className="inline-flex items-center gap-1.5 h-9 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors">
-                    Configurer WhatsApp
+                    {tp('Configurer WhatsApp')}
                   </a>
                 </div>
               ) : (
@@ -927,7 +928,7 @@ const CampaignsList = () => {
                           </div>
                           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border flex items-center gap-1 flex-shrink-0 ${isReady ? 'bg-green-50 text-green-700 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${isReady ? 'bg-green-500' : 'bg-red-400'}`}/>
-                            {isReady ? 'Connecté' : 'Hors ligne'}
+                            {isReady ? 'Connecté' : tp('Hors ligne')}
                           </span>
                         </div>
                       </button>
@@ -938,8 +939,8 @@ const CampaignsList = () => {
             </div>
 
             <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-              <p className="text-xs text-gray-400">Vous pouvez mettre en pause à tout moment</p>
-              <button onClick={() => { setShowInstanceSelector(false); setPendingCampaignId(null); }} className="h-8 px-3 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">Annuler</button>
+              <p className="text-xs text-gray-400">{tp('Vous pouvez mettre en pause à tout moment')}</p>
+              <button onClick={() => { setShowInstanceSelector(false); setPendingCampaignId(null); }} className="h-8 px-3 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
             </div>
           </div>
         </div>
@@ -962,7 +963,7 @@ const CampaignsList = () => {
           {sendProgress.status === 'paused' && <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>}
           {sendProgress.status === 'interrupted' && <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>}
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold truncate">{sendProgress.campaignName || 'Campagne'}</p>
+            <p className="text-xs font-semibold truncate">{sendProgress.campaignName || tp('Campagne')}</p>
             <p className="text-[11px] opacity-80">
               {sendProgress.status === 'sending'
                 ? sendProgress.batchPause
@@ -971,7 +972,7 @@ const CampaignsList = () => {
                 : sendProgress.status === 'done' ? 'Terminée'
                 : sendProgress.status === 'paused' ? 'En pause'
                 : sendProgress.status === 'reconnecting' ? 'Connexion perdue — envoi en cours...'
-                : 'Interrompue'}
+                : tp('Interrompue')}
             </p>
           </div>
           {sendProgress.total > 0 && (
@@ -994,7 +995,7 @@ const CampaignsList = () => {
               onClick={(e) => { e.stopPropagation(); handleResume(showProgress); }}
               className="px-2 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition flex-shrink-0"
             >
-              Reprendre
+              {tp('Reprendre')}
             </button>
           )}
           {/* Close button when terminal */}
@@ -1002,7 +1003,7 @@ const CampaignsList = () => {
             <button
               onClick={(e) => { e.stopPropagation(); setShowProgress(null); setSendProgress(null); setIsProgressMinimized(false); }}
               className="p-1 hover:bg-white/30 rounded-full transition flex-shrink-0"
-              title="Fermer"
+              title={tp('Fermer')}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
@@ -1016,9 +1017,9 @@ const CampaignsList = () => {
           <div className="flex items-center justify-between mb-3">
             <button onClick={() => setIsProgressMinimized(true)} className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 h-9 px-3 rounded-xl hover:bg-gray-100 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 19l-7-7 7-7"/></svg>
-              Retour aux campagnes
+              {tp('Retour aux campagnes')}
             </button>
-            <span className="text-xs text-gray-400 hidden sm:block">La campagne continue en arrière-plan si vous quittez</span>
+            <span className="text-xs text-gray-400 hidden sm:block">{tp('La campagne continue en arrière-plan si vous quittez')}</span>
           </div>
           <div className="bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden max-h-[calc(100vh-10rem)]">
             <div className={`px-5 py-4 flex items-center justify-between text-white ${
@@ -1047,11 +1048,11 @@ const CampaignsList = () => {
               </div>
               <div className="flex items-center gap-1 ml-3 flex-shrink-0">
                 {/* Minimize button — always visible while progress modal is open */}
-                <button onClick={() => setIsProgressMinimized(true)} title="Réduire" className="p-1.5 hover:bg-white/20 rounded-lg transition">
+                <button onClick={() => setIsProgressMinimized(true)} title={tp('Réduire')} className="p-1.5 hover:bg-white/20 rounded-lg transition">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4"/></svg>
                 </button>
                 {(['done', 'paused', 'interrupted'].includes(sendProgress.status)) && (
-                  <button onClick={() => { setShowProgress(null); setSendProgress(null); setIsProgressMinimized(false); }} title="Fermer" className="p-1.5 hover:bg-white/20 rounded-lg transition">
+                  <button onClick={() => { setShowProgress(null); setSendProgress(null); setIsProgressMinimized(false); }} title={tp('Fermer')} className="p-1.5 hover:bg-white/20 rounded-lg transition">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
                   </button>
                 )}
@@ -1079,15 +1080,15 @@ const CampaignsList = () => {
               <div className="flex gap-3 mt-3">
                 <div className="flex items-center gap-1.5 text-xs">
                   <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
-                  <span className="text-gray-600"><span className="font-semibold text-green-700">{sendProgress.sent}</span> envoyés</span>
+                  <span className="text-gray-600"><span className="font-semibold text-green-700">{sendProgress.sent}</span> {tp('envoyés')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs">
                   <span className="w-2 h-2 rounded-full bg-gray-400 flex-shrink-0"></span>
-                  <span className="text-gray-600"><span className="font-semibold text-gray-600">{sendProgress.skipped}</span> ignorés</span>
+                  <span className="text-gray-600"><span className="font-semibold text-gray-600">{sendProgress.skipped}</span> {tp('ignorés')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs">
                   <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0"></span>
-                  <span className="text-gray-600"><span className="font-semibold text-red-600">{sendProgress.failed}</span> échecs</span>
+                  <span className="text-gray-600"><span className="font-semibold text-red-600">{sendProgress.failed}</span> {tp('échecs')}</span>
                 </div>
                 {sendProgress.status === 'sending' && sendProgress.total > 0 && (
                   <div className="ml-auto text-xs text-gray-400">
@@ -1099,7 +1100,7 @@ const CampaignsList = () => {
 
             {/* Live log */}
             <div className="flex-1 overflow-y-auto px-5 pb-2 min-h-0">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 sticky top-0 bg-white py-1.5">Journal</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 sticky top-0 bg-white py-1.5">{tp('Journal')}</p>
               <div className="space-y-1">
                 {(sendProgress.log || []).map((entry, i) =>
                   entry.type === 'substep' ? (
@@ -1108,7 +1109,7 @@ const CampaignsList = () => {
                       entry.status === 'done' ? 'bg-green-50 text-green-700' :
                       'bg-red-50 text-red-600'
                     }`}>
-                      <span className="font-medium">{entry.step === 'text' ? 'Texte' : 'Image'}</span>
+                      <span className="font-medium">{entry.step === 'text' ? 'Texte' : tp('Image')}</span>
                       <span className="text-gray-300 mx-0.5">—</span>
                       <span className="truncate flex-1 text-gray-500">{entry.name}</span>
                       <span className="flex-shrink-0 flex items-center gap-1">
@@ -1139,7 +1140,7 @@ const CampaignsList = () => {
                       ? `Pause anti-spam — reprise dans ${sendProgress.batchPause.remainingMin} min (${sendProgress.batchPause.totalMin} min au total)`
                       : sendProgress.currentSubstep?.status === 'sending'
                         ? (sendProgress.currentSubstep.step === 'text' ? 'Envoi du texte...' : "Envoi de l'image...")
-                        : 'Envoi en cours...'}
+                        : tp('Envoi en cours...')}
                   </div>
                 )}
               </div>
@@ -1150,14 +1151,14 @@ const CampaignsList = () => {
               <div className="px-5 py-3 border-t border-gray-100">
                 <button onClick={() => handlePause(showProgress)} className="w-full h-10 bg-orange-500 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2 hover:bg-orange-600 transition-colors">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                  Mettre en pause
+                  {tp('Mettre en pause')}
                 </button>
               </div>
             )}
             {sendProgress.status === 'sending' && pausingCampaignId === showProgress && (
               <div className="px-5 py-3 border-t border-gray-100 bg-orange-50 flex items-center justify-center gap-2 text-sm text-orange-700 font-medium">
                 <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"/>
-                Arrêt en cours après ce message...
+                {tp('Arrêt en cours après ce message...')}
               </div>
             )}
             {sendProgress.status === 'done' && (
@@ -1172,18 +1173,18 @@ const CampaignsList = () => {
             )}
             {sendProgress.status === 'reconnecting' && (
               <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 flex flex-col gap-2">
-                <p className="text-sm text-gray-700 font-medium">Connexion perdue — vérifiez le statut.</p>
+                <p className="text-sm text-gray-700 font-medium">{tp('Connexion perdue — vérifiez le statut.')}</p>
                 <div className="flex gap-2">
-                  <button onClick={async () => { await fetchCampaigns(); setSendProgress(null); setShowProgress(null); }} className="flex-1 h-9 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors">Rafraîchir</button>
-                  {showProgress && <button onClick={async () => { await handleForceReset(showProgress); setSendProgress(null); setShowProgress(null); }} className="flex-1 h-9 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors">Forcer l'arrêt</button>}
-                  {showProgress && <button onClick={() => handleResume(showProgress)} className="flex-1 h-9 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-700 transition-colors">Reprendre</button>}
+                  <button onClick={async () => { await fetchCampaigns(); setSendProgress(null); setShowProgress(null); }} className="flex-1 h-9 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors">{tp('Rafraîchir')}</button>
+                  {showProgress && <button onClick={async () => { await handleForceReset(showProgress); setSendProgress(null); setShowProgress(null); }} className="flex-1 h-9 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors">{tp('Forcer l\'arrêt')}</button>}
+                  {showProgress && <button onClick={() => handleResume(showProgress)} className="flex-1 h-9 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-700 transition-colors">{tp('Reprendre')}</button>}
                 </div>
               </div>
             )}
             {sendProgress.status === 'interrupted' && (
               <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between gap-3">
-                <p className="text-sm text-gray-700 font-medium">Campagne interrompue.</p>
-                {showProgress && <button onClick={() => handleResume(showProgress)} className="h-9 px-4 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors flex-shrink-0">Reprendre</button>}
+                <p className="text-sm text-gray-700 font-medium">{tp('Campagne interrompue.')}</p>
+                {showProgress && <button onClick={() => handleResume(showProgress)} className="h-9 px-4 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors flex-shrink-0">{tp('Reprendre')}</button>}
               </div>
             )}
           </div>

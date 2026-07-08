@@ -3,6 +3,7 @@ import { useNavigate } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { importApi } from '../services/ecommApi.js';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 // â”€â”€â”€ Status badge colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const STATUS_COLORS = {
@@ -117,7 +118,7 @@ const ImportOrders = () => {
         if (!manualSheetId.trim()) { setError('Veuillez entrer un ID ou URL de spreadsheet'); setValidating(false); return; }
         payload = { spreadsheetId: manualSheetId.trim(), sheetName: manualSheetName || 'Sheet1' };
       } else {
-        if (!selectedSourceId) { setError('Veuillez sélectionner une source'); setValidating(false); return; }
+        if (!selectedSourceId) { setError(tp('Veuillez sélectionner une source')); setValidating(false); return; }
         const source = sources.find(s => s._id === selectedSourceId);
         payload = { spreadsheetId: source?.spreadsheetId, sheetName: source?.sheetName || 'Sheet1' };
       }
@@ -243,9 +244,9 @@ const ImportOrders = () => {
   // â”€â”€ Steps config â”€â”€
   const steps = [
     { num: 1, label: 'Source', icon: LinkIcon },
-    { num: 2, label: 'Aperçu', icon: EyeIcon },
+    { num: 2, get label() { return tp('Aperçu'); }, icon: EyeIcon },
     { num: 3, label: 'Import', icon: DownloadIcon },
-    { num: 4, label: 'Résultat', icon: CheckCircleIcon }
+    { num: 4, get label() { return tp('Résultat'); }, icon: CheckCircleIcon }
   ];
 
   return (
@@ -253,8 +254,8 @@ const ImportOrders = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Importation des commandes</h1>
-          <p className="text-sm text-gray-500 mt-1">Importez vos commandes depuis Google Sheets en quelques étapes</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('Importation des commandes')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{tp('Importez vos commandes depuis Google Sheets en quelques étapes')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -262,7 +263,7 @@ const ImportOrders = () => {
             className="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
           >
             <ClockIcon className="w-4 h-4" />
-            Historique
+            {tp('Historique')}
           </button>
         </div>
       </div>
@@ -319,8 +320,8 @@ const ImportOrders = () => {
         {currentStep === 1 && (
           <div className="p-6 sm:p-8">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Sélectionnez la source</h2>
-              <p className="text-sm text-gray-500 mt-1">Choisissez un Google Sheet configuré ou entrez un nouveau lien</p>
+              <h2 className="text-lg font-semibold text-gray-900">{tp('Sélectionnez la source')}</h2>
+              <p className="text-sm text-gray-500 mt-1">{tp('Choisissez un Google Sheet configuré ou entrez un nouveau lien')}</p>
             </div>
 
             {/* Toggle */}
@@ -331,7 +332,7 @@ const ImportOrders = () => {
                   !useManualInput ? 'bg-primary-50 text-primary-700 border-2 border-primary-200' : 'bg-gray-50 text-gray-600 border-2 border-transparent hover:bg-gray-100'
                 }`}
               >
-                Sources configurées
+                {tp('Sources configurées')}
               </button>
               <button
                 onClick={() => setUseManualInput(true)}
@@ -339,7 +340,7 @@ const ImportOrders = () => {
                   useManualInput ? 'bg-primary-50 text-primary-700 border-2 border-primary-200' : 'bg-gray-50 text-gray-600 border-2 border-transparent hover:bg-gray-100'
                 }`}
               >
-                Nouveau lien
+                {tp('Nouveau lien')}
               </button>
             </div>
 
@@ -350,9 +351,9 @@ const ImportOrders = () => {
                     <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                       <LinkIcon className="w-7 h-7 text-gray-400" />
                     </div>
-                    <p className="text-sm text-gray-500 mb-3">Aucune source configurée</p>
+                    <p className="text-sm text-gray-500 mb-3">{tp('Aucune source configurée')}</p>
                     <button onClick={() => setUseManualInput(true)} className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                      Ajouter un lien manuellement
+                      {tp('Ajouter un lien manuellement')}
                     </button>
                   </div>
                 ) : (
@@ -376,14 +377,14 @@ const ImportOrders = () => {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">{source.name}</p>
                         <p className="text-xs text-gray-500 truncate mt-0.5">
-                          {source.sheetName || 'Sheet1'}
+                          {source.sheetName || tp('Sheet1')}
                           {source.lastSyncAt && (
                             <> · Dernier sync: {new Date(source.lastSyncAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</>
                           )}
                         </p>
                       </div>
                       <div className="flex-shrink-0">
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded-md">Actif</span>
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded-md">{tp('Actif')}</span>
                       </div>
                     </label>
                   ))
@@ -392,18 +393,18 @@ const ImportOrders = () => {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Nom de la source</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom de la source')}</label>
                   <input
                     type="text"
                     value={manualSourceName}
                     onChange={(e) => setManualSourceName(e.target.value)}
-                    placeholder="Ex: Commandes Facebook, Leads Janvier..."
+                    placeholder={tp('Ex: Commandes Facebook, Leads Janvier...')}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
                   />
-                  <p className="text-[11px] text-gray-400 mt-1">Ce nom apparaitra dans la liste des sources sur la page Commandes</p>
+                  <p className="text-[11px] text-gray-400 mt-1">{tp('Ce nom apparaitra dans la liste des sources sur la page Commandes')}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">URL ou ID du Google Sheet</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('URL ou ID du Google Sheet')}</label>
                   <input
                     type="text"
                     value={manualSheetId}
@@ -413,18 +414,18 @@ const ImportOrders = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Nom de l'onglet</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom de l\'onglet')}</label>
                   <input
                     type="text"
                     value={manualSheetName}
                     onChange={(e) => setManualSheetName(e.target.value)}
-                    placeholder="Sheet1"
+                    placeholder={tp('Sheet1')}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
                   />
                 </div>
                 <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
                   <svg className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <p className="text-xs text-amber-700">Le spreadsheet doit être partagé en mode "Toute personne disposant du lien peut consulter".</p>
+                  <p className="text-xs text-amber-700">{tp('Le spreadsheet doit être partagé en mode "Toute personne disposant du lien peut consulter".')}</p>
                 </div>
               </div>
             )}
@@ -438,7 +439,7 @@ const ImportOrders = () => {
                       <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-primary-800">Spreadsheet accessible</p>
+                      <p className="text-sm font-medium text-primary-800">{tp('Spreadsheet accessible')}</p>
                       <p className="text-xs text-primary-600 mt-0.5">
                         {validationResult.rowCount || 0} lignes · {validationResult.columnCount || 0} colonnes
                         {validationResult.empty && ' · Spreadsheet vide'}
@@ -451,7 +452,7 @@ const ImportOrders = () => {
                       <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-red-800">Connexion échouée</p>
+                      <p className="text-sm font-medium text-red-800">{tp('Connexion échouée')}</p>
                       <p className="text-xs text-red-600 mt-0.5">{validationResult.error}</p>
                     </div>
                   </div>
@@ -467,9 +468,9 @@ const ImportOrders = () => {
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm"
               >
                 {validating ? (
-                  <><Spinner /> Vérification...</>
+                  <><Spinner /> {tp('Vérification...')}</>
                 ) : (
-                  <>Vérifier et continuer <ArrowRightIcon className="w-4 h-4" /></>
+                  <>{tp('Vérifier et continuer')} <ArrowRightIcon className="w-4 h-4" /></>
                 )}
               </button>
             </div>
@@ -481,8 +482,8 @@ const ImportOrders = () => {
           <div className="p-6 sm:p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Aperçu des données</h2>
-                <p className="text-sm text-gray-500 mt-1">Vérifiez que les colonnes sont correctement détectées</p>
+                <h2 className="text-lg font-semibold text-gray-900">{tp('Aperçu des données')}</h2>
+                <p className="text-sm text-gray-500 mt-1">{tp('Vérifiez que les colonnes sont correctement détectées')}</p>
               </div>
               <button onClick={() => setCurrentStep(1)} className="text-sm text-gray-500 hover:text-gray-700 font-medium">
                 â† Retour
@@ -492,13 +493,13 @@ const ImportOrders = () => {
             {previewing ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <Spinner size="lg" />
-                <p className="text-sm text-gray-500 mt-4">Chargement de l'aperçu...</p>
+                <p className="text-sm text-gray-500 mt-4">{tp('Chargement de l\'aperçu...')}</p>
               </div>
             ) : previewData ? (
               <>
                 {/* Column mapping */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">Colonnes détectées</h3>
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">{tp('Colonnes détectées')}</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                     {Object.entries(previewData.columnMapping).map(([field, colIdx]) => (
                       <div key={field} className="flex items-center gap-2 px-3 py-2 bg-primary-50 border border-primary-200 rounded-lg">
@@ -524,14 +525,14 @@ const ImportOrders = () => {
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-medium text-gray-700">Aperçu des données ({previewData.totalRows} lignes)</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Ordre:</span>
+                      <span className="text-xs text-gray-500">{tp('Ordre:')}</span>
                       <select 
                         value={sheetOrder} 
                         onChange={(e) => { setSheetOrder(e.target.value); handlePreview(); }}
                         className="text-xs border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-600"
                       >
-                        <option value="newest_first">Plus récentes d'abord (haut)</option>
-                        <option value="oldest_first">Plus anciennes d'abord (bas)</option>
+                        <option value="newest_first">{tp('Plus récentes d\'abord (haut)')}</option>
+                        <option value="oldest_first">{tp('Plus anciennes d\'abord (bas)')}</option>
                       </select>
                     </div>
                   </div>
@@ -577,8 +578,8 @@ const ImportOrders = () => {
               </>
             ) : (
               <div className="text-center py-12">
-                <p className="text-sm text-gray-500">Aucun aperçu disponible</p>
-                <button onClick={handlePreview} className="mt-3 text-sm text-primary-600 font-medium hover:text-primary-700">Réessayer</button>
+                <p className="text-sm text-gray-500">{tp('Aucun aperçu disponible')}</p>
+                <button onClick={handlePreview} className="mt-3 text-sm text-primary-600 font-medium hover:text-primary-700">{tp('Réessayer')}</button>
               </div>
             )}
           </div>
@@ -597,7 +598,7 @@ const ImportOrders = () => {
                 </div>
               </div>
 
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Import en cours</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">{tp('Import en cours')}</h2>
               <p className="text-sm text-gray-500 mb-8 text-center max-w-sm">
                 Veuillez ne pas fermer cette page pendant l'import.
               </p>
@@ -648,11 +649,11 @@ const ImportOrders = () => {
                       ? 'Import échoué'
                       : importResult.errorCount > 0
                       ? 'Import partiel'
-                      : 'Import réussi'}
+                      : tp('Import réussi')}
                   </h2>
                   <p className="text-sm text-gray-500 mt-1">
                     {importResult.duration ? `Terminé en ${importResult.duration}s` : ''}
-                    {importResult.sourceName && <span className="ml-1">— Source : <strong>{importResult.sourceName}</strong></span>}
+                    {importResult.sourceName && <span className="ml-1">{tp('— Source :')} <strong>{importResult.sourceName}</strong></span>}
                   </p>
                 </>
               ) : (
@@ -660,7 +661,7 @@ const ImportOrders = () => {
                   <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-4">
                     <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-900">Erreur</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">{tp('Erreur')}</h2>
                   <p className="text-sm text-red-600 mt-1">{error}</p>
                 </>
               )}
@@ -694,13 +695,13 @@ const ImportOrders = () => {
                 onClick={() => navigate('/ecom/orders')}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition w-full sm:w-auto justify-center"
               >
-                Voir les commandes
+                {tp('Voir les commandes')}
               </button>
               <button
                 onClick={handleReset}
                 className="text-sm text-gray-500 hover:text-gray-700 font-medium"
               >
-                Nouvel import
+                {tp('Nouvel import')}
               </button>
             </div>
           </div>
@@ -711,7 +712,7 @@ const ImportOrders = () => {
       {showHistory && (
         <div className="mt-8 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-gray-900">Historique des imports</h3>
+            <h3 className="text-base font-semibold text-gray-900">{tp('Historique des imports')}</h3>
             <button onClick={() => setShowHistory(false)} className="text-gray-400 hover:text-gray-600">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
@@ -720,7 +721,7 @@ const ImportOrders = () => {
             <div className="flex items-center justify-center py-12"><Spinner /></div>
           ) : history.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-sm text-gray-400">Aucun historique d'import</p>
+              <p className="text-sm text-gray-400">{tp('Aucun historique d\'import')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
@@ -732,7 +733,7 @@ const ImportOrders = () => {
                         {STATUS_LABELS[imp.status]}
                       </span>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{imp.sourceName || 'Import'}</p>
+                        <p className="text-sm font-medium text-gray-900">{imp.sourceName || tp('Import')}</p>
                         <p className="text-xs text-gray-500 mt-0.5">
                           {new Date(imp.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                           {imp.triggeredBy && <> · par {imp.triggeredBy.name || imp.triggeredBy.email}</>}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const CATEGORY_CFG = {
   general:  { label: 'Général',       cls: 'bg-blue-100 text-blue-700' },
@@ -174,18 +175,18 @@ const UserSupport = () => {
           </div>
           <div>
             <h1 className="text-base font-bold text-gray-900 flex items-center gap-2">
-              Support
+              {tp('Support')}
               {unreadTotal > 0 && (
                 <span className="w-5 h-5 bg-[#0F6B4F] text-white text-[10px] font-bold rounded-full flex items-center justify-center">{unreadTotal}</span>
               )}
             </h1>
-            <p className="text-xs text-gray-500">Soumettez vos problèmes et suivez leur avancement</p>
+            <p className="text-xs text-gray-500">{tp('Soumettez vos problèmes et suivez leur avancement')}</p>
           </div>
         </div>
         <button onClick={() => setShowNew(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#0F6B4F] hover:bg-[#0a5740] rounded-xl transition-colors shadow-sm">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-          <span className="hidden sm:inline">Nouveau ticket</span>
+          <span className="hidden sm:inline">{tp('Nouveau ticket')}</span>
         </button>
       </div>
 
@@ -194,21 +195,21 @@ const UserSupport = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-base font-bold text-gray-900">Nouveau ticket de support</h2>
+              <h2 className="text-base font-bold text-gray-900">{tp('Nouveau ticket de support')}</h2>
               <button onClick={() => setShowNew(false)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <form onSubmit={createTicket} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Sujet</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">{tp('Sujet')}</label>
                 <input type="text" value={newSubject} onChange={e => setNewSubject(e.target.value)}
-                  placeholder="Résumez votre problème en quelques mots…"
+                  placeholder={tp('Résumez votre problème en quelques mots…')}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none bg-gray-50 focus:bg-white transition"
                   maxLength={200} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Catégorie</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">{tp('Catégorie')}</label>
                 <div className="grid grid-cols-3 gap-2">
                   {CATEGORIES.map(c => (
                     <button key={c.value} type="button" onClick={() => setNewCategory(c.value)}
@@ -221,9 +222,9 @@ const UserSupport = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Message <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">{tp('Message')} <span className="text-red-500">*</span></label>
                 <textarea value={newMessage} onChange={e => setNewMessage(e.target.value)}
-                  placeholder="Décrivez votre problème en détail. Plus vous êtes précis, plus vite nous pourrons vous aider."
+                  placeholder={tp('Décrivez votre problème en détail. Plus vous êtes précis, plus vite nous pourrons vous aider.')}
                   rows={5}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none resize-none bg-gray-50 focus:bg-white transition"
                   maxLength={2000} required />
@@ -232,7 +233,7 @@ const UserSupport = () => {
               <div className="flex justify-end gap-3 pt-1">
                 <button type="button" onClick={() => setShowNew(false)}
                   className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition">
-                  Annuler
+                  {tp('Annuler')}
                 </button>
                 <button type="submit" disabled={creating || !newMessage.trim()}
                   className="px-6 py-2 text-sm font-semibold text-white bg-[#0F6B4F] hover:bg-[#0a5740] disabled:opacity-50 rounded-xl transition-colors">
@@ -255,7 +256,7 @@ const UserSupport = () => {
             {[
               { key: 'all',      label: 'Tous' },
               { key: 'open',     label: 'En cours' },
-              { key: 'resolved', label: 'Résolus' },
+              { key: 'resolved', get label() { return tp('Résolus'); } },
             ].map(f => (
               <button key={f.key} onClick={() => setFilter(f.key)}
                 className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${
@@ -275,13 +276,13 @@ const UserSupport = () => {
               <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-3">
                 <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
               </div>
-              <p className="text-sm font-medium text-gray-600">Aucun ticket</p>
+              <p className="text-sm font-medium text-gray-600">{tp('Aucun ticket')}</p>
               <p className="text-xs mt-1">
                 {filter === 'all' ? 'Créez votre premier ticket pour obtenir de l\'aide.' : `Aucun ticket ${filter === 'open' ? 'en cours' : 'résolu'}.`}
               </p>
               {filter === 'all' && (
                 <button onClick={() => setShowNew(true)} className="mt-4 px-4 py-2 bg-[#0F6B4F] text-white text-xs font-semibold rounded-xl hover:bg-[#0a5740] transition">
-                  Créer un ticket
+                  {tp('Créer un ticket')}
                 </button>
               )}
             </div>
@@ -296,7 +297,7 @@ const UserSupport = () => {
                     className={`w-full text-left px-4 py-3.5 transition-colors ${active ? 'bg-[#E6F2ED]' : 'hover:bg-gray-50'}`}>
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <span className={`text-sm font-semibold truncate flex-1 ${active ? 'text-[#0F6B4F]' : 'text-gray-900'}`}>
-                        {t.subject || 'Demande support'}
+                        {t.subject || tp('Demande support')}
                       </span>
                       <span className="text-[10px] text-gray-400 whitespace-nowrap">{fmtAgo(t.lastMessageAt)}</span>
                     </div>
@@ -327,8 +328,8 @@ const UserSupport = () => {
               <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center mb-4">
                 <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
               </div>
-              <p className="text-sm font-medium text-gray-500">Sélectionnez un ticket</p>
-              <p className="text-xs text-gray-400 mt-1">ou créez-en un nouveau</p>
+              <p className="text-sm font-medium text-gray-500">{tp('Sélectionnez un ticket')}</p>
+              <p className="text-xs text-gray-400 mt-1">{tp('ou créez-en un nouveau')}</p>
             </div>
           ) : detailLoading && !detail ? (
             <div className="flex-1 flex items-center justify-center">
@@ -338,7 +339,7 @@ const UserSupport = () => {
             <>
               {/* Detail header */}
               <div className="px-5 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 className="text-sm font-bold text-gray-900 mb-1.5">{detail.subject || 'Sans objet'}</h2>
+                <h2 className="text-sm font-bold text-gray-900 mb-1.5">{detail.subject || tp('Sans objet')}</h2>
                 <div className="flex items-center flex-wrap gap-2">
                   {(() => {
                     const wf = WORKFLOW_CFG[detail.workflowStatus] || WORKFLOW_CFG.pending_admin;
@@ -395,7 +396,7 @@ const UserSupport = () => {
                     <textarea ref={replyRef} value={reply}
                       onChange={e => setReply(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(e); } }}
-                      placeholder="Votre message… (Entrée pour envoyer)"
+                      placeholder={tp('Votre message… (Entrée pour envoyer)')}
                       rows={2}
                       className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none resize-none bg-gray-50 focus:bg-white transition"
                       maxLength={2000}
@@ -411,10 +412,10 @@ const UserSupport = () => {
                 </form>
               ) : (
                 <div className="px-5 py-4 border-t border-gray-100 bg-white text-center">
-                  <p className="text-sm text-gray-500 mb-2">Ce ticket est résolu.</p>
+                  <p className="text-sm text-gray-500 mb-2">{tp('Ce ticket est résolu.')}</p>
                   <button onClick={() => setShowNew(true)}
                     className="px-5 py-2 bg-[#0F6B4F] hover:bg-[#0a5740] text-white text-sm font-semibold rounded-xl transition">
-                    Créer un nouveau ticket
+                    {tp('Créer un nouveau ticket')}
                   </button>
                 </div>
               )}

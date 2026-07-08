@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { tp } from '../i18n/platform.js';
 import { useNavigate } from '@/lib/router-compat';
 import { useTheme } from '../contexts/ThemeContext';
 import { useBroadcastTheme } from '../hooks/useThemeSocket';
@@ -28,7 +29,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
   const colorOptions = [
     { key: 'primaryColor', label: 'Couleur principale' },
     { key: 'ctaColor', label: 'Boutons CTA' },
-    { key: 'backgroundColor', label: 'Arrière-plan' },
+    { key: 'backgroundColor', get label() { return tp('Arrière-plan'); } },
     { key: 'textColor', label: 'Texte' },
   ];
 
@@ -43,7 +44,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
     <div className="space-y-6 p-4">
       {/* Colors */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Couleurs</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Couleurs')}</h3>
         <div className="space-y-3">
           {colorOptions.map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
@@ -69,7 +70,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
 
       {/* Typography */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Police</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Police')}</h3>
         <div className="grid grid-cols-2 gap-2">
           {fontOptions.map((font) => (
             <button
@@ -89,7 +90,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
 
       {/* Border Radius */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Arrondis</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Arrondis')}</h3>
         <div className="grid grid-cols-3 gap-2">
           {[
             { id: 'none', label: 'Aucun' },
@@ -116,7 +117,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
 
       {/* Live Preview */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Aperçu</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Aperçu')}</h3>
         <div 
           className="p-4 rounded-lg border"
           style={{ 
@@ -124,14 +125,14 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
             color: localTheme.textColor,
           }}
         >
-          <h4 className="text-sm font-semibold mb-2">Titre d'exemple</h4>
-          <p className="text-xs mb-3 opacity-80">Voici un texte d'exemple pour voir le rendu.</p>
+          <h4 className="text-sm font-semibold mb-2">{tp('Titre d\'exemple')}</h4>
+          <p className="text-xs mb-3 opacity-80">{tp('Voici un texte d\'exemple pour voir le rendu.')}</p>
           <div className="flex gap-2">
             <button 
               className="px-3 py-1 text-xs font-medium text-white rounded"
               style={{ backgroundColor: localTheme.primaryColor }}
             >
-              Bouton principal
+              {tp('Bouton principal')}
             </button>
             <button 
               className="px-3 py-1 text-xs font-medium text-white rounded"
@@ -162,8 +163,8 @@ function DeviceFrame({ device, subdomain, iframeKey }) {
       <div className="flex-1 bg-gray-100 flex items-center justify-center">
         <div className="text-center text-gray-400">
           <div className="text-4xl mb-3">🏪</div>
-          <p className="text-sm font-medium">Aucune boutique configurée</p>
-          <p className="text-xs mt-1">Configurez un sous-domaine dans les paramètres</p>
+          <p className="text-sm font-medium">{tp('Aucune boutique configurée')}</p>
+          <p className="text-xs mt-1">{tp('Configurez un sous-domaine dans les paramètres')}</p>
         </div>
       </div>
     );
@@ -196,7 +197,7 @@ function DeviceFrame({ device, subdomain, iframeKey }) {
           src={iframeSrc}
           className="w-full border-0"
           style={{ height: config.height }}
-          title="Store Preview"
+          title={tp('Store Preview')}
           sandbox="allow-scripts allow-same-origin allow-forms"
         />
       </div>
@@ -293,7 +294,7 @@ const EnhancedVisualBuilder = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-          <p className="text-sm text-gray-500">Chargement du builder...</p>
+          <p className="text-sm text-gray-500">{tp('Chargement du builder...')}</p>
         </div>
       </div>
     );
@@ -310,17 +311,17 @@ const EnhancedVisualBuilder = () => {
               className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Retour</span>
+              <span className="hidden sm:inline">{tp('Retour')}</span>
             </button>
             
             <div className="w-px h-6 bg-gray-200" />
-            <h1 className="text-lg font-bold text-gray-900">Site Builder</h1>
+            <h1 className="text-lg font-bold text-gray-900">{tp('Site Builder')}</h1>
             
             <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
               isConnected ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-600'
             }`}>
               <Zap className="w-3 h-3" />
-              <span className="font-medium">{isConnected ? 'Live' : 'Connexion...'}</span>
+              <span className="font-medium">{isConnected ? 'Live' : tp('Connexion...')}</span>
               {lastBroadcast && isConnected && (
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
               )}
@@ -337,7 +338,7 @@ const EnhancedVisualBuilder = () => {
                 }`}
               >
                 <LayoutGrid className="w-4 h-4" />
-                Éditer
+                {tp('Éditer')}
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
@@ -346,7 +347,7 @@ const EnhancedVisualBuilder = () => {
                 }`}
               >
                 <Eye className="w-4 h-4" />
-                Aperçu
+                {tp('Aperçu')}
               </button>
             </div>
 
@@ -376,7 +377,7 @@ const EnhancedVisualBuilder = () => {
             <button
               onClick={() => setIframeKey(k => k + 1)}
               className="p-2 rounded-lg text-gray-500 hover:text-gray-700 transition"
-              title="Rafraîchir l'aperçu"
+              title={tp('Rafraîchir l\'aperçu')}
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -387,7 +388,7 @@ const EnhancedVisualBuilder = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg text-gray-500 hover:text-gray-700 transition"
-                title="Ouvrir la boutique"
+                title={tp('Ouvrir la boutique')}
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
@@ -403,7 +404,7 @@ const EnhancedVisualBuilder = () => {
               {saving ? <Loader2 className="w-4 h-4 animate-spin" />
                 : saved ? <Check className="w-4 h-4" />
                 : <Save className="w-4 h-4" />}
-              {saved ? 'Publié !' : 'Publier'}
+              {saved ? 'Publié !' : tp('Publier')}
             </button>
           </div>
         </header>
@@ -417,7 +418,7 @@ const EnhancedVisualBuilder = () => {
                 <div className="flex border-b border-gray-200">
                   {[
                     { id: 'builder', label: 'Blocs',  icon: <LayoutGrid className="w-4 h-4" /> },
-                    { id: 'theme',   label: 'Thème',  icon: <Palette className="w-4 h-4" /> },
+                    { id: 'theme',   get label() { return tp('Thème'); },  icon: <Palette className="w-4 h-4" /> },
                     { id: 'settings',label: 'Config', icon: <Settings className="w-4 h-4" /> },
                   ].map((tab) => (
                     <button
@@ -443,7 +444,7 @@ const EnhancedVisualBuilder = () => {
                   {activeTab === 'settings' && (
                     <div className="p-4 space-y-4">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Sous-domaine</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">{tp('Sous-domaine')}</label>
                         <input
                           type="text"
                           value={subdomain}
@@ -453,7 +454,7 @@ const EnhancedVisualBuilder = () => {
                         <p className="text-xs text-gray-500 mt-1">{subdomain}.scalor.net</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Sections</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">{tp('Sections')}</label>
                         <p className="text-sm text-gray-600">
                           {sections.length} section{sections.length !== 1 ? 's' : ''} configurée{sections.length !== 1 ? 's' : ''}
                         </p>

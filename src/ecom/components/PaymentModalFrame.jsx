@@ -1,5 +1,6 @@
 import React from 'react';
 import { Lock, ShieldCheck, X } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
 
 const DEFAULT_FOOTER_ITEMS = [
   { icon: Lock, label: 'Paiement securise' },
@@ -54,7 +55,7 @@ export default function PaymentModalFrame({
             type="button"
             onClick={onClose}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-            aria-label="Fermer"
+            aria-label={tp('Fermer')}
           >
             <X className="h-4 w-4" />
           </button>

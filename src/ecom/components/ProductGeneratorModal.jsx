@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Upload, Wand2, AlertCircle } from 'lucide-react';
+import { tp } from '../i18n/platform.js';
 
 const TARGET_GENDER_OPTIONS = [
   { value: 'auto', label: 'Auto', hint: 'L’IA choisit selon le produit' },
@@ -89,16 +90,16 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
   });
 
   const marketingApproaches = [
-    { value: 'PAS', label: 'PAS', description: 'Problème → Agitation → Solution' },
-    { value: 'AIDA', label: 'AIDA', description: 'Attention → Intérêt → Désir → Action' },
+    { value: 'PAS', label: 'PAS', get description() { return tp('Problème → Agitation → Solution'); } },
+    { value: 'AIDA', label: 'AIDA', get description() { return tp('Attention → Intérêt → Désir → Action'); } },
     { value: 'BAB', label: 'BAB', description: 'Before → After → Bridge' }
   ];
 
   const tones = [
-    { value: 'urgence', label: 'Urgence', emoji: '🔥', description: 'Stock limité, action immédiate' },
-    { value: 'premium', label: 'Premium', emoji: '💎', description: 'Qualité exceptionnelle, exclusivité' },
-    { value: 'fun', label: 'Fun', emoji: '🎉', description: 'Enjoué, dynamique, émojis' },
-    { value: 'serieux', label: 'Sérieux', emoji: '🎓', description: 'Professionnel, crédible, fiable' }
+    { value: 'urgence', label: 'Urgence', emoji: '🔥', get description() { return tp('Stock limité, action immédiate'); } },
+    { value: 'premium', label: 'Premium', emoji: '💎', get description() { return tp('Qualité exceptionnelle, exclusivité'); } },
+    { value: 'fun', label: 'Fun', emoji: '🎉', get description() { return tp('Enjoué, dynamique, émojis'); } },
+    { value: 'serieux', get label() { return tp('Sérieux'); }, emoji: '🎓', get description() { return tp('Professionnel, crédible, fiable'); } }
   ];
 
   const handleImageUpload = (e) => {
@@ -181,10 +182,10 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
-              Génération de Page Produit IA
+              {tp('Génération de Page Produit IA')}
             </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Étape {step} sur 2 — {step === 1 ? 'Informations produit' : 'Copywriting avancé'}
+              Étape {step} sur 2 — {step === 1 ? 'Informations produit' : tp('Copywriting avancé')}
             </p>
           </div>
           <button 
@@ -213,7 +214,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
               {/* Type de source */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  Source du contenu produit
+                  {tp('Source du contenu produit')}
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -224,8 +225,8 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <div className="font-semibold">URL Alibaba/AliExpress</div>
-                    <div className="text-xs text-gray-500 mt-1">Scraping automatique</div>
+                    <div className="font-semibold">{tp('URL Alibaba/AliExpress')}</div>
+                    <div className="text-xs text-gray-500 mt-1">{tp('Scraping automatique')}</div>
                   </button>
                   <button
                     onClick={() => setFormData(prev => ({ ...prev, sourceType: 'description' }))}
@@ -235,8 +236,8 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <div className="font-semibold">Description directe</div>
-                    <div className="text-xs text-gray-500 mt-1">Rédiger manuellement</div>
+                    <div className="font-semibold">{tp('Description directe')}</div>
+                    <div className="text-xs text-gray-500 mt-1">{tp('Rédiger manuellement')}</div>
                   </button>
                 </div>
               </div>
@@ -245,7 +246,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
               {formData.sourceType === 'url' ? (
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    URL du produit
+                    {tp('URL du produit')}
                   </label>
                   <input
                     type="url"
@@ -258,12 +259,12 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
               ) : (
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Description du produit (min 20 caractères)
+                    {tp('Description du produit (min 20 caractères)')}
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Décrivez votre produit en détail : nom, caractéristiques, utilisation, bénéfices..."
+                    placeholder={tp('Décrivez votre produit en détail : nom, caractéristiques, utilisation, bénéfices...')}
                     rows={5}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                   />
@@ -276,7 +277,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
               {/* Upload images */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Photos du produit (min 1, max 8)
+                  {tp('Photos du produit (min 1, max 8)')}
                   {formData.sourceType === 'description' && (
                     <span className="text-red-500 ml-1">*</span>
                   )}
@@ -293,7 +294,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
                   <label htmlFor="image-upload" className="cursor-pointer">
                     <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
                     <div className="text-sm font-medium text-gray-700">
-                      Cliquez pour uploader des images
+                      {tp('Cliquez pour uploader des images')}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
                       PNG, JPG, WEBP jusqu'à 10MB chacune
@@ -344,7 +345,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
               {/* Tone */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  Ton de communication
+                  {tp('Ton de communication')}
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   {tones.map(t => (
@@ -370,9 +371,9 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
               {/* Avatar cible */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Avatar client cible (optionnel)
+                  {tp('Avatar client cible (optionnel)')}
                 </label>
-                <p className="text-xs text-gray-500 mb-3">Choisis directement le genre, l’âge et le profil de l’audience.</p>
+                <p className="text-xs text-gray-500 mb-3">{tp('Choisis directement le genre, l’âge et le profil de l’audience.')}</p>
 
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   {TARGET_GENDER_OPTIONS.map((option) => {
@@ -400,7 +401,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">Tranche d’âge</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Tranche d’âge')}</label>
                     <select
                       value={formData.targetAgeRange}
                       onChange={(e) => setFormData(prev => ({ ...prev, targetAgeRange: e.target.value }))}
@@ -413,7 +414,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">Profil</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Profil')}</label>
                     <select
                       value={formData.targetProfile}
                       onChange={(e) => setFormData(prev => ({ ...prev, targetProfile: e.target.value }))}
@@ -427,20 +428,20 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
                 </div>
 
                 <div className="mt-3 rounded-lg border border-dashed border-purple-200 bg-purple-50 px-4 py-3">
-                  <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">Résumé avatar</div>
-                  <div className="text-sm font-medium text-gray-800 mt-1">{targetAvatarSummary || 'Auto selon le produit'}</div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">{tp('Résumé avatar')}</div>
+                  <div className="text-sm font-medium text-gray-800 mt-1">{targetAvatarSummary || tp('Auto selon le produit')}</div>
                 </div>
               </div>
 
               {/* Probleme principal */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Probleme principal (optionnel)
+                  {tp('Probleme principal (optionnel)')}
                 </label>
                 <textarea
                   value={formData.mainProblem}
                   onChange={(e) => setFormData(prev => ({ ...prev, mainProblem: e.target.value }))}
-                  placeholder="Ex: Peau terne avec des taches, perte de confiance en soi..."
+                  placeholder={tp('Ex: Peau terne avec des taches, perte de confiance en soi...')}
                   rows={2}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
                 />
@@ -477,7 +478,7 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
                 onClick={onClose}
                 className="px-6 py-2.5 text-gray-700 hover:bg-gray-200 rounded-lg transition font-medium"
               >
-                Annuler
+                {tp('Annuler')}
               </button>
               {step === 1 ? (
                 <button
@@ -500,12 +501,12 @@ const ProductGeneratorModal = ({ isOpen, onClose, workspaceId, onSuccess }) => {
                   {isLoading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Génération en cours...
+                      {tp('Génération en cours...')}
                     </>
                   ) : (
                     <>
                       <Wand2 className="w-5 h-5" />
-                      Générer la page
+                      {tp('Générer la page')}
                     </>
                   )}
                 </button>

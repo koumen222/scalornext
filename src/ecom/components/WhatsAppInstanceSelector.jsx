@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Smartphone, Check, Plus, RefreshCw, AlertCircle } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 // WhatsAppConfigModal supprimé
 
 const WhatsAppInstanceSelector = ({ onInstanceSelected, selectedInstanceId }) => {
@@ -43,7 +44,7 @@ const WhatsAppInstanceSelector = ({ onInstanceSelected, selectedInstanceId }) =>
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <div className="flex items-center justify-center py-4">
           <RefreshCw className="w-4 h-4 animate-spin text-gray-400 mr-2" />
-          <span className="text-sm text-gray-500">Chargement...</span>
+          <span className="text-sm text-gray-500">{tp('Chargement...')}</span>
         </div>
       </div>
     );
@@ -65,26 +66,26 @@ const WhatsAppInstanceSelector = ({ onInstanceSelected, selectedInstanceId }) =>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-gray-700 flex items-center">
           <Smartphone className="w-4 h-4 mr-2" />
-          Instance WhatsApp
+          {tp('Instance WhatsApp')}
         </h3>
         <button
           onClick={() => setShowRegisterModal(true)}
           className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition flex items-center"
         >
           <Plus className="w-3 h-3 mr-1" />
-          Nouvelle
+          {tp('Nouvelle')}
         </button>
       </div>
 
       {instances.length === 0 ? (
         <div className="text-center py-6">
           <Smartphone className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-500 mb-3">Aucune instance enregistrée</p>
+          <p className="text-sm text-gray-500 mb-3">{tp('Aucune instance enregistrée')}</p>
           <button
             onClick={() => setShowRegisterModal(true)}
             className="text-xs bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition"
           >
-            Enregistrer une instance
+            {tp('Enregistrer une instance')}
           </button>
         </div>
       ) : (
@@ -115,7 +116,7 @@ const WhatsAppInstanceSelector = ({ onInstanceSelected, selectedInstanceId }) =>
                         ? 'bg-blue-100 text-blue-700'
                         : 'bg-gray-100 text-gray-600'
                   }`}>
-                    {instance.status === 'connected' || instance.status === 'active' ? 'Connecté' : instance.status === 'configured' ? 'Configuré' : 'Déconnecté'}
+                    {instance.status === 'connected' || instance.status === 'active' ? 'Connecté' : instance.status === 'configured' ? 'Configuré' : tp('Déconnecté')}
                   </span>
                   {selectedInstanceId === instance._id && (
                     <Check className="w-4 h-4 text-green-600" />
@@ -131,11 +132,11 @@ const WhatsAppInstanceSelector = ({ onInstanceSelected, selectedInstanceId }) =>
       {showRegisterModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-xl p-6 max-w-sm w-full">
-            <h2 className="text-lg font-bold mb-4">Configuration requise</h2>
-            <p className="text-gray-600 mb-6 text-sm">Veuillez configurer vos instances dans la page "Connexion WhatsApp" de la barre latérale.</p>
+            <h2 className="text-lg font-bold mb-4">{tp('Configuration requise')}</h2>
+            <p className="text-gray-600 mb-6 text-sm">{tp('Veuillez configurer vos instances dans la page "Connexion WhatsApp" de la barre latérale.')}</p>
             <div className="flex gap-3">
-              <button onClick={() => setShowRegisterModal(false)} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg">Fermer</button>
-              <a href="/ecom/whatsapp/instances" className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg text-center">Y aller</a>
+              <button onClick={() => setShowRegisterModal(false)} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg">{tp('Fermer')}</button>
+              <a href="/ecom/whatsapp/instances" className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg text-center">{tp('Y aller')}</a>
             </div>
           </div>
         </div>

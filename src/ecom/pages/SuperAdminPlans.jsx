@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Loader2, Save, Plus, Trash2, Clock, Check, X, AlertCircle } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const LIMIT_FIELDS = [
   { key: 'maxOrders', label: 'Commandes / mois' },
@@ -169,8 +170,8 @@ const SuperAdminPlans = () => {
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Gestion des plans</h1>
-        <p className="text-sm text-gray-500 mt-1">Configurez les prix, les limites et les fonctionnalités de chaque plan. Les comptes sans abonnement utilisent automatiquement le plan <strong>Gratuit</strong>.</p>
+        <h1 className="text-2xl font-bold text-gray-900">{tp('Gestion des plans')}</h1>
+        <p className="text-sm text-gray-500 mt-1">{tp('Configurez les prix, les limites et les fonctionnalités de chaque plan. Les comptes sans abonnement utilisent automatiquement le plan')} <strong>{tp('Gratuit')}</strong>.</p>
       </div>
 
       {error && (
@@ -189,20 +190,20 @@ const SuperAdminPlans = () => {
       <div className="mb-6 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Tarifs credits IA pages produit</h2>
-            <p className="text-sm text-gray-500 mt-1">Modifiez les prix affiches dans le studio produit et appliquez une promo temporaire sans toucher au code.</p>
+            <h2 className="text-lg font-bold text-gray-900">{tp('Tarifs credits IA pages produit')}</h2>
+            <p className="text-sm text-gray-500 mt-1">{tp('Modifiez les prix affiches dans le studio produit et appliquez une promo temporaire sans toucher au code.')}</p>
           </div>
           <a
             href="/ecom/super-admin/promo-codes"
             className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-[#0F6B4F] bg-[#E6F4EF] rounded-lg hover:bg-[#D8EEE6] transition"
           >
-            Gérer les codes promo
+            {tp('Gérer les codes promo')}
           </a>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
           <label className="text-xs text-gray-600">
-            Prix unitaire normal ({generationPricing.currency || 'FCFA'})
+            Prix unitaire normal ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
               value={generationPricing.unitPriceRegular ?? 0}
@@ -211,7 +212,7 @@ const SuperAdminPlans = () => {
             />
           </label>
           <label className="text-xs text-gray-600">
-            Prix unitaire promo ({generationPricing.currency || 'FCFA'})
+            Prix unitaire promo ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
               value={generationPricing.unitPricePromo ?? ''}
@@ -221,7 +222,7 @@ const SuperAdminPlans = () => {
             />
           </label>
           <label className="text-xs text-gray-600">
-            Pack 3 normal ({generationPricing.currency || 'FCFA'})
+            Pack 3 normal ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
               value={generationPricing.packPriceRegular ?? 0}
@@ -230,7 +231,7 @@ const SuperAdminPlans = () => {
             />
           </label>
           <label className="text-xs text-gray-600">
-            Pack 3 promo ({generationPricing.currency || 'FCFA'})
+            Pack 3 promo ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
               value={generationPricing.packPricePromo ?? ''}
@@ -250,11 +251,11 @@ const SuperAdminPlans = () => {
               className="w-4 h-4 rounded accent-orange-600"
             />
             <Clock className="w-4 h-4 text-orange-600" />
-            <span className="text-sm font-medium text-gray-700">Promo credits IA active</span>
+            <span className="text-sm font-medium text-gray-700">{tp('Promo credits IA active')}</span>
           </label>
           {generationPricing.promoActive && (
             <label className="block mt-2 text-xs text-gray-600">
-              Expire le
+              {tp('Expire le')}
               <input
                 type="datetime-local"
                 value={fmtDateTimeLocal(generationPricing.promoExpiresAt)}
@@ -294,7 +295,7 @@ const SuperAdminPlans = () => {
                   <input
                     value={plan.tagline || ''}
                     onChange={e => update(plan.key, { tagline: e.target.value })}
-                    placeholder="Sous-titre"
+                    placeholder={tp('Sous-titre')}
                     className="text-sm text-gray-500 mt-1 w-full border-b border-transparent hover:border-gray-300 focus:border-[#0F6B4F] focus:outline-none"
                   />
                 </div>
@@ -303,7 +304,7 @@ const SuperAdminPlans = () => {
               {/* Prices */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <label className="text-xs text-gray-600">
-                  Prix normal (FCFA)
+                  {tp('Prix normal (FCFA)')}
                   <input
                     type="number"
                     value={plan.priceRegular ?? 0}
@@ -312,7 +313,7 @@ const SuperAdminPlans = () => {
                   />
                 </label>
                 <label className="text-xs text-gray-600">
-                  Prix promo (FCFA)
+                  {tp('Prix promo (FCFA)')}
                   <input
                     type="number"
                     value={plan.pricePromo ?? ''}
@@ -333,12 +334,12 @@ const SuperAdminPlans = () => {
                     className="w-4 h-4 rounded accent-orange-600"
                   />
                   <Clock className="w-4 h-4 text-orange-600" />
-                  <span className="text-sm font-medium text-gray-700">Offre limitée active</span>
-                  {promoExpired && <span className="text-xs text-red-600 font-medium">(expirée)</span>}
+                  <span className="text-sm font-medium text-gray-700">{tp('Offre limitée active')}</span>
+                  {promoExpired && <span className="text-xs text-red-600 font-medium">{tp('(expirée)')}</span>}
                 </label>
                 {plan.promoActive && (
                   <label className="block mt-2 text-xs text-gray-600">
-                    Expire le
+                    {tp('Expire le')}
                     <input
                       type="datetime-local"
                       value={fmtDateTimeLocal(plan.promoExpiresAt)}
@@ -351,7 +352,7 @@ const SuperAdminPlans = () => {
 
               {/* Limits */}
               <div className="mb-4">
-                <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Limites (–1 = illimité)</h3>
+                <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">{tp('Limites (–1 = illimité)')}</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {LIMIT_FIELDS.map(f => (
                     <label key={f.key} className="text-xs text-gray-600">
@@ -369,7 +370,7 @@ const SuperAdminPlans = () => {
 
               {/* Features */}
               <div className="mb-4">
-                <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Fonctionnalités</h3>
+                <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">{tp('Fonctionnalités')}</h3>
                 <div className="grid grid-cols-2 gap-1.5">
                   {FEATURE_FIELDS.map(f => (
                     <label key={f.key} className="flex items-center gap-2 text-xs text-gray-700 py-0.5">
@@ -388,7 +389,7 @@ const SuperAdminPlans = () => {
               {/* Features list (bullets) */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Bullets affichés</h3>
+                  <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">{tp('Bullets affichés')}</h3>
                   <button
                     onClick={() => addFeatureLine(plan.key)}
                     className="text-xs text-[#0F6B4F] hover:underline flex items-center gap-1"
@@ -415,7 +416,7 @@ const SuperAdminPlans = () => {
               {/* Misc */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <label className="text-xs text-gray-600">
-                  Label du bouton
+                  {tp('Label du bouton')}
                   <input
                     value={plan.ctaLabel || ''}
                     onChange={e => update(plan.key, { ctaLabel: e.target.value })}

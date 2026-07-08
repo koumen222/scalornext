@@ -5,6 +5,7 @@ import { authApi, warmUpBackend } from '../services/ecommApi';
 import { getContextualError } from '../utils/errorMessages';
 import { getPendingPlanSelection } from '../utils/pendingPlanFlow.js';
 import { loadGsi, renderGsiButton } from '../utils/googleGsi.js';
+import { tp } from '../i18n/platform.js';
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '559924689181-rpkv8ji3029kvrtsvt3qceusmsh1i4p2.apps.googleusercontent.com';
 const FORMATION_PATH = '/ecom/formation';
@@ -57,7 +58,10 @@ const Register = () => {
   }, []);
 
   const pwChecks = [
-    { label: 'Au moins 6 caractères', short: '6 caractères', ok: formData.password.length >= 6 },
+    { get label() { return tp('Au moins 8 caractères'); }, short: '8 caractères', ok: formData.password.length >= 8 },
+    { label: 'Une majuscule', short: 'majuscule', ok: /[A-Z]/.test(formData.password) },
+    { label: 'Une minuscule', short: 'minuscule', ok: /[a-z]/.test(formData.password) },
+    { label: 'Un chiffre', short: 'chiffre', ok: /\d/.test(formData.password) },
   ];
   const pwMissing = pwChecks.filter(c => !c.ok);
   const pwStrength = pwMissing.length === 0 ? 4 : 0;
@@ -105,7 +109,7 @@ const Register = () => {
 
     if (!response?.credential) {
       console.error('\u274c [Google Auth] Pas de credential dans la réponse Google !');
-      setError('Erreur Google : aucun token reçu.');
+      setError(tp('Erreur Google : aucun token reçu.'));
       return;
     }
 
@@ -230,7 +234,7 @@ const Register = () => {
               className="w-full rounded-xl border border-gray-100 mb-5"
             />
             <div className="text-center mb-5">
-              <p className="text-xs font-bold uppercase tracking-wide text-primary-600 mb-2">Compte créé avec succès</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-primary-600 mb-2">{tp('Compte créé avec succès')}</p>
               <h1 className="text-2xl font-black text-gray-900">
                 {formationOffer.firstName ? `${formationOffer.firstName}, commencez ici` : 'Commencez ici'}
               </h1>
@@ -246,14 +250,14 @@ const Register = () => {
                 className="w-full min-h-[44px] py-3 rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 transition flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M14.752 11.168l-4.586-2.62A1 1 0 009 9.416v5.168a1 1 0 001.166.868l4.586-2.62a1 1 0 000-1.736z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Voir la formation offerte
+                {tp('Voir la formation offerte')}
               </button>
               <button
                 type="button"
                 onClick={() => navigate(formationOffer.nextPath)}
                 className="w-full min-h-[44px] py-3 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center gap-2"
               >
-                Continuer vers mon espace
+                {tp('Continuer vers mon espace')}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </button>
             </div>
@@ -302,25 +306,25 @@ const Register = () => {
           {step === 1 && (
             <div>
               <div className="mb-6">
-                <h1 className="text-xl font-bold text-gray-900">Créer un compte</h1>
-                <p className="text-gray-600 text-sm mt-1">Entrez votre email pour commencer</p>
+                <h1 className="text-xl font-bold text-gray-900">{tp('Créer un compte')}</h1>
+                <p className="text-gray-600 text-sm mt-1">{tp('Entrez votre email pour commencer')}</p>
               </div>
               <div id="google-reg-btn" className="flex justify-center mb-4" />
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-500">ou par email</span>
+                <span className="text-xs text-gray-500">{tp('ou par email')}</span>
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
               <form onSubmit={handleSendOtp} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Adresse email</label>
-                  <input type="email" autoComplete="email" required placeholder="vous@exemple.com"
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Adresse email')}</label>
+                  <input type="email" autoComplete="email" required placeholder={tp('vous@exemple.com')}
                     value={email} onChange={e => setEmail(e.target.value)}
                     className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                 </div>
                 <button type="submit" disabled={loading || !email.includes('@')}
                   className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20">
-                  {loading ? <Spinner /> : <><span>Continuer</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
+                  {loading ? <Spinner /> : <><span>{tp('Continuer')}</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
                 </button>
               </form>
             </div>
@@ -329,14 +333,14 @@ const Register = () => {
           {step === 2 && (
             <div>
               <div className="mb-6">
-                <h1 className="text-xl font-bold text-gray-900">Vérifiez votre email</h1>
+                <h1 className="text-xl font-bold text-gray-900">{tp('Vérifiez votre email')}</h1>
                 <p className="text-gray-600 text-sm mt-1">
-                  Code envoye a <span className="text-primary-500 font-medium">{email}</span>
+                  {tp('Code envoye a')} <span className="text-primary-500 font-medium">{email}</span>
                 </p>
               </div>
               <form onSubmit={handleVerifyOtp} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3 text-center">Code à 6 chiffres</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-3 text-center">{tp('Code à 6 chiffres')}</label>
                   <div className="flex gap-2 justify-center" onPaste={handleOtpPaste}>
                     {otp.map((digit, idx) => (
                       <input key={idx} ref={el => { otpRefs.current[idx] = el; }}
@@ -349,14 +353,14 @@ const Register = () => {
                 </div>
                 <button type="submit" disabled={loading || otp.join('').length !== 6}
                   className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20">
-                  {loading ? <Spinner /> : 'Verifier le code'}
+                  {loading ? <Spinner /> : tp('Verifier le code')}
                 </button>
               </form>
               <div className="mt-4 flex items-center justify-between text-xs">
                 <button onClick={() => { setStep(1); setOtp(['', '', '', '', '', '']); setError(''); }}
                   className="text-gray-500 hover:text-gray-300 transition flex items-center gap-1">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-                  Changer d email
+                  {tp('Changer d email')}
                 </button>
                 <button onClick={handleResend} disabled={resendCooldown > 0 || loading}
                   className="text-primary-500 hover:text-primary-400 disabled:text-gray-600 disabled:cursor-not-allowed transition">
@@ -369,28 +373,28 @@ const Register = () => {
           {step === 3 && (
             <div>
               <div className="mb-5">
-                <h1 className="text-xl font-bold text-gray-900">Finalisez votre compte</h1>
-                <p className="text-gray-600 text-sm mt-1">Plus qu'un instant</p>
+                <h1 className="text-xl font-bold text-gray-900">{tp('Finalisez votre compte')}</h1>
+                <p className="text-gray-600 text-sm mt-1">{tp('Plus qu\'un instant')}</p>
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wide">Nom complet</label>
-                  <input id="name-input" type="text" required placeholder="Votre nom et prenom"
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wide">{tp('Nom complet')}</label>
+                  <input id="name-input" type="text" required placeholder={tp('Votre nom et prenom')}
                     value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
                     className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wide">
-                    Téléphone <span className="text-gray-500 normal-case">(optionnel)</span>
+                    Téléphone <span className="text-gray-500 normal-case">{tp('(optionnel)')}</span>
                   </label>
                   <input type="tel" placeholder="+237 6XX XXX XXX"
                     value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
                     className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wide">Mot de passe</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wide">{tp('Mot de passe')}</label>
                   <div className="relative">
-                    <input type={showPassword ? 'text' : 'password'} required placeholder="Creez un mot de passe fort"
+                    <input type={showPassword ? 'text' : 'password'} required placeholder={tp('Creez un mot de passe fort')}
                       value={formData.password} onChange={e => setFormData(p => ({ ...p, password: e.target.value }))}
                       className="block w-full px-4 py-3 pr-11 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                     <button type="button" onClick={() => setShowPassword(v => !v)}
@@ -403,7 +407,7 @@ const Register = () => {
                     </button>
                   </div>
                   <div className="mt-2.5">
-                    <p className="text-[11px] font-medium text-gray-500 mb-1.5">Votre mot de passe doit contenir :</p>
+                    <p className="text-[11px] font-medium text-gray-500 mb-1.5">{tp('Votre mot de passe doit contenir :')}</p>
                     <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5">
                       {pwChecks.map((c) => {
                         const neutral = !formData.password;
@@ -429,14 +433,14 @@ const Register = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wide">Confirmer</label>
-                  <input type={showPassword ? 'text' : 'password'} required placeholder="Retapez le mot de passe"
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wide">{tp('Confirmer')}</label>
+                  <input type={showPassword ? 'text' : 'password'} required placeholder={tp('Retapez le mot de passe')}
                     value={formData.confirmPassword} onChange={e => setFormData(p => ({ ...p, confirmPassword: e.target.value }))}
                     className={`block w-full px-4 py-3 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition ${formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-500' : 'border-gray-300'}`} />
                   {formData.confirmPassword && formData.password === formData.confirmPassword && (
                     <p className="text-primary-400 text-xs mt-1 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                      Identiques
+                      {tp('Identiques')}
                     </p>
                   )}
                 </div>
@@ -446,13 +450,13 @@ const Register = () => {
                   <p className="text-xs text-gray-600 leading-relaxed">
                     J'accepte la{' '}
                     <button type="button" onClick={() => window.open('/ecom/privacy', '_blank')} className="text-primary-500 hover:text-primary-400 underline underline-offset-2 transition">
-                      politique de confidentialite
+                      {tp('politique de confidentialite')}
                     </button>
                   </p>
                 </label>
                 <button type="submit" disabled={loading || !canSubmit}
                   className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20">
-                  {loading ? <Spinner /> : <><span>Creer mon compte</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg></>}
+                  {loading ? <Spinner /> : <><span>{tp('Creer mon compte')}</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg></>}
                 </button>
               </form>
             </div>
@@ -462,7 +466,7 @@ const Register = () => {
         <p className="text-center mt-5 text-sm text-gray-600">
           Deja un compte ?{' '}
           <button onClick={() => navigate('/ecom/login')} className="text-primary-500 hover:text-primary-400 font-medium transition">
-            Se connecter
+            {tp('Se connecter')}
           </button>
         </p>
         <p className="text-center mt-3 text-xs text-gray-500">

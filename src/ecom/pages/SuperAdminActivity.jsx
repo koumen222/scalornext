@@ -6,6 +6,7 @@ import {
 import { analyticsApi } from '../services/analytics.js';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
 import SuperAdminShell from '../components/SuperAdminShell';
+import { tp } from '../i18n/platform.js';
 
 /* ─────────────────────────────────────────────── helpers ── */
 const nFmt = new Intl.NumberFormat('fr-FR');
@@ -219,7 +220,7 @@ const SuperAdminActivity = () => {
 
   return (
     <SuperAdminShell
-      title="Activité boutiques"
+      title={tp('Activité boutiques')}
       subtitle={subtitle}
       icon={Store}
       error={pageError}
@@ -230,12 +231,12 @@ const SuperAdminActivity = () => {
         <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
           <AlertTriangle className="w-10 h-10 text-amber-400" />
           <div>
-            <p className="text-base font-bold text-slate-700">Impossible de charger les données</p>
+            <p className="text-base font-bold text-slate-700">{tp('Impossible de charger les données')}</p>
             <p className="text-sm text-slate-500 mt-1">{pageError}</p>
           </div>
           <button onClick={() => load(true)}
             className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors">
-            Réessayer
+            {tp('Réessayer')}
           </button>
         </div>
       ) : (
@@ -291,7 +292,7 @@ const SuperAdminActivity = () => {
                   <div className="relative flex-1 min-w-[180px]">
                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                     <input value={search} onChange={e => setSearch(e.target.value)}
-                      placeholder="Boutique, owner, workspace…"
+                      placeholder={tp('Boutique, owner, workspace…')}
                       className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg outline-none focus:border-primary-400 bg-slate-50" />
                   </div>
                   <div className="flex items-center gap-1 flex-wrap">
@@ -299,7 +300,7 @@ const SuperAdminActivity = () => {
                       { key: 'revenue', label: 'CA' },
                       { key: 'orders',  label: 'Cmdes' },
                       { key: 'products', label: 'Produits' },
-                      { key: 'lastOrder', label: 'Activité' },
+                      { key: 'lastOrder', get label() { return tp('Activité'); } },
                       { key: 'created',  label: 'Date' },
                     ].map(s => (
                       <button key={s.key} onClick={() => toggleSort(s.key)}
@@ -314,7 +315,7 @@ const SuperAdminActivity = () => {
                 </div>
 
                 {filteredStores.length === 0 ? (
-                  <p className="py-12 text-center text-sm text-slate-400">Aucune boutique.</p>
+                  <p className="py-12 text-center text-sm text-slate-400">{tp('Aucune boutique.')}</p>
                 ) : (
                   <div className="divide-y divide-slate-100">
                     {filteredStores.map((store, i) => {
@@ -332,9 +333,9 @@ const SuperAdminActivity = () => {
                                 <div className="flex flex-wrap items-center gap-1.5">
                                   <span className="text-sm font-bold text-slate-900 truncate max-w-[200px]">{store.name || '—'}</span>
                                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${store.isActive ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'}`}>
-                                    {store.isActive ? 'Active' : 'Inactive'}
+                                    {store.isActive ? 'Active' : tp('Inactive')}
                                   </span>
-                                  {store.isLegacyStore && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">Legacy</span>}
+                                  {store.isLegacyStore && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">{tp('Legacy')}</span>}
                                 </div>
                                 <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mt-1 text-[11px] text-slate-400">
                                   {store.subdomain && <span className="font-mono">{store.subdomain}</span>}
@@ -351,22 +352,22 @@ const SuperAdminActivity = () => {
                                 <p className="text-sm font-extrabold text-primary-700 tabular-nums">{fmtMoney(store.totalRevenue || 0)}</p>
                               </div>
                               <div className="text-center min-w-[40px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Cmdes</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Cmdes')}</p>
                                 <p className="text-sm font-extrabold text-slate-800 tabular-nums">{nFmt.format(store.totalOrders || 0)}</p>
                               </div>
                               <div className="text-center min-w-[48px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Panier</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Panier')}</p>
                                 <p className="text-sm font-extrabold text-slate-800 tabular-nums">{fmtMoney(avgOV)}</p>
                               </div>
                               <div className="text-center min-w-[44px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Produits</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Produits')}</p>
                                 <p className="text-sm font-extrabold text-slate-800 tabular-nums">{nFmt.format(store.totalProducts || 0)}</p>
                                 <div className="mt-0.5 h-1 bg-slate-100 rounded-full overflow-hidden w-10 mx-auto">
                                   <div className="h-full bg-violet-400 rounded-full" style={{ width: `${pubRatio}%` }} />
                                 </div>
                               </div>
                               <div className="text-center min-w-[52px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Dernière cmd</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Dernière cmd')}</p>
                                 <p className="text-xs font-bold text-slate-600">{timeAgo(store.lastOrderAt)}</p>
                               </div>
                               {store.url && (
@@ -396,7 +397,7 @@ const SuperAdminActivity = () => {
                     { label: 'Inactifs',          value: nFmt.format(userKpis.inactive),   icon: UserX,      accent: 'text-red-600'     },
                     { label: 'Avec boutique',     value: nFmt.format(userKpis.withOrders), icon: Store,      accent: 'text-blue-700'    },
                     { label: 'Actifs cette sem.', value: nFmt.format(userKpis.recentCnx),  icon: BarChart2,  accent: 'text-amber-700'   },
-                    { label: 'CA généré',         value: fmtMoney(userKpis.totalRev),      icon: TrendingUp, accent: 'text-primary-700' },
+                    { get label() { return tp('CA généré'); },         value: fmtMoney(userKpis.totalRev),      icon: TrendingUp, accent: 'text-primary-700' },
                   ].map(k => (
                     <div key={k.label} className="px-4 py-3">
                       <div className="flex items-center justify-between mb-1">
@@ -411,7 +412,7 @@ const SuperAdminActivity = () => {
                 {/* Distribution par rôle */}
                 {roleDistrib.length > 0 && (
                   <div className="px-5 py-3 border-b border-slate-100 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Rôles :</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{tp('Rôles :')}</span>
                     {roleDistrib.map(([role, count]) => (
                       <button key={role} onClick={() => setUserRoleFilter(userRoleFilter === role ? 'all' : role)}
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all border ${
@@ -424,7 +425,7 @@ const SuperAdminActivity = () => {
                       </button>
                     ))}
                     {userRoleFilter !== 'all' && (
-                      <button onClick={() => setUserRoleFilter('all')} className="text-[11px] text-slate-400 hover:text-slate-600 underline">Tout</button>
+                      <button onClick={() => setUserRoleFilter('all')} className="text-[11px] text-slate-400 hover:text-slate-600 underline">{tp('Tout')}</button>
                     )}
                   </div>
                 )}
@@ -434,7 +435,7 @@ const SuperAdminActivity = () => {
                   <div className="relative flex-1 min-w-[180px]">
                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                     <input value={userSearch} onChange={e => setUserSearch(e.target.value)}
-                      placeholder="Nom, email…"
+                      placeholder={tp('Nom, email…')}
                       className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg outline-none focus:border-primary-400 bg-slate-50" />
                   </div>
                   <div className="flex flex-wrap gap-1">
@@ -458,7 +459,7 @@ const SuperAdminActivity = () => {
 
                 {/* User list */}
                 {filteredUsers.length === 0 ? (
-                  <p className="py-12 text-center text-sm text-slate-400">Aucun utilisateur.</p>
+                  <p className="py-12 text-center text-sm text-slate-400">{tp('Aucun utilisateur.')}</p>
                 ) : (
                   <div className="divide-y divide-slate-100">
                     {filteredUsers.map((user, i) => {
@@ -479,7 +480,7 @@ const SuperAdminActivity = () => {
                                   {ROLE_LABELS[user.role] || user.role || '—'}
                                 </span>
                                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${user.isActive ? 'bg-primary-100 text-primary-700' : 'bg-red-100 text-red-600'}`}>
-                                  {user.isActive ? 'Actif' : 'Inactif'}
+                                  {user.isActive ? 'Actif' : tp('Inactif')}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 mt-1">
@@ -497,19 +498,19 @@ const SuperAdminActivity = () => {
                             {/* stats */}
                             <div className="hidden sm:flex items-center gap-5 flex-shrink-0">
                               <div className="text-right min-w-[80px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">CA total</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('CA total')}</p>
                                 <p className="text-sm font-extrabold text-primary-700 tabular-nums">{fmtMoney(user.totalRevenue || 0)}</p>
                               </div>
                               <div className="text-right min-w-[52px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Cmdes</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Cmdes')}</p>
                                 <p className="text-sm font-extrabold text-slate-800 tabular-nums">{nFmt.format(user.totalOrders || 0)}</p>
                               </div>
                               <div className="text-right min-w-[52px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Boutiques</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Boutiques')}</p>
                                 <p className="text-sm font-extrabold text-slate-800 tabular-nums">{user.boutiqueCount || 0}</p>
                               </div>
                               <div className="text-right min-w-[60px]">
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Dernière cnx</p>
+                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Dernière cnx')}</p>
                                 <p className="text-xs font-bold text-slate-600">{timeAgo(user.lastLogin)}</p>
                               </div>
                             </div>
@@ -542,7 +543,7 @@ const SuperAdminActivity = () => {
             {tab === 'products' && (
               <div>
                 <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-                  <p className="text-xs text-slate-500">Produits les plus vendus — classement par quantité vendue (12 derniers mois)</p>
+                  <p className="text-xs text-slate-500">{tp('Produits les plus vendus — classement par quantité vendue (12 derniers mois)')}</p>
                   {productsLoading && (
                     <span className="flex items-center gap-1.5 text-xs text-slate-400">
                       <span className="w-3 h-3 border-2 border-slate-300 border-t-primary-500 rounded-full animate-spin" />
@@ -556,7 +557,7 @@ const SuperAdminActivity = () => {
                     Calcul du classement produits…
                   </div>
                 ) : productLeaderboard.length === 0 ? (
-                  <p className="py-12 text-center text-sm text-slate-400">Aucune vente produit disponible.</p>
+                  <p className="py-12 text-center text-sm text-slate-400">{tp('Aucune vente produit disponible.')}</p>
                 ) : (
                   <div className="divide-y divide-slate-100">
                     {productLeaderboard.map((product, i) => (
@@ -566,7 +567,7 @@ const SuperAdminActivity = () => {
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <div className="min-w-0">
                               <p className="text-sm font-semibold text-slate-900 line-clamp-1">{product.name}</p>
-                              <p className="text-[11px] text-slate-400 truncate">{product.storeName || 'Boutique inconnue'}</p>
+                              <p className="text-[11px] text-slate-400 truncate">{product.storeName || tp('Boutique inconnue')}</p>
                             </div>
                             <div className="flex flex-wrap items-center gap-1.5">
                               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700">{nFmt.format(product.unitsSold || 0)} vendus</span>
@@ -575,9 +576,9 @@ const SuperAdminActivity = () => {
                             </div>
                           </div>
                           <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[10px] text-slate-500">
-                            <span>Prix moy. <span className="font-semibold text-slate-700">{fmtMoney(product.averageSellingPrice || 0)}</span></span>
-                            <span>Marge <span className="font-semibold text-slate-700">{product.marginPercentEstimate || 0}%</span></span>
-                            <span>Dernière vente <span className="font-semibold text-slate-700">{timeAgo(product.lastOrderAt)}</span></span>
+                            <span>{tp('Prix moy.')} <span className="font-semibold text-slate-700">{fmtMoney(product.averageSellingPrice || 0)}</span></span>
+                            <span>{tp('Marge')} <span className="font-semibold text-slate-700">{product.marginPercentEstimate || 0}%</span></span>
+                            <span>{tp('Dernière vente')} <span className="font-semibold text-slate-700">{timeAgo(product.lastOrderAt)}</span></span>
                           </div>
                         </div>
                       </div>
@@ -591,10 +592,10 @@ const SuperAdminActivity = () => {
             {tab === 'logins' && (
               <div>
                 <div className="px-5 py-3 border-b border-slate-100">
-                  <p className="text-xs text-slate-500">Dernières connexions enregistrées</p>
+                  <p className="text-xs text-slate-500">{tp('Dernières connexions enregistrées')}</p>
                 </div>
                 {recentLogins.length === 0 ? (
-                  <p className="py-12 text-center text-sm text-slate-400">Aucune connexion.</p>
+                  <p className="py-12 text-center text-sm text-slate-400">{tp('Aucune connexion.')}</p>
                 ) : (
                   <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
                     {recentLogins.map((login, i) => (

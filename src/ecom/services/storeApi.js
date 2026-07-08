@@ -229,6 +229,7 @@ export const storeProductsApi = {
   disableDigitalProduct: (id) => ecomApi.delete(`/store-products/${id}/digital-product`),
   deleteProduct: (id) => ecomApi.delete(`/store-products/${id}`),
   getCategories: () => ecomApi.get('/store-products/categories/list'),
+  autoGenerateCategories: (scope = 'uncategorized') => ecomApi.post('/store-products/categories/auto-generate', { scope }, { timeout: 0 }),
   exportCsv: (params = {}) => ecomApi.get('/store-products/export/csv', { params, responseType: 'blob' }),
   importCsv: (file) => {
     const formData = new FormData();

@@ -13,6 +13,7 @@ import {
   Bar
 } from 'recharts';
 import { marketingApi } from '../services/marketingApi.js';
+import { tp } from '../i18n/platform.js';
 
 const fmtNum = (n) => (n || 0).toLocaleString('fr-FR');
 
@@ -71,20 +72,20 @@ export default function EmailAnalytics() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Email Analytics</h1>
-            <p className="text-sm text-gray-500">Evolution journaliere des campagnes email: envoi, ouverture, clic</p>
+            <h1 className="text-2xl font-bold text-gray-900">{tp('Email Analytics')}</h1>
+            <p className="text-sm text-gray-500">{tp('Evolution journaliere des campagnes email: envoi, ouverture, clic')}</p>
           </div>
           <Link
             to="/ecom/marketing"
             className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border border-gray-200 rounded-lg bg-white hover:bg-gray-100"
           >
-            Retour marketing
+            {tp('Retour marketing')}
           </Link>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 md:flex-row md:items-end">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Periode</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Periode')}</label>
             <select
               value={days}
               onChange={(e) => {
@@ -94,15 +95,15 @@ export default function EmailAnalytics() {
               }}
               className="px-3 py-2 text-sm border border-gray-300 rounded-lg"
             >
-              <option value={7}>7 jours</option>
-              <option value={30}>30 jours</option>
-              <option value={90}>90 jours</option>
-              <option value={180}>180 jours</option>
+              <option value={7}>{tp('7 jours')}</option>
+              <option value={30}>{tp('30 jours')}</option>
+              <option value={90}>{tp('90 jours')}</option>
+              <option value={180}>{tp('180 jours')}</option>
             </select>
           </div>
 
           <div className="md:min-w-[280px]">
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Campagne</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Campagne')}</label>
             <select
               value={campaignId}
               onChange={(e) => {
@@ -112,7 +113,7 @@ export default function EmailAnalytics() {
               }}
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
             >
-              <option value="">Toutes les campagnes</option>
+              <option value="">{tp('Toutes les campagnes')}</option>
               {campaigns.map((c) => (
                 <option key={c._id} value={c._id}>{c.name}</option>
               ))}
@@ -123,7 +124,7 @@ export default function EmailAnalytics() {
             onClick={() => loadAnalytics(days, campaignId)}
             className="px-4 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700"
           >
-            Actualiser
+            {tp('Actualiser')}
           </button>
         </div>
 
@@ -148,10 +149,10 @@ export default function EmailAnalytics() {
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <h2 className="text-sm font-semibold text-gray-800 mb-3">Evolution journaliere des volumes</h2>
+          <h2 className="text-sm font-semibold text-gray-800 mb-3">{tp('Evolution journaliere des volumes')}</h2>
           <div className="h-80">
             {loading ? (
-              <div className="h-full flex items-center justify-center text-sm text-gray-500">Chargement...</div>
+              <div className="h-full flex items-center justify-center text-sm text-gray-500">{tp('Chargement...')}</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
@@ -171,10 +172,10 @@ export default function EmailAnalytics() {
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <h2 className="text-sm font-semibold text-gray-800 mb-3">Taux journaliers</h2>
+          <h2 className="text-sm font-semibold text-gray-800 mb-3">{tp('Taux journaliers')}</h2>
           <div className="h-72">
             {loading ? (
-              <div className="h-full flex items-center justify-center text-sm text-gray-500">Chargement...</div>
+              <div className="h-full flex items-center justify-center text-sm text-gray-500">{tp('Chargement...')}</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>

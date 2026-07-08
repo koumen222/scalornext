@@ -4,7 +4,8 @@ import {
   ArrowRight, RefreshCw, Download, Globe,
   Package, ShoppingCart, Zap, TrendingUp,
   ExternalLink, CreditCard, Youtube, Users, MessageCircle, Lightbulb,
-  ChevronDown, ChevronLeft, ChevronRight, Calendar
+  ChevronDown, ChevronLeft, ChevronRight, Calendar,
+  Eye, Wallet, ShoppingBag, Percent
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -18,6 +19,7 @@ import {
 import ecomApi from '../services/ecommApi';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useStore } from '../contexts/StoreContext.jsx';
+import { usePlatformT, tp } from '../i18n/platform.js';
 
 const TODAY_AUTO_REFRESH_MS = 15000;
 const INITIAL_AUTO_REFRESH_DELAY_MS = 1200;
@@ -226,6 +228,7 @@ const getPresetSelection = (key, referenceDate = new Date()) => {
 };
 
 export default function StoreDashboard() {
+  const t = usePlatformT();
   const { workspace } = useEcomAuth();
   const { activeStore } = useStore();
   const fallbackWorkspaceId = (() => {
@@ -484,6 +487,16 @@ export default function StoreDashboard() {
   const analytics = dashboardData?.analytics?.overview || {};
   const orders = dashboardData?.orders || {};
   const timeline = dashboardData?.analytics?.timeline || [];
+  // Devise = celle renvoyée par l'API stats (revenus déjà convertis côté serveur),
+  // sinon la devise configurée sur la boutique active. Jamais « FCFA » en dur.
+  const currency = dashboardData?.storeCurrency
+    || activeStore?.storeSettings?.storeCurrency
+    || activeStore?.storeSettings?.currency
+    || activeStore?.currency
+    || workspace?.storeSettings?.storeCurrency
+    || 'XAF';
+  // Libellé affiché : « FCFA » pour XAF/XOF, sinon le code de la devise (GNF, EUR…).
+  const currencyLabel = (currency === 'XAF' || currency === 'XOF') ? 'FCFA' : currency;
   const applyPreset = (key, label) => {
     setDateRange(null);
     setPeriod(key);
@@ -516,10 +529,10 @@ export default function StoreDashboard() {
   const processingCount = orders.processing || 0;
 
   const metrics = [
-    { key: 'visites', label: 'Visiteurs', value: n(analytics.uniqueVisitors || 0), sub: `${n(analytics.visitsToday || 0)} aujourd'hui` },
-    { key: 'revenus', label: 'Revenus', value: `${n(orders.totalRevenue || 0)} FCFA`, sub: `${n(orders.averageOrderValue || 0)} FCFA / commande` },
-    { key: 'commandes', label: 'Commandes', value: n(orders.total || 0), sub: `${orders.delivered || 0} livrées` },
-    { key: 'conversion', label: 'Conversion', value: `${analytics.conversionRate || 0}%`, sub: `${n(analytics.pageViews || 0)} pages vues` },
+    { key: 'visites', label: t('Visiteurs'), value: n(analytics.uniqueVisitors || 0), sub: t("{n} aujourd'hui", { n: n(analytics.visitsToday || 0) }), icon: Eye },
+    { key: 'revenus', label: t('Revenus'), value: `${n(orders.totalRevenue || 0)} ${currencyLabel}`, sub: t('{n} FCFA / commande', { n: n(orders.averageOrderValue || 0) }).replace('FCFA', currencyLabel), icon: Wallet },
+    { key: 'commandes', label: t('Commandes'), value: n(orders.total || 0), sub: t('{n} livrées', { n: orders.delivered || 0 }), icon: ShoppingBag },
+    { key: 'conversion', label: t('Conversion'), value: `${analytics.conversionRate || 0}%`, sub: t('{n} pages vues', { n: n(analytics.pageViews || 0) }), icon: Percent },
   ];
 
   // ── Séries du graphique ────────────────────────────────────────────────────
@@ -580,17 +593,17 @@ export default function StoreDashboard() {
       }));
   }
   const chartMetricLabel = {
-    visites: 'Visites',
-    commandes: 'Commandes',
-    revenus: 'Revenus',
-    conversion: 'Conversion',
+    visites: t('Visites'),
+    commandes: t('Commandes'),
+    revenus: t('Revenus'),
+    conversion: t('Conversion'),
   };
 
   const actions = [
-    { icon: Package, label: 'Commandes', to: '/ecom/boutique/orders', count: orders.total || 0 },
-    { icon: ShoppingCart, label: 'Nouveau produit', to: '/ecom/boutique/products/new' },
-    { icon: Zap, label: 'Thème', to: '/ecom/boutique/theme' },
-    { icon: TrendingUp, label: 'Campagne', to: '/ecom/campaigns/new' },
+    { icon: Package, label: t('Commandes'), to: '/ecom/boutique/orders', count: orders.total || 0 },
+    { icon: ShoppingCart, label: t('Nouveau produit'), to: '/ecom/boutique/products/new' },
+    { icon: Zap, label: t('Thème'), to: '/ecom/boutique/theme' },
+    { icon: TrendingUp, label: t('Campagne'), to: '/ecom/campaigns/new' },
   ];
 
   return (
@@ -607,23 +620,23 @@ export default function StoreDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl sm:text-lg font-bold sm:font-semibold text-gray-900">Vue d'ensemble</h1>
-          <p className="text-[13px] text-gray-400 mt-0.5">{periodLabel}</p>
+          <h1 className="text-2xl sm:text-[22px] font-bold tracking-tight text-gray-900">{t("Vue d'ensemble")}</h1>
+          <p className="text-[13px] text-gray-400 mt-1">{t(periodLabel)}</p>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           {(storeUrl || activeStore?.subdomain) && (
             <a href={storeUrl || `https://${activeStore.subdomain}.scalor.net`} target="_blank" rel="noopener noreferrer"
-              className="hidden sm:flex text-[13px] font-medium text-gray-500 hover:text-gray-900 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition items-center gap-1.5">
+              className="hidden sm:inline-flex text-[13px] font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-100 transition items-center gap-1.5">
               <Globe size={14} /> Boutique
             </a>
           )}
-          <div className="hidden sm:block h-5 w-px bg-gray-200 mx-1" />
+          <div className="hidden sm:block h-6 w-px bg-gray-200 mx-0.5" />
           <div className="relative flex-1 sm:flex-none">
             <button onClick={() => setDatePickerOpen(!datePickerOpen)}
-              className="flex w-full sm:w-auto sm:min-w-[190px] items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 sm:py-2 text-[13px] font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition">
+              className="flex w-full sm:w-auto sm:min-w-[190px] items-center justify-between gap-2 rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 sm:py-2 text-[13px] font-medium text-gray-700 shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:border-gray-300 hover:bg-gray-50 transition">
               <span className="flex items-center gap-2 min-w-0">
-                <Calendar size={14} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{periodLabel}</span>
+                <Calendar size={14} className="text-primary-500 flex-shrink-0" />
+                <span className="truncate">{t(periodLabel)}</span>
               </span>
               <ChevronDown size={14} className="text-gray-400 flex-shrink-0" />
             </button>
@@ -641,10 +654,10 @@ export default function StoreDashboard() {
               </>
             )}
           </div>
-          <button onClick={() => loadDashboard(false, { forceAllStores: true })} disabled={refreshing} className="p-2 sm:p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition">
+          <button onClick={() => loadDashboard(false, { forceAllStores: true })} disabled={refreshing} className="p-2.5 sm:p-2 text-gray-500 hover:text-gray-900 rounded-xl border border-gray-200/80 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:bg-gray-50 hover:border-gray-300 transition">
             <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
           </button>
-          <button onClick={exportAnalytics} className="p-2 sm:p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition">
+          <button onClick={exportAnalytics} className="p-2.5 sm:p-2 text-gray-500 hover:text-gray-900 rounded-xl border border-gray-200/80 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:bg-gray-50 hover:border-gray-300 transition">
             <Download size={16} />
           </button>
         </div>
@@ -664,37 +677,51 @@ export default function StoreDashboard() {
       )}
 
       {/* Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-primary-100 rounded-xl shadow-[0_14px_30px_-20px_rgba(16,24,40,0.28)] overflow-hidden">
-        {metrics.map((m, i) => (
-          <button key={i} onClick={() => setChartMetric(m.key)}
-            className={`bg-white px-4 sm:px-5 py-3.5 sm:py-4 text-left shadow-[0_8px_18px_-14px_rgba(16,24,40,0.28)] transition-all hover:bg-gray-50 hover:shadow-[0_16px_30px_-18px_rgba(16,24,40,0.34)] ${chartMetric === m.key ? 'ring-inset ring-1 ring-primary-500' : ''}`}>
-            <p className="text-[10px] sm:text-[11px] font-medium text-gray-400 uppercase tracking-wider">{m.label}</p>
-            <p className="text-lg sm:text-xl font-semibold text-gray-900 mt-1 tabular-nums truncate">{m.value}</p>
-            {m.sub && <p className="text-[10px] sm:text-[11px] text-gray-400 mt-0.5 truncate">{m.sub}</p>}
-          </button>
-        ))}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {metrics.map((m, i) => {
+          const active = chartMetric === m.key;
+          return (
+            <button key={i} onClick={() => setChartMetric(m.key)}
+              className={`group relative flex flex-col items-start rounded-2xl border bg-white px-4 sm:px-5 py-4 text-left transition-all duration-200
+                ${active
+                  ? 'border-primary-500/40 shadow-[0_18px_40px_-24px_rgba(15,107,79,0.55)] ring-1 ring-primary-500/30'
+                  : 'border-gray-200/70 shadow-[0_2px_4px_rgba(16,24,40,0.04)] hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_20px_40px_-26px_rgba(16,24,40,0.35)]'}`}>
+              <div className="flex w-full items-center justify-between">
+                <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${active ? 'bg-primary-500 text-white' : 'bg-primary-50 text-primary-600 group-hover:bg-primary-100'}`}>
+                  <m.icon size={17} strokeWidth={2} />
+                </span>
+                <p className="text-[10px] sm:text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{m.label}</p>
+              </div>
+              <p className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 mt-3 tabular-nums truncate w-full">{m.value}</p>
+              {m.sub && <p className="text-[11px] text-gray-400 mt-1 truncate w-full">{m.sub}</p>}
+            </button>
+          );
+        })}
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded-xl border border-primary-100 shadow-[0_18px_36px_-24px_rgba(16,24,40,0.3)] overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-primary-50">
-          <div className="relative">
-            <select
-              value={chartMetric}
-              onChange={(e) => setChartMetric(e.target.value)}
-              className="appearance-none rounded-lg border border-primary-100 bg-white py-1.5 pl-3 pr-8 text-[12px] font-medium text-gray-700 outline-none transition hover:bg-gray-50"
-            >
-              {Object.entries(chartMetricLabel).map(([key, label]) => (
-                <option key={key} value={key}>{label}</option>
-              ))}
-            </select>
-            <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-400" />
+      <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+          <div className="flex items-center gap-2.5">
+            <span className="h-2 w-2 rounded-full bg-primary-500" />
+            <div className="relative">
+              <select
+                value={chartMetric}
+                onChange={(e) => setChartMetric(e.target.value)}
+                className="appearance-none rounded-lg border border-gray-200 bg-white py-1.5 pl-3 pr-8 text-[13px] font-semibold text-gray-800 outline-none transition hover:border-gray-300 hover:bg-gray-50 focus:border-primary-400"
+              >
+                {Object.entries(chartMetricLabel).map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-400" />
+            </div>
           </div>
           <button
             onClick={() => setIsChartCollapsed((value) => !value)}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-[12px] font-medium text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[12px] font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
           >
-            {isChartCollapsed ? 'Afficher' : 'Masquer'}
+            {isChartCollapsed ? t('Afficher') : t('Masquer')}
             <ChevronDown size={14} className={`transition-transform ${isChartCollapsed ? '' : 'rotate-180'}`} />
           </button>
         </div>
@@ -705,7 +732,7 @@ export default function StoreDashboard() {
               chartMetric === 'visites' ? 'visites'
                 : chartMetric === 'commandes' ? 'commandes'
                   : chartMetric === 'conversion' ? '%'
-                    : 'FCFA'
+                    : currencyLabel
             }
             // Granularité alignée sur la source de chaque série :
             //  - visites & conversion (timeline API) : horaire pour 24h/aujourd'hui/hier
@@ -722,7 +749,7 @@ export default function StoreDashboard() {
           />
         ) : (
           <div className="h-40 flex items-center justify-center text-[13px] text-gray-300">
-            Aucune donnée
+            {tp('Aucune donnée')}
           </div>
         ))}
       </div>
@@ -731,9 +758,11 @@ export default function StoreDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {actions.map((a, i) => (
           <Link key={i} to={a.to}
-            className="group flex items-center gap-3 bg-white border border-primary-100 rounded-xl px-4 py-3.5 shadow-[0_12px_24px_-18px_rgba(16,24,40,0.26)] hover:border-primary-300 hover:shadow-[0_18px_32px_-20px_rgba(16,24,40,0.3)] transition">
-            <a.icon size={16} className="text-gray-400 group-hover:text-gray-600 transition" />
-            <span className="text-[13px] font-medium text-gray-700 group-hover:text-gray-900 transition">{a.label}</span>
+            className="group flex items-center gap-3 bg-white border border-gray-200/70 rounded-2xl px-4 py-3.5 shadow-[0_2px_4px_rgba(16,24,40,0.04)] hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_16px_30px_-22px_rgba(16,24,40,0.3)] transition-all duration-200">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 group-hover:bg-primary-100 transition-colors flex-shrink-0">
+              <a.icon size={16} />
+            </span>
+            <span className="text-[13px] font-medium text-gray-700 group-hover:text-gray-900 transition truncate">{a.label}</span>
             {a.count !== undefined && <span className="ml-auto text-[11px] font-semibold text-gray-400 tabular-nums">{a.count}</span>}
           </Link>
         ))}
@@ -743,33 +772,33 @@ export default function StoreDashboard() {
       {(() => {
         const configs = {
           visites: {
-            title: 'Produits les plus visités',
+            title: t('Produits les plus visités'),
             data: dashboardData?.analytics?.visitsPerProduct || [],
             valueKey: 'visits',
             valueLabel: (p) => n(p.visits),
             subLabel: (p) => `${n(p.uniqueVisitorCount)} uniques`,
           },
           commandes: {
-            title: 'Produits les plus vendus',
+            title: t('Produits les plus vendus'),
             data: dashboardData?.topProductsBySales || [],
             valueKey: 'sold',
             valueLabel: (p) => `${n(p.sold)} vendus`,
-            subLabel: (p) => `${n(p.revenue)} FCFA`,
+            subLabel: (p) => `${n(p.revenue)} ${currencyLabel}`,
           },
           revenus: {
-            title: 'Produits par revenu',
+            title: t('Produits par revenu'),
             data: dashboardData?.topProductsByRevenue || [],
             valueKey: 'revenue',
-            valueLabel: (p) => `${n(p.revenue)} FCFA`,
+            valueLabel: (p) => `${n(p.revenue)} ${currencyLabel}`,
             subLabel: (p) => `${n(p.sold)} vendus`,
           },
           // Pas de classement produit propre à la conversion → produits les plus vendus
           conversion: {
-            title: 'Produits les plus vendus',
+            title: t('Produits les plus vendus'),
             data: dashboardData?.topProductsBySales || [],
             valueKey: 'sold',
             valueLabel: (p) => `${n(p.sold)} vendus`,
-            subLabel: (p) => `${n(p.revenue)} FCFA`,
+            subLabel: (p) => `${n(p.revenue)} ${currencyLabel}`,
           },
         };
         const cfg = configs[chartMetric];
@@ -777,20 +806,20 @@ export default function StoreDashboard() {
         const maxV = items[0]?.[cfg.valueKey] || 1;
 
         return (
-          <div className="bg-white rounded-xl border border-primary-100 shadow-[0_16px_34px_-24px_rgba(16,24,40,0.28)]">
-            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-              <p className="text-[13px] font-semibold text-gray-900">{cfg.title}</p>
-              <Link to="/ecom/boutique/products" className="text-[12px] text-gray-400 hover:text-gray-600 transition">Voir tout</Link>
+          <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <p className="text-[14px] font-semibold text-gray-900">{cfg.title}</p>
+              <Link to="/ecom/boutique/products" className="text-[12px] font-medium text-primary-600 hover:text-primary-700 transition">{tp('Voir tout')}</Link>
             </div>
             {items.length > 0 ? (
               <div className="divide-y divide-gray-50">
                 {items.map((p, i) => (
-                  <div key={p._id || p.name || i} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition">
-                    <span className="text-[11px] font-semibold text-gray-300 w-4 text-right tabular-nums">{i + 1}</span>
+                  <div key={p._id || p.name || i} className="flex items-center gap-3.5 px-5 py-3.5 hover:bg-gray-50/70 transition">
+                    <span className={`flex h-6 w-6 items-center justify-center rounded-lg text-[11px] font-bold tabular-nums flex-shrink-0 ${i === 0 ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-400'}`}>{i + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium text-gray-800 truncate">{p.name || 'Sans nom'}</p>
-                      <div className="mt-1.5 h-1 bg-gray-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-primary-400 rounded-full" style={{ width: `${(p[cfg.valueKey] / maxV) * 100}%` }} />
+                      <p className="text-[13px] font-medium text-gray-800 truncate">{p.name || t('Sans nom')}</p>
+                      <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full transition-all duration-500" style={{ width: `${(p[cfg.valueKey] / maxV) * 100}%` }} />
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
@@ -801,33 +830,35 @@ export default function StoreDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="py-10 text-center text-[13px] text-gray-300">Aucune donnée disponible</div>
+              <div className="py-12 text-center text-[13px] text-gray-300">{tp('Aucune donnée disponible')}</div>
             )}
           </div>
         );
       })()}
 
       {/* Communauté */}
-      <div className="bg-white rounded-xl border border-primary-100 shadow-[0_16px_34px_-24px_rgba(16,24,40,0.28)] overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100">
-          <p className="text-[13px] font-semibold text-gray-900">Communauté</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Connectez-vous avec des créateurs, apprenez de nouvelles compétences et aidez à façonner l'avenir de Chariow.</p>
+          <p className="text-[14px] font-semibold text-gray-900">{t('Communauté')}</p>
+          <p className="text-[12px] text-gray-400 mt-0.5">{t("Connectez-vous avec des créateurs, apprenez de nouvelles compétences et aidez à façonner l'avenir de Scalor.")}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
           {[
-            { icon: Youtube, label: 'Rejoignez-nous sur Youtube', desc: 'Découvrez des vidéos pratiques pour apprendre à utiliser Chariow', href: 'https://youtube.com/@chariow', color: 'text-red-500' },
-            { icon: Users, label: 'Rejoignez notre Hub', desc: "Rejoignez la communauté d'entraide des créateurs Chariow", href: '#', color: 'text-indigo-500' },
-            { icon: Lightbulb, label: 'Partagez vos suggestions', desc: 'Vos suggestions nous aident à améliorer Chariow', href: '#', color: 'text-amber-500' },
-            { icon: MessageCircle, label: 'Rejoignez-nous sur WhatsApp', desc: 'Rejoignez notre canal WhatsApp', href: '#', color: 'text-primary-500' },
+            { icon: Youtube, label: t('Rejoignez-nous sur Youtube'), desc: t('Découvrez des vidéos pratiques pour apprendre à utiliser Scalor'), href: 'https://youtube.com/@chariow', color: 'text-red-500', bg: 'bg-red-50' },
+            { icon: Users, label: t('Rejoignez notre Hub'), desc: t("Rejoignez la communauté d'entraide des créateurs Scalor"), href: '#', color: 'text-indigo-500', bg: 'bg-indigo-50' },
+            { icon: Lightbulb, label: t('Partagez vos suggestions'), desc: t('Vos suggestions nous aident à améliorer Scalor'), href: '#', color: 'text-amber-500', bg: 'bg-amber-50' },
+            { icon: MessageCircle, label: t('Rejoignez-nous sur WhatsApp'), desc: t('Rejoignez notre canal WhatsApp'), href: '#', color: 'text-primary-600', bg: 'bg-primary-50' },
           ].map((c, i) => (
             <a key={i} href={c.href} target="_blank" rel="noopener noreferrer"
-              className="flex items-start gap-3 px-5 py-4 hover:bg-gray-50 transition">
-              <c.icon size={18} className={`${c.color} mt-0.5 flex-shrink-0`} />
+              className="group flex items-start gap-3.5 px-5 py-4 hover:bg-gray-50/70 transition">
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${c.bg} ${c.color} flex-shrink-0`}>
+                <c.icon size={18} />
+              </span>
               <div className="min-w-0">
                 <p className="text-[13px] font-medium text-gray-800">{c.label}</p>
                 <p className="text-[11px] text-gray-400 mt-0.5">{c.desc}</p>
               </div>
-              <ArrowRight size={12} className="text-gray-300 mt-1 flex-shrink-0 ml-auto" />
+              <ArrowRight size={13} className="text-gray-300 group-hover:text-gray-500 group-hover:translate-x-0.5 transition-all mt-1 flex-shrink-0 ml-auto" />
             </a>
           ))}
         </div>
@@ -915,10 +946,10 @@ const AreaChart = ({ data, unit, hourly, rangeStart, rangeEnd, respectSelectedRa
       ? `${point.date.split('T')[1] || ''}h`
       : new Date(point.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }),
   }));
-  const lineColor = '#28a8f5';
+  const lineColor = '#0F6B4F';
   const formatValue = (value) => {
-    if (unit === 'FCFA') return `${new Intl.NumberFormat('fr-FR').format(value || 0)} FCFA`;
     if (unit === '%') return `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(value || 0)} %`;
+    if (unit && unit !== 'visites' && unit !== 'commandes') return `${new Intl.NumberFormat('fr-FR').format(value || 0)} ${unit}`;
     return new Intl.NumberFormat('fr-FR').format(value || 0);
   };
   const formatAxisValue = (value) => new Intl.NumberFormat('fr-FR', {
@@ -993,6 +1024,7 @@ const DAYS = ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'];
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeLabel, selectedRange }) => {
+  const t = usePlatformT();
   const today = new Date();
   const initialPreset = selectedRange ? null : getPresetSelection(activePeriod === 'custom' ? '7d' : activePeriod) || getPresetSelection('7d');
   const initialStart = selectedRange?.start ? new Date(selectedRange.start) : initialPreset?.start || startOfDay(today);
@@ -1084,13 +1116,13 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
     {
       title: 'Trimestres',
       items: [
-        { key: 'quarter', label: 'Trimestre à ce jour' },
+        { key: 'quarter', get label() { return tp('Trimestre à ce jour'); } },
       ],
     },
     {
       title: null,
       items: [
-        { key: 'custom', label: 'Période personnalisée' },
+        { key: 'custom', get label() { return tp('Période personnalisée'); } },
       ],
     },
   ];
@@ -1139,7 +1171,7 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
     const days = getDays(year, month);
     return (
       <div>
-        <p className="text-[14px] font-semibold text-gray-900 text-center mb-4">{MONTHS[month]} {year}</p>
+        <p className="text-[14px] font-semibold text-gray-900 text-center mb-4">{t(MONTHS[month])} {year}</p>
         <div className="grid grid-cols-7 gap-y-1">
           {DAYS.map((d) => <div key={d} className="text-[11px] font-medium text-gray-400 text-center py-1">{d}</div>)}
           {days.map((d, i) => (
@@ -1168,12 +1200,12 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
         <div className="border-b border-gray-100 px-3 py-3 sm:w-56 sm:border-b-0 sm:border-r sm:px-0 sm:py-4 flex-shrink-0">
           {presetSections.map((section) => (
             <div key={section.title || section.items[0].key} className="sm:mb-2">
-              {section.title && <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">{section.title}</p>}
+              {section.title && <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">{t(section.title)}</p>}
               {section.items.map((item) => (
                 <button key={item.key} onClick={() => handlePreset(item.key)}
                   className={`block w-full rounded-xl px-4 py-2.5 text-left text-[14px] transition sm:rounded-none
                     ${activePreset === item.key ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-600 hover:bg-gray-50'}`}>
-                  {item.label}
+                  {t(item.label)}
                 </button>
               ))}
             </div>
@@ -1185,11 +1217,11 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
         {/* Date inputs */}
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <div className="flex min-h-[44px] flex-1 items-center rounded-xl border border-gray-200 bg-white px-4 text-[14px] text-gray-700 shadow-sm">
-            {fmtInput(selStart) || <span className="text-gray-300">Date de début</span>}
+            {fmtInput(selStart) || <span className="text-gray-300">{t('Date de début')}</span>}
           </div>
           <ArrowRight size={16} className="hidden text-gray-300 sm:block flex-shrink-0" />
           <div className="flex min-h-[44px] flex-1 items-center rounded-xl border border-gray-200 bg-white px-4 text-[14px] text-gray-700 shadow-sm">
-            {fmtInput(selEnd) || <span className="text-gray-300">Date de fin</span>}
+            {fmtInput(selEnd) || <span className="text-gray-300">{t('Date de fin')}</span>}
           </div>
         </div>
 
@@ -1211,11 +1243,11 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
         <div className="mt-5 flex justify-end gap-2 border-t border-gray-100 pt-4">
           <button onClick={onClose}
             className="rounded-xl border border-gray-200 px-4 py-2 text-[13px] font-medium text-gray-600 hover:bg-gray-50 transition">
-            Annuler
+            {t('Annuler')}
           </button>
           <button onClick={handleApply} disabled={!selStart}
             className="rounded-xl bg-gray-900 px-4 py-2 text-[13px] font-medium text-white hover:bg-gray-800 transition disabled:opacity-30">
-            Appliquer
+            {t('Appliquer')}
           </button>
         </div>
       </div>

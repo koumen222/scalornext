@@ -7,6 +7,7 @@ import {
 import ecomApi from '../services/ecommApi.js';
 import ProductImport from '../components/ProductImport.jsx';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR').format(n || 0);
 const fmtF = (n) => `${fmt(n)} F`;
@@ -14,8 +15,8 @@ const fmtF = (n) => `${fmt(n)} F`;
 const STATUS = {
   research:  { label: 'Recherche', cls: 'bg-sky-100 text-sky-700' },
   testing:   { label: 'Test',      cls: 'bg-amber-100 text-amber-700' },
-  validated: { label: 'Validé',    cls: 'bg-primary-100 text-primary-700' },
-  rejected:  { label: 'Rejeté',    cls: 'bg-red-100 text-red-600' },
+  validated: { get label() { return tp('Validé'); },    cls: 'bg-primary-100 text-primary-700' },
+  rejected:  { get label() { return tp('Rejeté'); },    cls: 'bg-red-100 text-red-600' },
 };
 
 const marginColor = (m) =>
@@ -67,22 +68,22 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
           {/* KPIs */}
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Marge</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Marge')}</p>
               <p className={`text-lg font-bold mt-0.5 ${marginColor(m)}`}>{m.toFixed(1)}%</p>
             </div>
             <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Bénéfice</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Bénéfice')}</p>
               <p className="text-lg font-bold mt-0.5 text-primary-600">{fmtF(product.profit)}</p>
             </div>
             <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Score</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Score')}</p>
               <p className="text-lg font-bold mt-0.5 text-amber-500">{product.opportunityScore || 3}/5</p>
             </div>
           </div>
 
           {/* Finances */}
           <div>
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Finances</p>
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">{tp('Finances')}</p>
             <div className="space-y-1.5">
               {[
                 ['Prix de vente',   fmtF(product.sellingPrice), 'font-bold text-gray-900 text-base'],
@@ -102,16 +103,16 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
           {/* Marché */}
           {(product.demand || product.competition || product.trend) && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Marché</p>
+              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">{tp('Marché')}</p>
               <div className="flex flex-wrap gap-2">
                 {product.demand && (
                   <span className="px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
-                    Demande: {product.demand === 'high' ? 'Élevée' : product.demand === 'low' ? 'Faible' : 'Moyenne'}
+                    Demande: {product.demand === 'high' ? 'Élevée' : product.demand === 'low' ? 'Faible' : tp('Moyenne')}
                   </span>
                 )}
                 {product.competition && (
                   <span className="px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
-                    Concurrence: {product.competition === 'high' ? 'Élevée' : product.competition === 'low' ? 'Faible' : 'Moyenne'}
+                    Concurrence: {product.competition === 'high' ? 'Élevée' : product.competition === 'low' ? 'Faible' : tp('Moyenne')}
                   </span>
                 )}
                 {product.trend && (
@@ -126,7 +127,7 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
           {/* Liens */}
           {(product.creative || product.alibabaLink || product.researchLink || product.websiteUrl) && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Sources</p>
+              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">{tp('Sources')}</p>
               <div className="flex flex-wrap gap-2">
                 <LinkPill href={product.creative} label="Creative" />
                 <LinkPill href={product.alibabaLink} label="Alibaba" />
@@ -141,7 +142,7 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
             <div className="grid grid-cols-2 gap-3">
               {product.pros?.filter(p=>p).length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold text-primary-600 uppercase tracking-widest mb-1.5">✓ Forces</p>
+                  <p className="text-[11px] font-bold text-primary-600 uppercase tracking-widest mb-1.5">{tp('✓ Forces')}</p>
                   <ul className="space-y-1">
                     {product.pros.filter(p=>p).map((p,i) => (
                       <li key={i} className="text-xs text-gray-600 flex items-start gap-1.5">
@@ -153,7 +154,7 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
               )}
               {product.cons?.filter(c=>c).length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold text-red-500 uppercase tracking-widest mb-1.5">✗ Faiblesses</p>
+                  <p className="text-[11px] font-bold text-red-500 uppercase tracking-widest mb-1.5">{tp('✗ Faiblesses')}</p>
                   <ul className="space-y-1">
                     {product.cons.filter(c=>c).map((c,i) => (
                       <li key={i} className="text-xs text-gray-600 flex items-start gap-1.5">
@@ -169,7 +170,7 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
           {/* Notes */}
           {product.notes && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Notes</p>
+              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">{tp('Notes')}</p>
               <p className="text-xs text-gray-600 leading-relaxed bg-gray-50 rounded-xl p-3">{product.notes}</p>
             </div>
           )}
@@ -252,7 +253,7 @@ const ProductResearchList = () => {
       await ecomApi.put(`/products-research/research/${p._id}/status`, { status: 'testing' });
       setSelected(null);
       loadProducts();
-    } catch { setError('Erreur lors de la création'); }
+    } catch { setError(tp('Erreur lors de la création')); }
   };
 
   const exportCSV = () => {
@@ -290,24 +291,24 @@ const ProductResearchList = () => {
       <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-base font-bold text-gray-900">Veille Produits</h1>
+            <h1 className="text-base font-bold text-gray-900">{tp('Veille Produits')}</h1>
             <p className="text-[11px] text-gray-400 mt-0.5">
               {products.length} produit{products.length !== 1 ? 's' : ''} · {researchCount} en recherche · {testingCount} en test · {validatedCount} validés
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowImport(v => !v)}
-              className="p-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition" title="Importer CSV">
+              className="p-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition" title={tp('Importer CSV')}>
               <Upload className="w-4 h-4" />
             </button>
             <button onClick={exportCSV}
-              className="p-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition" title="Exporter CSV">
+              className="p-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition" title={tp('Exporter CSV')}>
               <Download className="w-4 h-4" />
             </button>
             <button onClick={() => navigate('/ecom/product-finder')}
               className="flex items-center gap-1.5 px-3.5 py-2 bg-[#0F6B4F] hover:bg-[#0a5740] text-white text-sm font-bold rounded-xl transition shadow-sm">
               <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Ajouter</span>
+              <span className="hidden sm:inline">{tp('Ajouter')}</span>
             </button>
           </div>
         </div>
@@ -320,7 +321,7 @@ const ProductResearchList = () => {
           {[
             { label: 'Total', value: products.length, color: 'text-gray-900' },
             { label: 'En test', value: testingCount, color: 'text-amber-600' },
-            { label: 'Validés', value: validatedCount, color: 'text-primary-600' },
+            { get label() { return tp('Validés'); }, value: validatedCount, color: 'text-primary-600' },
             { label: 'Marge moy.', value: `${avgMargin.toFixed(0)}%`, color: marginColor(avgMargin) },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
@@ -342,26 +343,26 @@ const ProductResearchList = () => {
           <label className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
             <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Rechercher…"
+              placeholder={tp('Rechercher…')}
               className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-white outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] transition"
             />
           </label>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
             className="px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] text-gray-600">
-            <option value="">Tous</option>
-            <option value="research">Recherche</option>
-            <option value="testing">Test</option>
-            <option value="validated">Validé</option>
-            <option value="rejected">Rejeté</option>
+            <option value="">{tp('Tous')}</option>
+            <option value="research">{tp('Recherche')}</option>
+            <option value="testing">{tp('Test')}</option>
+            <option value="validated">{tp('Validé')}</option>
+            <option value="rejected">{tp('Rejeté')}</option>
           </select>
           <select value={`${sortBy}-${sortOrder}`}
             onChange={e => { const [f,o] = e.target.value.split('-'); setSortBy(f); setSortOrder(o); }}
             className="px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] text-gray-600">
-            <option value="researchDate-desc">Récents</option>
-            <option value="researchDate-asc">Anciens</option>
-            <option value="margin-desc">Marge ↓</option>
-            <option value="margin-asc">Marge ↑</option>
-            <option value="opportunityScore-desc">Score ↓</option>
+            <option value="researchDate-desc">{tp('Récents')}</option>
+            <option value="researchDate-asc">{tp('Anciens')}</option>
+            <option value="margin-desc">{tp('Marge ↓')}</option>
+            <option value="margin-asc">{tp('Marge ↑')}</option>
+            <option value="opportunityScore-desc">{tp('Score ↓')}</option>
             <option value="name-asc">A-Z</option>
           </select>
         </div>
@@ -376,8 +377,8 @@ const ProductResearchList = () => {
             <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
               <Package className="w-5 h-5 text-gray-400" />
             </div>
-            <p className="text-sm font-semibold text-gray-900">Aucun produit</p>
-            <p className="text-xs text-gray-400 mt-1 mb-5">Ajoutez votre premier produit de veille</p>
+            <p className="text-sm font-semibold text-gray-900">{tp('Aucun produit')}</p>
+            <p className="text-xs text-gray-400 mt-1 mb-5">{tp('Ajoutez votre premier produit de veille')}</p>
             <button onClick={() => navigate('/ecom/product-finder')}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0F6B4F] text-white text-sm font-bold rounded-xl hover:bg-[#0a5740] transition">
               <Plus className="w-4 h-4" />Ajouter un produit

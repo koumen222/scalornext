@@ -5,6 +5,7 @@ import {
   Copy, Check, Wifi, WifiOff, X
 } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const waStatus = (status) => {
   if (status === 'connected' || status === 'active')
@@ -65,7 +66,7 @@ const WhatsAppConnexion = () => {
       setLoading(true); setError('');
       const res = await ecomApi.post('/v1/external/whatsapp/refresh-status', { userId });
       if (res.data.success) setInstances(res.data.instances || []);
-    } catch { setError('Erreur lors de la mise à jour');
+    } catch { setError(tp('Erreur lors de la mise à jour'));
     } finally { setLoading(false); }
   };
 
@@ -138,8 +139,8 @@ const WhatsAppConnexion = () => {
               <MessageCircle className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-sm font-bold text-gray-900">Connexion WhatsApp</h1>
-              <p className="text-[11px] text-gray-400">Instances ZenChat API</p>
+              <h1 className="text-sm font-bold text-gray-900">{tp('Connexion WhatsApp')}</h1>
+              <p className="text-[11px] text-gray-400">{tp('Instances ZenChat API')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -149,7 +150,7 @@ const WhatsAppConnexion = () => {
             </button>
             <button onClick={() => setShowAddForm(v => !v)}
               className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition shadow-sm">
-              {showAddForm ? <X className="w-4 h-4" /> : <><Plus className="w-4 h-4" /><span>Lier</span></>}
+              {showAddForm ? <X className="w-4 h-4" /> : <><Plus className="w-4 h-4" /><span>{tp('Lier')}</span></>}
             </button>
           </div>
         </div>
@@ -157,19 +158,19 @@ const WhatsAppConnexion = () => {
         {/* KPI row */}
         <div className="grid grid-cols-4 gap-2">
           <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Total</p>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Total')}</p>
             <p className="text-xl font-bold text-gray-900 mt-0.5">{instances.length}</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Connectées</p>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Connectées')}</p>
             <p className={`text-xl font-bold mt-0.5 ${connected > 0 ? 'text-primary-600' : 'text-gray-400'}`}>{connected}</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Hors ligne</p>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Hors ligne')}</p>
             <p className={`text-xl font-bold mt-0.5 ${offline > 0 ? 'text-red-500' : 'text-gray-400'}`}>{offline}</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Msgs/jour</p>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Msgs/jour')}</p>
             <p className="text-xl font-bold text-gray-900 mt-0.5">{totalDaily}</p>
           </div>
         </div>
@@ -177,7 +178,7 @@ const WhatsAppConnexion = () => {
         {/* Global usage */}
         {instances.length > 0 && (
           <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 space-y-3">
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Usage global</p>
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{tp('Usage global')}</p>
             <UsageBar used={totalDaily} limit={totalDailyL} label="Messages aujourd'hui" />
             <UsageBar used={totalMonthly} limit={totalMonthlyL} label="Messages ce mois" />
           </div>
@@ -186,7 +187,7 @@ const WhatsAppConnexion = () => {
         {/* Add Form */}
         {showAddForm && (
           <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
-            <h2 className="text-sm font-bold text-gray-900">Nouvelle instance ZenChat</h2>
+            <h2 className="text-sm font-bold text-gray-900">{tp('Nouvelle instance ZenChat')}</h2>
             <div className="px-3 py-2.5 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-700">
               Pas encore de compte ZenChat ?{' '}
               <a href="https://zechat.site/" target="_blank" rel="noopener noreferrer"
@@ -212,11 +213,11 @@ const WhatsAppConnexion = () => {
               <div className="sm:col-span-2 flex justify-end gap-2 pt-1">
                 <button type="button" onClick={() => setShowAddForm(false)}
                   className="px-4 py-2.5 text-sm font-semibold text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
-                  Annuler
+                  {tp('Annuler')}
                 </button>
                 <button type="submit" disabled={submitting}
                   className="px-5 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 transition flex items-center gap-2">
-                  {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Liaison…</> : 'Enregistrer'}
+                  {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />{tp('Liaison…')}</> : tp('Enregistrer')}
                 </button>
               </div>
             </form>
@@ -241,7 +242,7 @@ const WhatsAppConnexion = () => {
               ? <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
               : <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />}
             <div className="flex-1">
-              <p className="font-semibold">{linkResult.verified && linkResult.status === 'connected' ? 'Instance connectée !' : 'Instance enregistrée'}</p>
+              <p className="font-semibold">{linkResult.verified && linkResult.status === 'connected' ? 'Instance connectée !' : tp('Instance enregistrée')}</p>
               {linkResult.message && <p className="text-xs opacity-80 mt-0.5">{linkResult.message}</p>}
             </div>
             <button onClick={() => setLinkResult(null)}><X className="w-4 h-4 opacity-50 hover:opacity-100" /></button>
@@ -252,18 +253,18 @@ const WhatsAppConnexion = () => {
         {loading ? (
           <div className="bg-white rounded-2xl border border-gray-100 py-16 flex flex-col items-center gap-3">
             <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
-            <p className="text-sm text-gray-500">Chargement…</p>
+            <p className="text-sm text-gray-500">{tp('Chargement…')}</p>
           </div>
         ) : instances.length === 0 ? (
           <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-16 text-center">
             <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="w-7 h-7 text-gray-300" />
             </div>
-            <p className="text-sm font-semibold text-gray-900">Aucune instance connectée</p>
-            <p className="text-xs text-gray-400 mt-1 mb-5">Liez votre compte WhatsApp via ZenChat pour commencer</p>
+            <p className="text-sm font-semibold text-gray-900">{tp('Aucune instance connectée')}</p>
+            <p className="text-xs text-gray-400 mt-1 mb-5">{tp('Liez votre compte WhatsApp via ZenChat pour commencer')}</p>
             <button onClick={() => setShowAddForm(true)}
               className="px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition">
-              Lier ma première instance
+              {tp('Lier ma première instance')}
             </button>
           </div>
         ) : (
@@ -307,7 +308,7 @@ const WhatsAppConnexion = () => {
                     {/* Token row */}
                     <div className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2">
                       <div className="min-w-0">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Token</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Token')}</p>
                         <p className="text-xs font-mono text-gray-500 mt-0.5">••••••••••••</p>
                       </div>
                       <button onClick={() => copy(inst.instanceToken, inst._id+'tok')}
@@ -320,13 +321,13 @@ const WhatsAppConnexion = () => {
                     {usage ? (
                       <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quotas</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Quotas')}</p>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                             usage.plan === 'free' ? 'bg-gray-100 text-gray-500'
                             : usage.plan === 'premium' ? 'bg-amber-100 text-amber-700'
                             : 'bg-primary-100 text-primary-700'
                           }`}>
-                            {usage.plan === 'free' ? 'Gratuit' : usage.plan === 'premium' ? 'Premium' : 'Illimité'}
+                            {usage.plan === 'free' ? 'Gratuit' : usage.plan === 'premium' ? 'Premium' : tp('Illimité')}
                           </span>
                         </div>
                         <UsageBar used={usage.dailyUsed || 0} limit={usage.dailyLimit || 100} label="Aujourd'hui" />
@@ -334,7 +335,7 @@ const WhatsAppConnexion = () => {
                         {usage.limitExceeded && (
                           <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-100 rounded-xl text-xs text-red-700">
                             <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                            <span className="flex-1">Limite atteinte.</span>
+                            <span className="flex-1">{tp('Limite atteinte.')}</span>
                             <a href="https://zechat.site/" target="_blank" rel="noopener noreferrer"
                               className="font-bold underline flex items-center gap-0.5">
                               Passer Premium <ExternalLink className="w-3 h-3" />
@@ -344,7 +345,7 @@ const WhatsAppConnexion = () => {
                       </div>
                     ) : (
                       <div className="space-y-2.5">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quotas</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Quotas')}</p>
                         <UsageBar used={0} limit={100} label="Aujourd'hui" />
                         <UsageBar used={0} limit={5000} label="Ce mois" />
                       </div>
@@ -358,8 +359,8 @@ const WhatsAppConnexion = () => {
                       <button onClick={() => testConnection(inst)} disabled={test?.loading}
                         className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl transition disabled:opacity-50 bg-[#0F6B4F] text-white hover:bg-[#0a5740]">
                         {test?.loading
-                          ? <><RefreshCw className="w-3 h-3 animate-spin" />Test…</>
-                          : 'Tester la connexion'}
+                          ? <><RefreshCw className="w-3 h-3 animate-spin" />{tp('Test…')}</>
+                          : tp('Tester la connexion')}
                       </button>
                     </div>
 

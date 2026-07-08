@@ -266,8 +266,8 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
   const [form, setForm] = useState({
     name: '', subject: '', previewText: '', 
     fromName: 'Scalor', 
-    fromEmail: 'contact@ecomcockpit.site', 
-    replyTo: 'support@ecomcockpit.site',
+    fromEmail: 'noreply@scalor.net',
+    replyTo: 'support@scalor.net',
     bodyHtml: '', bodyText: '', audienceType: 'custom_list',
     customEmails: '', 
     segmentFilter: { roles: [], period: '' }, 
@@ -455,8 +455,8 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div><Label>Nom expéditeur</Label><Inp value={form.fromName} onChange={e => sf('fromName', e.target.value)} placeholder="Scalor" /></div>
-            <div><Label>Email expéditeur</Label><Inp value={form.fromEmail} onChange={e => sf('fromEmail', e.target.value)} placeholder="contact@ecomcockpit.site" /></div>
-            <div><Label>Reply-To</Label><Inp value={form.replyTo} onChange={e => sf('replyTo', e.target.value)} placeholder="support@ecomcockpit.site" /></div>
+            <div><Label>Email expéditeur</Label><Inp value={form.fromEmail} onChange={e => sf('fromEmail', e.target.value)} placeholder="noreply@scalor.net" /></div>
+            <div><Label>Reply-To</Label><Inp value={form.replyTo} onChange={e => sf('replyTo', e.target.value)} placeholder="support@scalor.net" /></div>
           </div>
         </Section>
 

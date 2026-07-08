@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const PLAN_LABELS = { starter: 'Starter', pro: 'Pro', business: 'Business', enterprise: 'Enterprise' };
 const PLAN_COLORS = {
@@ -81,8 +82,8 @@ export default function SuperAdminScalorWhatsApp() {
   const handleSend = async () => {
     setError('');
     setResults(null);
-    if (!message.trim()) { setError('Rédigez un message avant d\'envoyer.'); return; }
-    if (!sendAll && selected.size === 0) { setError('Sélectionnez au moins un destinataire.'); return; }
+    if (!message.trim()) { setError(tp('Rédigez un message avant d\'envoyer.')); return; }
+    if (!sendAll && selected.size === 0) { setError(tp('Sélectionnez au moins un destinataire.')); return; }
 
     const count = sendAll ? '(tous les utilisateurs avec numéro)' : `${selected.size} utilisateur(s)`;
     if (!window.confirm(`Envoyer ce message à ${count} via ${adminInstance?.customName || adminInstance?.instanceName} ?`)) return;
@@ -116,8 +117,8 @@ export default function SuperAdminScalorWhatsApp() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">WhatsApp — Utilisateurs Scalor</h1>
-          <p className="text-sm text-gray-500 mt-1">Envoyez des messages WhatsApp aux utilisateurs de la plateforme Scalor.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{tp('WhatsApp — Utilisateurs Scalor')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{tp('Envoyez des messages WhatsApp aux utilisateurs de la plateforme Scalor.')}</p>
         </div>
         {/* Badge instance */}
         {adminInstance ? (
@@ -129,8 +130,8 @@ export default function SuperAdminScalorWhatsApp() {
         ) : (
           <div className="flex items-center gap-2 px-3 py-2 rounded-xl border bg-amber-50 border-amber-200 text-amber-700 text-sm font-medium">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
-            Aucune instance configurée
-            <a href="/ecom/super-admin/support" className="underline text-xs">Configurer</a>
+            {tp('Aucune instance configurée')}
+            <a href="/ecom/super-admin/support" className="underline text-xs">{tp('Configurer')}</a>
           </div>
         )}
       </div>
@@ -149,7 +150,7 @@ export default function SuperAdminScalorWhatsApp() {
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
-                placeholder="Nom, email, téléphone…"
+                placeholder={tp('Nom, email, téléphone…')}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
@@ -159,12 +160,12 @@ export default function SuperAdminScalorWhatsApp() {
                 onChange={e => setFilterPlan(e.target.value)}
                 className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               >
-                <option value="">Tous les plans</option>
+                <option value="">{tp('Tous les plans')}</option>
                 {Object.entries(PLAN_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
               <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer whitespace-nowrap">
                 <input type="checkbox" checked={filterHasPhone} onChange={e => setFilterHasPhone(e.target.checked)} className="rounded" />
-                Avec téléphone
+                {tp('Avec téléphone')}
               </label>
             </div>
             <div className="flex items-center justify-between text-xs text-gray-400">
@@ -175,7 +176,7 @@ export default function SuperAdminScalorWhatsApp() {
               </span>
               {!sendAll && usersWithPhone.length > 0 && (
                 <button onClick={toggleAll} className="text-gray-500 hover:text-gray-900 font-medium transition">
-                  {selected.size === usersWithPhone.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+                  {selected.size === usersWithPhone.length ? 'Tout désélectionner' : tp('Tout sélectionner')}
                 </button>
               )}
             </div>
@@ -184,9 +185,9 @@ export default function SuperAdminScalorWhatsApp() {
           {/* Liste */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {loadingUsers ? (
-              <div className="flex items-center justify-center py-12 text-gray-400 text-sm">Chargement…</div>
+              <div className="flex items-center justify-center py-12 text-gray-400 text-sm">{tp('Chargement…')}</div>
             ) : users.length === 0 ? (
-              <div className="flex items-center justify-center py-12 text-gray-400 text-sm">Aucun utilisateur trouvé.</div>
+              <div className="flex items-center justify-center py-12 text-gray-400 text-sm">{tp('Aucun utilisateur trouvé.')}</div>
             ) : (
               <div className="divide-y divide-gray-100 max-h-[440px] overflow-y-auto">
                 {users.map(u => {
@@ -214,14 +215,14 @@ export default function SuperAdminScalorWhatsApp() {
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${PLAN_COLORS[u.plan] || 'bg-gray-100 text-gray-600'}`}>
                             {PLAN_LABELS[u.plan] || u.plan}
                           </span>
-                          {!u.isActive && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">Inactif</span>}
+                          {!u.isActive && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">{tp('Inactif')}</span>}
                         </div>
                         <p className="text-xs text-gray-400 truncate">{u.email}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         {hasPhone
                           ? <p className="text-xs font-medium text-gray-700">{u.phone}</p>
-                          : <p className="text-xs text-gray-300 italic">Pas de numéro</p>
+                          : <p className="text-xs text-gray-300 italic">{tp('Pas de numéro')}</p>
                         }
                         <p className="text-[10px] text-gray-300">{fmt(u.createdAt)}</p>
                       </div>
@@ -237,7 +238,7 @@ export default function SuperAdminScalorWhatsApp() {
         <div className="space-y-4">
           {/* Destinataires */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-            <h3 className="text-sm font-bold text-gray-900">Destinataires</h3>
+            <h3 className="text-sm font-bold text-gray-900">{tp('Destinataires')}</h3>
             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
               <input
                 type="checkbox"
@@ -245,7 +246,7 @@ export default function SuperAdminScalorWhatsApp() {
                 onChange={e => { setSendAll(e.target.checked); setSelected(new Set()); }}
                 className="rounded"
               />
-              Tous les utilisateurs
+              {tp('Tous les utilisateurs')}
             </label>
             {sendAll ? (
               <select
@@ -253,7 +254,7 @@ export default function SuperAdminScalorWhatsApp() {
                 onChange={e => setSendAllPlan(e.target.value)}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               >
-                <option value="">Tous les plans</option>
+                <option value="">{tp('Tous les plans')}</option>
                 {Object.entries(PLAN_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             ) : (
@@ -265,10 +266,10 @@ export default function SuperAdminScalorWhatsApp() {
 
           {/* Message */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
-            <h3 className="text-sm font-bold text-gray-900">Message</h3>
+            <h3 className="text-sm font-bold text-gray-900">{tp('Message')}</h3>
             <textarea
               rows={7}
-              placeholder="Rédigez votre message…"
+              placeholder={tp('Rédigez votre message…')}
               value={message}
               onChange={e => setMessage(e.target.value)}
               maxLength={4000}
@@ -283,21 +284,21 @@ export default function SuperAdminScalorWhatsApp() {
             className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white rounded-xl text-sm font-semibold transition"
           >
             {sending ? (
-              <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Envoi en cours…</>
+              <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{tp('Envoi en cours…')}</>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
-                Envoyer
+                {tp('Envoyer')}
               </>
             )}
           </button>
 
           {!instanceOk && !sending && (
             <p className="text-xs text-amber-600 text-center">
-              {adminInstance ? 'Instance déconnectée.' : 'Aucune instance configurée.'}{' '}
-              <a href="/ecom/super-admin/support" className="underline font-semibold">Configurer →</a>
+              {adminInstance ? 'Instance déconnectée.' : tp('Aucune instance configurée.')}{' '}
+              <a href="/ecom/super-admin/support" className="underline font-semibold">{tp('Configurer →')}</a>
             </p>
           )}
         </div>
@@ -306,12 +307,12 @@ export default function SuperAdminScalorWhatsApp() {
       {/* Résultats */}
       {results && (
         <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-          <h3 className="text-sm font-bold text-gray-900">Rapport d'envoi</h3>
+          <h3 className="text-sm font-bold text-gray-900">{tp('Rapport d\'envoi')}</h3>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Envoyés', value: results.sent, cls: 'bg-primary-50 text-primary-600' },
-              { label: 'Échoués', value: results.failed, cls: 'bg-red-50 text-red-500' },
-              { label: 'Ignorés', value: results.skipped, cls: 'bg-amber-50 text-amber-500' },
+              { get label() { return tp('Envoyés'); }, value: results.sent, cls: 'bg-primary-50 text-primary-600' },
+              { get label() { return tp('Échoués'); }, value: results.failed, cls: 'bg-red-50 text-red-500' },
+              { get label() { return tp('Ignorés'); }, value: results.skipped, cls: 'bg-amber-50 text-amber-500' },
             ].map(s => (
               <div key={s.label} className={`text-center rounded-lg p-3 ${s.cls}`}>
                 <p className="text-2xl font-black">{s.value}</p>

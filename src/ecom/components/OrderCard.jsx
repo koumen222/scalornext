@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { useNavigate } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 const OrderCard = ({ 
   order, 
@@ -151,7 +152,7 @@ const OrderDetails = ({
   return (
     <div className="border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100/50 px-4 py-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Détails complets</h4>
+        <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{tp('Détails complets')}</h4>
         <div className="flex items-center gap-2">
           <select 
             value={order.status} 
@@ -165,14 +166,14 @@ const OrderDetails = ({
           >
             {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             {!SL[order.status] && <option value={order.status}>{order.status}</option>}
-            <option value="__custom">+ Personnalisé...</option>
+            <option value="__custom">{tp('+ Personnalisé...')}</option>
           </select>
           {isAdmin && (
             <>
               <button 
                 onClick={(e) => { e.stopPropagation(); onEdit(order); }} 
                 className="p-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-all" 
-                title="Modifier"
+                title={tp('Modifier')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -182,7 +183,7 @@ const OrderDetails = ({
                 onClick={(e) => { e.stopPropagation(); onDelete(order._id); }} 
                 disabled={deletingOrderId === order._id} 
                 className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" 
-                title="Supprimer"
+                title={tp('Supprimer')}
               >
                 {deletingOrderId === order._id ? (
                   <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
@@ -211,36 +212,36 @@ const OrderDetails = ({
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3">
           <div className="bg-white rounded-lg p-3 border border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Client</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Client')}</p>
             <p className="text-sm text-gray-700">{getClientName(order)}</p>
           </div>
           <div className="bg-white rounded-lg p-3 border border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Téléphone</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Téléphone')}</p>
             <p className="text-sm text-gray-700">{getClientPhone(order) || '—'}</p>
           </div>
           <div className="bg-white rounded-lg p-3 border border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Ville</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Ville')}</p>
             <p className="text-sm text-gray-700">{getCity(order) || '—'}</p>
           </div>
           <div className="bg-white rounded-lg p-3 border border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Produit</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Produit')}</p>
             <p className="text-sm text-gray-700">{getProductName(order)}</p>
           </div>
           <div className="bg-white rounded-lg p-3 border border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Prix</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Prix')}</p>
             <p className="text-sm text-gray-700">{order.price ? fmt(order.price) : '—'}</p>
           </div>
           <div className="bg-white rounded-lg p-3 border border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Quantité</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Quantité')}</p>
             <p className="text-sm text-gray-700">{order.quantity || 1}</p>
           </div>
           <div className="bg-white rounded-lg p-3 border border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Date</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Date')}</p>
             <p className="text-sm text-gray-700">{fmtDate(order.date)}</p>
           </div>
           {order.notes && (
             <div className="col-span-2 sm:col-span-3 lg:col-span-4 bg-white rounded-lg p-3 border border-gray-200">
-              <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Notes</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Notes')}</p>
               <p className="text-sm text-gray-700">{order.notes}</p>
             </div>
           )}

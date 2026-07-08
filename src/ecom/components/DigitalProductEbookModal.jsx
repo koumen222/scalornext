@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { tp } from '../i18n/platform.js';
 import {
   BookOpen, CheckCircle2, ChevronRight, Download, Eye,
   FileText, Loader2, Palette, Pen, Package, Cpu,
@@ -10,7 +11,7 @@ import {
 const GOALS = [
   { value: 'guide_utilisation', label: "Guide d'utilisation" },
   { value: 'routine',           label: "Routine / plan d'action" },
-  { value: 'erreurs',           label: 'Erreurs à éviter' },
+  { value: 'erreurs',           get label() { return tp('Erreurs à éviter'); } },
   { value: 'conseils',          label: 'Conseils pratiques' },
   { value: 'rassurance',        label: 'Rassurer avant achat' },
 ];
@@ -29,12 +30,12 @@ const COLOR_PRESETS = [
 const COVER_STYLES = [
   { value: 'light',   label: 'Classique' },
   { value: 'dark',    label: 'Sombre' },
-  { value: 'vibrant', label: 'Coloré' },
+  { value: 'vibrant', get label() { return tp('Coloré'); } },
 ];
 
 const STEPS = [
   { icon: Cpu,      label: "Analyse produit" },
-  { icon: Pen,      label: 'Rédaction chapitres' },
+  { icon: Pen,      get label() { return tp('Rédaction chapitres'); } },
   { icon: BookOpen, label: 'Structure & contenu' },
   { icon: Palette,  label: 'Design PDF' },
   { icon: Package,  label: 'Export final' },
@@ -301,7 +302,7 @@ const DigitalProductEbookModal = ({
                 <BookOpen size={18} color="#0D9488" />
               </div>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>Ebook bonus</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{tp('Ebook bonus')}</div>
                 {productName && <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>{productName}</div>}
               </div>
             </div>
@@ -323,7 +324,7 @@ const DigitalProductEbookModal = ({
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 20, padding: '2px 10px', marginBottom: 8 }}>
                   <CheckCircle2 size={11} color="#10b981" />
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#059669' }}>Actif</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#059669' }}>{tp('Actif')}</span>
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', lineHeight: 1.4, marginBottom: 8 }}>{existingTitle}</div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -332,7 +333,7 @@ const DigitalProductEbookModal = ({
                       <Eye size={13} />Voir le PDF
                     </a>
                   ) : (
-                    <span style={{ fontSize: 12, color: '#94a3b8' }}>PDF non disponible</span>
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>{tp('PDF non disponible')}</span>
                   )}
                   {onDelete && (
                     <button onClick={() => onDelete?.()} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff', border: '1.5px solid #fecaca', borderRadius: 8, padding: '6px 12px', fontSize: 12.5, fontWeight: 600, color: '#ef4444', cursor: 'pointer' }}>
@@ -346,7 +347,7 @@ const DigitalProductEbookModal = ({
             {/* offer toggle */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', borderRadius: 14, padding: '14px 16px', border: '1px solid #f1f5f9' }}>
               <div>
-                <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0f172a' }}>Activer comme offre</div>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0f172a' }}>{tp('Activer comme offre')}</div>
                 <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{"L'ebook apparaît comme bonus sur la page produit"}</div>
               </div>
               <button
@@ -363,7 +364,7 @@ const DigitalProductEbookModal = ({
             <button onClick={() => setShowGenerateForm(true)} style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'transparent', border: '1px solid #e2e8f0', borderRadius: 10, padding: '9px 16px', fontSize: 13, fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>
               <RefreshCw size={14} />
               {"Régénérer"}
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', background: '#f1f5f9', borderRadius: 6, padding: '2px 6px' }}>3 crédits</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', background: '#f1f5f9', borderRadius: 6, padding: '2px 6px' }}>{tp('3 crédits')}</span>
             </button>
             <button
               onClick={() => onSave?.({ addAsOffer })}
@@ -409,7 +410,7 @@ const DigitalProductEbookModal = ({
                 <CheckCircle2 size={18} color="#0D9488" />
               </div>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>Ebook généré avec succès</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{tp('Ebook généré avec succès')}</div>
                 <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>{ebookTitle || productName}</div>
               </div>
             </div>
@@ -427,11 +428,11 @@ const DigitalProductEbookModal = ({
               </div>
               {pdfUrl ? (
                 <div style={{ aspectRatio: '3/4', borderRadius: 14, overflow: 'hidden', border: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                  <iframe src={pdfUrl} title="Aperçu ebook PDF" style={{ width: '100%', height: '100%', border: 'none' }} />
+                  <iframe src={pdfUrl} title={tp('Aperçu ebook PDF')} style={{ width: '100%', height: '100%', border: 'none' }} />
                 </div>
               ) : (
                 <div style={{ aspectRatio: '3/4', borderRadius: 14, border: '1.5px dashed #e2e8f0', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 13, color: '#cbd5e1' }}>Aperçu non disponible</span>
+                  <span style={{ fontSize: 13, color: '#cbd5e1' }}>{tp('Aperçu non disponible')}</span>
                 </div>
               )}
             </div>
@@ -443,7 +444,7 @@ const DigitalProductEbookModal = ({
               </div>
               {ebookTitle && (
                 <div style={{ background: '#f0fdf4', borderRadius: 12, padding: '12px 14px', border: '1px solid #d1fae5' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#0D9488', marginBottom: 4 }}>Titre</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#0D9488', marginBottom: 4 }}>{tp('Titre')}</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>{ebookTitle}</div>
                 </div>
               )}
@@ -464,9 +465,9 @@ const DigitalProductEbookModal = ({
               )}
               {generatedResult?.digitalProduct?.offer && (
                 <div style={{ background: '#faf5ff', borderRadius: 12, padding: '12px 14px', border: '1px solid #ede9fe' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: 4 }}>Offre bonus activée</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: 4 }}>{tp('Offre bonus activée')}</div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#4c1d95' }}>
-                    {generatedResult.digitalProduct.offer.label || 'Ebook offert avec la commande'}
+                    {generatedResult.digitalProduct.offer.label || tp('Ebook offert avec la commande')}
                   </div>
                 </div>
               )}
@@ -526,44 +527,44 @@ const DigitalProductEbookModal = ({
 
               {/* Contenu */}
               <div>
-                <SectionTitle>Contenu</SectionTitle>
+                <SectionTitle>{tp('Contenu')}</SectionTitle>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div>
-                    <Label>Thème de l'ebook</Label>
-                    <SoftInput value={form.theme} onChange={e => update('theme', e.target.value)} placeholder="Ex: Guide complet d'utilisation" />
+                    <Label>{tp('Thème de l\'ebook')}</Label>
+                    <SoftInput value={form.theme} onChange={e => update('theme', e.target.value)} placeholder={tp('Ex: Guide complet d\'utilisation')} />
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <div>
-                      <Label>Objectif</Label>
+                      <Label>{tp('Objectif')}</Label>
                       <SoftSelect value={form.goal} onChange={e => update('goal', e.target.value)}>
                         {GOALS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
                       </SoftSelect>
                     </div>
                     <div>
-                      <Label>Chapitres</Label>
+                      <Label>{tp('Chapitres')}</Label>
                       <SoftSelect value={form.chapterCount} onChange={e => update('chapterCount', e.target.value)}>
                         {[5,6,7,8,9,10,11,12].map(n => <option key={n} value={String(n)}>{n} chapitres</option>)}
                       </SoftSelect>
                     </div>
                   </div>
                   <div>
-                    <Label>Audience cible</Label>
-                    <SoftInput value={form.audience} onChange={e => update('audience', e.target.value)} placeholder="Ex: femmes actives, sportifs…" />
+                    <Label>{tp('Audience cible')}</Label>
+                    <SoftInput value={form.audience} onChange={e => update('audience', e.target.value)} placeholder={tp('Ex: femmes actives, sportifs…')} />
                   </div>
                   <div>
-                    <Label>Problème à résoudre</Label>
-                    <SoftInput value={form.problem} onChange={e => update('problem', e.target.value)} placeholder="Ex: ne sait pas comment utiliser le produit" />
+                    <Label>{tp('Problème à résoudre')}</Label>
+                    <SoftInput value={form.problem} onChange={e => update('problem', e.target.value)} placeholder={tp('Ex: ne sait pas comment utiliser le produit')} />
                   </div>
                 </div>
               </div>
 
               {/* Design */}
               <div>
-                <SectionTitle>Design</SectionTitle>
+                <SectionTitle>{tp('Design')}</SectionTitle>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   {/* Color */}
                   <div>
-                    <Label>Couleur principale</Label>
+                    <Label>{tp('Couleur principale')}</Label>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
                       {COLOR_PRESETS.map(c => (
                         <button
@@ -582,7 +583,7 @@ const DigitalProductEbookModal = ({
                         />
                       ))}
                       {/* custom */}
-                      <label title="Couleur personnalisée" style={{ width: 30, height: 30, borderRadius: '50%', border: '1.5px dashed #cbd5e1', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+                      <label title={tp('Couleur personnalisée')} style={{ width: 30, height: 30, borderRadius: '50%', border: '1.5px dashed #cbd5e1', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
                         <span style={{ fontSize: 15, color: '#94a3b8', fontWeight: 300, lineHeight: 1 }}>+</span>
                         <input type="color" value={form.accentColor} onChange={e => update('accentColor', e.target.value)} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
                       </label>
@@ -591,7 +592,7 @@ const DigitalProductEbookModal = ({
 
                   {/* Style */}
                   <div>
-                    <Label>Style de couverture</Label>
+                    <Label>{tp('Style de couverture')}</Label>
                     <div style={{ display: 'flex', gap: 8 }}>
                       {COVER_STYLES.map(s => (
                         <button
@@ -621,7 +622,7 @@ const DigitalProductEbookModal = ({
 
               {/* Offre */}
               <div>
-                <SectionTitle>Offre commerciale</SectionTitle>
+                <SectionTitle>{tp('Offre commerciale')}</SectionTitle>
                 <button
                   type="button"
                   onClick={() => update('addAsOffer', !form.addAsOffer)}
@@ -635,12 +636,12 @@ const DigitalProductEbookModal = ({
                 >
                   <div>
                     <div style={{ fontSize: 13.5, fontWeight: 700, color: form.addAsOffer ? '#0f172a' : '#475569' }}>
-                      Offre bonus sur la fiche produit
+                      {tp('Offre bonus sur la fiche produit')}
                     </div>
                     <div style={{ fontSize: 12, color: form.addAsOffer ? '#0D9488' : '#94a3b8', marginTop: 2, fontWeight: 500 }}>
                       {form.addAsOffer
                         ? 'Affiché comme "1 unité achetée + PDF offert"'
-                        : 'Ebook généré sans être proposé en offre'}
+                        : tp('Ebook généré sans être proposé en offre')}
                     </div>
                   </div>
                   {/* pill toggle */}
@@ -669,7 +670,7 @@ const DigitalProductEbookModal = ({
 
             {/* ── Right: live cover preview ── */}
             <div style={{ position: 'sticky', top: 0 }}>
-              <Label>Aperçu couverture</Label>
+              <Label>{tp('Aperçu couverture')}</Label>
               <div style={{ aspectRatio: '2/3', borderRadius: 14, overflow: 'hidden', boxShadow: '0 8px 24px -4px rgba(15,23,42,.14), 0 0 0 1px rgba(15,23,42,.06)', background: '#f8fafc' }}>
                 <MiniCover color={form.accentColor} style={form.coverStyle} />
               </div>
@@ -686,12 +687,12 @@ const DigitalProductEbookModal = ({
         {/* ── Footer ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderTop: '1px solid #f8fafc', background: '#fff' }}>
           <button onClick={onClose} style={{ background: 'transparent', border: '1px solid #e2e8f0', borderRadius: 10, padding: '10px 18px', fontSize: 13, fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>
-            Annuler
+            {tp('Annuler')}
           </button>
           <button onClick={handleSubmit} style={{ display: 'flex', alignItems: 'center', gap: 8, background: `linear-gradient(135deg, ${form.accentColor}, ${form.accentColor}cc)`, border: 'none', borderRadius: 12, padding: '11px 22px', fontSize: 14, fontWeight: 700, color: '#fff', cursor: 'pointer', boxShadow: `0 4px 14px -2px ${form.accentColor}66`, transition: 'opacity .15s' }}>
             <Sparkles size={16} />
-            Générer le PDF ebook
-            <span style={{ marginLeft: 4, padding: '2px 7px', background: 'rgba(255,255,255,0.22)', borderRadius: 20, fontSize: 11, fontWeight: 900, border: '1px solid rgba(255,255,255,0.3)', lineHeight: 1 }}>3 crédits</span>
+            {tp('Générer le PDF ebook')}
+            <span style={{ marginLeft: 4, padding: '2px 7px', background: 'rgba(255,255,255,0.22)', borderRadius: 20, fontSize: 11, fontWeight: 900, border: '1px solid rgba(255,255,255,0.3)', lineHeight: 1 }}>{tp('3 crédits')}</span>
             <ChevronRight size={15} />
           </button>
         </div>

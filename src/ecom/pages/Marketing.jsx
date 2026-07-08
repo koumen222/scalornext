@@ -6,22 +6,24 @@ import {
   CheckCircle2, AlertCircle, Clock, Eye, MousePointerClick,
   TrendingUp, Users, Zap, Calendar, ArrowUpRight,
   Filter, MoreHorizontal, ExternalLink, Smartphone,
-  MessageSquare, Loader2
+  MessageSquare, Loader2, StopCircle
 } from 'lucide-react';
 import { marketingApi } from '../services/marketingApi.js';
 // Quill (react-quill-new) touche `document` à l'import → chargement client-only
 // (next/dynamic ssr:false), pattern standard Next pour les éditeurs riches.
 import dynamic from 'next/dynamic';
+import { tp } from '../i18n/platform.js';
 const MarketingCompose = dynamic(() => import('./MarketingCompose.jsx'), { ssr: false });
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STATUS = {
   draft:     { label: 'Brouillon',  icon: Edit3,        dot: 'bg-slate-400',   badge: 'bg-slate-100 text-slate-600 ring-slate-200'  },
-  scheduled: { label: 'Planifiée',  icon: Calendar,     dot: 'bg-blue-500',    badge: 'bg-blue-50 text-blue-700 ring-blue-200'      },
+  scheduled: { get label() { return tp('Planifiée'); },  icon: Calendar,     dot: 'bg-blue-500',    badge: 'bg-blue-50 text-blue-700 ring-blue-200'      },
   sending:   { label: 'En cours',   icon: Loader2,      dot: 'bg-amber-500',   badge: 'bg-amber-50 text-amber-700 ring-amber-200'   },
-  sent:      { label: 'Envoyée',    icon: CheckCircle2, dot: 'bg-primary-500', badge: 'bg-primary-50 text-primary-700 ring-primary-200' },
-  failed:    { label: 'Échouée',    icon: AlertCircle,  dot: 'bg-red-500',     badge: 'bg-red-50 text-red-700 ring-red-200'         },
+  sent:      { get label() { return tp('Envoyée'); },    icon: CheckCircle2, dot: 'bg-primary-500', badge: 'bg-primary-50 text-primary-700 ring-primary-200' },
+  failed:    { get label() { return tp('Échouée'); },    icon: AlertCircle,  dot: 'bg-red-500',     badge: 'bg-red-50 text-red-700 ring-red-200'         },
+  cancelled: { get label() { return tp('Arrêtée'); },    icon: StopCircle,   dot: 'bg-orange-500',  badge: 'bg-orange-50 text-orange-700 ring-orange-200' },
 };
 
 const fmt  = n => !n ? '0' : n >= 1_000_000 ? (n/1_000_000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n);
@@ -36,7 +38,7 @@ const StatusBadge = ({ status }) => {
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold ring-1 ${s.badge}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${s.dot} ${status === 'sending' ? 'animate-pulse' : ''}`} />
-      {s.label}
+      {tp(s.label)}
     </span>
   );
 };
@@ -128,6 +130,7 @@ export default function Marketing() {
   const searchTimer               = useRef(null);
   const [editingId, setEditingId] = useState(null);
   const [sendingId, setSendingId] = useState(null);
+  const [stoppingId, setStoppingId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [waModal, setWaModal]     = useState(null); // campaign id
   const [waInstances, setWaInstances] = useState([]);
@@ -149,8 +152,8 @@ export default function Marketing() {
   filterStatusRef.current = filterStatus;
   searchRef.current = search;
 
-  const loadCampaigns = useCallback(async (page = 1) => {
-    setLoading(true);
+  const loadCampaigns = useCallback(async (page = 1, { silent = false } = {}) => {
+    if (!silent) setLoading(true);
     try {
       const params = { page, limit: 15 };
       if (filterStatusRef.current) params.status = filterStatusRef.current;
@@ -160,9 +163,9 @@ export default function Marketing() {
       setCampaigns(d.campaigns || []);
       setPg({ page: d.page || 1, pages: d.pages || 1, total: d.total || 0 });
     } catch {
-      setToasts(prev => { const id = Date.now(); setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 4500); return [...prev, { id, msg: 'Erreur lors du chargement des campagnes', type: 'err' }]; });
+      if (!silent) setToasts(prev => { const id = Date.now(); setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 4500); return [...prev, { id, msg: 'Erreur lors du chargement des campagnes', type: 'err' }]; });
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, []); // stable — lit filterStatus/search via ref
 
@@ -214,6 +217,14 @@ export default function Marketing() {
     return () => document.removeEventListener('click', h);
   }, []);
 
+  // Auto-refresh silencieux tant qu'une campagne est en cours d'envoi
+  const hasSending = campaigns.some(c => c.status === 'sending');
+  useEffect(() => {
+    if (!hasSending) return undefined;
+    const timer = setInterval(() => loadCampaigns(pg.page, { silent: true }), 5000);
+    return () => clearInterval(timer);
+  }, [hasSending, pg.page, loadCampaigns]);
+
   // ─── Actions ──────────────────────────────────────────────────────────────
   const sendCampaign = async (id, instanceId = null) => {
     setSendingId(id);
@@ -231,13 +242,27 @@ export default function Marketing() {
     }
   };
 
+  const stopCampaign = async (id) => {
+    setStoppingId(id);
+    try {
+      const r = await marketingApi.stopCampaign(id);
+      toast(r.data.message || 'Arrêt demandé');
+      await loadCampaigns(pg.page, { silent: true });
+      loadStats();
+    } catch (e) {
+      toast(e.response?.data?.message || "Impossible d'arrêter la campagne", 'err');
+    } finally {
+      setStoppingId(null);
+    }
+  };
+
   const deleteCampaign = async () => {
     if (!deleteTarget) return;
     const id = deleteTarget;
     setDeleteTarget(null);
     try {
       await marketingApi.deleteCampaign(id);
-      toast('Campagne supprimée');
+      toast(tp('Campagne supprimée'));
       loadCampaigns(pg.page);
       loadStats();
     } catch (e) {
@@ -248,7 +273,7 @@ export default function Marketing() {
   const dupCampaign = async (id) => {
     try {
       await marketingApi.duplicateCampaign(id);
-      toast('Campagne dupliquée');
+      toast(tp('Campagne dupliquée'));
       loadCampaigns(1);
     } catch {
       toast('Erreur lors de la duplication', 'err');
@@ -286,9 +311,9 @@ export default function Marketing() {
   };
 
   const waStatusStyle = (status) => {
-    if (status === 'connected' || status === 'active') return { label: 'Connecté', cls: 'bg-primary-100 text-primary-700', ready: true };
-    if (status === 'configured')   return { label: 'Configuré',   cls: 'bg-blue-100 text-blue-600',   ready: false };
-    if (status === 'disconnected') return { label: 'Déconnecté',  cls: 'bg-red-100 text-red-600',     ready: false };
+    if (status === 'connected' || status === 'active') return { get label() { return tp('Connecté'); }, cls: 'bg-primary-100 text-primary-700', ready: true };
+    if (status === 'configured')   return { get label() { return tp('Configuré'); },   cls: 'bg-blue-100 text-blue-600',   ready: false };
+    if (status === 'disconnected') return { get label() { return tp('Déconnecté'); },  cls: 'bg-red-100 text-red-600',     ready: false };
     return { label: 'Inactif', cls: 'bg-slate-100 text-slate-500', ready: false };
   };
 
@@ -323,10 +348,10 @@ export default function Marketing() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-black text-white tracking-tight">Marketing Email</h1>
+                  <h1 className="text-xl font-black text-white tracking-tight">{tp('Marketing Email')}</h1>
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
-                    Live
+                    {tp('Live')}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -340,7 +365,7 @@ export default function Marketing() {
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all"
               >
                 <BarChart2 className="w-3.5 h-3.5" />
-                Analytics
+                {tp('Analytics')}
                 <ExternalLink className="w-3 h-3 opacity-60" />
               </Link>
               <button
@@ -348,7 +373,7 @@ export default function Marketing() {
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
-                Nouvelle campagne
+                {tp('Nouvelle campagne')}
               </button>
             </div>
           </div>
@@ -356,7 +381,7 @@ export default function Marketing() {
           {/* KPI strip in header */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
-              { label: 'Envoyés',      value: fmt(stats?.sent),      icon: Send,              color: '#34d399' },
+              { get label() { return tp('Envoyés'); },      value: fmt(stats?.sent),      icon: Send,              color: '#34d399' },
               { label: 'Ouvertures',   value: `${stats?.openRate || 0}%`, icon: Eye,           color: '#60a5fa' },
               { label: 'Clics',        value: `${stats?.clickRate || 0}%`, icon: MousePointerClick, color: '#a78bfa' },
               { label: 'Taux succès',  value: `${successRate}%`,     icon: TrendingUp,        color: '#fb923c' },
@@ -407,7 +432,7 @@ export default function Marketing() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Rechercher une campagne…"
+                  placeholder={tp('Rechercher une campagne…')}
                   value={searchInput}
                   onChange={e => handleSearchInput(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-xs font-medium bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 placeholder:text-slate-400"
@@ -419,10 +444,11 @@ export default function Marketing() {
                 {[
                   { k: '',          label: 'Toutes' },
                   { k: 'draft',     label: 'Brouillon' },
-                  { k: 'scheduled', label: 'Planifiées' },
+                  { k: 'scheduled', get label() { return tp('Planifiées'); } },
                   { k: 'sending',   label: 'En cours' },
-                  { k: 'sent',      label: 'Envoyées' },
-                  { k: 'failed',    label: 'Échec' },
+                  { k: 'sent',      get label() { return tp('Envoyées'); } },
+                  { k: 'cancelled', get label() { return tp('Arrêtées'); } },
+                  { k: 'failed',    get label() { return tp('Échec'); } },
                 ].map(({ k, label }) => (
                   <button
                     key={k}
@@ -444,7 +470,7 @@ export default function Marketing() {
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:border-slate-400 rounded-xl transition-all ml-auto"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-                Actualiser
+                {tp('Actualiser')}
               </button>
             </div>
 
@@ -455,7 +481,7 @@ export default function Marketing() {
                   <div className="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
                     <Mail className="w-7 h-7 text-primary-500" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-800 mb-1">Aucune campagne</h3>
+                  <h3 className="text-base font-bold text-slate-800 mb-1">{tp('Aucune campagne')}</h3>
                   <p className="text-sm text-slate-400 mb-5 max-w-xs">
                     {filterStatus || search
                       ? 'Aucun résultat pour ce filtre.'
@@ -467,7 +493,7 @@ export default function Marketing() {
                       className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-500 transition-all shadow-sm"
                     >
                       <Plus className="w-4 h-4" />
-                      Créer une campagne
+                      {tp('Créer une campagne')}
                     </button>
                   )}
                 </div>
@@ -488,7 +514,7 @@ export default function Marketing() {
                         ? Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
                         : campaigns.map(c => {
                             const isSending = sendingId === c._id;
-                            const canSend   = ['draft', 'scheduled'].includes(c.status);
+                            const canSend   = ['draft', 'scheduled', 'cancelled', 'failed'].includes(c.status);
                             const canEdit   = ['draft', 'scheduled'].includes(c.status);
                             const menuOpen  = openMenu === c._id;
 
@@ -536,27 +562,42 @@ export default function Marketing() {
 
                                 {/* Actions */}
                                 <td className="px-4 py-3.5">
-                                  <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <div className={`flex items-center justify-end gap-1.5 transition-opacity ${c.status === 'sending' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                                     {/* Envoyer */}
                                     {canSend && (
                                       <button
                                         onClick={() => sendCampaign(c._id)}
                                         disabled={isSending}
-                                        title="Envoyer"
+                                        title={tp('Envoyer')}
                                         className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-lg transition-all disabled:opacity-50 shadow-sm"
                                       >
                                         {isSending
                                           ? <Loader2 className="w-3 h-3 animate-spin" />
                                           : <Send className="w-3 h-3" />}
-                                        {isSending ? 'Envoi…' : 'Envoyer'}
+                                        {isSending ? 'Envoi…' : tp('Envoyer')}
                                       </button>
                                     )}
 
-                                    {/* Voir résultats */}
-                                    {c.status === 'sent' && (
+                                    {/* Arrêter l'envoi en cours */}
+                                    {c.status === 'sending' && (
+                                      <button
+                                        onClick={() => stopCampaign(c._id)}
+                                        disabled={stoppingId === c._id}
+                                        title={tp('Arrêter l\'envoi')}
+                                        className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-white bg-red-600 hover:bg-red-500 rounded-lg transition-all disabled:opacity-50 shadow-sm"
+                                      >
+                                        {stoppingId === c._id
+                                          ? <Loader2 className="w-3 h-3 animate-spin" />
+                                          : <StopCircle className="w-3 h-3" />}
+                                        {stoppingId === c._id ? 'Arrêt…' : tp('Arrêter')}
+                                      </button>
+                                    )}
+
+                                    {/* Voir résultats / stats — dispo dès qu'il y a des envois */}
+                                    {['sent', 'sending', 'cancelled', 'failed'].includes(c.status) && (
                                       <Link
                                         to={`/ecom/marketing/campaigns/${c._id}/results`}
-                                        title="Voir les résultats"
+                                        title={tp('Voir les statistiques')}
                                         className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
                                       >
                                         <BarChart2 className="w-3.5 h-3.5" />
@@ -567,7 +608,7 @@ export default function Marketing() {
                                     {canEdit && (
                                       <button
                                         onClick={() => goCompose(c._id)}
-                                        title="Modifier"
+                                        title={tp('Modifier')}
                                         className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
                                       >
                                         <Edit3 className="w-3.5 h-3.5" />
@@ -618,7 +659,7 @@ export default function Marketing() {
               {pg.pages > 1 && (
                 <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 bg-slate-50/40">
                   <p className="text-[11px] text-slate-500 font-medium">
-                    Page <span className="font-bold text-slate-700">{pg.page}</span> sur {pg.pages} — <span className="font-bold text-slate-700">{fmt(pg.total)}</span> campagnes
+                    {tp('Page')} <span className="font-bold text-slate-700">{pg.page}</span> sur {pg.pages} — <span className="font-bold text-slate-700">{fmt(pg.total)}</span> campagnes
                   </p>
                   <div className="flex gap-1.5">
                     <button
@@ -660,7 +701,7 @@ export default function Marketing() {
             {/* Recent sent campaigns */}
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-slate-800">Dernières campagnes envoyées</h3>
+                <h3 className="text-sm font-bold text-slate-800">{tp('Dernières campagnes envoyées')}</h3>
                 <button onClick={() => setView('campaigns')} className="text-xs font-semibold text-primary-600 hover:text-primary-500 flex items-center gap-1">
                   Voir tout <ArrowUpRight className="w-3 h-3" />
                 </button>
@@ -668,7 +709,7 @@ export default function Marketing() {
               {campaigns.filter(c => c.status === 'sent').length === 0 ? (
                 <div className="py-12 text-center">
                   <Send className="w-8 h-8 text-slate-200 mx-auto mb-3" />
-                  <p className="text-sm text-slate-400">Aucune campagne envoyée pour l'instant</p>
+                  <p className="text-sm text-slate-400">{tp('Aucune campagne envoyée pour l\'instant')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-50">
@@ -684,7 +725,7 @@ export default function Marketing() {
                           <p className="text-[11px] text-slate-400">{date(c.sentAt)}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-sm font-bold text-slate-800">{fmt(c.stats?.sent)} <span className="text-slate-400 font-normal">envoyés</span></p>
+                          <p className="text-sm font-bold text-slate-800">{fmt(c.stats?.sent)} <span className="text-slate-400 font-normal">{tp('envoyés')}</span></p>
                           <p className="text-[11px] text-slate-400">{rate}% de succès</p>
                         </div>
                         <Link to={`/ecom/marketing/campaigns/${c._id}/results`} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
@@ -701,32 +742,32 @@ export default function Marketing() {
       </div>
 
       {/* ── Delete confirmation modal ── */}
-      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Supprimer la campagne">
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title={tp('Supprimer la campagne')}>
         <div className="text-center">
           <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
             <Trash2 className="w-5 h-5 text-red-500" />
           </div>
-          <p className="text-sm text-slate-600 mb-1">Vous allez supprimer cette campagne.</p>
-          <p className="text-xs text-slate-400 mb-6">Cette action est irréversible et supprimera toutes les statistiques associées.</p>
+          <p className="text-sm text-slate-600 mb-1">{tp('Vous allez supprimer cette campagne.')}</p>
+          <p className="text-xs text-slate-400 mb-6">{tp('Cette action est irréversible et supprimera toutes les statistiques associées.')}</p>
           <div className="flex gap-3">
             <button onClick={() => setDeleteTarget(null)} className="flex-1 py-2.5 text-sm font-semibold bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors">
-              Annuler
+              {tp('Annuler')}
             </button>
             <button onClick={deleteCampaign} className="flex-1 py-2.5 text-sm font-bold bg-red-600 text-white rounded-xl hover:bg-red-500 transition-colors shadow-sm">
-              Supprimer
+              {tp('Supprimer')}
             </button>
           </div>
         </div>
       </Modal>
 
       {/* ── WhatsApp send modal ── */}
-      <Modal open={!!waModal} onClose={() => setWaModal(null)} title="Envoyer via WhatsApp" size="max-w-sm">
+      <Modal open={!!waModal} onClose={() => setWaModal(null)} title={tp('Envoyer via WhatsApp')} size="max-w-sm">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500">Sélectionnez une instance connectée pour lancer l'envoi.</p>
+            <p className="text-xs text-slate-500">{tp('Sélectionnez une instance connectée pour lancer l\'envoi.')}</p>
             <button onClick={refreshWaStatus} disabled={waLoading} className="flex items-center gap-1 text-[11px] font-semibold text-primary-600 hover:text-primary-500 disabled:opacity-40">
               <RefreshCw className={`w-3 h-3 ${waLoading ? 'animate-spin' : ''}`} />
-              Actualiser
+              {tp('Actualiser')}
             </button>
           </div>
 
@@ -737,7 +778,7 @@ export default function Marketing() {
           ) : waInstances.length === 0 ? (
             <div className="py-8 text-center">
               <Smartphone className="w-8 h-8 text-slate-200 mx-auto mb-2" />
-              <p className="text-xs text-slate-400">Aucune instance WhatsApp active</p>
+              <p className="text-xs text-slate-400">{tp('Aucune instance WhatsApp active')}</p>
             </div>
           ) : (
             <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -772,7 +813,7 @@ export default function Marketing() {
           )}
 
           <button onClick={() => setWaModal(null)} className="w-full py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">
-            Annuler
+            {tp('Annuler')}
           </button>
         </div>
       </Modal>

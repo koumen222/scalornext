@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
-import { useStorefrontT } from '../i18n/storefront.js';
+import React, { useContext, useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import { useStorefrontT, useMerchantTextLocalizer, getStorefrontT, localizeMerchantDefault, StorefrontLangContext } from '../i18n/storefront.js';
 import {
   Award,
   BadgeCheck,
@@ -162,13 +162,17 @@ const boolIcon = (value, accent) => value ? (
   <span className="premium-bool premium-bool-no" aria-label="Non"><X size={14} /></span>
 );
 
-const PremiumBonusEbook = ({ ebook, accent, onOrder, ctaLabel = 'Commander', productImage = '' }) => {
+const PremiumBonusEbook = ({ ebook, accent, onOrder, ctaLabel = '', productImage = '', lang = '' }) => {
+  const ctxLangBonus = useContext(StorefrontLangContext);
+  const t = getStorefrontT(lang || ctxLangBonus);
+  const lm = (v) => localizeMerchantDefault(lang || ctxLangBonus, v);
+  const tv = (v, fb) => lm(textValue(v, fb));
   if (!ebook || typeof ebook !== 'object') return null;
   const sales = ebook.sales_section || {};
   const cover = ebook.cover || {};
-  const title = textValue(ebook.title || cover.cover_title, 'Guide bonus offert');
-  const subtitle = (textValue(ebook.subtitle || ebook.short_description, sales.bonus_text) || '').slice(0, 72);
-  const buttonText = textValue(sales.cta_text, ctaLabel);
+  const title = tv(ebook.title || cover.cover_title, t('store.bonusGuide'));
+  const subtitle = (tv(ebook.subtitle || ebook.short_description, sales.bonus_text) || '').slice(0, 72);
+  const buttonText = tv(sales.cta_text, ctaLabel) || t('premium.orderCta');
 
   // Priority: ebook cover → product image. Both tried before showing placeholder.
   const candidates = [
@@ -189,7 +193,7 @@ const PremiumBonusEbook = ({ ebook, accent, onOrder, ctaLabel = 'Commander', pro
         {/* badge */}
         <div className="premium-bonus-kicker" style={{ marginBottom: 8 }}>
           <Gift size={15} />
-          {textValue(cover.badge_text, 'Bonus offert')}
+          {tv(cover.badge_text, t('store.bonus'))}
         </div>
 
         {/* title + subtitle */}
@@ -226,8 +230,12 @@ const PremiumBonusEbook = ({ ebook, accent, onOrder, ctaLabel = 'Commander', pro
   );
 };
 
-const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain, pixels, prefix = '' }) => {
-  const t = useStorefrontT();
+const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain, pixels, prefix = '', onSectionClick = null, activeSection = null }) => {
+  const ctxLangMain = useContext(StorefrontLangContext);
+  const premiumLang = store?.language || ctxLangMain;
+  const t = getStorefrontT(premiumLang);
+  const lm = (v) => localizeMerchantDefault(premiumLang, v);
+  const tv = (v, fb) => lm(textValue(v, fb));
   const formType = productPageConfig?.general?.formType || 'popup';
   const isEmbeddedForm = formType === 'embedded';
   const ctaRef = useRef(null);
@@ -237,7 +245,19 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
   const [activeHeroImage, setActiveHeroImage] = useState(0);
   const heroTouchStartX = useRef(null);
   const reviewsRef = useRef(null);
-  const { cartCount } = useStoreCart(subdomain);
+  const { cartCount, addToCart } = useStoreCart(subdomain);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const handleAddToCart = () => {
+    addToCart({
+      productId: product?._id,
+      name: product?.name,
+      price: product?.price,
+      image: product?.images?.[0]?.url || '',
+      currency,
+    }, 1);
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 1800);
+  };
 
   // ── Admin image editing ───────────────────────────────────────────────────
   const [isAdmin, setIsAdmin] = useState(false);
@@ -286,7 +306,14 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
   const textColor = design.textColor || '#171717';
   const backgroundColor = design.backgroundColor || '#F6FBFA';
   const pageData = product?._pageData || {};
-  const premiumImages = { ...(pageData.premiumImages || product?.premiumImages || {}), ...(productPageConfig?.premiumImages || {}), ...(localPremiumImages || {}) };
+  // Fusion additive : ne JAMAIS écarter une source d'images. Le "||" précédent masquait
+  // product.premiumImages dès que _pageData.premiumImages existait. Priorité : local > config > _pageData > product.
+  const premiumImages = {
+    ...(product?.premiumImages || {}),
+    ...(pageData.premiumImages || {}),
+    ...(productPageConfig?.premiumImages || {}),
+    ...(localPremiumImages || {}),
+  };
   const gallery = useMemo(() => buildGallery(product, productPageConfig), [product, productPageConfig]);
   const sectionImage = (key, fallbackIndex = 0) => getImageUrl(premiumImages?.[key]) || gallery[fallbackIndex] || gallery[0] || '';
   const realPhotos = dedupeImages(pageData.realPhotos || product?.realPhotos || []);
@@ -297,7 +324,7 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
     ? testimonialUgcImages[index % testimonialUgcImages.length]
     : (testimonialFallback[index] || testimonialFallback[0] || ''));
   const heroImage = sectionImage('hero', 0);
-  const productName = textValue(premium.brandName, product?.name || store?.name || 'Produit');
+  const productName = tv(premium.brandName, product?.name || store?.name || 'Produit');
   const rawEbook = pageData.ebook || product?.ebook || productPageConfig?.ebook || null;
   // Produit digital masqué dès qu'il est explicitement désactivé (bouton « Désactiver le
   // produit digital » côté admin) : soit via le flag d'offre de la page, soit via addAsOffer.
@@ -308,7 +335,8 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
 
   // Devise: priorité à la boutique, jamais USD/$. Repli FCFA (XAF).
   const resolveCurrency = (code) => (code && String(code).toUpperCase() !== 'USD' ? code : null);
-  const currency = resolveCurrency(store?.currency) || resolveCurrency(product?.currency) || 'XAF';
+  // Devise = uniquement celle configurée sur la boutique (jamais la devise du produit).
+  const currency = resolveCurrency(store?.currency) || 'XAF';
   const priceLabel = product?.price
     ? formatMoney(product.price, currency)
     : sanitizeMoney(premium.hero?.priceLabel);
@@ -320,11 +348,15 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
   // L'image principale du produit (product.images[0]) est prioritaire si elle existe.
   const heroImages = useMemo(() => {
     const productImages = product?.images || [];
+    const mainProductImage = productImages[0] ? [productImages[0]] : [];
+    // Le carrousel curé dans le builder (heroGallery) doit primer sur les images produit
+    // secondaires : sinon un produit avec >=5 images masquait tout heroGallery via slice(0,5).
     const dedicated = dedupeImages([
-      ...productImages,
+      ...mainProductImage,
       ...((premiumImages.heroGallery || []).map((entry) => getImageUrl(entry))),
       premiumImages.hero,
       pageData.heroImage,
+      ...productImages.slice(1),
     ]);
     return (dedicated.length ? dedicated : gallery).slice(0, 5);
   }, [premiumImages, pageData, product, gallery]);
@@ -355,25 +387,25 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
     ? asArray(premium.hero.benefits)
     : asArray(product?._pageData?.benefits_bullets);
   const heroBenefits = rawHeroBenefits.length ? rawHeroBenefits : [
-    `Une solution simple pour profiter de ${productName}`,
-    'Une utilisation facile au quotidien',
-    "Une qualité rassurante avant l'achat",
-    "Un accompagnement clair jusqu'à la commande",
+    t('premium.benefit1', { product: productName }),
+    t('premium.benefit2'),
+    t('premium.benefit3'),
+    t('premium.benefit4'),
   ];
   const authorityStrip = asArray(premium.authorityStrip).length ? premium.authorityStrip : [
-    { label: 'Clients vérifiés', quote: heroBenefits[0] || 'Une solution choisie pour sa simplicité au quotidien.' },
-    { label: 'Routine populaire', quote: heroBenefits[1] || 'Une expérience claire, pratique et rassurante.' },
-    { label: 'Qualité contrôlée', quote: 'Une page pensée pour acheter avec confiance.' },
+    { label: t('premium.authVerified'), quote: heroBenefits[0] || t('premium.authQuote1') },
+    { label: t('premium.authPopular'), quote: heroBenefits[1] || t('premium.authQuote2') },
+    { label: t('premium.authQuality'), quote: t('premium.authQuote3') },
   ];
 
   // Avis: on garantit 6 témoignages affichés en carrousel.
   const fallbackReviews = [
-    { name: 'Aïcha B.', text: `Très satisfaite de ${productName}. La qualité est au rendez-vous et l'utilisation est simple au quotidien. La livraison a été rapide et le paiement à la livraison m'a mise en confiance dès le départ.`, tags: ['Qualité', 'Vérifié'] },
-    { name: 'Yannick O.', text: `Ce ${productName} fait exactement ce qui est promis. Je l'utilise tous les jours et je vois la différence. Le rapport qualité-prix est excellent, je le recommande déjà à tout mon entourage.`, tags: ['Pratique', 'Vérifié'] },
-    { name: 'Fatou S.', text: `J'hésitais avant de commander mais je ne regrette pas du tout. Le produit est conforme à la description, bien emballé et vraiment agréable à utiliser. Le service client est très réactif sur WhatsApp.`, tags: ['Conforme', 'Vérifié'] },
-    { name: 'Jean-Paul T.', text: `Excellent achat. ${productName} est solide, bien pensé et facile à intégrer dans ma routine. Les premiers résultats sont arrivés vite, je suis bluffé par la simplicité d'utilisation au quotidien.`, tags: ['Résultat', 'Vérifié'] },
-    { name: 'Mariam D.', text: `Produit reçu en bon état et parfaitement conforme. Ce ${productName} est vite devenu indispensable pour moi. Je l'utilise depuis deux semaines et je le recommande sans la moindre hésitation.`, tags: ['Fiable', 'Vérifié'] },
-    { name: 'Patrick N.', text: `Vraiment content de cet achat. ${productName} est pratique, de très bonne qualité et tient ses promesses. Commande simple, livraison rapide et paiement à la réception : tout était parfait.`, tags: ['Top', 'Vérifié'] },
+    { name: 'Aïcha B.', text: t('premium.review1', { product: productName }), tags: [t('premium.tagQuality'), t('premium.tagVerified')] },
+    { name: 'Yannick O.', text: t('premium.review2', { product: productName }), tags: [t('premium.tagPractical'), t('premium.tagVerified')] },
+    { name: 'Fatou S.', text: t('premium.review3', { product: productName }), tags: [t('premium.tagCompliant'), t('premium.tagVerified')] },
+    { name: 'Jean-Paul T.', text: t('premium.review4', { product: productName }), tags: [t('premium.tagResult'), t('premium.tagVerified')] },
+    { name: 'Mariam D.', text: t('premium.review5', { product: productName }), tags: [t('premium.tagReliable'), t('premium.tagVerified')] },
+    { name: 'Patrick N.', text: t('premium.review6', { product: productName }), tags: [t('premium.tagTop'), t('premium.tagVerified')] },
   ];
   const reviewsBase = asArray(premium.testimonialGallery?.items).length
     ? premium.testimonialGallery.items
@@ -389,13 +421,13 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
   const ritualSteps = asArray(premium.ritualSection?.steps).length
     ? premium.ritualSection.steps
     : asArray(product?._pageData?.guide_utilisation?.etapes).slice(0, 4).map((step) => ({
-      label: `Étape ${step.numero || ''}`.trim(),
+      label: t('premium.stepLabel', { n: step.numero || '' }).trim(),
       title: step.action,
       description: step.detail,
     }));
   const timeline = asArray(premium.ritualSection?.resultsTimeline);
   const comparison = premium.comparisonSection || {};
-  const comparisonColumns = asArray(comparison.columns).length ? comparison.columns : [productName, 'Solution classique', 'Alternative basique'];
+  const comparisonColumns = asArray(comparison.columns).length ? comparison.columns : [productName, t('premium.classicSolution'), t('premium.basicAlternative')];
   const comparisonRows = asArray(comparison.rows).length
     ? comparison.rows
     : heroBenefits.slice(0, 8).map((benefit) => ({ label: benefit, values: [true, false, false] }));
@@ -407,23 +439,23 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
     : asArray(product?._pageData?.faq || product?.faq).length
     ? (product?._pageData?.faq || product?.faq)
     : [
-      { question: 'Comment utiliser ce produit ?', answer: "Suivez les instructions sur l'emballage. En cas de doute, contactez-nous via WhatsApp." },
-      { question: 'Quels sont les effets secondaires ?', answer: 'Ce produit est naturel et sans effets secondaires connus. Consultez un professionnel si besoin.' },
-      { question: 'Combien de temps pour voir des resultats ?', answer: "Les premiers resultats sont visibles entre 7 et 15 jours d'utilisation reguliere." },
-      { question: 'Comment passer commande ?', answer: 'Cliquez sur le bouton Commander et remplissez le formulaire. Paiement a la livraison disponible.' },
-      { question: 'La livraison est-elle gratuite ?', answer: 'La livraison est offerte a partir d\'un certain montant. Sinon, les frais sont affiches avant paiement.' },
+      { question: t('premium.faq1Q'), answer: t('premium.faq1A') },
+      { question: t('premium.faq2Q'), answer: t('premium.faq2A') },
+      { question: t('premium.faq3Q'), answer: t('premium.faq3A') },
+      { question: t('premium.faq4Q'), answer: t('premium.faq4A') },
+      { question: t('premium.faq5Q'), answer: t('premium.faq5A') },
     ];
   const reassurance = asArray(premium.hero?.reassurance).length
     ? premium.hero.reassurance
-    : ['Paiement à la livraison', 'Livraison rapide', 'Support WhatsApp'];
+    : [t('shipping.codTitle'), t('store.fastDelivery'), t('premium.whatsappSupport')];
   const heroAccordions = asArray(premium.hero?.accordions).length
     ? premium.hero.accordions
     : asArray(product?._pageData?.hero_accordions).length
     ? product._pageData.hero_accordions
     : [
-      { title: "Comment ca marche ?", content: textValue(premium.mechanismSection?.body || product?._pageData?.solution_section?.description, "Les capsules agissent de l'interieur pour neutraliser les odeurs a la source. Une seule gelule par jour suffit.") },
-      { title: "Ingredients cles", content: textValue(premium.scienceSection?.items?.[0]?.description, "Formule 100% naturelle a base d'ingredients selectionnes pour leur efficacite prouvee.") },
-      { title: "Et si cela ne fonctionne pas ?", content: "Nous offrons une garantie de satisfaction totale. Contactez-nous pour un remboursement integral, sans aucune question." },
+      { title: t('premium.how1Title'), content: tv(premium.mechanismSection?.body || product?._pageData?.solution_section?.description, t('premium.how1Body')) },
+      { title: t('premium.how2Title'), content: tv(premium.scienceSection?.items?.[0]?.description, t('premium.how2Body')) },
+      { title: t('premium.how3Title'), content: t('premium.how3Body') },
     ];
 
   const openOrder = () => {
@@ -640,7 +672,12 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
       )}
 
       <main>
-        <section className="premium-section premium-hero">
+        <section
+          className="premium-section premium-hero"
+          data-premium-section="hero"
+          onClick={onSectionClick ? () => onSectionClick('hero') : undefined}
+          style={onSectionClick ? { cursor: 'pointer', ...(activeSection === 'hero' ? { outline: '2px solid #6366f1', outlineOffset: '-2px', borderRadius: 8 } : {}) } : undefined}
+        >
           <div className="premium-media">
             <div
               className="premium-carousel"
@@ -677,11 +714,11 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
           <div>
             <div className="premium-rating">
               <span className="premium-stars">{[1, 2, 3, 4, 5].map((i) => <Star key={i} size={18} fill="currentColor" />)}</span>
-              <span>{textValue(premium.rating?.score, '4,9/5')} par {textValue(premium.rating?.count, '+1 000')} {textValue(premium.rating?.label, 'clients satisfaits')}</span>
+              <span>{tv(premium.rating?.score, t('premium.ratingScore'))} par {tv(premium.rating?.count, t('premium.ratingCount'))} {tv(premium.rating?.label, t('premium.ratingLabel'))}</span>
             </div>
 
-            <h1>{textValue(premium.hero?.headline, product?._pageData?.hero_headline || productName)}</h1>
-            <p className="premium-subtitle">{textValue(premium.hero?.subheadline, product?._pageData?.hero_slogan)}</p>
+            <h1>{tv(premium.hero?.headline, product?._pageData?.hero_headline || productName)}</h1>
+            <p className="premium-subtitle">{tv(premium.hero?.subheadline, product?._pageData?.hero_slogan)}</p>
 
             {priceLabel && (
               <div className="premium-price">
@@ -692,19 +729,19 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
 
             <ul className="premium-check-list">
               {heroBenefits.map((benefit, index) => (
-                <li key={index}><span className="premium-check-dot"><Check size={14} /></span><span>{textValue(benefit)}</span></li>
+                <li key={index}><span className="premium-check-dot"><Check size={14} /></span><span>{tv(benefit)}</span></li>
               ))}
             </ul>
 
             {premium.hero?.showOffer && (
               <>
-                <div className="premium-offer-title">{textValue(premium.hero?.offerTitle, 'Offre spéciale')}</div>
-                <div className="premium-countdown"><Clock size={15} style={{ display: 'inline', marginRight: 6 }} />{textValue(premium.hero?.countdownLabel, "L'offre expire bientôt")}</div>
+                <div className="premium-offer-title">{tv(premium.hero?.offerTitle, t('offer.special'))}</div>
+                <div className="premium-countdown"><Clock size={15} style={{ display: 'inline', marginRight: 6 }} />{tv(premium.hero?.countdownLabel, t('premium.countdown'))}</div>
                 <div className="premium-offer-card">
                   {sectionImage('hero', 1) && <EditableImage src={sectionImage('hero', 1)} alt={`${productName} offre`} style={{ width: '100%', height: 'auto' }} imageKey="hero" productId={product?._id} onImageUpdated={handleImageUpdated} isAdmin={isAdmin} />}
                   <div className="premium-offer-main">
-                    <span>{textValue(premium.hero?.offerCards?.[0]?.title, 'Offre du moment')}</span>
-                    <span className="premium-chip">{textValue(premium.hero?.offerCards?.[0]?.badge, 'Meilleur choix')}</span>
+                    <span>{tv(premium.hero?.offerCards?.[0]?.title, t('premium.offerNow'))}</span>
+                    <span className="premium-chip">{tv(premium.hero?.offerCards?.[0]?.badge, t('premium.bestChoice'))}</span>
                   </div>
                   <div className="premium-offer-price">
                     {priceLabel || sanitizeMoney(premium.hero?.offerCards?.[0]?.price)}
@@ -727,13 +764,25 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
             ) : (
               <button type="button" className="premium-cta" onClick={openOrder}>
                 <ShoppingCart size={19} />
-                {textValue(premium.hero?.ctaLabel, productPageConfig?.button?.text || 'Commander')}
+                {tv(premium.hero?.ctaLabel, productPageConfig?.button?.text || t('premium.orderCta'))}
+              </button>
+            )}
+
+            {store?.cartEnabled && (
+              <button
+                type="button"
+                className="premium-cta"
+                onClick={handleAddToCart}
+                style={{ marginTop: 10, background: 'transparent', color: 'var(--premium-accent)', border: '2px solid color-mix(in srgb, var(--premium-accent) 45%, white)' }}
+              >
+                <ShoppingCart size={18} />
+                {addedToCart ? t('storefront.addedToCart') : t('storefront.addToCart')}
               </button>
             )}
 
             <div className="premium-reassurance">
               {reassurance.slice(0, 3).map((item, index) => (
-                <span key={index}>{index === 0 ? <Truck size={14} /> : index === 1 ? <Shield size={14} /> : <BadgeCheck size={14} />}{textValue(item)}</span>
+                <span key={index}>{index === 0 ? <Truck size={14} /> : index === 1 ? <Shield size={14} /> : <BadgeCheck size={14} />}{tv(item)}</span>
               ))}
             </div>
 
@@ -746,11 +795,11 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
                     aria-expanded={openHeroAccordion === index}
                     onClick={() => setOpenHeroAccordion(openHeroAccordion === index ? null : index)}
                   >
-                    <span>{textValue(acc.title)}</span>
+                    <span>{tv(acc.title)}</span>
                     <ChevronDown size={17} />
                   </button>
                   {openHeroAccordion === index && (
-                    <div className="premium-hero-acc-body">{textValue(acc.content)}</div>
+                    <div className="premium-hero-acc-body">{tv(acc.content)}</div>
                   )}
                 </div>
               ))}
@@ -759,7 +808,10 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
         </section>
 
         {(() => {
-          const DEFAULT_ORDER = ['guide', 'testimonials', 'problem', 'mechanism', 'science', 'ritual', 'comparison', 'faq', 'closing'];
+          const DEFAULT_ORDER = ['guide', 'testimonials', 'problem', 'mechanism', 'gifs', 'science', 'ritual', 'comparison', 'faq', 'closing'];
+          const pageGifs = (Array.isArray(product?._pageData?.descriptionGifs) ? product._pageData.descriptionGifs : [])
+            .map((g) => (typeof g === 'string' ? g : g?.url || ''))
+            .filter(Boolean);
           const hidden = productPageConfig?.hiddenSections || [];
           const configuredOrder = Array.isArray(productPageConfig?.sectionOrder)
             ? productPageConfig.sectionOrder.filter((id) => DEFAULT_ORDER.includes(id))
@@ -773,20 +825,21 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
           const sectionMap = {
             guide: bonusEbook ? (
               <PremiumBonusEbook
+                lang={premiumLang}
                 key="guide"
                 ebook={bonusEbook}
                 accent={accent}
                 onOrder={openOrder}
-                ctaLabel={textValue(premium.hero?.ctaLabel, productPageConfig?.button?.text || 'Commander')}
+                ctaLabel={tv(premium.hero?.ctaLabel, productPageConfig?.button?.text || t('premium.orderCta'))}
                 productImage={heroImage}
               />
             ) : null,
             testimonials: (
               <section key="testimonials" className="premium-section premium-testimonials">
                 <div className="premium-centered">
-                  <div className="premium-eyebrow"><span className="premium-stars">{[1, 2, 3, 4, 5].map((i) => <Star key={i} size={16} fill="currentColor" />)}</span>{textValue(premium.rating?.score, '4,9/5')} par {textValue(premium.rating?.count, '+1 000')} clients satisfaits</div>
-                  <h2 className="premium-heading">{textValue(premium.testimonialGallery?.headline, 'Une vie intime libérée et sereine')}</h2>
-                  <p className="premium-lead">{textValue(premium.testimonialGallery?.subheadline, "Des clients d'Afrique francophone et d'ailleurs partagent leur expérience.")}</p>
+                  <div className="premium-eyebrow"><span className="premium-stars">{[1, 2, 3, 4, 5].map((i) => <Star key={i} size={16} fill="currentColor" />)}</span>{tv(premium.rating?.score, t('premium.ratingScore'))} par {tv(premium.rating?.count, t('premium.ratingCount'))} clients satisfaits</div>
+                  <h2 className="premium-heading">{tv(premium.testimonialGallery?.headline, t('premium.galleryHeadline'))}</h2>
+                  <p className="premium-lead">{tv(premium.testimonialGallery?.subheadline, t('premium.gallerySub'))}</p>
                 </div>
                 <div className="premium-reviews-wrap">
                   <button type="button" className="premium-carousel-arrow prev" onClick={() => scrollReviews(-1)} aria-label="Avis précédents"><ChevronLeft size={20} /></button>
@@ -798,8 +851,8 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
                           <div className="premium-tags">{cleanPremiumTags(item.tags).map((tag, tagIndex) => <span key={tagIndex}>{tag}</span>)}</div>
                         </div>
                         <div className="premium-review-stars">{[1, 2, 3, 4, 5].map((i) => <Star key={i} size={17} fill="currentColor" />)}</div>
-                        <p className="premium-testimonial-text">{textValue(item.text)}</p>
-                        <div className="premium-verified"><strong>{textValue(item.name, t('store.verifiedCustomer'))}</strong><CheckCircle size={16} color={accent} fill={accent} stroke="white" /> {t('store.verifiedBuyer')}</div>
+                        <p className="premium-testimonial-text">{tv(item.text)}</p>
+                        <div className="premium-verified"><strong>{tv(item.name, t('store.verifiedCustomer'))}</strong><CheckCircle size={16} color={accent} fill={accent} stroke="white" /> {t('store.verifiedBuyer')}</div>
                       </article>
                     ))}
                   </div>
@@ -810,15 +863,15 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
             problem: (
               <section key="problem" className="premium-section premium-split">
                 <div className="premium-copy">
-                  <h2 className="premium-heading">{textValue(premium.problemSection?.headline, product?._pageData?.problem_section?.title || 'Ce problème ruine votre quotidien')}</h2>
+                  <h2 className="premium-heading">{tv(premium.problemSection?.headline, product?._pageData?.problem_section?.title || t('premium.problemHeadline'))}</h2>
                   <ul className="premium-check-list" style={{ marginTop: 28 }}>
                     {problemBullets.slice(0, 4).map((item, index) => (
-                      <li key={index}><span className="premium-check-dot"><Check size={14} /></span><span>{textValue(item)}</span></li>
+                      <li key={index}><span className="premium-check-dot"><Check size={14} /></span><span>{tv(item)}</span></li>
                     ))}
                   </ul>
                   <button type="button" className="premium-cta" onClick={openOrder} style={{ marginTop: 22 }}>
                     <ShoppingCart size={18} />
-                    {textValue(premium.hero?.ctaLabel, productPageConfig?.button?.text || 'Commander')}
+                    {tv(premium.hero?.ctaLabel, productPageConfig?.button?.text || t('premium.orderCta'))}
                   </button>
                 </div>
                 <div className="premium-image-panel">{sectionImage('problem', 5) && <EditableImage src={sectionImage('problem', 5)} alt={`Situation client ${productName}`} style={{ objectFit: 'contain', width: '100%', height: '100%' }} imageKey="problem" productId={product?._id} onImageUpdated={handleImageUpdated} isAdmin={isAdmin} />}</div>
@@ -828,27 +881,41 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
               <section key="mechanism" className="premium-section premium-split reverse">
                 <div className="premium-image-panel">{sectionImage('mechanism', 6) && <EditableImage src={sectionImage('mechanism', 6)} alt={`Explication ${productName}`} style={{ objectFit: 'contain', width: '100%', height: '100%' }} imageKey="mechanism" productId={product?._id} onImageUpdated={handleImageUpdated} isAdmin={isAdmin} />}</div>
                 <div className="premium-copy">
-                  <h2 className="premium-heading">{textValue(premium.mechanismSection?.headline, product?._pageData?.solution_section?.title || "Ce n'est pas une question de hasard")}</h2>
-                  <p className="premium-lead">{textValue(premium.mechanismSection?.body, product?._pageData?.solution_section?.description)}</p>
+                  <h2 className="premium-heading">{tv(premium.mechanismSection?.headline, product?._pageData?.solution_section?.title || t('premium.mechanismHeadline'))}</h2>
+                  <p className="premium-lead">{tv(premium.mechanismSection?.body, product?._pageData?.solution_section?.description)}</p>
                   <button type="button" className="premium-cta" onClick={openOrder} style={{ marginTop: 22 }}>
                     <ShoppingCart size={18} />
-                    {textValue(premium.hero?.ctaLabel, productPageConfig?.button?.text || 'Commander')}
+                    {tv(premium.hero?.ctaLabel, productPageConfig?.button?.text || t('premium.orderCta'))}
                   </button>
                 </div>
               </section>
             ),
+            gifs: pageGifs.length > 0 ? (
+              <section key="gifs" className="premium-section">
+                <div className="premium-centered">
+                  <h2 className="premium-heading">{t('premium.gifsHeadline')}</h2>
+                </div>
+                <div style={{ display: 'grid', gap: 18, maxWidth: 760, margin: '28px auto 0' }}>
+                  {pageGifs.map((url, i) => (
+                    <div key={`${url}-${i}`} style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(15,23,42,0.08)', background: '#000' }}>
+                      <img src={url} alt={`${productName} — démo ${i + 1}`} loading="lazy" style={{ width: '100%', display: 'block' }} />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null,
             science: (
               <section key="science" className="premium-section premium-split premium-soft-band">
                 <div className="premium-copy">
-                  <h2 className="premium-heading">{textValue(premium.scienceSection?.headline, 'Ce qui rend ce produit efficace')}</h2>
-                  <p className="premium-lead">{textValue(premium.scienceSection?.subheadline, 'Des éléments clés pensés pour une utilisation claire et rassurante.')}</p>
+                  <h2 className="premium-heading">{tv(premium.scienceSection?.headline, t('premium.scienceHeadline'))}</h2>
+                  <p className="premium-lead">{tv(premium.scienceSection?.subheadline, t('premium.scienceSub'))}</p>
                   <div className="premium-ingredients">
                     {scienceItems.slice(0, 4).map((item, index) => (
                       <div key={index} className="premium-ingredient">
                         <div className="premium-ingredient-thumb"><Award size={24} /></div>
                         <div>
-                          <h3>{textValue(item.name, `Point clé ${index + 1}`)}</h3>
-                          <p>{textValue(item.description, item.name)}</p>
+                          <h3>{tv(item.name, t('premium.keyPoint', { n: index + 1 }))}</h3>
+                          <p>{tv(item.description, item.name)}</p>
                         </div>
                       </div>
                     ))}
@@ -861,40 +928,40 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
               <section key="ritual" className="premium-section premium-split">
                 <div className="premium-results-card">
                   <div>
-                    <h2 className="premium-heading" style={{ fontSize: 'clamp(20px, 2.4vw, 30px)' }}>{timeline[0]?.headline || 'Résultats progressifs'}</h2>
+                    <h2 className="premium-heading" style={{ fontSize: 'clamp(20px, 2.4vw, 30px)' }}>{timeline[0]?.headline || t('premium.progressiveResults')}</h2>
                     {(timeline.length ? timeline : [
-                      { label: 'Jour 1', description: 'Vous commencez la routine avec une utilisation simple.' },
-                      { label: 'Jour 7', description: 'Les premiers changements deviennent plus visibles.' },
-                      { label: 'Jour 15', description: 'La routine se stabilise pour un résultat plus durable.' },
-                      { label: 'Jour 30', description: 'Les résultats sont bien installés dans votre quotidien.' },
+                      { label: t('premium.dayLabel', { n: 1 }), description: t('premium.day1') },
+                      { label: t('premium.dayLabel', { n: 7 }), description: t('premium.day7') },
+                      { label: t('premium.dayLabel', { n: 15 }), description: t('premium.day15') },
+                      { label: t('premium.dayLabel', { n: 30 }), description: t('premium.day30') },
                     ]).slice(0, 4).map((item, index) => (
-                      <p key={index} style={{ margin: '22px 0 0', fontSize: 15, lineHeight: 1.45 }}><strong>{textValue(item.label)}</strong><br />{textValue(item.description)}</p>
+                      <p key={index} style={{ margin: '22px 0 0', fontSize: 15, lineHeight: 1.45 }}><strong>{tv(item.label)}</strong><br />{tv(item.description)}</p>
                     ))}
                   </div>
                   {sectionImage('ritual', 8) && <EditableImage src={sectionImage('ritual', 8)} alt="Résultats produit" style={{ width: '100%', height: '100%' }} imageKey="ritual" productId={product?._id} onImageUpdated={handleImageUpdated} isAdmin={isAdmin} />}
                 </div>
                 <div className="premium-copy">
-                  <h2 className="premium-heading">{textValue(premium.ritualSection?.headline, 'Votre rituel simple')}</h2>
-                  <p className="premium-lead">{textValue(premium.ritualSection?.subheadline, 'Une routine claire, facile à suivre et pensée pour rester régulière.')}</p>
+                  <h2 className="premium-heading">{tv(premium.ritualSection?.headline, t('premium.ritualHeadline'))}</h2>
+                  <p className="premium-lead">{tv(premium.ritualSection?.subheadline, t('premium.ritualSub'))}</p>
                   <div className="premium-timeline">
                     {(ritualSteps.length ? ritualSteps : [
-                      { label: 'Étape 1', title: 'Prenez un comprimé par jour', description: 'Il est recommandé de prendre le produit régulièrement pour obtenir les meilleurs résultats.' },
-                      { label: 'Étape 2', title: 'Répétez chaque jour', description: 'La régularité est la clé. Intégrez-le dans votre routine quotidienne.' },
-                      { label: 'Étape 3', title: 'Observez les résultats', description: 'Les effets se font sentir progressivement au fil des jours.' },
-                      { label: 'Étape 4', title: 'Maintenez la routine', description: 'Continuez pour des résultats durables et un bien-être optimal.' },
+                      { label: t('premium.stepLabel', { n: 1 }), title: t('premium.step1Title'), description: t('premium.step1Desc') },
+                      { label: t('premium.stepLabel', { n: 2 }), title: t('premium.step2Title'), description: t('premium.step2Desc') },
+                      { label: t('premium.stepLabel', { n: 3 }), title: t('premium.step3Title'), description: t('premium.step3Desc') },
+                      { label: t('premium.stepLabel', { n: 4 }), title: t('premium.step4Title'), description: t('premium.step4Desc') },
                     ]).map((step, index) => (
                       <div key={index} className="premium-step">
-                        <span className="premium-step-label">{textValue(step.label, `Étape ${index + 1}`)}</span>
+                        <span className="premium-step-label">{tv(step.label, t('premium.stepLabel', { n: index + 1 }))}</span>
                         <div>
-                          <h3>{textValue(step.title, step.action)}</h3>
-                          <p>{textValue(step.description, step.detail)}</p>
+                          <h3>{tv(step.title, step.action)}</h3>
+                          <p>{tv(step.description, step.detail)}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                   <button type="button" className="premium-cta" onClick={openOrder} style={{ marginTop: 26 }}>
                     <ShoppingCart size={18} />
-                    {textValue(premium.hero?.ctaLabel, productPageConfig?.button?.text || 'Commander')}
+                    {tv(premium.hero?.ctaLabel, productPageConfig?.button?.text || t('premium.orderCta'))}
                   </button>
                 </div>
               </section>
@@ -902,20 +969,20 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
             comparison: (
               <section key="comparison" className="premium-section premium-comparison">
                 <div className="premium-centered">
-                  <h2 className="premium-heading">{textValue(comparison.headline, 'Comparaison')}</h2>
+                  <h2 className="premium-heading">{tv(comparison.headline, t('premium.comparisonHeadline'))}</h2>
                 </div>
                 <div className="premium-table-wrap">
                   <table className="premium-table">
                     <thead>
                       <tr>
                         <th></th>
-                        {comparisonColumns.slice(0, 3).map((column, index) => <th key={index}>{textValue(column)}</th>)}
+                        {comparisonColumns.slice(0, 3).map((column, index) => <th key={index}>{tv(column)}</th>)}
                       </tr>
                     </thead>
                     <tbody>
                       {comparisonRows.slice(0, 6).map((row, index) => (
                         <tr key={index}>
-                          <td>{textValue(row.label)}</td>
+                          <td>{tv(row.label)}</td>
                           {(asArray(row.values).length ? row.values : [true, false, false]).slice(0, 3).map((value, valueIndex) => (
                             <td key={valueIndex}>{boolIcon(Boolean(value), accent)}</td>
                           ))}
@@ -927,10 +994,10 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
                 <div className="premium-mobile-cards">
                   {comparisonRows.slice(0, 6).map((row, index) => (
                     <div key={index} className="premium-mobile-card">
-                      <div className="premium-mobile-card-label">{textValue(row.label)}</div>
+                      <div className="premium-mobile-card-label">{tv(row.label)}</div>
                       {comparisonColumns.slice(0, 3).map((col, colIndex) => (
                         <div key={colIndex} className="premium-mobile-card-row">
-                          <span className="premium-mobile-card-col">{textValue(col)}</span>
+                          <span className="premium-mobile-card-col">{tv(col)}</span>
                           {boolIcon(Boolean((asArray(row.values).length ? row.values : [true, false, false])[colIndex]), accent)}
                         </div>
                       ))}
@@ -942,8 +1009,8 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
             faq: (
               <section key="faq" className="premium-section premium-faq">
                 <div className="premium-centered">
-                  <h2 className="premium-heading">{textValue(premium.faq?.headline, 'Questions frequentes')}</h2>
-                  <p className="premium-lead">{textValue(premium.faq?.subheadline, 'Tout ce que vous devez savoir avant de commander.')}</p>
+                  <h2 className="premium-heading">{tv(premium.faq?.headline, t('store.faq'))}</h2>
+                  <p className="premium-lead">{tv(premium.faq?.subheadline, t('premium.faqSub'))}</p>
                 </div>
                 <div className="premium-faq-list">
                   {faqItems.map((item, index) => (
@@ -954,11 +1021,11 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
                         aria-expanded={openFaq === index}
                         onClick={() => setOpenFaq(openFaq === index ? null : index)}
                       >
-                        <span>{textValue(item.question)}</span>
+                        <span>{tv(item.question)}</span>
                         <ChevronDown size={19} />
                       </button>
                       {openFaq === index && (
-                        <div className="premium-faq-a">{textValue(item.answer)}</div>
+                        <div className="premium-faq-a">{tv(item.answer)}</div>
                       )}
                     </div>
                   ))}
@@ -968,16 +1035,16 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
             closing: (
               <section key="closing" className="premium-section premium-split premium-soft-band">
                 <div className="premium-copy">
-                  <h2 className="premium-heading">{textValue(premium.closingSection?.headline, `Pourquoi choisir ${productName}`)}</h2>
-                  <p className="premium-lead">{textValue(premium.closingSection?.subheadline, 'Une solution pensée pour acheter simplement et utiliser avec confiance.')}</p>
+                  <h2 className="premium-heading">{tv(premium.closingSection?.headline, t('premium.whyChoose', { product: productName }))}</h2>
+                  <p className="premium-lead">{tv(premium.closingSection?.subheadline, t('premium.closingSub'))}</p>
                   <ul className="premium-check-list" style={{ marginTop: 26 }}>
                     {closingBullets.slice(0, 4).map((item, index) => (
-                      <li key={index}><span className="premium-check-dot"><Check size={14} /></span><span>{textValue(item)}</span></li>
+                      <li key={index}><span className="premium-check-dot"><Check size={14} /></span><span>{tv(item)}</span></li>
                     ))}
                   </ul>
                   <button type="button" className="premium-cta" onClick={openOrder}>
                     <ShoppingCart size={19} />
-                    {textValue(premium.hero?.ctaLabel, 'Commander')}
+                    {tv(premium.hero?.ctaLabel, t('premium.orderCta'))}
                   </button>
                 </div>
                 <div className="premium-image-panel">{sectionImage('closing', 9) && <EditableImage src={sectionImage('closing', 9)} alt={productName} style={{ width: '100%', height: '100%' }} imageKey="closing" productId={product?._id} onImageUpdated={handleImageUpdated} isAdmin={isAdmin} />}</div>
@@ -991,14 +1058,28 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
                 <div className="premium-authority-track">
                   {[...authorityStrip, ...authorityStrip].map((item, index) => (
                     <div key={index} className="premium-authority-item">
-                      <div className="premium-authority-label">{textValue(item.label, 'Clients vérifiés')}</div>
-                      <p className="premium-authority-quote">{textValue(item.quote)}</p>
+                      <div className="premium-authority-label">{tv(item.label, t('premium.authVerified'))}</div>
+                      <p className="premium-authority-quote">{tv(item.quote)}</p>
                     </div>
                   ))}
                 </div>
               </section>
 
-              {order.map(id => sectionMap[id] || null)}
+              {order.map((id) => {
+                const el = sectionMap[id];
+                if (!el) return null;
+                if (!onSectionClick) return el;
+                const isActiveSection = activeSection === id;
+                return React.cloneElement(el, {
+                  'data-premium-section': id,
+                  onClick: () => onSectionClick(id),
+                  style: {
+                    ...(el.props.style || {}),
+                    cursor: 'pointer',
+                    ...(isActiveSection ? { outline: '2px solid #6366f1', outlineOffset: '-2px', borderRadius: 8 } : {}),
+                  },
+                });
+              })}
             </>
           );
         })()}

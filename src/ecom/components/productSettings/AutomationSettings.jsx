@@ -2,6 +2,7 @@ import React from 'react';
 import { MessageSquare, Info } from 'lucide-react';
 import SectionCard from './SectionCard';
 import ToggleSwitch from './ToggleSwitch';
+import { tp } from '../../i18n/platform.js';
 
 const VARIABLES = ['{{name}}', '{{phone}}', '{{product}}', '{{total}}', '{{order_id}}'];
 
@@ -18,7 +19,7 @@ const AutomationSettings = ({ config, onChange }) => {
 
   return (
     <div className="space-y-5">
-      <SectionCard icon={<MessageSquare size={18} />} title="WhatsApp Automation" description="Send automatic order confirmations via WhatsApp.">
+      <SectionCard icon={<MessageSquare size={18} />} title={tp('WhatsApp Automation')} description="Send automatic order confirmations via WhatsApp.">
         <ToggleSwitch
           label="Enable WhatsApp Confirmation"
           description="Automatically send a message when an order is placed"
@@ -29,7 +30,7 @@ const AutomationSettings = ({ config, onChange }) => {
         {wa.enabled && (
           <div className="space-y-4 pt-3 border-t border-gray-100 mt-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">WhatsApp Number</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('WhatsApp Number')}</label>
               <input
                 type="tel"
                 value={wa.number}
@@ -40,7 +41,7 @@ const AutomationSettings = ({ config, onChange }) => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">Message Template</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Message Template')}</label>
               <textarea
                 rows={4}
                 value={wa.message}
@@ -50,7 +51,7 @@ const AutomationSettings = ({ config, onChange }) => {
               <div className="mt-2">
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <Info size={12} className="text-gray-400" />
-                  <span className="text-[11px] text-gray-400">Click to insert a variable</span>
+                  <span className="text-[11px] text-gray-400">{tp('Click to insert a variable')}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {VARIABLES.map((v) => (

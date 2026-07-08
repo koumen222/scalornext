@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat';
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import ecomApi from '../services/ecommApi.js';
 import { CenteredSpinner } from '../components/Skeleton.jsx';
+import { tp } from '../i18n/platform.js';
 
 const DecisionsList = () => {
   const { user } = useEcomAuth();
@@ -22,7 +23,7 @@ const DecisionsList = () => {
       const decisionsData = response.data?.data || [];
       setDecisions(Array.isArray(decisionsData) ? decisionsData : []);
     } catch (error) {
-      setError('Erreur lors du chargement des décisions');
+      setError(tp('Erreur lors du chargement des décisions'));
       console.error(error);
       setDecisions([]);
     } finally {
@@ -35,7 +36,7 @@ const DecisionsList = () => {
       await ecomApi.put(`/decisions/${decisionId}/${action}`);
       loadDecisions();
     } catch (error) {
-      setError('Erreur lors de la mise à jour de la décision');
+      setError(tp('Erreur lors de la mise à jour de la décision'));
       console.error(error);
     }
   };
@@ -59,7 +60,7 @@ const DecisionsList = () => {
   return (
     <div className="p-3 sm:p-4 lg:p-6">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Décisions</h1>
+        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{tp('Décisions')}</h1>
         <Link
           to="/ecom/decisions/new"
           className="bg-primary-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-primary-700 text-sm"
@@ -79,25 +80,25 @@ const DecisionsList = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
+                {tp('Date')}
               </th>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Produit
+                {tp('Produit')}
               </th>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Type
+                {tp('Type')}
               </th>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                Priorité
+                {tp('Priorité')}
               </th>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Statut
+                {tp('Statut')}
               </th>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                Assigné à
+                {tp('Assigné à')}
               </th>
               <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                {tp('Actions')}
               </th>
             </tr>
           </thead>
@@ -105,7 +106,7 @@ const DecisionsList = () => {
             {decisions.length === 0 ? (
               <tr>
                 <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
-                  Aucune décision trouvée
+                  {tp('Aucune décision trouvée')}
                 </td>
               </tr>
             ) : (
@@ -132,7 +133,7 @@ const DecisionsList = () => {
                         : 'bg-primary-100 text-primary-800'
                     }`}>
                       {decision.type === 'scale' ? 'Scaler' : 
-                       decision.type === 'stop' ? 'Arrêter' : 'Continuer'}
+                       decision.type === 'stop' ? 'Arrêter' : tp('Continuer')}
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden sm:table-cell">
@@ -144,7 +145,7 @@ const DecisionsList = () => {
                         : 'bg-gray-100 text-gray-800'
                     }`}>
                       {decision.priority === 'high' ? 'Haute' : 
-                       decision.priority === 'medium' ? 'Moyenne' : 'Basse'}
+                       decision.priority === 'medium' ? 'Moyenne' : tp('Basse')}
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -156,12 +157,12 @@ const DecisionsList = () => {
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
                       {decision.status === 'completed' ? 'Complétée' : 
-                       decision.status === 'cancelled' ? 'Annulée' : 'En attente'}
+                       decision.status === 'cancelled' ? 'Annulée' : tp('En attente')}
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden md:table-cell">
                     <div className="text-xs sm:text-sm text-gray-900">
-                      {decision.assignedTo?.name || 'Non assigné'}
+                      {decision.assignedTo?.name || tp('Non assigné')}
                     </div>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
@@ -169,7 +170,7 @@ const DecisionsList = () => {
                       to={`/decisions/${decision._id}`}
                       className="text-primary-700 hover:text-primary-900 mr-4"
                     >
-                      Voir
+                      {tp('Voir')}
                     </Link>
                     {decision.status === 'pending' && (
                       <>
@@ -177,13 +178,13 @@ const DecisionsList = () => {
                           onClick={() => updateDecisionStatus(decision._id, 'complete')}
                           className="text-green-600 hover:text-green-900 mr-4"
                         >
-                          Compléter
+                          {tp('Compléter')}
                         </button>
                         <button
                           onClick={() => updateDecisionStatus(decision._id, 'cancel')}
                           className="text-red-600 hover:text-red-900"
                         >
-                          Annuler
+                          {tp('Annuler')}
                         </button>
                       </>
                     )}

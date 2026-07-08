@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
 import SuperAdminShell from '../components/SuperAdminShell';
+import { tp } from '../i18n/platform.js';
 
 const RANGES = [
   { value: '7', label: '7 jours' },
@@ -160,7 +161,7 @@ const SuperAdminProductPageHistory = () => {
 
   return (
     <SuperAdminShell
-      title="Historique pages produit IA"
+      title={tp('Historique pages produit IA')}
       subtitle="Suivi detaille par utilisateur, credits utilises et contenu genere."
       icon={FileText}
       error={error}
@@ -171,7 +172,7 @@ const SuperAdminProductPageHistory = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-400">
           <RefreshCw size={28} className="animate-spin mb-3" />
-          <span className="text-sm font-medium">Chargement...</span>
+          <span className="text-sm font-medium">{tp('Chargement...')}</span>
         </div>
       ) : (
         <>
@@ -194,9 +195,9 @@ const SuperAdminProductPageHistory = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
             {/* Top users */}
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-              <h2 className="text-sm font-bold text-slate-900 mb-4">Top utilisateurs generateurs</h2>
+              <h2 className="text-sm font-bold text-slate-900 mb-4">{tp('Top utilisateurs generateurs')}</h2>
               {generationUsers.length === 0 ? (
-                <p className="text-sm text-slate-400">Aucune donnee</p>
+                <p className="text-sm text-slate-400">{tp('Aucune donnee')}</p>
               ) : (
                 generationUsers.slice(0, 10).map((user, index) => (
                   <button
@@ -213,8 +214,8 @@ const SuperAdminProductPageHistory = () => {
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-slate-900 truncate">{user.name || user.email || 'Utilisateur'}</div>
-                      <div className="text-xs text-slate-400">{user.email || 'Email inconnu'} · {user.workspaceCount || 0} workspace{(user.workspaceCount || 0) > 1 ? 's' : ''}</div>
+                      <div className="text-sm font-semibold text-slate-900 truncate">{user.name || user.email || tp('Utilisateur')}</div>
+                      <div className="text-xs text-slate-400">{user.email || tp('Email inconnu')} · {user.workspaceCount || 0} workspace{(user.workspaceCount || 0) > 1 ? 's' : ''}</div>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <div className="text-sm font-bold text-primary-700">{user.generationCount || 0}</div>
@@ -227,9 +228,9 @@ const SuperAdminProductPageHistory = () => {
 
             {/* Content types */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-              <h2 className="text-sm font-bold text-slate-900 mb-4">Types de contenu</h2>
+              <h2 className="text-sm font-bold text-slate-900 mb-4">{tp('Types de contenu')}</h2>
               {generationContentTypes.length === 0 ? (
-                <p className="text-sm text-slate-400">Aucune donnee</p>
+                <p className="text-sm text-slate-400">{tp('Aucune donnee')}</p>
               ) : (
                 <div className="space-y-2.5">
                   {generationContentTypes.map((row) => (
@@ -251,7 +252,7 @@ const SuperAdminProductPageHistory = () => {
                 <input
                   value={generationSearch}
                   onChange={(e) => setGenerationSearch(e.target.value)}
-                  placeholder="Produit, URL, user, workspace…"
+                  placeholder={tp('Produit, URL, user, workspace…')}
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-primary-400 bg-slate-50"
                 />
               </div>
@@ -260,10 +261,10 @@ const SuperAdminProductPageHistory = () => {
                 onChange={(e) => setSelectedGenerationUser(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:border-primary-400"
               >
-                <option value="all">Tous les utilisateurs</option>
+                <option value="all">{tp('Tous les utilisateurs')}</option>
                 {generationUsers.map((user) => (
                   <option key={String(user._id)} value={String(user._id)}>
-                    {user.name || user.email || 'Utilisateur'}
+                    {user.name || user.email || tp('Utilisateur')}
                   </option>
                 ))}
               </select>
@@ -272,7 +273,7 @@ const SuperAdminProductPageHistory = () => {
                 onChange={(e) => setSelectedGenerationStatus(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:border-primary-400"
               >
-                <option value="all">Tous les statuts</option>
+                <option value="all">{tp('Tous les statuts')}</option>
                 {Object.entries(STATUS_META).map(([key, meta]) => (
                   <option key={key} value={key}>{meta.label}</option>
                 ))}
@@ -290,7 +291,7 @@ const SuperAdminProductPageHistory = () => {
             {filteredGenerationHistory.length === 0 && (
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-10 text-center">
                 <FileText size={32} className="mx-auto mb-3 text-slate-300" />
-                <p className="text-sm text-slate-400 font-medium">Aucune generation ne correspond aux filtres.</p>
+                <p className="text-sm text-slate-400 font-medium">{tp('Aucune generation ne correspond aux filtres.')}</p>
               </div>
             )}
             {filteredGenerationHistory.map((item) => {
@@ -307,12 +308,12 @@ const SuperAdminProductPageHistory = () => {
                       {/* Title + badges */}
                       <div className="flex flex-wrap items-center gap-2 mb-2">
                         <span className="text-sm font-bold text-slate-900">
-                          {item.productName || item.productUrl || 'Produit sans nom'}
+                          {item.productName || item.productUrl || tp('Produit sans nom')}
                         </span>
                         <Badge bg={statusMeta.bg} color={statusMeta.color}>{statusMeta.label}</Badge>
                         <Badge bg="#ecfeff" color="#0f766e">{item.creditsUsed || 0} credit{(item.creditsUsed || 0) > 1 ? 's' : ''}</Badge>
                         <Badge bg="#eff6ff" color="#1d4ed8">{item.creditSource || 'unknown'}</Badge>
-                        <Badge bg="#f8fafc" color="#475569">{item.outputMode === 'page_with_images' ? 'Page + images' : 'Page seule'}</Badge>
+                        <Badge bg="#f8fafc" color="#475569">{item.outputMode === 'page_with_images' ? 'Page + images' : tp('Page seule')}</Badge>
                       </div>
 
                       <p className="text-xs text-slate-500 mb-1.5">{itemUserName} · {itemUserEmail} · {workspaceName}</p>

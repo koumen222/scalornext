@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useCallback } from 'react';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const statusConfig = {
   sent:        { label: 'Envoyé',    color: 'bg-primary-100 text-primary-700',    dot: 'bg-primary-600' },
@@ -60,17 +61,17 @@ const SuperAdminWhatsAppLogs = () => {
     <div className="p-4 sm:p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Logs WhatsApp</h1>
-        <p className="text-sm text-gray-500 mt-1">Historique de tous les envois WhatsApp — diagnostiquez les échecs</p>
+        <h1 className="text-2xl font-bold text-gray-900">{tp('Logs WhatsApp')}</h1>
+        <p className="text-sm text-gray-500 mt-1">{tp('Historique de tous les envois WhatsApp — diagnostiquez les échecs')}</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         {[
           { label: 'Total', value: stats.total, color: 'text-gray-700', bg: 'bg-gray-50 border-gray-200' },
-          { label: 'Envoyés', value: stats.sent, color: 'text-primary-700', bg: 'bg-primary-50 border-primary-200' },
-          { label: 'Livrés', value: stats.delivered, color: 'text-green-700', bg: 'bg-green-50 border-green-200' },
-          { label: 'Échoués', value: stats.failed, color: 'text-red-700', bg: 'bg-red-50 border-red-200' },
+          { get label() { return tp('Envoyés'); }, value: stats.sent, color: 'text-primary-700', bg: 'bg-primary-50 border-primary-200' },
+          { get label() { return tp('Livrés'); }, value: stats.delivered, color: 'text-green-700', bg: 'bg-green-50 border-green-200' },
+          { get label() { return tp('Échoués'); }, value: stats.failed, color: 'text-red-700', bg: 'bg-red-50 border-red-200' },
           { label: 'En attente', value: stats.pending, color: 'text-yellow-700', bg: 'bg-yellow-50 border-yellow-200' },
         ].map((s, i) => (
           <div key={i} className={`${s.bg} border rounded-xl p-4 text-center`}>
@@ -84,7 +85,7 @@ const SuperAdminWhatsAppLogs = () => {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <input
           type="text"
-          placeholder="Rechercher par téléphone, nom, campagne, workspace, erreur..."
+          placeholder={tp('Rechercher par téléphone, nom, campagne, workspace, erreur...')}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
@@ -92,11 +93,11 @@ const SuperAdminWhatsAppLogs = () => {
         <div className="flex gap-2 flex-wrap">
           {[
             { value: '', label: 'Tous' },
-            { value: 'sent', label: 'Envoyés' },
-            { value: 'delivered', label: 'Livrés' },
-            { value: 'failed', label: 'Échoués' },
+            { value: 'sent', get label() { return tp('Envoyés'); } },
+            { value: 'delivered', get label() { return tp('Livrés'); } },
+            { value: 'failed', get label() { return tp('Échoués'); } },
             { value: 'pending', label: 'En attente' },
-            { value: 'undelivered', label: 'Non livrés' },
+            { value: 'undelivered', get label() { return tp('Non livrés'); } },
           ].map(f => (
             <button
               key={f.value}
@@ -118,7 +119,7 @@ const SuperAdminWhatsAppLogs = () => {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
-          Rafraîchir
+          {tp('Rafraîchir')}
         </button>
       </div>
 
@@ -149,8 +150,8 @@ const SuperAdminWhatsAppLogs = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
           </div>
-          <p className="text-gray-500 font-medium">Aucun log trouvé</p>
-          <p className="text-gray-400 text-sm mt-1">Les logs d'envoi WhatsApp apparaîtront ici</p>
+          <p className="text-gray-500 font-medium">{tp('Aucun log trouvé')}</p>
+          <p className="text-gray-400 text-sm mt-1">{tp('Les logs d\'envoi WhatsApp apparaîtront ici')}</p>
         </div>
       ) : (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
@@ -158,13 +159,13 @@ const SuperAdminWhatsAppLogs = () => {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Téléphone</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nom</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Workspace</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Campagne</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Envoyé le</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Erreur</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statut')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Téléphone')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Nom')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Workspace')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Campagne')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Envoyé le')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Erreur')}</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
@@ -198,7 +199,7 @@ const SuperAdminWhatsAppLogs = () => {
                             onClick={() => setExpandedId(isExpanded ? null : log._id)}
                             className="text-xs text-primary-600 hover:text-primary-800 font-medium"
                           >
-                            {isExpanded ? 'Masquer' : 'Détails'}
+                            {isExpanded ? 'Masquer' : tp('Détails')}
                           </button>
                         </td>
                       </tr>
@@ -207,43 +208,43 @@ const SuperAdminWhatsAppLogs = () => {
                           <td colSpan={8} className="px-4 py-4 bg-gray-50 border-t border-gray-200">
                             <div className="grid sm:grid-cols-2 gap-4 text-xs">
                               <div>
-                                <p className="font-semibold text-gray-700 mb-2">Message envoyé</p>
+                                <p className="font-semibold text-gray-700 mb-2">{tp('Message envoyé')}</p>
                                 <div className="bg-white border border-gray-200 rounded-lg p-3 whitespace-pre-wrap text-gray-700 max-h-40 overflow-y-auto">
-                                  {log.messageSent || <span className="text-gray-400 italic">Aucun message enregistré</span>}
+                                  {log.messageSent || <span className="text-gray-400 italic">{tp('Aucun message enregistré')}</span>}
                                 </div>
                               </div>
                               <div className="space-y-2">
-                                <p className="font-semibold text-gray-700 mb-2">Détails techniques</p>
+                                <p className="font-semibold text-gray-700 mb-2">{tp('Détails techniques')}</p>
                                 <div className="bg-white border border-gray-200 rounded-lg p-3 space-y-1.5">
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">ID Log</span>
+                                    <span className="text-gray-500">{tp('ID Log')}</span>
                                     <span className="font-mono text-gray-700 text-[10px]">{log._id}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">Message ID</span>
+                                    <span className="text-gray-500">{tp('Message ID')}</span>
                                     <span className="font-mono text-gray-700 text-[10px]">{log.messageId || '—'}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">Livré le</span>
+                                    <span className="text-gray-500">{tp('Livré le')}</span>
                                     <span className="text-gray-700">{fmt(log.deliveredAt)}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">Lu le</span>
+                                    <span className="text-gray-500">{tp('Lu le')}</span>
                                     <span className="text-gray-700">{fmt(log.readAt)}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">Envoyé par</span>
+                                    <span className="text-gray-500">{tp('Envoyé par')}</span>
                                     <span className="text-gray-700">{log.userId?.email || '—'}</span>
                                   </div>
                                   {log.error && (
                                     <div className="mt-2 pt-2 border-t border-red-100">
-                                      <p className="text-red-600 font-medium mb-1">Erreur :</p>
+                                      <p className="text-red-600 font-medium mb-1">{tp('Erreur :')}</p>
                                       <p className="text-red-500 break-all">{log.error}</p>
                                     </div>
                                   )}
                                   {log.providerResponse && Object.keys(log.providerResponse).length > 0 && (
                                     <div className="mt-2 pt-2 border-t border-gray-100">
-                                      <p className="text-gray-500 font-medium mb-1">Réponse provider :</p>
+                                      <p className="text-gray-500 font-medium mb-1">{tp('Réponse provider :')}</p>
                                       <pre className="text-[10px] text-gray-600 overflow-auto max-h-24 bg-gray-50 p-2 rounded">
                                         {JSON.stringify(log.providerResponse, null, 2)}
                                       </pre>

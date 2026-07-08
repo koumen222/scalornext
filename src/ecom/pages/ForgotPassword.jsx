@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Link } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
+import { tp } from '../i18n/platform.js';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -64,7 +65,7 @@ const ForgotPassword = () => {
                 onClick={() => { setSuccess(false); setEmail(''); }}
                 className="w-full py-2.5 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition text-sm"
               >
-                Renvoyer un email
+                {tp('Renvoyer un email')}
               </button>
               <Link
                 to="/ecom/login"
@@ -107,7 +108,7 @@ const ForgotPassword = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                Adresse email
+                {tp('Adresse email')}
               </label>
               <input
                 type="email"
@@ -115,7 +116,7 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="votre@email.com"
+                placeholder={tp('votre@email.com')}
                 disabled={loading}
                 autoFocus
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent disabled:opacity-50 disabled:bg-gray-50 text-sm"
@@ -130,7 +131,7 @@ const ForgotPassword = () => {
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Envoi en cours...
+                  {tp('Envoi en cours...')}
                 </>
               ) : (
                 <>

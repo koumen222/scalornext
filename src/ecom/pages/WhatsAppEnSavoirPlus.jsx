@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { Link } from '@/lib/router-compat';
+import { tp } from '../i18n/platform.js';
 
 const WhatsAppEnSavoirPlus = () => {
   return (
@@ -11,7 +12,7 @@ const WhatsAppEnSavoirPlus = () => {
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Retour au Marketing
+            {tp('Retour au Marketing')}
           </Link>
 
           <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -20,9 +21,9 @@ const WhatsAppEnSavoirPlus = () => {
             </svg>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">WhatsApp Pro pour votre Business</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">{tp('WhatsApp Pro pour votre Business')}</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Transformez votre communication client avec votre propre numéro WhatsApp
+            {tp('Transformez votre communication client avec votre propre numéro WhatsApp')}
           </p>
         </div>
 
@@ -41,8 +42,8 @@ const WhatsAppEnSavoirPlus = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">Messages envoyés avec NOTRE numéro</p>
-                    <p className="text-sm text-gray-600">Les clients voient un numéro inconnu → Moins de confiance</p>
+                    <p className="font-semibold text-gray-900">{tp('Messages envoyés avec NOTRE numéro')}</p>
+                    <p className="text-sm text-gray-600">{tp('Les clients voient un numéro inconnu → Moins de confiance')}</p>
                   </div>
                 </div>
 
@@ -53,8 +54,8 @@ const WhatsAppEnSavoirPlus = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">Messages envoyés avec VOTRE numéro</p>
-                    <p className="text-sm text-gray-600">Les clients reconnaissent votre numéro → Plus de réponses</p>
+                    <p className="font-semibold text-gray-900">{tp('Messages envoyés avec VOTRE numéro')}</p>
+                    <p className="text-sm text-gray-600">{tp('Les clients reconnaissent votre numéro → Plus de réponses')}</p>
                   </div>
                 </div>
               </div>
@@ -63,11 +64,11 @@ const WhatsAppEnSavoirPlus = () => {
             <div className="bg-gradient-to-br from-green-50 to-primary-50 rounded-xl p-6">
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600 mb-2">+40%</div>
-                <div className="text-sm text-gray-600">Taux de réponse moyen</div>
+                <div className="text-sm text-gray-600">{tp('Taux de réponse moyen')}</div>
                 <div className="text-3xl font-bold text-green-600 mb-2 mt-4">+25%</div>
-                <div className="text-sm text-gray-600">Taux de conversion</div>
+                <div className="text-sm text-gray-600">{tp('Taux de conversion')}</div>
                 <div className="text-3xl font-bold text-green-600 mb-2 mt-4">+60%</div>
-                <div className="text-sm text-gray-600">Confiance client</div>
+                <div className="text-sm text-gray-600">{tp('Confiance client')}</div>
               </div>
             </div>
           </div>
@@ -86,7 +87,7 @@ const WhatsAppEnSavoirPlus = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Confiance accrue</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{tp('Confiance accrue')}</h3>
               <p className="text-sm text-gray-600">
                 Vos clients reconnaissent votre numéro et sont plus enclins ù  répondre et ù  faire confiance ù  vos messages.
               </p>
@@ -98,7 +99,7 @@ const WhatsAppEnSavoirPlus = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Réponse rapide</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{tp('Réponse rapide')}</h3>
               <p className="text-sm text-gray-600">
                 Les clients répondent plus rapidement aux messages provenant d'un numéro qu'ils connaissent déjù .
               </p>
@@ -110,7 +111,7 @@ const WhatsAppEnSavoirPlus = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Image professionnelle</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{tp('Image professionnelle')}</h3>
               <p className="text-sm text-gray-600">
                 Renforcez votre image de marque en utilisant un numéro professionnel associé ù  votre entreprise.
               </p>
@@ -130,7 +131,7 @@ const WhatsAppEnSavoirPlus = () => {
                 1
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Postulez pour WhatsApp Pro</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">{tp('Postulez pour WhatsApp Pro')}</h3>
                 <p className="text-sm text-gray-600">
                   Remplissez le formulaire de postulation avec vos informations et votre numéro WhatsApp personnel.
                 </p>
@@ -142,9 +143,9 @@ const WhatsAppEnSavoirPlus = () => {
                 2
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Validation technique</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">{tp('Validation technique')}</h3>
                 <p className="text-sm text-gray-600">
-                  Notre équipe technique configure votre numéro et réalise les tests nécessaires (24-48h).
+                  {tp('Notre équipe technique configure votre numéro et réalise les tests nécessaires (24-48h).')}
                 </p>
               </div>
             </div>
@@ -154,9 +155,9 @@ const WhatsAppEnSavoirPlus = () => {
                 3
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Activation</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">{tp('Activation')}</h3>
                 <p className="text-sm text-gray-600">
-                  Une fois activé, toutes vos campagnes sont automat votre numéro personnel automatiquement.
+                  {tp('Une fois activé, toutes vos campagnes sont automat votre numéro personnel automatiquement.')}
                 </p>
               </div>
             </div>
@@ -171,28 +172,28 @@ const WhatsAppEnSavoirPlus = () => {
 
           <div className="space-y-6">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Est-ce que mon numéro personnel reste privé ?</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{tp('Est-ce que mon numéro personnel reste privé ?')}</h3>
               <p className="text-sm text-gray-600">
                 Oui, votre numéro n'est utilisé que pour l'envoi de vos campagnes marketing. Les clients peuvent vous répondre mais vos informations personnelles restent protégées.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Puis-je toujours utiliser mon numéro personnel ?</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{tp('Puis-je toujours utiliser mon numéro personnel ?')}</h3>
               <p className="text-sm text-gray-600">
                 Absolument ! La configuration ne perturbe pas votre usage personnel du numéro. Vous pouvez continuer ù  l'utiliser normalement.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Y a-t-il des limites d'envoi ?</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{tp('Y a-t-il des limites d\'envoi ?')}</h3>
               <p className="text-sm text-gray-600">
                 Oui, pour éviter le spam, nous appliquons les mêmes limites que pour le numéro partagé : 1 message toutes les 30 secondes avec une pause de 5 minutes après 10 envois.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Que se passe-t-il si je change de numéro ?</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{tp('Que se passe-t-il si je change de numéro ?')}</h3>
               <p className="text-sm text-gray-600">
                 Pas de problème ! Il suffit de faire une nouvelle postulation et nous reconfigurerons le système avec votre nouveau numéro.
               </p>
@@ -202,7 +203,7 @@ const WhatsAppEnSavoirPlus = () => {
 
         {/* CTA */}
         <div className="bg-gradient-to-r from-green-600 to-primary-600 rounded-2xl shadow-xl p-8 text-white text-center">
-          <h2 className="text-xl sm:text-3xl font-bold mb-4">Prêt ù  transformer votre communication ?</h2>
+          <h2 className="text-xl sm:text-3xl font-bold mb-4">{tp('Prêt ù  transformer votre communication ?')}</h2>
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
             Rejoignez les entreprises qui utilisent déjù  WhatsApp Pro pour améliorer leur relation client et augmenter leurs ventes.
           </p>
@@ -218,15 +219,15 @@ const WhatsAppEnSavoirPlus = () => {
               to="/ecom/campaigns"
               className="px-8 py-3 bg-white/20 text-white font-semibold rounded-lg hover:bg-white/30 transition border border-white/30"
             >
-              Retour au Marketing
+              {tp('Retour au Marketing')}
             </Link>
           </div>
         </div>
 
         {/* Contact */}
         <div className="mt-8 text-center text-sm text-gray-600">
-          <p>📞 Besoin d'aide ? Contactez notre équipe</p>
-          <p className="mt-1">⏰ Délai de traitement : 24-48h</p>
+          <p>{tp('📞 Besoin d\'aide ? Contactez notre équipe')}</p>
+          <p className="mt-1">{tp('⏰ Délai de traitement : 24-48h')}</p>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import {
   getAffiliateToken
 } from '../services/affiliatePortalApi.js';
 import AffiliateLayout from '../components/AffiliateLayout.jsx';
+import { tp } from '../i18n/platform.js';
 
 const REFERRAL_BASE_URL = 'https://scalor.net/ref';
 
@@ -169,7 +170,7 @@ export default function AffiliateDashboard() {
         <div className="flex items-center justify-center h-[80vh]">
           <div className="flex flex-col items-center gap-3">
             <svg className="w-8 h-8 animate-spin text-[#0F6B4F]" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-            <p className="text-sm text-gray-500">Chargement...</p>
+            <p className="text-sm text-gray-500">{tp('Chargement...')}</p>
           </div>
         </div>
       </AffiliateLayout>
@@ -192,11 +193,11 @@ export default function AffiliateDashboard() {
           <div className="relative">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
               <div>
-                <h1 className="text-xl font-bold">Bienvenue, {affiliate?.name || 'Affilié'}</h1>
-                <p className="text-sm text-white/70 mt-0.5">Votre lien de parrainage</p>
+                <h1 className="text-xl font-bold">Bienvenue, {affiliate?.name || tp('Affilié')}</h1>
+                <p className="text-sm text-white/70 mt-0.5">{tp('Votre lien de parrainage')}</p>
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-white/10 rounded-full border border-white/20 self-start">
-                Affilié Scalor
+                {tp('Affilié Scalor')}
               </span>
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -211,9 +212,9 @@ export default function AffiliateDashboard() {
                   }`}
                 >
                   {copied ? (
-                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Copié !</>
+                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> {tp('Copié !')}</>
                   ) : (
-                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg> Copier</>
+                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg> {tp('Copier')}</>
                   )}
                 </button>
                 <button
@@ -235,7 +236,7 @@ export default function AffiliateDashboard() {
               <svg className="w-5 h-5 text-[#0F6B4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
             <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalBalance} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">Solde disponible (FCFA)</p>
+            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Solde disponible (FCFA)')}</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
@@ -243,7 +244,7 @@ export default function AffiliateDashboard() {
               <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
             </div>
             <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalInscriptions} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">Inscriptions (x300 FCFA)</p>
+            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Inscriptions (x300 FCFA)')}</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
@@ -251,7 +252,7 @@ export default function AffiliateDashboard() {
               <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
             </div>
             <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalClients} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">Clients actifs</p>
+            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Clients actifs')}</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
@@ -259,7 +260,7 @@ export default function AffiliateDashboard() {
               <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
             </div>
             <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalMonthCommissions} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">Commissions ce mois (30%)</p>
+            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Commissions ce mois (30%)')}</p>
           </div>
         </div>
 
@@ -270,13 +271,13 @@ export default function AffiliateDashboard() {
             className="px-5 py-2.5 rounded-xl font-semibold text-sm bg-[#0F6B4F] hover:bg-[#0a5040] text-white transition-colors flex items-center gap-2 shadow-lg shadow-primary-600/20"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-            Demander un retrait
+            {tp('Demander un retrait')}
           </button>
         </div>
 
         {showWithdraw && (
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-base font-semibold text-gray-900 mb-3">Demander un retrait</h3>
+            <h3 className="text-base font-semibold text-gray-900 mb-3">{tp('Demander un retrait')}</h3>
             {withdrawSuccess && (
               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm mb-4">{withdrawSuccess}</div>
             )}
@@ -286,7 +287,7 @@ export default function AffiliateDashboard() {
             <form onSubmit={handleWithdraw} className="flex flex-col sm:flex-row gap-3">
               <input
                 type="number"
-                placeholder="Montant (min 5 000 FCFA)"
+                placeholder={tp('Montant (min 5 000 FCFA)')}
                 value={withdrawForm.amount}
                 onChange={e => setWithdrawForm(f => ({ ...f, amount: e.target.value }))}
                 className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
@@ -296,33 +297,33 @@ export default function AffiliateDashboard() {
                 onChange={e => setWithdrawForm(f => ({ ...f, operator: e.target.value }))}
                 className="px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
               >
-                <option value="orange_money">Orange Money</option>
-                <option value="mtn">MTN MoMo</option>
-                <option value="virement">Virement bancaire</option>
+                <option value="orange_money">{tp('Orange Money')}</option>
+                <option value="mtn">{tp('MTN MoMo')}</option>
+                <option value="virement">{tp('Virement bancaire')}</option>
               </select>
               <button type="submit" className="px-6 py-3 bg-[#0F6B4F] hover:bg-[#0a5040] text-white font-semibold rounded-xl text-sm transition-colors">
-                Retirer
+                {tp('Retirer')}
               </button>
             </form>
-            <p className="text-xs text-gray-500 mt-2">Solde disponible : <span className="text-[#0F6B4F] font-bold">{fmt(totalBalance)} FCFA</span></p>
+            <p className="text-xs text-gray-500 mt-2">{tp('Solde disponible :')} <span className="text-[#0F6B4F] font-bold">{fmt(totalBalance)} FCFA</span></p>
           </div>
         )}
 
         {/* Gains table */}
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Historique des gains</h3>
+            <h3 className="text-sm font-semibold text-gray-900">{tp('Historique des gains')}</h3>
             <span className="text-xs text-gray-500">{simData.history.length + conversions.length} transactions</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Client</th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Montant</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Date')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Type')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Client')}</th>
+                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Montant')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statut')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -349,7 +350,7 @@ export default function AffiliateDashboard() {
                   <tr key={c._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-3 text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
                     <td className="px-5 py-3 text-sm text-gray-900 font-medium">
-                      {c.conversionType === 'signup' ? 'Inscription' : 'Commission'}
+                      {c.conversionType === 'signup' ? 'Inscription' : tp('Commission')}
                     </td>
                     <td className="px-5 py-3 text-sm text-gray-500">{c.referredUser?.name || '—'}</td>
                     <td className="px-5 py-3 text-sm text-right font-bold text-[#0F6B4F]">+{fmt(c.commissionAmount)} F</td>
@@ -361,7 +362,7 @@ export default function AffiliateDashboard() {
                   </tr>
                 ))}
                 {simData.history.length === 0 && conversions.length === 0 && (
-                  <tr><td colSpan={5} className="px-5 py-10 text-center text-sm text-gray-500">Aucune transaction. Utilisez le simulateur ci-dessous.</td></tr>
+                  <tr><td colSpan={5} className="px-5 py-10 text-center text-sm text-gray-500">{tp('Aucune transaction. Utilisez le simulateur ci-dessous.')}</td></tr>
                 )}
               </tbody>
             </table>
@@ -371,81 +372,81 @@ export default function AffiliateDashboard() {
         {/* Simulator */}
         <div className="bg-gray-100 border border-gray-200 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Simulateur</span>
-            <span className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">Démo</span>
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{tp('Simulateur')}</span>
+            <span className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">{tp('Démo')}</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <button
               onClick={() => simulate('inscription', 0, 300)}
               className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
             >
-              <span className="block text-xs font-medium">+ Inscription</span>
+              <span className="block text-xs font-medium">{tp('+ Inscription')}</span>
               <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">+300 FCFA</span>
             </button>
             <button
               onClick={() => simulate('commission', 5000, 1500)}
               className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
             >
-              <span className="block text-xs font-medium">Achat 5 000F</span>
-              <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">+1 500 FCFA (30%)</span>
+              <span className="block text-xs font-medium">{tp('Achat 5 000F')}</span>
+              <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">{tp('+1 500 FCFA (30%)')}</span>
             </button>
             <button
               onClick={() => simulate('commission', 10000, 3000)}
               className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
             >
-              <span className="block text-xs font-medium">Achat 10 000F</span>
-              <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">+3 000 FCFA (30%)</span>
+              <span className="block text-xs font-medium">{tp('Achat 10 000F')}</span>
+              <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">{tp('+3 000 FCFA (30%)')}</span>
             </button>
             <button
               onClick={() => simulate('commission', 15000, 4500)}
               className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
             >
-              <span className="block text-xs font-medium">Achat 15 000F</span>
-              <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">+4 500 FCFA (30%)</span>
+              <span className="block text-xs font-medium">{tp('Achat 15 000F')}</span>
+              <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">{tp('+4 500 FCFA (30%)')}</span>
             </button>
           </div>
           <button
             onClick={() => setSimData({ balance: 0, inscriptions: 0, clients: 0, monthCommissions: 0, history: [] })}
             className="mt-3 text-xs text-gray-500 hover:text-gray-700 transition-colors"
           >
-            Réinitialiser la simulation
+            {tp('Réinitialiser la simulation')}
           </button>
         </div>
 
         {/* Commission rules */}
         <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Règles de commission</h3>
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Règles de commission')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="flex items-center gap-3 p-3 rounded-lg bg-primary-50 border border-primary-100">
               <div className="w-8 h-8 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold">1</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">Inscription via lien</p>
-                <p className="text-xs text-[#0F6B4F] font-semibold">+300 FCFA (immédiat)</p>
+                <p className="text-sm font-medium text-gray-900">{tp('Inscription via lien')}</p>
+                <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+300 FCFA (immédiat)')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-100">
               <div className="w-8 h-8 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center text-sm font-bold">2</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">Abonnement 5 000 FCFA/mois</p>
-                <p className="text-xs text-[#0F6B4F] font-semibold">+1 500 FCFA/mois (30%)</p>
+                <p className="text-sm font-medium text-gray-900">{tp('Abonnement 5 000 FCFA/mois')}</p>
+                <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+1 500 FCFA/mois (30%)')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 border border-purple-100">
               <div className="w-8 h-8 bg-purple-100 text-purple-700 rounded-lg flex items-center justify-center text-sm font-bold">3</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">Abonnement 10 000 FCFA/mois</p>
-                <p className="text-xs text-[#0F6B4F] font-semibold">+3 000 FCFA/mois (30%)</p>
+                <p className="text-sm font-medium text-gray-900">{tp('Abonnement 10 000 FCFA/mois')}</p>
+                <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+3 000 FCFA/mois (30%)')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
               <div className="w-8 h-8 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center text-sm font-bold">4</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">Abonnement 15 000 FCFA/mois</p>
-                <p className="text-xs text-[#0F6B4F] font-semibold">+4 500 FCFA/mois (30%)</p>
+                <p className="text-sm font-medium text-gray-900">{tp('Abonnement 15 000 FCFA/mois')}</p>
+                <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+4 500 FCFA/mois (30%)')}</p>
               </div>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-3">Retrait minimum : <span className="text-[#0F6B4F] font-bold">5 000 FCFA</span> — via Orange Money, MTN MoMo ou virement.</p>
+          <p className="text-xs text-gray-500 mt-3">{tp('Retrait minimum :')} <span className="text-[#0F6B4F] font-bold">5 000 FCFA</span> {tp('— via Orange Money, MTN MoMo ou virement.')}</p>
         </div>
       </div>
     </AffiliateLayout>

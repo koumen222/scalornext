@@ -2,6 +2,7 @@
 import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useWorkspaceSwitch, SwitchOverlay } from '../hooks/useWorkspaceSwitch';
 import ecomApi from '../services/ecommApi';
+import { tp } from '../i18n/platform.js';
 
 const PALETTE = [
   '#10b981', '#8b5cf6', '#3b82f6',
@@ -74,7 +75,7 @@ const WorkspaceSwitcher = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-gray-900 truncate leading-tight">{wsName}</p>
-            <p className="text-[10px] text-gray-400 leading-tight">{roleLabels[currentWorkspace?.role] || 'Espace'}</p>
+            <p className="text-[10px] text-gray-400 leading-tight">{roleLabels[currentWorkspace?.role] || tp('Espace')}</p>
           </div>
           {canSwitch && (
             <svg className={`w-3.5 h-3.5 text-gray-400 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +103,7 @@ const WorkspaceSwitcher = () => {
                 <p className="text-sm font-semibold text-gray-900 truncate">{currentWorkspace?.name}</p>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-medium text-primary-600">{roleLabels[currentWorkspace?.role]}</span>
-                  {currentWorkspace?.isOwner && <span className="text-[10px] text-gray-400">· Propriétaire</span>}
+                  {currentWorkspace?.isOwner && <span className="text-[10px] text-gray-400">{tp('· Propriétaire')}</span>}
                 </div>
               </div>
               <div className="w-1.5 h-1.5 rounded-full bg-primary-500 flex-shrink-0" />
@@ -126,7 +127,7 @@ const WorkspaceSwitcher = () => {
                   <p className="text-sm font-medium text-gray-800 truncate">{ws.name}</p>
                   <div className="flex items-center gap-1">
                     <span className="text-[10px] text-gray-400">{roleLabels[ws.role] || ws.role}</span>
-                    {ws.isOwner && <span className="text-[10px] text-gray-400">· Propriétaire</span>}
+                    {ws.isOwner && <span className="text-[10px] text-gray-400">{tp('· Propriétaire')}</span>}
                   </div>
                 </div>
                 <svg className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -9,6 +9,7 @@ import {
 import { analyticsApi } from '../services/analytics.js';
 import { CenteredSpinner as Spinner } from '../components/Skeleton.jsx';
 import SuperAdminShell from '../components/SuperAdminShell.jsx';
+import { tp } from '../i18n/platform.js';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -99,8 +100,8 @@ const FunnelStep = ({ step, count, rate, isLast, dropRate, lost }) => (
 const EmptyState = ({ message }) => (
   <div className="flex flex-col items-center justify-center py-20 text-slate-400">
     <BarChart3 className="w-16 h-16 mb-4 text-slate-300" />
-    <p className="text-base font-black text-slate-400">{message || 'Aucune donnée disponible'}</p>
-    <p className="text-sm mt-2 text-slate-400">Les données apparaîtront dès que du trafic sera enregistré.</p>
+    <p className="text-base font-black text-slate-400">{message || tp('Aucune donnée disponible')}</p>
+    <p className="text-sm mt-2 text-slate-400">{tp('Les données apparaîtront dès que du trafic sera enregistré.')}</p>
   </div>
 );
 
@@ -121,7 +122,7 @@ const SectionCard = ({ title, children, className = '', icon: Icon }) => (
 
 // ─── Bar chart avec labels dates réels ───
 const DailyBarChart = ({ data, valueKey = 'sessions', color = 'bg-primary-600', hoverColor = 'bg-primary-700', height = 'h-36' }) => {
-  if (!data || data.length === 0) return <p className="text-xs text-gray-400 text-center py-8">Aucune donnée</p>;
+  if (!data || data.length === 0) return <p className="text-xs text-gray-400 text-center py-8">{tp('Aucune donnée')}</p>;
   const maxVal = Math.max(...data.map(d => d[valueKey] || 0), 1);
   // Afficher au max 15 labels sur l'axe X
   const step = Math.ceil(data.length / 15);
@@ -212,7 +213,7 @@ const SuperAdminAnalytics = () => {
       }
     } catch (err) {
       console.error('Analytics load error:', err);
-      setError('Impossible de charger les données analytics.');
+      setError(tp('Impossible de charger les données analytics.'));
     } finally {
       setLoading(false);
     }
@@ -247,39 +248,39 @@ const SuperAdminAnalytics = () => {
         </div>
 
         {/* DAU / WAU / MAU */}
-        <SectionCard title="Utilisateurs actifs">
+        <SectionCard title={tp('Utilisateurs actifs')}>
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center">
               <p className="text-xl sm:text-3xl font-semibold text-teal-600 tracking-tight">{formatNumber(k.dau)}</p>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">DAU (24h)</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">{tp('DAU (24h)')}</p>
             </div>
             <div className="text-center">
               <p className="text-xl sm:text-3xl font-semibold text-primary-700 tracking-tight">{formatNumber(k.wau)}</p>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">WAU (7j)</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">{tp('WAU (7j)')}</p>
             </div>
             <div className="text-center">
               <p className="text-xl sm:text-3xl font-semibold text-primary-700 tracking-tight">{formatNumber(k.mau)}</p>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">MAU (30j)</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">{tp('MAU (30j)')}</p>
             </div>
           </div>
         </SectionCard>
 
         {/* Daily sessions */}
-        <SectionCard title="Sessions par jour" icon={Activity}>
+        <SectionCard title={tp('Sessions par jour')} icon={Activity}>
           {overview.trends?.dailySessions?.length > 0
             ? <DailyBarChart data={overview.trends.dailySessions} valueKey="sessions" color="bg-primary-600" hoverColor="bg-primary-700" height="h-36" />
             : <EmptyState message="Aucune session enregistrée" />}
         </SectionCard>
 
         {/* Visites uniques par jour */}
-        <SectionCard title="Visiteurs uniques par jour" icon={Users}>
+        <SectionCard title={tp('Visiteurs uniques par jour')} icon={Users}>
           {overview.trends?.dailySessions?.length > 0
             ? <DailyBarChart data={overview.trends.dailySessions} valueKey="uniqueUsers" color="bg-teal-500" hoverColor="bg-teal-600" height="h-32" />
             : <EmptyState message="Aucun visiteur enregistré" />}
         </SectionCard>
 
         {/* Inscriptions par jour */}
-        <SectionCard title="Inscriptions par jour" icon={TrendingUp}>
+        <SectionCard title={tp('Inscriptions par jour')} icon={TrendingUp}>
           {overview.trends?.dailySignups?.length > 0
             ? <DailyBarChart
                 data={overview.trends.dailySignups.map(d => ({ ...d, date: d._id, signups: d.count }))}
@@ -303,7 +304,7 @@ const SuperAdminAnalytics = () => {
     return (
       <div className="space-y-6">
         {/* Funnel visualization */}
-        <SectionCard title="Funnel de conversion">
+        <SectionCard title={tp('Funnel de conversion')}>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 items-stretch">
             {steps?.map((s, i) => (
               <FunnelStep
@@ -321,7 +322,7 @@ const SuperAdminAnalytics = () => {
 
         {/* Drop-off analysis */}
         {dropoffs?.length > 0 && (
-          <SectionCard title="Analyse des abandons">
+          <SectionCard title={tp('Analyse des abandons')}>
             <div className="space-y-4">
               {dropoffs.map((d, i) => (
                 <div key={i} className="flex items-center gap-3">
@@ -346,19 +347,19 @@ const SuperAdminAnalytics = () => {
           {steps && steps.length >= 5 && (
             <>
               <div className="bg-sky-50/60 border border-sky-200/60 rounded-2xl p-5 text-center transition-all duration-200 hover:shadow-lg hover:shadow-sky-100/50">
-                <p className="text-[11px] text-teal-600 font-medium uppercase tracking-wider">Visite → Inscription</p>
+                <p className="text-[11px] text-teal-600 font-medium uppercase tracking-wider">{tp('Visite → Inscription')}</p>
                 <p className="text-xl sm:text-3xl font-semibold text-sky-700 mt-2 tracking-tight">
                   {steps[0].count > 0 ? Math.round((steps[1].count / steps[0].count) * 100) : 0}%
                 </p>
               </div>
               <div className="bg-primary-50/60 border border-primary-200/60 rounded-2xl p-5 text-center transition-all duration-200 hover:shadow-lg hover:shadow-primary-100/50">
-                <p className="text-[11px] text-primary-600 font-medium uppercase tracking-wider">Inscription → Activation</p>
+                <p className="text-[11px] text-primary-600 font-medium uppercase tracking-wider">{tp('Inscription → Activation')}</p>
                 <p className="text-xl sm:text-3xl font-semibold text-primary-700 mt-2 tracking-tight">
                   {steps[1].count > 0 ? Math.round((steps[3].count / steps[1].count) * 100) : 0}%
                 </p>
               </div>
               <div className="bg-primary-50/60 border border-primary-200/60 rounded-2xl p-5 text-center transition-all duration-200 hover:shadow-lg hover:shadow-primary-100/50">
-                <p className="text-[11px] text-primary-700 font-medium uppercase tracking-wider">Activation → Actif</p>
+                <p className="text-[11px] text-primary-700 font-medium uppercase tracking-wider">{tp('Activation → Actif')}</p>
                 <p className="text-xl sm:text-3xl font-semibold text-primary-800 mt-2 tracking-tight">
                   {steps[3].count > 0 ? Math.round((steps[4].count / steps[3].count) * 100) : 0}%
                 </p>
@@ -380,7 +381,7 @@ const SuperAdminAnalytics = () => {
       <div className="space-y-6">
         {/* By Device & Browser */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <SectionCard title="Par appareil">
+          <SectionCard title={tp('Par appareil')}>
             {byDevice?.length > 0 ? (
               <div className="space-y-4">
                 {byDevice.map(d => {
@@ -392,7 +393,7 @@ const SuperAdminAnalytics = () => {
                       <span className="text-lg">{icons[d._id] || '❓'}</span>
                       <div className="flex-1">
                         <div className="flex justify-between text-xs mb-1.5">
-                          <span className="font-medium text-gray-700 capitalize">{d._id || 'Unknown'}</span>
+                          <span className="font-medium text-gray-700 capitalize">{d._id || tp('Unknown')}</span>
                           <span className="text-gray-500">{d.sessions} ({pct}%)</span>
                         </div>
                         <MiniBar value={d.sessions} max={byDevice[0]?.sessions || 1} />
@@ -401,17 +402,17 @@ const SuperAdminAnalytics = () => {
                   );
                 })}
               </div>
-            ) : <p className="text-xs text-gray-400">Les appareils s'afficheront dès que des sessions sont enregistrées.</p>}
+            ) : <p className="text-xs text-gray-400">{tp('Les appareils s\'afficheront dès que des sessions sont enregistrées.')}</p>}
           </SectionCard>
 
-          <SectionCard title="Par navigateur">
+          <SectionCard title={tp('Par navigateur')}>
             {byBrowser?.length > 0 ? (
               <div className="space-y-4">
                 {byBrowser.map(b => (
                   <div key={b._id} className="flex items-center gap-3">
                     <div className="flex-1">
                       <div className="flex justify-between text-xs mb-1.5">
-                        <span className="font-medium text-gray-700">{b._id || 'Unknown'}</span>
+                        <span className="font-medium text-gray-700">{b._id || tp('Unknown')}</span>
                         <span className="text-gray-500">{b.sessions}</span>
                       </div>
                       <MiniBar value={b.sessions} max={byBrowser[0]?.sessions || 1} color="bg-teal-500" />
@@ -419,20 +420,20 @@ const SuperAdminAnalytics = () => {
                   </div>
                 ))}
               </div>
-            ) : <p className="text-xs text-gray-400">Aucune donnée</p>}
+            ) : <p className="text-xs text-gray-400">{tp('Aucune donnée')}</p>}
           </SectionCard>
         </div>
 
         {/* By OS & Hourly */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <SectionCard title="Par système">
+          <SectionCard title={tp('Par système')}>
             {byOS?.length > 0 ? (
               <div className="space-y-4">
                 {byOS.map(o => (
                   <div key={o._id} className="flex items-center gap-3">
                     <div className="flex-1">
                       <div className="flex justify-between text-xs mb-1.5">
-                        <span className="font-medium text-gray-700">{o._id || 'Unknown'}</span>
+                        <span className="font-medium text-gray-700">{o._id || tp('Unknown')}</span>
                         <span className="text-gray-500">{o.sessions}</span>
                       </div>
                       <MiniBar value={o.sessions} max={byOS[0]?.sessions || 1} color="bg-primary-500" />
@@ -440,10 +441,10 @@ const SuperAdminAnalytics = () => {
                   </div>
                 ))}
               </div>
-            ) : <p className="text-xs text-gray-400">Aucune donnée</p>}
+            ) : <p className="text-xs text-gray-400">{tp('Aucune donnée')}</p>}
           </SectionCard>
 
-          <SectionCard title="Heures d'activité (sessions/heure)">
+          <SectionCard title={tp('Heures d\'activité (sessions/heure)')}>
             {hourly?.length > 0 ? (() => {
               const maxH = Math.max(...hourly.map(x => x.sessions), 1);
               const peakHour = hourly.reduce((a, b) => b.sessions > a.sessions ? b : a, hourly[0]);
@@ -479,13 +480,13 @@ const SuperAdminAnalytics = () => {
                   </div>
                 </>
               );
-            })() : <p className="text-xs text-gray-400">Aucune donnée</p>}
+            })() : <p className="text-xs text-gray-400">{tp('Aucune donnée')}</p>}
           </SectionCard>
         </div>
 
         {/* Referrers */}
         {byReferrer?.length > 0 && (
-          <SectionCard title="Sources de trafic">
+          <SectionCard title={tp('Sources de trafic')}>
             <div className="space-y-3">
               {byReferrer.map(r => (
                 <div key={r._id} className="flex items-center gap-3">
@@ -512,7 +513,7 @@ const SuperAdminAnalytics = () => {
     if (!countries?.countries?.length) return (
       <div className="bg-white rounded-2xl border border-gray-200/80 p-12 text-center shadow-sm">
         <MapPin className="w-10 h-10 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-600 font-semibold text-sm">Aucune donnée géographique</p>
+        <p className="text-gray-600 font-semibold text-sm">{tp('Aucune donnée géographique')}</p>
         <p className="text-gray-400 text-xs mt-2 max-w-xs mx-auto">
           Les pays s'afficheront dès que des visiteurs accèdent à la plateforme.
           La géolocalisation est détectée automatiquement via leur adresse IP.
@@ -524,20 +525,20 @@ const SuperAdminAnalytics = () => {
     return (
       <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
         <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900">Top pays</h3>
+          <h3 className="text-sm font-semibold text-gray-900">{tp('Top pays')}</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">#</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pays</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Sessions</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Utilisateurs</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Inscriptions</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Conversion</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Durée moy.</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rebond</th>
+                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Pays')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Sessions')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Utilisateurs')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Inscriptions')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Conversion')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Durée moy.')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Rebond')}</th>
                 <th className="px-5 py-3.5 text-[11px] font-semibold text-gray-400 w-32"></th>
               </tr>
             </thead>
@@ -577,7 +578,7 @@ const SuperAdminAnalytics = () => {
     if (!pages?.pages?.length) return (
       <div className="bg-white rounded-2xl border border-gray-200/80 p-12 text-center shadow-sm">
         <FileText className="w-10 h-10 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-600 font-semibold text-sm">Aucune page visitée enregistrée</p>
+        <p className="text-gray-600 font-semibold text-sm">{tp('Aucune page visitée enregistrée')}</p>
         <p className="text-gray-400 text-xs mt-2 max-w-xs mx-auto">
           Les pages s'afficheront dès que des utilisateurs naviguent sur la plateforme.
         </p>
@@ -588,20 +589,20 @@ const SuperAdminAnalytics = () => {
     return (
       <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
         <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900">Pages les plus visitées</h3>
+          <h3 className="text-sm font-semibold text-gray-900">{tp('Pages les plus visitées')}</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">#</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Page</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Vues</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Sessions</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Utilisateurs</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entrées</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Sorties</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Taux sortie</th>
+                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Page')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Vues')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Sessions')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Utilisateurs')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Entrées')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Sorties')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Taux sortie')}</th>
                 <th className="px-5 py-3.5 text-[11px] font-semibold text-gray-400 w-28"></th>
               </tr>
             </thead>
@@ -666,12 +667,12 @@ const SuperAdminAnalytics = () => {
 
         {/* Active by role */}
         {activeByRole?.length > 0 && (
-          <SectionCard title="Utilisateurs actifs par rôle">
+          <SectionCard title={tp('Utilisateurs actifs par rôle')}>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {activeByRole.map(r => (
                 <div key={r.role || 'null'} className="flex items-center gap-3 p-3.5 bg-gray-50/80 rounded-xl">
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ring-1 ring-inset ${roleBadge[r.role] || roleBadge[null]}`}>
-                    {roleLabels[r.role] || r.role || 'Sans rôle'}
+                    {roleLabels[r.role] || r.role || tp('Sans rôle')}
                   </span>
                   <span className="text-lg font-semibold text-gray-900">{r.count}</span>
                 </div>
@@ -684,19 +685,19 @@ const SuperAdminAnalytics = () => {
         <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900">Utilisateurs ({formatNumber(activity.totalLogins)})</h3>
-            <span className="text-[10px] text-gray-400">trié par date de connexion</span>
+            <span className="text-[10px] text-gray-400">{tp('trié par date de connexion')}</span>
           </div>
           {recentLogins?.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60">
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Date</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Nom</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Date')}</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Nom')}</th>
                     <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Email</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rôle</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pays</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Appareil</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Rôle')}</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Pays')}</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Appareil')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -721,8 +722,8 @@ const SuperAdminAnalytics = () => {
             </div>
           ) : (
             <div className="p-12 text-center">
-              <p className="text-gray-500 text-sm font-medium">Aucun utilisateur trouvé pour cette période</p>
-              <p className="text-gray-400 text-xs mt-1">Essayez la plage 90j ou une date plus large</p>
+              <p className="text-gray-500 text-sm font-medium">{tp('Aucun utilisateur trouvé pour cette période')}</p>
+              <p className="text-gray-400 text-xs mt-1">{tp('Essayez la plage 90j ou une date plus large')}</p>
             </div>
           )}
 
@@ -769,7 +770,7 @@ const SuperAdminAnalytics = () => {
           className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all duration-300 shadow-md hover:shadow-lg"
         >
           <RotateCcw className="w-4 h-4" />
-          Réessayer
+          {tp('Réessayer')}
         </button>
       </div>
     );
@@ -808,7 +809,7 @@ const SuperAdminAnalytics = () => {
           {startDate && (
             <button onClick={() => loadTab(tab, buildParams(activityPage))}
               className="px-3 py-1.5 text-xs font-bold bg-primary-500 text-white rounded-lg hover:bg-primary-400 transition-colors">
-              Appliquer
+              {tp('Appliquer')}
             </button>
           )}
         </div>
@@ -818,7 +819,7 @@ const SuperAdminAnalytics = () => {
 
   return (
     <SuperAdminShell
-      title="Analytics"
+      title={tp('Analytics')}
       subtitle="Vue globale et détaillée de la plateforme"
       icon={BarChart3}
       refreshing={loading}

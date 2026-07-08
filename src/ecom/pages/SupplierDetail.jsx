@@ -3,6 +3,7 @@ import { useParams, useNavigate } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi';
 import { useMoney } from '../hooks/useMoney';
 import { getContextualError } from '../utils/errorMessages';
+import { tp } from '../i18n/platform.js';
 
 const I = {
   back: 'M15 19l-7-7 7-7',
@@ -23,10 +24,10 @@ const Ico = ({d, className="w-5 h-5", ...props}) => (
 
 const STATUS_CONFIG = {
   pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
-  paid: { label: 'Payé', color: 'bg-blue-100 text-blue-800' },
-  shipped: { label: 'Expédié', color: 'bg-purple-100 text-purple-800' },
-  received: { label: 'Reçu', color: 'bg-primary-100 text-primary-800' },
-  cancelled: { label: 'Annulé', color: 'bg-red-100 text-red-800' }
+  paid: { get label() { return tp('Payé'); }, color: 'bg-blue-100 text-blue-800' },
+  shipped: { get label() { return tp('Expédié'); }, color: 'bg-purple-100 text-purple-800' },
+  received: { get label() { return tp('Reçu'); }, color: 'bg-primary-100 text-primary-800' },
+  cancelled: { get label() { return tp('Annulé'); }, color: 'bg-red-100 text-red-800' }
 };
 
 export default function SupplierDetail() {
@@ -149,7 +150,7 @@ export default function SupplierDetail() {
     }
   };
 
-  if (loading && !supplier) return <div className="min-h-screen bg-gray-50 flex items-center justify-center font-medium text-gray-500 animate-pulse">Chargement fournisseur...</div>;
+  if (loading && !supplier) return <div className="min-h-screen bg-gray-50 flex items-center justify-center font-medium text-gray-500 animate-pulse">{tp('Chargement fournisseur...')}</div>;
   if (!supplier) return null;
 
   return (
@@ -158,7 +159,7 @@ export default function SupplierDetail() {
       <div className="bg-white border-b border-gray-100 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
           <div className="flex items-center gap-4 mb-4">
-            <button onClick={() => navigate('/ecom/sourcing')} aria-label="Retour aux fournisseurs" className="p-2 -ml-2 rounded-lg hover:bg-gray-100 active:scale-95 text-gray-400 hover:text-gray-900 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-1">
+            <button onClick={() => navigate('/ecom/sourcing')} aria-label={tp('Retour aux fournisseurs')} className="p-2 -ml-2 rounded-lg hover:bg-gray-100 active:scale-95 text-gray-400 hover:text-gray-900 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-1">
               <Ico d={I.back} className="w-5 h-5" aria-hidden="true" />
             </button>
             <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center font-black text-xl text-gray-600">
@@ -166,7 +167,7 @@ export default function SupplierDetail() {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">{supplier.name}</h1>
-              <p className="text-sm text-gray-500 font-medium">{supplier.phone || 'Aucun numéro'} • {stats?.totalOrders || 0} commande(s)</p>
+              <p className="text-sm text-gray-500 font-medium">{supplier.phone || tp('Aucun numéro')} • {stats?.totalOrders || 0} commande(s)</p>
             </div>
           </div>
 
@@ -198,10 +199,10 @@ export default function SupplierDetail() {
                 <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
                   <Ico d={I.box} className="w-8 h-8"/>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Aucune commande</h3>
-                <p className="text-gray-500 text-sm font-medium mb-6">Vous n'avez pas encore passé de commande chez ce fournisseur.</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{tp('Aucune commande')}</h3>
+                <p className="text-gray-500 text-sm font-medium mb-6">{tp('Vous n\'avez pas encore passé de commande chez ce fournisseur.')}</p>
                 <button onClick={() => setActiveTab('new_order')} className="px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition">
-                  Créer une commande
+                  {tp('Créer une commande')}
                 </button>
               </div>
             ) : (
@@ -214,7 +215,7 @@ export default function SupplierDetail() {
                       </div>
                       <div>
                         <p className="font-bold text-gray-900">{new Date(order.orderDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                        <p className="text-xs font-medium text-gray-500">Réf: {order.referenceNumber || 'N/A'} • {order.products.length} produit(s)</p>
+                        <p className="text-xs font-medium text-gray-500">Réf: {order.referenceNumber || tp('N/A')} • {order.products.length} produit(s)</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 sm:justify-end">
@@ -224,7 +225,7 @@ export default function SupplierDetail() {
                           {STATUS_CONFIG[order.status]?.label}
                         </span>
                       </div>
-                      <button onClick={() => handleDeleteOrder(order._id)} aria-label="Supprimer la commande" className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg active:scale-95 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-1">
+                      <button onClick={() => handleDeleteOrder(order._id)} aria-label={tp('Supprimer la commande')} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg active:scale-95 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-1">
                         <Ico d={I.trash} className="w-5 h-5" aria-hidden="true" />
                       </button>
                     </div>
@@ -239,7 +240,7 @@ export default function SupplierDetail() {
                     ))}
                     {order.shippingCost > 0 && (
                       <div className="flex justify-between items-center text-sm font-medium pt-2 border-t border-gray-50">
-                        <span className="text-gray-500 flex items-center gap-2"><Ico d={I.truck} className="w-4 h-4"/> Frais de port</span>
+                        <span className="text-gray-500 flex items-center gap-2"><Ico d={I.truck} className="w-4 h-4"/> {tp('Frais de port')}</span>
                         <span className="text-gray-500">{formatMoney(order.shippingCost)}</span>
                       </div>
                     )}
@@ -249,17 +250,17 @@ export default function SupplierDetail() {
                   <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-50">
                     {order.status !== 'paid' && order.status !== 'received' && (
                       <button onClick={() => handleUpdateOrderStatus(order._id, 'paid')} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100 active:scale-95 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-1">
-                        Marquer Payé
+                        {tp('Marquer Payé')}
                       </button>
                     )}
                     {order.status === 'paid' && (
                       <button onClick={() => handleUpdateOrderStatus(order._id, 'shipped')} className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-xs font-bold hover:bg-purple-100 active:scale-95 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-1">
-                        Marquer Expédié
+                        {tp('Marquer Expédié')}
                       </button>
                     )}
                     {order.status === 'shipped' && (
                       <button onClick={() => handleUpdateOrderStatus(order._id, 'received')} className="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-100 active:scale-95 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1">
-                        Marquer Reçu
+                        {tp('Marquer Reçu')}
                       </button>
                     )}
                   </div>
@@ -275,7 +276,7 @@ export default function SupplierDetail() {
             <div className="p-6 border-b border-gray-100 bg-gray-50/50">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Ico d={I.plus} className="w-5 h-5 text-gray-400"/>
-                Créer une commande
+                {tp('Créer une commande')}
               </h2>
             </div>
             
@@ -283,7 +284,7 @@ export default function SupplierDetail() {
               {/* Produits */}
               <div className="mb-8">
                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center justify-between">
-                  Produits commandés
+                  {tp('Produits commandés')}
                   <button type="button" onClick={addProductRow} className="text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg normal-case flex items-center gap-1.5 transition">
                     <Ico d={I.plus} className="w-4 h-4"/> Ajouter une ligne
                   </button>
@@ -293,17 +294,17 @@ export default function SupplierDetail() {
                   {orderForm.products.map((prod, idx) => (
                     <div key={idx} className="flex flex-col sm:flex-row gap-3 items-start sm:items-center p-4 bg-gray-50 rounded-xl border border-gray-100">
                       <div className="flex-1 w-full">
-                        <label className="block text-xs font-bold text-gray-500 mb-1">Nom du produit *</label>
+                        <label className="block text-xs font-bold text-gray-500 mb-1">{tp('Nom du produit *')}</label>
                         <input type="text" required value={prod.productName} onChange={e=>updateProductRow(idx, 'productName', e.target.value)}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400 outline-none" placeholder="Ex: T-shirt noir XL"/>
+                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400 outline-none" placeholder={tp('Ex: T-shirt noir XL')}/>
                       </div>
                       <div className="w-full sm:w-24">
-                        <label className="block text-xs font-bold text-gray-500 mb-1">Quantité *</label>
+                        <label className="block text-xs font-bold text-gray-500 mb-1">{tp('Quantité *')}</label>
                         <input type="number" required min="1" value={prod.quantity} onChange={e=>updateProductRow(idx, 'quantity', e.target.value)}
                           className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400 outline-none"/>
                       </div>
                       <div className="w-full sm:w-32">
-                        <label className="block text-xs font-bold text-gray-500 mb-1">Prix U. (XAF) *</label>
+                        <label className="block text-xs font-bold text-gray-500 mb-1">{tp('Prix U. (XAF) *')}</label>
                         <input type="number" required min="0" value={prod.unitPrice} onChange={e=>updateProductRow(idx, 'unitPrice', e.target.value)}
                           className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400 outline-none"/>
                       </div>
@@ -321,40 +322,40 @@ export default function SupplierDetail() {
               {/* Détails Global */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1.5">Frais de livraison (XAF)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-1.5">{tp('Frais de livraison (XAF)')}</label>
                   <input type="number" min="0" value={orderForm.shippingCost} onChange={e=>setOrderForm({...orderForm, shippingCost: e.target.value})}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gray-900/10 outline-none"/>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1.5">N° de Suivi / Référence</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-1.5">{tp('N° de Suivi / Référence')}</label>
                   <input type="text" value={orderForm.referenceNumber} onChange={e=>setOrderForm({...orderForm, referenceNumber: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gray-900/10 outline-none" placeholder="Tracking..."/>
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gray-900/10 outline-none" placeholder={tp('Tracking...')}/>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1.5">Statut de la commande</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-1.5">{tp('Statut de la commande')}</label>
                   <select value={orderForm.status} onChange={e=>setOrderForm({...orderForm, status: e.target.value})}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gray-900/10 outline-none">
-                    <option value="pending">En attente</option>
-                    <option value="paid">Payée</option>
-                    <option value="shipped">Expédiée</option>
-                    <option value="received">Reçue</option>
+                    <option value="pending">{tp('En attente')}</option>
+                    <option value="paid">{tp('Payée')}</option>
+                    <option value="shipped">{tp('Expédiée')}</option>
+                    <option value="received">{tp('Reçue')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1.5">Méthode de paiement</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-1.5">{tp('Méthode de paiement')}</label>
                   <input type="text" value={orderForm.paymentMethod} onChange={e=>setOrderForm({...orderForm, paymentMethod: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gray-900/10 outline-none" placeholder="Ex: Virement, Alibaba, Espèces..."/>
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gray-900/10 outline-none" placeholder={tp('Ex: Virement, Alibaba, Espèces...')}/>
                 </div>
               </div>
 
               {/* Récapitulatif Total */}
               <div className="bg-gray-900 rounded-xl p-5 sm:p-6 text-white flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div>
-                  <p className="text-gray-400 text-sm font-medium mb-1">Montant Total de la commande</p>
+                  <p className="text-gray-400 text-sm font-medium mb-1">{tp('Montant Total de la commande')}</p>
                   <p className="text-3xl font-black">{formatMoney(orderTotal)}</p>
                 </div>
                 <button type="submit" className="w-full sm:w-auto px-8 py-3 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-50 transition active:scale-95 text-sm">
-                  Valider la commande
+                  {tp('Valider la commande')}
                 </button>
               </div>
             </form>
@@ -366,7 +367,7 @@ export default function SupplierDetail() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total commandes</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Total commandes')}</p>
                 <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center" aria-hidden="true">
                   <Ico d={I.box} className="w-4 h-4 text-blue-600" />
                 </div>
@@ -376,7 +377,7 @@ export default function SupplierDetail() {
 
             <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total dépensé</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Total dépensé')}</p>
                 <div className="w-7 h-7 rounded-lg bg-primary-100 flex items-center justify-center" aria-hidden="true">
                   <Ico d={I.chart} className="w-4 h-4 text-primary-600" />
                 </div>
@@ -386,7 +387,7 @@ export default function SupplierDetail() {
 
             <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panier moyen</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Panier moyen')}</p>
                 <div className="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center" aria-hidden="true">
                   <Ico d={I.chart} className="w-4 h-4 text-purple-600" />
                 </div>
@@ -396,7 +397,7 @@ export default function SupplierDetail() {
 
             <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Dernière commande</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Dernière commande')}</p>
                 <div className="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center" aria-hidden="true">
                   <Ico d={I.clock} className="w-4 h-4 text-orange-600" />
                 </div>
