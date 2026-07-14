@@ -5,10 +5,11 @@ import {
   ArrowLeft, Save, Eye, EyeOff, Plus, Trash2, GripVertical,
   ChevronUp, ChevronDown, ChevronLeft, Settings, Code, Star, MessageSquare,
   HelpCircle, Zap, Image, Type, Layout, Copy, CheckCircle,
-  AlertCircle, Loader2, Layers, Smartphone, Monitor, X,
+  AlertCircle, Loader2, Layers, Smartphone, Monitor, X, Sparkles,
   ChevronRight, Package, ShoppingCart, BarChart3, Box, Flame,
   Clock, Shield, Gift, FileText, Frown, Lightbulb, Link2,
-  Pin, Rocket, MousePointerClick, Upload
+  Pin, Rocket, MousePointerClick, Upload,
+  Megaphone, Timer, ArrowLeftRight, Play, ListOrdered, Table, Truck, MessageCircle,
 } from 'lucide-react';
 import { storeProductsApi, storeManageApi, storeDeliveryZonesApi } from '../services/storeApi.js';
 import { useStore } from '../contexts/StoreContext.jsx';
@@ -16,7 +17,14 @@ import defaultConfig from '../components/productSettings/defaultConfig.js';
 import { formatMoney } from '../utils/currency.js';
 import { buildMergedProductPageConfig, buildProductOnlyPageConfig } from '../utils/productPageConfig.js';
 import BuilderAIChatWidget from '../components/BuilderAIChatWidget.jsx';
-import StoreProductPagePremium from '../components/StoreProductPagePremium.jsx';
+import CustomCodeEditor from '../components/CustomCodeEditor.jsx';
+import { SECTION_TEMPLATES } from '../components/sectionTemplates.js';
+
+// Icônes monochromes des templates de sections prédéfinies
+const TEMPLATE_ICONS = {
+  Megaphone, Timer, ArrowLeftRight, Play, Shield, ListOrdered, Table,
+  Star, HelpCircle, Truck, MessageCircle, BarChart3, ImageIcon: Image,
+};
 
 // ─── Section metadata for the 20 productPageConfig sections ──────────────────
 const SECTION_META = {
@@ -39,6 +47,10 @@ const SECTION_META = {
   stickyOrderBar:   { label: 'Barre de commande fixe',    desc: 'Barre fixe Commander',                icon: Pin,          color: 'bg-gray-100 text-gray-700 border-gray-200' },
   upsell:           { label: 'Upsell',                    desc: 'Produit de valeur supérieure',        icon: Rocket,       color: 'bg-violet-100 text-violet-700 border-violet-200' },
   orderBump:        { label: 'Order Bump',                desc: 'Produit complémentaire',              icon: ShoppingCart, color: 'bg-teal-100 text-teal-700 border-teal-200' },
+  orderForm:        { label: 'Bouton / Formulaire',       desc: 'Bouton commander et formulaire',      icon: MousePointerClick, color: 'bg-gray-100 text-gray-700 border-gray-200' },
+  productGallery:   { label: 'Photos du produit',         desc: 'Galerie d\'images du produit',        icon: Image,        color: 'bg-gray-100 text-gray-700 border-gray-200' },
+  comparison:       { label: 'Tableau comparatif',        desc: 'Votre produit vs les autres',         icon: BarChart3,    color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  customCode:       { label: 'Code personnalisé',         desc: 'HTML, CSS et JS injectés dans la page', icon: Code,        color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
 };
 
 // ─── Merge helpers (same as ProductSettingsPage) ─────────────────────────────
@@ -95,8 +107,9 @@ const EDITABLE_SECTIONS = {
     { key: 'quickResult', label: 'Résultat rapide', placeholder: 'Ex: 7 jours', type: 'text' },
   ]},
   conversionBlocks: { fields: 'iconTextList', label: 'Blocs de réassurance', iconPlaceholder: '🚚', textPlaceholder: 'Livraison gratuite partout' },
-  description:     { fields: [{ key: 'text', label: 'Description', placeholder: 'Description détaillée du produit…', type: 'textarea' }] },
+  description:     { fields: [{ key: 'text', label: 'Description (texte ou code HTML)', placeholder: 'Description détaillée du produit… (HTML accepté : <p>, <img>, <iframe>…)', type: 'textarea' }] },
   stockCounter:    { fields: [{ key: 'text', label: 'Texte stock', placeholder: 'Ex: ⚡ Plus que 5 en stock !', type: 'text' }] },
+  customCode:      { fields: 'code' },
 };
 
 const inputCls = "w-full px-3 py-2 rounded-lg border border-gray-200 text-[13px] outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200 transition-all bg-white";
@@ -272,13 +285,28 @@ const getDefaultContent = (sectionId, product) => {
   }
 };
 
-const SectionContentEditor = ({ section, onChange, product }) => {
+const SectionContentEditor = ({ section, onChange, product, onRemoveSection }) => {
   const schema = EDITABLE_SECTIONS[section.id];
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [galleryUploadError, setGalleryUploadError] = useState('');
   const [aiImagePrompt, setAiImagePrompt] = useState('');
   const [aiImageGenerating, setAiImageGenerating] = useState(false);
   const [aiImageError, setAiImageError] = useState('');
+
+  // Sections personnalisées du thème classique (ccs_…) — éditeur code complet
+  if (String(section.id).startsWith('ccs_')) {
+    const content = section.content || {};
+    return (
+      <CustomCodeEditor
+        html={content.html || ''}
+        onChangeHtml={(value) => onChange({ ...section, content: { ...content, html: value } })}
+        style={content.style || {}}
+        onChangeStyle={(value) => onChange({ ...section, content: { ...content, style: value } })}
+        onRemove={onRemoveSection ? () => onRemoveSection(section.id) : undefined}
+      />
+    );
+  }
+
   if (!schema) return (
     <div className="text-[11px] text-gray-400 italic py-2">Contenu généré automatiquement par l'IA ou géré via les paramètres de la boutique.</div>
   );
@@ -466,6 +494,29 @@ const SectionContentEditor = ({ section, onChange, product }) => {
           </button>
         )}
       </div>
+    );
+  }
+
+  // ── Code editor (customCode) — un seul champ (HTML + CSS + JS ensemble) ──
+  if (schema.fields === 'code') {
+    const legacyExtras = [
+      content.css?.trim() ? `<style>\n${content.css}\n</style>` : '',
+      content.js?.trim() ? `<script>\n${content.js}\n</script>` : '',
+    ].filter(Boolean).join('\n\n');
+    const displayValue = [content.html || '', legacyExtras].filter(Boolean).join('\n\n');
+    const handleCodeChange = (val) => {
+      const next = { ...content, html: val };
+      if (content.css) next.css = '';
+      if (content.js) next.js = '';
+      onChange({ ...section, content: next });
+    };
+    return (
+      <CustomCodeEditor
+        html={displayValue}
+        onChangeHtml={handleCodeChange}
+        style={content.style || {}}
+        onChangeStyle={(value) => update('style', value)}
+      />
     );
   }
 
@@ -1477,6 +1528,9 @@ const ProductPageBuilder = () => {
   })();
 
   const subdomain = activeStore?.subdomain || activeStore?.storeSettings?.subdomain || '';
+  // Aperçu iframe de la vraie page publique — rechargé à chaque sauvegarde (iframeKey)
+  const [iframeKey, setIframeKey] = useState(0);
+  const previewUrl = subdomain && product ? `/store/${subdomain}/product/${product.slug || id}` : null;
 
   // Load product + store config
   useEffect(() => {
@@ -1566,6 +1620,7 @@ const ProductPageBuilder = () => {
         await storeProductsApi.updateProduct(id, { productPageConfig: updatedProductConfig });
         setProduct((prev) => prev ? { ...prev, productPageConfig: updatedProductConfig } : prev);
         setSaveStatus('saved');
+        setIframeKey(k => k + 1);
         setTimeout(() => setSaveStatus(null), 2000);
       } catch {
         setSaveStatus('error');
@@ -1609,6 +1664,31 @@ const ProductPageBuilder = () => {
       autoSaveConfig(next);
       return next;
     });
+  }, [autoSaveConfig]);
+
+  // Suppression d'une section personnalisée (ccs_…)
+  const handleConfigRemoveSection = useCallback((sectionId) => {
+    if (!window.confirm('Supprimer cette section ? Son contenu sera perdu.')) return;
+    setConfigSections(prev => {
+      const next = prev.filter(s => s.id !== sectionId);
+      autoSaveConfig(next);
+      return next;
+    });
+    setActiveConfigSection(null);
+  }, [autoSaveConfig]);
+
+  // Ajout d'une section personnalisée (vierge ou template) au thème classique
+  const [showAddSection, setShowAddSection] = useState(false);
+  const handleAddCustomSection = useCallback((tpl) => {
+    const id = `ccs_${Date.now()}`;
+    setConfigSections(prev => {
+      const entry = { id, label: tpl?.label || 'Nouvelle section', enabled: true, content: { html: tpl?.html || '' } };
+      const next = tpl?.placement === 'top' ? [entry, ...prev] : [...prev, entry];
+      autoSaveConfig(next);
+      return next;
+    });
+    setShowAddSection(false);
+    setActiveConfigSection(id);
   }, [autoSaveConfig]);
 
   const handleDeliveryChange = useCallback((field, value) => {
@@ -1739,6 +1819,7 @@ const ProductPageBuilder = () => {
       productConfigRef.current = updatedProductConfig;
       setProduct((prev) => prev ? { ...prev, productPageConfig: updatedProductConfig } : prev);
       setSaveStatus('saved');
+      setIframeKey(k => k + 1);
       setTimeout(() => setSaveStatus(null), 3000);
     } catch {
       setSaveStatus('error');
@@ -1873,7 +1954,7 @@ const ProductPageBuilder = () => {
             /* ── SECTION EDITOR (inline, replaces list) ── */
             const sec = configSections.find(s => s.id === activeConfigSection);
             if (!sec) return null;
-            const meta = SECTION_META[sec.id] || { label: sec.label, desc: '', icon: Layers, color: 'bg-gray-100 text-gray-700 border-gray-200' };
+            const meta = SECTION_META[sec.id] || { label: sec.label || sec.id, desc: '', icon: String(sec.id).startsWith('ccs_') ? Code : Layers, color: 'bg-gray-100 text-gray-700 border-gray-200' };
             const SectionIcon = meta.icon;
             return (
               <>
@@ -1886,7 +1967,17 @@ const ProductPageBuilder = () => {
                   </button>
                   <span className="text-gray-300 text-sm">·</span>
                   <span className="text-[12px] font-semibold text-gray-800 truncate flex items-center gap-1.5"><SectionIcon className="w-3.5 h-3.5" /> {meta.label}</span>
-                  <div className="ml-auto">
+                  <div className="ml-auto flex items-center gap-1">
+                    <button
+                      type="button"
+                      title="Modifier cette section avec l'IA"
+                      onClick={() => window.dispatchEvent(new CustomEvent('builder-ai:prefill', {
+                        detail: { text: `Modifie la section « ${meta.label} » (id: ${sec.id}) : ` },
+                      }))}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg text-indigo-600 hover:bg-indigo-50 transition text-[11px] font-semibold"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" /> IA
+                    </button>
                     <button onClick={() => handleConfigToggle(sec.id)}
                       className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 ${sec.enabled !== false ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}>
                       <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${sec.enabled !== false ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -1900,6 +1991,7 @@ const ProductPageBuilder = () => {
                     <SectionContentEditor
                       section={sec}
                       onChange={handleConfigContentChange}
+                      onRemoveSection={handleConfigRemoveSection}
                       product={product}
                     />
                   </div>
@@ -1929,7 +2021,7 @@ const ProductPageBuilder = () => {
                 /* Sections list */
                 <div className="flex-1 overflow-y-auto p-2 space-y-1">
                   {configSections.map((section, idx) => {
-                    const meta = SECTION_META[section.id] || { label: section.id, desc: '', icon: Layers, color: 'bg-gray-100 text-gray-700' };
+                    const meta = SECTION_META[section.id] || { label: section.label || section.id, desc: '', icon: String(section.id).startsWith('ccs_') ? Code : Layers, color: 'bg-gray-100 text-gray-700' };
                     const SectionIcon = meta.icon;
                     const isEnabled = section.enabled !== false;
                     return (
@@ -1948,7 +2040,7 @@ const ProductPageBuilder = () => {
                         onClick={() => setActiveConfigSection(section.id)}
                       >
                         <GripVertical className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
-                        <div className={`w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 ${meta.color.split(' ').slice(0, 2).join(' ')}`}>
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 text-gray-900">
                           <SectionIcon className="w-3 h-3" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1974,7 +2066,63 @@ const ProductPageBuilder = () => {
                     );
                   })}
                 </div>
-              ) : (
+              ) : null}
+
+              {sidebarTab === 'sections' && (
+                <>
+                  {showAddSection && (
+                    <div className="border-t border-gray-100 p-2 space-y-1 bg-gray-50 flex-shrink-0 max-h-[46vh] overflow-y-auto">
+                      <button
+                        type="button"
+                        onClick={() => handleAddCustomSection(null)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-[#4D9F82] hover:bg-green-50/50 transition"
+                      >
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                          <Code className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[12.5px] font-semibold text-gray-800">Section vierge</p>
+                          <p className="text-[10.5px] text-gray-400">Code libre (HTML, styles, scripts)</p>
+                        </div>
+                        <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                      </button>
+                      <p className="px-1 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">Sections prédéfinies</p>
+                      {SECTION_TEMPLATES.map((tpl) => {
+                        const TplIcon = TEMPLATE_ICONS[tpl.icon] || Code;
+                        return (
+                          <button
+                            key={tpl.id}
+                            type="button"
+                            onClick={() => handleAddCustomSection(tpl)}
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-[#4D9F82] hover:bg-green-50/50 transition"
+                          >
+                            <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                              <TplIcon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12.5px] font-semibold text-gray-800">{tpl.label}</p>
+                              <p className="text-[10.5px] text-gray-400 truncate">{tpl.desc}{tpl.placement === 'top' ? ' · ajoutée en haut' : ''}</p>
+                            </div>
+                            <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <div className="p-3 border-t border-gray-100 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddSection(v => !v)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-gray-200 text-[12.5px] font-semibold text-[#0F6B4F] hover:border-[#4D9F82] hover:bg-green-50/50 transition"
+                    >
+                      {showAddSection ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                      {showAddSection ? 'Fermer' : 'Ajouter une section'}
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {sidebarTab === 'livraison' && (
                 /* ── LIVRAISON PANEL ── */
                 <div className="flex-1 overflow-y-auto">
                   <div className="p-4 space-y-5">
@@ -2143,51 +2291,21 @@ const ProductPageBuilder = () => {
                     style={{ width, maxWidth: '100%', height: previewDevice === 'desktop' ? 'calc(100vh - 120px)' : 'calc(100vh - 140px)' }}
                   >
                     <div className="h-full overflow-y-auto relative">
-                      {/* Custom HTML injected by AI (top banners, etc.) */}
-                      {storeConfig?.customHtml && (
-                        <div dangerouslySetInnerHTML={{ __html: storeConfig.customHtml }} />
-                      )}
-
-                      <StoreProductPagePremium
-                        product={product}
-                        store={activeStore || {}}
-                        productPageConfig={(() => {
-                          const base = mergedConfig || {};
-                          const sp = storeConfig?.premiumPage;
-                          const basePremium = base.premiumPage || {};
-                          const mergedPremium = sp ? {
-                            ...basePremium,
-                            ...sp,
-                            ...(sp.hero ? { hero: { ...(basePremium.hero || {}), ...sp.hero } } : {}),
-                            ...(sp.faq ? { faq: { ...(basePremium.faq || {}), ...sp.faq } } : {}),
-                            ...(sp.problemSection ? { problemSection: { ...(basePremium.problemSection || {}), ...sp.problemSection } } : {}),
-                            ...(sp.mechanismSection ? { mechanismSection: { ...(basePremium.mechanismSection || {}), ...sp.mechanismSection } } : {}),
-                            ...(sp.closingSection ? { closingSection: { ...(basePremium.closingSection || {}), ...sp.closingSection } } : {}),
-                          } : basePremium;
-                          return {
-                            ...base,
-                            premiumPage: mergedPremium,
-                            ...(storeConfig?.customSections ? { customSections: storeConfig.customSections } : {}),
-                            ...(storeConfig?.whatsapp ? { whatsapp: storeConfig.whatsapp } : {}),
-                          };
-                        })()}
-                        subdomain={subdomain}
-                        pixels={[]}
-                      />
-
-                      {/* WhatsApp floating button */}
-                      {storeConfig?.whatsapp?.enabled && (
-                        <div
-                          className="sticky z-[99] flex items-center justify-center w-14 h-14 rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
-                          style={{
-                            backgroundColor: '#25D366',
-                            bottom: '24px',
-                            ...(storeConfig.whatsapp.position === 'bottom-left' ? { left: '24px', marginLeft: '24px' } : { left: 'calc(100% - 80px)' }),
-                          }}
-                        >
-                          <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                          </svg>
+                      {/* Aperçu = vraie page produit publique (respecte le thème choisi :
+                          classique ou premium), rechargée à chaque sauvegarde */}
+                      {previewUrl ? (
+                        <iframe
+                          key={iframeKey}
+                          src={previewUrl}
+                          title="Aperçu de la page produit"
+                          className="w-full h-full border-0 bg-white"
+                        />
+                      ) : (
+                        <div className="h-full flex items-center justify-center text-center text-gray-400">
+                          <div>
+                            <p className="text-sm font-medium">Aperçu indisponible</p>
+                            <p className="text-xs mt-1">Sous-domaine de la boutique introuvable</p>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -2197,9 +2315,11 @@ const ProductPageBuilder = () => {
             );
           })()}
         </div>
-      </div>
 
-      <BuilderAIChatWidget
+        {/* Assistant IA — panneau ancré à droite (style Shopify Sidekick) */}
+        <BuilderAIChatWidget
+        variant="docked"
+        dockBarOffset={320}
         productPageConfig={mergedConfig}
         theme={storeConfig?.design || {}}
         productName={product?.name || ''}
@@ -2234,12 +2354,35 @@ const ProductPageBuilder = () => {
             return updated;
           });
           if (patch?.general?.sections) {
-            setConfigSections(patch.general.sections);
+            setConfigSections(prev => {
+              const patchSections = patch.general.sections;
+              // Tableau complet (tous les ids existants présents) → remplacement, l'ordre du patch fait foi.
+              // Patch partiel → fusion par id, les sections inconnues (ex: customCode) sont ajoutées.
+              const coversAll = prev.every(s => patchSections.some(p => p.id === s.id));
+              let next;
+              if (coversAll) {
+                next = patchSections;
+              } else {
+                next = prev.map(s => {
+                  const u = patchSections.find(p => p.id === s.id);
+                  return u ? { ...s, ...u, content: { ...(s.content || {}), ...(u.content || {}) } } : s;
+                });
+                patchSections.forEach(u => {
+                  if (!next.find(s => s.id === u.id)) next.push(u);
+                });
+              }
+              autoSaveConfig(next);
+              return next;
+            });
           } else if (Array.isArray(patch?.sections)) {
-            setConfigSections(prev => prev.map(s => {
-              const update = patch.sections.find(p => p.id === s.id);
-              return update ? { ...s, ...update } : s;
-            }));
+            setConfigSections(prev => {
+              const next = prev.map(s => {
+                const update = patch.sections.find(p => p.id === s.id);
+                return update ? { ...s, ...update, content: { ...(s.content || {}), ...(update.content || {}) } } : s;
+              });
+              autoSaveConfig(next);
+              return next;
+            });
           }
         }}
         onApplyTheme={(themePatch) => {
@@ -2248,7 +2391,8 @@ const ProductPageBuilder = () => {
             design: { ...(prev?.design || {}), ...themePatch },
           }));
         }}
-      />
+        />
+      </div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import {
   Activity, Clock, Eye, Target, RotateCcw, TrendingDown, Smartphone,
   Monitor, Tablet, Chrome, MapPin, ArrowUpRight, ArrowDownRight,
   Loader2, AlertCircle, CheckCircle2, Crown, Briefcase, Package,
-  Calculator, Truck, Zap, Calendar
+  Calculator, Truck, Zap, Calendar, UserPlus, Award, Link2
 } from 'lucide-react';
 import { analyticsApi } from '../services/analytics.js';
 import { CenteredSpinner as Spinner } from '../components/Skeleton.jsx';
@@ -13,11 +13,20 @@ import { tp } from '../i18n/platform.js';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
+  { id: 'acquisition', label: 'Acquisition marchands', icon: UserPlus },
   { id: 'conversion', label: 'Conversion', icon: TrendingUp },
   { id: 'traffic', label: 'Traffic', icon: Globe },
   { id: 'countries', label: 'Countries', icon: MapPin },
   { id: 'pages', label: 'Pages', icon: FileText },
   { id: 'activity', label: 'Users Activity', icon: Users },
+];
+
+// Audience segment — isolates a population within the pooled platform data.
+const SEGMENTS = [
+  { value: 'all', label: 'Tous' },
+  { value: 'merchants', label: 'Marchands' },
+  { value: 'staff', label: 'Staff' },
+  { value: 'anonymous', label: 'Prospects' },
 ];
 
 const RANGES = [
@@ -169,6 +178,7 @@ const DailyBarChart = ({ data, valueKey = 'sessions', color = 'bg-primary-600', 
 const SuperAdminAnalytics = () => {
   const [tab, setTab] = useState('overview');
   const [range, setRange] = useState('30d');
+  const [segment, setSegment] = useState('all');
   const [startDate, setStartDate] = useState(() => {
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -190,14 +200,16 @@ const SuperAdminAnalytics = () => {
   const [pages, setPages] = useState(null);
   const [activity, setActivity] = useState(null);
   const [activityPage, setActivityPage] = useState(1);
+  const [acquisition, setAcquisition] = useState(null);
 
-  // Build API params from current range/dates
+  // Build API params from current range/dates. `segment` only affects the
+  // overview endpoint server-side; other endpoints ignore it harmlessly.
   const buildParams = useCallback((p = 1) => {
-    if (range === 'custom' && startDate) {
-      return { startDate, endDate: endDate || startDate, page: p };
-    }
-    return { range, page: p };
-  }, [range, startDate, endDate]);
+    const base = (range === 'custom' && startDate)
+      ? { startDate, endDate: endDate || startDate, page: p }
+      : { range, page: p };
+    return { ...base, segment };
+  }, [range, startDate, endDate, segment]);
 
   const loadTab = useCallback(async (t, params) => {
     setLoading(true);
@@ -205,6 +217,7 @@ const SuperAdminAnalytics = () => {
     try {
       switch (t) {
         case 'overview': { const res = await analyticsApi.getOverview(params); setOverview(res.data.data); break; }
+        case 'acquisition': { const res = await analyticsApi.getMerchantAcquisition(params); setAcquisition(res.data.data); break; }
         case 'conversion': { const res = await analyticsApi.getFunnel(params); setFunnel(res.data.data); break; }
         case 'traffic': { const res = await analyticsApi.getTraffic(params); setTraffic(res.data.data); break; }
         case 'countries': { const res = await analyticsApi.getCountries(params); setCountries(res.data.data); break; }
@@ -223,7 +236,7 @@ const SuperAdminAnalytics = () => {
     // Ne pas charger si custom sans dates
     if (range === 'custom' && !startDate) return;
     loadTab(tab, buildParams(activityPage));
-  }, [tab, range, startDate, endDate, activityPage, loadTab, buildParams]);
+  }, [tab, range, segment, startDate, endDate, activityPage, loadTab, buildParams]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // OVERVIEW TAB
@@ -290,6 +303,86 @@ const SuperAdminAnalytics = () => {
                 height="h-32"
               />
             : <EmptyState message="Aucune inscription enregistrée" />}
+        </SectionCard>
+      </div>
+    );
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ACQUISITION MARCHANDS TAB — isole les nouvelles inscriptions marchand
+  // du bruit du trafic global (mesure directe des campagnes affiliés).
+  // ═══════════════════════════════════════════════════════════════════════════
+  const renderAcquisition = () => {
+    if (!acquisition) return <EmptyState message="Aucune donnée d'acquisition pour cette période" />;
+    const { counters: c, attribution: a, trends: t } = acquisition;
+    // The signup_completed EVENT under-fires (disabled in dev, skipped on some
+    // google/failed flows), so the reliable merchant-signup metric is the
+    // workspace/owner count. `eventCapture` surfaces how much the event misses.
+    const eventCapture = c.merchantOwners > 0 ? Math.round((c.signupEvents / c.merchantOwners) * 100) : null;
+    const affiliates = a.byAffiliate || [];
+    const maxAff = Math.max(...affiliates.map(x => x.signups || 0), 1);
+    return (
+      <div className="space-y-6">
+        {/* Reconciled headline counters — lead with the RELIABLE metric */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <KpiCard label="Nouveaux marchands" value={formatNumber(c.merchantOwners)}
+            sub="comptes propriétaires (fiable)" color="text-emerald-600" icon={Crown} />
+          <KpiCard label="Workspaces créés" value={formatNumber(c.merchantWorkspaces)}
+            sub="1 par marchand inscrit" color="text-emerald-600" icon={Briefcase} />
+          <KpiCard label="Signups trackés" value={formatNumber(c.signupEvents)}
+            sub={eventCapture !== null ? `événement — capte ~${eventCapture}%` : 'événement signup_completed'} color="text-slate-400" icon={UserPlus} />
+          <KpiCard label="Comptes non-marchand" value={formatNumber(c.nonMerchantAccounts)}
+            sub={`dont staff invité : ${formatNumber(c.staffNewAccounts)}`} color="text-amber-600" icon={Users} />
+        </div>
+
+        {/* De-noising note — the whole point: the legacy "signups" KPI mixed populations */}
+        <div className="rounded-2xl border-2 p-4 flex items-start gap-3 bg-slate-50 border-slate-200">
+          <AlertCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
+          <div className="text-xs sm:text-sm text-slate-700">
+            <p className="font-bold mb-0.5">
+              Signal marchand isolé : <b>{formatNumber(c.merchantOwners)}</b> nouveaux marchands.
+            </p>
+            <p className="text-slate-500">
+              L'ancien KPI « signups » affichait <b>{formatNumber(c.allNewAccounts)}</b> comptes toutes populations confondues
+              (+ {formatNumber(c.staffNewAccounts)} staff invité). L'événement <code>signup_completed</code> ne capte que
+              {' '}<b>{formatNumber(c.signupEvents)}</b>{eventCapture !== null ? ` (~${eventCapture}%)` : ''} des inscriptions —
+              la référence fiable est le nombre de comptes/workspaces créés.
+            </p>
+          </div>
+        </div>
+
+        {/* Daily signup trend — uses the reliable workspace series */}
+        <SectionCard title="Nouveaux marchands par jour" icon={TrendingUp}>
+          {t?.dailySignups?.length
+            ? <DailyBarChart data={t.dailySignups} valueKey="workspaces" color="bg-emerald-500" hoverColor="bg-emerald-600" />
+            : <EmptyState message="Aucune inscription sur la période" />}
+        </SectionCard>
+
+        {/* Affiliate attribution */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <KpiCard label="Signups attribués (affiliés)" value={formatNumber(a.attributedSignups)}
+            sub="via code de parrainage" color="text-primary-600" icon={Award} />
+          <KpiCard label="Signups organiques" value={formatNumber(a.organicSignups)}
+            sub="sans code affilié" color="text-slate-900" icon={Globe} />
+        </div>
+
+        <SectionCard title="Attribution par affilié / influenceur" icon={Link2}>
+          {affiliates.length ? (
+            <div className="space-y-3">
+              {affiliates.map((aff, i) => (
+                <div key={aff.affiliateCode || i} className="flex items-center gap-3">
+                  <div className="w-40 min-w-0">
+                    <p className="text-sm font-bold text-slate-900 truncate">{aff.affiliateName || aff.affiliateCode}</p>
+                    <p className="text-[11px] text-slate-400 font-medium truncate">{aff.affiliateCode}</p>
+                  </div>
+                  <div className="flex-1"><MiniBar value={aff.signups} max={maxAff} color="bg-primary-500" /></div>
+                  <span className="text-sm font-black text-slate-900 w-10 text-right">{formatNumber(aff.signups)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState message="Aucun signup attribué à un affilié sur cette période" />
+          )}
         </SectionCard>
       </div>
     );
@@ -777,6 +870,7 @@ const SuperAdminAnalytics = () => {
 
     switch (tab) {
       case 'overview': return renderOverview();
+      case 'acquisition': return renderAcquisition();
       case 'conversion': return renderConversion();
       case 'traffic': return renderTraffic();
       case 'countries': return renderCountries();
@@ -788,6 +882,17 @@ const SuperAdminAnalytics = () => {
 
   const rangeActions = (
     <div className="flex flex-wrap items-center gap-2">
+      {tab === 'overview' && (
+        <div className="flex items-center gap-0.5 p-0.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
+          {SEGMENTS.map(s => (
+            <button key={s.value} onClick={() => setSegment(s.value)}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150"
+              style={segment === s.value ? { background: '#6366f1', color: '#fff' } : { color: 'rgba(148,163,184,0.9)' }}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="flex items-center gap-0.5 p-0.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
         {RANGES.map(r => (
           <button key={r.value} onClick={() => setRange(r.value)}

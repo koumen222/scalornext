@@ -40,7 +40,9 @@ export function trackEvent(eventType, extra = {}) {
       // Note: api client can't use keepalive, so we use direct fetch here
       // but with UTF-8 headers for consistency
       const token = localStorage.getItem('ecomToken');
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+        || process.env.NEXT_PUBLIC_API_URL
+        || 'https://api.scalor.net';
       fetch(`${backendUrl}/api/ecom/analytics/track`, {
         method: 'POST',
         headers: {
@@ -66,8 +68,10 @@ export function trackPageView(path) {
 
 // Analytics API for Super Admin dashboard
 // params: { range, startDate, endDate } — startDate/endDate (YYYY-MM-DD) override range
+// getOverview also accepts { segment } — 'all' | 'merchants' | 'staff' | 'anonymous'
 export const analyticsApi = {
   getOverview: (params = {}) => ecomApi.get('/analytics/overview', { params }),
+  getMerchantAcquisition: (params = {}) => ecomApi.get('/analytics/merchant-acquisition', { params }),
   getFunnel: (params = {}) => ecomApi.get('/analytics/funnel', { params }),
   getTraffic: (params = {}) => ecomApi.get('/analytics/traffic', { params }),
   getCountries: (params = {}) => ecomApi.get('/analytics/countries', { params }),

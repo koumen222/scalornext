@@ -16,10 +16,10 @@ import { tp } from '../i18n/platform.js';
 // Product-generator is mounted at /api/ai/product-generator (outside /api/ecom).
 // We must always use API origin only, never a base path like /api/ecom.
 const API_ORIGIN = (() => {
-  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || '').trim();
+  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').trim();
 
   // On scalor.net frontend, always target public API domain.
-  if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
+  if (!raw && typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
     return 'https://api.scalor.net';
   }
 
@@ -3423,46 +3423,77 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         </>
                       ) : (
                         <>
-                          {/* Pack selection */}
-                          <div className="grid gap-2">
-                            <button type="button" onClick={() => setSelectedPack('unit')}
-                              className={`flex items-center gap-3 p-4 rounded-xl border text-left transition-all ${selectedPack === 'unit' ? 'border-scalor-green bg-scalor-green text-white' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-400'}`}>
-                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${selectedPack === 'unit' ? 'bg-white/15' : 'bg-scalor-green/10'}`}>
-                                <Zap className={`w-4 h-4 ${selectedPack === 'unit' ? 'text-white' : 'text-scalor-green'}`} />
-                              </div>
-                              <div className="flex-1">
-                                <p className={`text-sm font-bold ${selectedPack === 'unit' ? 'text-white' : 'text-gray-900'}`}>{tp('1 crédit')}</p>
-                                <p className={`text-xs ${selectedPack === 'unit' ? 'text-white/70' : 'text-gray-500'}`}>{tp('1 page produit complète avec visuels IA')}</p>
-                              </div>
-                              <span className={`text-sm font-bold ${selectedPack === 'unit' ? 'text-white' : 'text-gray-900'}`}>{pricing.unit} FCFA</span>
-                            </button>
-                            <button type="button" onClick={() => setSelectedPack('pack3')}
-                              className={`flex items-center gap-3 p-4 rounded-xl border text-left transition-all relative ${selectedPack === 'pack3' ? 'border-scalor-green bg-scalor-green text-white' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-400'}`}>
-                              <span className="absolute -top-2.5 right-4 text-[10px] font-bold bg-scalor-green text-white px-2.5 py-0.5 rounded-full">MEILLEURE OFFRE</span>
-                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${selectedPack === 'pack3' ? 'bg-white/15' : 'bg-scalor-green/10'}`}>
-                                <Zap className={`w-4 h-4 ${selectedPack === 'pack3' ? 'text-white' : 'text-scalor-green'}`} />
-                              </div>
-                              <div className="flex-1">
-                                <p className={`text-sm font-bold ${selectedPack === 'pack3' ? 'text-white' : 'text-gray-900'}`}>{tp('Pack 3 crédits')}</p>
-                                <p className={`text-xs ${selectedPack === 'pack3' ? 'text-white/70' : 'text-gray-500'}`}>Économise {pricing.unit * 3 - pricing.pack3} FCFA sur 3 crédits</p>
-                              </div>
-                              <span className={`text-sm font-bold ${selectedPack === 'pack3' ? 'text-white' : 'text-gray-900'}`}>{pricing.pack3} FCFA</span>
-                            </button>
+                          {/* Pack selection — cartes radio */}
+                          <div className="grid gap-2.5">
+                            {[
+                              {
+                                id: 'unit',
+                                title: tp('1 crédit'),
+                                desc: tp('1 page produit complète avec visuels IA'),
+                                price: pricing.unit,
+                                perCredit: null,
+                                best: false,
+                              },
+                              {
+                                id: 'pack3',
+                                title: tp('Pack 3 crédits'),
+                                desc: `Économise ${pricing.unit * 3 - pricing.pack3} FCFA sur 3 crédits`,
+                                price: pricing.pack3,
+                                perCredit: Math.round(pricing.pack3 / 3),
+                                best: true,
+                              },
+                            ].map((pack) => {
+                              const selected = selectedPack === pack.id;
+                              return (
+                                <button
+                                  key={pack.id}
+                                  type="button"
+                                  onClick={() => setSelectedPack(pack.id)}
+                                  className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all ${
+                                    selected
+                                      ? 'border-scalor-green bg-scalor-green/5 shadow-[0_4px_16px_rgba(15,107,79,0.12)]'
+                                      : 'border-gray-200 bg-white hover:border-gray-300'
+                                  }`}
+                                >
+                                  {/* Radio */}
+                                  <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition ${selected ? 'border-scalor-green' : 'border-gray-300'}`}>
+                                    {selected && <span className="h-2.5 w-2.5 rounded-full bg-scalor-green" />}
+                                  </span>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <p className="text-sm font-bold text-gray-900">{pack.title}</p>
+                                      {pack.best && (
+                                        <span className="rounded-full bg-scalor-green px-2 py-0.5 text-[9px] font-black tracking-wide text-white">
+                                          MEILLEURE OFFRE
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="mt-0.5 text-xs text-gray-500">{pack.desc}</p>
+                                  </div>
+                                  <div className="shrink-0 text-right">
+                                    <p className="text-sm font-black tabular-nums text-gray-900">{pack.price} FCFA</p>
+                                    {pack.perCredit && (
+                                      <p className="text-[10px] font-semibold text-scalor-green">{pack.perCredit} FCFA / crédit</p>
+                                    )}
+                                  </div>
+                                </button>
+                              );
+                            })}
                           </div>
 
                           {/* Formulaire paiement */}
                           <div className="space-y-3 pt-1">
                             <div>
-                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-500"><Phone className="h-3.5 w-3.5 text-scalor-green" />{tp('Numéro de téléphone')}</label>
+                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-600"><Phone className="h-3.5 w-3.5 text-scalor-green" />{tp('Numéro de téléphone')}</label>
                               <input type="tel" value={paymentPhone} onChange={(e) => setPaymentPhone(e.target.value)}
                                 placeholder={tp('Ex: 0707070707')}
-                                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-scalor-green" />
+                                className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium transition focus:border-scalor-green focus:bg-white focus:outline-none focus:ring-2 focus:ring-scalor-green/20" />
                             </div>
                             <div>
-                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-500"><User className="h-3.5 w-3.5 text-scalor-green" />{tp('Votre nom')}</label>
+                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-600"><User className="h-3.5 w-3.5 text-scalor-green" />{tp('Votre nom')}</label>
                               <input type="text" value={paymentName} onChange={(e) => setPaymentName(e.target.value)}
                                 placeholder={tp('Ex: Jean Dupont')}
-                                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-scalor-green" />
+                                className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium transition focus:border-scalor-green focus:bg-white focus:outline-none focus:ring-2 focus:ring-scalor-green/20" />
                             </div>
                           </div>
 
@@ -3474,11 +3505,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                           {/* Bouton payer */}
                           <button type="button" onClick={handleBuyGeneration} disabled={paymentLoading || !selectedPack}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-scalor-green text-white font-bold rounded-xl hover:bg-scalor-green-dark transition text-sm disabled:opacity-40">
+                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-scalor-green px-4 py-3.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(15,107,79,0.3)] transition hover:bg-scalor-green-dark disabled:opacity-40 disabled:shadow-none">
                             {paymentLoading ? (
                               <><Loader2 className="w-4 h-4 animate-spin" /> {tp('Chargement...')}</>
                             ) : (
-                              <><Zap className="w-4 h-4" /> Payer {selectedPack === 'pack3' ? pricing.pack3 : pricing.unit} FCFA</>
+                              <><Lock className="w-4 h-4" /> Payer {selectedPack === 'pack3' ? pricing.pack3 : pricing.unit} FCFA</>
                             )}
                           </button>
 

@@ -15,8 +15,16 @@ import {
   RefreshCw, ExternalLink, Plus, GripVertical, EyeOff, Trash2, Copy,
   ChevronLeft, ChevronRight, Image, X, Upload, AlertCircle, Layers,
   Type, Star, HelpCircle, Phone, Layout, Zap, ShoppingBag, AlignLeft,
-  AlignCenter, AlignRight, ChevronDown, ChevronUp, Pencil, Undo2, Redo2, Lock,
+  AlignCenter, AlignRight, ChevronDown, ChevronUp, Pencil, Undo2, Redo2, Lock, Sparkles,
+  ArrowLeftRight, ListOrdered, Megaphone, MessageCircle, Play, Shield, Table, Timer, Truck,
 } from 'lucide-react';
+import { SECTION_TEMPLATES } from '../components/sectionTemplates.js';
+import CustomCodeEditor from '../components/CustomCodeEditor.jsx';
+import AiImagePromptBox from '../components/AiImagePromptBox.jsx';
+import { SectionRenderer, buildStorefrontThemeVars } from './PublicStorefront.jsx';
+import { StorefrontLangContext } from '../i18n/storefront.js';
+import { publicStoreApi } from '../services/storeApi.js';
+import { injectStoreCssVars, applyFont } from '../hooks/useStoreData';
 import { storeManageApi, storeProductsApi } from '../services/storeApi';
 import ecomApi from '../services/ecommApi.js';
 import BuilderAiChat from '../components/BuilderAiChat.jsx';
@@ -338,7 +346,24 @@ const SECTION_TYPES = {
   },
 };
 
-const CATEGORIES = ['Marketing', 'E-commerce', 'Contenu', 'Social Proof', 'Support', 'Layout', 'Avancé'];
+const CATEGORIES = ['Prédéfinies', 'Marketing', 'E-commerce', 'Contenu', 'Social Proof', 'Support', 'Layout', 'Avancé'];
+
+// Icônes lucide des sections prédéfinies (sectionTemplates.js)
+const TEMPLATE_ICONS = {
+  Megaphone, Timer, ArrowLeftRight, Play, Shield, ListOrdered, Table,
+  Star, HelpCircle, Truck, MessageCircle, ImageIcon: Image,
+};
+
+// La homepage publique exécute le JS via config.js (les <script> du HTML ne
+// s'exécutent pas) : on extrait donc les scripts des templates vers js.
+const splitTemplateHtml = (raw = '') => {
+  const scripts = [];
+  const html = String(raw).replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, (_, body) => {
+    if (body.trim()) scripts.push(body.trim());
+    return '';
+  }).trim();
+  return { html, js: scripts.join('\n\n') };
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -418,6 +443,8 @@ function ImageUploader({ value, onChange, label = 'Image', aspectHint = '' }) {
         </button>
       )}
       {error && <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
+      {/* Génération / édition par IA (GPT Image) */}
+      <AiImagePromptBox value={value || ''} onGenerated={onChange} aspectRatio="4:3" compact />
       <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
     </div>
   );
@@ -515,6 +542,8 @@ function HeroBgUploader({ value, onChange }) {
         </div>
       )}
       {error && <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
+      {/* Génération / édition par IA (GPT Image) */}
+      <AiImagePromptBox value={value || ''} onGenerated={onChange} aspectRatio="16:9" />
       <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
     </div>
   );
@@ -598,51 +627,46 @@ function SectionCard({ section, isSelected, onSelect, onDelete, onDuplicate, onT
     opacity: isDragging ? 0.4 : 1,
   };
 
-  // Ligne compacte façon Shopify : poignée au survol, icône teintée, libellé,
-  // actions révélées au survol — pas de vignette, la préview vit à droite.
+  // Ligne identique au builder de page produit (premium) : poignée au survol,
+  // icône monochrome, libellé, pastille d'état, œil au survol, chevron.
   return (
     <div
       ref={setNodeRef}
       style={style}
       onClick={() => onSelect(section.id)}
-      className={`group relative flex items-center gap-2 pl-1.5 pr-1 py-[7px] rounded-lg cursor-pointer transition-colors select-none ${
+      className={`group flex items-center gap-1.5 px-2 py-2 rounded-lg cursor-pointer border transition select-none ${
         isSelected
-          ? 'bg-indigo-50 ring-1 ring-indigo-200'
-          : 'hover:bg-slate-100/80'
-      } ${isDragging ? 'bg-white shadow-lg ring-1 ring-indigo-200 z-10' : ''}`}
+          ? 'bg-gray-50 border-gray-200'
+          : 'border-transparent hover:bg-gray-50 hover:border-gray-200'
+      } ${section.visible ? '' : 'opacity-50'} ${isDragging ? 'bg-white shadow-lg border-indigo-200 z-10' : ''}`}
     >
       <div
         {...attributes}
         {...listeners}
-        className={`cursor-grab active:cursor-grabbing p-0.5 rounded text-slate-300 hover:text-slate-500 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+        className="cursor-grab active:cursor-grabbing flex-shrink-0"
         onClick={(e) => e.stopPropagation()}
         title="Glisser pour réordonner"
       >
-        <GripVertical className="w-3.5 h-3.5" />
+        <GripVertical className={`w-3.5 h-3.5 text-gray-300 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
       </div>
-      <div
-        className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5"
-        style={{ background: `${meta?.color || '#64748b'}14`, color: meta?.color || '#64748b' }}
-      >
+      <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5">
         {meta?.icon || <Layout className="w-3.5 h-3.5" />}
       </div>
-      <span className={`flex-1 min-w-0 truncate text-[12.5px] font-semibold ${
-        isSelected ? 'text-indigo-900' : section.visible ? 'text-slate-700' : 'text-slate-400 line-through decoration-slate-300'
-      }`}>
+      <span className="flex-1 min-w-0 truncate text-[13px] font-semibold text-gray-800">
         {meta?.label || section.type}
       </span>
-      {!section.visible && <EyeOff className="w-3 h-3 text-slate-300 flex-shrink-0" />}
       <div className={`flex items-center transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'}`} onClick={(e) => e.stopPropagation()}>
-        <button onClick={() => onToggleVisible(section.id)} className="p-1 rounded-md hover:bg-white text-slate-400 hover:text-slate-700 transition" title={section.visible ? 'Masquer' : 'Afficher'}>
+        <button onClick={() => onToggleVisible(section.id)} className={`p-1 rounded-md hover:bg-gray-200 transition ${section.visible ? 'text-gray-400' : 'text-gray-500 opacity-100'}`} title={section.visible ? 'Masquer' : 'Afficher'}>
           {section.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
         </button>
-        <button onClick={() => onDuplicate(section.id)} className="p-1 rounded-md hover:bg-white text-slate-400 hover:text-slate-700 transition" title="Dupliquer">
+        <button onClick={() => onDuplicate(section.id)} className="p-1 rounded-md hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition" title="Dupliquer">
           <Copy className="w-3.5 h-3.5" />
         </button>
-        <button onClick={() => onDelete(section.id)} className="p-1 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-500 transition" title="Supprimer">
+        <button onClick={() => onDelete(section.id)} className="p-1 rounded-md hover:bg-red-50 text-gray-400 hover:text-red-500 transition" title="Supprimer">
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
+      <ChevronRight className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
     </div>
   );
 }
@@ -924,10 +948,17 @@ function SectionTypeEditor({ section, onChange }) {
         <div className="space-y-4">
           <FieldRow label="Titre de section"><input type="text" value={config.title || ''} onChange={(e) => set('title', e.target.value)} className={inputCls} /></FieldRow>
           <FieldRow label="Sous-titre"><input type="text" value={config.subtitle || ''} onChange={(e) => set('subtitle', e.target.value)} className={inputCls} /></FieldRow>
-          <FieldRow label="Colonnes">
+          <FieldRow label="Colonnes (ordinateur)">
             <div className="flex gap-2">
               {[2, 3, 4].map((n) => (
                 <button key={n} onClick={() => set('columns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.columns === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{n} col.</button>
+              ))}
+            </div>
+          </FieldRow>
+          <FieldRow label="Colonnes sur mobile">
+            <div className="flex gap-2">
+              {[1, 2, 4].map((n) => (
+                <button key={n} onClick={() => set('mobileColumns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${(config.mobileColumns || 1) === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{n} col.</button>
               ))}
             </div>
           </FieldRow>
@@ -1341,22 +1372,35 @@ function SectionTypeEditor({ section, onChange }) {
     case 'custom_code': {
       const codeCls = 'w-full px-3 py-2.5 text-[12px] leading-relaxed border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-900 text-slate-100 font-mono resize-y placeholder-slate-500';
       return (
-        <div className="space-y-4">
-          <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-50 ring-1 ring-amber-200">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] text-amber-800 leading-snug">
-              Section libre type Shopify « Custom Liquid ». Le HTML et le CSS s'affichent dans l'aperçu ; le <b>JS s'exécute uniquement sur la boutique publiée</b>.
-            </p>
-          </div>
-          <FieldRow label="HTML">
-            <textarea rows={8} value={config.html || ''} onChange={(e) => set('html', e.target.value)} className={codeCls} placeholder={'<div>\n  ...\n</div>'} spellCheck={false} />
-          </FieldRow>
-          <FieldRow label="CSS">
-            <textarea rows={6} value={config.css || ''} onChange={(e) => set('css', e.target.value)} className={codeCls} placeholder={'.ma-classe {\n  color: red;\n}'} spellCheck={false} />
-          </FieldRow>
-          <FieldRow label="JavaScript">
-            <textarea rows={5} value={config.js || ''} onChange={(e) => set('js', e.target.value)} className={codeCls} placeholder={"document.querySelector('.ma-classe')..."} spellCheck={false} />
-          </FieldRow>
+        <div className="space-y-3">
+          {/* Éditeur visuel premium : Design / Mise en page / Contenu / Code */}
+          <CustomCodeEditor
+            html={config.html || ''}
+            onChangeHtml={(v) => set('html', v)}
+            style={config._style || {}}
+            onChangeStyle={(st) => set('_style', st)}
+          />
+
+          {/* CSS / JS globaux de la section (exécutés sur la boutique publiée) */}
+          <details className="rounded-lg border border-slate-200 bg-white">
+            <summary className="cursor-pointer select-none px-3 py-2 text-[11.5px] font-bold text-slate-600 hover:text-slate-900">
+              CSS / JavaScript avancés
+            </summary>
+            <div className="space-y-3 border-t border-slate-100 p-3">
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-50 ring-1 ring-amber-200">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-[11px] text-amber-800 leading-snug">
+                  Le CSS s'affiche dans l'aperçu ; le <b>JS s'exécute uniquement sur la boutique publiée</b>.
+                </p>
+              </div>
+              <FieldRow label="CSS">
+                <textarea rows={5} value={config.css || ''} onChange={(e) => set('css', e.target.value)} className={codeCls} placeholder={'.ma-classe {\n  color: red;\n}'} spellCheck={false} />
+              </FieldRow>
+              <FieldRow label="JavaScript">
+                <textarea rows={4} value={config.js || ''} onChange={(e) => set('js', e.target.value)} className={codeCls} placeholder={"document.querySelector('.ma-classe')..."} spellCheck={false} />
+              </FieldRow>
+            </div>
+          </details>
         </div>
       );
     }
@@ -1773,7 +1817,7 @@ function LiveSpacer({ config, selected }) {
   );
 }
 
-function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
+function LiveSectionRender({ section, selected, onClick, onFieldUpdate, pubStore, pubProducts }) {
   const { type, config, visible } = section;
   if (!visible) {
     return (
@@ -1788,6 +1832,20 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
 
   const props = { config, selected, onUpdate: (key, val) => onFieldUpdate(section.id, key, val) };
   let rendered;
+  // Rendu RÉEL : même moteur que la boutique publiée (SectionRenderer public).
+  // Fallback sur les composants Live* tant que le payload public n'est pas chargé.
+  if (pubStore) {
+    rendered = (
+      <StorefrontLangContext.Provider value={pubStore.language || 'fr'}>
+        <div
+          style={{ ...buildStorefrontThemeVars(pubStore), backgroundColor: 'var(--s-bg)', fontFamily: 'var(--s-font-base, var(--s-font))', color: 'var(--s-text)' }}
+          onClickCapture={(e) => { const a = e.target?.closest?.('a'); if (a) e.preventDefault(); }}
+        >
+          <SectionRenderer section={section} store={pubStore} products={pubProducts} prefix="" />
+        </div>
+      </StorefrontLangContext.Provider>
+    );
+  } else
   switch (type) {
     case 'hero':        rendered = <LiveHero {...props} />; break;
     case 'products':    rendered = <LiveProducts {...props} />; break;
@@ -1808,8 +1866,8 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
       rendered = <div className="p-6 bg-gray-50 text-sm text-gray-400 text-center">Section : {type}</div>;
   }
 
-  // Surcharges "Apparence & avancé" (espacements, couleurs) — visibles dans le canvas
-  const st = section.config?._style || {};
+  // Surcharges "Apparence & avancé" — le rendu réel les applique déjà (SectionRenderer)
+  const st = pubStore ? {} : (section.config?._style || {});
   const wrapStyle = {
     ...(st.paddingTop != null ? { paddingTop: st.paddingTop } : {}),
     ...(st.paddingBottom != null ? { paddingBottom: st.paddingBottom } : {}),
@@ -1846,7 +1904,7 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
 
 // ─── Sortable wrapper for live preview sections ─────────────────────────────
 
-function SortableLiveSection({ section, selected, onClick, onFieldUpdate }) {
+function SortableLiveSection({ section, selected, onClick, onFieldUpdate, pubStore, pubProducts }) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
   });
@@ -1866,6 +1924,8 @@ function SortableLiveSection({ section, selected, onClick, onFieldUpdate }) {
         selected={selected}
         onClick={onClick}
         onFieldUpdate={onFieldUpdate}
+        pubStore={pubStore}
+        pubProducts={pubProducts}
       />
       {/* Drag handle overlay — uses setActivatorNodeRef */}
       <div
@@ -1882,8 +1942,8 @@ function SortableLiveSection({ section, selected, onClick, onFieldUpdate }) {
 
 // ─── Add section panel ────────────────────────────────────────────────────────
 
-function AddSectionPanel({ onAdd, onClose }) {
-  const [cat, setCat] = useState('Marketing');
+function AddSectionPanel({ onAdd, onAddTemplate, onClose }) {
+  const [cat, setCat] = useState('Prédéfinies');
 
   const filtered = Object.entries(SECTION_TYPES).filter(([, meta]) => meta.category === cat);
 
@@ -1905,6 +1965,27 @@ function AddSectionPanel({ onAdd, onClose }) {
         ))}
       </div>
       <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+        {cat === 'Prédéfinies' && SECTION_TEMPLATES.map((tpl) => {
+          const TplIcon = TEMPLATE_ICONS[tpl.icon] || Layout;
+          return (
+            <button
+              key={tpl.id}
+              onClick={() => { onAddTemplate(tpl); onClose(); }}
+              className="w-full flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 hover:shadow-sm transition text-left group"
+            >
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-100 text-slate-600 transition group-hover:scale-105 group-hover:bg-indigo-100 group-hover:text-indigo-600">
+                <TplIcon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[13px] font-bold text-slate-800 group-hover:text-indigo-700">{tpl.label}</p>
+                <p className="text-[11px] text-slate-400 truncate">{tpl.desc}</p>
+              </div>
+              <span className="ml-auto flex-shrink-0 w-6 h-6 rounded-md bg-slate-50 group-hover:bg-indigo-600 flex items-center justify-center transition">
+                <Plus className="w-3.5 h-3.5 text-slate-300 group-hover:text-white" />
+              </span>
+            </button>
+          );
+        })}
         {filtered.map(([type, meta]) => (
           <button
             key={type}
@@ -1950,6 +2031,14 @@ const StorepageBuilder = () => {
     return saved >= 240 && saved <= 560 ? saved : 320;
   });
   const [panelCollapsed, setPanelCollapsed] = useState(false);
+  // Aperçu : 'edit' = canevas interactif (approximation), 'real' = vraie page publiée (iframe)
+  const [previewMode, setPreviewMode] = useState('edit');
+  const [realPreviewKey, setRealPreviewKey] = useState(0);
+  // Payload public de la boutique : le canevas d'édition rend avec le VRAI moteur
+  // (SectionRenderer + variables de thème) pour être identique à la page publiée.
+  const [pubStore, setPubStore] = useState(null);
+  const [pubProducts, setPubProducts] = useState([]);
+
   const [panelResizing, setPanelResizing] = useState(false);
 
   const startPanelResize = useCallback((e) => {
@@ -2057,6 +2146,30 @@ const StorepageBuilder = () => {
   }, [undo, redo]);
 
   const subdomain = activeStore?.subdomain || workspace?.subdomain || '';
+  useEffect(() => {
+    if (!subdomain) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const [storeRes, prodRes] = await Promise.all([
+          publicStoreApi.getStore(subdomain),
+          publicStoreApi.getProducts(subdomain, { limit: 12 }).catch(() => null),
+        ]);
+        if (cancelled) return;
+        const storeData = storeRes?.data?.data || storeRes?.data || null;
+        const prodData = prodRes?.data?.data?.products || prodRes?.data?.products || prodRes?.data?.data || [];
+        if (storeData) {
+          setPubStore(storeData);
+          injectStoreCssVars(storeData);
+          applyFont(storeData.productPageConfig?.design?.fontFamily || storeData.font || 'inter');
+        }
+        setPubProducts(Array.isArray(prodData) ? prodData : []);
+      } catch {
+        // Fallback silencieux : le canevas garde les composants Live* approximatifs
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [subdomain]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -2084,6 +2197,23 @@ const StorepageBuilder = () => {
   // ─ Mutations (all push to history) ─
   const addSection = useCallback((type) => {
     const sec = makeSection(type);
+    setSections((prev) => {
+      pushHistory(prev);
+      return [...prev, sec];
+    });
+    setSelectedId(sec.id);
+    setDirty(true);
+    forceRender((n) => n + 1);
+  }, [pushHistory]);
+
+  const addSectionFromTemplate = useCallback((tpl) => {
+    const { html, js } = splitTemplateHtml(tpl.html);
+    const sec = {
+      id: `sec_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      type: 'custom_code',
+      visible: true,
+      config: { html, css: '', js, _templateId: tpl.id, _label: tpl.label },
+    };
     setSections((prev) => {
       pushHistory(prev);
       return [...prev, sec];
@@ -2316,6 +2446,7 @@ const StorepageBuilder = () => {
       await storeManageApi.updatePages({ sections });
       setSaved(true);
       setDirty(false);
+      setRealPreviewKey((k) => k + 1);
       setTimeout(() => setSaved(false), 3000);
     } catch {
       alert('Erreur lors de la sauvegarde');
@@ -2537,7 +2668,19 @@ const StorepageBuilder = () => {
                                   <p className="text-[9.5px] text-slate-400 font-medium uppercase tracking-wide">Édition</p>
                                 </div>
                               </div>
-                              <button onClick={() => setSelectedId(null)} title="Fermer" className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition"><X className="w-3.5 h-3.5" /></button>
+                              <div className="flex items-center gap-0.5">
+                                <button
+                                  type="button"
+                                  title="Modifier cette section avec l'IA"
+                                  onClick={() => window.dispatchEvent(new CustomEvent('builder-ai:prefill', {
+                                    detail: { text: `Modifie la section « ${SECTION_TYPES[sec.type]?.label || sec.type} » (id: ${sec.id}) : ` },
+                                  }))}
+                                  className="flex items-center gap-1 px-2 py-1 rounded-lg text-indigo-600 hover:bg-indigo-50 transition text-[11px] font-semibold"
+                                >
+                                  <Sparkles className="w-3.5 h-3.5" /> IA
+                                </button>
+                                <button onClick={() => setSelectedId(null)} title="Fermer" className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition"><X className="w-3.5 h-3.5" /></button>
+                              </div>
                             </div>
                             <div className="p-3 bg-slate-50/50">
                               <SectionEditor section={sec} onChange={updateSelected} />
@@ -2553,7 +2696,7 @@ const StorepageBuilder = () => {
           </div>
 
           {/* Add section overlay */}
-          {showAddPanel && <AddSectionPanel onAdd={addSection} onClose={() => setShowAddPanel(false)} />}
+          {showAddPanel && <AddSectionPanel onAdd={addSection} onAddTemplate={addSectionFromTemplate} onClose={() => setShowAddPanel(false)} />}
           </div>
 
           {/* Poignée de redimensionnement — glisser pour élargir/réduire, double-clic pour réinitialiser */}
@@ -2578,12 +2721,34 @@ const StorepageBuilder = () => {
             backgroundSize: '22px 22px',
           }}
         >
-          {/* Badge de largeur du viewport */}
-          <div className={`${iframeContainerCls} flex items-center justify-center mb-2 transition-all duration-300`}>
+          {/* Badge de largeur + bascule Édition / Aperçu réel */}
+          <div className={`${iframeContainerCls} flex items-center justify-center gap-2 mb-2 transition-all duration-300`}>
             <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-slate-500 bg-white/80 backdrop-blur px-2.5 py-1 rounded-full ring-1 ring-slate-200 shadow-sm tabular-nums">
               {device === 'mobile' ? <Smartphone className="w-3 h-3" /> : device === 'tablet' ? <Tablet className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
               {device === 'mobile' ? '390 px' : device === 'tablet' ? '768 px' : 'Pleine largeur'}
             </span>
+            <div className="inline-flex rounded-full bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow-sm p-0.5">
+              <button
+                type="button"
+                onClick={() => setPreviewMode('edit')}
+                className={`px-2.5 py-0.5 text-[10.5px] font-bold rounded-full transition ${previewMode === 'edit' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                Édition
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPreviewMode('real'); setRealPreviewKey((k) => k + 1); }}
+                title="Rendu exact de la page publiée (recharge après chaque Publier)"
+                className={`px-2.5 py-0.5 text-[10.5px] font-bold rounded-full transition ${previewMode === 'real' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                Aperçu réel
+              </button>
+            </div>
+            {previewMode === 'real' && dirty && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 ring-1 ring-amber-200 px-2 py-0.5 rounded-full">
+                Modifications non publiées
+              </span>
+            )}
           </div>
 
           <div className={`${iframeContainerCls} bg-white rounded-2xl shadow-2xl shadow-slate-300/60 ring-1 ring-slate-200 overflow-hidden transition-all duration-300`}>
@@ -2604,7 +2769,16 @@ const StorepageBuilder = () => {
               </span>
             </div>
 
-            {/* Inline rendered sections — click to select, drag to reorder */}
+            {/* Aperçu réel : la vraie homepage publiée, rendu garanti identique */}
+            {previewMode === 'real' ? (
+              <iframe
+                key={realPreviewKey}
+                src={`/store/${subdomain}?_v=${realPreviewKey}`}
+                title="Aperçu réel de la boutique"
+                className="w-full border-0"
+                style={{ height: 'calc(100vh - 210px)', minHeight: 480 }}
+              />
+            ) : (
             <div className="min-h-[400px]">
               {sections.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center px-8">
@@ -2624,27 +2798,32 @@ const StorepageBuilder = () => {
                         selected={selectedId === sec.id}
                         onClick={() => setSelectedId(sec.id)}
                         onFieldUpdate={onFieldUpdate}
+                        pubStore={pubStore}
+                        pubProducts={pubProducts}
                       />
                     ))}
                   </SortableContext>
                 </DndContext>
               )}
             </div>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* ── IA Flottante ──────────────────────────────────────────────────── */}
-      <BuilderAiChat
-        mode="storepage"
-        context={{ sections }}
-        onPatch={({ sectionsPatch }) => {
-          if (sectionsPatch && Array.isArray(sectionsPatch)) {
-            setSections(sectionsPatch);
-            setDirty(true);
-          }
-        }}
-      />
+        {/* ── Assistant IA ancré — colonne à droite, le builder reste visible ── */}
+        <BuilderAiChat
+          mode="storepage"
+          variant="docked"
+          dockBarOffset={panelCollapsed ? 0 : panelWidth}
+          context={{ sections }}
+          onPatch={({ sectionsPatch }) => {
+            if (sectionsPatch && Array.isArray(sectionsPatch)) {
+              setSections(sectionsPatch);
+              setDirty(true);
+            }
+          }}
+        />
+      </div>
       {false /* dead code removed */ && (
         <div className="fixed bottom-6 right-6 z-[9999] flex flex-col w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-hidden">
 
@@ -2679,8 +2858,8 @@ const StorepageBuilder = () => {
                 <option value="claude-sonnet">Claude Sonnet — rapide {isProPlan ? '' : '(PRO)'}</option>
                 <option value="claude-opus">Claude Opus — plus puissant {isProPlan ? '' : '(PRO)'}</option>
               </optgroup>
-              <optgroup label="— OpenAI">
-                <option value="gpt-5.4">GPT-5.4 {isProPlan ? '' : '(PRO)'}</option>
+              <optgroup label="— Scalor IA">
+                <option value="gpt-5.4">Scalor IA Créative {isProPlan ? '' : '(PRO)'}</option>
               </optgroup>
             </select>
           </div>

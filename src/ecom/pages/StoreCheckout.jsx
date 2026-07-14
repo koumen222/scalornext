@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from '@/lib/router-compat';
-import { ArrowLeft, ShoppingCart, CheckCircle, AlertCircle, Loader2, User, Phone, MapPin, FileText, Truck, Package, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, CheckCircle, AlertCircle, Loader2, User, Phone, MapPin, FileText, Truck, Package, ChevronDown, Mail, Hash, Calendar } from 'lucide-react';
 import { PHONE_CODES, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, buildFullPhone, getPhoneLength } from '../utils/phoneCodes.js';
 import { publicStoreApi } from '../services/storeApi.js';
+import { PAYMENT_METHOD_META, resolveAvailablePaymentMethods } from '../utils/storePaymentMethods.js';
+import defaultConfig from '../components/productSettings/defaultConfig.js';
 import { getStorefrontT } from '../i18n/storefront.js';
 import { useSubdomain } from '../hooks/useSubdomain.js';
 import { useStoreCart } from '../hooks/useStoreCart.js';
@@ -22,6 +24,16 @@ import {
 // Cache sessionStorage SUPPRIMÉ — checkout lit toujours frais depuis l'API.
 // (cf. useStoreData.js : on a eu trop de bugs "modif pas visible")
 function _coRead(_key) { return null; }
+
+// ── Formulaire piloté par la config marchand (identique à la page produit) ──
+// Mappe le nom de champ de la config vers la clé d'état du checkout.
+const FIELD_KEY_MAP = { fullname: 'customerName', phone: 'phone', city: 'city', address: 'address', note: 'notes', email: 'email' };
+const FIELD_ICON_MAP = { user: User, phone: Phone, map: MapPin, pin: MapPin, mail: Mail, file: FileText, hash: Hash, calendar: Calendar };
+const DEFAULT_ICON_BY_TYPE = { text: User, email: Mail, phone: Phone, city_select: MapPin, address: MapPin, textarea: FileText, number: Hash, date: Calendar };
+// Types rendus comme champs de saisie dans le checkout. Les blocs propres à la
+// page produit (offre, quantité, bouton CTA, urgence, badges…) et le pays
+// (géré à part pour la logique de livraison) sont exclus.
+const INPUT_FIELD_TYPES = new Set(['text', 'email', 'number', 'date', 'phone', 'city_select', 'address', 'textarea', 'select', 'consent']);
 
 const CO_SKEL_CSS = `
 @keyframes _coskel { 0%{background-position:-200% center} 100%{background-position:200% center} }
@@ -127,6 +139,23 @@ const StoreCheckout = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [orderResult, setOrderResult] = useState(null);
+  // Mode de paiement choisi par le client.
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+
+  // Modes de paiement réellement activés par le marchand (config boutique).
+  const paymentMethodsCfg = store?.paymentMethods;
+  const availablePaymentMethods = useMemo(
+    () => resolveAvailablePaymentMethods(store),
+    [paymentMethodsCfg], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  // Aligne le mode sélectionné sur ce qui est réellement disponible.
+  useEffect(() => {
+    if (!availablePaymentMethods.includes(paymentMethod)) {
+      setPaymentMethod(availablePaymentMethods[0]);
+    }
+  }, [availablePaymentMethods, paymentMethod]);
+
   // Langue de la boutique (réglage marchand) — libellés du checkout
   const t = getStorefrontT(store?.language);
 
@@ -447,6 +476,195 @@ const StoreCheckout = () => {
     style: inputStyle(field),
   });
 
+  // Champs du formulaire pilotés par la config marchand (même source que la page
+  // produit : store.productPageConfig.form.fields), repli sur la config par défaut.
+  const configFields = useMemo(() => {
+    const fields = store?.productPageConfig?.form?.fields;
+    return (Array.isArray(fields) && fields.length ? fields : defaultConfig.form.fields) || [];
+  }, [store]);
+
+  // Rend un champ de saisie à partir de sa config. Le pays et les blocs propres à
+  // la page produit sont gérés/exclus ailleurs.
+  const renderConfigField = (field) => {
+    if (!field || field.enabled === false) return null;
+    if (field.type === 'country' || !INPUT_FIELD_TYPES.has(field.type)) return null;
+
+    const key = FIELD_KEY_MAP[field.name] || field.name;
+    const required = field.required !== false;
+    const label = field.label || '';
+    const star = required ? ' *' : '';
+    const IconComp = FIELD_ICON_MAP[field.icon] || DEFAULT_ICON_BY_TYPE[field.type];
+    const labelEl = label ? (
+      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label}{star}</label>
+    ) : null;
+
+    // Téléphone : indicatif + numéro (logique checkout conservée)
+    if (field.type === 'phone') {
+      return (
+        <div key={field.name}>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label || t('checkout.whatsappPhone')}{star}</label>
+          <div className="flex gap-0">
+            <div className="relative flex-shrink-0">
+              <select
+                value={phoneCode}
+                onChange={(e) => setPhoneCode(e.target.value)}
+                className="checkout-input appearance-none pl-3 pr-7 py-3 border border-r-0 text-sm font-semibold cursor-pointer transition-all"
+                style={{ ...fieldStyle, minWidth: 90, borderTopRightRadius: 0, borderBottomRightRadius: 0, borderTopLeftRadius: '12px', borderBottomLeftRadius: '12px' }}
+              >
+                {PHONE_CODES.map(c => (<option key={`${c.country}-${c.code}`} value={c.code}>{c.label}</option>))}
+              </select>
+              <ChevronDown className="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: fieldIconColor }} />
+            </div>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={(e) => handleChange('phone', e.target.value)}
+              maxLength={getPhoneLength(phoneCode)}
+              placeholder={field.placeholder || activePlaceholders.phone}
+              required={required}
+              className="checkout-input flex-1 min-w-0 px-3 py-3 border text-sm font-medium transition-all"
+              style={{ ...inputStyle('phone'), borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}
+              onFocus={() => setFocusedField('phone')}
+              onBlur={() => setFocusedField(null)}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // Ville : liste des zones de livraison si dispo, sinon champ libre
+    if (field.type === 'city_select') {
+      return (
+        <div key={field.name}>
+          {labelEl || <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Ville{star}</label>}
+          <div className="field-row has-icon">
+            <span className="field-icon"><MapPin className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
+            {cityOptions.length > 0 ? (
+              <div className="relative w-full">
+                <select
+                  value={form.city}
+                  onChange={(e) => handleChange('city', e.target.value)}
+                  required={required}
+                  className="checkout-input w-full py-3 border text-sm font-medium transition-all appearance-none"
+                  style={{ ...inputStyle('city'), borderRadius: '12px', paddingRight: '32px' }}
+                  onFocus={() => setFocusedField('city')}
+                  onBlur={() => setFocusedField(null)}
+                >
+                  <option value="">{activePlaceholders.city || t('checkout.selectCity')}</option>
+                  {cityOptions.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: fieldIconColor }} />
+              </div>
+            ) : (
+              <input
+                type="text"
+                value={form.city}
+                onChange={(e) => handleChange('city', e.target.value)}
+                placeholder={field.placeholder || activePlaceholders.city}
+                required={required}
+                className="checkout-input w-full py-3 border text-sm font-medium transition-all"
+                style={{ ...inputStyle('city'), borderRadius: '12px' }}
+                onFocus={() => setFocusedField('city')}
+                onBlur={() => setFocusedField(null)}
+              />
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Zone de texte (notes / instructions)
+    if (field.type === 'textarea') {
+      return (
+        <div key={field.name}>
+          {labelEl}
+          <div className="field-row has-icon-textarea relative">
+            <span className="field-icon-top"><FileText className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
+            <textarea
+              value={form[key] || ''}
+              onChange={(e) => handleChange(key, e.target.value)}
+              placeholder={field.placeholder || t('checkout.notesPlaceholder')}
+              required={required}
+              rows={2}
+              className="checkout-input w-full pl-9 pr-3 py-3 border text-sm font-medium resize-none transition-all"
+              style={{ ...inputStyle(key), borderRadius: '12px' }}
+              onFocus={() => setFocusedField(key)}
+              onBlur={() => setFocusedField(null)}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // Liste déroulante personnalisée
+    if (field.type === 'select') {
+      const options = Array.isArray(field.options) ? field.options : [];
+      return (
+        <div key={field.name}>
+          {labelEl}
+          <div className="relative w-full">
+            <select
+              value={form[key] || ''}
+              onChange={(e) => handleChange(key, e.target.value)}
+              required={required}
+              className="checkout-input w-full py-3 px-3 border text-sm font-medium transition-all appearance-none"
+              style={{ ...inputStyle(key), borderRadius: '12px', paddingRight: '32px' }}
+              onFocus={() => setFocusedField(key)}
+              onBlur={() => setFocusedField(null)}
+            >
+              <option value="">{field.placeholder || '—'}</option>
+              {options.map((opt) => {
+                const val = typeof opt === 'string' ? opt : (opt.value ?? opt.label ?? '');
+                const lab = typeof opt === 'string' ? opt : (opt.label ?? opt.value ?? '');
+                return <option key={val} value={val}>{lab}</option>;
+              })}
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: fieldIconColor }} />
+          </div>
+        </div>
+      );
+    }
+
+    // Case à cocher (consentement)
+    if (field.type === 'consent') {
+      return (
+        <label key={field.name} className="flex items-start gap-2 text-xs text-gray-600 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={!!form[key]}
+            onChange={(e) => handleChange(key, e.target.checked)}
+            required={required}
+            className="mt-0.5 h-4 w-4"
+            style={{ accentColor: btnColor }}
+          />
+          <span>{label}{star}</span>
+        </label>
+      );
+    }
+
+    // Champs texte génériques (nom, adresse, email, nombre, date, personnalisés)
+    const inputType = field.type === 'email' ? 'email' : field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text';
+    return (
+      <div key={field.name}>
+        {labelEl}
+        <div className={IconComp ? 'field-row has-icon' : ''}>
+          {IconComp && <span className="field-icon"><IconComp className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>}
+          <input
+            type={inputType}
+            value={form[key] || ''}
+            onChange={(e) => handleChange(key, e.target.value)}
+            placeholder={field.placeholder || ''}
+            required={required}
+            className={`checkout-input w-full ${IconComp ? '' : 'px-3'} py-3 border text-sm font-medium transition-all`}
+            style={{ ...inputStyle(key), borderRadius: '12px' }}
+            onFocus={() => setFocusedField(key)}
+            onBlur={() => setFocusedField(null)}
+          />
+        </div>
+      </div>
+    );
+  };
+
   const subtotal = cartSubtotal;
   // Zone cost takes priority; flat fee is the fallback when no per-zone cost applies
   const zoneCost = deliveryStatus.cost || 0;
@@ -536,6 +754,18 @@ const StoreCheckout = () => {
       return;
     }
 
+    // Validation des champs requis pilotée par la config marchand
+    for (const f of configFields) {
+      if (f.enabled === false || f.required === false) continue;
+      if (f.type === 'country' || !INPUT_FIELD_TYPES.has(f.type)) continue;
+      const key = FIELD_KEY_MAP[f.name] || f.name;
+      if (f.type === 'consent') {
+        if (!form[key]) { setError(`${f.label || f.name} est requis`); return; }
+        continue;
+      }
+      if (!String(form[key] || '').trim()) { setError(`${f.label || f.name} est requis`); return; }
+    }
+
     // Validate delivery zone
     if (hasDeliveryConfig && !deliveryStatus.allowed) {
       if (deliveryStatus.type === 'blocked') {
@@ -571,9 +801,34 @@ const StoreCheckout = () => {
         affiliateCode: affiliateAttribution?.affiliateCode || '',
         affiliateLinkCode: affiliateAttribution?.affiliateLinkCode || '',
         checkoutSessionId,
+        paymentMethod,
       });
 
       const orderData = res.data?.data;
+
+      // Scalor Pay — encaissement en ligne : redirige le client vers MoneyFusion.
+      if (paymentMethod === 'scalor_pay' && store?.paymentMethods?.scalorPay) {
+        try {
+          const payRes = await publicStoreApi.startScalorPayment(subdomain, {
+            orderId: orderData?._id,
+            orderNumber: orderData?.orderNumber,
+            phone: fullPhone,
+            returnUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+          });
+          if (payRes?.data?.paymentUrl) {
+            if (!location.state?.products?.length) clearCart();
+            if (checkoutSessionStorageKey && typeof window !== 'undefined') {
+              window.sessionStorage.removeItem(checkoutSessionStorageKey);
+            }
+            window.location.href = payRes.data.paymentUrl;
+            return; // on quitte la page vers le paiement
+          }
+        } catch {
+          // Paiement en ligne indisponible → on retombe sur la confirmation classique
+          // (la commande est déjà enregistrée, le marchand pourra relancer le client).
+        }
+      }
+
       setOrderResult(orderData);
       // Vide le panier persistant après une commande réussie (si l'achat venait du panier)
       if (!location.state?.products?.length) clearCart();
@@ -973,58 +1228,7 @@ const StoreCheckout = () => {
               {t('checkout.yourInfo')}
             </h2>
 
-            {/* Nom */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nom complet *</label>
-              <div className="field-row has-icon">
-                <span className="field-icon"><User className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
-                <input
-                  type="text"
-                  value={form.customerName}
-                  onChange={(e) => handleChange('customerName', e.target.value)}
-                  placeholder={t('checkout.fullNamePlaceholder')}
-                  required
-                  className="checkout-input w-full py-3 border text-sm font-medium transition-all"
-                  style={{ ...inputStyle('customerName'), borderRadius: '12px' }}
-                  onFocus={() => setFocusedField('customerName')}
-                  onBlur={() => setFocusedField(null)}
-                />
-              </div>
-            </div>
-
-            {/* Téléphone */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{t('checkout.whatsappPhone')}</label>
-              <div className="flex gap-0">
-                <div className="relative flex-shrink-0">
-                  <select
-                    value={phoneCode}
-                    onChange={(e) => setPhoneCode(e.target.value)}
-                    className="checkout-input appearance-none pl-3 pr-7 py-3 border border-r-0 text-sm font-semibold cursor-pointer transition-all"
-                    style={{ ...fieldStyle, minWidth: 90, borderTopRightRadius: 0, borderBottomRightRadius: 0, borderTopLeftRadius: '12px', borderBottomLeftRadius: '12px' }}
-                  >
-                    {PHONE_CODES.map(c => (
-                      <option key={`${c.country}-${c.code}`} value={c.code}>{c.label}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: fieldIconColor }} />
-                </div>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => handleChange('phone', e.target.value)}
-                  maxLength={getPhoneLength(phoneCode)}
-                  placeholder={activePlaceholders.phone}
-                  required
-                  className="checkout-input flex-1 min-w-0 px-3 py-3 border text-sm font-medium transition-all"
-                  style={{ ...inputStyle('phone'), borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}
-                  onFocus={() => setFocusedField('phone')}
-                  onBlur={() => setFocusedField(null)}
-                />
-              </div>
-            </div>
-
-            {/* Pays */}
+            {/* Pays — conservé pour la logique de livraison du panier */}
             {hasDeliveryConfig && (
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Pays *</label>
@@ -1049,7 +1253,7 @@ const StoreCheckout = () => {
               </div>
             )}
 
-            {/* Blocked */}
+            {/* Zone de livraison bloquée */}
             {deliveryStatus.type === 'blocked' && (
               <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -1057,59 +1261,10 @@ const StoreCheckout = () => {
               </div>
             )}
 
-            {/* Ville + Email */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Ville {hasDeliveryConfig ? '*' : ''}</label>
-                <div className="field-row has-icon">
-                  <span className="field-icon"><MapPin className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
-                  {cityOptions.length > 0 ? (
-                    <div className="relative w-full">
-                      <select
-                        value={form.city}
-                        onChange={(e) => handleChange('city', e.target.value)}
-                        required={hasDeliveryConfig}
-                        className="checkout-input w-full py-3 border text-sm font-medium transition-all appearance-none"
-                        style={{ ...inputStyle('city'), borderRadius: '12px', paddingRight: '32px' }}
-                        onFocus={() => setFocusedField('city')}
-                        onBlur={() => setFocusedField(null)}
-                      >
-                        <option value="">{activePlaceholders.city || t('checkout.selectCity')}</option>
-                        {cityOptions.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                      <ChevronDown className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: fieldIconColor }} />
-                    </div>
-                  ) : (
-                    <input
-                      type="text"
-                      value={form.city}
-                      onChange={(e) => handleChange('city', e.target.value)}
-                      placeholder={activePlaceholders.city}
-                      required={hasDeliveryConfig}
-                      className="checkout-input w-full py-3 border text-sm font-medium transition-all"
-                      style={{ ...inputStyle('city'), borderRadius: '12px' }}
-                      onFocus={() => setFocusedField('city')}
-                      onBlur={() => setFocusedField(null)}
-                    />
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                  placeholder="optionnel"
-                  className="checkout-input w-full px-3 py-3 border text-sm font-medium transition-all"
-                  style={{ ...inputStyle('email'), borderRadius: '12px' }}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                />
-              </div>
-            </div>
+            {/* Champs du formulaire — pilotés par la config marchand (identique à la page produit du store) */}
+            {configFields.map(renderConfigField)}
 
-            {/* Delivery status indicator */}
+            {/* Indicateur de statut de livraison */}
             {hasDeliveryConfig && form.country && form.city && deliveryStatus.type !== 'blocked' && deliveryStatus.type !== 'pending' && (
               <div className={`flex items-start gap-2.5 p-3 rounded-xl text-sm ${
                 deliveryStatus.type === 'livraison'
@@ -1131,41 +1286,44 @@ const StoreCheckout = () => {
               </div>
             )}
 
-            {/* Adresse */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{t('checkout.deliveryAddress')}</label>
-              <div className="field-row has-icon">
-                <span className="field-icon"><MapPin className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
-                <input
-                  type="text"
-                  value={form.address}
-                  onChange={(e) => handleChange('address', e.target.value)}
-                  placeholder={activePlaceholders.address}
-                  className="checkout-input w-full py-3 border text-sm font-medium transition-all"
-                  style={{ ...inputStyle('address'), borderRadius: '12px' }}
-                  onFocus={() => setFocusedField('address')}
-                  onBlur={() => setFocusedField(null)}
-                />
+            {/* Mode de paiement — n'affiche que les modes activés par le marchand.
+                Masqué s'il n'y a qu'un seul mode (rien à choisir). */}
+            {availablePaymentMethods.length > 1 && (
+              <div className="space-y-2">
+                <p className="text-xs font-bold uppercase tracking-wide text-gray-400">Mode de paiement</p>
+                {availablePaymentMethods.map((id) => {
+                  const opt = PAYMENT_METHOD_META[id];
+                  if (!opt) return null;
+                  const active = paymentMethod === id;
+                  return (
+                    <button
+                      type="button"
+                      key={id}
+                      onClick={() => setPaymentMethod(id)}
+                      className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all ${
+                        active ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white'
+                      }`}
+                    >
+                      <span className="text-xl">{opt.icon}</span>
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-sm font-bold text-gray-900">{opt.label}</span>
+                        <span className="block text-xs text-gray-500">{opt.sub}</span>
+                        {Array.isArray(opt.badges) && opt.badges.length > 0 && (
+                          <span className="mt-1.5 flex flex-wrap gap-1">
+                            {opt.badges.map((b) => (
+                              <span key={b.label} className="rounded-full px-2 py-0.5 text-[9.5px] font-extrabold whitespace-nowrap" style={{ backgroundColor: b.bg, color: b.color }}>
+                                {b.label}
+                              </span>
+                            ))}
+                          </span>
+                        )}
+                      </span>
+                      <span className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${active ? 'border-primary-500 bg-primary-500' : 'border-gray-300'}`} />
+                    </button>
+                  );
+                })}
               </div>
-            </div>
-
-            {/* Notes */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Instructions / Notes</label>
-              <div className="field-row has-icon-textarea relative">
-                <span className="field-icon-top"><FileText className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
-                <textarea
-                  value={form.notes}
-                  onChange={(e) => handleChange('notes', e.target.value)}
-                  placeholder={t('checkout.notesPlaceholder')}
-                  rows={2}
-                  className="checkout-input w-full pl-9 pr-3 py-3 border text-sm font-medium resize-none transition-all"
-                  style={{ ...inputStyle('notes'), borderRadius: '12px' }}
-                  onFocus={() => setFocusedField('notes')}
-                  onBlur={() => setFocusedField(null)}
-                />
-              </div>
-            </div>
+            )}
 
             {/* Submit */}
             <button
@@ -1186,7 +1344,9 @@ const StoreCheckout = () => {
                 <ShoppingCart className="w-4 h-4" />
               )}
               <span>
-                {submitting ? 'Traitement en cours...' : `Commander · ${formatPrice(total, currency)}`}
+                {submitting
+                  ? 'Traitement en cours...'
+                  : `${paymentMethod === 'scalor_pay' ? 'Payer' : 'Commander'} · ${formatPrice(total, currency)}`}
               </span>
             </button>
 

@@ -8,7 +8,9 @@ import WhatsAppSendModal from './WhatsAppSendModal.jsx';
 import { tp } from '../i18n/platform.js';
 // WhatsAppConfigModal supprimé
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'https://api.scalor.net';
 
 const STEPS = [
   { id: 1, icon: '🔍', label: 'Analyse de la page Alibaba' },

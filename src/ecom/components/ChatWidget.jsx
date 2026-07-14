@@ -4,7 +4,9 @@ import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
 import api from '../../lib/api.js';
 import { tp } from '../i18n/platform.js';
 
-const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'https://api.scalor.net';
 
 const CHANNEL_LABELS = {
   general: { label: 'Général', emoji: '💬', desc: "Toute l'équipe" },

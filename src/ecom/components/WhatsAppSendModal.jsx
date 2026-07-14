@@ -5,7 +5,9 @@ import {
   AlertCircle, Loader2, Settings, RotateCcw, Eye
 } from 'lucide-react';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'https://api.scalor.net';
 
 const WhatsAppSendModal = ({ 
   onClose, 

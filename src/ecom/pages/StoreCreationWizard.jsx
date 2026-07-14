@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useSearchParams } from '@/lib/router-compat';
-import { useStore, isStoreEnabled } from '../contexts/StoreContext.jsx';
+import { useNavigate, useSearchParams, useLocation } from '@/lib/router-compat';
+import { useStore } from '../contexts/StoreContext.jsx';
 import {
   Check, ArrowRight, ArrowLeft, Loader2, Store, Palette, MapPin,
   Sparkles, MessageSquare, ChevronRight, ChevronDown, Zap,
@@ -193,6 +193,18 @@ const LOGO_GENERATION_MESSAGES = [
   'Finalisation et optimisation du rendu...',
 ];
 
+// Messages d'activité affichés en rotation sous le titre, par étape.
+const GENERATION_ACTIVITY = {
+  subdomain: ['Réservation de votre adresse…', 'Configuration du routage sécurisé…'],
+  config: ['Enregistrement de vos informations…', 'Application de la langue et de la devise…'],
+  theme: ['Installation du thème…', 'Application de votre palette de couleurs…'],
+  logo: ["Intégration du logo dans l'identité…"],
+  homepage: ['Analyse de votre niche…', 'Rédaction des textes de vente…', 'Construction des sections…', 'Optimisation pour mobile…'],
+  images: ['Génération des visuels par IA…', 'Compression et mise en ligne…'],
+  verification: ['Contrôle final de la boutique…', 'Vérification des pages publiques…'],
+  done: ['Votre boutique est en ligne.'],
+};
+
 const GenerationOverlay = ({ currentStep, storeName, subdomain, themeColor = '#0F6B4F', logoUrl, includeLogoStep = false }) => {
   const generationSteps = getGenerationSteps({ includeLogoStep });
   const currentIdx = generationSteps.findIndex((step) => step.key === currentStep);
@@ -202,34 +214,52 @@ const GenerationOverlay = ({ currentStep, storeName, subdomain, themeColor = '#0
     ? 100
     : Math.min(96, Math.round(((safeCurrentIdx + 0.7) / generationSteps.length) * 100));
   const isLogoStep = currentStep === 'logo';
-  const title = currentStep === 'done'
-    ? "Votre boutique est prête"
+  const isDoneStep = currentStep === 'done';
+  const title = isDoneStep
+    ? 'Félicitations !'
     : isLogoStep
       ? 'Application du logo'
       : 'Création en cours...';
-  const subtitle = currentStep === 'done'
-    ? `${storeName || 'Votre boutique'} est prête à être utilisée.`
+  const subtitle = isDoneStep
+    ? `${storeName || 'Votre boutique'} est prête à vendre.`
     : isLogoStep
       ? "Nous intégrons votre logo dans l'identité de la boutique."
       : "L'IA construit votre boutique sur mesure.";
   const storeLabel = storeName || 'Votre boutique';
   const urlLabel = subdomain ? `${subdomain}.scalor.net` : 'scalor.net';
 
+  // Ticker d'activité (rotation ~3s dans la liste de l'étape en cours)
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setTick((v) => v + 1), 3000);
+    return () => clearInterval(t);
+  }, []);
+  const activityList = GENERATION_ACTIVITY[currentStep] || GENERATION_ACTIVITY.subdomain;
+  const activityMsg = activityList[tick % activityList.length];
+
   return (
     <div className="fixed inset-0 z-[100] bg-[#f6f8f7] px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto flex min-h-full w-full max-w-6xl items-center">
         <div className="w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.12)]">
           <div className="grid lg:grid-cols-[0.92fr_1.08fr]">
-            <section className="relative flex flex-col justify-between overflow-hidden bg-slate-950 px-6 py-7 text-white sm:px-8 lg:min-h-[640px] lg:px-10 lg:py-10">
+
+            {/* ── Panneau gauche : narration + progression ── */}
+            <section className="relative flex flex-col justify-between overflow-hidden border-b border-slate-100 bg-gradient-to-br from-emerald-50/70 via-white to-sky-50/50 px-6 py-7 sm:px-8 lg:min-h-[640px] lg:border-b-0 lg:border-r lg:px-10 lg:py-10">
               <div
                 className="absolute inset-x-0 top-0 h-1"
                 style={{ background: `linear-gradient(90deg, ${themeColor}, #38bdf8, #f59e0b)` }}
               />
-              <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: themeColor }} />
+              {/* Trame de points + halos */}
+              <div
+                className="pointer-events-none absolute inset-0 opacity-[0.5]"
+                style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(15,107,79,0.12) 1px, transparent 0)', backgroundSize: '26px 26px' }}
+              />
+              <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full opacity-25 blur-3xl" style={{ backgroundColor: themeColor }} />
+              <div className="pointer-events-none absolute -left-28 bottom-0 h-72 w-72 rounded-full bg-sky-200 opacity-30 blur-3xl" />
 
               <div className="relative">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/15">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-emerald-700 shadow-[0_10px_30px_rgba(16,185,129,0.25)]">
                     {isLogoStep && logoUrl ? (
                       <img src={logoUrl} alt="Logo de la boutique" className="max-h-10 max-w-10 object-contain" />
                     ) : isLogoStep ? (
@@ -239,114 +269,149 @@ const GenerationOverlay = ({ currentStep, storeName, subdomain, themeColor = '#0
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">{tp('Scalor Builder')}</p>
-                    <p className="mt-1 truncate text-sm font-semibold text-white">{storeLabel}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{tp('Scalor Builder')}</p>
+                    <p className="mt-1 truncate text-sm font-semibold text-slate-900">{storeLabel}</p>
                   </div>
                 </div>
 
-                <div className="mt-12 sm:mt-16">
-                  <div className="inline-flex min-h-[28px] items-center rounded-full border border-white/10 bg-white/10 px-3 text-xs font-semibold text-white/80">
+                <div className="mt-10 sm:mt-14">
+                  <div className="inline-flex min-h-[30px] items-center gap-2 rounded-full border border-emerald-200 bg-emerald-100/80 px-3.5 text-xs font-bold text-emerald-800">
+                    <span className="scx-blink h-1.5 w-1.5 rounded-full bg-emerald-600" />
                     {activeStep?.label || tp('Préparation')}
                   </div>
-                  <h2 className="mt-5 max-w-md text-3xl font-black tracking-tight text-white sm:text-4xl">
+                  <h2 className="mt-5 max-w-md text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
                     {title}
                   </h2>
-                  <p className="mt-4 max-w-md text-sm leading-6 text-white/60">
+                  <p className="mt-3 max-w-md text-sm leading-6 text-slate-500">
                     {subtitle}
                   </p>
+                  {!isDoneStep && (
+                    <p className="mt-4 flex min-h-[20px] items-center gap-2 text-sm font-semibold text-emerald-700">
+                      <span key={activityMsg} className="scx-fade">{activityMsg}</span>
+                    </p>
+                  )}
                 </div>
 
-                <div className="mt-10 rounded-lg border border-white/10 bg-white/[0.06] p-4">
+                <div className="mt-9 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                   <div className="flex items-end justify-between gap-4">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">{tp('Progression')}</p>
-                      <p className="mt-1 text-3xl font-black tabular-nums text-white">{progressPct}%</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">{tp('Progression')}</p>
+                      <p className="mt-1 text-4xl font-black tabular-nums text-slate-950">
+                        {progressPct}<span className="text-xl font-bold text-slate-300">%</span>
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-white/50">{tp('Adresse')}</p>
-                      <p className="mt-1 max-w-[180px] truncate text-sm font-semibold text-white/80">{urlLabel}</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">{tp('Adresse')}</p>
+                      <p className="mt-1 max-w-[190px] truncate text-sm font-bold text-emerald-700">{urlLabel}</p>
+                      <p className="mt-0.5 text-[11px] text-slate-400">{tp('Étape')} {safeCurrentIdx + 1} / {generationSteps.length}</p>
                     </div>
                   </div>
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progressPct}>
+                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progressPct}>
                     <div
-                      className="h-full rounded-full transition-all duration-700 ease-out"
+                      className="relative h-full overflow-hidden rounded-full transition-all duration-700 ease-out"
                       style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${themeColor}, #38bdf8)` }}
-                    />
+                    >
+                      <span className="scx-sheen absolute inset-y-0 left-0" />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="relative mt-8 flex items-center gap-2 text-xs font-medium text-white/50">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>{tp('Synchronisation des paramètres en cours')}</span>
+              <div className="relative mt-8 flex items-center justify-between gap-3 text-xs font-medium text-slate-400">
+                {isDoneStep ? (
+                  <span className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-emerald-600" />
+                    {tp('Boutique en ligne')} · {urlLabel}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {tp('Ne fermez pas cette fenêtre')}
+                  </span>
+                )}
+                <span className="hidden text-slate-300 sm:block">scalor.net</span>
               </div>
+
+              <style>{`
+                @keyframes scx-sheen { 0% { transform: translateX(-120%); } 100% { transform: translateX(340%); } }
+                .scx-sheen { width: 45%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent); animation: scx-sheen 1.8s ease-in-out infinite; }
+                @keyframes scx-fadein { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+                .scx-fade { display: inline-block; animation: scx-fadein 0.5s ease; }
+                @keyframes scx-blink { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+                .scx-blink { animation: scx-blink 1.6s ease-in-out infinite; }
+              `}</style>
             </section>
 
+            {/* ── Panneau droit : timeline du pipeline ── */}
             <section className="px-5 py-6 sm:px-7 lg:px-9 lg:py-9">
               <div className="flex flex-col gap-2 border-b border-slate-100 pb-5 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{tp('Pipeline')}</p>
                   <h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">{tp('Préparation de la boutique')}</h3>
                 </div>
-                <span className="text-sm font-semibold text-slate-500">{safeCurrentIdx + 1}/{generationSteps.length}</span>
+                <span className="inline-flex w-fit items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
+                  {safeCurrentIdx + 1}/{generationSteps.length}
+                </span>
               </div>
 
-              <div className="mt-6 space-y-2.5">
-                {generationSteps.map((step, idx) => {
-                  const isDone = idx < safeCurrentIdx || currentStep === 'done';
-                  const isActive = idx === safeCurrentIdx && currentStep !== 'done';
+              <div className="relative mt-6">
+                {/* Ligne de connexion de la timeline */}
+                <div className="absolute bottom-5 left-[21px] top-5 w-px bg-slate-200" />
 
-                  return (
-                    <div
-                      key={step.key}
-                      className={`grid grid-cols-[40px_1fr] gap-3 rounded-lg border px-3 py-3.5 transition-all duration-300 ${
-                        isDone
-                          ? 'border-emerald-200 bg-emerald-50'
-                          : isActive
-                            ? 'border-slate-300 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.08)]'
-                            : 'border-slate-100 bg-slate-50/60'
-                      }`}
-                    >
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                        isDone
-                          ? 'bg-emerald-700 text-white'
-                          : isActive
-                            ? 'bg-white text-slate-950 ring-1 ring-slate-200'
-                            : 'bg-white text-slate-400 ring-1 ring-slate-100'
-                      }`}>
-                        {isDone ? (
-                          <Check className="h-5 w-5" />
-                        ) : isActive ? (
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                        ) : (
-                          <span className="h-2.5 w-2.5 rounded-full bg-current" />
-                        )}
-                      </div>
+                <div className="space-y-1">
+                  {generationSteps.map((step, idx) => {
+                    const isDone = idx < safeCurrentIdx || currentStep === 'done';
+                    const isActive = idx === safeCurrentIdx && currentStep !== 'done';
 
-                      <div className="min-w-0">
-                        <div className="flex items-center justify-between gap-3">
-                          <p className={`text-sm font-bold ${isDone ? 'text-emerald-900' : isActive ? 'text-slate-950' : 'text-slate-500'}`}>
-                            {step.label}
-                          </p>
-                          <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                            isDone
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : isActive
-                                ? 'bg-amber-100 text-amber-800'
-                                : 'bg-slate-100 text-slate-500'
-                          }`}>
-                            {isDone ? 'Terminé' : isActive ? 'En cours' : tp('En attente')}
-                          </span>
+                    return (
+                      <div
+                        key={step.key}
+                        className={`relative grid grid-cols-[44px_1fr] items-start gap-3 rounded-lg px-1.5 transition-all duration-300 ${
+                          isActive ? 'bg-white py-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.08)] ring-1 ring-emerald-600/20' : 'py-2.5'
+                        }`}
+                      >
+                        {/* Nœud de timeline */}
+                        <div className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white transition-all ${
+                          isDone
+                            ? 'bg-emerald-700 text-white'
+                            : isActive
+                              ? 'border-2 border-emerald-600 bg-white text-emerald-700'
+                              : 'border border-slate-200 bg-white text-slate-300'
+                        }`}>
+                          {isDone ? (
+                            <Check className="h-5 w-5" />
+                          ) : isActive ? (
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                          ) : (
+                            <span className="h-2 w-2 rounded-full bg-current" />
+                          )}
                         </div>
-                        {isActive && (
-                          <p className="mt-1 text-xs leading-5 text-slate-500">
-                            {tp('Cette étape peut prendre quelques secondes selon la charge du serveur.')}
-                          </p>
-                        )}
+
+                        <div className="min-w-0 pt-2">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className={`text-sm ${isDone ? 'font-semibold text-slate-400' : isActive ? 'font-bold text-slate-950' : 'font-medium text-slate-400'}`}>
+                              {step.label}
+                            </p>
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-bold ${
+                              isDone
+                                ? 'bg-emerald-50 text-emerald-700'
+                                : isActive
+                                  ? 'scx-blink bg-amber-100 text-amber-800'
+                                  : 'bg-slate-100 text-slate-400'
+                            }`}>
+                              {isDone ? 'Terminé' : isActive ? 'En cours' : tp('En attente')}
+                            </span>
+                          </div>
+                          {isActive && (
+                            <p className="mt-1 text-xs leading-5 text-slate-500">
+                              {tp('Cette étape peut prendre quelques secondes selon la charge du serveur.')}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </section>
           </div>
@@ -501,11 +566,15 @@ const splitInternationalPhone = (value = '', fallbackCode = '+237') => {
 
 const StoreCreationWizard = ({ onComplete }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { stores, loading: storesLoading, refreshStores, switchStore } = useStore();
   const [searchParams] = useSearchParams();
   const isResetMode = searchParams.get('reset') === 'true';
-  // "nouvelle" mode = creating a new additional store (not editing the primary)
-  const isNewStoreMode = searchParams.get('mode') === 'new' || window.location.pathname.includes('/boutique/nouvelle');
+  // "nouvelle" mode = creating a new additional store (not editing the primary).
+  // Détection via le router (réactive) — window.location peut être en retard
+  // pendant une navigation Next et faisait rebondir le wizard vers le dashboard.
+  const isNewStoreMode = searchParams.get('mode') === 'new' || location.pathname.includes('/boutique/nouvelle');
+  const [maxStoresReached, setMaxStoresReached] = useState(false);
 
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
@@ -568,14 +637,10 @@ const StoreCreationWizard = ({ onComplete }) => {
 
   // ── Charger données existantes ────────────────────────────────────────────────
   const initDoneRef = useRef(false);
-  useEffect(() => {
-    if (storesLoading) return;
-
-    const hasAccessibleStore = stores.some(isStoreEnabled);
-    if (!isNewStoreMode && !isResetMode && hasAccessibleStore) {
-      navigate('/ecom/boutique', { replace: true });
-    }
-  }, [isNewStoreMode, isResetMode, navigate, stores, storesLoading]);
+  // Note : l'ancien renvoi automatique vers le dashboard quand une boutique
+  // accessible existait a été supprimé — il éjectait silencieusement le wizard
+  // (création d'une 2e boutique, édition depuis Paramètres). Le wizard charge
+  // désormais la boutique existante en mode édition dans ce cas (loadExisting).
 
   useEffect(() => {
     // Wait for StoreContext to finish loading before deciding
@@ -584,9 +649,10 @@ const StoreCreationWizard = ({ onComplete }) => {
     if (initDoneRef.current) return;
     initDoneRef.current = true;
 
-    // Max 3 stores -- block creation if limit reached
+    // Max 3 stores -- écran explicite au lieu d'un renvoi silencieux
     if (isNewStoreMode && stores.length >= 3) {
-      navigate('/ecom/boutique', { replace: true });
+      setMaxStoresReached(true);
+      setLoading(false);
       return;
     }
 
@@ -859,7 +925,7 @@ const StoreCreationWizard = ({ onComplete }) => {
   // ── Soumission ────────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (!validate()) return;
-    let redirectToBoutique = false;
+    let creationSucceeded = false;
     setSaving(true);
     setGenerationLogoUrl(form.storeLogo || null);
     setGenerationStep('subdomain');
@@ -967,34 +1033,65 @@ const StoreCreationWizard = ({ onComplete }) => {
       }
       await new Promise(r => setTimeout(r, 500));
 
-      // Step final : tout est prêt
+      // Step final : page félicitations pour une vraie création,
+      // simple retour au dashboard pour une édition de boutique existante.
       setGenerationStep('done');
-      onComplete?.();
-
-      // Refresh stores list & switch to the new store
-      await refreshStores();
-      if (isNewStoreMode) {
-        const freshRes = await storesApi.getStores();
-        const freshList = freshRes.data?.data || [];
-        const newOne = freshList.find(s => s.subdomain === form.subdomain);
-        if (newOne) {
-          switchStore(newOne);
-        }
+      creationSucceeded = true;
+      const isPureEdit = isEditMode && !isResetMode && !isNewStoreMode;
+      if (isPureEdit) {
+        await refreshStores().catch(() => {});
+        navigate('/ecom/boutique', { replace: true });
+      } else {
+        navigate(
+          `/ecom/boutique/creation-reussie?sub=${encodeURIComponent(form.subdomain)}&name=${encodeURIComponent(form.storeName)}`,
+          { replace: true }
+        );
       }
-
-      redirectToBoutique = true;
-      navigate('/ecom/boutique', { replace: true });
+      onComplete?.();
       return;
     } catch (err) {
       setErrors({ submit: getErrorMessage(err, 'Impossible de créer la boutique.') });
     } finally {
-      if (!redirectToBoutique) {
-        setSaving(false);
-        setSavingStep('');
+      setSaving(false);
+      setSavingStep('');
+      if (!creationSucceeded) {
         setGenerationStep(null);
       }
     }
   };
+
+  // ── Limite de boutiques atteinte (mode nouvelle) ──────────────────────────────
+  if (maxStoresReached) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+            <Store className="h-7 w-7" />
+          </div>
+          <h1 className="mt-5 text-xl font-black text-slate-950">{tp('Limite de boutiques atteinte')}</h1>
+          <p className="mt-2 text-sm leading-6 text-slate-500">
+            {tp('Votre espace contient déjà 3 boutiques, le maximum autorisé. Supprimez une boutique existante (Paramètres → Avancé) pour en créer une nouvelle.')}
+          </p>
+          <div className="mt-6 grid gap-2">
+            <button
+              type="button"
+              onClick={() => navigate('/ecom/boutique/settings')}
+              className="rounded-lg bg-slate-950 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
+            >
+              {tp('Gérer mes boutiques')}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/ecom/boutique')}
+              className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+            >
+              {tp('Retour au tableau de bord')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ── Loading ───────────────────────────────────────────────────────────────────
   if (storesLoading || loading) {

@@ -25,13 +25,15 @@ function normalizeBase(raw = '') {
 function resolveProviderBaseUrl() {
   const fromApi = normalizeBase(process.env.NEXT_PUBLIC_API_URL);
   const fromBackend = normalizeBase(process.env.NEXT_PUBLIC_BACKEND_URL);
+  const configured = fromApi || fromBackend;
+
+  if (configured) return configured;
 
   if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
-    if (fromApi.includes('api.scalor.net')) return fromApi;
     return 'https://api.scalor.net/api/provider';
   }
 
-  return fromApi || fromBackend || '/api/provider';
+  return '/api/provider';
 }
 
 const providerApi = axios.create({

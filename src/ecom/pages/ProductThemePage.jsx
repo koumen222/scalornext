@@ -9,7 +9,7 @@ import {
 import { storeManageApi } from '../services/storeApi';
 import { useStore } from '../contexts/StoreContext.jsx';
 import { applyFont } from '../hooks/useStoreData';
-import BuilderAIChatWidget from '../components/BuilderAIChatWidget.jsx';
+import BuilderAiChat from '../components/BuilderAiChat.jsx';
 
 // ── 2 Layout Themes ───────────────────────────────────────────────────────────
 const THEMES = [
@@ -1365,28 +1365,27 @@ const ProductThemePage = () => {
         )}
       </div>
 
-      <BuilderAIChatWidget
-        productPageConfig={null}
-        theme={{ template: currentTheme, ...design, sectionColors }}
-        productName=""
-        onApplyChanges={() => {}}
-        onApplyTheme={(patch) => {
-          if (patch.template && patch.template !== currentTheme) {
-            setCurrentTheme(patch.template);
+      <BuilderAiChat
+        mode="theme"
+        variant="docked"
+        dockBarOffset={240}
+        context={{ themeDesign: design, themeTemplate: currentTheme, sectionColors, storeName: activeStore?.name }}
+        onPatch={({ designPatch, sectionColorsPatch, themeTemplate }) => {
+          if (themeTemplate && ['classic', 'magazine'].includes(themeTemplate) && themeTemplate !== currentTheme) {
+            setCurrentTheme(themeTemplate);
           }
-          const designKeys = Object.keys(DEFAULT_DESIGN);
-          const designPatch = {};
-          const colorPatch = {};
-          Object.entries(patch).forEach(([k, v]) => {
-            if (k === 'template') return;
-            if (k === 'sectionColors' && typeof v === 'object') {
-              Object.assign(colorPatch, v);
-            } else if (designKeys.includes(k)) {
-              designPatch[k] = v;
-            }
-          });
-          if (Object.keys(designPatch).length) setDesign(prev => ({ ...prev, ...designPatch }));
-          if (Object.keys(colorPatch).length) setSectionColors(prev => ({ ...prev, ...colorPatch }));
+          if (designPatch && typeof designPatch === 'object') {
+            const designKeys = Object.keys(DEFAULT_DESIGN);
+            const clean = {};
+            Object.entries(designPatch).forEach(([k, v]) => { if (designKeys.includes(k)) clean[k] = v; });
+            if (Object.keys(clean).length) setDesign(prev => ({ ...prev, ...clean }));
+          }
+          if (sectionColorsPatch && typeof sectionColorsPatch === 'object') {
+            const colorKeys = Object.keys(DEFAULT_SECTION_COLORS);
+            const clean = {};
+            Object.entries(sectionColorsPatch).forEach(([k, v]) => { if (colorKeys.includes(k)) clean[k] = v; });
+            if (Object.keys(clean).length) setSectionColors(prev => ({ ...prev, ...clean }));
+          }
         }}
       />
     </div>

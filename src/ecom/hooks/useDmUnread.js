@@ -3,20 +3,6 @@ import { io } from 'socket.io-client';
 import ecomApi from '../services/ecommApi.js';
 
 const resolveSocketUrl = () => {
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname.toLowerCase();
-    if (
-      hostname === 'scalor.net' ||
-      hostname === 'www.scalor.net' ||
-      hostname.endsWith('.scalor.net') ||
-      hostname === 'scalor.site' ||
-      hostname === 'www.scalor.site' ||
-      hostname.endsWith('.scalor.site')
-    ) {
-      return 'https://api.scalor.net';
-    }
-  }
-
   const candidates = [
     process.env.NEXT_PUBLIC_API_URL,
     process.env.NEXT_PUBLIC_BACKEND_URL,

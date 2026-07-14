@@ -3,11 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
+    "build:staging": "NEXT_PUBLIC_APP_ENV=staging NEXT_PUBLIC_API_URL=https://api-staging.scalor.net NEXT_PUBLIC_BACKEND_URL=https://api-staging.scalor.net NEXT_PUBLIC_API_BASE_URL=https://api-staging.scalor.net NEXT_PUBLIC_STORE_API_URL=https://api-staging.scalor.net NEXT_PUBLIC_SCALOR_API_URL=https://api-staging.scalor.net opennextjs-cloudflare build --config=wrangler.staging.jsonc",
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "preview:staging": "npm run build:staging && opennextjs-cloudflare preview --config=wrangler.staging.jsonc",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy:staging": "npm run build:staging && opennextjs-cloudflare deploy --config=wrangler.staging.jsonc -- --keep-vars",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload"
   },
   "dependencies": {

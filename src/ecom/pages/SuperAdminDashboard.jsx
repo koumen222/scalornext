@@ -397,7 +397,9 @@ const SuperAdminDashboard = () => {
   const activeSessionUsers10d = kpis.activeSessionUsers10d ?? kpis.activeSessions10d ?? 0;
   const inactiveSessionUsers10d = kpis.inactiveSessionUsers10d ?? kpis.inactiveSessions10d ?? 0;
   const totalSessionUsers = kpis.totalSessionUsers ?? kpis.totalOpenSessions ?? (activeSessionUsers10d + inactiveSessionUsers10d);
-  const churnRate = kpis.churnRate10d ?? 0;
+  const churnRate = kpis.churnRate30 ?? kpis.churnRate10d ?? 0;
+  const churned30 = kpis.churned30 ?? 0;
+  const eligible30 = kpis.eligible30 ?? 0;
 
   const roleCounts = useMemo(() => {
     const map = {};
@@ -495,9 +497,9 @@ const SuperAdminDashboard = () => {
             sparkColor="#2563eb"
           />
           <KpiCard
-            label="Churn comptes"
+            label="Churn marchands 30 j"
             value={`${churnRate}%`}
-            sub={`${inactiveSessionUsers10d.toLocaleString()} comptes sans ouverture +10j`}
+            sub={`${churned30.toLocaleString()} / ${eligible30.toLocaleString()} marchands actifs il y a 30-60 j non revenus`}
             icon={TrendingDown}
             accent="#b45309"
             accentLight="#fef3c7"

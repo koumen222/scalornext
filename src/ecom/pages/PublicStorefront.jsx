@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react';
 import { safeHtml } from '../utils/sanitize';
 import { Link, useParams, useSearchParams, useLocation } from '@/lib/router-compat';
 import {
@@ -19,6 +19,7 @@ import { EditModeProvider, useEditMode } from '../contexts/EditModeContext';
 import { EditableWrapper, EditToolbar } from '../components/storefront/EditableWrapper';
 import { useStoreAnalytics } from '../hooks/useStoreAnalytics';
 import { StorefrontFooter as SharedStorefrontFooter } from '../components/StorefrontShared';
+import { publicStoreApi } from '../services/storeApi.js';
 import { formatMoney } from '../utils/currency.js';
 import { trackStorefrontEvent } from '../utils/pixelTracking.js';
 import { captureAffiliateAttributionFromSearch } from '../utils/affiliateAttribution.js';
@@ -118,7 +119,7 @@ const isTransparentThemeColor = (value) => {
 
 const resolveThemeColor = (...values) => values.find((value) => !isTransparentThemeColor(value)) || null;
 
-const buildStorefrontThemeVars = (store) => {
+export const buildStorefrontThemeVars = (store) => {
   const design = store?.productPageConfig?.design || {};
   const buttonStyle = String(design.buttonStyle || '').trim().toLowerCase();
   const primaryColor = resolveThemeColor(design.ctaButtonColor, design.buttonColor, store?.primaryColor, '#0F6B4F') || '#0F6B4F';
@@ -435,7 +436,6 @@ const AnnouncementBar = ({ store }) => {
 };
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
-const HOMEPAGE_HERO_CTA_BLUE = '#2563EB';
 
 const AiHeroSection = ({ cfg, store, prefix, products }) => {
   const t = useStorefrontT();
@@ -452,8 +452,10 @@ const AiHeroSection = ({ cfg, store, prefix, products }) => {
         textAlign: cfg.alignment || 'center', position: 'relative', overflow: 'hidden',
         backgroundImage: `url(${heroImg})`, backgroundSize: 'cover', backgroundPosition: 'center',
       }}>
-        {/* flat dark overlay — no gradient */}
-        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.52)', zIndex: 0 }} />
+        {/* flat dark overlay — réglable via le Theme Builder (overlay / overlayOpacity) */}
+        {cfg.overlay !== false && (
+          <div style={{ position: 'absolute', inset: 0, backgroundColor: `rgba(0,0,0,${Math.min(85, Math.max(0, Number(cfg.overlayOpacity ?? 52))) / 100})`, zIndex: 0 }} />
+        )}
         <div style={{ position: 'relative', zIndex: 1 }}>
           <HeroContent cfg={cfg} prefix={prefix} />
         </div>
@@ -492,8 +494,8 @@ const AiHeroSection = ({ cfg, store, prefix, products }) => {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 10,
                 padding: '16px 36px', borderRadius: '999px',
-                background: HOMEPAGE_HERO_CTA_BLUE, backgroundColor: HOMEPAGE_HERO_CTA_BLUE, color: '#ffffff',
-                border: `1px solid ${HOMEPAGE_HERO_CTA_BLUE}`,
+                background: 'var(--sf-hero-cta-bg, var(--s-primary))', color: 'var(--sf-hero-cta-text, #ffffff)',
+                border: '1px solid var(--sf-hero-cta-border, transparent)',
                 fontWeight: 800, fontSize: 15, textDecoration: 'none',
                 letterSpacing: '-0.01em', fontFamily: 'var(--s-font)',
                 boxShadow: 'var(--sf-hero-cta-shadow)', transition: 'transform 0.15s, box-shadow 0.15s',
@@ -558,8 +560,8 @@ const HeroContent = ({ cfg, prefix, sectionId = 'hero' }) => {
   const ctaStyle = {
     display: 'inline-flex', alignItems: 'center', gap: 10,
     padding: '17px 40px', borderRadius: '999px',
-    background: HOMEPAGE_HERO_CTA_BLUE, backgroundColor: HOMEPAGE_HERO_CTA_BLUE, color: '#ffffff',
-    border: `1px solid ${HOMEPAGE_HERO_CTA_BLUE}`,
+    background: 'var(--sf-hero-cta-bg, var(--s-primary))', color: 'var(--sf-hero-cta-text, #ffffff)',
+    border: '1px solid var(--sf-hero-cta-border, transparent)',
     fontWeight: 800, fontSize: 15.5, textDecoration: 'none',
     letterSpacing: '-0.01em', fontFamily: 'var(--s-font)',
     boxShadow: 'var(--sf-hero-cta-shadow)', transition: 'transform 0.15s, box-shadow 0.15s',
@@ -741,6 +743,8 @@ const AiProductsSection = ({ cfg, products, prefix, store }) => {
   const lm = useMerchantTextLocalizer();
   const limit = Math.max(6, cfg.homepageLimit || 6);
   const displayed = products.slice(0, limit);
+  // Colonnes sur mobile — réglage marchand (1 par défaut, 2 ou 4 possibles)
+  const mobileCols = [1, 2, 3, 4].includes(Number(cfg.mobileColumns)) ? Number(cfg.mobileColumns) : 1;
   const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
 
   return (
@@ -750,6 +754,8 @@ const AiProductsSection = ({ cfg, products, prefix, store }) => {
         .hp-catalog-scroll::-webkit-scrollbar { display: none; }
         .hp-cat-card { flex-shrink: 0; text-decoration: none; transition: all 0.2s ease; display: block; }
         .hp-cat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .hp-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; max-width: 820px; margin: 0 auto; }
+        @media (max-width: 767px) { .hp-products-grid { grid-template-columns: repeat(${mobileCols}, 1fr); gap: ${mobileCols >= 3 ? 8 : 14}px; } }
       `}</style>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -802,7 +808,7 @@ const AiProductsSection = ({ cfg, products, prefix, store }) => {
         )}
 
         {/* Product grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 24, maxWidth: 820, margin: '0 auto' }}>
+        <div className="hp-products-grid">
           {displayed.length === 0 ? (
             <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '64px 20px', color: 'var(--s-text2)' }}>
               <ShoppingBag size={40} style={{ marginBottom: 12, opacity: 0.3 }} />
@@ -1817,7 +1823,7 @@ const isLegacyStorySection = (section) => {
 };
 
 // ─── Section Renderer ─────────────────────────────────────────────────────────
-const SectionRenderer = ({ section, store, products, prefix }) => {
+export const SectionRenderer = ({ section, store, products, prefix }) => {
   if (!section?.type) return null;
   const cfg = section.config || {};
   const sectionId = section.id || section.type;
@@ -1915,6 +1921,18 @@ const StorefrontHeader = ({ store, cartCount, prefix }) => {
   const [cartBounce, setCartBounce] = useState(false);
   const prevCartCount = React.useRef(cartCount);
 
+  // Collections de la boutique → menu « Collections » avec sous-menu
+  const [collections, setCollections] = useState([]);
+  const [collectionsOpen, setCollectionsOpen] = useState(false);
+  useEffect(() => {
+    if (!store?.subdomain) return;
+    let cancelled = false;
+    publicStoreApi.getCollections(store.subdomain)
+      .then((res) => { if (!cancelled) setCollections(res?.data?.data || []); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [store?.subdomain]);
+
   // Détecter le scroll pour l'effet glassmorphism
   useEffect(() => {
     const handleScroll = () => {
@@ -1937,6 +1955,8 @@ const StorefrontHeader = ({ store, cartCount, prefix }) => {
   const navLinks = [
     { label: t('store.breadcrumbHome'), href: `${prefix}/` },
     { label: t('store.breadcrumbProducts'), href: `${prefix}/products` },
+    { label: t('store.aboutMenu'), href: `${prefix}/a-propos` },
+    { label: t('store.contactMenu'), href: `${prefix}/contact` },
   ];
 
   return (
@@ -2045,6 +2065,58 @@ const StorefrontHeader = ({ store, cartCount, prefix }) => {
                   {link.label}
                 </Link>
               ))}
+
+              {/* Menu Collections avec sous-menu (si la boutique en a) */}
+              {collections.length > 0 && (
+                <div
+                  style={{ position: 'relative' }}
+                  onMouseEnter={() => setCollectionsOpen(true)}
+                  onMouseLeave={() => setCollectionsOpen(false)}
+                >
+                  <button
+                    type="button"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 5,
+                      padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 600,
+                      color: collectionsOpen ? 'var(--s-text)' : 'var(--s-text2)',
+                      background: collectionsOpen ? 'rgba(0,0,0,0.04)' : 'transparent',
+                      border: 'none', cursor: 'pointer', fontFamily: 'var(--s-font)', transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {t('store.collectionsMenu')}
+                    <ChevronDown size={14} style={{ transform: collectionsOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </button>
+                  {collectionsOpen && (
+                    <div style={{
+                      position: 'absolute', top: '100%', left: 0, minWidth: 230, zIndex: 60,
+                      background: '#fff', borderRadius: 14, padding: 6,
+                      border: '1px solid rgba(15,23,42,0.08)', boxShadow: '0 18px 44px rgba(15,23,42,0.14)',
+                    }}>
+                      {collections.map((c) => (
+                        <Link
+                          key={c.slug}
+                          to={`${prefix}/collections/${c.slug}`}
+                          onClick={() => setCollectionsOpen(false)}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: 10, padding: '9px 11px',
+                            borderRadius: 10, textDecoration: 'none', transition: 'background 0.15s',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.045)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          {c.image
+                            ? <img src={c.image} alt="" style={{ width: 34, height: 34, borderRadius: 9, objectFit: 'cover', flexShrink: 0 }} />
+                            : <span style={{ width: 34, height: 34, borderRadius: 9, background: 'color-mix(in srgb, var(--s-primary) 10%, white)', flexShrink: 0 }} />}
+                          <span style={{ minWidth: 0 }}>
+                            <span style={{ display: 'block', fontSize: 13.5, fontWeight: 700, color: 'var(--s-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name}</span>
+                            <span style={{ display: 'block', fontSize: 11.5, color: 'var(--s-text2)' }}>{c.productCount} produit{c.productCount !== 1 ? 's' : ''}</span>
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Bouton Mode Édition (desktop only) */}
               {canEdit && (
@@ -2198,6 +2270,30 @@ const StorefrontHeader = ({ store, cartCount, prefix }) => {
             {link.label}
           </Link>
         ))}
+
+        {/* Collections — sous-menu mobile */}
+        {collections.length > 0 && (
+          <div style={{ marginTop: 4, paddingTop: 10, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+            <p style={{ margin: '0 0 6px', padding: '0 6px', fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--s-text2)' }}>{t('store.collectionsMenu')}</p>
+            {collections.map((c) => (
+              <Link
+                key={c.slug}
+                to={`${prefix}/collections/${c.slug}`}
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  padding: '12px 16px', borderRadius: 12, fontSize: 15, fontWeight: 600,
+                  color: 'var(--s-text)', textDecoration: 'none', fontFamily: 'var(--s-font)',
+                  backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center',
+                  justifyContent: 'space-between', gap: 12, marginBottom: 6,
+                }}
+              >
+                {c.name}
+                <span style={{ fontSize: 12, color: 'var(--s-text2)', fontWeight: 700 }}>{c.productCount}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+
         
         <div style={{ marginTop: 'auto', paddingTop: 24, borderTop: '1px solid #E5E7EB' }}>
           <Link 
@@ -3172,6 +3268,173 @@ const StorefrontFooter = ({ store, prefix }) => {
   );
 };
 
+// ─── Page collection publique : /collections/:slug ───────────────────────────
+export const StoreCollectionPage = () => {
+  const t = useStorefrontT();
+  const { subdomain: paramSubdomain, slug } = useParams();
+  const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
+  const subdomain = paramSubdomain || detectedSubdomain;
+  const prefix = isStoreDomain ? '' : (subdomain ? `/store/${subdomain}` : '');
+
+  const { store, pixels, footer, error } = useStoreData(subdomain);
+  const { cartCount } = useStoreCart(subdomain);
+  const { trackPageView } = useStoreAnalytics(subdomain);
+  const [payload, setPayload] = useState(null);
+  const [notFoundErr, setNotFoundErr] = useState(false);
+
+  useEffect(() => {
+    if (!subdomain || !slug) return;
+    let cancelled = false;
+    setPayload(null);
+    setNotFoundErr(false);
+    publicStoreApi.getCollection(subdomain, slug)
+      .then((res) => { if (!cancelled) setPayload(res?.data?.data || null); })
+      .catch(() => { if (!cancelled) setNotFoundErr(true); });
+    return () => { cancelled = true; };
+  }, [subdomain, slug]);
+
+  const collection = payload?.collection || null;
+  const rawProducts = payload?.products || [];
+
+  // Sous-menu de filtres de la page collection
+  const [colSearch, setColSearch] = useState('');
+  const [colSort, setColSort] = useState('featured');
+  const [colAvailability, setColAvailability] = useState('all');
+  const products = useMemo(() => {
+    let list = rawProducts.filter((p) => {
+      const matchSearch = !colSearch || String(p.name || '').toLowerCase().includes(colSearch.toLowerCase());
+      const stock = Number(p.stock || 0);
+      const matchAvail = colAvailability === 'all'
+        || (colAvailability === 'in-stock' && stock > 0)
+        || (colAvailability === 'out-of-stock' && stock <= 0);
+      return matchSearch && matchAvail;
+    });
+    if (colSort === 'price-asc') list = [...list].sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+    else if (colSort === 'price-desc') list = [...list].sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+    else if (colSort === 'name-asc') list = [...list].sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'fr', { sensitivity: 'base' }));
+    return list;
+  }, [rawProducts, colSearch, colSort, colAvailability]);
+
+  useEffect(() => {
+    if (!store?.name || !collection?.name) return;
+    setDocumentMeta({
+      title: `${collection.name} — ${store.name}`,
+      description: collection.description || `Découvrez la collection ${collection.name} chez ${store.name}.`,
+      image: collection.image || getStoreMetaImage(store),
+      siteName: store.name,
+      type: 'website',
+    });
+    trackPageView();
+  }, [store?.name, collection?.name]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (error) return null;
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--s-bg)', fontFamily: 'var(--s-font-base, var(--s-font))', color: 'var(--s-text)', ...buildStorefrontThemeVars(store) }}>
+      <style>{`
+        *{box-sizing:border-box}
+        .col-products-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+        @media(min-width:900px){.col-products-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+        @media(min-width:1180px){.col-products-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+      `}</style>
+      <StorefrontHeader store={store} cartCount={cartCount} prefix={prefix} />
+
+      {/* Bandeau collection */}
+      <section style={{ position: 'relative', overflow: 'hidden', padding: 'clamp(56px, 9vw, 96px) 24px', textAlign: 'center', backgroundColor: 'var(--sf-soft-surface)' }}>
+        {collection?.image && (
+          <>
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${collection.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.45)' }} />
+          </>
+        )}
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: 760, margin: '0 auto' }}>
+          <h1 style={{ fontSize: 'clamp(30px, 5vw, 48px)', fontWeight: 900, letterSpacing: '-0.03em', margin: 0, color: collection?.image ? '#fff' : 'var(--s-text)', fontFamily: 'var(--s-font)' }}>
+            {collection?.name || (notFoundErr ? 'Collection introuvable' : '…')}
+          </h1>
+          {collection?.description && (
+            <p style={{ fontSize: 16, lineHeight: 1.6, margin: '14px auto 0', color: collection?.image ? 'rgba(255,255,255,0.88)' : 'var(--s-text2)', maxWidth: 560 }}>
+              {collection.description}
+            </p>
+          )}
+          {collection && (
+            <p style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: collection?.image ? 'rgba(255,255,255,0.75)' : 'var(--s-text2)' }}>
+              {products.length} produit{products.length !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Produits de la collection */}
+      <section style={{ maxWidth: 1280, margin: '0 auto', padding: '28px 16px 88px' }}>
+        {/* Sous-menu de filtres */}
+        {rawProducts.length > 0 && (
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10,
+            padding: '12px 14px', marginBottom: 22, borderRadius: 16,
+            background: '#fff', border: '1px solid rgba(15,23,42,0.08)', boxShadow: '0 8px 26px rgba(15,23,42,0.05)',
+          }}>
+            <input
+              value={colSearch}
+              onChange={(e) => setColSearch(e.target.value)}
+              placeholder={t('store.searchPlaceholder') || 'Rechercher…'}
+              style={{ flex: '1 1 180px', minWidth: 140, padding: '9px 13px', borderRadius: 11, border: '1px solid rgba(15,23,42,0.10)', fontSize: 13.5, outline: 'none', fontFamily: 'var(--s-font)' }}
+            />
+            <select
+              value={colSort}
+              onChange={(e) => setColSort(e.target.value)}
+              style={{ padding: '9px 11px', borderRadius: 11, border: '1px solid rgba(15,23,42,0.10)', fontSize: 13, fontWeight: 600, color: 'var(--s-text)', background: '#fff', fontFamily: 'var(--s-font)', cursor: 'pointer' }}
+            >
+              <option value="featured">{t('store.sortFeatured') || 'En vedette'}</option>
+              <option value="price-asc">{t('store.sortPriceAsc') || 'Prix croissant'}</option>
+              <option value="price-desc">{t('store.sortPriceDesc') || 'Prix décroissant'}</option>
+              <option value="name-asc">{t('store.sortNameAsc') || 'Nom A→Z'}</option>
+            </select>
+            <select
+              value={colAvailability}
+              onChange={(e) => setColAvailability(e.target.value)}
+              style={{ padding: '9px 11px', borderRadius: 11, border: '1px solid rgba(15,23,42,0.10)', fontSize: 13, fontWeight: 600, color: 'var(--s-text)', background: '#fff', fontFamily: 'var(--s-font)', cursor: 'pointer' }}
+            >
+              <option value="all">{t('store.allProducts') || 'Tous'}</option>
+              <option value="in-stock">{t('store.inStock') || 'En stock'}</option>
+              <option value="out-of-stock">{t('store.outOfStock') || 'Épuisé'}</option>
+            </select>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--s-text2)', marginLeft: 'auto' }}>
+              {products.length} / {rawProducts.length}
+            </span>
+          </div>
+        )}
+        {notFoundErr ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--s-text2)' }}>
+            <p style={{ fontSize: 15 }}>Cette collection n'existe pas ou n'est plus disponible.</p>
+            <Link to={`${prefix}/products`} style={{ display: 'inline-block', marginTop: 16, fontWeight: 700, color: 'var(--s-primary)' }}>
+              {t('store.discoverProducts')} →
+            </Link>
+          </div>
+        ) : !payload ? (
+          <div className="col-products-grid">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} style={{ borderRadius: 16, background: 'color-mix(in srgb, var(--s-text) 5%, var(--s-bg))', height: 280 }} />
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--s-text2)' }}>
+            <ShoppingBag size={40} style={{ marginBottom: 12, opacity: 0.3 }} />
+            <p style={{ margin: 0, fontSize: 15 }}>{t('store.noProductsNow')}</p>
+          </div>
+        ) : (
+          <div className="col-products-grid">
+            {products.map((p) => (
+              <MemoizedProductCard key={p._id} product={p} prefix={prefix} store={store} subdomain={subdomain} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <SharedStorefrontFooter store={store} prefix={prefix} footer={footer} />
+    </div>
+  );
+};
+
 export const StoreAllProducts = () => {
   const t = useStorefrontT();
   const { subdomain: paramSubdomain } = useParams();
@@ -3758,7 +4021,7 @@ const PublicStorefrontInner = () => {
             <div style={{ maxWidth: 640, margin: '0 auto' }}>
               <h1 style={{ fontSize: 'clamp(36px, 7vw, 60px)', fontWeight: 900, lineHeight: 1.08, color: '#fff', margin: '0 0 18px', letterSpacing: '-0.03em', fontFamily: 'var(--s-font)' }}>{store?.name}</h1>
               {store?.description && <p style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'rgba(255,255,255,0.85)', lineHeight: 1.65, margin: '0 0 40px', fontFamily: 'var(--s-font)' }}>{store.description}</p>}
-              <Link to={`${prefix}/products`} style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '15px 34px', borderRadius: '999px', background: HOMEPAGE_HERO_CTA_BLUE, backgroundColor: HOMEPAGE_HERO_CTA_BLUE, color: '#ffffff', border: `1px solid ${HOMEPAGE_HERO_CTA_BLUE}`, fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: 'var(--sf-hero-cta-shadow)' }}>
+              <Link to={`${prefix}/products`} style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '15px 34px', borderRadius: '999px', background: 'var(--sf-hero-cta-bg, var(--s-primary))', color: 'var(--sf-hero-cta-text, #ffffff)', border: '1px solid var(--sf-hero-cta-border, transparent)', fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: 'var(--sf-hero-cta-shadow)' }}>
                 {t('store.discoverProducts')} <ArrowRight size={17} />
               </Link>
             </div>
@@ -3846,6 +4109,147 @@ const PublicStorefront = () => {
 };
 
 // ── Legal Page Component ─────────────────────────────────────────────────────
+// ─── Page À propos : /a-propos ────────────────────────────────────────────────
+export const StoreAboutPage = () => {
+  const t = useStorefrontT();
+  const { subdomain: paramSubdomain } = useParams();
+  const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
+  const subdomain = paramSubdomain || detectedSubdomain;
+  const prefix = isStoreDomain ? '' : (subdomain ? `/store/${subdomain}` : '');
+  const { store, footer, legalPages, loading } = useStoreData(subdomain);
+  const { cartCount } = useStoreCart(subdomain);
+
+  useEffect(() => {
+    if (store?.name) setDocumentMeta({ title: `À propos — ${store.name}`, siteName: store.name, type: 'website' });
+  }, [store?.name]);
+
+  if (loading) return null;
+  const custom = legalPages?.apropos; // page personnalisée si générée un jour
+  const values = [
+    { icon: <Truck size={22} />, title: t('store.fastDelivery'), desc: t('store.deliveryCodLine') },
+    { icon: <ShieldCheck size={22} />, title: t('store.ourGuarantee'), desc: t('premium.whatsappSupport') },
+    { icon: <Package size={22} />, title: t('store.happyCustomer'), desc: t('store.theyTrustUs') },
+  ];
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--s-bg)', fontFamily: 'var(--s-font-base, var(--s-font))', color: 'var(--s-text)', ...buildStorefrontThemeVars(store) }}>
+      <StorefrontHeader store={store} cartCount={cartCount} prefix={prefix} />
+
+      <section style={{ padding: 'clamp(56px, 9vw, 96px) 24px', textAlign: 'center', backgroundColor: 'var(--sf-soft-surface)' }}>
+        <h1 style={{ fontSize: 'clamp(30px, 5vw, 48px)', fontWeight: 900, letterSpacing: '-0.03em', margin: 0, fontFamily: 'var(--s-font)' }}>
+          {custom?.title || `${t('store.aboutMenu')} ${store?.name || ''}`}
+        </h1>
+      </section>
+
+      <section style={{ maxWidth: 760, margin: '0 auto', padding: '48px 20px 24px' }}>
+        {custom?.content ? (
+          <div style={{ fontSize: 15.5, lineHeight: 1.85, color: 'var(--s-text)' }} dangerouslySetInnerHTML={safeHtml(custom.content, 'storefront')} />
+        ) : (
+          <p style={{ fontSize: 16.5, lineHeight: 1.85, color: 'var(--s-text2)', textAlign: 'center', margin: 0 }}>
+            {store?.description || `${store?.name || 'Notre boutique'} — des produits sélectionnés avec soin, livrés rapidement, avec paiement à la réception.`}
+          </p>
+        )}
+      </section>
+
+      <section style={{ maxWidth: 980, margin: '0 auto', padding: '16px 20px 56px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 16 }}>
+          {values.map((v, i) => (
+            <div key={i} style={{ padding: '26px 22px', borderRadius: 18, textAlign: 'center', background: '#fff', border: '1px solid var(--sf-border)', boxShadow: 'var(--sf-shadow)' }}>
+              <span style={{ display: 'inline-flex', width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: 14, background: 'color-mix(in srgb, var(--s-primary) 10%, white)', color: 'var(--s-primary)', marginBottom: 12 }}>{v.icon}</span>
+              <p style={{ margin: 0, fontSize: 15.5, fontWeight: 800 }}>{v.title}</p>
+              <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--s-text2)', lineHeight: 1.6 }}>{v.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 36 }}>
+          <Link to={`${prefix}/products`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '15px 34px', borderRadius: 999, background: 'var(--sf-hero-cta-bg, var(--s-primary))', color: 'var(--sf-hero-cta-text, #fff)', fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
+            {t('store.discoverProducts')} <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+
+      <SharedStorefrontFooter store={store} prefix={prefix} footer={footer} />
+    </div>
+  );
+};
+
+// ─── Page Contact : /contact ──────────────────────────────────────────────────
+export const StoreContactPage = () => {
+  const t = useStorefrontT();
+  const { subdomain: paramSubdomain } = useParams();
+  const { subdomain: detectedSubdomain, isStoreDomain } = useSubdomain();
+  const subdomain = paramSubdomain || detectedSubdomain;
+  const prefix = isStoreDomain ? '' : (subdomain ? `/store/${subdomain}` : '');
+  const { store, footer, loading } = useStoreData(subdomain);
+  const { cartCount } = useStoreCart(subdomain);
+
+  useEffect(() => {
+    if (store?.name) setDocumentMeta({ title: `Contact — ${store.name}`, siteName: store.name, type: 'website' });
+  }, [store?.name]);
+
+  if (loading) return null;
+  const waDigits = String(store?.whatsapp || '').replace(/[^\d]/g, '');
+  const cards = [
+    store?.whatsapp && { icon: <Phone size={20} />, label: 'WhatsApp', value: store.whatsapp, href: `https://wa.me/${waDigits}` },
+    store?.phone && { icon: <Phone size={20} />, label: t('store.phoneLabel'), value: store.phone, href: `tel:${store.phone}` },
+    store?.email && { icon: <Package size={20} />, label: 'Email', value: store.email, href: `mailto:${store.email}` },
+    store?.address && { icon: <Package size={20} />, label: t('store.addressLabel'), value: store.address, href: null },
+  ].filter(Boolean);
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--s-bg)', fontFamily: 'var(--s-font-base, var(--s-font))', color: 'var(--s-text)', ...buildStorefrontThemeVars(store) }}>
+      <StorefrontHeader store={store} cartCount={cartCount} prefix={prefix} />
+
+      <section style={{ padding: 'clamp(56px, 9vw, 96px) 24px', textAlign: 'center', backgroundColor: 'var(--sf-soft-surface)' }}>
+        <h1 style={{ fontSize: 'clamp(30px, 5vw, 48px)', fontWeight: 900, letterSpacing: '-0.03em', margin: 0, fontFamily: 'var(--s-font)' }}>
+          {t('store.contactMenu')}
+        </h1>
+        <p style={{ margin: '14px auto 0', maxWidth: 520, fontSize: 15.5, lineHeight: 1.7, color: 'var(--s-text2)' }}>
+          {t('store.contactIntro')}
+        </p>
+      </section>
+
+      <section style={{ maxWidth: 860, margin: '0 auto', padding: '44px 20px 64px' }}>
+        {store?.whatsapp && (
+          <div style={{ textAlign: 'center', marginBottom: 34 }}>
+            <a
+              href={`https://wa.me/${waDigits}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '16px 36px', borderRadius: 999, background: '#25D366', color: '#fff', fontWeight: 800, fontSize: 15.5, textDecoration: 'none', boxShadow: '0 14px 34px rgba(37,211,102,0.35)' }}
+            >
+              <Phone size={18} /> {t('store.contactWhatsappCta')}
+            </a>
+          </div>
+        )}
+
+        {cards.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 14 }}>
+            {cards.map((c, i) => {
+              const inner = (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '20px 18px', borderRadius: 16, background: '#fff', border: '1px solid var(--sf-border)', boxShadow: 'var(--sf-shadow)', height: '100%' }}>
+                  <span style={{ display: 'inline-flex', width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 12, background: 'color-mix(in srgb, var(--s-primary) 10%, white)', color: 'var(--s-primary)', flexShrink: 0 }}>{c.icon}</span>
+                  <span style={{ minWidth: 0 }}>
+                    <span style={{ display: 'block', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--s-text2)' }}>{c.label}</span>
+                    <span style={{ display: 'block', fontSize: 15, fontWeight: 700, color: 'var(--s-text)', wordBreak: 'break-word' }}>{c.value}</span>
+                  </span>
+                </div>
+              );
+              return c.href
+                ? <a key={i} href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" style={{ textDecoration: 'none' }}>{inner}</a>
+                : <div key={i}>{inner}</div>;
+            })}
+          </div>
+        ) : (
+          <p style={{ textAlign: 'center', color: 'var(--s-text2)' }}>{t('store.contactEmpty')}</p>
+        )}
+      </section>
+
+      <SharedStorefrontFooter store={store} prefix={prefix} footer={footer} />
+    </div>
+  );
+};
+
 export const StoreLegalPage = () => {
   const t = useStorefrontT();
   const { subdomain: paramSubdomain, pageType } = useParams();

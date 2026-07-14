@@ -6,20 +6,6 @@ import { io } from 'socket.io-client';
  * Works in both admin (VITE_API_URL) and public storefront (VITE_BACKEND_URL / VITE_STORE_API_URL)
  */
 function resolveSocketUrl() {
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname.toLowerCase();
-    if (
-      hostname === 'scalor.net' ||
-      hostname === 'www.scalor.net' ||
-      hostname.endsWith('.scalor.net') ||
-      hostname === 'scalor.site' ||
-      hostname === 'www.scalor.site' ||
-      hostname.endsWith('.scalor.site')
-    ) {
-      return 'https://api.scalor.net';
-    }
-  }
-
   const candidates = [
     process.env.NEXT_PUBLIC_API_URL,
     process.env.NEXT_PUBLIC_BACKEND_URL,

@@ -3,7 +3,7 @@ import { Link } from '@/lib/router-compat';
 import {
   ArrowRight, RefreshCw, Download, Globe,
   Package, ShoppingCart, Zap, TrendingUp,
-  ExternalLink, CreditCard, Youtube, Users, MessageCircle, Lightbulb,
+  ExternalLink, CreditCard,
   ChevronDown, ChevronLeft, ChevronRight, Calendar,
   Eye, Wallet, ShoppingBag, Percent
 } from 'lucide-react';
@@ -835,34 +835,6 @@ export default function StoreDashboard() {
           </div>
         );
       })()}
-
-      {/* Communauté */}
-      <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <p className="text-[14px] font-semibold text-gray-900">{t('Communauté')}</p>
-          <p className="text-[12px] text-gray-400 mt-0.5">{t("Connectez-vous avec des créateurs, apprenez de nouvelles compétences et aidez à façonner l'avenir de Scalor.")}</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
-          {[
-            { icon: Youtube, label: t('Rejoignez-nous sur Youtube'), desc: t('Découvrez des vidéos pratiques pour apprendre à utiliser Scalor'), href: 'https://youtube.com/@chariow', color: 'text-red-500', bg: 'bg-red-50' },
-            { icon: Users, label: t('Rejoignez notre Hub'), desc: t("Rejoignez la communauté d'entraide des créateurs Scalor"), href: '#', color: 'text-indigo-500', bg: 'bg-indigo-50' },
-            { icon: Lightbulb, label: t('Partagez vos suggestions'), desc: t('Vos suggestions nous aident à améliorer Scalor'), href: '#', color: 'text-amber-500', bg: 'bg-amber-50' },
-            { icon: MessageCircle, label: t('Rejoignez-nous sur WhatsApp'), desc: t('Rejoignez notre canal WhatsApp'), href: '#', color: 'text-primary-600', bg: 'bg-primary-50' },
-          ].map((c, i) => (
-            <a key={i} href={c.href} target="_blank" rel="noopener noreferrer"
-              className="group flex items-start gap-3.5 px-5 py-4 hover:bg-gray-50/70 transition">
-              <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${c.bg} ${c.color} flex-shrink-0`}>
-                <c.icon size={18} />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[13px] font-medium text-gray-800">{c.label}</p>
-                <p className="text-[11px] text-gray-400 mt-0.5">{c.desc}</p>
-              </div>
-              <ArrowRight size={13} className="text-gray-300 group-hover:text-gray-500 group-hover:translate-x-0.5 transition-all mt-1 flex-shrink-0 ml-auto" />
-            </a>
-          ))}
-        </div>
-      </div>
 
     </div>
   );

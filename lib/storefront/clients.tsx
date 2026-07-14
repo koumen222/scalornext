@@ -14,6 +14,9 @@ import type { ComponentType, ReactNode } from 'react';
 import PublicStorefrontJs, {
   StoreAllProducts as StoreAllProductsJs,
   StoreLegalPage as StoreLegalPageJs,
+  StoreCollectionPage as StoreCollectionPageJs,
+  StoreAboutPage as StoreAboutPageJs,
+  StoreContactPage as StoreContactPageJs,
 } from '@/src/ecom/pages/PublicStorefront.jsx';
 import StoreProductPageJs from '@/src/ecom/pages/StoreProductPage.jsx';
 import StoreCheckoutJs from '@/src/ecom/pages/StoreCheckout.jsx';
@@ -31,6 +34,9 @@ export interface SubdomainValue {
 
 export const PublicStorefront = PublicStorefrontJs as ComponentType;
 export const StoreAllProducts = StoreAllProductsJs as ComponentType;
+export const StoreCollectionPage = StoreCollectionPageJs as ComponentType;
+export const StoreAboutPage = StoreAboutPageJs as ComponentType;
+export const StoreContactPage = StoreContactPageJs as ComponentType;
 export const StoreLegalPage = StoreLegalPageJs as ComponentType;
 export const StoreProductPage = StoreProductPageJs as ComponentType;
 export const StoreCheckout = StoreCheckoutJs as ComponentType;

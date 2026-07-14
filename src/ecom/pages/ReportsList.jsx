@@ -9,7 +9,7 @@ import {
   Plus, Filter, X, Zap, Calendar,
   ChevronRight, ChevronDown, ArrowUp, ArrowDown,
   MoreHorizontal, CheckCircle2, AlertTriangle,
-  Package, Crown, Medal, Award, ArrowRight,
+  Package, Crown, Medal, Award, ArrowRight, Sparkles,
 } from 'lucide-react';
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -25,6 +25,15 @@ import {
 // ═════════════════════════════════════════════════════════════════════════════
 
 const T = 'transition-all duration-200 ease-out';
+
+// Formate une Date en 'YYYY-MM-DD' en heure LOCALE (toISOString décale d'un jour
+// pour les fuseaux positifs comme Africa/Douala → à éviter pour les presets).
+const ymd = (d) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
 
 // ─── Skeleton ──
 const Skeleton = () => (
@@ -60,11 +69,12 @@ const Delta = ({ value, suffix = '%' }) => {
 };
 
 // ─── Compact stat — pas de boîte d'icône colorée ──
-const Stat = ({ label, value, delta }) => (
+const Stat = ({ label, value, delta, sub }) => (
   <div className="py-2.5">
     <p className="text-xs font-medium text-gray-500 mb-0.5">{label}</p>
-    <div className="flex items-baseline gap-2">
+    <div className="flex items-baseline gap-1.5">
       <p className="text-lg font-semibold text-gray-900 tabular-nums tracking-tight">{value}</p>
+      {sub != null && <span className="text-xs font-medium text-gray-400 tabular-nums">{sub}</span>}
       {delta !== undefined && <Delta value={delta} />}
     </div>
   </div>
@@ -84,30 +94,48 @@ const Chip = ({ active, onClick, children }) => (
   </button>
 );
 
+// ─── Preset rapide (modal Générer) — pilule douce ──
+const Preset = ({ active, onClick, children }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`px-3.5 h-9 inline-flex items-center text-sm font-medium rounded-full ${T} ${
+      active ? 'bg-primary-50 text-primary-600 ring-1 ring-primary-100' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+    }`}
+  >
+    {children}
+  </button>
+);
+
+// ─── Toggle (interrupteur doux) ──
+const Toggle = ({ checked, onChange }) => (
+  <button
+    type="button"
+    role="switch"
+    aria-checked={checked}
+    onClick={() => onChange(!checked)}
+    className={`relative w-11 h-6 rounded-full shrink-0 ${T} ${checked ? 'bg-primary-500' : 'bg-gray-200'}`}
+  >
+    <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm ${T} ${checked ? 'translate-x-5' : ''}`} />
+  </button>
+);
+
 // ─── Report row — hairline separator, no card-in-card ──
 const ReportRow = ({ report, isAdmin, isCloseuse, fmt, onDelete }) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const rate = report.ordersReceived > 0
-    ? Math.round((report.ordersDelivered / report.ordersReceived) * 100)
-    : 0;
-  const profit = report.profit ?? ((report.revenue || 0) - (report.cost || 0));
+  const delivered = report.ordersDelivered || 0;
+  const received = report.ordersReceived || 0;
+  const rate = received > 0 ? Math.round((delivered / received) * 100) : null;
+  const revenue = report.revenue || 0;
+  const profit = report.profit ?? (revenue - (report.cost || 0));
+  const suspicious = revenue > 0 && profit > revenue; // bénéfice > CA ⇒ donnée douteuse
 
   return (
     <div
       onClick={() => navigate(`/ecom/reports/${report._id}`)}
-      className={`group flex items-center gap-4 px-4 sm:px-5 py-4 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100 cursor-pointer ${T}`}
+      className={`group flex items-center gap-3 px-2 sm:px-3 py-3 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100 cursor-pointer ${T}`}
     >
-      {/* Date — discret */}
-      <div className="w-14 shrink-0 text-center">
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-          {new Date(report.date).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
-        </p>
-        <p className="text-lg font-semibold text-gray-900 tabular-nums leading-none mt-0.5">
-          {new Date(report.date).getDate()}
-        </p>
-      </div>
-
       {/* Product name + secondary info */}
       <div className="flex-1 min-w-0">
         {report.productId?._id ? (
@@ -124,17 +152,22 @@ const ReportRow = ({ report, isAdmin, isCloseuse, fmt, onDelete }) => {
           </p>
         )}
         <p className="text-xs text-gray-500 mt-0.5 tabular-nums">
-          {report.ordersDelivered}/{report.ordersReceived} {tp('livrées')} · {rate}%
+          {delivered} {tp('livrées')}
+          {received > 0 && <> · {received} {tp('reçues')} · {rate}%</>}
         </p>
       </div>
 
-      {/* Profit (or ratio for closeuse) — right aligned */}
+      {/* Profit + CA — right aligned */}
       {!isCloseuse && (
         <div className="text-right shrink-0">
-          <p className={`text-sm font-semibold tabular-nums ${profit >= 0 ? 'text-primary-500' : 'text-red-600'}`}>
+          <p
+            title={suspicious ? tp('Bénéfice supérieur au CA — à vérifier') : undefined}
+            className={`text-sm font-semibold tabular-nums inline-flex items-center gap-1 ${profit >= 0 ? 'text-primary-500' : 'text-red-600'}`}
+          >
+            {suspicious && <AlertTriangle size={12} className="text-amber-500 shrink-0" />}
             {profit >= 0 ? '+' : ''}{fmt(profit)}
           </p>
-          <p className="text-xs text-gray-500 tabular-nums mt-0.5">{fmt(report.revenue || 0)}</p>
+          <p className="text-xs text-gray-400 tabular-nums mt-0.5">{tp('CA')} {fmt(revenue)}</p>
         </div>
       )}
 
@@ -249,6 +282,7 @@ const ReportsList = () => {
   const [reports, setReports] = useState([]);
   const [financialStats, setFinancialStats] = useState({});
   const [prevStats, setPrevStats] = useState(null); // For delta computation
+  const [todayDelivered, setTodayDelivered] = useState(0); // Livraisons du jour (indépendant du filtre)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -265,6 +299,11 @@ const ReportsList = () => {
   const [autoStep, setAutoStep] = useState('config');
   const [autoProducts, setAutoProducts] = useState([]);
   const [autoMappings, setAutoMappings] = useState({});
+  const [aiMatching, setAiMatching] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState({}); // orderProductName -> { productId, productName, confidence, source }
+  const [autoAdBudget, setAutoAdBudget] = useState('');       // budget pub facultatif (période)
+  const [autoDeliveryBudget, setAutoDeliveryBudget] = useState(''); // budget livraison facultatif
+  const [schedule, setSchedule] = useState({ enabled: false, time: '21:00' }); // génération auto quotidienne
 
   const [filter, setFilter] = useState({ dateStart: '', dateEnd: '', status: '', productId: '' });
   const [dateRangePreset, setDateRangePreset] = useState('all');
@@ -279,6 +318,7 @@ const ReportsList = () => {
       setReports([]);
       setFinancialStats({});
       setPrevStats(null);
+      setTodayDelivered(0);
       setFilter({ dateStart: '', dateEnd: '', status: '', productId: '' });
       setDateRangePreset('all');
     };
@@ -311,19 +351,27 @@ const ReportsList = () => {
       if (filter.status) params.status = filter.status;
       if (filter.productId) params.productId = filter.productId;
 
-      // Current period (reports + stats) in parallel with previous period stats
-      const [reportsRes, statsRes, prevStatsRes] = await Promise.all([
+      const today = new Date().toISOString().split('T')[0];
+
+      // Période courante (rapports + stats) + période précédente (deltas) +
+      // commandes livrées du jour. ⚠️ Les livraisons du jour viennent de
+      // /reports/delivered-count : compte des commandes LIVRÉES par date de
+      // livraison (source Order), donc le nombre EXACT que « Générer »
+      // transformera en rapport — indépendant de la période sélectionnée.
+      const [reportsRes, statsRes, prevStatsRes, todayDeliveredRes] = await Promise.all([
         ecomApi.get('/reports', { params }),
         ecomApi.get('/reports/stats/financial', { params }).catch(() => ({ data: { data: {} } })),
         previousPeriodParams
           ? ecomApi.get('/reports/stats/financial', { params: previousPeriodParams }).catch(() => null)
           : Promise.resolve(null),
+        ecomApi.get('/reports/delivered-count', { params: { date: today } }).catch(() => null),
       ]);
 
       const reportsData = reportsRes.data?.data?.reports || [];
       setReports(Array.isArray(reportsData) ? reportsData : []);
       setFinancialStats(statsRes.data?.data || {});
       setPrevStats(prevStatsRes?.data?.data || null);
+      setTodayDelivered(todayDeliveredRes?.data?.data?.ordersDelivered || 0);
     } catch (e) {
       setError(getContextualError(e, 'load_stats'));
       console.error(e);
@@ -355,11 +403,26 @@ const ReportsList = () => {
     setAutoResult(null);
     setAutoStep('config');
     setAutoMappings({});
+    setAiSuggestions({});
+    setAiMatching(false);
+    setAutoAdBudget('');
+    setAutoDeliveryBudget('');
     try {
       const res = await ecomApi.get('/products', { params: { isActive: true, limit: 500 } });
       const list = res.data?.data?.products || res.data?.data || [];
       setAutoProducts(Array.isArray(list) ? list : []);
     } catch { setAutoProducts([]); }
+    try {
+      const sc = await ecomApi.get('/reports/auto-schedule');
+      const d = sc.data?.data;
+      if (d) setSchedule({ enabled: !!d.enabled, time: d.time || '21:00' });
+    } catch { /* réglage indisponible → valeurs par défaut */ }
+  };
+
+  // Enregistre le réglage de génération auto (optimiste : on met à jour l'UI puis on persiste)
+  const saveSchedule = async (next) => {
+    setSchedule(next);
+    try { await ecomApi.put('/reports/auto-schedule', next); } catch { /* silencieux */ }
   };
 
   const generateAutoReports = async (extraMappings = {}) => {
@@ -372,16 +435,52 @@ const ReportsList = () => {
       const allMappings = Object.entries({ ...autoMappings, ...extraMappings })
         .filter(([, v]) => v)
         .map(([orderProductName, productId]) => ({ orderProductName, productId }));
-      const body = { ...dateBody, ...(allMappings.length > 0 ? { mappings: allMappings } : {}) };
+      const adB = parseFloat(autoAdBudget) || 0;
+      const delivB = parseFloat(autoDeliveryBudget) || 0;
+      const body = {
+        ...dateBody,
+        ...(allMappings.length > 0 ? { mappings: allMappings } : {}),
+        ...(adB > 0 ? { adBudget: adB } : {}),
+        ...(delivB > 0 ? { deliveryBudget: delivB } : {}),
+      };
       const res = await ecomApi.post('/reports/auto-generate', body);
       setAutoResult(res.data);
       const unmatched = res.data?.data?.unmatched || [];
-      if (unmatched.length > 0 && autoStep === 'config') setAutoStep('assign');
-      else { setAutoStep('done'); loadData(); }
+      if (unmatched.length > 0 && autoStep === 'config') {
+        setAutoStep('assign');
+        runAiMatch(unmatched); // suggestions IA en tâche de fond (l'humain confirme)
+      } else { setAutoStep('done'); loadData(); }
     } catch (err) {
       setAutoResult({ success: false, message: getContextualError(err, 'load_stats') });
     } finally {
       setAutoLoading(false);
+    }
+  };
+
+  // Demande à l'IA de proposer un produit pour chaque libellé non reconnu.
+  // Ne fait que PRÉ-REMPLIR les listes déroulantes (confiance ≥ 60) : rien
+  // n'est créé sans que l'utilisateur clique « Confirmer ». Échec IA = silencieux
+  // → l'assignation manuelle reste pleinement disponible.
+  const runAiMatch = async (unmatchedItems) => {
+    const names = (unmatchedItems || []).map(i => i.productName).filter(Boolean);
+    if (names.length === 0) return;
+    try {
+      setAiMatching(true);
+      const res = await ecomApi.post('/reports/ai-match', { names });
+      const list = res.data?.data?.matches || [];
+      const sugg = {};
+      const prefill = {};
+      list.forEach(m => {
+        sugg[m.orderProductName] = m;
+        if (m.productId && (m.confidence ?? 0) >= 60) prefill[m.orderProductName] = m.productId;
+      });
+      setAiSuggestions(sugg);
+      // prev en dernier : ne jamais écraser un choix déjà fait par l'utilisateur
+      setAutoMappings(prev => ({ ...prefill, ...prev }));
+    } catch {
+      // silencieux : l'assignation manuelle reste possible
+    } finally {
+      setAiMatching(false);
     }
   };
 
@@ -396,17 +495,30 @@ const ReportsList = () => {
   };
 
   // ─── Computed stats ──
+  // ⚠️ FIABILITÉ : /reports ne renvoie qu'UNE PAGE (max 50 rapports). Faire la
+  // somme sur `reports` sous-compte dès qu'il y a >50 rapports sur la période.
+  // On s'appuie donc TOUJOURS sur les agrégats serveur (/stats/financial), qui
+  // couvrent toute la période. Le reduce local n'est qu'un fallback si les
+  // stats sont indisponibles (erreur réseau → financialStats = {}).
   const totals = useMemo(() => {
-    const totalReceived = reports.reduce((s, r) => s + (r.ordersReceived || 0), 0);
-    const totalDelivered = reports.reduce((s, r) => s + (r.ordersDelivered || 0), 0);
-    const totalAdSpend = reports.reduce((s, r) => s + (r.adSpend || 0), 0);
-    const totalRevenue = financialStats.totalRevenue || reports.reduce((s, r) => s + (r.revenue || 0), 0);
-    const totalProfit = financialStats.totalProfit || reports.reduce((s, r) => s + (r.profit || 0), 0);
-    const totalProductCost = financialStats.totalProductCost || reports.reduce((s, r) => s + (r.productCost || 0), 0);
-    const totalDeliveryCost = financialStats.totalDeliveryCost || reports.reduce((s, r) => s + (r.deliveryCost || 0), 0);
-    const totalCost = financialStats.totalCost || reports.reduce((s, r) => s + (r.cost || 0), 0);
-    const roas = financialStats.roas ?? (totalAdSpend > 0 ? totalRevenue / totalAdSpend : 0);
-    const deliveryRate = totalReceived > 0 ? ((totalDelivered / totalReceived) * 100) : 0;
+    const has = (v) => v !== undefined && v !== null;
+    const sum = (key) => reports.reduce((s, r) => s + (r[key] || 0), 0);
+    const pick = (statKey, reportKey) => has(financialStats[statKey]) ? financialStats[statKey] : sum(reportKey);
+
+    const totalReceived = pick('totalOrdersReceived', 'ordersReceived');
+    const totalDelivered = pick('totalOrdersDelivered', 'ordersDelivered');
+    const totalAdSpend = pick('totalAdSpend', 'adSpend');
+    const totalRevenue = pick('totalRevenue', 'revenue');
+    const totalProfit = pick('totalProfit', 'profit');
+    const totalProductCost = pick('totalProductCost', 'productCost');
+    const totalDeliveryCost = pick('totalDeliveryCost', 'deliveryCost');
+    const totalCost = pick('totalCost', 'cost');
+    const roas = has(financialStats.roas)
+      ? financialStats.roas
+      : (totalAdSpend > 0 ? totalRevenue / totalAdSpend : 0);
+    const deliveryRate = has(financialStats.deliveryRate)
+      ? financialStats.deliveryRate
+      : (totalReceived > 0 ? (totalDelivered / totalReceived) * 100 : 0);
     return { totalReceived, totalDelivered, totalAdSpend, totalRevenue, totalProfit, totalProductCost, totalDeliveryCost, totalCost, roas, deliveryRate };
   }, [reports, financialStats]);
 
@@ -473,12 +585,49 @@ const ReportsList = () => {
     return Object.values(map).sort((a, b) => b.ordersDelivered - a.ordersDelivered).slice(0, 3);
   }, [reports]);
 
+  // Regroupement par jour : sous-total livrées + bénéfice, affichage plus lisible
+  const reportsByDay = useMemo(() => {
+    const groups = [];
+    const idx = new Map();
+    for (const r of reports) {
+      const key = new Date(r.date).toISOString().split('T')[0];
+      let g = idx.get(key);
+      if (!g) { g = { key, date: r.date, reports: [], delivered: 0, profit: 0 }; idx.set(key, g); groups.push(g); }
+      g.reports.push(r);
+      g.delivered += r.ordersDelivered || 0;
+      g.profit += getReportProfit(r);
+    }
+    return groups;
+  }, [reports]);
+
   const activeFiltersCount =
     (filter.status ? 1 : 0) +
     (filter.productId ? 1 : 0);
 
   const hasComparison = !!prevStats;
   const profitPositive = totals.totalProfit >= 0;
+
+  // ─── Valeurs « faciles à comprendre » pour le relevé ──
+  const margin = totals.totalRevenue > 0 ? (totals.totalProfit / totals.totalRevenue) * 100 : null;
+  const profitPerOrder = totals.totalDelivered > 0 ? totals.totalProfit / totals.totalDelivered : null;
+  const costPct = (v) => totals.totalCost > 0 ? (v / totals.totalCost) * 100 : 0;
+  const periodLabel =
+    dateRangePreset === 'all' ? tp('Toute la période') :
+    dateRangePreset === 'today' ? tp("Aujourd'hui") :
+    dateRangePreset === 'week' ? tp('7 derniers jours') :
+    dateRangePreset === 'month' ? tp('Ce mois-ci') :
+    tp('Période personnalisée');
+
+  // ─── Presets rapides du modal « Générer » ──
+  const _now = new Date();
+  const todayStr = ymd(_now);
+  const yesterdayStr = ymd(new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() - 1));
+  const monthStartStr = ymd(new Date(_now.getFullYear(), _now.getMonth(), 1));
+  const _dow = (_now.getDay() + 6) % 7; // 0 = lundi
+  const weekStartStr = ymd(new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() - _dow));
+
+  // Champs « ultra soft » du modal Générer (remplissage doux, focus en anneau léger)
+  const softInput = `w-full h-10 px-3.5 rounded-2xl bg-gray-50 border border-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:bg-white focus:ring-4 focus:ring-gray-100 outline-none ${T}`;
 
   if (loading) return <Skeleton />;
 
@@ -511,10 +660,16 @@ const ReportsList = () => {
               </button>
               <button
                 onClick={openAutoModal}
-                className={`hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 ${T}`}
+                title={tp('Générer le rapport du jour depuis les commandes livrées')}
+                className={`hidden sm:inline-flex items-center gap-1.5 pl-3 pr-2 h-9 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 ${T}`}
               >
                 <Zap size={14} strokeWidth={2} />
-                {tp('Auto')}
+                {tp('Générer')}
+                {todayDelivered > 0 && (
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary-50 text-primary-600 text-xs font-semibold tabular-nums">
+                    {todayDelivered}
+                  </span>
+                )}
               </button>
               <Link
                 to="/ecom/reports/new"
@@ -558,7 +713,7 @@ const ReportsList = () => {
           </div>
         )}
 
-        {/* ═══ HERO METRIC — un seul chiffre dominant ═══════════════════════ */}
+        {/* ═══ HERO — Bénéfice net + marge + par commande ══════════════════ */}
         {!isCloseuse && (
           <section className="pt-5 pb-4">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Bénéfice net')}</p>
@@ -568,32 +723,87 @@ const ReportsList = () => {
               </h2>
               {hasComparison && <Delta value={deltas.profit} />}
             </div>
-            <p className="text-sm text-gray-500 mt-1.5">
-              {dateRangePreset === 'all' && tp('Toute la période')}
-              {dateRangePreset === 'today' && tp("Aujourd'hui")}
-              {dateRangePreset === 'week' && tp('7 derniers jours')}
-              {dateRangePreset === 'month' && tp('Ce mois-ci')}
-              {dateRangePreset === 'custom' && tp('Période personnalisée')}
-              {hasComparison && <span className="text-gray-400"> {tp('· vs période précédente')}</span>}
-            </p>
+            <div className="flex items-center gap-x-2.5 gap-y-1 flex-wrap mt-2 text-sm text-gray-500">
+              <span>{periodLabel}</span>
+              {margin !== null && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-gray-300" />
+                  <span>{tp('marge')} <strong className="font-semibold text-gray-700 tabular-nums">{margin.toFixed(0)}%</strong></span>
+                </>
+              )}
+              {profitPerOrder !== null && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-gray-300" />
+                  <span><strong className="font-semibold text-gray-700 tabular-nums">{fmt(profitPerOrder)}</strong> {tp('/ commande')}</span>
+                </>
+              )}
+            </div>
           </section>
         )}
 
-        {/* ═══ STATS COMPACT — pas de boîtes d'icônes ═══════════════════════ */}
-        <section className="grid grid-cols-2 sm:grid-cols-4 gap-0 sm:gap-8 border-y border-gray-100 divide-x divide-gray-100 sm:divide-x-0">
-          {!isCloseuse && (
-            <div className="px-4 sm:px-0">
-              <Stat
-                label={tp('Chiffre d\'affaires')}
-                value={fmt(totals.totalRevenue)}
-                delta={hasComparison ? deltas.revenue : undefined}
-              />
+        {/* ═══ RELEVÉ — CA − Coûts = Bénéfice (lecture verticale) ═══════════ */}
+        {!isCloseuse && totals.totalRevenue > 0 && (
+          <section className="py-4 border-y border-gray-100 space-y-3">
+            {/* Ce qui rentre */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">{tp('Chiffre d\'affaires')}</span>
+              <span className="text-sm font-semibold text-gray-900 tabular-nums">{fmt(totals.totalRevenue)}</span>
             </div>
-          )}
-          <div className="px-4 sm:px-0">
+
+            {/* Ce qui sort */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-600">− {tp('Coûts')}</span>
+                <span className="text-sm font-semibold text-gray-900 tabular-nums">−{fmt(totals.totalCost)}</span>
+              </div>
+              {totals.totalCost > 0 && (
+                <>
+                  <div className="flex h-1.5 rounded-full overflow-hidden gap-px bg-gray-100">
+                    <div className="bg-gray-900" style={{ width: `${costPct(totals.totalProductCost)}%` }} />
+                    <div className="bg-gray-500" style={{ width: `${costPct(totals.totalDeliveryCost)}%` }} />
+                    <div className="bg-gray-300" style={{ width: `${costPct(totals.totalAdSpend)}%` }} />
+                  </div>
+                  <div className="mt-2.5 space-y-1.5">
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gray-900 shrink-0" />
+                      <span className="text-gray-600">{tp('Produits')}</span>
+                      <span className="text-gray-300 tabular-nums">{costPct(totals.totalProductCost).toFixed(0)}%</span>
+                      <span className="ml-auto font-semibold text-gray-800 tabular-nums">{fmt(totals.totalProductCost)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gray-500 shrink-0" />
+                      <span className="text-gray-600">{tp('Livraison')}</span>
+                      <span className="text-gray-300 tabular-nums">{costPct(totals.totalDeliveryCost).toFixed(0)}%</span>
+                      <span className="ml-auto font-semibold text-gray-800 tabular-nums">{fmt(totals.totalDeliveryCost)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0" />
+                      <span className="text-gray-600">{tp('Publicité')}</span>
+                      <span className="text-gray-300 tabular-nums">{costPct(totals.totalAdSpend).toFixed(0)}%</span>
+                      <span className="ml-auto font-semibold text-gray-800 tabular-nums">{fmt(totals.totalAdSpend)}</span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Ce qui reste */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+              <span className="text-sm font-medium text-gray-900">= {tp('Bénéfice net')}</span>
+              <span className={`text-base font-semibold tabular-nums ${profitPositive ? 'text-primary-600' : 'text-red-600'}`}>
+                {profitPositive ? '+' : ''}{fmt(totals.totalProfit)}
+              </span>
+            </div>
+          </section>
+        )}
+
+        {/* ═══ OPÉRATIONNEL — livrées / taux / ROAS ════════════════════════ */}
+        <section className="grid grid-cols-3 gap-0 border-b border-gray-100 divide-x divide-gray-100">
+          <div className="pr-4 sm:pr-0">
             <Stat
               label={tp('Cmd livrées')}
               value={`${totals.totalDelivered}`}
+              sub={dateRangePreset === 'today' ? undefined : `(${todayDelivered} ${tp('auj.')})`}
             />
           </div>
           <div className="px-4 sm:px-0">
@@ -603,17 +813,16 @@ const ReportsList = () => {
               delta={hasComparison ? deltas.deliveryRate : undefined}
             />
           </div>
-          {!isCloseuse && (
-            <div className="px-4 sm:px-0">
+          {!isCloseuse ? (
+            <div className="pl-4 sm:pl-0 sm:px-0">
               <Stat
                 label={tp('ROAS')}
-                value={totals.roas > 0 ? totals.roas.toFixed(2) : '—'}
+                value={totals.roas > 0 ? `${totals.roas.toFixed(1)}×` : '—'}
                 delta={hasComparison ? deltas.roas : undefined}
               />
             </div>
-          )}
-          {isCloseuse && (
-            <div className="px-4 sm:px-0">
+          ) : (
+            <div className="pl-4 sm:pl-0 sm:px-0">
               <Stat
                 label={tp('Cmd reçues')}
                 value={`${totals.totalReceived}`}
@@ -621,35 +830,6 @@ const ReportsList = () => {
             </div>
           )}
         </section>
-
-        {/* ═══ COST BREAKDOWN — barre minimaliste ═══════════════════════════ */}
-        {totals.totalCost > 0 && !isCloseuse && (
-          <section className="py-5 border-b border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{tp('Coûts')}</p>
-              <p className="text-sm font-medium text-gray-900 tabular-nums">{fmt(totals.totalCost)}</p>
-            </div>
-            <div className="flex h-1.5 rounded-full overflow-hidden gap-px bg-gray-100">
-              <div className="bg-gray-900" style={{ width: `${(totals.totalProductCost / totals.totalCost * 100)}%` }} />
-              <div className="bg-gray-500" style={{ width: `${(totals.totalDeliveryCost / totals.totalCost * 100)}%` }} />
-              <div className="bg-gray-300" style={{ width: `${(totals.totalAdSpend / totals.totalCost * 100)}%` }} />
-            </div>
-            <div className="flex flex-wrap gap-x-5 gap-y-1 mt-2 text-xs">
-              <span className="flex items-center gap-1.5 text-gray-700">
-                <span className="w-1.5 h-1.5 bg-gray-900 rounded-full" />
-                {tp('Produits')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalProductCost)}</strong>
-              </span>
-              <span className="flex items-center gap-1.5 text-gray-700">
-                <span className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
-                {tp('Livraison')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalDeliveryCost)}</strong>
-              </span>
-              <span className="flex items-center gap-1.5 text-gray-700">
-                <span className="w-1.5 h-1.5 bg-gray-300 rounded-full" />
-                {tp('Publicité')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(totals.totalAdSpend)}</strong>
-              </span>
-            </div>
-          </section>
-        )}
 
         {/* ═══ INSIGHTS — accordion mobile, 3 cols desktop ══════════════════ */}
         <section className="py-5 border-b border-gray-100">
@@ -737,16 +917,32 @@ const ReportsList = () => {
               </Link>
             </div>
           ) : (
-            <div className="border-t border-gray-100">
-              {reports.map(r => (
-                <ReportRow
-                  key={r._id}
-                  report={r}
-                  isAdmin={isAdmin}
-                  isCloseuse={isCloseuse}
-                  fmt={fmt}
-                  onDelete={deleteReport}
-                />
+            <div>
+              {reportsByDay.map(day => (
+                <div key={day.key}>
+                  {/* En-tête de jour — date + sous-total livrées & bénéfice */}
+                  <div className="flex items-center gap-2 px-2 sm:px-3 pt-4 pb-1.5">
+                    <span className="text-xs font-semibold text-gray-500">
+                      {new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    </span>
+                    <span className="text-xs text-gray-400">· {day.delivered} {tp('livrées')}</span>
+                    {!isCloseuse && (
+                      <span className={`ml-auto text-xs font-semibold tabular-nums ${day.profit >= 0 ? 'text-primary-600' : 'text-red-600'}`}>
+                        {day.profit >= 0 ? '+' : ''}{fmt(day.profit)}
+                      </span>
+                    )}
+                  </div>
+                  {day.reports.map(r => (
+                    <ReportRow
+                      key={r._id}
+                      report={r}
+                      isAdmin={isAdmin}
+                      isCloseuse={isCloseuse}
+                      fmt={fmt}
+                      onDelete={deleteReport}
+                    />
+                  ))}
+                </div>
               ))}
             </div>
           )}
@@ -757,9 +953,14 @@ const ReportsList = () => {
       <button
         onClick={openAutoModal}
         className={`sm:hidden fixed bottom-6 right-5 z-20 w-12 h-12 rounded-full bg-primary-500 text-white shadow-lg active:scale-95 flex items-center justify-center ${T}`}
-        aria-label={tp('Rapport automatique')}
+        aria-label={tp('Générer le rapport du jour')}
       >
         <Zap size={18} strokeWidth={2} />
+        {todayDelivered > 0 && (
+          <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-gray-900 text-white text-xs font-semibold tabular-nums flex items-center justify-center ring-2 ring-white">
+            {todayDelivered}
+          </span>
+        )}
       </button>
 
       {/* ═══ FILTERS SHEET ════════════════════════════════════════════════ */}
@@ -820,50 +1021,100 @@ const ReportsList = () => {
         open={autoModal}
         onClose={() => { setAutoModal(false); setAutoResult(null); }}
         title={
-          autoStep === 'config' ? 'Rapport automatique' :
+          autoStep === 'config' ? 'Générer le rapport' :
           autoStep === 'assign' ? 'Assigner les produits' :
           'Rapport généré'
         }
         size="md"
       >
         {autoStep === 'config' && (
-          <div className="space-y-5">
-            <p className="text-sm text-gray-500">{tp('Génère un rapport depuis les commandes livrées.')}</p>
-
-            <div className="inline-flex p-1 bg-gray-100 rounded-full">
-              <button onClick={() => setAutoMode('day')} className={`px-4 h-8 rounded-full text-sm font-medium ${T} ${autoMode === 'day' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>Un jour</button>
-              <button onClick={() => setAutoMode('range')} className={`px-4 h-8 rounded-full text-sm font-medium ${T} ${autoMode === 'range' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>Période</button>
+          <div className="space-y-4">
+            <div className="flex p-1 bg-gray-50 rounded-2xl">
+              <button onClick={() => setAutoMode('day')} className={`flex-1 h-9 rounded-xl text-sm font-medium ${T} ${autoMode === 'day' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'}`}>{tp('Un jour')}</button>
+              <button onClick={() => setAutoMode('range')} className={`flex-1 h-9 rounded-xl text-sm font-medium ${T} ${autoMode === 'range' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'}`}>{tp('Période')}</button>
             </div>
 
             {autoMode === 'day' ? (
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Date')}</label>
-                <input type="date" value={autoDate} onChange={e => setAutoDate(e.target.value)} className={`w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none ${T}`} />
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Preset active={autoDate === yesterdayStr} onClick={() => setAutoDate(yesterdayStr)}>{tp('Hier')}</Preset>
+                  <Preset active={autoDate === todayStr} onClick={() => setAutoDate(todayStr)}>{tp("Aujourd'hui")}</Preset>
+                </div>
+                <input type="date" value={autoDate} onChange={e => setAutoDate(e.target.value)} className={softInput} />
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Début')}</label>
-                  <input type="date" value={autoStartDate} onChange={e => setAutoStartDate(e.target.value)} className={`w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none ${T}`} />
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Preset
+                    active={autoStartDate === weekStartStr && autoEndDate === todayStr}
+                    onClick={() => { setAutoStartDate(weekStartStr); setAutoEndDate(todayStr); }}
+                  >{tp('Cette semaine')}</Preset>
+                  <Preset
+                    active={autoStartDate === monthStartStr && autoEndDate === todayStr}
+                    onClick={() => { setAutoStartDate(monthStartStr); setAutoEndDate(todayStr); }}
+                  >{tp('Ce mois')}</Preset>
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">{tp('Fin')}</label>
-                  <input type="date" value={autoEndDate} onChange={e => setAutoEndDate(e.target.value)} className={`w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none ${T}`} />
+                <div className="grid grid-cols-2 gap-2">
+                  <input type="date" value={autoStartDate} onChange={e => setAutoStartDate(e.target.value)} className={softInput} />
+                  <input type="date" value={autoEndDate} onChange={e => setAutoEndDate(e.target.value)} className={softInput} />
                 </div>
               </div>
             )}
 
+            {/* Budgets facultatifs — compact (placeholder = label) */}
+            <div className="space-y-2">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xs font-medium text-gray-500">{tp('Budgets')}</span>
+                <span className="text-xs text-gray-300">· {tp('facultatif')}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="number" min="0" inputMode="decimal" placeholder={tp('Publicité')}
+                  value={autoAdBudget}
+                  onChange={e => setAutoAdBudget(e.target.value)}
+                  className={softInput}
+                />
+                <input
+                  type="number" min="0" inputMode="decimal" placeholder={tp('Livraison')}
+                  value={autoDeliveryBudget}
+                  onChange={e => setAutoDeliveryBudget(e.target.value)}
+                  className={softInput}
+                />
+              </div>
+            </div>
+
             {autoResult && !autoResult.success && (
-              <div className="rounded-xl px-3 py-2.5 text-sm bg-red-50 border border-red-100 text-red-700">{autoResult.message}</div>
+              <div className="rounded-2xl px-3.5 py-3 text-sm bg-red-50 text-red-600">{autoResult.message}</div>
             )}
 
             <button
               onClick={() => generateAutoReports()}
               disabled={autoLoading || (autoMode === 'range' && (!autoStartDate || !autoEndDate))}
-              className={`w-full h-11 rounded-xl bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${T}`}
+              className={`w-full h-12 rounded-2xl bg-primary-500 text-white text-sm font-semibold hover:bg-primary-600 shadow-sm shadow-primary-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 ${T}`}
             >
-              {autoLoading ? 'Analyse en cours...' : <>Générer <ArrowRight size={14} strokeWidth={2.5} /></>}
+              {autoLoading ? tp('Analyse en cours…') : <>{tp('Générer')} <ArrowRight size={16} strokeWidth={2.5} /></>}
             </button>
+
+            {/* Génération automatique quotidienne à heure fixe */}
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-gray-100">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-gray-700">{tp('Génération auto')}</p>
+                <p className="text-xs text-gray-400">
+                  {schedule.enabled ? `${tp('Chaque jour à')} ${schedule.time}` : tp('Générer chaque jour automatiquement')}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {schedule.enabled && (
+                  <input
+                    type="time"
+                    value={schedule.time}
+                    onChange={e => saveSchedule({ ...schedule, time: e.target.value })}
+                    className={`h-9 px-2.5 rounded-xl bg-gray-50 text-sm text-gray-800 tabular-nums outline-none focus:bg-white focus:ring-4 focus:ring-gray-100 ${T}`}
+                  />
+                )}
+                <Toggle checked={schedule.enabled} onChange={v => saveSchedule({ ...schedule, enabled: v })} />
+              </div>
+            </div>
           </div>
         )}
 
@@ -872,27 +1123,65 @@ const ReportsList = () => {
             {autoResult?.message && (
               <p className="text-sm text-gray-500">{autoResult.message}</p>
             )}
+
+            {/* Bandeau IA */}
+            {aiMatching ? (
+              <div className="flex items-center gap-2 rounded-xl bg-primary-50 px-3 py-2.5 text-sm text-primary-700">
+                <Sparkles size={15} className="shrink-0 animate-pulse" />
+                {tp("L'IA recherche les correspondances…")}
+              </div>
+            ) : Object.keys(aiSuggestions).length > 0 && (
+              <div className="flex items-start gap-2 rounded-xl bg-primary-50 px-3 py-2.5 text-sm text-primary-700">
+                <Sparkles size={15} className="shrink-0 mt-0.5" />
+                <span>{tp('Suggestions IA pré-remplies — vérifiez avant de confirmer.')}</span>
+              </div>
+            )}
+
             <div className="space-y-3 max-h-[50vh] overflow-y-auto">
-              {(autoResult?.data?.unmatched || []).map(item => (
-                <div key={item.productName} className="border border-gray-200 rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 truncate">{item.productName}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{item.totalDelivered} commande{item.totalDelivered > 1 ? 's' : ''} livrée{item.totalDelivered > 1 ? 's' : ''}</p>
+              {(autoResult?.data?.unmatched || []).map(item => {
+                const s = aiSuggestions[item.productName];
+                const conf = s?.confidence ?? 0;
+                const isAiPick = s?.source === 'ai' && s?.productId;
+                const selectedIsAi = isAiPick && autoMappings[item.productName] === s.productId;
+                const confCls = conf >= 80 ? 'text-primary-600 bg-primary-50'
+                  : conf >= 60 ? 'text-amber-600 bg-amber-50'
+                  : 'text-gray-500 bg-gray-100';
+                return (
+                  <div key={item.productName} className="border border-gray-200 rounded-xl p-3">
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 truncate">{item.productName}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{item.totalDelivered} commande{item.totalDelivered > 1 ? 's' : ''} livrée{item.totalDelivered > 1 ? 's' : ''}</p>
+                      </div>
+                      {isAiPick && (
+                        <span className={`shrink-0 inline-flex items-center gap-1 px-2 h-6 rounded-full text-xs font-semibold ${confCls}`}>
+                          <Sparkles size={11} /> {conf}%
+                        </span>
+                      )}
                     </div>
+
+                    {isAiPick && (
+                      <p className="text-xs text-gray-500 mb-1.5">
+                        {tp('IA propose')} : <span className="font-medium text-gray-700">{s.productName}</span>
+                      </p>
+                    )}
+                    {s && !s.productId && (
+                      <p className="text-xs text-gray-400 mb-1.5">{tp('IA : aucune correspondance sûre')}</p>
+                    )}
+
+                    <select
+                      value={autoMappings[item.productName] || ''}
+                      onChange={e => setAutoMappings(p => ({ ...p, [item.productName]: e.target.value }))}
+                      className={`w-full h-9 px-3 border rounded-lg text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white ${T} ${selectedIsAi ? 'border-primary-400' : 'border-gray-200'}`}
+                    >
+                      <option value="">{tp('— Ignorer —')}</option>
+                      {autoProducts.map(p => (
+                        <option key={p._id} value={p._id}>{p.name}</option>
+                      ))}
+                    </select>
                   </div>
-                  <select
-                    value={autoMappings[item.productName] || ''}
-                    onChange={e => setAutoMappings(p => ({ ...p, [item.productName]: e.target.value }))}
-                    className={`w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white ${T}`}
-                  >
-                    <option value="">{tp('— Ignorer —')}</option>
-                    {autoProducts.map(p => (
-                      <option key={p._id} value={p._id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="flex gap-2">

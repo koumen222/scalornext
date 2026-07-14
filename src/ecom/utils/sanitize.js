@@ -8,18 +8,29 @@ const RICH_CONFIG = {
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
     'a', 'span', 'div', 'section', 'article', 'header', 'footer',
-    'img', 'figure', 'figcaption',
+    'img', 'figure', 'figcaption', 'picture',
     'table', 'thead', 'tbody', 'tr', 'th', 'td',
-    'hr', 'sub', 'sup'
+    'hr', 'sub', 'sup', 'small', 'mark',
+    // Code inséré par le marchand : embeds vidéo/iframe, médias, styles.
+    // Les <script> et attributs on* restent supprimés (défaut DOMPurify).
+    'iframe', 'video', 'audio', 'source', 'track', 'style', 'button'
   ],
   ALLOWED_ATTR: [
     'href', 'src', 'alt', 'title', 'class', 'id', 'style',
     'target', 'rel', 'width', 'height', 'loading',
-    'colspan', 'rowspan', 'align', 'valign'
+    'colspan', 'rowspan', 'align', 'valign',
+    // Attributs nécessaires aux embeds (YouTube, Vimeo…) et aux médias
+    'allow', 'allowfullscreen', 'frameborder', 'scrolling', 'referrerpolicy',
+    'controls', 'controlslist', 'autoplay', 'muted', 'loop', 'playsinline',
+    'poster', 'preload', 'type', 'srcset', 'sizes', 'media', 'kind', 'srclang', 'label',
+    'aria-label', 'role', 'disabled'
   ],
   ALLOW_DATA_ATTR: false,
   // Forcer rel="noopener noreferrer" sur les liens externes
   ADD_ATTR: ['rel'],
+  // Sans FORCE_BODY, le parseur HTML remonte les <style> en <head>
+  // et ils sont perdus (seul le body est retourné).
+  FORCE_BODY: true,
 };
 
 // Config stricte : texte seulement, aucune balise HTML

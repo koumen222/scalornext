@@ -3,7 +3,7 @@ import {
   Plus, Trash2, RefreshCw, CheckCircle, AlertCircle, Loader2,
   ExternalLink, Copy, Check, Bot, Smartphone, Zap, Send,
   Eye, EyeOff, X, Globe, MessageSquare, Package,
-  QrCode, BarChart3, Wifi, WifiOff, Settings, Megaphone, Users, ChevronDown,
+  QrCode, BarChart3, Wifi, WifiOff, Settings, Megaphone, Users, ChevronDown, ArrowRight, ShieldCheck, Radio, Workflow,
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from '@/lib/router-compat';
 import ecomApi from '../services/ecommApi.js';
@@ -34,6 +34,27 @@ const WEBHOOK_EVENTS = [
   { id: 'CONNECTION_UPDATE', label: 'Connexion' },
   { id: 'QRCODE_UPDATED',    label: 'QR Code' },
   { id: 'CONTACTS_UPSERT',   label: 'Nouveaux contacts' },
+];
+
+const INSTANCE_USAGES = [
+  { id: 'customer', label: 'Messages clients', description: 'Commandes, relances et conversations avec vos clients.', icon: MessageSquare },
+  { id: 'host', label: 'Hôte Scalor', description: 'Rapports, commandes et alertes envoyés à votre équipe.', icon: ShieldCheck },
+];
+
+const HOST_ROLE_OPTIONS = [
+  { id: 'ecom_admin', label: 'Administrateurs' },
+  { id: 'ecom_closeuse', label: 'Closeuses' },
+  { id: 'ecom_compta', label: 'Comptabilité' },
+  { id: 'ecom_livreur', label: 'Livreurs' },
+  { id: 'service_client', label: 'Service client' },
+];
+
+const HOST_EVENT_OPTIONS = [
+  { id: 'daily_report', label: 'Rapport quotidien' },
+  { id: 'new_order', label: 'Nouvelles commandes' },
+  { id: 'order_assignment', label: 'Affectations de commandes' },
+  { id: 'important_alert', label: 'Alertes importantes' },
+  { id: 'stock_alert', label: 'Alertes de stock' },
 ];
 
 // ─── Composant Relances par Produit ─────────────────────────────────────────
@@ -249,12 +270,14 @@ const WhatsAppService = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [showTokens, setShowTokens] = useState({});
   const [webhookPanels, setWebhookPanels] = useState({});
+  const [expandedInstances, setExpandedInstances] = useState({});
+  const [savingUsage, setSavingUsage] = useState({});
 
 
   // ─── Modal création d'instance ───
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createStep, setCreateStep] = useState('form'); // 'form' | 'scanning' | 'success'
-  const [createData, setCreateData] = useState({ name: '', serviceType: 'whatsapp-baileys' });
+  const [createData, setCreateData] = useState({ name: '', serviceType: 'whatsapp-baileys', usageType: 'customer' });
   const [createdInstance, setCreatedInstance] = useState(null);
 
   // ─── QR code ───
@@ -389,6 +412,24 @@ const WhatsAppService = () => {
     } catch (err) { setError(err.response?.data?.error || err.message || 'Erreur serveur'); }
   };
 
+  const updateInstanceUsage = async (instance, usageType, hostSettings = instance.hostSettings) => {
+    setSavingUsage(prev => ({ ...prev, [instance._id]: true }));
+    setError('');
+    try {
+      const { data } = await ecomApi.patch(`/v1/external/whatsapp/instances/${instance._id}/usage`, {
+        usageType,
+        hostSettings,
+      });
+      if (!data.success) throw new Error(data.error || 'Configuration impossible');
+      setInstances(prev => prev.map(item => item._id === instance._id ? data.instance : item));
+      setSuccessMsg(usageType === 'host' ? 'Instance hôte configurée.' : 'Instance dédiée aux messages clients.');
+    } catch (err) {
+      setError(err.response?.data?.error || err.message || 'Impossible de modifier le rôle de cette instance');
+    } finally {
+      setSavingUsage(prev => ({ ...prev, [instance._id]: false }));
+    }
+  };
+
   // ═══ Création d'instance ═══
   const SERVICE_TYPES = [
     { id: 'whatsapp-baileys', label: 'WhatsApp', desc: 'Connexion via QR code (gratuit)', logo: WhatsAppBrandLogo, color: 'emerald' },
@@ -398,7 +439,7 @@ const WhatsAppService = () => {
   const openCreateModal = () => {
     setShowCreateModal(true);
     setCreateStep('form');
-    setCreateData({ name: '', serviceType: 'whatsapp-baileys' });
+    setCreateData({ name: '', serviceType: 'whatsapp-baileys', usageType: 'customer' });
     setCreatedInstance(null);
     setQrCode(null);
     setPairingCode(null);
@@ -431,6 +472,7 @@ const WhatsAppService = () => {
       const { data } = await ecomApi.post('/v1/external/whatsapp/create-instance', {
         customName: createData.name || undefined,
         serviceType: createData.serviceType,
+        usageType: createData.usageType,
       });
       if (data.success) {
         setCreatedInstance(data.data);
@@ -552,61 +594,42 @@ const WhatsAppService = () => {
   ];
 
   return (
-    <div className="px-4 sm:px-6 py-5 sm:py-6 space-y-5">
+    <div className="mx-auto max-w-6xl space-y-4 px-4 py-5 sm:px-6 sm:py-7">
 
       {/* Page Header */}
-      <div className="relative overflow-hidden rounded-[30px] border border-primary-100 bg-white p-4 shadow-sm shadow-primary-100/60 sm:p-6">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-primary-50 via-white to-white" />
-        <div className="relative flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-primary-700 shadow-sm shadow-primary-100">
-                <MessageSquare className="h-6 w-6" />
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-6">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50"><WhatsAppBrandLogo className="h-7 w-7" /></span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">{tp('WhatsApp Service')}</h1>
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${connectedCount > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}><span className={`h-1.5 w-1.5 rounded-full ${connectedCount > 0 ? 'bg-emerald-500' : 'bg-slate-400'}`} />{connectedCount} en ligne sur {instances.length}</span>
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-500">
-                    {instances.length} instance{instances.length !== 1 ? 's' : ''} · {connectedCount} en ligne
-                  </span>
-                </div>
-                <h1 className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{tp('WhatsApp Service')}</h1>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500 sm:text-[15px]">
-                  {tp('Gérez vos instances WhatsApp sans surcharge d’information.')}
-                </p>
-              </div>
+              <p className="mt-1 text-[13px] text-slate-500">Connectez vos numéros et gérez Rita IA depuis un seul espace.</p>
             </div>
           </div>
-
-          <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap xl:w-auto xl:justify-end">
-            <button onClick={refreshAllStatuses} disabled={loading}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50 disabled:opacity-50">
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              {tp('Synchroniser')}
-            </button>
-            <button onClick={openCreateModal}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-primary-200 transition hover:brightness-95"
-              style={{ background: ACCENT }}>
-              <Plus className="h-4 w-4" />
-              {tp('Créer une instance')}
-            </button>
+          <div className="flex items-center gap-2">
+            <button onClick={refreshAllStatuses} disabled={loading} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 text-[12px] font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"><RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />{tp('Synchroniser')}</button>
+            <button onClick={openCreateModal} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-[12px] font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100"><Plus className="h-3.5 w-3.5" />{tp('Créer une instance')}</button>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="rounded-[24px] border border-gray-100 bg-white p-2 shadow-sm sm:p-3">
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-1.5 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <nav className="flex gap-2 overflow-x-auto">
+        <nav className="flex gap-1.5 overflow-x-auto">
           {TABS.map(tab => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
             return (
               <button key={tab.id} onClick={() => setTab(tab.id)}
-                className={`relative flex items-center gap-2 rounded-2xl px-4 py-2.5 text-[13px] font-semibold transition whitespace-nowrap ${active ? 'bg-primary-50 text-primary-700 shadow-sm shadow-primary-100' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'}`}>
+                className={`relative flex min-h-9 items-center gap-2 rounded-xl px-3.5 text-[12px] font-semibold transition-all whitespace-nowrap ${active ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}>
                 <Icon className="w-4 h-4" />
                 {tab.label}
                 {tab.count !== undefined && (
-                  <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${active ? 'bg-white text-primary-700' : 'bg-gray-100 text-gray-500'}`}>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${active ? 'bg-white text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
                     {tab.count}
                   </span>
                 )}
@@ -618,7 +641,7 @@ const WhatsAppService = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate('/ecom/whatsapp/agent-config')}
-            className="inline-flex items-center gap-1.5 rounded-2xl border border-violet-200 bg-violet-50 px-3.5 py-2 text-[12px] font-semibold text-violet-700 transition hover:bg-violet-100 whitespace-nowrap"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-xl px-3 text-[12px] font-semibold text-violet-600 transition hover:bg-violet-50 whitespace-nowrap"
           >
             <Bot className="w-3.5 h-3.5" />
             <span>{tp('Configurer Rita IA')}</span>
@@ -633,37 +656,54 @@ const WhatsAppService = () => {
 
       {/* ═══ Modal Création d'Instance ═══ */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={closeCreateModal}>
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 p-3 backdrop-blur-[2px] sm:p-4" onClick={closeCreateModal}>
+          <div className="max-h-[92vh] w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_70px_-28px_rgba(15,23,42,0.3)]" onClick={e => e.stopPropagation()}>
 
             {/* Modal header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: ACCENT_LIGHT }}>
-                  {createStep === 'success' ? <CheckCircle className="w-5 h-5 text-primary-500" /> :
-                   createStep === 'scanning' ? <QrCode className="w-5 h-5" style={{ color: ACCENT }} /> :
-                   <Plus className="w-5 h-5" style={{ color: ACCENT }} />}
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                  {createStep === 'success' ? <CheckCircle className="h-4 w-4" /> :
+                   createStep === 'scanning' ? <QrCode className="h-4 w-4" /> :
+                   <Plus className="h-4 w-4" />}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-[15px]">
+                  <h3 className="text-[14px] font-semibold text-slate-900">
                     {createStep === 'success' ? 'Instance connectée !' : createStep === 'scanning' ? 'Scanner le QR Code' : tp('Créer une instance')}
                   </h3>
-                  <p className="text-[11px] text-gray-400 mt-0.5">
+                  <p className="mt-0.5 text-[10px] text-slate-400">
                     {createStep === 'success' ? 'Votre WhatsApp est maintenant lié' : createStep === 'scanning' ? 'Ouvrez WhatsApp → Appareils connectés → Scanner' : tp('Configurez votre nouvelle connexion WhatsApp')}
                   </p>
                 </div>
               </div>
-              <button onClick={closeCreateModal} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+              <button onClick={closeCreateModal} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Step: Form */}
             {createStep === 'form' && (
-              <form onSubmit={handleCreateInstance} className="p-6 space-y-5">
+              <form onSubmit={handleCreateInstance} className="max-h-[calc(92vh-70px)] space-y-5 overflow-y-auto p-5 sm:p-6">
+                <div className="space-y-2.5">
+                  <label className="block text-[12px] font-semibold text-slate-700">Utilisation de l’instance</label>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {INSTANCE_USAGES.map(usage => {
+                      const Icon = usage.icon;
+                      const selected = createData.usageType === usage.id;
+                      return (
+                        <button key={usage.id} type="button" onClick={() => setCreateData(d => ({ ...d, usageType: usage.id }))} className={`flex items-start gap-3 rounded-xl border p-3 text-left transition ${selected ? 'border-emerald-200 bg-emerald-50/60' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'}`}>
+                          <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${selected ? 'bg-white text-emerald-700 shadow-sm' : 'bg-slate-100 text-slate-500'}`}><Icon className="h-3.5 w-3.5" /></span>
+                          <span><span className="block text-[11px] font-semibold text-slate-900">{usage.label}</span><span className="mt-0.5 block text-[9.5px] leading-4 text-slate-500">{usage.description}</span></span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {createData.usageType === 'host' && <p className="flex items-center gap-2 rounded-lg bg-violet-50/70 px-3 py-2 text-[9.5px] leading-4 text-violet-600"><ShieldCheck className="h-3.5 w-3.5 shrink-0" />Une seule instance hôte peut être active par espace de travail.</p>}
+                </div>
+
                 {/* Nom de l'instance */}
                 <div className="space-y-1.5">
-                  <label className="block text-[13px] font-semibold text-gray-700">{tp('Nom de l\'instance')}</label>
+                  <label className="block text-[12px] font-semibold text-slate-700">{tp('Nom de l\'instance')}</label>
                   <input
                     type="text"
                     value={createData.name}
@@ -672,13 +712,13 @@ const WhatsAppService = () => {
                     className="field-input"
                     autoFocus
                   />
-                  <p className="text-[11px] text-gray-400">{tp('Un nom pour identifier cette connexion (optionnel)')}</p>
+                  <p className="text-[10px] text-slate-400">{tp('Un nom pour identifier cette connexion (optionnel)')}</p>
                 </div>
 
                 {/* Type de service */}
                 <div className="space-y-2">
-                  <label className="block text-[13px] font-semibold text-gray-700">{tp('Type de service')}</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <label className="block text-[12px] font-semibold text-slate-700">{tp('Type de service')}</label>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {SERVICE_TYPES.map(svc => {
                       const selected = createData.serviceType === svc.id;
                       const Logo = svc.logo;
@@ -687,22 +727,21 @@ const WhatsAppService = () => {
                           key={svc.id}
                           type="button"
                           onClick={() => setCreateData(d => ({ ...d, serviceType: svc.id }))}
-                          className={`relative p-4 rounded-xl border-2 text-left transition-all ${
+                          className={`relative flex items-center gap-3 rounded-xl border p-3 text-left transition-all ${
                             selected
-                              ? `border-${svc.color}-500 bg-${svc.color}-50 ring-2 ring-${svc.color}-200`
-                              : 'border-gray-200 hover:border-gray-300 bg-white'
+                              ? 'border-emerald-200 bg-emerald-50/60'
+                              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
                           }`}
                         >
                           {selected && (
-                            <span className={`absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-${svc.color}-500 text-white flex items-center justify-center`}>
-                              <Check className="w-3 h-3" />
+                            <span className="absolute right-2.5 top-2.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-white">
+                              <Check className="h-2.5 w-2.5" />
                             </span>
                           )}
-                          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-black/5">
-                            <Logo className="h-8 w-8" />
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
+                            <Logo className="h-6 w-6" />
                           </div>
-                          <p className={`text-[13px] font-semibold ${selected ? `text-${svc.color}-800` : 'text-gray-900'}`}>{svc.label}</p>
-                          <p className={`text-[11px] mt-0.5 ${selected ? `text-${svc.color}-600` : 'text-gray-400'}`}>{svc.desc}</p>
+                          <div className="min-w-0 pr-3"><p className="text-[11px] font-semibold text-slate-900">{svc.label}</p><p className="mt-0.5 text-[9.5px] leading-4 text-slate-500">{svc.desc}</p></div>
                         </button>
                       );
                     })}
@@ -712,13 +751,13 @@ const WhatsAppService = () => {
                 <ErrorBanner message={error} onDismiss={() => setError('')} />
 
                 {/* Actions */}
-                <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                <div className="sticky bottom-0 -mx-5 flex justify-end gap-2 border-t border-slate-100 bg-white/95 px-5 pt-4 backdrop-blur sm:-mx-6 sm:px-6">
                   <button type="button" onClick={closeCreateModal}
-                    className="px-4 py-2.5 text-[13px] font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                    className="rounded-xl px-4 py-2.5 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-800">
                     {tp('Annuler')}
                   </button>
                   <button type="submit" disabled={submitting}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-semibold text-white rounded-lg disabled:opacity-50 transition-all shadow-sm"
+                    className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-[12px] font-semibold text-white shadow-sm transition-all disabled:opacity-50"
                     style={{ background: ACCENT }}>
                     {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                     {submitting ? 'Création en cours...' : 'Créer l\'instance'}
@@ -856,7 +895,7 @@ const WhatsAppService = () => {
                       <button
                         onClick={() => createdInstance?.id && connectInstanceToRita({ _id: createdInstance.id, customName: createdInstance.customName, instanceName: createdInstance.instanceName }, agents[0])}
                         disabled={connectingRita[createdInstance?.id]}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-semibold text-violet-700 bg-violet-50 border border-violet-200 hover:bg-violet-100 transition-colors disabled:opacity-60"
+                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-[13px] font-semibold text-violet-500 bg-violet-50/80 ring-1 ring-violet-100/70 hover:bg-violet-100/80 hover:text-violet-600 transition-colors disabled:opacity-60"
                       >
                         {connectingRita[createdInstance?.id]
                           ? <><Loader2 className="w-4 h-4 animate-spin" /> {tp('Connexion Rita IA...')}</>
@@ -867,7 +906,7 @@ const WhatsAppService = () => {
                   }
                   return (
                     <button onClick={() => { closeCreateModal(); navigate('/ecom/agent-onboarding'); }}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-semibold text-violet-700 bg-violet-50 border border-violet-200 hover:bg-violet-100 transition-colors">
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-[13px] font-semibold text-violet-500 bg-violet-50/80 ring-1 ring-violet-100/70 hover:bg-violet-100/80 hover:text-violet-600 transition-colors">
                       <Bot className="w-4 h-4" />
                       Créer un agent IA →
                     </button>
@@ -891,27 +930,16 @@ const WhatsAppService = () => {
 
           {/* Dashboard Stats */}
           {dashboardStats && instances.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { label: 'Total instances', value: dashboardStats.totalInstances, icon: Smartphone, sub: `${dashboardStats.connected} connectée${dashboardStats.connected > 1 ? 's' : ''}`, accent: 'emerald' },
-                { label: "Messages aujourd'hui", value: dashboardStats.totalSentToday, icon: Send, sub: `sur ${dashboardStats.totalDailyLimit} max`, accent: 'blue' },
-                { label: 'Messages ce mois', value: dashboardStats.totalSentMonth, icon: BarChart3, sub: `sur ${dashboardStats.totalMonthlyLimit} max`, accent: 'violet' },
-                { label: 'Hors ligne', value: dashboardStats.disconnected, icon: WifiOff, sub: dashboardStats.disconnected > 0 ? 'à reconnecter' : 'tout est OK', accent: dashboardStats.disconnected > 0 ? 'red' : 'gray' },
-              ].map((stat, i) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{stat.label}</p>
-                      <div className={`w-7 h-7 rounded-lg bg-${stat.accent}-50 flex items-center justify-center`}>
-                        <Icon className={`w-3.5 h-3.5 text-${stat.accent}-500`} />
-                      </div>
-                    </div>
-                    <p className={`text-2xl font-bold text-${stat.accent}-600`}>{stat.value}</p>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{stat.sub}</p>
-                  </div>
-                );
-              })}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-slate-200/70 bg-slate-50/60 px-4 py-3 text-[12px] text-slate-500">
+              <span><strong className="font-semibold text-slate-800">{dashboardStats.totalInstances}</strong> instances</span>
+              <span className="hidden h-3 w-px bg-slate-200 sm:block" />
+              <span><strong className="font-semibold text-emerald-700">{dashboardStats.connected}</strong> connectées</span>
+              <span className="hidden h-3 w-px bg-slate-200 sm:block" />
+              <span><strong className="font-semibold text-slate-800">{dashboardStats.totalSentToday}</strong> messages aujourd’hui</span>
+              <span className="hidden h-3 w-px bg-slate-200 sm:block" />
+              <span><strong className="font-semibold text-slate-800">{dashboardStats.totalSentMonth}</strong> ce mois</span>
+              <span className="hidden h-3 w-px bg-slate-200 sm:block" />
+              <span className={instances.some(item => item.usageType === 'host') ? 'text-violet-700' : 'text-amber-700'}><strong className="font-semibold">{instances.some(item => item.usageType === 'host') ? 'Hôte actif' : 'Hôte à configurer'}</strong></span>
             </div>
           )}
 
@@ -925,74 +953,111 @@ const WhatsAppService = () => {
 
           {/* Empty */}
           {!loading && instances.length === 0 && (
-            <div className="overflow-hidden rounded-[30px] border border-gray-100 bg-white shadow-sm">
-              <div className="relative overflow-hidden px-6 py-12 text-center sm:px-8 sm:py-14">
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-white" />
-                <div className="relative mx-auto max-w-lg">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-primary-100 text-primary-700 shadow-sm shadow-primary-100">
-                    <Smartphone className="h-8 w-8" />
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <div className="grid lg:grid-cols-[1.05fr_.95fr]">
+                <div className="p-6 sm:p-8 lg:p-10">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700"><ShieldCheck size={14} /> Configuration sécurisée</span>
+                  <h2 className="mt-5 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">Connectez votre premier numéro WhatsApp</h2>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-slate-500">Scannez un QR code depuis WhatsApp. Votre numéro reste sous votre contrôle et vous pouvez le déconnecter à tout moment.</p>
+                  <button onClick={openCreateModal} className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-[13px] font-extrabold text-white shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-600"><Plus size={16} />{tp('Créer une instance')}<ArrowRight size={15} /></button>
+                </div>
+                <div className="border-t border-slate-200 bg-slate-50 p-6 sm:p-8 lg:border-l lg:border-t-0">
+                  <p className="mb-4 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Mise en service</p>
+                  <div className="space-y-3">
+                    {[{ n: '01', icon: Smartphone, title: 'Créer l’instance', desc: 'Donnez un nom à votre connexion.' }, { n: '02', icon: QrCode, title: 'Scanner le QR code', desc: 'Depuis les appareils connectés WhatsApp.' }, { n: '03', icon: Workflow, title: 'Activer Rita IA', desc: 'Automatisez les réponses et relances.' }].map((step) => { const Icon = step.icon; return <div key={step.n} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-[11px] font-extrabold text-white">{step.n}</span><Icon size={17} className="shrink-0 text-emerald-600" /><div><p className="text-[12.5px] font-bold text-slate-900">{step.title}</p><p className="text-[11px] text-slate-500">{step.desc}</p></div></div>; })}
                   </div>
-                  <h2 className="mt-5 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{tp('Aucune instance WhatsApp')}</h2>
-                  <p className="mt-3 text-sm leading-6 text-gray-500 sm:text-[15px]">
-                    Créez votre première instance pour connecter votre WhatsApp et commencer à envoyer des messages.
-                  </p>
-
-                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                    <button onClick={openCreateModal}
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-primary-200 transition hover:brightness-95"
-                      style={{ background: ACCENT }}>
-                      <Plus className="h-4 w-4" />
-                      {tp('Créer une instance')}
-                    </button>
-                    <button
-                      onClick={() => navigate('/ecom/whatsapp/agent-config')}
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-100"
-                    >
-                      <Bot className="h-4 w-4" />
-                      {tp('Configurer Rita IA')}
-                    </button>
-                  </div>
+                  <button onClick={() => navigate('/ecom/whatsapp/agent-config')} className="mt-4 inline-flex min-h-10 items-center gap-2 text-[12px] font-bold text-violet-700 hover:text-violet-900"><Bot size={15} />Configurer Rita IA séparément<ArrowRight size={14} /></button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Instance Cards */}
+          {/* Instances */}
           {!loading && instances.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="space-y-2.5">
               {instances.map((inst) => {
                 const st = getStatus(inst.status);
                 const test = testResults[inst._id];
                 const wh = webhookPanels[inst._id];
                 const stats = messageStats[inst._id];
                 const isConnected = inst.status === 'connected' || inst.status === 'active';
+                const expanded = !!expandedInstances[inst._id];
                 return (
-                  <div key={inst._id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md hover:border-gray-300 transition-all group">
-                    <div className={`h-[3px] ${isConnected ? 'bg-primary-500' : inst.status === 'configured' ? 'bg-blue-400' : 'bg-red-400'}`} />
-                    <div className="p-5 space-y-4">
-
-                      {/* Header */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${st.bg}`}>
-                            {isConnected ? <Wifi className={`w-5 h-5 ${st.text}`} /> : <WifiOff className={`w-5 h-5 ${st.text}`} />}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-gray-900 text-[14px] truncate leading-tight">
-                              {inst.customName || inst.instanceName}
-                            </p>
-                            <p className="text-[11px] text-gray-400 font-mono truncate mt-0.5">{inst.instanceName}</p>
-                          </div>
-                        </div>
-                        <span className={`inline-flex items-center gap-1.5 flex-shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full ${st.bg} ${st.text}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${st.dot} ${isConnected ? 'animate-pulse' : ''}`} />
-                          {st.label}
+                  <div key={inst._id} className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_rgba(15,23,42,0.03)] transition hover:border-slate-300">
+                    <div className="flex flex-col gap-3 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+                      <button type="button" onClick={() => setExpandedInstances(p => ({ ...p, [inst._id]: !p[inst._id] }))} className="flex min-w-0 flex-1 items-center gap-3 text-left focus:outline-none">
+                        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${isConnected ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                          {isConnected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
                         </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[13px] font-semibold text-slate-900">{inst.customName || inst.instanceName}</span>
+                          <span className="mt-0.5 block truncate font-mono text-[10px] text-slate-400">{inst.instanceName}</span>
+                        </span>
+                        <span className={`hidden shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold sm:inline-flex ${isConnected ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                          <span className={`h-1.5 w-1.5 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-slate-400'}`} />{st.label}
+                        </span>
+                        <span className={`hidden shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold md:inline-flex ${inst.usageType === 'host' ? 'bg-violet-50 text-violet-700' : 'bg-blue-50 text-blue-600'}`}>
+                          {inst.usageType === 'host' ? 'Hôte Scalor' : 'Messages clients'}
+                        </span>
+                      </button>
+                      <div className="flex items-center gap-2 pl-12 sm:pl-0">
+                        {!isConnected && (
+                          <button onClick={() => openQrForInstance(inst)} className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-emerald-50 px-3 text-[11px] font-semibold text-emerald-700 transition hover:bg-emerald-100">
+                            <QrCode className="h-3.5 w-3.5" /> Connecter
+                          </button>
+                        )}
+                        <button type="button" aria-expanded={expanded} aria-label={expanded ? 'Réduire les détails' : 'Afficher les détails'} onClick={() => setExpandedInstances(p => ({ ...p, [inst._id]: !p[inst._id] }))} className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-50 hover:text-slate-700">
+                          <ChevronDown className={`h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {expanded && (
+                    <div className="space-y-4 border-t border-slate-100 bg-slate-50/30 p-4 sm:p-5">
+
+                      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <p className="text-[12px] font-semibold text-slate-900">Rôle de cette instance</p>
+                            <p className="mt-1 text-[10px] leading-4 text-slate-500">L’hôte informe l’équipe. Une instance client échange avec les acheteurs.</p>
+                          </div>
+                          {['super_admin', 'ecom_admin'].includes(user?.role) && (
+                            <div className="flex rounded-xl bg-slate-100 p-1">
+                              <button type="button" disabled={savingUsage[inst._id]} onClick={() => updateInstanceUsage(inst, 'customer')} className={`rounded-lg px-3 py-1.5 text-[10px] font-semibold transition ${inst.usageType !== 'host' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Clients</button>
+                              <button type="button" disabled={savingUsage[inst._id]} onClick={() => updateInstanceUsage(inst, 'host')} className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[10px] font-semibold transition ${inst.usageType === 'host' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-500'}`}>{savingUsage[inst._id] && <Loader2 className="h-3 w-3 animate-spin" />}Hôte</button>
+                            </div>
+                          )}
+                        </div>
+
+                        {inst.usageType === 'host' && (
+                          <div className="mt-4 grid gap-4 border-t border-slate-100 pt-4 lg:grid-cols-2">
+                            <div>
+                              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Informer les rôles</p>
+                              <div className="flex flex-wrap gap-2">
+                                {HOST_ROLE_OPTIONS.map(option => {
+                                  const selectedRoles = inst.hostSettings?.recipientRoles || ['ecom_admin', 'ecom_closeuse'];
+                                  const selected = selectedRoles.includes(option.id);
+                                  return <button key={option.id} type="button" disabled={savingUsage[inst._id] || !['super_admin', 'ecom_admin'].includes(user?.role)} onClick={() => updateInstanceUsage(inst, 'host', { ...inst.hostSettings, recipientRoles: selected ? selectedRoles.filter(id => id !== option.id) : [...selectedRoles, option.id] })} className={`rounded-lg border px-2.5 py-1.5 text-[10px] font-medium transition ${selected ? 'border-violet-200 bg-violet-50 text-violet-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>{option.label}</button>;
+                                })}
+                              </div>
+                            </div>
+                            <div>
+                              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Envoyer les informations</p>
+                              <div className="flex flex-wrap gap-2">
+                                {HOST_EVENT_OPTIONS.map(option => {
+                                  const selectedEvents = inst.hostSettings?.events || ['daily_report', 'new_order', 'order_assignment', 'important_alert'];
+                                  const selected = selectedEvents.includes(option.id);
+                                  return <button key={option.id} type="button" disabled={savingUsage[inst._id] || !['super_admin', 'ecom_admin'].includes(user?.role)} onClick={() => updateInstanceUsage(inst, 'host', { ...inst.hostSettings, events: selected ? selectedEvents.filter(id => id !== option.id) : [...selectedEvents, option.id] })} className={`rounded-lg border px-2.5 py-1.5 text-[10px] font-medium transition ${selected ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>{option.label}</button>;
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Quotas / Message Stats */}
                       {stats && (
-                        <div className="space-y-3 p-3.5 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-100">
+                        <div className="space-y-3 p-3.5 bg-gradient-to-br from-gray-50/70 to-slate-50/50 rounded-2xl ring-1 ring-gray-100/70">
                           <div className="flex items-center justify-between">
                             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
                               <BarChart3 className="w-3 h-3" />
@@ -1071,7 +1136,7 @@ const WhatsAppService = () => {
                       {/* Not connected → Scan QR button prominent */}
                       {!isConnected && (
                         <button onClick={() => openQrForInstance(inst)}
-                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors">
+                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-[13px] font-semibold text-amber-500 bg-amber-50/80 ring-1 ring-amber-100/70 hover:bg-amber-100/80 hover:text-amber-600 transition-colors">
                           <QrCode className="w-4 h-4" />
                           {tp('Scanner le QR code pour connecter')}
                         </button>
@@ -1083,10 +1148,10 @@ const WhatsAppService = () => {
                         const isBusy = connectingRita[inst._id];
                         if (linkedAgent) {
                           return (
-                            <div className="flex items-center justify-between px-3.5 py-2.5 bg-violet-50 border border-violet-100 rounded-xl">
+                            <div className="flex items-center justify-between px-3.5 py-2.5 bg-violet-50/70 ring-1 ring-violet-100/70 rounded-2xl">
                               <div className="flex items-center gap-2.5">
-                                <div className="w-7 h-7 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <Bot className="w-4 h-4 text-violet-600" />
+                                <div className="w-7 h-7 bg-violet-100/80 rounded-xl flex items-center justify-center flex-shrink-0 ring-1 ring-white/60">
+                                  <Bot className="w-4 h-4 text-violet-500" />
                                 </div>
                                 <div className="min-w-0">
                                   <p className="text-[12px] font-bold text-violet-800 leading-tight truncate">{linkedAgent.name}</p>
@@ -1112,7 +1177,7 @@ const WhatsAppService = () => {
                             {agents.length === 0 ? (
                               <button
                                 onClick={() => navigate('/ecom/agent-onboarding')}
-                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-semibold text-violet-700 bg-violet-50 border border-violet-200 hover:bg-violet-100 transition-colors"
+                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-[13px] font-semibold text-violet-500 bg-violet-50/80 ring-1 ring-violet-100/70 hover:bg-violet-100/80 hover:text-violet-600 transition-colors"
                               >
                                 <Bot className="w-4 h-4" />
                                 Créer un agent IA →
@@ -1121,7 +1186,7 @@ const WhatsAppService = () => {
                               <button
                                 onClick={() => connectInstanceToRita(inst, availableAgents[0] || agents[0])}
                                 disabled={isBusy}
-                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-semibold text-violet-700 bg-violet-50 border border-violet-200 hover:bg-violet-100 transition-colors disabled:opacity-60"
+                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-[13px] font-semibold text-violet-500 bg-violet-50/80 ring-1 ring-violet-100/70 hover:bg-violet-100/80 hover:text-violet-600 transition-colors disabled:opacity-60"
                               >
                                 {isBusy
                                   ? <><Loader2 className="w-4 h-4 animate-spin" /> {tp('Connexion en cours...')}</>
@@ -1134,7 +1199,7 @@ const WhatsAppService = () => {
                       })()}
 
                       {/* Token */}
-                      <div className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                      <div className="flex items-center justify-between bg-gray-50/70 ring-1 ring-gray-100/60 rounded-xl px-3 py-2">
                         <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Token')}</span>
                         <div className="flex items-center gap-1.5">
                           <code className="text-[12px] text-gray-600 font-mono">
@@ -1215,7 +1280,7 @@ const WhatsAppService = () => {
                       )}
 
                       {/* Footer */}
-                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                      <div className="flex items-center justify-between pt-2.5 border-t border-gray-100/70">
                         <span className="text-[11px] text-gray-300">
                           {inst.createdAt ? `Créé le ${new Date(inst.createdAt).toLocaleDateString('fr-FR')}` : ''}
                         </span>
@@ -1240,6 +1305,7 @@ const WhatsAppService = () => {
                         </div>
                       </div>
                     </div>
+                    )}
                   </div>
                 );
               })}
@@ -1271,8 +1337,8 @@ const WhatsAppService = () => {
           background: #fff;
         }
         .field-input:focus {
-          border-color: #a78bfa;
-          box-shadow: 0 0 0 3px rgba(167,139,250,0.12);
+          border-color: #86c9b1;
+          box-shadow: 0 0 0 3px rgba(16,185,129,0.10);
           background: #fff;
         }
         .field-input::placeholder {

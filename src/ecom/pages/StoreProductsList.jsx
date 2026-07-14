@@ -117,6 +117,9 @@ const StoreProductsList = () => {
     window.open(url, '_blank');
   };
 
+  // Le bouton « Voir (local) » ne sert qu'en développement — masqué en production
+  const showLocalPreview = process.env.NODE_ENV !== 'production';
+
   const isPremiumStore = storeTemplate === 'magazine';
 
   const handleOpenPageGenerator = (pageStyle = 'classic') => {
@@ -363,7 +366,7 @@ const StoreProductsList = () => {
         pdf: res.data?.ebook?.pdf || updated?._pageData?.ebook?.pdf,
       });
     } catch (err) {
-      setDigitalProductError(err?.response?.data?.message || err.message || 'Erreur lors de la génération du produit digital');
+      setDigitalProductError(err?.response?.data?.detail || err?.response?.data?.message || err.message || 'Erreur lors de la génération du produit digital');
     } finally {
       setDigitalProductLoading(null);
     }
@@ -840,15 +843,15 @@ const StoreProductsList = () => {
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
       {/* Header (hidden on stock view) */}
       {viewMode !== 'stock' && (
-      <div className="rounded-3xl border border-gray-200/80 bg-white px-5 py-5 shadow-[0_2px_14px_rgba(15,23,42,0.06)] sm:px-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex items-start gap-3.5">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-[0_10px_22px_-10px_rgba(15,107,79,0.7)]">
-              <Package className="h-6 w-6 text-white" />
+      <div className="rounded-2xl border border-gray-200/80 bg-white px-4 py-3 shadow-[0_1px_8px_rgba(15,23,42,0.05)] sm:px-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-[0_6px_16px_-8px_rgba(15,107,79,0.7)]">
+              <Package className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">{currentView.title()}</h1>
-              <p className="mt-0.5 text-sm text-gray-500">{currentView.description(pagination.total, categorySummaries.length)}</p>
+              <h1 className="text-base sm:text-lg font-bold tracking-tight text-gray-900">{currentView.title()}</h1>
+              <p className="text-xs text-gray-500">{currentView.description(pagination.total, categorySummaries.length)}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -866,7 +869,7 @@ const StoreProductsList = () => {
                     type="button"
                     onClick={handleTriggerImport}
                     disabled={csvBusy}
-                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
                     title={tp('Importer un CSV')}
                   >
                     <Upload className="h-4 w-4" />
@@ -877,7 +880,7 @@ const StoreProductsList = () => {
                     type="button"
                     onClick={handleExportCsv}
                     disabled={csvBusy}
-                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
                     title={tp('Exporter en CSV')}
                   >
                     <Download className="h-4 w-4" />
@@ -890,7 +893,7 @@ const StoreProductsList = () => {
               <button
                 type="button"
                 onClick={openCreateCategoryDialog}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 shadow-sm"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gray-900 px-3.5 py-1.5 text-sm font-medium text-white transition hover:bg-gray-800 shadow-sm"
               >
                 <Plus className="h-4 w-4" />
                 {tp('Ajouter une catégorie')}
@@ -900,7 +903,7 @@ const StoreProductsList = () => {
               <button
                 type="button"
                 onClick={handleSubmitStockChanges}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 shadow-sm"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gray-900 px-3.5 py-1.5 text-sm font-medium text-white transition hover:bg-gray-800 shadow-sm"
                 disabled={stockSaving}
               >
                 {stockSaving ? 'Enregistrement...' : tp('Enregistrer')}
@@ -908,7 +911,7 @@ const StoreProductsList = () => {
             )}
             <button
               onClick={() => navigate(`${basePath}/products/new`)}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:from-primary-600 hover:to-primary-700 shadow-[0_10px_22px_-10px_rgba(15,107,79,0.7)]"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 px-3.5 py-1.5 text-sm font-semibold text-white transition hover:from-primary-600 hover:to-primary-700 shadow-[0_10px_22px_-10px_rgba(15,107,79,0.7)]"
             >
               <Plus className="h-4 w-4" />
               {tp('Ajouter un produit')}
@@ -918,7 +921,7 @@ const StoreProductsList = () => {
 
         {/* Génération de page IA — regroupée et libellée */}
         {viewMode !== 'categories' && (
-          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-gray-50/70 px-3 py-2.5">
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-xl border border-gray-100 bg-gray-50/70 px-2.5 py-2">
             <span className="mr-1 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
               <Sparkles className="h-3.5 w-3.5 text-primary-500" />
               {tp('Générer une page')}
@@ -965,15 +968,15 @@ const StoreProductsList = () => {
           </div>
         )}
 
-        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-2.5 flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative max-w-2xl flex-1">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={currentView.searchPlaceholder()}
-              className="w-full rounded-2xl border border-gray-200 bg-gray-50/80 py-3 pl-11 pr-4 text-sm text-gray-700 transition placeholder:text-gray-400 focus:border-primary-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary-100"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50/80 py-2 pl-10 pr-4 text-sm text-gray-700 transition placeholder:text-gray-400 focus:border-primary-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary-100"
             />
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -1524,12 +1527,12 @@ const StoreProductsList = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/80">
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Produit')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Prix')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Stock')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Catégorie')}</th>
-                  <th className="px-4 py-4 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Statut')}</th>
-                  <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Actions')}</th>
+                  <th className="px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Produit')}</th>
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Prix')}</th>
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Stock')}</th>
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Catégorie')}</th>
+                  <th className="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Statut')}</th>
+                  <th className="px-5 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -1538,17 +1541,17 @@ const StoreProductsList = () => {
                   const digitalReady = hasDigitalProduct(product);
                   return (
                   <tr key={product._id} className="transition hover:bg-gray-50/70">
-                    <td className="px-5 py-4">
+                    <td className="px-5 py-2.5">
                       <div className="flex items-center gap-3">
                         {product.images?.[0]?.url ? (
                           <img
                             src={product.images[0].url}
                             alt={product.name}
-                            className="h-14 w-14 rounded-2xl border border-gray-200 object-cover shadow-sm"
+                            className="h-11 w-11 rounded-2xl border border-gray-200 object-cover shadow-sm"
                             loading="lazy"
                           />
                         ) : (
-                          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
+                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gray-100">
                             <Image className="h-5 w-5 text-gray-400" />
                           </div>
                         )}
@@ -1570,10 +1573,10 @@ const StoreProductsList = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-2.5">
                       <div className="text-sm font-semibold text-gray-900">{formatPrice(product.price, product.currency)}</div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-2.5">
                       <div className="flex flex-col items-start gap-1">
                         <span className="text-sm font-semibold text-gray-900">{product.stock ?? 0}</span>
                         <span className={`inline-flex rounded-full px-2 py-1 text-[11px] font-medium ring-1 ${stockBadge.className}`}>
@@ -1581,7 +1584,7 @@ const StoreProductsList = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-500">
+                    <td className="px-4 py-2.5 text-sm text-gray-500">
                       {product.category ? (
                         <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
                           {product.category}
@@ -1590,7 +1593,7 @@ const StoreProductsList = () => {
                         <span className="text-gray-400">{tp('Non classé')}</span>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-4 py-2.5 text-center">
                       <button
                         onClick={() => handleTogglePublish(product)}
                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-medium transition ${
@@ -1603,8 +1606,9 @@ const StoreProductsList = () => {
                         {product.isPublished ? tp('Publié') : tp('Brouillon')}
                       </button>
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-5 py-2.5">
                       <div className="flex items-center justify-end gap-1.5">
+                        {showLocalPreview && (
                         <button
                           onClick={() => handleViewProduct(product, 'local')}
                           disabled={!storeSubdomain || !product.slug}
@@ -1613,6 +1617,7 @@ const StoreProductsList = () => {
                         >
                           <Laptop className="w-4 h-4" />
                         </button>
+                        )}
                         <button
                           onClick={() => handleViewProduct(product, 'prod')}
                           disabled={!storeSubdomain || !product.slug}
@@ -1692,12 +1697,12 @@ const StoreProductsList = () => {
               const stockBadge = getStockBadge(product.stock || 0);
               const digitalReady = hasDigitalProduct(product);
               return (
-              <div key={product._id} className="space-y-4 p-4">
+              <div key={product._id} className="space-y-2.5 p-3">
                 <div className="flex items-start gap-3">
                   {product.images?.[0]?.url ? (
-                    <img src={product.images[0].url} alt={product.name} className="h-14 w-14 rounded-2xl border border-gray-200 object-cover shadow-sm" loading="lazy" />
+                    <img src={product.images[0].url} alt={product.name} className="h-11 w-11 rounded-2xl border border-gray-200 object-cover shadow-sm" loading="lazy" />
                   ) : (
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gray-100">
                       <Image className="h-5 w-5 text-gray-400" />
                     </div>
                   )}
@@ -1729,6 +1734,7 @@ const StoreProductsList = () => {
                     {product.isPublished ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                     {product.isPublished ? 'Dépublier' : tp('Publier')}
                   </button>
+                  {showLocalPreview && (
                   <button
                     onClick={() => handleViewProduct(product, 'local')}
                     disabled={!storeSubdomain || !product.slug}
@@ -1737,6 +1743,7 @@ const StoreProductsList = () => {
                     <Laptop className="h-3.5 w-3.5" />
                     {tp('Voir (local)')}
                   </button>
+                  )}
                   <button
                     onClick={() => handleViewProduct(product, 'prod')}
                     disabled={!storeSubdomain || !product.slug}

@@ -225,6 +225,7 @@ export const storeProductsApi = {
   getProduct: (id) => ecomApi.get(`/store-products/${id}`),
   createProduct: (data) => ecomApi.post('/store-products', data),
   updateProduct: (id, data) => ecomApi.put(`/store-products/${id}`, data),
+  generateUpsellOffer: (payload) => ecomApi.post('/store-products/generate-upsell-offer', payload),
   generateDigitalProduct: (id, brief = {}) => ecomApi.post(`/store-products/${id}/digital-product`, { brief }, { timeout: 0 }),
   disableDigitalProduct: (id) => ecomApi.delete(`/store-products/${id}/digital-product`),
   deleteProduct: (id) => ecomApi.delete(`/store-products/${id}`),
@@ -323,8 +324,9 @@ export const storeDeliveryZonesApi = {
 // Production: https://api.scalor.net (wildcard DNS → Railway)
 // Dev: falls back to VITE_BACKEND_URL or Railway direct URL
 const API_BASE = process.env.NEXT_PUBLIC_STORE_API_URL
-  || ((process.env.NODE_ENV === 'production') ? 'https://api.scalor.net' : null)
   || process.env.NEXT_PUBLIC_BACKEND_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || ((process.env.NODE_ENV === 'production') ? 'https://api.scalor.net' : null)
   || 'https://api.scalor.net';
 
 const PUBLIC_API_BASE = String(API_BASE).replace(/\/+$/, '');
@@ -441,6 +443,20 @@ export const publicStoreApi = {
     options
   ),
 
+  // Collections publiques
+  getCollections: (subdomain, options = {}) => cachedPublicGet(
+    `${String(subdomain).toLowerCase()}:collections`,
+    PUBLIC_TTL.products,
+    (force) => publicApi.get(`/${subdomain}/collections`, withFreshBypass({}, force)),
+    options
+  ),
+  getCollection: (subdomain, slug, options = {}) => cachedPublicGet(
+    `${String(subdomain).toLowerCase()}:collection:${slug}`,
+    PUBLIC_TTL.products,
+    (force) => publicApi.get(`/${subdomain}/collections/${slug}`, withFreshBypass({}, force)),
+    options
+  ),
+
   // Get single product by slug
   getProduct: (subdomain, slug, options = {}) => cachedPublicGet(
     `${String(subdomain).toLowerCase()}:product:${slug}`,
@@ -471,8 +487,14 @@ export const publicStoreApi = {
   // Place a public order (guest checkout)
   placeOrder: (subdomain, orderData) => publicApi.post(`/${subdomain}/orders`, orderData),
 
+  // Scalor Pay — ouvre une session de paiement en ligne pour une commande existante.
+  // Renvoie { success, paymentUrl, mfToken } ; rediriger le client vers paymentUrl.
+  startScalorPayment: (subdomain, { orderId, orderNumber, phone, returnUrl } = {}) =>
+    publicApi.post(`/${subdomain}/scalor-pay/checkout`, { orderId, orderNumber, phone, returnUrl }),
+
   // Save a recoverable checkout before final confirmation
   saveAbandonedCheckout: (subdomain, checkoutData) => publicApi.post(`/${subdomain}/abandoned-checkout`, checkoutData),
+  acceptUpsell: (subdomain, orderId, offer) => publicApi.post(`/${subdomain}/orders/${orderId}/upsell`, { offer }),
 
   // Newsletter subscription
   subscribeNewsletter: (subdomain, email) => publicApi.post(`/${subdomain}/newsletter`, { email }),
@@ -482,6 +504,19 @@ export const publicStoreApi = {
 // ═══════════════════════════════════════════════════════════════════════════════
 // MULTI-STORE APIs (authenticated — CRUD on Store documents)
 // ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Collections (admin) ───────────────────────────────────────────────────────
+export const collectionsApi = {
+  list:   ()          => ecomApi.get('/collections'),
+  create: (payload)   => ecomApi.post('/collections', payload),
+  update: (id, patch) => ecomApi.put(`/collections/${id}`, patch),
+  remove: (id)        => ecomApi.delete(`/collections/${id}`),
+};
+
+export const mediaLibraryApi = {
+  list:   (params) => ecomApi.get('/media-library', { params }),
+  remove: (id)     => ecomApi.delete(`/media-library/${id}`),
+};
 
 export const storesApi = {
   getStores:      ()              => ecomApi.get('/stores'),

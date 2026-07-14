@@ -5,9 +5,9 @@ import ecomApi from '../services/ecommApi';
 import { useMoney } from '../hooks/useMoney';
 import { getContextualError } from '../utils/errorMessages';
 import {
-  Plus, Search, BarChart3, Building2, X, ChevronRight,
+  Plus, Search, BarChart3, Building2, X,
   MoreHorizontal, Mail, Phone, Link as LinkIcon, Package2,
-  AlertTriangle, CheckCircle2, Clock, ArrowRight, Circle,
+  AlertTriangle, Clock, ArrowRight, Circle,
   Plane, Check, XCircle,
 } from 'lucide-react';
 
@@ -47,21 +47,12 @@ const Skeleton = () => (
   </div>
 );
 
-// ─── Compact stat (no colored icon box) ──
-const Stat = ({ label, value, sub }) => (
-  <div className="py-3">
-    <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
-    <p className="text-xl font-semibold text-gray-900 tabular-nums tracking-tight">{value}</p>
-    {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
-  </div>
-);
-
 // ─── Period/tab chip — Scalor green pour actif ──
 const Chip = ({ active, onClick, children }) => (
   <button
     onClick={onClick}
-    className={`shrink-0 px-4 h-9 inline-flex items-center text-sm font-medium rounded-full ${T} ${
-      active ? 'bg-primary-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+    className={`inline-flex h-9 shrink-0 items-center rounded-xl px-3.5 text-[12px] font-semibold ${T} ${
+      active ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500 hover:bg-slate-50'
     }`}
   >
     {children}
@@ -121,17 +112,23 @@ const StatusPill = ({ status }) => {
   );
 };
 
-// ─── Payment pill — pill propre ──
-const PaymentPill = ({ paid, label }) => (
-  <span className={`inline-flex items-center gap-1 px-2 h-[22px] rounded-md text-[11px] font-semibold ring-1 ring-inset ${
-    paid
-      ? 'bg-primary-50 text-primary-700 ring-primary-200/60'
-      : 'bg-red-50 text-red-700 ring-red-200/60'
-  }`}>
-    {paid ? <Check size={11} strokeWidth={2.5} /> : <XCircle size={11} strokeWidth={2.5} />}
-    {label || (paid ? tp('Payé') : tp('Impayé'))}
-  </span>
-);
+const PaymentSummary = ({ order }) => {
+  const steps = order.sourcing === 'chine'
+    ? [{ label: 'Achat', paid: order.paidPurchase }, { label: 'Transport', paid: order.paidTransport }]
+    : [{ label: 'Commande', paid: order.paid }];
+  const pending = steps.filter(step => !step.paid).length;
+  return (
+    <div className="min-w-0">
+      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${pending === 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+        {pending === 0 ? <Check size={11} /> : <Clock size={11} />}
+        {pending === 0 ? 'Réglé' : `${pending} paiement${pending > 1 ? 's' : ''} à régler`}
+      </span>
+      <div className="mt-1.5 flex flex-wrap gap-x-2 gap-y-1">
+        {steps.map(step => <span key={step.label} className={`inline-flex items-center gap-1 text-[9px] ${step.paid ? 'text-slate-400' : 'text-amber-600'}`}><span className={`h-1.5 w-1.5 rounded-full ${step.paid ? 'bg-emerald-400' : 'bg-amber-400'}`} />{step.label}</span>)}
+      </div>
+    </div>
+  );
+};
 
 // ─── Sourcing pill — neutre, gris ──
 const SourcingPill = ({ sourcing }) => (
@@ -206,16 +203,7 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
             <SourcingPill sourcing={order.sourcing} />
             <StatusPill status={order.status} />
           </div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {order.sourcing === 'chine' ? (
-              <>
-                <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? tp('Achat payé') : tp('Achat impayé')} />
-                <PaymentPill paid={order.paidTransport} label={order.paidTransport ? tp('Transport payé') : tp('Transport impayé')} />
-              </>
-            ) : (
-              <PaymentPill paid={order.paid} label={order.paid ? tp('Payé') : tp('Impayé')} />
-            )}
-          </div>
+          <div className="mt-2"><PaymentSummary order={order} /></div>
           <div className="mt-2.5 flex items-center gap-4 text-xs text-gray-500">
             <span className="tabular-nums">{order.quantity || 0} unités</span>
             {order.weightKg > 0 && <span className="tabular-nums">{order.weightKg} kg</span>}
@@ -227,10 +215,10 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
   </div>
 
   {/* ── Desktop : tableau ── */}
-  <div className="hidden sm:block overflow-x-auto border border-gray-200 rounded-xl">
-    <table className="w-full table-fixed divide-y divide-gray-200 text-sm">
+  <div className="hidden overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_rgba(15,23,42,0.03)] sm:block">
+    <table className="w-full table-fixed divide-y divide-slate-100 text-sm">
       <colgroup>
-        <col className="w-[220px]" />
+        <col className="w-[260px]" />
         <col className="w-[90px]" />
         <col className="w-[80px]" />
         <col className="w-[120px]" />
@@ -241,21 +229,21 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
         <col className="w-[60px]" />
       </colgroup>
       <thead>
-        <tr className="bg-gray-50">
+        <tr className="bg-slate-50/70">
           {[tp('Produit'), tp('Sourcing'), tp('Qté'), tp('Achat'), tp('Transport'), tp('Total'), tp('Paiement'), tp('Statut'), tp('Actions')].map(h => (
-            <th key={h} className="px-3 py-2.5 text-left text-xs font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap border-b border-gray-200">
+            <th key={h} className="whitespace-nowrap border-b border-slate-200 px-3 py-3 text-left text-[10px] font-semibold text-slate-500">
               {h}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody className="divide-y divide-gray-100 bg-white">
-        {orders.map((order, idx) => {
+      <tbody className="divide-y divide-slate-100 bg-white">
+        {orders.map((order) => {
           const purchaseTotal = (order.purchasePrice || 0) * (order.quantity || 0);
           const transport = order.transportCost || 0;
           const total = purchaseTotal + transport;
           return (
-            <tr key={order._id} className={`hover:bg-primary-50/30 ${T} ${idx % 2 === 1 ? 'bg-gray-50/40' : ''}`}>
+            <tr key={order._id} className={`bg-white hover:bg-emerald-50/20 ${T}`}>
 
               {/* Produit */}
               <td className="px-3 py-3 align-top">
@@ -296,16 +284,7 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
               </td>
 
               {/* Paiement */}
-              <td className="px-3 py-3 align-top">
-                {order.sourcing === 'chine' ? (
-                  <div className="flex flex-col gap-1">
-                    <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? tp('Achat payé') : tp('Achat impayé')} />
-                    <PaymentPill paid={order.paidTransport} label={order.paidTransport ? tp('Transport payé') : tp('Transport impayé')} />
-                  </div>
-                ) : (
-                  <PaymentPill paid={order.paid} label={order.paid ? tp('Payé') : tp('Impayé')} />
-                )}
-              </td>
+              <td className="px-3 py-3 align-top"><PaymentSummary order={order} /></td>
 
               {/* Statut */}
               <td className="px-3 py-3 align-top">
@@ -646,7 +625,7 @@ export default function SourcingList() {
   if (loading && ordersLoading) return <Skeleton />;
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-slate-50/60 pb-24">
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -656,21 +635,21 @@ export default function SourcingList() {
       `}</style>
 
       {/* ─── Sticky Header ────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-100">
+      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="py-4 flex items-center justify-between gap-4">
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">{tp('Sourcing')}</h1>
+          <div className="flex items-center justify-between gap-4 py-4">
+            <div><h1 className="text-xl font-semibold tracking-tight text-slate-900">{tp('Sourcing')}</h1><p className="mt-0.5 text-[11px] text-slate-500">Suivez vos achats, transports et paiements fournisseurs.</p></div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/ecom/sourcing/stats')}
-                className={`hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 ${T}`}
+                className={`hidden h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-semibold text-slate-600 hover:bg-slate-50 sm:inline-flex ${T}`}
               >
                 <BarChart3 size={14} strokeWidth={2} />
                 {tp('Stats')}
               </button>
               <button
                 onClick={() => activeTab === 'commandes' ? openOrderModal() : openSupplierModal()}
-                className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
+                className={`inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary-500 px-4 text-[11px] font-semibold text-white shadow-sm hover:bg-primary-600 ${T}`}
               >
                 <Plus size={15} strokeWidth={2.5} />
                 <span className="hidden xs:inline">{activeTab === 'commandes' ? 'Commande' : tp('Fournisseur')}</span>
@@ -679,8 +658,8 @@ export default function SourcingList() {
           </div>
 
           {/* Tab chips */}
-          <div className="pb-3 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-1 w-max">
+          <div className="-mx-4 overflow-x-auto px-4 pb-3 scrollbar-hide sm:-mx-6 sm:px-6">
+            <div className="flex w-max items-center gap-1 rounded-xl bg-slate-100/70 p-1">
               <Chip active={activeTab === 'commandes'} onClick={() => setActiveTab('commandes')}>
                 {tp('Commandes')} <span className="ml-1.5 text-xs opacity-60 tabular-nums">{orders.length}</span>
               </Chip>
@@ -705,14 +684,38 @@ export default function SourcingList() {
         )}
 
         {/* ═══ CONTENT TAB ═══════════════════════════════════════════════════ */}
-        <section className="py-8">
+        <section className="py-6">
 
           {activeTab === 'commandes' && (
             <>
-              <div className="flex items-center justify-between mb-2 px-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Commandes')}</p>
+              <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                {[
+                  { label: 'À régler', value: fmt(amountToPlan), sub: amountToPlan > 0 ? 'paiements fournisseurs' : 'tout est à jour', tone: amountToPlan > 0 ? 'text-amber-700' : 'text-emerald-700' },
+                  { label: 'Engagé', value: fmt(totalSpent), sub: 'achat + transport', tone: 'text-slate-900' },
+                  { label: 'En transit', value: inTransitCount, sub: `${orders.length} commandes au total`, tone: 'text-slate-900' },
+                  { label: 'CA potentiel', value: fmt(potentialRevenue), sub: `${receivedCount} reçues`, tone: 'text-violet-700' },
+                ].map(stat => (
+                  <div key={stat.label} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{stat.label}</p>
+                    <p className={`mt-2 truncate text-xl font-semibold tracking-tight tabular-nums ${stat.tone}`}>{stat.value}</p>
+                    <p className="mt-1 text-[10px] text-slate-400">{stat.sub}</p>
+                  </div>
+                ))}
+              </div>
+
+              {amountToPlan > 0 && (
+                <div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-amber-100 bg-amber-50/50 px-4 py-3 text-[10px] text-slate-500">
+                  <span className="font-semibold text-amber-700">Paiements à prévoir</span>
+                  {chinaPurchaseToPlan > 0 && <span>Achat Chine <strong className="font-semibold text-slate-700 tabular-nums">{fmt(chinaPurchaseToPlan)}</strong></span>}
+                  {chinaTransportToPlan > 0 && <span>Transport <strong className="font-semibold text-slate-700 tabular-nums">{fmt(chinaTransportToPlan)}</strong></span>}
+                  {localToPlan > 0 && <span>Local <strong className="font-semibold text-slate-700 tabular-nums">{fmt(localToPlan)}</strong></span>}
+                </div>
+              )}
+
+              <div className="mb-2 flex items-center justify-between px-1">
+                <div><p className="text-[12px] font-semibold text-slate-800">{tp('Commandes')}</p><p className="mt-0.5 text-[10px] text-slate-400">Achats et acheminements fournisseurs</p></div>
                 {orders.length > 0 && (
-                  <p className="text-xs text-gray-400 tabular-nums">{orders.length}</p>
+                  <p className="text-[10px] text-slate-400 tabular-nums">{orders.length} commande{orders.length > 1 ? 's' : ''}</p>
                 )}
               </div>
 
@@ -725,7 +728,7 @@ export default function SourcingList() {
                   <p className="text-sm text-gray-500 mb-6">{tp('Créez votre première commande fournisseur')}</p>
                   <button
                     onClick={() => openOrderModal()}
-                    className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
+                    className={`inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary-500 px-4 text-[11px] font-semibold text-white hover:bg-primary-600 ${T}`}
                   >
                     <Plus size={14} strokeWidth={2.5} /> Nouvelle commande
                   </button>
@@ -740,47 +743,6 @@ export default function SourcingList() {
                 />
               )}
 
-              {/* ═══ STATS COMPACT ══════════════════════════════════════════ */}
-              <section className="grid grid-cols-2 sm:grid-cols-4 gap-0 sm:gap-8 border-y border-gray-100 divide-x divide-gray-100 sm:divide-x-0 mt-8">
-                <div className="px-4 sm:px-0">
-                  <Stat label="Total dépensé" value={fmt(totalSpent)} sub="Achat + transport" />
-                </div>
-                <div className="px-4 sm:px-0">
-                  <Stat label="CA potentiel" value={fmt(potentialRevenue)} sub={`${inTransitCount} en transit`} />
-                </div>
-                <div className="px-4 sm:px-0">
-                  <Stat label="En transit" value={inTransitCount} />
-                </div>
-                <div className="px-4 sm:px-0">
-                  <Stat label="Reçues" value={receivedCount} />
-                </div>
-              </section>
-
-              {/* ═══ HERO METRIC — À prévoir ════════════════════════════════ */}
-              <section className="pt-8 pb-2">
-                <p className="text-xs font-medium text-primary-600 uppercase tracking-wider mb-2">{tp('À prévoir')}</p>
-                <div className="flex items-baseline gap-3 flex-wrap">
-                  <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight tabular-nums leading-none ${amountToPlan > 0 ? 'text-primary-600' : 'text-gray-400'}`}>
-                    {fmt(amountToPlan)}
-                  </h2>
-                </div>
-                <p className="text-sm text-gray-500 mt-3">
-                  {inTransitCount} commande{inTransitCount > 1 ? 's' : ''} en transit · {amountToPlan > 0 ? 'paiements à effectuer' : 'tout est à jour'}
-                </p>
-                {(chinaPurchaseToPlan > 0 || chinaTransportToPlan > 0 || localToPlan > 0) && (
-                  <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs">
-                    {chinaPurchaseToPlan > 0 && (
-                      <span className="text-gray-700">{tp('Achat Chine')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaPurchaseToPlan)}</strong></span>
-                    )}
-                    {chinaTransportToPlan > 0 && (
-                      <span className="text-gray-700">{tp('Transport')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaTransportToPlan)}</strong></span>
-                    )}
-                    {localToPlan > 0 && (
-                      <span className="text-gray-700">{tp('Local')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(localToPlan)}</strong></span>
-                    )}
-                  </div>
-                )}
-              </section>
             </>
           )}
 

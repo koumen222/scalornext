@@ -53,6 +53,8 @@ export default function AvailableOrders() {
       navigate('/ecom/livreur/deliveries');
     } catch (err) {
       setError(err.response?.data?.message || 'Impossible d\'accepter cette course.');
+      // Course perdue (déjà prise / réservée) → rafraîchir pour retirer l'offre obsolète
+      loadOrders();
     } finally {
       setAssigning(null);
     }

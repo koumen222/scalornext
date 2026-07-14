@@ -3,13 +3,16 @@ import { useNavigate, useParams, useLocation } from '@/lib/router-compat';
 import {
   ArrowLeft, Save, Image, Plus, X, Loader2, AlertCircle, CheckCircle,
   Search, PackageSearch, Link, Sparkles, Globe, FileText, ChevronDown,
-  ChevronUp, ShoppingBag, Layers, ChevronRight, Target, Lightbulb,
+  ChevronUp, Layers, ChevronRight, Target, Lightbulb,
   BarChart3, Star, Shield, Zap, BookOpen, Type, Trash2, Download,
-  Upload, ExternalLink, HelpCircle, Film
+  Upload, ExternalLink, HelpCircle
 } from 'lucide-react';
 import { storeProductsApi, storeManageApi } from '../services/storeApi.js';
 import AlibabaImportModal from '../components/AlibabaImportModal.jsx';
 import RichTextEditor from '../components/RichTextEditor.jsx';
+import AiTextPromptBox from '../components/AiTextPromptBox.jsx';
+import AiImagePromptBox from '../components/AiImagePromptBox.jsx';
+import AiGifPromptBox from '../components/AiGifPromptBox.jsx';
 import QuantityOffersManager from '../components/QuantityOffersManager.jsx';
 import ReviewGenerator from '../components/ReviewGenerator.jsx';
 import DigitalProductEbookModal from '../components/DigitalProductEbookModal.jsx';
@@ -84,12 +87,6 @@ function clearPublicStoreSessionCaches() {
   invalidateProductPageCache();
 }
 
-const MARKET_COUNTRY_SUGGESTIONS = [
-  'Cameroun', "Cote d'Ivoire", 'Sénégal', 'Bénin', 'Togo', 'Gabon',
-  'RDC', 'Congo', 'Nigeria', 'Ghana', 'Guinée', 'Mali', 'Burkina Faso',
-  'Maroc', 'Tunisie', 'France',
-];
-const MARKET_CURRENCY_SUGGESTIONS = ['XAF', 'XOF', 'EUR', 'USD', 'NGN', 'GHS', 'KES', 'MAD', 'DZD', 'TND', 'GNF', 'CDF'];
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
 
@@ -160,9 +157,6 @@ const StoreProductForm = () => {
   const [imageUrlInput, setImageUrlInput] = useState('');
 
   // ── GIF state ────────────────────────────────────────────────────────────────
-  const [gifDragOver, setGifDragOver] = useState(false);
-  const [gifUrlInput, setGifUrlInput] = useState('');
-  const [uploadingGif, setUploadingGif] = useState(false);
 
   // ── Picker state ─────────────────────────────────────────────────────────────
   const [showPicker, setShowPicker] = useState(false);
@@ -171,6 +165,7 @@ const StoreProductForm = () => {
   const [pickerLoading, setPickerLoading] = useState(false);
   const [linkedProduct, setLinkedProduct] = useState(null);
   const searchTimeout = useRef(null);
+  const descEditorRef = useRef(null);
 
   // ── Collapsible sections ──────────────────────────────────────────────────
   const [openSections, setOpenSections] = useState({});
@@ -289,6 +284,16 @@ const StoreProductForm = () => {
   // ── Form helpers ──────────────────────────────────────────────────────────
   const handleChange = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
+  // Insertions IA (image, GIF, paragraphe) : à la position du curseur dans
+  // l'éditeur de description — à défaut, à la fin du contenu.
+  const insertIntoDescription = (html) => {
+    if (descEditorRef.current?.insertHtmlAtCaret) {
+      descEditorRef.current.insertHtmlAtCaret(html); // le onChange de l'éditeur synchronise form.description
+    } else {
+      setForm(prev => ({ ...prev, description: `${prev.description || ''}${html}` }));
+    }
+  };
+
   const syncHeroWithImages = (updater) => {
     setForm(prev => {
       const next = typeof updater === 'function' ? updater(prev) : updater;
@@ -369,66 +374,6 @@ const StoreProductForm = () => {
       images: [...prev.images, { url: imageUrlInput.trim(), alt: prev.name, order: prev.images.length }],
     }));
     setImageUrlInput('');
-  };
-
-  // ── GIF handlers (stockés dans _pageData.descriptionGifs, affichés sur la page produit) ──
-  const gifUrlOf = (g) => (typeof g === 'string' ? g : g?.url || '');
-  const productGifs = (Array.isArray(form._pageData?.descriptionGifs) ? form._pageData.descriptionGifs : [])
-    .map(gifUrlOf).filter(Boolean);
-
-  const updateGifs = (updater) =>
-    setForm(prev => {
-      const current = (Array.isArray(prev._pageData?.descriptionGifs) ? prev._pageData.descriptionGifs : [])
-        .map(gifUrlOf).filter(Boolean);
-      return { ...prev, _pageData: { ...(prev._pageData || {}), descriptionGifs: updater(current) } };
-    });
-
-  const addGifs = async (fileList) => {
-    const files = Array.from(fileList || []).filter(f =>
-      f.type === 'image/gif' || f.type === 'image/webp' || /\.(gif|webp)$/i.test(f.name));
-    if (!files.length) { showToast('error', tp('Sélectionnez un fichier GIF (.gif ou .webp animé)')); return; }
-    setUploadingGif(true);
-    const errors = [];
-    for (const file of files) {
-      if (file.size > 15 * 1024 * 1024) {
-        errors.push(tp('{name} dépasse 15 MB', { name: file.name }));
-        continue;
-      }
-      try {
-        const res = await storeProductsApi.uploadImages([file]);
-        const uploaded = res.data?.data?.[0];
-        if (!uploaded?.url) throw new Error('URL manquante dans la réponse');
-        updateGifs(current => [...current, uploaded.url]);
-      } catch (err) {
-        errors.push(`${file.name} : ${err?.response?.data?.message || err.message || 'Erreur upload'}`);
-      }
-    }
-    setUploadingGif(false);
-    if (errors.length) showToast('error', errors.join(' — '));
-  };
-
-  const handleGifDrop = (e) => {
-    e.preventDefault();
-    setGifDragOver(false);
-    addGifs(e.dataTransfer.files);
-  };
-
-  const handleRemoveGif = (index) => updateGifs(current => current.filter((_, i) => i !== index));
-
-  const handleMoveGif = (index, direction) =>
-    updateGifs(current => {
-      const next = [...current];
-      const target = index + direction;
-      if (target < 0 || target >= next.length) return current;
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
-
-  const handleAddGifUrl = () => {
-    const url = gifUrlInput.trim();
-    if (!url) return;
-    updateGifs(current => [...current, url]);
-    setGifUrlInput('');
   };
 
   // ── Picker ────────────────────────────────────────────────────────────────
@@ -578,7 +523,7 @@ const StoreProductForm = () => {
       });
       showToast('success', 'Produit digital généré et ajouté à cette page.');
     } catch (err) {
-      setDigitalProductError(err?.response?.data?.message || err.message || 'Erreur lors de la génération du produit digital');
+      setDigitalProductError(err?.response?.data?.detail || err?.response?.data?.message || err.message || 'Erreur lors de la génération du produit digital');
     } finally {
       setDigitalProductLoading(false);
     }
@@ -774,12 +719,89 @@ const StoreProductForm = () => {
                 />
                 <div className="border-t border-gray-100 pt-4">
                   <RichTextEditor
+                    ref={descEditorRef}
                     value={form.description}
                     onChange={(html) => handleChange('description', html)}
                     placeholder={tp('Décrivez votre produit : avantages, matière, utilisation…')}
                     minHeight={160}
                     maxHeight={500}
                   />
+                  {/* IA description : générer / ajouter un paragraphe / insérer une image */}
+                  <div className="mt-2 flex flex-wrap items-start gap-x-4 gap-y-1.5">
+                    <AiTextPromptBox
+                      withMethods
+                      format="html"
+                      purpose="description de fiche produit e-commerce (vendeur, structuré, orienté bénéfices)"
+                      maxWords={220}
+                      label={tp('Générer la description par IA')}
+                      context={{
+                        produit: form.name,
+                        prix: form.price,
+                        categorie: form.category,
+                        marche: form.targetMarket || form.country,
+                      }}
+                      onGenerated={(text) => {
+                        // HTML structuré (h2/h3/p/ul) renvoyé tel quel par l'IA ;
+                        // fallback : texte plat → paragraphes
+                        const html = /<h2|<h3|<p|<ul/i.test(String(text))
+                          ? String(text)
+                          : String(text)
+                            .split(/\n{2,}|\n/)
+                            .map((l) => l.trim())
+                            .filter(Boolean)
+                            .map((l) => `<p>${l}</p>`)
+                            .join('');
+                        const existing = String(form.description || '').replace(/<[^>]+>/g, '').trim();
+                        if (existing) {
+                          // Contenu déjà présent → insertion au curseur, sans écraser
+                          insertIntoDescription(html || `<p>${text}</p>`);
+                        } else {
+                          handleChange('description', html || `<p>${text}</p>`);
+                        }
+                      }}
+                    />
+                    <AiTextPromptBox
+                      withMethods
+                      purpose="UN paragraphe complémentaire de description produit (continue le texte existant sans le répéter : angle nouveau — utilisation, bénéfice, réassurance, cible…)"
+                      maxWords={70}
+                      label={tp('Ajouter un paragraphe par IA')}
+                      context={{
+                        produit: form.name,
+                        prix: form.price,
+                        categorie: form.category,
+                        descriptionActuelle: String(form.description || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 900),
+                      }}
+                      onGenerated={(text) => {
+                        const para = String(text)
+                          .split(/\n{2,}|\n/)
+                          .map((l) => l.trim())
+                          .filter(Boolean)
+                          .map((l) => `<p>${l}</p>`)
+                          .join('');
+                        insertIntoDescription(para || `<p>${text}</p>`);
+                      }}
+                    />
+                    <AiGifPromptBox
+                      subject={form.name}
+                      context={form.description}
+                      aspectRatio="1:1"
+                      referenceOptions={form.images?.[0]?.url ? [{ label: tp('Image principale'), url: form.images[0].url }] : []}
+                      onGenerated={(gifUrl) => {
+                        insertIntoDescription(`<p><img src="${gifUrl}" alt="${(form.name || '').replace(/"/g, '')}" style="max-width:100%;height:auto;border-radius:12px" /></p>`);
+                      }}
+                    />
+                    <AiImagePromptBox
+                      compact
+                      value=""
+                      label={tp('Insérer une image par IA')}
+                      aspectRatio="4:3"
+                      subject={form.name}
+                      referenceOptions={form.images?.[0]?.url ? [{ label: tp('Image principale'), url: form.images[0].url }] : []}
+                      onGenerated={(url) => {
+                        insertIntoDescription(`<p><img src="${url}" alt="${(form.name || '').replace(/"/g, '')}" style="max-width:100%;height:auto;border-radius:12px" /></p>`);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -919,119 +941,20 @@ const StoreProductForm = () => {
                       {tp('Ajouter')}
                     </button>
                   </div>
-                </div>
-              </div>
 
-              {/* ── GIFs ─────────────────────────────────────────────────── */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">
-                  <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                    <Film className="w-4 h-4 text-gray-400" />
-                    {tp('GIFs animés')}
-                    {productGifs.length > 0 && (
-                      <span className="text-xs text-gray-400 font-normal">{productGifs.length}</span>
-                    )}
-                  </h2>
-                  {uploadingGif && (
-                    <span className="flex items-center gap-1.5 text-xs text-primary-600 font-medium">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" /> {tp('Upload en cours...')}
-                    </span>
-                  )}
-                </div>
-
-                <div className="p-5">
-                  <p className="text-xs text-gray-400 mb-3">{tp('Affichés dans la description de la page produit (démo du produit en action).')}</p>
-                  {productGifs.length === 0 ? (
-                    <label
-                      className={`flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
-                        gifDragOver
-                          ? 'border-primary-400 bg-primary-50 scale-[1.01]'
-                          : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
-                      }`}
-                      onDragOver={(e) => { e.preventDefault(); setGifDragOver(true); }}
-                      onDragLeave={() => setGifDragOver(false)}
-                      onDrop={handleGifDrop}
-                    >
-                      <input
-                        type="file" accept="image/gif,image/webp" multiple className="hidden"
-                        onChange={(e) => { addGifs(e.target.files); e.target.value = ''; }} disabled={uploadingGif}
-                      />
-                      <div className={`flex flex-col items-center gap-2 pointer-events-none ${gifDragOver ? 'text-primary-600' : 'text-gray-400'}`}>
-                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${gifDragOver ? 'bg-primary-100' : 'bg-gray-100'}`}>
-                          <Film className="w-5 h-5" />
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm font-semibold text-gray-700">
-                            {gifDragOver ? tp('Déposez vos GIFs ici') : tp('Glissez-déposez vos GIFs')}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-0.5">{tp('ou cliquez pour parcourir · GIF, WebP animé · max 15 MB')}</p>
-                        </div>
-                      </div>
-                    </label>
-                  ) : (
-                    <div
-                      className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-1 rounded-xl transition ${gifDragOver ? 'ring-2 ring-primary-400 ring-inset bg-primary-50/50' : ''}`}
-                      onDragOver={(e) => { e.preventDefault(); setGifDragOver(true); }}
-                      onDragLeave={() => setGifDragOver(false)}
-                      onDrop={handleGifDrop}
-                    >
-                      {productGifs.map((url, i) => (
-                        <div key={`${url}-${i}`} className="relative group aspect-video">
-                          <img
-                            src={url}
-                            alt={`GIF ${i + 1}`}
-                            className="w-full h-full rounded-xl object-cover ring-1 ring-gray-200 bg-black"
-                            loading="lazy"
-                          />
-                          <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-black/60 text-white text-[9px] font-bold rounded-md leading-none">GIF</span>
-                          <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
-                            {i > 0 && (
-                              <button type="button" onClick={() => handleMoveGif(i, -1)} title={tp('Déplacer à gauche')}
-                                className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
-                                <ChevronUp className="w-3.5 h-3.5 -rotate-90" />
-                              </button>
-                            )}
-                            {i < productGifs.length - 1 && (
-                              <button type="button" onClick={() => handleMoveGif(i, 1)} title={tp('Déplacer à droite')}
-                                className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
-                                <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
-                              </button>
-                            )}
-                            <button type="button" onClick={() => handleRemoveGif(i)} title={tp('Supprimer')}
-                              className="p-1.5 bg-red-500 rounded-lg text-white hover:bg-red-600 transition shadow-sm">
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                      <label className="aspect-video rounded-xl border-2 border-dashed border-gray-200 hover:border-primary-300 hover:bg-primary-50 flex flex-col items-center justify-center cursor-pointer transition group">
-                        <input type="file" accept="image/gif,image/webp" multiple className="hidden" onChange={(e) => { addGifs(e.target.files); e.target.value = ''; }} disabled={uploadingGif} />
-                        {uploadingGif ? (
-                          <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
-                        ) : (
-                          <>
-                            <Plus className="w-5 h-5 text-gray-300 group-hover:text-primary-500 transition" />
-                            <span className="text-[10px] text-gray-300 group-hover:text-primary-500 mt-1 transition font-medium">{tp('Ajouter')}</span>
-                          </>
-                        )}
-                      </label>
-                    </div>
-                  )}
-
-                  {/* URL input */}
-                  <div className="flex gap-2 mt-4">
-                    <input
-                      type="url"
-                      value={gifUrlInput}
-                      onChange={(e) => setGifUrlInput(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddGifUrl(); } }}
-                      placeholder={tp('Ou collez une URL de GIF...')}
-                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-300"
+                  {/* Générer une image produit par IA (à partir de la principale si présente) */}
+                  <div className="mt-2">
+                    <AiImagePromptBox
+                      compact
+                      value={form.images?.[0]?.url || ''}
+                      aspectRatio="1:1"
+                      subject={form.name}
+                      referenceOptions={form.images?.[0]?.url ? [{ label: tp('Image principale'), url: form.images[0].url }] : []}
+                      onGenerated={(url) => setForm((prev) => ({
+                        ...prev,
+                        images: [...prev.images, { url, alt: prev.name, order: prev.images.length }],
+                      }))}
                     />
-                    <button type="button" onClick={handleAddGifUrl} disabled={!gifUrlInput.trim()}
-                      className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition font-medium whitespace-nowrap">
-                      {tp('Ajouter')}
-                    </button>
                   </div>
                 </div>
               </div>
@@ -1039,7 +962,7 @@ const StoreProductForm = () => {
               {/* ── Prix & Stock ─────────────────────────────────────────── */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
                 <h2 className="text-sm font-semibold text-gray-900 mb-4">Prix & Stock</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   <div className="col-span-2 sm:col-span-1">
                     <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Prix *')}</label>
                     <div className="relative">
@@ -1056,50 +979,13 @@ const StoreProductForm = () => {
                     <input type="number" value={form.compareAtPrice} onChange={(e) => handleChange('compareAtPrice', e.target.value)}
                       placeholder="20000" min="0" step="any" className={inputCls} />
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Devise')}</label>
-                    <select value={form.currency} onChange={(e) => handleChange('currency', e.target.value.toUpperCase())}
-                      className={`${inputCls} bg-white`}>
-                      <option value="">{tp('Boutique')}</option>
-                      {[...new Set([...(form.currency && !MARKET_CURRENCY_SUGGESTIONS.includes(form.currency) ? [form.currency] : []), ...MARKET_CURRENCY_SUGGESTIONS])].map(c => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
+                  <div className="col-span-2 sm:col-span-1">
                     <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Stock')}</label>
                     <input type="number" value={form.stock} onChange={(e) => handleChange('stock', e.target.value)}
                       min="0" className={inputCls} />
                   </div>
                 </div>
 
-                {/* Marché */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Marché cible')}</label>
-                    <input type="text" value={form.targetMarket} onChange={(e) => handleChange('targetMarket', e.target.value)}
-                      placeholder={tp('Ex: Afrique francophone')} className={inputCls} />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Langue de la page produit')}</label>
-                    <select value={form.pageLanguage} onChange={(e) => handleChange('pageLanguage', e.target.value)} className={`${inputCls} bg-white`}>
-                      <option value="">{tp('Auto — langue de la boutique')}</option>
-                      <option value="fr">Français</option>
-                      <option value="en">English</option>
-                      <option value="es">Español</option>
-                    </select>
-                    <p className="mt-1 text-[11px] text-gray-400">{tp('Le contenu de la page est traduit automatiquement dans cette langue.')}</p>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Pays cible')}</label>
-                    <select value={form.country} onChange={(e) => handleChange('country', e.target.value)} className={`${inputCls} bg-white`}>
-                      <option value="">{tp('Choisir un pays')}</option>
-                      {[...new Set([...(form.country && !MARKET_COUNTRY_SUGGESTIONS.includes(form.country) ? [form.country] : []), ...MARKET_COUNTRY_SUGGESTIONS])].map(c => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
               </div>
 
               {/* ── Organisation ─────────────────────────────────────────── */}
@@ -1380,14 +1266,6 @@ const StoreProductForm = () => {
               {/* Actions rapides */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-2">
                 <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">{tp('Actions rapides')}</h3>
-                <button type="button" onClick={() => setShowAiModal(true)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-100 text-sm font-semibold text-violet-700 hover:from-violet-100 hover:to-indigo-100 transition">
-                  <Sparkles className="w-4 h-4 flex-shrink-0" /> Générer avec l'IA
-                </button>
-                <button type="button" onClick={() => setShowAlibabaModal(true)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-orange-50 border border-orange-100 text-sm font-semibold text-orange-700 hover:bg-orange-100 transition">
-                  <ShoppingBag className="w-4 h-4 flex-shrink-0" /> Importer d'Alibaba
-                </button>
                 {isEdit && (
                   <button type="button" onClick={() => {
                     const isPremium = storeTemplate === 'magazine' || isPremiumPageData(form._pageData, form.productPageConfig);

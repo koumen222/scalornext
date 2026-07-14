@@ -4,7 +4,7 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
 import { useStore } from '../contexts/StoreContext.jsx';
-import { ArrowRight, CheckCircle2, Store } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Store, Rocket, Package, ShoppingCart, BarChart3, Target, Check, X } from 'lucide-react';
 import { usePlatformT, tp } from '../i18n/platform.js';
 
 const ChartContent = React.memo(({ data, selectedMetric, fmt }) => {
@@ -195,6 +195,9 @@ const AdminDashboard = () => {
   });
   const [timeRange, setTimeRange] = useState('today');
   const [selectedMetric, setSelectedMetric] = useState('revenue');
+  // Guide de démarrage ("Premiers pas") — signaux all-time indépendants de la période
+  const [onboarding, setOnboarding] = useState({ hasProducts: false, hasOrders: false, hasReports: false, loaded: false });
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
@@ -545,6 +548,37 @@ const AdminDashboard = () => {
     loadDashboardDataRef.current();
   }, [timeRange, customStartDate, customEndDate, activeStore?._id]);
 
+  // Signaux d'activation (all-time) pour le guide "Premiers pas" — 1 seule fois par boutique
+  useEffect(() => {
+    let cancelled = false;
+    const hasData = (res) => Array.isArray(res?.data?.data) && res.data.data.length > 0;
+    (async () => {
+      const [p, o, r] = await Promise.all([
+        ecomApi.get('/products?limit=1').catch(() => null),
+        ecomApi.get('/orders?limit=1').catch(() => null),
+        ecomApi.get('/reports?limit=1').catch(() => null),
+      ]);
+      if (cancelled) return;
+      setOnboarding({ hasProducts: hasData(p), hasOrders: hasData(o), hasReports: hasData(r), loaded: true });
+    })();
+    return () => { cancelled = true; };
+  }, [activeStore?._id]);
+
+  // Restaurer l'état "masqué" du guide (par workspace)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      setOnboardingDismissed(localStorage.getItem(`scalor_gs_dismissed_${workspaceId || 'default'}`) === '1');
+    } catch { /* localStorage indisponible */ }
+  }, [workspaceId]);
+
+  const dismissOnboarding = () => {
+    setOnboardingDismissed(true);
+    try {
+      if (typeof window !== 'undefined') localStorage.setItem(`scalor_gs_dismissed_${workspaceId || 'default'}`, '1');
+    } catch { /* localStorage indisponible */ }
+  };
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return t('Bonjour');
@@ -709,7 +743,23 @@ const AdminDashboard = () => {
   }
 
   const hasStores = stores.length > 0;
-  const showStoreSetupBanner = Boolean(workspaceId) && !hasStores;
+
+  // ── Guide "Premiers pas" : checklist d'activation qui pousse à l'action ──
+  const gsSteps = [
+    { key: 'store',   done: hasStores,             icon: Store,        short: tp('Boutique'), title: tp('Créer votre boutique'),          to: '/ecom/boutique/wizard' },
+    { key: 'product', done: onboarding.hasProducts, icon: Package,      short: tp('Produit'),  title: tp('Ajouter votre premier produit'), to: '/ecom/products/new' },
+    { key: 'order',   done: onboarding.hasOrders,   icon: ShoppingCart, short: tp('Commande'), title: tp('Marquer une commande'),          to: '/ecom/orders' },
+    { key: 'report',  done: onboarding.hasReports,  icon: BarChart3,    short: tp('Rapport'),  title: tp('Créer votre premier rapport'),   to: '/ecom/reports/new' },
+    { key: 'goal',    done: (stats.goals || []).length > 0, icon: Target, short: tp('Objectif'), title: tp('Définir un objectif du mois'), to: '/ecom/goals' },
+  ];
+  const gsDone = gsSteps.filter(s => s.done).length;
+  const gsAllDone = gsDone === gsSteps.length;
+  const gsPct = Math.round((gsDone / gsSteps.length) * 100);
+  const nextStepKey = gsSteps.find(s => !s.done)?.key;
+  const showGuide = onboarding.loaded && !gsAllDone && !onboardingDismissed;
+
+  // La bannière "créer une boutique" est redondante avec l'étape 1 du guide
+  const showStoreSetupBanner = Boolean(workspaceId) && !hasStores && !showGuide;
 
   // Si pas de workspace — afficher CTA (ici pour respecter les Rules of Hooks)
   if (!user?.workspaceId) {
@@ -766,6 +816,57 @@ const AdminDashboard = () => {
             {t('Voici un aperçu de votre activité aujourd\'hui.')}
           </p>
         </div>
+
+        {/* Guide "Premiers pas" — stepper compact qui pousse à l'action */}
+        {showGuide && (
+          <section className="mb-4 rounded-xl border border-gray-200/70 bg-white px-3 py-2.5 shadow-sm sm:px-4">
+            {/* Ligne 1 : titre + progression + fermer */}
+            <div className="flex items-center gap-2.5">
+              <Rocket className="h-4 w-4 shrink-0 text-primary-600" />
+              <h2 className="text-[13px] font-semibold text-gray-900 whitespace-nowrap">{tp('Lancez votre activité')} 🚀</h2>
+              <div className="hidden sm:block h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100">
+                <div className="h-full rounded-full bg-primary-500 transition-all duration-700" style={{ width: `${gsPct}%` }} />
+              </div>
+              <span className="ml-auto sm:ml-0 whitespace-nowrap text-[11px] text-gray-500">
+                <span className="font-semibold tabular-nums text-gray-700">{gsDone}/{gsSteps.length}</span>
+              </span>
+              <button
+                onClick={dismissOnboarding}
+                aria-label={tp('Masquer le guide')}
+                className="shrink-0 rounded-md p-1 text-gray-400 transition hover:bg-gray-50 hover:text-gray-600"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {/* Ligne 2 : pastilles d'étapes (compact, wrap) */}
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              {gsSteps.map((step) => {
+                const Icon = step.icon;
+                const isNext = step.key === nextStepKey;
+                return (
+                  <Link
+                    key={step.key}
+                    to={step.to}
+                    title={step.title}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+                      step.done
+                        ? 'border-transparent bg-gray-50 text-gray-400'
+                        : isNext
+                          ? 'border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {step.done
+                      ? <Check className="h-3.5 w-3.5 text-primary-500" />
+                      : <Icon className={`h-3.5 w-3.5 ${isNext ? 'text-primary-600' : 'text-gray-400'}`} />}
+                    <span className={step.done ? 'line-through' : ''}>{step.short}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {showStoreSetupBanner && (
           <section className="mb-5 rounded-lg border border-primary-100 bg-white shadow-sm">
@@ -1013,28 +1114,47 @@ const AdminDashboard = () => {
           <div className="p-4">
             {loadingKpi ? (
               <div className="h-56 bg-gray-100 rounded-xl animate-pulse" />
+            ) : (periodStats.totalRevenue === 0 && periodStats.totalOrders === 0) ? (
+              /* Période vide → CTA plutôt qu'un graphique mort */
+              <div className="flex h-56 flex-col items-center justify-center px-4 text-center">
+                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                  <BarChart3 className="h-5 w-5" />
+                </div>
+                <p className="text-sm font-semibold text-gray-900">{tp('Aucune activité sur cette période')}</p>
+                <p className="mt-1 max-w-sm text-xs text-gray-500">
+                  {tp('Créez un rapport ou ajoutez un produit pour voir vos ventes apparaître ici.')}
+                </p>
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                  <Link to="/ecom/reports/new" className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-primary-700">
+                    <BarChart3 className="h-3.5 w-3.5" /> {tp('Créer un rapport')}
+                  </Link>
+                  <Link to="/ecom/products/new" className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-50">
+                    <Package className="h-3.5 w-3.5" /> {tp('Ajouter un produit')}
+                  </Link>
+                </div>
+              </div>
             ) : <ChartContent data={stats.dailyFinancial || []} selectedMetric={selectedMetric} fmt={fmt} />}
           </div>
         </div>
 
         {/* Quick Actions */}
         <div className="mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
             {quickActions.map((action, i) => (
               <Link
                 key={i}
                 to={action.link}
-                className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-all duration-200"
+                className="group bg-white border border-gray-200 rounded-xl p-3 sm:p-4 hover:shadow-sm active:scale-[0.99] transition-all duration-200"
               >
-                <div className="flex items-start gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3">
                   <div className={`${action.iconBg} ${action.iconColor} w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0`}>
                     {action.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{action.name}</h3>
-                    <p className="text-xs text-gray-500">{action.description}</p>
+                    <h3 className="text-[13px] sm:text-sm font-semibold text-gray-900 leading-tight">{action.name}</h3>
+                    <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">{action.description}</p>
                   </div>
-                  <svg className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0 mt-0.5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -1106,7 +1226,7 @@ const AdminDashboard = () => {
                 );
               })}
               {!loadingSecondary && topProductsPreview.length === 0 && (
-                <div className="px-6 py-12 text-center">
+                <div className="px-6 py-10 sm:py-12 text-center">
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 17l4-4 3 3 5-6M7 7h10M7 12h6" />
@@ -1187,7 +1307,7 @@ const AdminDashboard = () => {
                 })}
               </div>
             ) : (
-              <div className="px-6 py-12 text-center">
+              <div className="px-6 py-10 sm:py-12 text-center">
                 <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-primary-600">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1292,11 +1412,18 @@ const AdminDashboard = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-gray-900 font-bold mb-1">{tp('Aucun objectif défini pour ce mois')}</p>
-              <p className="text-sm text-gray-500 mb-5 max-w-xs mx-auto">{tp('Fixez des cibles pour suivre votre progression chaque mois.')}</p>
+              <p className="text-gray-900 font-bold mb-1">{tp('Donnez un cap à votre mois')}</p>
+              <p className="text-sm text-gray-500 mb-4 max-w-sm mx-auto">{tp('Un objectif clair vous garde motivé et transforme vos ventes quotidiennes en progression visible.')}</p>
+              <div className="mb-5 flex flex-wrap items-center justify-center gap-1.5">
+                {[tp("Chiffre d'affaires"), tp('Livraisons'), tp('Bénéfice')].map((chip) => (
+                  <span key={chip} className="inline-flex items-center gap-1 rounded-full border border-violet-100 bg-white px-2.5 py-1 text-[11px] font-medium text-violet-700">
+                    <Target className="h-3 w-3" /> {chip}
+                  </span>
+                ))}
+              </div>
               <Link to="/ecom/goals" className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm transition">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 6v12m6-6H6" /></svg>
-                {tp('Créer un objectif')}
+                {tp('Définir mon premier objectif')}
               </Link>
             </div>
           )}

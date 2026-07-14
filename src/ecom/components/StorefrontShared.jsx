@@ -198,6 +198,8 @@ export const StorefrontFooter = ({ store, prefix = '', footer = null }) => {
   const quickLinks = footer?.quickLinks || [
     { label: 'Accueil', href: '/' },
     { label: 'Nos Produits', href: '/products' },
+    { get label() { return tp('À propos'); }, href: '/a-propos' },
+    { label: 'Contact', href: '/contact' },
   ];
   const legalLinks = footer?.legalLinks || [
     { get label() { return tp('Confidentialité'); }, href: '/legal/confidentialite' },

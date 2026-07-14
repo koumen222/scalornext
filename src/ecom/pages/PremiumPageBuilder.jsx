@@ -3,16 +3,24 @@ import { createPortal } from 'react-dom';
 import { useNavigate, useParams } from '@/lib/router-compat';
 import {
   ArrowLeft, Save, Loader2, Check, Plus, Trash2, ChevronDown, ChevronUp,
+  ChevronLeft, ChevronRight, Eye, EyeOff, Code, GripVertical, X, Sparkles,
   Star, Type, Zap, Shield, HelpCircle, BookOpen, Palette, Image as ImageIcon,
   MessageSquare, BarChart3, Layers, Award, Clock, ShoppingBag, Monitor,
   Smartphone, ExternalLink, Pencil, Undo2, Redo2,
+  Megaphone, Timer, ArrowLeftRight, Play, ListOrdered, Table, Truck, MessageCircle,
 } from 'lucide-react';
-import { storeProductsApi } from '../services/storeApi.js';
+import { storeProductsApi, storeManageApi } from '../services/storeApi.js';
 import { useStore } from '../contexts/StoreContext.jsx';
-import StoreProductPagePremium from '../components/StoreProductPagePremium.jsx';
+import StoreProductPagePremium, { normalizeAiSections } from '../components/StoreProductPagePremium.jsx';
 import BuilderAIChatWidget from '../components/BuilderAIChatWidget.jsx';
+import CustomCodeEditor from '../components/CustomCodeEditor.jsx';
+import AiImagePromptBox from '../components/AiImagePromptBox.jsx';
+import { SECTION_TEMPLATES } from '../components/sectionTemplates.js';
 
 // Build a premiumPage config pre-filled from _pageData when productPageConfig.premiumPage is absent/empty
+// Contexte de génération d'images (produit + infos de la page) diffusé aux ImageField.
+const ImageGenContext = React.createContext({ subject: '', context: '' });
+
 function hydrateFromPageData(product) {
   const pd = product?._pageData || {};
   const pp = product?.productPageConfig?.premiumPage;
@@ -75,24 +83,28 @@ function hydrateFromPageData(product) {
   const existing = product?.productPageConfig || {};
 
   // Merge product.premiumImages into config.premiumImages (product-level images win if config empty)
+  // Sources, dans l'ordre de priorité : config sauvegardée → produit → SNAPSHOT de la dernière
+  // génération IA (_pageData.premiumImages). Ainsi les visuels générés remplissent les slots.
   const srcImgs = product?.premiumImages || {};
   const cfgImgs = existing.premiumImages || {};
+  const genImgs = product?._pageData?.premiumImages || {};
+  const pickUrl = (v) => (typeof v === 'string' ? v : v?.url || '');
+  const arrUrls = (imgs, key) => (Array.isArray(imgs?.[key]) ? imgs[key].map(pickUrl).filter(Boolean) : []);
+  const firstNonEmpty = (...arrs) => arrs.find((a) => a && a.length) || [];
   const mergedImages = {};
   for (const key of ['hero', 'problem', 'mechanism', 'science', 'ritual', 'closing']) {
-    const cfgVal = cfgImgs[key];
-    const srcVal = srcImgs[key];
-    const cfgUrl = typeof cfgVal === 'string' ? cfgVal : cfgVal?.url || '';
-    const srcUrl = typeof srcVal === 'string' ? srcVal : srcVal?.url || '';
-    mergedImages[key] = cfgUrl || srcUrl || '';
+    mergedImages[key] = pickUrl(cfgImgs[key]) || pickUrl(srcImgs[key]) || pickUrl(genImgs[key]) || '';
   }
-  // heroGallery: array of urls
-  const cfgGallery = Array.isArray(cfgImgs.heroGallery) ? cfgImgs.heroGallery.map(e => typeof e === 'string' ? e : e?.url || '') : [];
-  const srcGallery = Array.isArray(srcImgs.heroGallery) ? srcImgs.heroGallery.map(e => typeof e === 'string' ? e : e?.url || '') : [];
-  mergedImages.heroGallery = cfgGallery.length ? cfgGallery : srcGallery;
+  // heroGallery: array of urls — config → produit → génération IA
+  const cfgGallery = arrUrls(cfgImgs, 'heroGallery');
+  const srcGallery = arrUrls(srcImgs, 'heroGallery');
+  const genGallery = arrUrls(genImgs, 'heroGallery');
+  mergedImages.heroGallery = firstNonEmpty(cfgGallery, srcGallery, genGallery);
   // testimonials images
-  const cfgTesti = Array.isArray(cfgImgs.testimonials) ? cfgImgs.testimonials.map(e => typeof e === 'string' ? e : e?.url || '') : [];
-  const srcTesti = Array.isArray(srcImgs.testimonials) ? srcImgs.testimonials.map(e => typeof e === 'string' ? e : e?.url || '') : [];
-  mergedImages.testimonials = cfgTesti.length ? cfgTesti : srcTesti;
+  const cfgTesti = arrUrls(cfgImgs, 'testimonials');
+  const srcTesti = arrUrls(srcImgs, 'testimonials');
+  const genTesti = arrUrls(genImgs, 'testimonials');
+  mergedImages.testimonials = firstNonEmpty(cfgTesti, srcTesti, genTesti);
 
   // Also pull product gallery images as fallback for heroGallery
   if (!mergedImages.heroGallery.length) {
@@ -170,6 +182,33 @@ function hydrateFromPageData(product) {
 const inputCls = 'w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition placeholder-gray-400';
 const textareaCls = `${inputCls} resize-none`;
 
+// ─── Éditeur de la section « Code personnalisé » — un seul champ (HTML + CSS + JS) ──
+function CustomCodeEditorPanel({ content = {}, onChange, onRemove }) {
+  // Compat : anciens contenus séparés css/js — affichés fusionnés dans le champ unique
+  const legacyExtras = [
+    content.css?.trim() ? `<style>\n${content.css}\n</style>` : '',
+    content.js?.trim() ? `<script>\n${content.js}\n</script>` : '',
+  ].filter(Boolean).join('\n\n');
+  const displayValue = [content.html || '', legacyExtras].filter(Boolean).join('\n\n');
+
+  const handleChange = (val) => {
+    onChange('html', val);
+    // Le champ unique devient la seule source — on vide les anciens champs séparés
+    if (content.css) onChange('css', '');
+    if (content.js) onChange('js', '');
+  };
+
+  return (
+    <CustomCodeEditor
+      html={displayValue}
+      onChangeHtml={handleChange}
+      style={content.style || {}}
+      onChangeStyle={(value) => onChange('style', value)}
+      onRemove={onRemove}
+    />
+  );
+}
+
 function Field({ label, children }) {
   return (
     <div className="space-y-1.5">
@@ -229,6 +268,7 @@ function getMediaPreviewType(url) {
 }
 
 function ImageField({ label, value, onChange, onUpload }) {
+  const { subject: genSubject, context: genContext } = React.useContext(ImageGenContext);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [showUrl, setShowUrl] = useState(false);
@@ -260,9 +300,9 @@ function ImageField({ label, value, onChange, onUpload }) {
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        className={`flex items-center gap-3 p-2 rounded-xl border-2 border-dashed cursor-pointer transition ${dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'}`}
+        className={`flex items-center gap-3 p-2.5 rounded-xl border-2 border-dashed cursor-pointer transition ${dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'}`}
       >
-        <div className="w-14 h-14 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
+        <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
           {value
             ? mediaType === 'video'
               ? <video src={value} muted className="w-full h-full object-cover" />
@@ -279,10 +319,14 @@ function ImageField({ label, value, onChange, onUpload }) {
         )}
         <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} onChange={handleFile} className="hidden" />
       </div>
-      <button type="button" onClick={() => setShowUrl((v) => !v)} className="text-[11px] font-medium text-gray-400 hover:text-indigo-600">{showUrl ? "Masquer l'URL" : 'Coller une URL à la place'}</button>
+      <div className="flex items-center gap-3">
+        <button type="button" onClick={() => setShowUrl((v) => !v)} className="text-[11px] font-medium text-gray-400 hover:text-indigo-600">{showUrl ? "Masquer l'URL" : 'Coller une URL à la place'}</button>
+      </div>
       {showUrl && (
         <input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="https://... (image, GIF, vidéo)" className={inputCls} />
       )}
+      {/* Génération / édition par IA (GPT Image) — remplace l'image en live */}
+      <AiImagePromptBox value={value || ''} onGenerated={onChange} subject={genSubject} context={genContext} />
     </div>
   );
 }
@@ -348,24 +392,41 @@ const SECTIONS = [
 ];
 
 const ORDERABLE_SECTION_IDS = ['guide', 'testimonials', 'problem', 'mechanism', 'science', 'ritual', 'comparison', 'faq', 'closing'];
-const FIXED_TOP_IDS = ['design', 'hero', 'accordions'];
+const FIXED_TOP_IDS = ['hero', 'accordions'];
 const FIXED_BOTTOM_IDS = ['upsells'];
 
-const SECTION_GROUP = {
-  design: 'Structure & design', hero: 'Structure & design', accordions: 'Structure & design',
-  guide: 'Contenu', problem: 'Contenu', mechanism: 'Contenu', science: 'Contenu', ritual: 'Contenu',
-  testimonials: 'Preuve sociale', comparison: 'Preuve sociale',
-  faq: 'Questions & clôture', closing: 'Questions & clôture',
-  upsells: 'Offre & upsells',
+// Section "Code personnalisé" — ajoutable via « Ajouter une section » (style Shopify)
+const CUSTOM_CODE_META = { id: 'customCode', label: 'Code personnalisé', icon: <Code className="w-3.5 h-3.5" />, color: '#4f46e5' };
+
+// Types de sections proposés dans « Ajouter une section »
+const ADDABLE_SECTIONS = [
+  { ...CUSTOM_CODE_META, desc: 'HTML, CSS et JS injectés dans la page' },
+];
+
+// Icônes monochromes des templates de sections prédéfinies
+const TEMPLATE_ICONS = {
+  Megaphone, Timer, ArrowLeftRight, Play, Shield, ListOrdered, Table,
+  Star, HelpCircle, Truck, MessageCircle, BarChart3, ImageIcon,
 };
 
-const normalizeSectionOrder = (order) => {
+// extraIds : ids de sections personnalisées (cs_…) autorisés dans le flux —
+// conservés à leur position, les manquants ajoutés en fin de liste.
+const normalizeSectionOrder = (order, extraIds = []) => {
   const configured = Array.isArray(order)
-    ? order.filter((id) => ORDERABLE_SECTION_IDS.includes(id))
+    ? order.filter((id) => ORDERABLE_SECTION_IDS.includes(id) || extraIds.includes(id))
     : [];
   const withGuide = configured.includes('guide') ? configured : ['guide', ...configured];
-  return [...withGuide, ...ORDERABLE_SECTION_IDS.filter((id) => !withGuide.includes(id))];
+  return [
+    ...withGuide,
+    ...ORDERABLE_SECTION_IDS.filter((id) => !withGuide.includes(id)),
+    ...extraIds.filter((id) => !withGuide.includes(id)),
+  ];
 };
+
+// Ids des sections personnalisées appartenant au flux de la page (placement ≠ top)
+const flowAiIdsOf = (config) => normalizeAiSections(config?.customSections)
+  .filter((s) => s.placement !== 'top')
+  .map((s) => s.id);
 
 const MAX_HISTORY = 50;
 
@@ -421,8 +482,40 @@ const PremiumPageBuilder = () => {
   const [saved, setSaved] = useState(false);
   const [product, setProduct] = useState(null);
   const [config, setConfig] = useState(null);
-  const [activeSection, setActiveSection] = useState('hero');
+  const [activeSection, setActiveSection] = useState(null);
+  const [showAddSection, setShowAddSection] = useState(false);
   const [device, setDevice] = useState('desktop');
+
+  // Couleurs par défaut de la boutique (affichage + fallbacks) — jamais sauvegardées au niveau produit
+  const [storeDesign, setStoreDesign] = useState({});
+
+  // Largeur de la sidebar — redimensionnable en glissant son bord droit
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    if (typeof window === 'undefined') return 320;
+    const saved = Number(window.localStorage.getItem('premiumBuilderSidebarWidth'));
+    return saved >= 260 && saved <= 560 ? saved : 320;
+  });
+  const sidebarRef = useRef(null);
+  const startSidebarResize = useCallback((e) => {
+    e.preventDefault();
+    const rect = sidebarRef.current?.getBoundingClientRect();
+    const leftEdge = rect ? rect.left : 0;
+    const onMove = (ev) => setSidebarWidth(Math.min(560, Math.max(260, Math.round(ev.clientX - leftEdge))));
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.body.style.removeProperty('cursor');
+      document.body.style.removeProperty('user-select');
+      setSidebarWidth((w) => {
+        try { window.localStorage.setItem('premiumBuilderSidebarWidth', String(w)); } catch { /* ignore */ }
+        return w;
+      });
+    };
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, []);
 
   // Undo/Redo history
   const [history, setHistory] = useState([]);
@@ -430,21 +523,31 @@ const PremiumPageBuilder = () => {
   const historyIndexRef = useRef(-1);
   const skipHistoryRef = useRef(false);
   const lastSavedRef = useRef('');
+  const initialDesignRef = useRef('{}');
   const previewRef = useRef(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await storeProductsApi.getProduct(id);
+        const [res, storeConfigRes] = await Promise.all([
+          storeProductsApi.getProduct(id),
+          storeManageApi.getStoreConfig().catch(() => null),
+        ]);
         const p = res.data?.data;
         if (p) {
           setProduct(p);
           const initialConfig = hydrateFromPageData(p);
           setConfig(initialConfig);
           lastSavedRef.current = JSON.stringify(initialConfig);
+          initialDesignRef.current = JSON.stringify(initialConfig?.design || {});
           setHistory([initialConfig]);
           setHistoryIndex(0);
           historyIndexRef.current = 0;
+        }
+        if (storeConfigRes) {
+          const raw = storeConfigRes.data?.data || storeConfigRes.data || {};
+          const ppc = raw.storeSettings?.productPageConfig || raw.productPageConfig || {};
+          setStoreDesign(ppc.design || {});
         }
       } catch {
         // ignore
@@ -509,7 +612,7 @@ const PremiumPageBuilder = () => {
 
   // Clic sur une section de l'aperçu → ouvre son panneau d'édition
   const handlePreviewSectionClick = useCallback((sid) => {
-    if (SECTIONS.some((sec) => sec.id === sid)) setActiveSection(sid);
+    if (sid === 'customCode' || String(sid).startsWith('cs_') || SECTIONS.some((sec) => sec.id === sid)) setActiveSection(sid);
   }, []);
 
   // Sélection d'une section → fait défiler l'aperçu jusqu'à elle
@@ -522,6 +625,21 @@ const PremiumPageBuilder = () => {
   const safeConfig = config || {};
   const isDirty = !!config && lastSavedRef.current !== JSON.stringify(config);
   const premium = safeConfig.premiumPage || product?._pageData?.premium_page || product?._pageData?.premiumPage || {};
+  // Contexte produit/page injecté dans la génération d'images (AiImagePromptBox)
+  const genSubject = product?.name || premium?.hero?.title || '';
+  const genContext = useMemo(() => {
+    const strip = (h) => String(h || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const hero = premium?.hero || {};
+    const bits = [
+      product?.name && `Produit : ${product.name}`,
+      product?.category && `Catégorie : ${product.category}`,
+      hero.title && `Titre : ${strip(hero.title)}`,
+      (hero.subtitle || hero.baseline) && `Accroche : ${strip(hero.subtitle || hero.baseline)}`,
+      product?.description && `Description : ${strip(product.description).slice(0, 400)}`,
+    ].filter(Boolean);
+    return bits.join('. ').slice(0, 900);
+  }, [product, premium]);
+  const imgGenValue = useMemo(() => ({ subject: genSubject, context: genContext }), [genSubject, genContext]);
   const isSectionFilled = (sid) => {
     const pp = premium || {};
     switch (sid) {
@@ -536,12 +654,23 @@ const PremiumPageBuilder = () => {
       case 'closing': return !!(pp.closingSection?.headline || pp.closingSection?.subheadline);
       case 'guide': return !!(safeConfig.ebook || product?.ebook || product?._pageData?.ebook);
       case 'upsells': return !!((safeConfig.upsells?.offers || []).length || safeConfig.upsells?.bump?.isActive);
-      default: return true;
+      case 'customCode': {
+        const cc = (safeConfig.general?.sections || []).find((sec) => sec.id === 'customCode');
+        return !!(cc?.content?.html?.trim() || cc?.content?.css?.trim() || cc?.content?.js?.trim());
+      }
+      default: {
+        if (String(sid).startsWith('cs_')) {
+          const cs = normalizeAiSections(safeConfig.customSections).find((s) => s.id === sid);
+          return !!cs?.html?.trim();
+        }
+        return true;
+      }
     }
   };
   const design = safeConfig.design || {};
-  const accent = design.ctaButtonColor || design.buttonColor || '#0F766E';
-  const sectionOrder = normalizeSectionOrder(safeConfig.sectionOrder);
+  // Fallback : couleurs par défaut de la boutique avant les valeurs codées en dur
+  const accent = design.ctaButtonColor || design.buttonColor || storeDesign.ctaButtonColor || storeDesign.buttonColor || '#0F766E';
+  const sectionOrder = normalizeSectionOrder(safeConfig.sectionOrder, flowAiIdsOf(safeConfig));
   const hiddenSections = Array.isArray(safeConfig.hiddenSections) ? safeConfig.hiddenSections : [];
   const hasPracticalGuide = Boolean(product?._pageData?.ebook || product?.ebook || safeConfig.ebook);
 
@@ -609,34 +738,13 @@ const PremiumPageBuilder = () => {
 
   const dragIdRef = useRef(null);
 
-  const moveSectionUp = useCallback((id) => {
-    updateConfig((prev) => {
-      const order = normalizeSectionOrder(prev?.sectionOrder);
-      const idx = order.indexOf(id);
-      if (idx <= 0) return prev;
-      const next = [...order];
-      [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
-      return { ...(prev || {}), sectionOrder: next };
-    });
-  }, [updateConfig]);
-
-  const moveSectionDown = useCallback((id) => {
-    updateConfig((prev) => {
-      const order = normalizeSectionOrder(prev?.sectionOrder);
-      const idx = order.indexOf(id);
-      if (idx < 0 || idx >= order.length - 1) return prev;
-      const next = [...order];
-      [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
-      return { ...(prev || {}), sectionOrder: next };
-    });
-  }, [updateConfig]);
-
   const handleDragStart = useCallback((id) => { dragIdRef.current = id; }, []);
   const handleDragOver = useCallback((e, id) => {
     e.preventDefault();
     if (!dragIdRef.current || dragIdRef.current === id) return;
     updateConfig((prev) => {
-      const order = normalizeSectionOrder(prev?.sectionOrder);
+      // Les sections personnalisées du flux participent au même ordre que les standard
+      const order = normalizeSectionOrder(prev?.sectionOrder, flowAiIdsOf(prev));
       const from = order.indexOf(dragIdRef.current);
       const to = order.indexOf(id);
       if (from < 0 || to < 0) return prev;
@@ -659,6 +767,123 @@ const PremiumPageBuilder = () => {
     });
   }, [updateConfig]);
 
+  // ── Section « Code personnalisé » (stockée dans general.sections) ──────────
+  const customCodeSection = (safeConfig.general?.sections || []).find((s) => s.id === 'customCode') || null;
+
+  const updateGeneralSections = useCallback((mapper) => {
+    updateConfig((prev) => {
+      const p = prev || {};
+      const sections = Array.isArray(p.general?.sections) ? p.general.sections : [];
+      return { ...p, general: { ...(p.general || {}), sections: mapper(sections) } };
+    });
+  }, [updateConfig]);
+
+  const addCustomCodeSection = useCallback(() => {
+    updateGeneralSections((sections) => {
+      if (sections.some((s) => s.id === 'customCode')) {
+        return sections.map((s) => s.id === 'customCode' ? { ...s, enabled: true } : s);
+      }
+      return [...sections, { id: 'customCode', label: 'Code personnalisé', enabled: true, content: { html: '', css: '', js: '' } }];
+    });
+    setShowAddSection(false);
+    setActiveSection('customCode');
+  }, [updateGeneralSections]);
+
+  const removeCustomCodeSection = useCallback(() => {
+    if (!window.confirm('Supprimer la section « Code personnalisé » ? Son code sera perdu.')) return;
+    updateGeneralSections((sections) => sections.filter((s) => s.id !== 'customCode'));
+    setActiveSection((cur) => (cur === 'customCode' ? null : cur));
+  }, [updateGeneralSections]);
+
+  const toggleCustomCodeEnabled = useCallback(() => {
+    updateGeneralSections((sections) => sections.map((s) => s.id === 'customCode' ? { ...s, enabled: !s.enabled } : s));
+  }, [updateGeneralSections]);
+
+  const setCustomCodeContent = useCallback((key, value) => {
+    updateGeneralSections((sections) => sections.map((s) => s.id === 'customCode'
+      ? { ...s, content: { ...(s.content || {}), [key]: value } }
+      : s));
+  }, [updateGeneralSections]);
+
+  // ── Sections personnalisées (customSections) — vraies sections nommées ─────
+  const aiSections = normalizeAiSections(safeConfig.customSections);
+
+  const updateAiSections = useCallback((mapper) => {
+    updateConfig((prev) => {
+      const list = normalizeAiSections(prev?.customSections);
+      return { ...(prev || {}), customSections: mapper(list) };
+    });
+  }, [updateConfig]);
+
+  const setAiSectionField = useCallback((id, key, value) => {
+    updateConfig((prev) => {
+      const p = prev || {};
+      const list = normalizeAiSections(p.customSections).map((s) => (s.id === id ? { ...s, [key]: value } : s));
+      const next = { ...p, customSections: list };
+      // Changement de position : top = hors flux ; sinon la section rejoint le flux en fin d'ordre
+      if (key === 'placement') {
+        const base = (Array.isArray(p.sectionOrder) ? p.sectionOrder : normalizeSectionOrder(p.sectionOrder, [])).filter((x) => x !== id);
+        next.sectionOrder = value === 'top' ? base : [...base, id];
+      }
+      return next;
+    });
+  }, [updateConfig]);
+
+  const toggleAiSection = useCallback((id) => {
+    updateAiSections((list) => list.map((s) => (s.id === id ? { ...s, enabled: s.enabled === false } : s)));
+  }, [updateAiSections]);
+
+  const removeAiSection = useCallback((id) => {
+    if (!window.confirm('Supprimer cette section ? Son code sera perdu.')) return;
+    updateConfig((prev) => {
+      const p = prev || {};
+      return {
+        ...p,
+        customSections: normalizeAiSections(p.customSections).filter((s) => s.id !== id),
+        ...(Array.isArray(p.sectionOrder) ? { sectionOrder: p.sectionOrder.filter((x) => x !== id) } : {}),
+      };
+    });
+    setActiveSection((cur) => (cur === id ? null : cur));
+  }, [updateConfig]);
+
+  // Drag & drop des sections personnalisées (réordonnancement au sein du même groupe haut/bas)
+  const aiDragIdRef = useRef(null);
+  const handleAiDragStart = useCallback((id) => { aiDragIdRef.current = id; }, []);
+  const handleAiDragEnd = useCallback(() => { aiDragIdRef.current = null; }, []);
+  const handleAiDragOver = useCallback((e, id) => {
+    e.preventDefault();
+    const from = aiDragIdRef.current;
+    if (!from || from === id) return;
+    updateAiSections((list) => {
+      const fromIdx = list.findIndex((s) => s.id === from);
+      const toIdx = list.findIndex((s) => s.id === id);
+      if (fromIdx < 0 || toIdx < 0) return list;
+      if (list[fromIdx].placement !== list[toIdx].placement) return list;
+      const next = [...list];
+      const [moved] = next.splice(fromIdx, 1);
+      next.splice(toIdx, 0, moved);
+      return next;
+    });
+  }, [updateAiSections]);
+
+  // Ajout d'une section (vierge ou depuis la bibliothèque de templates)
+  const addSectionFromTemplate = useCallback((tpl) => {
+    const id = `cs_${Date.now()}`;
+    const placement = tpl?.placement === 'top' ? 'top' : 'bottom';
+    updateConfig((prev) => {
+      const p = prev || {};
+      const entry = { id, label: tpl?.label || 'Nouvelle section', placement, enabled: true, html: tpl?.html || '' };
+      const next = { ...p, customSections: [...normalizeAiSections(p.customSections), entry] };
+      // Section du flux : ajoutée en fin d'ordre, déplaçable ensuite par glisser-déposer
+      if (placement !== 'top') {
+        next.sectionOrder = [...normalizeSectionOrder(p.sectionOrder, flowAiIdsOf(p)), id];
+      }
+      return next;
+    });
+    setShowAddSection(false);
+    setActiveSection(id);
+  }, [updateConfig]);
+
   const uploadOne = useCallback(async (file) => {
     const res = await storeProductsApi.uploadImages([file]);
     return res?.data?.data?.[0]?.url || res?.data?.[0]?.url || '';
@@ -667,7 +892,17 @@ const PremiumPageBuilder = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await storeProductsApi.updateProduct(id, { productPageConfig: config });
+      // Ne jamais figer des couleurs au niveau produit si l'utilisateur n'y a pas touché :
+      // si le produit n'avait pas de design à l'ouverture et qu'il n'a pas été modifié
+      // dans cette session, on ne le sauvegarde pas — la page continue de suivre
+      // les couleurs par défaut de la boutique.
+      const payload = { ...config };
+      const designNow = JSON.stringify(payload.design || {});
+      const hadDesignAtLoad = initialDesignRef.current !== '{}';
+      if (!hadDesignAtLoad && (designNow === '{}' || designNow === initialDesignRef.current)) {
+        delete payload.design;
+      }
+      await storeProductsApi.updateProduct(id, { productPageConfig: payload });
       lastSavedRef.current = JSON.stringify(config);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -678,10 +913,12 @@ const PremiumPageBuilder = () => {
     }
   };
 
-  // Build productPageConfig for live preview
+  // Build productPageConfig for live preview — couleurs par défaut de la boutique
+  // en dessous des éventuelles surcharges produit (comme sur la page publique)
   const liveProductPageConfig = useMemo(() => ({
     ...safeConfig,
-  }), [safeConfig]);
+    design: { ...storeDesign, ...(safeConfig.design || {}) },
+  }), [safeConfig, storeDesign]);
 
   if (loading) {
     return (
@@ -721,14 +958,14 @@ const PremiumPageBuilder = () => {
             </Field>
             <Field label="Couleur de fond">
               <div className="flex items-center gap-2">
-                <input type="color" value={design.backgroundColor || '#F6FBFA'} onChange={(e) => setDesign('backgroundColor', e.target.value)} className="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer" />
-                <input type="text" value={design.backgroundColor || '#F6FBFA'} onChange={(e) => setDesign('backgroundColor', e.target.value)} className={inputCls} />
+                <input type="color" value={design.backgroundColor || storeDesign.backgroundColor || '#F6FBFA'} onChange={(e) => setDesign('backgroundColor', e.target.value)} className="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer" />
+                <input type="text" value={design.backgroundColor || storeDesign.backgroundColor || '#F6FBFA'} onChange={(e) => setDesign('backgroundColor', e.target.value)} className={inputCls} />
               </div>
             </Field>
             <Field label="Couleur du texte">
               <div className="flex items-center gap-2">
-                <input type="color" value={design.textColor || '#171717'} onChange={(e) => setDesign('textColor', e.target.value)} className="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer" />
-                <input type="text" value={design.textColor || '#171717'} onChange={(e) => setDesign('textColor', e.target.value)} className={inputCls} />
+                <input type="color" value={design.textColor || storeDesign.textColor || '#171717'} onChange={(e) => setDesign('textColor', e.target.value)} className="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer" />
+                <input type="text" value={design.textColor || storeDesign.textColor || '#171717'} onChange={(e) => setDesign('textColor', e.target.value)} className={inputCls} />
               </div>
             </Field>
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wide pt-2">Note / Avis</p>
@@ -841,6 +1078,7 @@ const PremiumPageBuilder = () => {
       case 'problem':
         return (
           <div className="space-y-4">
+            <ImageField label="Image de la section probleme" value={imgSingleOf('problem')} onUpload={uploadOne} onChange={(v) => setPremiumImage('problem', v)} />
             <Field label="Titre"><input type="text" value={premium.problemSection?.headline || ''} onChange={(e) => setPremiumNested('problemSection', 'headline', e.target.value)} className={inputCls} /></Field>
             <Field label="Texte introductif"><textarea value={premium.problemSection?.body || ''} onChange={(e) => setPremiumNested('problemSection', 'body', e.target.value)} rows={3} className={textareaCls} /></Field>
             <StringListField
@@ -850,20 +1088,20 @@ const PremiumPageBuilder = () => {
               placeholder="Ex: Fatigue chronique dès le matin"
               addLabel="Ajouter un point"
             />
-            <ImageField label="Image de la section probleme" value={imgSingleOf('problem')} onUpload={uploadOne} onChange={(v) => setPremiumImage('problem', v)} />
           </div>
         );
       case 'mechanism':
         return (
           <div className="space-y-4">
+            <ImageField label="Image de la section mecanisme" value={imgSingleOf('mechanism')} onUpload={uploadOne} onChange={(v) => setPremiumImage('mechanism', v)} />
             <Field label="Titre"><input type="text" value={premium.mechanismSection?.headline || ''} onChange={(e) => setPremiumNested('mechanismSection', 'headline', e.target.value)} className={inputCls} /></Field>
             <Field label="Texte explicatif"><textarea value={premium.mechanismSection?.body || ''} onChange={(e) => setPremiumNested('mechanismSection', 'body', e.target.value)} rows={6} className={textareaCls} /></Field>
-            <ImageField label="Image de la section mecanisme" value={imgSingleOf('mechanism')} onUpload={uploadOne} onChange={(v) => setPremiumImage('mechanism', v)} />
           </div>
         );
       case 'science':
         return (
           <div className="space-y-4">
+            <ImageField label="Image de la section science" value={imgSingleOf('science')} onUpload={uploadOne} onChange={(v) => setPremiumImage('science', v)} />
             <Field label="Titre"><input type="text" value={premium.scienceSection?.headline || ''} onChange={(e) => setPremiumNested('scienceSection', 'headline', e.target.value)} className={inputCls} /></Field>
             <Field label="Sous-titre"><input type="text" value={premium.scienceSection?.subheadline || ''} onChange={(e) => setPremiumNested('scienceSection', 'subheadline', e.target.value)} className={inputCls} /></Field>
             <RepeatableItems
@@ -875,12 +1113,12 @@ const PremiumPageBuilder = () => {
                 { key: 'description', label: 'Role / Description', type: 'textarea', rows: 2 },
               ]}
             />
-            <ImageField label="Image de la section science" value={imgSingleOf('science')} onUpload={uploadOne} onChange={(v) => setPremiumImage('science', v)} />
           </div>
         );
       case 'ritual':
         return (
           <div className="space-y-4">
+            <ImageField label="Image de la section rituel" value={imgSingleOf('ritual')} onUpload={uploadOne} onChange={(v) => setPremiumImage('ritual', v)} />
             <Field label="Titre"><input type="text" value={premium.ritualSection?.headline || ''} onChange={(e) => setPremiumNested('ritualSection', 'headline', e.target.value)} className={inputCls} /></Field>
             <Field label="Sous-titre"><input type="text" value={premium.ritualSection?.subheadline || ''} onChange={(e) => setPremiumNested('ritualSection', 'subheadline', e.target.value)} className={inputCls} /></Field>
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Etapes du rituel</p>
@@ -894,7 +1132,6 @@ const PremiumPageBuilder = () => {
                 { key: 'description', label: 'Detail', type: 'textarea', rows: 2 },
               ]}
             />
-            <ImageField label="Image de la section rituel" value={imgSingleOf('ritual')} onUpload={uploadOne} onChange={(v) => setPremiumImage('ritual', v)} />
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wide pt-2">Timeline des resultats</p>
             <RepeatableItems
               items={premium.ritualSection?.resultsTimeline || []}
@@ -945,6 +1182,7 @@ const PremiumPageBuilder = () => {
       case 'closing':
         return (
           <div className="space-y-4">
+            <ImageField label="Image de la section closing" value={imgSingleOf('closing')} onUpload={uploadOne} onChange={(v) => setPremiumImage('closing', v)} />
             <Field label="Titre"><input type="text" value={premium.closingSection?.headline || ''} onChange={(e) => setPremiumNested('closingSection', 'headline', e.target.value)} className={inputCls} /></Field>
             <Field label="Sous-titre"><input type="text" value={premium.closingSection?.subheadline || ''} onChange={(e) => setPremiumNested('closingSection', 'subheadline', e.target.value)} className={inputCls} /></Field>
             <StringListField
@@ -954,7 +1192,6 @@ const PremiumPageBuilder = () => {
               placeholder="Ex: Formule naturelle et efficace"
               addLabel="Ajouter un point"
             />
-            <ImageField label="Image de la section closing" value={imgSingleOf('closing')} onUpload={uploadOne} onChange={(v) => setPremiumImage('closing', v)} />
           </div>
         );
       case 'upsells': {
@@ -1014,12 +1251,47 @@ const PremiumPageBuilder = () => {
           </div>
         );
       }
-      default:
+      case 'customCode':
+        return (
+          <CustomCodeEditorPanel
+            content={customCodeSection?.content || {}}
+            onChange={setCustomCodeContent}
+            onRemove={removeCustomCodeSection}
+          />
+        );
+      default: {
+        // Sections personnalisées (customSections) — éditeur nom + position + code
+        if (String(activeSection).startsWith('cs_')) {
+          const cs = aiSections.find((s) => s.id === activeSection);
+          if (!cs) return null;
+          return (
+            <div className="space-y-4">
+              <Field label="Nom de la section">
+                <input type="text" value={cs.label} onChange={(e) => setAiSectionField(cs.id, 'label', e.target.value)} className={inputCls} placeholder="Ex: Barre d'annonce" />
+              </Field>
+              <Field label="Position sur la page">
+                <select value={cs.placement} onChange={(e) => setAiSectionField(cs.id, 'placement', e.target.value)} className={inputCls}>
+                  <option value="top">Haut de page (au-dessus du hero)</option>
+                  <option value="bottom">Dans la page — glissez la section dans la liste pour la positionner</option>
+                </select>
+              </Field>
+              <CustomCodeEditor
+                html={cs.html}
+                onChangeHtml={(value) => setAiSectionField(cs.id, 'html', value)}
+                style={cs.style || {}}
+                onChangeStyle={(value) => setAiSectionField(cs.id, 'style', value)}
+                onRemove={() => removeAiSection(cs.id)}
+              />
+            </div>
+          );
+        }
         return null;
+      }
     }
   };
 
   return (
+    <ImageGenContext.Provider value={imgGenValue}>
     <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
 
       {/* Top bar */}
@@ -1078,105 +1350,240 @@ const PremiumPageBuilder = () => {
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* Left: vertical section list with inline editors */}
-        <div className="w-80 xl:w-[420px] bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-shrink-0">
-            <p className="text-xs font-bold text-gray-900 uppercase tracking-wider">Sections</p>
-            <span className="text-[11px] text-gray-400">{SECTIONS.length} sections</span>
-          </div>
-          <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
-            {(() => {
-              // Build display order: fixed-top + orderable in user order + fixed-bottom
-              const orderableMap = Object.fromEntries(SECTIONS.filter(s => ORDERABLE_SECTION_IDS.includes(s.id)).map(s => [s.id, s]));
-              const orderedSections = [
-                ...SECTIONS.filter(s => FIXED_TOP_IDS.includes(s.id)),
-                ...sectionOrder.map(id => orderableMap[id]).filter(Boolean),
-                ...SECTIONS.filter(s => FIXED_BOTTOM_IDS.includes(s.id)),
-              ];
-              let lastGroup = null;
-              return orderedSections.map((s) => {
-                const isOrderable = ORDERABLE_SECTION_IDS.includes(s.id);
-                const orderIdx = sectionOrder.indexOf(s.id);
-                const isVisible = !isOrderable || !hiddenSections.includes(s.id);
-                const grp = SECTION_GROUP[s.id] || 'Autres';
-                const showHeader = grp !== lastGroup;
-                lastGroup = grp;
-                const filled = isSectionFilled(s.id);
-                return [
-                  showHeader ? (
-                    <p key={`grp-${s.id}`} className="px-1 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">{grp}</p>
-                  ) : null,
-                  (
-                  <div
-                    key={s.id}
-                    draggable={isOrderable}
-                    onDragStart={isOrderable ? () => handleDragStart(s.id) : undefined}
-                    onDragOver={isOrderable ? (e) => handleDragOver(e, s.id) : undefined}
-                    onDragEnd={isOrderable ? handleDragEnd : undefined}
-                    className={isOrderable ? 'cursor-default' : ''}
+        {/* Left: Shopify-style sidebar — liste des sections OU éditeur de la section active */}
+        <div ref={sidebarRef} style={{ width: sidebarWidth }} className="relative bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden">
+          {/* Poignée de redimensionnement — glisser pour élargir/réduire, double-clic = défaut */}
+          <div
+            onPointerDown={startSidebarResize}
+            onDoubleClick={() => setSidebarWidth(320)}
+            title="Glisser pour redimensionner"
+            className="absolute right-0 top-0 bottom-0 w-1.5 z-20 cursor-col-resize hover:bg-indigo-400/60 active:bg-indigo-500/70 transition-colors"
+          />
+          {activeSection ? (() => {
+            // ── ÉDITEUR (remplace la liste, avec retour — style Shopify) ──
+            const aiSec = String(activeSection).startsWith('cs_') ? aiSections.find((s) => s.id === activeSection) : null;
+            const meta = aiSec
+              ? { ...CUSTOM_CODE_META, id: aiSec.id, label: aiSec.label }
+              : activeSection === 'customCode' ? CUSTOM_CODE_META : SECTIONS.find((s) => s.id === activeSection);
+            if (!meta) return null;
+            const isCustom = activeSection === 'customCode';
+            const canHide = isCustom || !!aiSec || ORDERABLE_SECTION_IDS.includes(activeSection);
+            const isVisible = aiSec
+              ? aiSec.enabled !== false
+              : isCustom
+              ? customCodeSection?.enabled !== false
+              : !hiddenSections.includes(activeSection);
+            return (
+              <>
+                <div className="flex items-center gap-2 px-3 py-3 border-b border-gray-100 bg-gray-50 flex-shrink-0">
+                  <button
+                    onClick={() => setActiveSection(null)}
+                    className="flex items-center gap-1 text-[12px] text-gray-500 hover:text-gray-900 font-medium transition flex-shrink-0"
                   >
-                    <div className={`flex items-center gap-1 ${isVisible ? '' : 'opacity-50'}`}>
-                      {isOrderable && (
-                        <div className="flex flex-col items-center gap-0.5 flex-shrink-0 px-0.5 cursor-grab active:cursor-grabbing select-none" title="Glisser pour réordonner">
-                          <div className="w-3.5 h-0.5 rounded-full bg-gray-300" />
-                          <div className="w-3.5 h-0.5 rounded-full bg-gray-300" />
-                          <div className="w-3.5 h-0.5 rounded-full bg-gray-300" />
-                        </div>
-                      )}
+                    <ChevronLeft className="w-4 h-4" /> Sections
+                  </button>
+                  <span className="text-gray-300 text-sm">·</span>
+                  <div className="w-5 h-5 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                    {meta.icon}
+                  </div>
+                  <span className="text-[12px] font-semibold text-gray-800 truncate">{meta.label}</span>
+                  <div className="ml-auto flex items-center gap-0.5 flex-shrink-0">
+                    <button
+                      type="button"
+                      title="Modifier cette section avec l'IA"
+                      onClick={() => window.dispatchEvent(new CustomEvent('builder-ai:prefill', {
+                        detail: { text: `Modifie la section « ${meta.label} »${aiSec ? ` (id: ${aiSec.id})` : ''} : ` },
+                      }))}
+                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-indigo-600 hover:bg-indigo-50 transition text-[11px] font-semibold"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" /> IA
+                    </button>
+                    {canHide && (
                       <button
-                        onClick={() => setActiveSection(activeSection === s.id ? null : s.id)}
-                        className={`flex-1 flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition ${activeSection === s.id ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-gray-50 border border-transparent'}`}
+                        type="button"
+                        title={isVisible ? 'Masquer cette section' : 'Afficher cette section'}
+                        onClick={() => { if (aiSec) toggleAiSection(aiSec.id); else if (isCustom) toggleCustomCodeEnabled(); else toggleSectionVisibility(activeSection); }}
+                        className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-500 transition"
                       >
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ background: s.color }}>
-                          {s.icon}
-                        </div>
-                        <span className="text-sm font-semibold text-gray-900 flex-1">{s.label}</span>
-                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${filled ? 'bg-green-400' : 'bg-gray-300'}`} title={filled ? 'Contenu présent' : 'Section vide'} />
-                        {activeSection === s.id ? <ChevronUp className="w-4 h-4 text-indigo-500" /> : <ChevronDown className="w-4 h-4 text-gray-300" />}
+                        {isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>
-                      {isOrderable && (
-                        <button
-                          type="button"
-                          role="switch"
-                          title={isVisible ? 'Masquer cette section' : 'Afficher cette section'}
-                          aria-label={isVisible ? `Masquer ${s.label}` : `Afficher ${s.label}`}
-                          aria-checked={isVisible}
-                          onClick={() => toggleSectionVisibility(s.id)}
-                          className={`relative h-5 w-9 rounded-full transition-colors ${isVisible ? 'bg-teal-500' : 'bg-gray-300'}`}
-                        >
-                          <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${isVisible ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                        </button>
-                      )}
-                      {isOrderable && (
-                        <div className="flex flex-col gap-0.5 flex-shrink-0">
-                          <button
-                            type="button"
-                            title="Monter"
-                            onClick={() => moveSectionUp(s.id)}
-                            disabled={orderIdx <= 0}
-                            className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 disabled:opacity-20 transition"
-                          ><ChevronUp className="w-3.5 h-3.5" /></button>
-                          <button
-                            type="button"
-                            title="Descendre"
-                            onClick={() => moveSectionDown(s.id)}
-                            disabled={orderIdx >= sectionOrder.length - 1}
-                            className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 disabled:opacity-20 transition"
-                          ><ChevronDown className="w-3.5 h-3.5" /></button>
-                        </div>
-                      )}
-                    </div>
-                    {activeSection === s.id && (
-                      <div className="mt-2 mb-3 ml-3 pl-4 border-l-2 border-indigo-200 space-y-3">
-                        {renderEditor()}
-                      </div>
                     )}
                   </div>
-                  ),
+                </div>
+                <div className="flex-1 overflow-y-auto p-4">
+                  {renderEditor()}
+                </div>
+              </>
+            );
+          })() : (
+            /* ── LISTE DES SECTIONS (ordre réel de la page) ── */
+            <>
+              {/* Paramètres du thème — hors sections, comme Shopify */}
+              <div className="p-3 border-b border-gray-100 flex-shrink-0">
+                <button
+                  onClick={() => setActiveSection('design')}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/40 transition text-left"
+                >
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-900 flex-shrink-0">
+                    <Palette className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-gray-900">Design & Couleurs</p>
+                    <p className="text-[10.5px] text-gray-400">Paramètres du thème</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                </button>
+              </div>
+
+              {(() => {
+                const orderableMap = Object.fromEntries(SECTIONS.filter((s) => ORDERABLE_SECTION_IDS.includes(s.id)).map((s) => [s.id, s]));
+                const aiById = Object.fromEntries(aiSections.map((s) => [s.id, s]));
+                const aiRow = (s, extra) => ({ ...CUSTOM_CODE_META, id: s.id, label: s.label, _ai: true, ...extra });
+                const pageRows = [
+                  // Ordre = ordre réel de la page : sections "haut" avant le hero,
+                  // sections personnalisées du flux mélangées aux standard via sectionOrder
+                  ...aiSections.filter((s) => s.placement === 'top').map((s) => aiRow(s, { _aiTop: true })),
+                  ...SECTIONS.filter((s) => FIXED_TOP_IDS.includes(s.id)),
+                  ...sectionOrder.map((sid) => orderableMap[sid]
+                    || (aiById[sid] && aiById[sid].placement !== 'top' ? aiRow(aiById[sid]) : null)
+                  ).filter(Boolean),
+                  ...(customCodeSection ? [CUSTOM_CODE_META] : []),
+                  ...SECTIONS.filter((s) => FIXED_BOTTOM_IDS.includes(s.id)),
                 ];
-              });
-            })()}
-          </div>
+                return (
+                  <>
+                    <div className="flex items-center justify-between px-4 py-2.5 flex-shrink-0">
+                      <p className="text-xs font-bold text-gray-900 uppercase tracking-wider">Sections</p>
+                      <span className="text-[11px] text-gray-400">{pageRows.length} sections</span>
+                    </div>
+                    <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5">
+                      {pageRows.map((s) => {
+                        const isAi = !!s._ai;
+                        const isFlowAi = isAi && !s._aiTop; // section personnalisée dans le flux → drag standard
+                        const isCustom = s.id === 'customCode';
+                        const isOrderable = ORDERABLE_SECTION_IDS.includes(s.id);
+                        const isVisible = isAi
+                          ? aiSections.find((x) => x.id === s.id)?.enabled !== false
+                          : isCustom
+                          ? customCodeSection?.enabled !== false
+                          : (!isOrderable || !hiddenSections.includes(s.id));
+                        const filled = isSectionFilled(s.id);
+                        return (
+                          <div
+                            key={s.id}
+                            draggable={isOrderable || isAi}
+                            onDragStart={(isOrderable || isFlowAi) ? () => handleDragStart(s.id) : isAi ? () => handleAiDragStart(s.id) : undefined}
+                            onDragOver={(isOrderable || isFlowAi) ? (e) => handleDragOver(e, s.id) : isAi ? (e) => handleAiDragOver(e, s.id) : undefined}
+                            onDragEnd={(isOrderable || isFlowAi) ? handleDragEnd : isAi ? handleAiDragEnd : undefined}
+                            onClick={() => setActiveSection(s.id)}
+                            className={`group flex items-center gap-1.5 px-2 py-2 rounded-lg cursor-pointer border border-transparent hover:bg-gray-50 hover:border-gray-200 transition ${isVisible ? '' : 'opacity-50'}`}
+                          >
+                            <GripVertical
+                              className={`w-3.5 h-3.5 flex-shrink-0 ${(isOrderable || isAi) ? 'text-gray-300 opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing' : 'text-transparent'}`}
+                              title={(isOrderable || isAi) ? 'Glisser pour réordonner' : undefined}
+                            />
+                            <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                              {s.icon}
+                            </div>
+                            <span className="flex-1 text-[13px] font-semibold text-gray-800 truncate">{s.label}</span>
+                            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${filled ? 'bg-green-400' : 'bg-gray-300'}`} title={filled ? 'Contenu présent' : 'Section vide'} />
+                            {(isOrderable || isCustom || isAi) && (
+                              <button
+                                type="button"
+                                title={isVisible ? 'Masquer cette section' : 'Afficher cette section'}
+                                aria-label={isVisible ? `Masquer ${s.label}` : `Afficher ${s.label}`}
+                                onClick={(e) => { e.stopPropagation(); if (isAi) toggleAiSection(s.id); else if (isCustom) toggleCustomCodeEnabled(); else toggleSectionVisibility(s.id); }}
+                                className={`p-1 rounded-md hover:bg-gray-200 transition flex-shrink-0 ${isVisible ? 'text-gray-400 opacity-0 group-hover:opacity-100' : 'text-gray-500'}`}
+                              >
+                                {isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                              </button>
+                            )}
+                            <ChevronRight className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                );
+              })()}
+
+              {/* Ajouter une section — style Shopify */}
+              {showAddSection && (
+                <div className="border-t border-gray-100 p-2 space-y-1 bg-gray-50 flex-shrink-0 max-h-[46vh] overflow-y-auto">
+                  {/* Section vierge (code libre) */}
+                  <button
+                    type="button"
+                    onClick={() => addSectionFromTemplate(null)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition"
+                  >
+                    <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                      <Code className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[12.5px] font-semibold text-gray-800">Section vierge</p>
+                      <p className="text-[10.5px] text-gray-400">Code libre, position haut ou bas</p>
+                    </div>
+                    <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                  </button>
+
+                  {/* Bibliothèque de sections prédéfinies — prêtes à modifier */}
+                  <p className="px-1 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">Sections prédéfinies</p>
+                  {SECTION_TEMPLATES.map((tpl) => {
+                    const TplIcon = TEMPLATE_ICONS[tpl.icon] || Code;
+                    return (
+                      <button
+                        key={tpl.id}
+                        type="button"
+                        onClick={() => addSectionFromTemplate(tpl)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition"
+                      >
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                          <TplIcon className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[12.5px] font-semibold text-gray-800">{tpl.label}</p>
+                          <p className="text-[10.5px] text-gray-400 truncate">{tpl.desc}{tpl.placement === 'top' ? ' · haut de page' : ''}</p>
+                        </div>
+                        <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                      </button>
+                    );
+                  })}
+
+                  {ADDABLE_SECTIONS.map((t) => {
+                    const alreadyAdded = t.id === 'customCode' && !!customCodeSection;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        disabled={alreadyAdded}
+                        onClick={t.id === 'customCode' ? addCustomCodeSection : undefined}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                          {t.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[12.5px] font-semibold text-gray-800">{t.label}</p>
+                          <p className="text-[10.5px] text-gray-400">{alreadyAdded ? 'Déjà ajoutée à la page' : t.desc}</p>
+                        </div>
+                        <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <div className="p-3 border-t border-gray-100 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowAddSection((v) => !v)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-gray-200 text-[12.5px] font-semibold text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition"
+                >
+                  {showAddSection ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                  {showAddSection ? 'Fermer' : 'Ajouter une section'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right: live preview (inline component, no iframe) */}
@@ -1227,8 +1634,11 @@ const PremiumPageBuilder = () => {
             </div>
           </div>
         </div>
-      </div>
-      <BuilderAIChatWidget
+
+        {/* Assistant IA — panneau ancré à droite (style Shopify Sidekick) */}
+        <BuilderAIChatWidget
+        variant="docked"
+        dockBarOffset={sidebarWidth}
         productPageConfig={config}
         theme={config?.design || {}}
         productName={product?.name || ''}
@@ -1255,13 +1665,48 @@ const PremiumPageBuilder = () => {
               };
             }
             if (patch.premiumImages) updated.premiumImages = { ...(updated.premiumImages || {}), ...patch.premiumImages };
+            // Sections classiques (dont customCode) — fusion par id, ids inconnus ajoutés :
+            // l'IA crée ainsi de VRAIES sections visibles dans la liste du builder
+            if (patch.general?.sections) {
+              const existing = Array.isArray(updated.general?.sections) ? updated.general.sections : [];
+              const merged = existing.map((s) => {
+                const u = patch.general.sections.find((p) => p.id === s.id);
+                return u ? { ...s, ...u, content: { ...(s.content || {}), ...(u.content || {}) } } : s;
+              });
+              patch.general.sections.forEach((u) => {
+                if (!merged.find((s) => s.id === u.id)) merged.push(u);
+              });
+              updated.general = { ...(updated.general || {}), sections: merged };
+            }
             if (patch.button) updated.button = { ...(updated.button || {}), ...patch.button };
             if (patch.whatsapp) updated.whatsapp = { ...(updated.whatsapp || {}), ...patch.whatsapp };
             if (patch.floatingElements) updated.floatingElements = { ...(updated.floatingElements || {}), ...patch.floatingElements };
             if (patch.customHtml !== undefined) updated.customHtml = patch.customHtml;
             if (patch.customCss !== undefined) updated.customCss = (updated.customCss ? updated.customCss + '\n' : '') + patch.customCss;
             if (patch.customJs !== undefined) updated.customJs = (updated.customJs ? updated.customJs + '\n' : '') + patch.customJs;
-            if (patch.customSections !== undefined) updated.customSections = Array.isArray(patch.customSections) && patch.customSections.length === 0 ? [] : [...(updated.customSections || []), ...patch.customSections];
+            if (patch.customSections !== undefined) {
+              if (Array.isArray(patch.customSections) && patch.customSections.length === 0) {
+                updated.customSections = [];
+              } else {
+                // Chaque ajout IA devient une vraie section : id, label, position, activée.
+                // Fusion par id (mise à jour d'une section existante), sinon ajout.
+                const existing = normalizeAiSections(updated.customSections);
+                (Array.isArray(patch.customSections) ? patch.customSections : []).forEach((raw, i) => {
+                  const entry = {
+                    id: raw.id || `cs_${Date.now()}_${i}`,
+                    label: raw.label || 'Section IA',
+                    placement: raw.placement === 'top' ? 'top' : 'bottom',
+                    enabled: raw.enabled !== false,
+                    html: raw.html || '',
+                    ...(raw.style && typeof raw.style === 'object' ? { style: raw.style } : {}),
+                  };
+                  const idx = existing.findIndex((s) => s.id === entry.id);
+                  if (idx >= 0) existing[idx] = { ...existing[idx], ...entry };
+                  else existing.push(entry);
+                });
+                updated.customSections = existing;
+              }
+            }
             if (Array.isArray(patch.sectionOrder)) updated.sectionOrder = patch.sectionOrder;
             if (Array.isArray(patch.hiddenSections)) updated.hiddenSections = patch.hiddenSections;
             return updated;
@@ -1273,8 +1718,10 @@ const PremiumPageBuilder = () => {
             design: { ...((prev || {}).design || {}), ...themePatch },
           }));
         }}
-      />
+        />
+      </div>
     </div>
+    </ImageGenContext.Provider>
   );
 };
 

@@ -2,10 +2,15 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Le proxy des rewrites dev coupe les requêtes longues (~30s) : la génération
+  // d'images IA peut durer 2-3 min — on aligne le timeout du proxy dessus.
+  experimental: {
+    proxyTimeout: 300_000,
+  },
   // NEXT_USE_WASM_SWC=1 : force le binding SWC WASM (utile en CI/sandbox où le
   // binaire natif n'est pas utilisable). Sans effet en usage normal.
   ...(process.env.NEXT_USE_WASM_SWC === '1'
-    ? { experimental: { cpus: 1, workerThreads: false, useWasmBinary: true } }
+    ? { experimental: { cpus: 1, workerThreads: false, useWasmBinary: true, proxyTimeout: 300_000 } }
     : {}),
   // NEXT_SKIP_TYPECHECK=1 : saute le type-check pendant `next build` (sandbox CI
   // à fenêtre courte uniquement — `npx tsc --noEmit` est alors exécuté à part).

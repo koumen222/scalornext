@@ -114,6 +114,8 @@ const LivreurDashboard = () => {
       console.error('[Assign error]', err);
       setError(err.response?.data?.message || `Erreur: ${err.message || 'impossible d\'accepter. Vérifiez que le serveur est démarré.'}`);
       setAssigning(p => ({ ...p, [orderId]: false }));
+      // Course perdue → rafraîchir pour retirer l'offre obsolète
+      loadData(true);
     }
   };
 

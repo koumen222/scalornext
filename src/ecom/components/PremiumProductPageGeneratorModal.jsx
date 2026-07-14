@@ -18,9 +18,9 @@ import DigitalProductEbookModal from './DigitalProductEbookModal.jsx';
 import { tp } from '../i18n/platform.js';
 
 const API_ORIGIN = (() => {
-  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || '').trim();
+  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').trim();
 
-  if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
+  if (!raw && typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
     return 'https://api.scalor.net';
   }
 
@@ -177,6 +177,8 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
   const [dragOver, setDragOver] = useState(false);
   const [themeColor, setThemeColor] = useState('#0F766E');
   const [targetGender, setTargetGender] = useState('auto');
+  const [targetAgeRange, setTargetAgeRange] = useState('auto');
+  const [targetNiche, setTargetNiche] = useState('');
   const [targetProfile, setTargetProfile] = useState('premium');
   const [mainProblem, setMainProblem] = useState('');
   const [creditsInfo, setCreditsInfo] = useState(null);
@@ -379,6 +381,8 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
     formData.append('tone', 'premium');
     formData.append('language', generationLanguage);
     formData.append('targetGender', targetGender);
+    formData.append('targetAgeRange', targetAgeRange);
+    if (targetNiche.trim()) formData.append('targetAvatar', targetNiche.trim());
     formData.append('targetProfile', targetProfile);
     if (mainProblem.trim()) formData.append('mainProblem', mainProblem.trim());
     photos.forEach((photo) => formData.append('images', photo));
@@ -640,6 +644,21 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                         <option value="male">{tp('Homme')}</option>
                         <option value="mixed">{tp('Mixte')}</option>
                       </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Tranche d\'âge')}</span>
+                      <select value={targetAgeRange} onChange={(event) => setTargetAgeRange(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-slate-400">
+                        <option value="auto">{tp('Auto (selon le produit)')}</option>
+                        <option value="18-25">18-25</option>
+                        <option value="25-40">25-40</option>
+                        <option value="40-55">40-55</option>
+                        <option value="55-70">55-70</option>
+                        <option value="65+">65+</option>
+                      </select>
+                    </label>
+                    <label className="block sm:col-span-2">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Niche / public cible')} <span className="font-normal normal-case text-slate-400">({tp('optionnel')})</span></span>
+                      <input value={targetNiche} onChange={(event) => setTargetNiche(event.target.value)} placeholder={tp('ex. personnes âgées avec fatigue oculaire')} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-slate-400" />
                     </label>
                     <label className="block">
                       <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Langue du contenu')}</span>

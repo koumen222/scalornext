@@ -104,88 +104,28 @@ const GeneratingScreen = ({ productName }) => {
   }, []);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(15,23,42,.55)', backdropFilter: 'blur(6px)' }}>
-      <div style={{ width: '100%', maxWidth: 420, background: '#fff', borderRadius: 24, overflow: 'hidden', boxShadow: '0 32px 64px -12px rgba(15,23,42,.18), 0 0 0 1px rgba(15,23,42,.06)' }}>
-
-        {/* progress line */}
+    <div style={{ position: 'fixed', left: 0, right: 0, bottom: 20, zIndex: 9999, display: 'flex', justifyContent: 'center', padding: '0 12px', pointerEvents: 'none' }}>
+      <div style={{ pointerEvents: 'auto', width: '100%', maxWidth: 400, background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 45px -12px rgba(15,23,42,.28), 0 0 0 1px rgba(15,23,42,.06)' }}>
+        {/* barre de progression */}
         <div style={{ height: 3, background: '#f1f5f9' }}>
-          <div style={{ height: '100%', background: 'linear-gradient(90deg,#0D9488,#6366f1)', borderRadius: 99, transition: 'width .3s ease-out', width: `${progress}%` }} />
+          <div style={{ height: '100%', background: 'linear-gradient(90deg,#0D9488,#6366f1)', transition: 'width .3s ease-out', width: `${progress}%` }} />
         </div>
-
-        <div style={{ padding: '36px 32px 32px' }}>
-
-          {/* animated icon */}
-          <div style={{ margin: '0 auto 24px', width: 72, height: 72, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {/* outer pulse ring */}
-            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'rgba(13,148,136,.08)', animation: 'ebPulse 2s ease-in-out infinite' }} />
-            {/* spinning ring */}
-            <div style={{ position: 'absolute', inset: 4, borderRadius: '50%', border: '2px solid transparent', borderTopColor: '#0D9488', borderRightColor: '#6366f1', animation: 'ebSpin 1.1s linear infinite' }} />
-            {/* center */}
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg,#f0fdf4,#ede9fe)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Sparkles size={20} color="#0D9488" />
+        <div style={{ padding: '13px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 34, height: 34, position: 'relative', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid transparent', borderTopColor: '#0D9488', borderRightColor: '#6366f1', animation: 'ebSpin 1.1s linear infinite' }} />
+            <Sparkles size={15} color="#0D9488" />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 13.5, fontWeight: 700, color: '#0f172a' }}>Génération de l'ebook…</span>
+              <span style={{ marginLeft: 'auto', fontSize: 12, fontWeight: 800, color: '#0D9488' }}>{Math.round(progress)}%</span>
+            </div>
+            <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {(STEPS[stepIndex]?.label || productName || 'En cours')} · vous pouvez continuer à naviguer
             </div>
           </div>
-
-          <style>{`
-            @keyframes ebSpin  { to { transform: rotate(360deg); } }
-            @keyframes ebPulse { 0%,100% { transform: scale(1); opacity:.6; } 50% { transform: scale(1.15); opacity:1; } }
-            @keyframes ebBounce { 0%,80%,100% { transform:translateY(0); } 40% { transform:translateY(-5px); } }
-          `}</style>
-
-          <h2 style={{ margin: 0, textAlign: 'center', fontSize: 18, fontWeight: 700, color: '#0f172a', letterSpacing: '-.02em' }}>
-            Génération de l'ebook
-          </h2>
-          {productName && (
-            <p style={{ margin: '4px 0 0', textAlign: 'center', fontSize: 13, color: '#94a3b8', fontWeight: 500 }}>
-              {productName}
-            </p>
-          )}
-
-          {/* progress percentage */}
-          <p style={{ margin: '14px 0 0', textAlign: 'center', fontSize: 28, fontWeight: 800, color: '#0f172a', letterSpacing: '-.03em' }}>
-            {Math.round(progress)}<span style={{ fontSize: 16, color: '#94a3b8', fontWeight: 500 }}>%</span>
-          </p>
-
-          {/* steps */}
-          <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {STEPS.map((step, i) => {
-              const StepIcon = step.icon;
-              const isDone = i < stepIndex;
-              const isActive = i === stepIndex;
-              return (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, transition: 'opacity .3s', opacity: isActive ? 1 : isDone ? .45 : .18 }}>
-                  <div style={{
-                    width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isDone ? '#f0fdf4' : isActive ? 'linear-gradient(135deg,#f0fdf4,#ede9fe)' : '#f8fafc',
-                  }}>
-                    {isDone
-                      ? <CheckCircle2 size={14} color="#10b981" />
-                      : isActive
-                        ? <Loader2 size={14} color="#0D9488" style={{ animation: 'ebSpin 1s linear infinite' }} />
-                        : <StepIcon size={14} color="#cbd5e1" />
-                    }
-                  </div>
-                  <span style={{ fontSize: 13, fontWeight: isActive ? 600 : 400, color: isActive ? '#1e293b' : isDone ? '#64748b' : '#94a3b8', flex: 1 }}>
-                    {step.label}
-                  </span>
-                  {isActive && (
-                    <div style={{ display: 'flex', gap: 3 }}>
-                      {[0, 1, 2].map(j => (
-                        <div key={j} style={{ width: 4, height: 4, borderRadius: '50%', background: '#0D9488', animation: 'ebBounce 1.1s ease-in-out infinite', animationDelay: `${j * 160}ms` }} />
-                      ))}
-                    </div>
-                  )}
-                  {isDone && <span style={{ fontSize: 11, color: '#10b981', fontWeight: 700 }}>✓</span>}
-                </div>
-              );
-            })}
-          </div>
-
-          <p style={{ margin: '24px 0 0', textAlign: 'center', fontSize: 12, color: '#cbd5e1' }}>
-            1 à 3 minutes · Ne fermez pas cette fenêtre
-          </p>
         </div>
+        <style>{`@keyframes ebSpin { to { transform: rotate(360deg); } }`}</style>
       </div>
     </div>
   );

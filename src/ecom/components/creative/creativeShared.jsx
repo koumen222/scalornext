@@ -1,0 +1,314 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Loader2, X, Sparkles, CheckCircle, Wallet, CreditCard, Zap, Store, Package } from 'lucide-react';
+import creativeApi, { CREATIVE_PROVIDERS } from '../../services/creativeApi.js';
+import { tp } from '../../i18n/platform.js';
+
+/* ════════════════════════════════════════════════════════════════════════
+   Creative Center — primitives de design partagées (ultra épuré)
+   Tokens : vert marque #0F6B4F (primary-*), gris neutres, radius 2xl,
+   ombres douces, beaucoup d'air.
+   ════════════════════════════════════════════════════════════════════════ */
+
+// ─── Palette d'accent par module ────────────────────────────────────────────
+export const ACCENTS = {
+  text:  { ring: 'ring-blue-100',    text: 'text-blue-600',    bg: 'bg-blue-50',    solid: 'bg-blue-600',    grad: 'from-blue-500 to-indigo-500' },
+  image: { ring: 'ring-primary-100', text: 'text-primary-600', bg: 'bg-primary-50', solid: 'bg-primary-500', grad: 'from-primary-500 to-emerald-500' },
+  video: { ring: 'ring-orange-100',  text: 'text-scalor-copper', bg: 'bg-orange-50', solid: 'bg-scalor-copper', grad: 'from-scalor-copper to-amber-500' },
+  launch:{ ring: 'ring-violet-100',  text: 'text-violet-600',  bg: 'bg-violet-50',  solid: 'bg-violet-600',   grad: 'from-violet-500 to-purple-500' },
+  montage:{ ring: 'ring-cyan-100',   text: 'text-cyan-600',    bg: 'bg-cyan-50',    solid: 'bg-cyan-600',     grad: 'from-cyan-500 to-blue-500' },
+};
+
+export const CREDIT_PACKS = [
+  { quantity: 10, label: '10 crédits', price: 800 },
+  { quantity: 20, label: '20 crédits', price: 1600, badge: tp('Populaire') },
+  { quantity: 50, label: '50 crédits', price: 4000, badge: tp('Meilleure offre') },
+];
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+export async function downloadFile(url, filename) {
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (filename || 'creative').replace(/\s+/g, '-').toLowerCase();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  } catch {
+    window.open(url, '_blank');
+  }
+}
+
+export function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch { return ''; }
+}
+
+// ─── Hook crédits ───────────────────────────────────────────────────────────
+export function useCreativeCredits() {
+  const [credits, setCredits] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const refresh = useCallback(async () => {
+    try {
+      const r = await creativeApi.credits.get();
+      setCredits(r.data?.credits ?? 0);
+    } catch {
+      setCredits(0);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => { refresh(); }, [refresh]);
+  return { credits, setCredits, refresh, loading };
+}
+
+// ─── Badge provider ─────────────────────────────────────────────────────────
+export function ProviderBadge({ kind = 'text', size = 'sm' }) {
+  const provider = CREATIVE_PROVIDERS[kind] || CREATIVE_PROVIDERS.text;
+  const a = ACCENTS[kind] || ACCENTS.text;
+  const pad = size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs';
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full font-semibold ${a.bg} ${a.text} ${pad}`}>
+      <Zap size={size === 'sm' ? 9 : 11} className="opacity-80" />
+      {provider.label}
+    </span>
+  );
+}
+
+// ─── Petites primitives réutilisables ───────────────────────────────────────
+export function ChoiceChip({ active, onClick, children, icon: Icon, accent = ACCENTS.image, disabled }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-[13px] font-medium border transition-all disabled:opacity-40
+        ${active
+          ? `${accent.bg} ${accent.text} border-transparent ring-2 ${accent.ring}`
+          : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}
+    >
+      {Icon && <Icon size={14} />}
+      {children}
+    </button>
+  );
+}
+
+export function Field({ label, hint, children }) {
+  return (
+    <label className="block">
+      {label && (
+        <span className="flex items-center justify-between mb-1.5">
+          <span className="text-[13px] font-semibold text-gray-700">{label}</span>
+          {hint && <span className="text-[11px] text-gray-400">{hint}</span>}
+        </span>
+      )}
+      {children}
+    </label>
+  );
+}
+
+export function EmptyState({ icon: Icon, title, description, action }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-5 ring-1 ring-gray-100">
+        {Icon && <Icon size={26} className="text-gray-300" />}
+      </div>
+      <h3 className="text-lg font-semibold text-gray-800 mb-1.5">{title}</h3>
+      {description && <p className="text-gray-400 text-sm max-w-xs mb-6">{description}</p>}
+      {action}
+    </div>
+  );
+}
+
+// ─── Modal d'achat de crédits (redesign) ────────────────────────────────────
+export function BuyCreditsModal({ open, onClose, onSuccess, initialPack }) {
+  const [pack, setPack] = useState(initialPack || CREDIT_PACKS[1]);
+  const [phone, setPhone] = useState('');
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(null);
+  const pollRef = useRef(null);
+
+  useEffect(() => () => clearInterval(pollRef.current), []);
+  useEffect(() => { if (open) { setError(''); setSuccess(null); if (initialPack) setPack(initialPack); } }, [open, initialPack]);
+
+  const startPoll = useCallback((token) => {
+    pollRef.current = setInterval(async () => {
+      try {
+        const r = await creativeApi.credits.status(token);
+        const s = r.data?.status || r.data?.payment?.status;
+        if (s === 'paid') {
+          clearInterval(pollRef.current);
+          setSuccess(tp('Paiement confirmé ! Vos crédits ont été ajoutés.'));
+          setLoading(false);
+          const cr = await creativeApi.credits.get();
+          onSuccess?.(cr.data?.credits ?? 0);
+        } else if (s === 'failure' || s === 'no paid') {
+          clearInterval(pollRef.current);
+          setError(tp('Paiement échoué ou annulé.'));
+          setLoading(false);
+        }
+      } catch { /* transitoire */ }
+    }, 4000);
+  }, [onSuccess]);
+
+  const submit = async () => {
+    if (!phone.trim() || phone.trim().length < 8) { setError(tp('Numéro de téléphone invalide')); return; }
+    if (!name.trim() || name.trim().length < 2) { setError(tp('Nom requis')); return; }
+    setLoading(true); setError(''); setSuccess(null);
+    try {
+      const r = await creativeApi.credits.buy({ quantity: pack.quantity, phone: phone.trim(), clientName: name.trim() });
+      if (r.data?.success && r.data?.paymentUrl) {
+        window.open(r.data.paymentUrl, '_blank', 'noopener,noreferrer');
+        startPoll(r.data.mfToken);
+      } else {
+        throw new Error(r.data?.message || 'Erreur');
+      }
+    } catch (err) {
+      setLoading(false);
+      setError(err.response?.data?.message || err.message || tp('Erreur paiement'));
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={onClose}>
+      <div className="bg-white w-full sm:max-w-sm sm:mx-4 rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="pt-3 pb-1 flex justify-center sm:hidden"><div className="w-10 h-1 bg-gray-200 rounded-full" /></div>
+
+        <div className="px-6 pt-5 pb-4 flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-primary-50 flex items-center justify-center">
+              <Wallet size={18} className="text-primary-600" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-gray-900">{tp('Recharger des crédits')}</h3>
+              <p className="text-[12px] text-gray-400">{tp('1 crédit = 1 génération')}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400">
+            <X size={16} />
+          </button>
+        </div>
+
+        {success ? (
+          <div className="px-6 pb-8 pt-2 text-center">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
+              <CheckCircle size={26} className="text-primary-600" />
+            </div>
+            <p className="text-sm font-medium text-gray-800 mb-5">{success}</p>
+            <button onClick={onClose} className="w-full h-11 rounded-xl bg-primary-500 text-white font-semibold hover:bg-primary-600 transition-colors">
+              {tp('Terminer')}
+            </button>
+          </div>
+        ) : (
+          <div className="px-6 pb-6 space-y-4">
+            <div className="grid grid-cols-3 gap-2">
+              {CREDIT_PACKS.map(p => (
+                <button
+                  key={p.quantity}
+                  onClick={() => setPack(p)}
+                  className={`relative rounded-2xl border p-3 text-center transition-all ${pack.quantity === p.quantity ? 'border-primary-500 bg-primary-50/50 ring-2 ring-primary-100' : 'border-gray-200 hover:border-gray-300'}`}
+                >
+                  {p.badge && <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold uppercase tracking-wide bg-scalor-copper text-white px-1.5 py-0.5 rounded-full whitespace-nowrap">{p.badge}</span>}
+                  <div className="text-lg font-bold text-gray-900">{p.quantity}</div>
+                  <div className="text-[10px] text-gray-400 -mt-0.5">{tp('crédits')}</div>
+                  <div className="text-[11px] font-semibold text-primary-600 mt-1">{p.price} F</div>
+                </button>
+              ))}
+            </div>
+
+            <div className="space-y-2.5">
+              <input value={name} onChange={e => setName(e.target.value)} placeholder={tp('Votre nom')}
+                className="w-full h-11 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder={tp('Numéro de téléphone')} inputMode="tel"
+                className="w-full h-11 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
+            </div>
+
+            {error && <p className="text-[12px] text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>}
+
+            <button onClick={submit} disabled={loading}
+              className="w-full h-12 rounded-xl bg-gray-900 text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors disabled:opacity-60">
+              {loading ? <><Loader2 size={16} className="animate-spin" /> {tp('En attente du paiement…')}</> : <><CreditCard size={16} /> {tp('Payer')} {pack.price} F</>}
+            </button>
+            <p className="text-center text-[11px] text-gray-400">{tp('Paiement mobile money sécurisé')}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── En-tête de studio (2 colonnes form / résultat) ─────────────────────────
+export function StudioHeader({ icon: Icon, kind, title, subtitle, right }) {
+  const a = ACCENTS[kind] || ACCENTS.image;
+  return (
+    <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="flex items-start gap-3.5">
+        <div className={`w-11 h-11 rounded-2xl ${a.bg} flex items-center justify-center shrink-0`}>
+          {Icon && <Icon size={20} className={a.text} />}
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+          {subtitle && <p className="text-[13px] text-gray-400 mt-0.5">{subtitle}</p>}
+        </div>
+      </div>
+      {right}
+    </div>
+  );
+}
+
+// ─── Helpers produit ────────────────────────────────────────────────────────
+export function stripHtml(html) {
+  if (!html) return '';
+  return String(html)
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&#39;|&rsquo;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Télécharge une image distante et la convertit en File (pour réutiliser le flux d'upload). */
+export async function urlToFile(url, filename = 'produit.png') {
+  const res = await fetch(url, { mode: 'cors' });
+  if (!res.ok) throw new Error('fetch failed');
+  const blob = await res.blob();
+  return new File([blob], filename, { type: blob.type || 'image/png' });
+}
+
+// ─── Barre « importer un produit » (bouton ↔ chip produit importé) ──────────
+export function ImportProductBar({ product, onImport, onClear, accent = ACCENTS.image }) {
+  if (product) {
+    return (
+      <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50/70 p-2.5">
+        {product.imageUrl
+          ? <img src={product.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover border border-gray-200 shrink-0" />
+          : <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0"><Package size={16} className="text-gray-300" /></div>}
+        <div className="min-w-0 flex-1">
+          <p className="text-[9.5px] font-bold uppercase tracking-wide text-gray-400">{tp('Produit importé')}</p>
+          <p className="text-[13px] font-semibold text-gray-800 truncate">{product.name}</p>
+        </div>
+        <button onClick={onImport} className="text-[12px] font-medium text-gray-500 hover:text-gray-800 px-1.5 shrink-0">{tp('Changer')}</button>
+        <button onClick={onClear} className="w-7 h-7 rounded-lg hover:bg-gray-200 flex items-center justify-center text-gray-400 shrink-0"><X size={14} /></button>
+      </div>
+    );
+  }
+  return (
+    <button type="button" onClick={onImport}
+      className="w-full h-11 rounded-xl border-2 border-dashed border-gray-200 hover:border-gray-300 hover:bg-gray-50 flex items-center justify-center gap-2 text-[13px] font-medium text-gray-600 transition-colors">
+      <Store size={15} className={accent.text} /> {tp('Importer un produit de ma boutique')}
+    </button>
+  );
+}

@@ -59,6 +59,31 @@ Build-time (CI ou `.env` local au moment du build) — voir `.env.example` :
 npm run deploy       # opennextjs-cloudflare build && deploy
 ```
 
+### Déploiement staging isolé
+
+Pour tester la version Next sans modifier le frontend React ni son backend de
+production :
+
+```bash
+npm run build:staging
+npm run deploy:staging
+```
+
+Le fichier `wrangler.staging.jsonc` crée/utilise le Worker distinct
+`scalornext-staging` et injecte exclusivement :
+
+```text
+NEXT_PUBLIC_API_URL=https://api-staging.scalor.net
+NEXT_PUBLIC_BACKEND_URL=https://api-staging.scalor.net
+NEXT_PUBLIC_STORE_API_URL=https://api-staging.scalor.net
+NEXT_PUBLIC_SCALOR_API_URL=https://api-staging.scalor.net
+```
+
+Le domaine de test recommandé est `staging.scalor.net`. Il doit être rattaché
+au Worker `scalornext-staging`, tandis que `api-staging.scalor.net` doit pointer
+vers le backend staging sur le VPS. Ne rattache jamais `scalor.net`,
+`www.scalor.net` ou `*.scalor.net` au Worker staging.
+
 ## 6. Domaines
 
 1. **Plateforme** : router `scalor.net` et `www.scalor.net` vers le Worker

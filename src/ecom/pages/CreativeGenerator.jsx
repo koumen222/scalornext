@@ -40,6 +40,7 @@ const CreativeGenerator = () => {
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
   const [visualTemplate, setVisualTemplate] = useState('listing-green');
+  const [imageQuality, setImageQuality] = useState('low'); // low | medium | high
   const [productImage, setProductImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [logoImage, setLogoImage] = useState(null);
@@ -160,14 +161,79 @@ const CreativeGenerator = () => {
     }
   };
 
+  // ── Génération asynchrone : POST → jobId, puis polling de l'état ──────────
+  // Fiabilité : plus de requête HTTP longue. Le job survit aux coupures réseau,
+  // au refresh de la page (reprise via sessionStorage) et aux timeouts proxy.
+  const JOB_STORAGE_KEY = 'creativeGenJobId';
+  const POLL_INTERVAL_MS = 2500;
+  const POLL_MAX_MS = 10 * 60 * 1000;
+
+  const pollJob = useCallback(async (jobId) => {
+    const startedAt = Date.now();
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      if (Date.now() - startedAt > POLL_MAX_MS) {
+        throw new Error('La génération prend plus de temps que prévu — retrouvez vos visuels dans « Mes visuels » d\'ici quelques minutes.');
+      }
+      let job;
+      try {
+        const res = await ecomApi.get(`/ai/creative-generator/jobs/${jobId}`, { timeout: 15000 });
+        job = res.data?.job;
+      } catch (err) {
+        if (err.response?.status === 404) {
+          throw new Error(err.response?.data?.message || 'Suivi perdu — vos visuels déjà générés sont dans « Mes visuels ».');
+        }
+        // Erreur réseau transitoire → on continue de sonder
+        await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
+        continue;
+      }
+      if (!job) { await new Promise(r => setTimeout(r, POLL_INTERVAL_MS)); continue; }
+
+      // Progression visible : analyse → génération (x/n)
+      if (job.step === 'analysis' || job.step === 'queued') setCurrentStep(1);
+      else if (job.step === 'generating') setCurrentStep(2);
+
+      if (job.status === 'done') return job.result;
+      if (job.status === 'error') {
+        const partial = (job.creatives || []).some(c => c.imageUrl);
+        throw new Error(job.error + (partial ? ' — les visuels réussis sont dans « Mes visuels ».' : ''));
+      }
+      await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
+    }
+  }, []);
+
+  const runJobToCompletion = useCallback(async (jobId) => {
+    try {
+      const finalResult = await pollJob(jobId);
+      setResult(finalResult);
+      if (finalResult?.creditsRemaining !== undefined) setCredits(finalResult.creditsRemaining);
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la génération');
+    } finally {
+      try { sessionStorage.removeItem(JOB_STORAGE_KEY); } catch { /* ignore */ }
+      setLoading(false);
+      setCurrentStep(0);
+    }
+  }, [pollJob]);
+
+  // Reprise après refresh : si un job était en cours, on se raccroche dessus
+  useEffect(() => {
+    let jobId = null;
+    try { jobId = sessionStorage.getItem(JOB_STORAGE_KEY); } catch { /* ignore */ }
+    if (!jobId) return;
+    setLoading(true);
+    setError('');
+    setCurrentStep(1);
+    runJobToCompletion(jobId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const generate = useCallback(async () => {
     if (!canGenerate) return;
     setLoading(true);
     setError('');
     setResult(null);
-    setCurrentStep(0);
-    const stepTimer1 = setTimeout(() => setCurrentStep(1), 3000);
-    const stepTimer2 = setTimeout(() => setCurrentStep(2), 8000);
+    setCurrentStep(1);
     try {
       const formData = new FormData();
       if (productImage) formData.append('productImage', productImage);
@@ -175,13 +241,20 @@ const CreativeGenerator = () => {
       if (url.trim()) formData.append('url', url.trim());
       if (description.trim()) formData.append('description', description.trim());
       formData.append('visualTemplate', visualTemplate);
+      formData.append('quality', imageQuality);
       formData.append('formats', JSON.stringify(selectedFormats.length > 0 ? selectedFormats : undefined));
+
+      // Le POST rend un jobId en quelques secondes (validations + réservation crédits)
       const res = await ecomApi.post('/ai/creative-generator', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 0,
+        timeout: 60000,
       });
-      setResult(res.data);
+      const jobId = res.data?.jobId;
+      if (!jobId) throw new Error(res.data?.error || 'Réponse serveur invalide');
       if (res.data.creditsRemaining !== undefined) setCredits(res.data.creditsRemaining);
+      try { sessionStorage.setItem(JOB_STORAGE_KEY, jobId); } catch { /* ignore */ }
+
+      await runJobToCompletion(jobId);
     } catch (err) {
       const errData = err.response?.data;
       if (err.response?.status === 402) {
@@ -190,13 +263,10 @@ const CreativeGenerator = () => {
       } else {
         setError(errData?.error || err.message || 'Erreur lors de la génération');
       }
-    } finally {
-      clearTimeout(stepTimer1);
-      clearTimeout(stepTimer2);
       setLoading(false);
       setCurrentStep(0);
     }
-  }, [url, description, productImage, selectedFormats, visualTemplate, canGenerate]);
+  }, [url, description, productImage, logoImage, selectedFormats, visualTemplate, imageQuality, canGenerate, runJobToCompletion]);
 
   const downloadImage = async (imageUrl, filename) => {
     try {
@@ -501,6 +571,38 @@ const CreativeGenerator = () => {
                       {tpl.title}
                     </span>
                     {visualTemplate === tpl.id && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-600 rounded-full flex items-center justify-center">
+                        <CheckCircle size={10} className="text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Qualité d'image */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Qualité des images')}</p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'low', title: tp('Brouillon'), desc: tp('Rapide, pour tester'), badge: '⚡' },
+                  { id: 'medium', title: tp('Standard'), desc: tp('Bon rapport qualité/coût'), badge: '✨' },
+                  { id: 'high', title: tp('Premium'), desc: tp('Détails maximum'), badge: '💎' },
+                ].map(q => (
+                  <button
+                    key={q.id}
+                    type="button"
+                    onClick={() => setImageQuality(q.id)}
+                    className={`relative flex flex-col items-center gap-1 py-3 px-2 rounded-xl border-2 transition-all ${
+                      imageQuality === q.id
+                        ? 'border-green-600 bg-green-50'
+                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-lg leading-none">{q.badge}</span>
+                    <span className={`text-[11px] font-bold leading-none ${imageQuality === q.id ? 'text-green-700' : 'text-gray-700'}`}>{q.title}</span>
+                    <span className="text-[9.5px] text-gray-400 leading-tight text-center">{q.desc}</span>
+                    {imageQuality === q.id && (
                       <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-600 rounded-full flex items-center justify-center">
                         <CheckCircle size={10} className="text-white" />
                       </div>

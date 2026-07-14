@@ -294,24 +294,41 @@ const TicketsAdmin = () => {
                   {(!analysis.status || analysis.status === 'skipped') ? (
                     <p className="text-sm text-gray-500">Aucune analyse (catégorie hors bug technique).</p>
                   ) : analysis.status === 'pending' ? (
-                    <p className="text-sm text-amber-600">En attente — le job d'analyse (Phase 2) n'est pas encore branché.</p>
+                    <p className="text-sm text-amber-600">En attente d'un run Claude Code.</p>
+                  ) : analysis.status === 'running' ? (
+                    <p className="text-sm text-amber-600">Analyse en cours — run Claude Code en exécution…{analysis.runUrl && <> · <a href={analysis.runUrl} target="_blank" rel="noreferrer" className="text-indigo-600 underline">suivre le run</a></>}</p>
                   ) : (
-                    <div className="space-y-1.5 text-sm text-gray-700">
-                      {analysis.diagnosis && <p className="whitespace-pre-wrap">{analysis.diagnosis}</p>}
+                    <div className="space-y-2 text-sm text-gray-700">
+                      {analysis.status === 'failed' && analysis.error && (
+                        <div className="flex items-start gap-1.5 text-red-600 bg-red-50 rounded-lg p-2">
+                          <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          <span className="whitespace-pre-wrap break-words">{analysis.error}</span>
+                        </div>
+                      )}
+                      {analysis.diagnosis && (
+                        <div>
+                          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Ce que Claude a fait / conclu</p>
+                          <p className="whitespace-pre-wrap break-words text-gray-700">{analysis.diagnosis}</p>
+                        </div>
+                      )}
                       <div className="flex flex-wrap gap-3 text-xs text-gray-500">
                         {analysis.confidenceScore != null && <span>Confiance : {Math.round(analysis.confidenceScore * 100)}%</span>}
                         {analysis.recommendedAction && <span>Reco : {analysis.recommendedAction}</span>}
+                        {analysis.analyzedAt && <span>Analysé : {fmtDate(analysis.analyzedAt)}</span>}
                       </div>
-                      {fix.branch && (
-                        <div className="mt-2 bg-gray-900 text-gray-100 rounded-lg p-2 text-xs font-mono overflow-x-auto">
-                          <div>branche : {fix.branch}</div>
-                          {Array.isArray(fix.filesChanged) && fix.filesChanged.length > 0 && <div>fichiers : {fix.filesChanged.join(', ')}</div>}
+                      {(fix.branch || fix.prUrl || (Array.isArray(fix.filesChanged) && fix.filesChanged.length > 0)) && (
+                        <div className="mt-1 bg-gray-900 text-gray-100 rounded-lg p-2 text-xs font-mono overflow-x-auto">
+                          {fix.branch && <div>branche : {fix.branch}</div>}
+                          {Array.isArray(fix.filesChanged) && fix.filesChanged.length > 0 && <div>fichiers ({fix.filesChanged.length}) : {fix.filesChanged.join(', ')}</div>}
                           {fix.testResults && <div>tests : {fix.testResults.passed}/{fix.testResults.total}</div>}
                           {fix.prUrl && <div>PR : <a href={fix.prUrl} target="_blank" rel="noreferrer" className="text-primary-300 underline break-all">{fix.prUrl}</a></div>}
                         </div>
                       )}
+                      {analysis.runUrl && (
+                        <a href={analysis.runUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:underline">Voir l'exécution GitHub (logs complets) →</a>
+                      )}
                       {analysis.blacklistTriggered?.length > 0 && (
-                        <p className="flex items-center gap-1.5 text-xs text-red-600 mt-1"><AlertTriangle className="w-3.5 h-3.5" /> Liste noire : {analysis.blacklistTriggered.join(', ')}</p>
+                        <p className="flex items-center gap-1.5 text-xs text-red-600"><AlertTriangle className="w-3.5 h-3.5" /> Liste noire : {analysis.blacklistTriggered.join(', ')}</p>
                       )}
                     </div>
                   )}

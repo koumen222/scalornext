@@ -6,7 +6,8 @@ function resolveAffiliateApiBase() {
   if (isDev) return '';
 
   const candidate = process.env.NEXT_PUBLIC_STORE_API_URL
-    || process.env.NEXT_PUBLIC_BACKEND_URL;
+    || process.env.NEXT_PUBLIC_BACKEND_URL
+    || process.env.NEXT_PUBLIC_API_URL;
   if (candidate) return String(candidate).replace(/\/+$/, '');
 
   if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {

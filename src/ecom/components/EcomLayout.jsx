@@ -18,6 +18,7 @@ import SupportChatWidget from './SupportChatWidget.jsx';
 import { usePlanGate } from '../contexts/PlanGateContext.jsx';
 import { usePlatformT, usePlatformLang, tp } from '../i18n/platform.js';
 import PlatformLanguageSelector from './PlatformLanguageSelector.jsx';
+import StoreAssistantChat from './StoreAssistantChat.jsx';
 
 const EcomLayoutComponent = ({ children }) => {
   const { user, workspace, logout } = useEcomAuth();
@@ -280,14 +281,9 @@ const EcomLayoutComponent = ({ children }) => {
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
     },
     {
-      name: t('Créatives Images'), shortName: t('Créatives'), href: '/ecom/creatives', primary: false,
+      name: t('Creative Center'), shortName: t('Creative'), href: '/ecom/creatives', primary: false,
       roles: ['ecom_admin'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-    },
-    {
-      name: t('Mes Visuels'), shortName: t('Visuels'), href: '/ecom/creatives/gallery', primary: false,
-      roles: ['ecom_admin'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5L13 3z" /></svg>
     },
     {
       name: t('Service WhatsApp'), shortName: t('WhatsApp'), href: '/ecom/whatsapp/service', primary: false,
@@ -639,7 +635,7 @@ const EcomLayoutComponent = ({ children }) => {
       </aside>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:ml-[232px]">
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-[232px]" style={{ paddingRight: 'var(--store-assistant-dock, 0px)', transition: 'padding-right 200ms ease' }}>
         {/* ── Mobile Header: Scalor style (hidden on chat) ── */}
         <header className={`lg:hidden fixed top-0 left-0 right-0 z-20 bg-white border-b border-gray-200 pt-safe ${location.pathname.startsWith('/ecom/chat') ? 'hidden' : ''}`}>
           <div className="flex items-center justify-between min-h-[56px] px-3 sm:px-4">
@@ -680,7 +676,7 @@ const EcomLayoutComponent = ({ children }) => {
         </header>
 
         {/* ── Desktop Header ── Chariow-inspired: page title left, search center, actions right */}
-        <header className="hidden lg:flex border-b h-14 items-center px-5 fixed top-0 left-[232px] right-0 z-20 bg-white border-gray-200 gap-4">
+        <header className="hidden lg:flex border-b h-14 items-center px-5 fixed top-0 left-[232px] z-20 bg-white border-gray-200 gap-4" style={{ right: 'var(--store-assistant-dock, 0px)', transition: 'right 200ms ease' }}>
           {/* Left: page title */}
           <div className="flex items-center gap-2 min-w-[160px]">
             <h1 className="text-[15px] font-semibold text-gray-900 truncate">{getPageTitle(location.pathname, t)}</h1>
@@ -940,6 +936,17 @@ const EcomLayoutComponent = ({ children }) => {
 
       {/* Support Chat Widget */}
       {!useAdminLayout && <SupportChatWidget />}
+
+      {/* Assistant IA transversal du back-office. La Boutique possède son assistant dédié. */}
+      {!location.pathname.startsWith('/ecom/boutique') &&
+       !location.pathname.includes('builder') &&
+       !location.pathname.startsWith('/ecom/chat') && (
+        <StoreAssistantChat
+          mode="backoffice"
+          pageTitle={getPageTitle(location.pathname, t)}
+          workspaceName={workspace?.name || ''}
+        />
+      )}
 
       {/* ── Mobile Bottom Tab Bar - Scalor style (hidden on chat page) ── */}
       <nav className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 ${location.pathname.startsWith('/ecom/chat') ? 'hidden' : ''}`}>

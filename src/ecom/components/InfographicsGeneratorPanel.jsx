@@ -4,8 +4,8 @@ import { storeProductsApi } from '../services/storeApi.js';
 import { tp } from '../i18n/platform.js';
 
 const API_ORIGIN = (() => {
-  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || '').trim();
-  if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
+  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').trim();
+  if (!raw && typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
     return 'https://api.scalor.net';
   }
   if (raw && /^https?:\/\//i.test(raw)) {

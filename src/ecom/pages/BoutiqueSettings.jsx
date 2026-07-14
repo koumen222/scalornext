@@ -8,7 +8,8 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useStore } from '../contexts/StoreContext.jsx';
 import api from '../../lib/api';
 import { storeManageApi } from '../services/storeApi.js';
-import { ExternalLink, Check, Upload, Palette, Type, Store, Megaphone, Sparkles, Loader2, RefreshCw, Settings, Eye } from 'lucide-react';
+import DeleteStoreModal from '../components/DeleteStoreModal.jsx';
+import { ExternalLink, Check, Upload, Palette, Type, Store, Megaphone, Sparkles, Loader2, RefreshCw, Settings, Eye, Trash2 } from 'lucide-react';
 import { tp } from '../i18n/platform.js';
 import { WORLD_COUNTRIES as COUNTRIES } from '../constants/countries.js';
 
@@ -213,6 +214,10 @@ const BoutiqueSettings = () => {
   const navigate = useNavigate();
   const { workspace } = useEcomAuth();
   const { activeStore, getActiveStorefrontUrl } = useStore();
+
+  // ── Suppression de la boutique (modal partagée) ─────────────────────────────
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const canDeleteStore = Boolean(activeStore?._id) && !activeStore?.legacyWorkspaceStore;
 
   const _cacheKey = activeStore?._id
     ? `boutique_settings_${activeStore._id}`
@@ -683,6 +688,35 @@ const BoutiqueSettings = () => {
               <p className="text-xs mt-3 font-medium text-purple-700">{regenMsg}</p>
             )}
           </div>
+
+          {/* ── Zone de danger : suppression de la boutique ─────────────── */}
+          <div className="bg-red-50/60 rounded-2xl border border-red-200 p-6">
+            <div className="flex items-start gap-3 mb-4">
+              <span className="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
+                <Trash2 size={17} />
+              </span>
+              <div>
+                <h2 className="text-sm font-bold text-red-900">{tp('Supprimer la boutique')}</h2>
+                <p className="text-xs text-red-700/80 mt-0.5">
+                  {tp('Action définitive : la boutique passe hors ligne immédiatement, ses produits, pages et réglages ne seront plus accessibles.')}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setDeleteOpen(true)}
+              disabled={!canDeleteStore}
+              title={canDeleteStore ? undefined : tp('Cette boutique ne peut pas être supprimée depuis cette page')}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition shadow-md shadow-red-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Trash2 size={15} />
+              {tp('Supprimer cette boutique')}
+            </button>
+          </div>
+
+          {/* Modal de confirmation partagée */}
+          {deleteOpen && (
+            <DeleteStoreModal store={activeStore} onClose={() => setDeleteOpen(false)} />
+          )}
         </>
       )}
 

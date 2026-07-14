@@ -49,17 +49,17 @@ const PlatformLanguageSelector = ({ compact = false }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-xl border border-gray-200 bg-white py-1.5 shadow-xl">
+        <div className="absolute right-0 top-full mt-1 z-50 w-44 whitespace-nowrap rounded-xl border border-gray-200 bg-white py-1.5 shadow-xl" style={{ minWidth: '12rem' }}>
           <p className="px-3 pb-1 pt-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-400">{t('Langue')}</p>
           {PLATFORM_LANGUAGES.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => select(option.value)}
-              className={`flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition hover:bg-gray-50 ${option.value === lang ? 'font-semibold text-primary-700' : 'text-gray-700'}`}
+              className={`flex w-full items-center gap-2.5 whitespace-nowrap px-3 py-2 text-left text-sm transition hover:bg-gray-50 ${option.value === lang ? 'font-semibold text-primary-700' : 'text-gray-700'}`}
             >
               <span className="text-base leading-none">{option.flag}</span>
-              <span className="flex-1">{option.label}</span>
+              <span className="flex-1 whitespace-nowrap">{option.label}</span>
               {option.value === lang && (
                 <svg className="h-4 w-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M5 13l4 4L19 7" />
