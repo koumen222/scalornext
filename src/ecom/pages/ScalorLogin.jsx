@@ -32,7 +32,7 @@ export default function ScalorLogin() {
           <h1 className="text-4xl font-bold text-white">
             <span className="text-green-400">Scalor</span> API
           </h1>
-          <p className="text-gray-400 mt-2">{tp('WhatsApp Business API Platform')}</p>
+          <p className="text-muted-foreground mt-2">{tp('WhatsApp Business API Platform')}</p>
         </div>
 
         {/* Form */}
@@ -47,7 +47,7 @@ export default function ScalorLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Email</label>
+              <label className="block text-sm text-muted-foreground mb-1">Email</label>
               <input
                 type="email"
                 required
@@ -59,7 +59,7 @@ export default function ScalorLogin() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{tp('Mot de passe')}</label>
+              <label className="block text-sm text-muted-foreground mb-1">{tp('Mot de passe')}</label>
               <input
                 type="password"
                 required
@@ -79,7 +79,7 @@ export default function ScalorLogin() {
             </button>
           </form>
 
-          <p className="text-center text-gray-500 text-sm mt-6">
+          <p className="text-center text-muted-foreground text-sm mt-6">
             Pas encore de compte ?{' '}
             <Link to="/scalor/register" className="text-green-400 hover:text-green-300">
               {tp('Créer un compte')}

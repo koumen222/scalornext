@@ -130,7 +130,7 @@ const AiImagePromptBox = ({ value = '', onGenerated, aspectRatio = '4:3', compac
                 key={s.id}
                 type="button"
                 onClick={() => setPresetId(presetId === s.id ? '' : s.id)}
-                className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${presetId === s.id ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-indigo-200 bg-white text-indigo-700 hover:bg-indigo-50'}`}
+                className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${presetId === s.id ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-indigo-200 bg-card text-indigo-700 hover:bg-indigo-50'}`}
               >
                 {s.label}
               </button>
@@ -144,12 +144,12 @@ const AiImagePromptBox = ({ value = '', onGenerated, aspectRatio = '4:3', compac
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(false); } }}
               placeholder={tp('Décrivez l\'image : « crème sur fond beige avec fleurs d\'hibiscus »…')}
-              className="min-h-[46px] flex-1 resize-y rounded-lg border border-indigo-200 bg-white px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="min-h-[46px] flex-1 resize-y rounded-lg border border-indigo-200 bg-card px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
             />
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg p-1 text-slate-400 transition hover:bg-white hover:text-slate-700"
+              className="rounded-lg p-1 text-slate-400 transition hover:bg-card hover:text-slate-700"
               title={tp('Fermer')}
             >
               <X className="h-3.5 w-3.5" />
@@ -163,13 +163,13 @@ const AiImagePromptBox = ({ value = '', onGenerated, aspectRatio = '4:3', compac
                 key={o.url}
                 type="button"
                 onClick={() => setRefUrl(refUrl === o.url ? '' : o.url)}
-                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${refUrl === o.url ? 'border-indigo-500 bg-indigo-100 text-indigo-800' : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-300'}`}
+                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${refUrl === o.url ? 'border-indigo-500 bg-indigo-100 text-indigo-800' : 'border-slate-200 bg-card text-slate-500 hover:border-indigo-300'}`}
               >
                 <ImageIcon className="h-2.5 w-2.5" />
                 {o.label}
               </button>
             ))}
-            <label className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10.5px] font-bold text-slate-500 transition hover:border-indigo-300">
+            <label className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-slate-200 bg-card px-2 py-0.5 text-[10.5px] font-bold text-slate-500 transition hover:border-indigo-300">
               {refUploading ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Upload className="h-2.5 w-2.5" />}
               {tp('Uploader un exemple')}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => uploadReference(e.target.files?.[0])} />
@@ -201,7 +201,7 @@ const AiImagePromptBox = ({ value = '', onGenerated, aspectRatio = '4:3', compac
                 disabled={!prompt.trim() && !presetId}
                 onClick={() => run(true)}
                 title={tp('Applique votre demande à l\'image actuelle')}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-300 bg-white px-2.5 py-1.5 text-[11px] font-bold text-indigo-700 transition hover:bg-indigo-50 disabled:opacity-40"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-300 bg-card px-2.5 py-1.5 text-[11px] font-bold text-indigo-700 transition hover:bg-indigo-50 disabled:opacity-40"
               >
                 <Wand2 className="h-3 w-3" />
                 {tp('Modifier l\'image actuelle')}

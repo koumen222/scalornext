@@ -103,8 +103,8 @@ export default function ConnectShopify() {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{tp('Webhook Shopify')}</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-foreground">{tp('Webhook Shopify')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           {tp('Recevez automatiquement vos commandes Shopify en temps reel via webhook.')}
         </p>
       </div>
@@ -134,16 +134,16 @@ export default function ConnectShopify() {
       )}
 
       {/* Webhook URL */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+      <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-6">
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">{tp('Webhook URL')}</h2>
-            <p className="text-xs text-gray-500">{tp('Copiez cette URL et collez-la dans Shopify')}</p>
+            <h2 className="text-lg font-semibold text-foreground">{tp('Webhook URL')}</h2>
+            <p className="text-xs text-muted-foreground">{tp('Copiez cette URL et collez-la dans Shopify')}</p>
           </div>
         </div>
 
@@ -154,7 +154,7 @@ export default function ConnectShopify() {
               type="text"
               readOnly
               value={webhookLoading ? 'Chargement...' : webhookUrl}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono text-gray-700 select-all outline-none"
+              className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm font-mono text-foreground select-all outline-none"
               onClick={(e) => e.target.select()}
             />
           </div>
@@ -162,8 +162,8 @@ export default function ConnectShopify() {
             onClick={copyWebhookUrl}
             className={`px-4 py-3 rounded-xl text-sm font-medium transition flex items-center gap-2 flex-shrink-0 ${
               webhookCopied
-                ? 'bg-primary-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-primary text-white'
+                : 'bg-muted text-foreground hover:bg-gray-200'
             }`}
           >
             {webhookCopied ? (
@@ -185,7 +185,7 @@ export default function ConnectShopify() {
           <button
             onClick={testWebhook}
             disabled={webhookTesting}
-            className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-100 transition flex items-center gap-2 disabled:opacity-50"
+            className="px-4 py-2 bg-background border border-border rounded-xl text-sm text-muted-foreground hover:bg-muted transition flex items-center gap-2 disabled:opacity-50"
           >
             {webhookTesting ? (
               <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
@@ -195,11 +195,11 @@ export default function ConnectShopify() {
             Tester l'endpoint
           </button>
           {webhookStatus && (
-            <span className={`text-xs font-medium flex items-center gap-1.5 ${webhookStatus.ok ? 'text-primary-600' : 'text-red-600'}`}>
-              <span className={`w-2 h-2 rounded-full ${webhookStatus.ok ? 'bg-primary-500' : 'bg-red-500'}`} />
+            <span className={`text-xs font-medium flex items-center gap-1.5 ${webhookStatus.ok ? 'text-primary' : 'text-red-600'}`}>
+              <span className={`w-2 h-2 rounded-full ${webhookStatus.ok ? 'bg-primary' : 'bg-red-500'}`} />
               {webhookStatus.message}
               {webhookStatus.ok && webhookStatus.hmac && (
-                <span className="text-gray-400 font-normal ml-1">{tp('(HMAC actif)')}</span>
+                <span className="text-muted-foreground font-normal ml-1">{tp('(HMAC actif)')}</span>
               )}
             </span>
           )}
@@ -207,7 +207,7 @@ export default function ConnectShopify() {
       </div>
 
       {/* Video Tutorial */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+      <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
             <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -215,8 +215,8 @@ export default function ConnectShopify() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">{tp('Tutoriel video')}</h2>
-            <p className="text-xs text-gray-500">{tp('Regardez comment configurer votre webhook Shopify')}</p>
+            <h2 className="text-lg font-semibold text-foreground">{tp('Tutoriel video')}</h2>
+            <p className="text-xs text-muted-foreground">{tp('Regardez comment configurer votre webhook Shopify')}</p>
           </div>
         </div>
         <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: '56.25%' }}>
@@ -232,7 +232,7 @@ export default function ConnectShopify() {
       </div>
 
       {/* Configuration Shopify */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+      <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-6">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-10 h-10 bg-[#96bf48] rounded-xl flex items-center justify-center">
             <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
@@ -240,18 +240,18 @@ export default function ConnectShopify() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">{tp('Configuration dans Shopify')}</h2>
-            <p className="text-xs text-gray-500">{tp('Suivez ces etapes pour activer le webhook')}</p>
+            <h2 className="text-lg font-semibold text-foreground">{tp('Configuration dans Shopify')}</h2>
+            <p className="text-xs text-muted-foreground">{tp('Suivez ces etapes pour activer le webhook')}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           {/* Step 1 */}
           <div className="flex gap-3">
-            <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+            <div className="w-7 h-7 bg-primary-100 text-primary rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">{tp('Ouvrez les parametres Shopify')}</p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-sm font-medium text-foreground">{tp('Ouvrez les parametres Shopify')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Allez dans <strong>{tp('Shopify Admin')}</strong> &rarr; <strong>{tp('Settings')}</strong> &rarr; <strong>{tp('Notifications')}</strong>
               </p>
             </div>
@@ -259,10 +259,10 @@ export default function ConnectShopify() {
 
           {/* Step 2 */}
           <div className="flex gap-3">
-            <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+            <div className="w-7 h-7 bg-primary-100 text-primary rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">{tp('Creez un webhook')}</p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-sm font-medium text-foreground">{tp('Creez un webhook')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Faites defiler jusqu'a <strong>{tp('Webhooks')}</strong> {tp('en bas de page, puis cliquez sur')} <strong>{tp('Create webhook')}</strong>
               </p>
             </div>
@@ -270,22 +270,22 @@ export default function ConnectShopify() {
 
           {/* Step 3 */}
           <div className="flex gap-3">
-            <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+            <div className="w-7 h-7 bg-primary-100 text-primary rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">{tp('Configurez le webhook')}</p>
-              <div className="mt-2 bg-gray-50 rounded-xl p-3 space-y-2">
+              <p className="text-sm font-medium text-foreground">{tp('Configurez le webhook')}</p>
+              <div className="mt-2 bg-background rounded-xl p-3 space-y-2">
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="font-medium text-gray-600 w-16">{tp('Event')}</span>
-                  <code className="bg-white px-2 py-1 rounded-lg border border-gray-200 text-gray-800">{tp('Order creation')}</code>
+                  <span className="font-medium text-muted-foreground w-16">{tp('Event')}</span>
+                  <code className="bg-card px-2 py-1 rounded-lg border border-border text-foreground">{tp('Order creation')}</code>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="font-medium text-gray-600 w-16">{tp('Format')}</span>
-                  <code className="bg-white px-2 py-1 rounded-lg border border-gray-200 text-gray-800">JSON</code>
+                  <span className="font-medium text-muted-foreground w-16">{tp('Format')}</span>
+                  <code className="bg-card px-2 py-1 rounded-lg border border-border text-foreground">JSON</code>
                 </div>
                 <div className="flex items-start gap-2 text-xs">
-                  <span className="font-medium text-gray-600 w-16 mt-1">URL</span>
+                  <span className="font-medium text-muted-foreground w-16 mt-1">URL</span>
                   <div className="flex-1">
-                    <code className="bg-white px-2 py-1 rounded-lg border border-gray-200 text-primary-700 block break-all">{webhookUrl || '...'}</code>
+                    <code className="bg-card px-2 py-1 rounded-lg border border-border text-primary block break-all">{webhookUrl || '...'}</code>
                   </div>
                 </div>
               </div>
@@ -294,10 +294,10 @@ export default function ConnectShopify() {
 
           {/* Step 4 */}
           <div className="flex gap-3">
-            <div className="w-7 h-7 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
+            <div className="w-7 h-7 bg-primary-100 text-primary rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
             <div>
-              <p className="text-sm font-medium text-gray-900">{tp('Sauvegardez')}</p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-sm font-medium text-foreground">{tp('Sauvegardez')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Cliquez sur <strong>{tp('Save')}</strong>. Les nouvelles commandes Shopify seront automatiquement envoyees a Scalor.
               </p>
             </div>

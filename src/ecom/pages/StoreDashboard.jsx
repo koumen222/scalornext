@@ -610,8 +610,8 @@ export default function StoreDashboard() {
     <div className="p-5 sm:p-8 lg:p-10 max-w-6xl mx-auto space-y-8">
 
       {loading && !dashboardData && (
-        <div className="rounded-xl border border-gray-200 bg-white p-3">
-          <div className="h-1.5 w-40 rounded-full bg-gray-100 overflow-hidden">
+        <div className="rounded-xl border border-border bg-card p-3">
+          <div className="h-1.5 w-40 rounded-full bg-muted overflow-hidden">
             <div className="h-full w-1/2 bg-gray-300 animate-pulse" />
           </div>
         </div>
@@ -620,25 +620,25 @@ export default function StoreDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-[22px] font-bold tracking-tight text-gray-900">{t("Vue d'ensemble")}</h1>
-          <p className="text-[13px] text-gray-400 mt-1">{t(periodLabel)}</p>
+          <h1 className="text-2xl sm:text-[22px] font-bold tracking-tight text-foreground">{t("Vue d'ensemble")}</h1>
+          <p className="text-[13px] text-muted-foreground mt-1">{t(periodLabel)}</p>
         </div>
         <div className="flex items-center gap-2">
           {(storeUrl || activeStore?.subdomain) && (
             <a href={storeUrl || `https://${activeStore.subdomain}.scalor.net`} target="_blank" rel="noopener noreferrer"
-              className="hidden sm:inline-flex text-[13px] font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-100 transition items-center gap-1.5">
+              className="hidden sm:inline-flex text-[13px] font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-xl hover:bg-muted transition items-center gap-1.5">
               <Globe size={14} /> Boutique
             </a>
           )}
           <div className="hidden sm:block h-6 w-px bg-gray-200 mx-0.5" />
           <div className="relative flex-1 sm:flex-none">
             <button onClick={() => setDatePickerOpen(!datePickerOpen)}
-              className="flex w-full sm:w-auto sm:min-w-[190px] items-center justify-between gap-2 rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 sm:py-2 text-[13px] font-medium text-gray-700 shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:border-gray-300 hover:bg-gray-50 transition">
+              className="flex w-full sm:w-auto sm:min-w-[190px] items-center justify-between gap-2 rounded-xl border border-border/80 bg-card px-3.5 py-2.5 sm:py-2 text-[13px] font-medium text-foreground shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:border-gray-300 hover:bg-background transition">
               <span className="flex items-center gap-2 min-w-0">
                 <Calendar size={14} className="text-primary-500 flex-shrink-0" />
                 <span className="truncate">{t(periodLabel)}</span>
               </span>
-              <ChevronDown size={14} className="text-gray-400 flex-shrink-0" />
+              <ChevronDown size={14} className="text-muted-foreground flex-shrink-0" />
             </button>
             {datePickerOpen && (
               <>
@@ -654,10 +654,10 @@ export default function StoreDashboard() {
               </>
             )}
           </div>
-          <button onClick={() => loadDashboard(false, { forceAllStores: true })} disabled={refreshing} className="p-2.5 sm:p-2 text-gray-500 hover:text-gray-900 rounded-xl border border-gray-200/80 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:bg-gray-50 hover:border-gray-300 transition">
+          <button onClick={() => loadDashboard(false, { forceAllStores: true })} disabled={refreshing} className="p-2.5 sm:p-2 text-muted-foreground hover:text-foreground rounded-xl border border-border/80 bg-card shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:bg-background hover:border-gray-300 transition">
             <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
           </button>
-          <button onClick={exportAnalytics} className="p-2.5 sm:p-2 text-gray-500 hover:text-gray-900 rounded-xl border border-gray-200/80 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:bg-gray-50 hover:border-gray-300 transition">
+          <button onClick={exportAnalytics} className="p-2.5 sm:p-2 text-muted-foreground hover:text-foreground rounded-xl border border-border/80 bg-card shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:bg-background hover:border-gray-300 transition">
             <Download size={16} />
           </button>
         </div>
@@ -682,44 +682,44 @@ export default function StoreDashboard() {
           const active = chartMetric === m.key;
           return (
             <button key={i} onClick={() => setChartMetric(m.key)}
-              className={`group relative flex flex-col items-start rounded-2xl border bg-white px-4 sm:px-5 py-4 text-left transition-all duration-200
+              className={`group relative flex flex-col items-start rounded-2xl border bg-card px-4 sm:px-5 py-4 text-left transition-all duration-200
                 ${active
                   ? 'border-primary-500/40 shadow-[0_18px_40px_-24px_rgba(15,107,79,0.55)] ring-1 ring-primary-500/30'
-                  : 'border-gray-200/70 shadow-[0_2px_4px_rgba(16,24,40,0.04)] hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_20px_40px_-26px_rgba(16,24,40,0.35)]'}`}>
+                  : 'border-border/70 shadow-[0_2px_4px_rgba(16,24,40,0.04)] hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_20px_40px_-26px_rgba(16,24,40,0.35)]'}`}>
               <div className="flex w-full items-center justify-between">
-                <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${active ? 'bg-primary-500 text-white' : 'bg-primary-50 text-primary-600 group-hover:bg-primary-100'}`}>
+                <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${active ? 'bg-primary text-white' : 'bg-primary-50 text-primary group-hover:bg-primary-100'}`}>
                   <m.icon size={17} strokeWidth={2} />
                 </span>
-                <p className="text-[10px] sm:text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{m.label}</p>
+                <p className="text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{m.label}</p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 mt-3 tabular-nums truncate w-full">{m.value}</p>
-              {m.sub && <p className="text-[11px] text-gray-400 mt-1 truncate w-full">{m.sub}</p>}
+              <p className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mt-3 tabular-nums truncate w-full">{m.value}</p>
+              {m.sub && <p className="text-[11px] text-muted-foreground mt-1 truncate w-full">{m.sub}</p>}
             </button>
           );
         })}
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+      <div className="bg-card rounded-2xl border/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
           <div className="flex items-center gap-2.5">
-            <span className="h-2 w-2 rounded-full bg-primary-500" />
+            <span className="h-2 w-2 rounded-full bg-primary" />
             <div className="relative">
               <select
                 value={chartMetric}
                 onChange={(e) => setChartMetric(e.target.value)}
-                className="appearance-none rounded-lg border border-gray-200 bg-white py-1.5 pl-3 pr-8 text-[13px] font-semibold text-gray-800 outline-none transition hover:border-gray-300 hover:bg-gray-50 focus:border-primary-400"
+                className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-[13px] font-semibold text-foreground outline-none transition hover:border-gray-300 hover:bg-background focus:border-primary-400"
               >
                 {Object.entries(chartMetricLabel).map(([key, label]) => (
                   <option key={key} value={key}>{label}</option>
                 ))}
               </select>
-              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-400" />
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
           <button
             onClick={() => setIsChartCollapsed((value) => !value)}
-            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[12px] font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[12px] font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
           >
             {isChartCollapsed ? t('Afficher') : t('Masquer')}
             <ChevronDown size={14} className={`transition-transform ${isChartCollapsed ? '' : 'rotate-180'}`} />
@@ -758,12 +758,12 @@ export default function StoreDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {actions.map((a, i) => (
           <Link key={i} to={a.to}
-            className="group flex items-center gap-3 bg-white border border-gray-200/70 rounded-2xl px-4 py-3.5 shadow-[0_2px_4px_rgba(16,24,40,0.04)] hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_16px_30px_-22px_rgba(16,24,40,0.3)] transition-all duration-200">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 group-hover:bg-primary-100 transition-colors flex-shrink-0">
+            className="group flex items-center gap-3 bg-card border border-border/70 rounded-2xl px-4 py-3.5 shadow-[0_2px_4px_rgba(16,24,40,0.04)] hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_16px_30px_-22px_rgba(16,24,40,0.3)] transition-all duration-200">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary group-hover:bg-primary-100 transition-colors flex-shrink-0">
               <a.icon size={16} />
             </span>
-            <span className="text-[13px] font-medium text-gray-700 group-hover:text-gray-900 transition truncate">{a.label}</span>
-            {a.count !== undefined && <span className="ml-auto text-[11px] font-semibold text-gray-400 tabular-nums">{a.count}</span>}
+            <span className="text-[13px] font-medium text-foreground group-hover:text-foreground transition truncate">{a.label}</span>
+            {a.count !== undefined && <span className="ml-auto text-[11px] font-semibold text-muted-foreground tabular-nums">{a.count}</span>}
           </Link>
         ))}
       </div>
@@ -806,25 +806,25 @@ export default function StoreDashboard() {
         const maxV = items[0]?.[cfg.valueKey] || 1;
 
         return (
-          <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <p className="text-[14px] font-semibold text-gray-900">{cfg.title}</p>
-              <Link to="/ecom/boutique/products" className="text-[12px] font-medium text-primary-600 hover:text-primary-700 transition">{tp('Voir tout')}</Link>
+          <div className="bg-card rounded-2xl border/70 shadow-[0_2px_8px_rgba(16,24,40,0.05)] overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <p className="text-[14px] font-semibold text-foreground">{cfg.title}</p>
+              <Link to="/ecom/boutique/products" className="text-[12px] font-medium text-primary hover:text-primary transition">{tp('Voir tout')}</Link>
             </div>
             {items.length > 0 ? (
               <div className="divide-y divide-gray-50">
                 {items.map((p, i) => (
-                  <div key={p._id || p.name || i} className="flex items-center gap-3.5 px-5 py-3.5 hover:bg-gray-50/70 transition">
-                    <span className={`flex h-6 w-6 items-center justify-center rounded-lg text-[11px] font-bold tabular-nums flex-shrink-0 ${i === 0 ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-400'}`}>{i + 1}</span>
+                  <div key={p._id || p.name || i} className="flex items-center gap-3.5 px-5 py-3.5 hover:bg-background/70 transition">
+                    <span className={`flex h-6 w-6 items-center justify-center rounded-lg text-[11px] font-bold tabular-nums flex-shrink-0 ${i === 0 ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>{i + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium text-gray-800 truncate">{p.name || t('Sans nom')}</p>
-                      <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <p className="text-[13px] font-medium text-foreground truncate">{p.name || t('Sans nom')}</p>
+                      <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full transition-all duration-500" style={{ width: `${(p[cfg.valueKey] / maxV) * 100}%` }} />
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-[13px] font-semibold text-gray-900 tabular-nums">{cfg.valueLabel(p)}</p>
-                      <p className="text-[10px] text-gray-400">{cfg.subLabel(p)}</p>
+                      <p className="text-[13px] font-semibold text-foreground tabular-nums">{cfg.valueLabel(p)}</p>
+                      <p className="text-[10px] text-muted-foreground">{cfg.subLabel(p)}</p>
                     </div>
                   </div>
                 ))}
@@ -938,7 +938,7 @@ const AreaChart = ({ data, unit, hourly, rangeStart, rangeEnd, respectSelectedRa
     return (
       <div className="rounded-xl bg-gray-900 px-3 py-2 text-[11px] font-medium text-white shadow-lg">
         <div>{formatValue(payload[0].value)}</div>
-        <div className="text-gray-400">{label}</div>
+        <div className="text-muted-foreground">{label}</div>
       </div>
     );
   };
@@ -1143,19 +1143,19 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
     const days = getDays(year, month);
     return (
       <div>
-        <p className="text-[14px] font-semibold text-gray-900 text-center mb-4">{t(MONTHS[month])} {year}</p>
+        <p className="text-[14px] font-semibold text-foreground text-center mb-4">{t(MONTHS[month])} {year}</p>
         <div className="grid grid-cols-7 gap-y-1">
-          {DAYS.map((d) => <div key={d} className="text-[11px] font-medium text-gray-400 text-center py-1">{d}</div>)}
+          {DAYS.map((d) => <div key={d} className="text-[11px] font-medium text-muted-foreground text-center py-1">{d}</div>)}
           {days.map((d, i) => (
             <button key={i} disabled={!d || isFuture(d)}
               onClick={() => handleDayClick(d)}
               className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl text-[13px] transition-all
                 ${!d ? 'pointer-events-none opacity-0' : ''}
                 ${d && isFuture(d) ? 'text-gray-200 cursor-not-allowed' : ''}
-                ${d && !isFuture(d) && !isInRange(d) ? 'text-gray-700 hover:bg-gray-100' : ''}
-                ${isInRange(d) && !isStart(d) && !isEnd(d) ? 'bg-gray-100 text-gray-900 rounded-md' : ''}
+                ${d && !isFuture(d) && !isInRange(d) ? 'text-foreground hover:bg-muted' : ''}
+                ${isInRange(d) && !isStart(d) && !isEnd(d) ? 'bg-muted text-foreground rounded-md' : ''}
                 ${isStart(d) || isEnd(d) ? 'bg-gray-900 text-white font-semibold shadow-sm' : ''}
-                ${isToday(d) && !isStart(d) && !isEnd(d) ? 'font-semibold text-gray-900 ring-1 ring-gray-300' : ''}
+                ${isToday(d) && !isStart(d) && !isEnd(d) ? 'font-semibold text-foreground ring-1 ring-gray-300' : ''}
               `}>
               {d ? d.getDate() : ''}
             </button>
@@ -1166,17 +1166,17 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
   };
 
   return (
-    <div className="fixed inset-4 top-20 z-50 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[920px]">
+    <div className="fixed inset-4 top-20 z-50 overflow-hidden rounded-2xl border border-border bg-card shadow-2xl sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[920px]">
       {/* Presets sidebar */}
       <div className="flex h-full flex-col sm:flex-row">
-        <div className="border-b border-gray-100 px-3 py-3 sm:w-56 sm:border-b-0 sm:border-r sm:px-0 sm:py-4 flex-shrink-0">
+        <div className="border-b border-border px-3 py-3 sm:w-56 sm:border-b-0 sm:border-r sm:px-0 sm:py-4 flex-shrink-0">
           {presetSections.map((section) => (
             <div key={section.title || section.items[0].key} className="sm:mb-2">
-              {section.title && <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">{t(section.title)}</p>}
+              {section.title && <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{t(section.title)}</p>}
               {section.items.map((item) => (
                 <button key={item.key} onClick={() => handlePreset(item.key)}
                   className={`block w-full rounded-xl px-4 py-2.5 text-left text-[14px] transition sm:rounded-none
-                    ${activePreset === item.key ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-600 hover:bg-gray-50'}`}>
+                    ${activePreset === item.key ? 'bg-muted font-semibold text-foreground' : 'text-muted-foreground hover:bg-background'}`}>
                   {t(item.label)}
                 </button>
               ))}
@@ -1188,33 +1188,33 @@ const DatePickerDropdown = ({ onPreset, onCustom, onClose, activePeriod, activeL
         <div className="flex-1 p-4 sm:p-5">
         {/* Date inputs */}
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <div className="flex min-h-[44px] flex-1 items-center rounded-xl border border-gray-200 bg-white px-4 text-[14px] text-gray-700 shadow-sm">
+          <div className="flex min-h-[44px] flex-1 items-center rounded-xl border border-border bg-card px-4 text-[14px] text-foreground shadow-sm">
             {fmtInput(selStart) || <span className="text-gray-300">{t('Date de début')}</span>}
           </div>
           <ArrowRight size={16} className="hidden text-gray-300 sm:block flex-shrink-0" />
-          <div className="flex min-h-[44px] flex-1 items-center rounded-xl border border-gray-200 bg-white px-4 text-[14px] text-gray-700 shadow-sm">
+          <div className="flex min-h-[44px] flex-1 items-center rounded-xl border border-border bg-card px-4 text-[14px] text-foreground shadow-sm">
             {fmtInput(selEnd) || <span className="text-gray-300">{t('Date de fin')}</span>}
           </div>
         </div>
 
         {/* Dual calendar */}
         <div className="flex items-start gap-3 sm:gap-6">
-          <button onClick={prevMonth} className="mt-1 rounded-lg p-1.5 hover:bg-gray-100 transition">
-            <ChevronLeft size={16} className="text-gray-400" />
+          <button onClick={prevMonth} className="mt-1 rounded-lg p-1.5 hover:bg-muted transition">
+            <ChevronLeft size={16} className="text-muted-foreground" />
           </button>
           <div className="grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2">
             <div>{renderCalendar(leftYear, leftMonth)}</div>
             <div>{renderCalendar(rightYear, rightMonth)}</div>
           </div>
-          <button onClick={nextMonth} className="mt-1 rounded-lg p-1.5 hover:bg-gray-100 transition">
-            <ChevronRight size={16} className="text-gray-400" />
+          <button onClick={nextMonth} className="mt-1 rounded-lg p-1.5 hover:bg-muted transition">
+            <ChevronRight size={16} className="text-muted-foreground" />
           </button>
         </div>
 
         {/* Footer */}
-        <div className="mt-5 flex justify-end gap-2 border-t border-gray-100 pt-4">
+        <div className="mt-5 flex justify-end gap-2 border-t border-border pt-4">
           <button onClick={onClose}
-            className="rounded-xl border border-gray-200 px-4 py-2 text-[13px] font-medium text-gray-600 hover:bg-gray-50 transition">
+            className="rounded-xl border border-border px-4 py-2 text-[13px] font-medium text-muted-foreground hover:bg-background transition">
             {t('Annuler')}
           </button>
           <button onClick={handleApply} disabled={!selStart}

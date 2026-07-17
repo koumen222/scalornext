@@ -9,24 +9,24 @@ import { tp } from '../i18n/platform.js';
 
 const waStatus = (status) => {
   if (status === 'connected' || status === 'active')
-    return { label: 'Connecté', dot: 'bg-primary-500', badge: 'bg-primary-100 text-primary-700' };
+    return { label: 'Connecté', dot: 'bg-primary', badge: 'bg-primary-100 text-primary' };
   if (status === 'configured')
     return { label: 'Configuré', dot: 'bg-sky-400', badge: 'bg-sky-100 text-sky-700' };
   if (status === 'disconnected')
     return { label: 'Déconnecté', dot: 'bg-red-400', badge: 'bg-red-100 text-red-600' };
-  return { label: 'Non vérifié', dot: 'bg-gray-300', badge: 'bg-gray-100 text-gray-500' };
+  return { label: 'Non vérifié', dot: 'bg-gray-300', badge: 'bg-muted text-muted-foreground' };
 };
 
 const UsageBar = ({ used, limit, label }) => {
   const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
-  const color = pct >= 100 ? 'bg-red-500' : pct >= 80 ? 'bg-amber-400' : 'bg-primary-500';
+  const color = pct >= 100 ? 'bg-red-500' : pct >= 80 ? 'bg-amber-400' : 'bg-primary';
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-[11px]">
-        <span className="text-gray-500 font-medium">{label}</span>
-        <span className="font-bold text-gray-800">{used.toLocaleString('fr-FR')} <span className="font-normal text-gray-400">/ {limit.toLocaleString('fr-FR')}</span></span>
+        <span className="text-muted-foreground font-medium">{label}</span>
+        <span className="font-bold text-foreground">{used.toLocaleString('fr-FR')} <span className="font-normal text-muted-foreground">/ {limit.toLocaleString('fr-FR')}</span></span>
       </div>
-      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -129,27 +129,27 @@ const WhatsAppConnexion = () => {
   const totalMonthlyL = Object.values(usageStats).reduce((s,u) => s+(u?.monthlyLimit||0), 0) || 5000;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-4">
 
         {/* Header */}
-        <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex items-center justify-between gap-3">
+        <div className="bg-card rounded-2xl border px-5 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
               <MessageCircle className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-sm font-bold text-gray-900">{tp('Connexion WhatsApp')}</h1>
-              <p className="text-[11px] text-gray-400">{tp('Instances ZenChat API')}</p>
+              <h1 className="text-sm font-bold text-foreground">{tp('Connexion WhatsApp')}</h1>
+              <p className="text-[11px] text-muted-foreground">{tp('Instances ZenChat API')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={refreshAll} disabled={loading}
-              className="p-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition disabled:opacity-50">
+              className="p-2 rounded-xl border border-border text-muted-foreground hover:bg-background transition disabled:opacity-50">
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button onClick={() => setShowAddForm(v => !v)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition shadow-sm">
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition shadow-sm">
               {showAddForm ? <X className="w-4 h-4" /> : <><Plus className="w-4 h-4" /><span>{tp('Lier')}</span></>}
             </button>
           </div>
@@ -157,28 +157,28 @@ const WhatsAppConnexion = () => {
 
         {/* KPI row */}
         <div className="grid grid-cols-4 gap-2">
-          <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Total')}</p>
-            <p className="text-xl font-bold text-gray-900 mt-0.5">{instances.length}</p>
+          <div className="bg-card rounded-2xl border p-3 text-center">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{tp('Total')}</p>
+            <p className="text-xl font-bold text-foreground mt-0.5">{instances.length}</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Connectées')}</p>
-            <p className={`text-xl font-bold mt-0.5 ${connected > 0 ? 'text-primary-600' : 'text-gray-400'}`}>{connected}</p>
+          <div className="bg-card rounded-2xl border p-3 text-center">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{tp('Connectées')}</p>
+            <p className={`text-xl font-bold mt-0.5 ${connected > 0 ? 'text-primary' : 'text-muted-foreground'}`}>{connected}</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Hors ligne')}</p>
-            <p className={`text-xl font-bold mt-0.5 ${offline > 0 ? 'text-red-500' : 'text-gray-400'}`}>{offline}</p>
+          <div className="bg-card rounded-2xl border p-3 text-center">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{tp('Hors ligne')}</p>
+            <p className={`text-xl font-bold mt-0.5 ${offline > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>{offline}</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Msgs/jour')}</p>
-            <p className="text-xl font-bold text-gray-900 mt-0.5">{totalDaily}</p>
+          <div className="bg-card rounded-2xl border p-3 text-center">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{tp('Msgs/jour')}</p>
+            <p className="text-xl font-bold text-foreground mt-0.5">{totalDaily}</p>
           </div>
         </div>
 
         {/* Global usage */}
         {instances.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 space-y-3">
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{tp('Usage global')}</p>
+          <div className="bg-card rounded-2xl border px-5 py-4 space-y-3">
+            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{tp('Usage global')}</p>
             <UsageBar used={totalDaily} limit={totalDailyL} label="Messages aujourd'hui" />
             <UsageBar used={totalMonthly} limit={totalMonthlyL} label="Messages ce mois" />
           </div>
@@ -186,8 +186,8 @@ const WhatsAppConnexion = () => {
 
         {/* Add Form */}
         {showAddForm && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
-            <h2 className="text-sm font-bold text-gray-900">{tp('Nouvelle instance ZenChat')}</h2>
+          <div className="bg-card rounded-2xl border p-5 space-y-4">
+            <h2 className="text-sm font-bold text-foreground">{tp('Nouvelle instance ZenChat')}</h2>
             <div className="px-3 py-2.5 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-700">
               Pas encore de compte ZenChat ?{' '}
               <a href="https://zechat.site/" target="_blank" rel="noopener noreferrer"
@@ -203,20 +203,20 @@ const WhatsAppConnexion = () => {
                 { name: 'defaultPart', label: 'Part (%)', placeholder: '50', type: 'number' },
               ].map(f => (
                 <div key={f.name}>
-                  <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">{f.label}</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">{f.label}</label>
                   <input type={f.type} name={f.name} value={formData[f.name]} onChange={e => setFormData(p => ({ ...p, [f.name]: e.target.value }))}
                     placeholder={f.placeholder} required={f.required} min={f.name === 'defaultPart' ? 0 : undefined} max={f.name === 'defaultPart' ? 100 : undefined}
-                    className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary-600/20 focus:border-primary-500 outline-none transition"
+                    className="w-full px-3.5 py-2.5 text-sm border border-border rounded-xl bg-background focus:bg-card focus:ring-2 focus:ring-primary-600/20 focus:border-primary-500 outline-none transition"
                   />
                 </div>
               ))}
               <div className="sm:col-span-2 flex justify-end gap-2 pt-1">
                 <button type="button" onClick={() => setShowAddForm(false)}
-                  className="px-4 py-2.5 text-sm font-semibold text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+                  className="px-4 py-2.5 text-sm font-semibold text-muted-foreground border border-border rounded-xl hover:bg-background transition">
                   {tp('Annuler')}
                 </button>
                 <button type="submit" disabled={submitting}
-                  className="px-5 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 transition flex items-center gap-2">
+                  className="px-5 py-2.5 text-sm font-bold bg-primary text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 transition flex items-center gap-2">
                   {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />{tp('Liaison…')}</> : tp('Enregistrer')}
                 </button>
               </div>
@@ -235,7 +235,7 @@ const WhatsAppConnexion = () => {
         {linkResult && (
           <div className={`px-4 py-3 rounded-xl flex items-start gap-2 text-sm border ${
             linkResult.verified && linkResult.status === 'connected'
-              ? 'bg-primary-50 border-primary-200 text-primary-700'
+              ? 'bg-primary-50 border-primary-200 text-primary'
               : 'bg-amber-50 border-amber-200 text-amber-700'
           }`}>
             {linkResult.verified && linkResult.status === 'connected'
@@ -251,19 +251,19 @@ const WhatsAppConnexion = () => {
 
         {/* Instances */}
         {loading ? (
-          <div className="bg-white rounded-2xl border border-gray-100 py-16 flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
-            <p className="text-sm text-gray-500">{tp('Chargement…')}</p>
+          <div className="bg-card rounded-2xl border py-16 flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <p className="text-sm text-muted-foreground">{tp('Chargement…')}</p>
           </div>
         ) : instances.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-16 text-center">
-            <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="bg-card rounded-2xl border border-dashed border-border py-16 text-center">
+            <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="w-7 h-7 text-gray-300" />
             </div>
-            <p className="text-sm font-semibold text-gray-900">{tp('Aucune instance connectée')}</p>
-            <p className="text-xs text-gray-400 mt-1 mb-5">{tp('Liez votre compte WhatsApp via ZenChat pour commencer')}</p>
+            <p className="text-sm font-semibold text-foreground">{tp('Aucune instance connectée')}</p>
+            <p className="text-xs text-muted-foreground mt-1 mb-5">{tp('Liez votre compte WhatsApp via ZenChat pour commencer')}</p>
             <button onClick={() => setShowAddForm(true)}
-              className="px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition">
+              className="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition">
               {tp('Lier ma première instance')}
             </button>
           </div>
@@ -276,18 +276,18 @@ const WhatsAppConnexion = () => {
               const isOff   = inst.status === 'disconnected';
 
               return (
-                <div key={inst._id} className={`bg-white rounded-2xl border overflow-hidden ${isOff ? 'border-red-100' : 'border-gray-100'}`}>
+                <div key={inst._id} className={`bg-card rounded-2xl border overflow-hidden ${isOff ? 'border-red-100' : 'border-border'}`}>
 
                   {/* Card header */}
                   <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50">
                     <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${isOff ? 'bg-red-50' : 'bg-primary-50'}`}>
                       {isOff
                         ? <WifiOff className="w-4 h-4 text-red-400" />
-                        : <Wifi className="w-4 h-4 text-primary-600" />}
+                        : <Wifi className="w-4 h-4 text-primary" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-gray-900 truncate">{inst.customName || inst.instanceName}</p>
-                      <p className="text-[11px] font-mono text-gray-400 truncate">{inst.instanceName}</p>
+                      <p className="text-sm font-bold text-foreground truncate">{inst.customName || inst.instanceName}</p>
+                      <p className="text-[11px] font-mono text-muted-foreground truncate">{inst.instanceName}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${st.badge}`}>
@@ -295,7 +295,7 @@ const WhatsAppConnexion = () => {
                         {st.label}
                       </span>
                       {inst.defaultPart !== undefined && (
-                        <span className="px-2 py-1 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-600">{inst.defaultPart}%</span>
+                        <span className="px-2 py-1 rounded-full text-[11px] font-semibold bg-muted text-muted-foreground">{inst.defaultPart}%</span>
                       )}
                       <button onClick={() => deleteInstance(inst)}
                         className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition">
@@ -306,13 +306,13 @@ const WhatsAppConnexion = () => {
 
                   <div className="px-4 py-3.5 space-y-3">
                     {/* Token row */}
-                    <div className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2">
+                    <div className="flex items-center justify-between bg-background rounded-xl px-3 py-2">
                       <div className="min-w-0">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Token')}</p>
-                        <p className="text-xs font-mono text-gray-500 mt-0.5">••••••••••••</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{tp('Token')}</p>
+                        <p className="text-xs font-mono text-muted-foreground mt-0.5">••••••••••••</p>
                       </div>
                       <button onClick={() => copy(inst.instanceToken, inst._id+'tok')}
-                        className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-400 transition">
+                        className="p-1.5 rounded-lg hover:bg-gray-200 text-muted-foreground transition">
                         {copiedId === inst._id+'tok' ? <Check className="w-3.5 h-3.5 text-primary-500" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
                     </div>
@@ -321,11 +321,11 @@ const WhatsAppConnexion = () => {
                     {usage ? (
                       <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Quotas')}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{tp('Quotas')}</p>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                            usage.plan === 'free' ? 'bg-gray-100 text-gray-500'
+                            usage.plan === 'free' ? 'bg-muted text-muted-foreground'
                             : usage.plan === 'premium' ? 'bg-amber-100 text-amber-700'
-                            : 'bg-primary-100 text-primary-700'
+                            : 'bg-primary-100 text-primary'
                           }`}>
                             {usage.plan === 'free' ? 'Gratuit' : usage.plan === 'premium' ? 'Premium' : tp('Illimité')}
                           </span>
@@ -345,7 +345,7 @@ const WhatsAppConnexion = () => {
                       </div>
                     ) : (
                       <div className="space-y-2.5">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Quotas')}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{tp('Quotas')}</p>
                         <UsageBar used={0} limit={100} label="Aujourd'hui" />
                         <UsageBar used={0} limit={5000} label="Ce mois" />
                       </div>
@@ -353,7 +353,7 @@ const WhatsAppConnexion = () => {
 
                     {/* Footer */}
                     <div className="flex items-center justify-between pt-1">
-                      <p className="text-[11px] text-gray-400">
+                      <p className="text-[11px] text-muted-foreground">
                         Créé le {new Date(inst.createdAt || inst.updatedAt).toLocaleDateString('fr-FR')}
                       </p>
                       <button onClick={() => testConnection(inst)} disabled={test?.loading}
@@ -368,7 +368,7 @@ const WhatsAppConnexion = () => {
                     {test && !test.loading && (
                       <div className={`flex items-start gap-2 px-3 py-2.5 rounded-xl text-xs border ${
                         test.success
-                          ? 'bg-primary-50 border-primary-100 text-primary-700'
+                          ? 'bg-primary-50 border-primary-100 text-primary'
                           : 'bg-red-50 border-red-100 text-red-700'
                       }`}>
                         {test.success

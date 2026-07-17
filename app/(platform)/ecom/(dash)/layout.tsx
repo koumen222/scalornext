@@ -8,6 +8,17 @@
 import type { ReactNode } from 'react';
 import { DashboardChrome } from '@/lib/dashboard/chrome';
 
-export default function DashLayout({ children }: { children: ReactNode }) {
-  return <DashboardChrome>{children}</DashboardChrome>;
+export default function DashLayout({
+  children,
+  modal,
+}: {
+  children: ReactNode;
+  modal: ReactNode;
+}) {
+  return (
+    <DashboardChrome>
+      {children}
+      {modal}
+    </DashboardChrome>
+  );
 }

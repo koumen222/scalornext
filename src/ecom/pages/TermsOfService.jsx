@@ -394,7 +394,7 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
             <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
           </button>
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate(-1)} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition">
+            <button onClick={() => navigate(-1)} className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition">
               {tp('Retour')}
             </button>
             <button onClick={() => navigate('/ecom/login')} className="px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 rounded-xl transition">
@@ -407,11 +407,11 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
       {/* Hero */}
       <div className="relative py-16 sm:py-24 px-4">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-700/10 rounded-full blur-3xl"></div>
         </div>
         <div className="relative max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full text-primary-400 text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary-500/20 rounded-full text-primary-400 text-sm font-medium mb-6">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
@@ -420,11 +420,11 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
           <h1 className="text-3xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-primary-100 to-primary-200 bg-clip-text text-transparent leading-tight">
             Conditions Générales<br />d'Utilisation
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
             Veuillez lire attentivement ces conditions avant d'utiliser SCALOR. 
             En utilisant notre service, vous acceptez d'être lié par ces conditions.
           </p>
-          <p className="text-gray-500 text-sm mt-4">
+          <p className="text-muted-foreground text-sm mt-4">
             Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
@@ -432,7 +432,7 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
 
       {/* Quick Links */}
       <div className="max-w-5xl mx-auto px-4 mb-16">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <div className="bg-card/5 border border-white/10 rounded-2xl p-6">
           <h3 className="text-sm font-semibold text-white mb-4">{tp('Accès rapide')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
@@ -444,7 +444,7 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
               <button
                 key={i}
                 onClick={() => document.getElementById(`section-${link.section}`)?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-left px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-gray-300 hover:text-white transition"
+                className="text-left px-3 py-2 bg-card/5 hover:bg-card/10 border border-white/10 rounded-lg text-xs text-gray-300 hover:text-white transition"
               >
                 § {link.section}. {link.label}
               </button>
@@ -459,13 +459,13 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
           <div 
             key={i} 
             id={`section-${i + 1}`}
-            className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/20 transition scroll-mt-20"
+            className="bg-card/[0.03] border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/20 transition scroll-mt-20"
           >
             <div className="flex items-start gap-4">
               <div className="text-3xl flex-shrink-0 mt-1">{section.icon}</div>
               <div className="flex-1">
                 <h2 className="text-xl font-bold text-white mb-4">{section.title}</h2>
-                <div className="text-gray-400 text-sm leading-relaxed whitespace-pre-line">
+                <div className="text-muted-foreground text-sm leading-relaxed whitespace-pre-line">
                   {section.content.split('**').map((part, j) => 
                     j % 2 === 1 ? <strong key={j} className="text-white font-medium">{part}</strong> : part
                   )}
@@ -479,7 +479,7 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
         <div className="bg-gradient-to-r from-primary-600/10 to-primary-700/10 border border-primary-600/20 rounded-2xl p-6 sm:p-8 text-center">
           <div className="text-4xl mb-4">✍️</div>
           <h3 className="text-xl font-bold text-white mb-3">{tp('Acceptation des conditions')}</h3>
-          <p className="text-gray-400 text-sm max-w-xl mx-auto mb-6">
+          <p className="text-muted-foreground text-sm max-w-xl mx-auto mb-6">
             En créant un compte sur SCALOR, vous acceptez ces Conditions Générales d'Utilisation ainsi que notre Politique de Confidentialité. 
             Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser le Service.
           </p>
@@ -492,7 +492,7 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
             </button>
             <button 
               onClick={() => navigate('/ecom/privacy')}
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-semibold text-sm transition"
+              className="px-6 py-3 bg-card/10 hover:bg-card/20 border border-white/20 rounded-xl font-semibold text-sm transition"
             >
               {tp('Voir la politique de confidentialité')}
             </button>
@@ -503,16 +503,16 @@ Des conditions spécifiques s'appliquent aux revendeurs et partenaires commercia
       {/* Footer */}
       <footer className="border-t border-white/5 py-8 px-4">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} SCALOR. Tous droits réservés.</p>
+          <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} SCALOR. Tous droits réservés.</p>
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/ecom/landing')} className="text-xs text-gray-500 hover:text-gray-300 transition">
+            <button onClick={() => navigate('/ecom/landing')} className="text-xs text-muted-foreground hover:text-gray-300 transition">
               {tp('Accueil')}
             </button>
-            <span className="text-gray-700">•</span>
-            <button onClick={() => navigate('/ecom/privacy')} className="text-xs text-gray-500 hover:text-gray-300 transition">
+            <span className="text-foreground">•</span>
+            <button onClick={() => navigate('/ecom/privacy')} className="text-xs text-muted-foreground hover:text-gray-300 transition">
               {tp('Confidentialité')}
             </button>
-            <span className="text-gray-700">•</span>
+            <span className="text-foreground">•</span>
             <span className="text-xs text-primary-500">CGU</span>
           </div>
         </div>

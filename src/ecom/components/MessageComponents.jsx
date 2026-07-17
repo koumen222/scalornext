@@ -3,9 +3,9 @@ import { useAudioPlayer } from '../hooks/useAudioRecorder';
 import { tp } from '../i18n/platform.js';
 
 const ROLE_COLORS = { 
-  ecom_admin: 'bg-primary-600', 
+  ecom_admin: 'bg-primary', 
   ecom_closeuse: 'bg-amber-500', 
-  ecom_compta: 'bg-primary-500', 
+  ecom_compta: 'bg-primary', 
   ecom_livreur: 'bg-orange-500', 
   super_admin: 'bg-primary-700' 
 };
@@ -35,7 +35,7 @@ export function AudioPlayer({ src, duration }) {
     <div className="flex items-center gap-2 min-w-[180px]">
       <button
         onClick={() => toggle(src)}
-        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-card/20 hover:bg-card/30 transition-colors"
       >
         {isPlaying ? (
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -53,10 +53,10 @@ export function AudioPlayer({ src, duration }) {
         <div
           ref={progressRef}
           onClick={handleProgressClick}
-          className="h-1 bg-white/30 rounded-full cursor-pointer"
+          className="h-1 bg-card/30 rounded-full cursor-pointer"
         >
           <div
-            className="h-full bg-white rounded-full transition-all"
+            className="h-full bg-card rounded-full transition-all"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -78,7 +78,7 @@ export function ImageMessage({ src, alt, onClick }) {
 
   if (error) {
     return (
-      <div className="w-48 h-32 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+      <div className="w-48 h-32 bg-gray-200 rounded-lg flex items-center justify-center text-muted-foreground">
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
@@ -131,9 +131,9 @@ export function DocumentMessage({ fileName, fileSize, src }) {
       href={src}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-3 p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+      className="flex items-center gap-3 p-3 bg-card/10 rounded-lg hover:bg-card/20 transition-colors"
     >
-      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+      <div className="w-10 h-10 bg-card/20 rounded-lg flex items-center justify-center">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
@@ -164,7 +164,7 @@ export function ReplyPreview({ replyTo, onClear, isOwn }) {
   };
 
   return (
-    <div className={`flex items-center gap-2 px-3 py-2 rounded-t-lg border-l-2 ${isOwn ? 'bg-primary-600/20 border-primary-500' : 'bg-gray-100 border-gray-400'}`}>
+    <div className={`flex items-center gap-2 px-3 py-2 rounded-t-lg border-l-2 ${isOwn ? 'bg-primary/20 border-primary-500' : 'bg-muted border-gray-400'}`}>
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold">{replyTo.senderName}</p>
         <p className="text-xs opacity-70 truncate">{getPreviewText()}</p>
@@ -186,7 +186,7 @@ export function ReplyPreview({ replyTo, onClear, isOwn }) {
 export function MessageStatus({ status }) {
   if (status === 'sending') {
     return (
-      <svg className="w-3 h-3 text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-3 h-3 text-muted-foreground animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="10" strokeWidth={2} />
       </svg>
     );
@@ -194,7 +194,7 @@ export function MessageStatus({ status }) {
   
   if (status === 'sent') {
     return (
-      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
       </svg>
     );
@@ -202,7 +202,7 @@ export function MessageStatus({ status }) {
   
   if (status === 'delivered') {
     return (
-      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7M5 19l4 4L19 13" />
       </svg>
     );
@@ -210,7 +210,7 @@ export function MessageStatus({ status }) {
   
   if (status === 'read') {
     return (
-      <svg className="w-3 h-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7M5 19l4 4L19 13" />
       </svg>
     );
@@ -234,7 +234,7 @@ export function MessageReactions({ reactions, onReact, userId }) {
             key={emoji}
             onClick={() => onReact(emoji, hasReacted ? 'remove' : 'add')}
             className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs transition-colors ${
-              hasReacted ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 hover:bg-gray-200'
+              hasReacted ? 'bg-primary-100 text-primary' : 'bg-muted hover:bg-gray-200'
             }`}
           >
             <span>{emoji}</span>
@@ -251,7 +251,7 @@ export function MessageReactions({ reactions, onReact, userId }) {
  */
 export function TypingIndicator({ userName }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500">
+    <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
       <div className="flex gap-1">
         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -273,7 +273,7 @@ export function RecordingIndicator({ duration, onCancel, onStop }) {
       <div className="flex-1" />
       <button
         onClick={onCancel}
-        className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-100"
+        className="p-2 text-muted-foreground hover:text-red-500 rounded-full hover:bg-red-100"
         title={tp('Annuler')}
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,21 +319,21 @@ export function UploadProgress({ progress, fileName, onCancel }) {
             fill="none"
             strokeDasharray={88}
             strokeDashoffset={88 - (88 * progress) / 100}
-            className="text-primary-600 transition-all"
+            className="text-primary transition-all"
           />
         </svg>
-        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-primary-600">
+        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-primary">
           {progress}%
         </span>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-primary-700 truncate">{fileName}</p>
-        <p className="text-xs text-primary-600">{tp('Envoi en cours...')}</p>
+        <p className="text-sm font-medium text-primary truncate">{fileName}</p>
+        <p className="text-xs text-primary">{tp('Envoi en cours...')}</p>
       </div>
       {onCancel && (
         <button
           onClick={onCancel}
-          className="p-1 text-primary-500 hover:text-primary-600"
+          className="p-1 text-primary-500 hover:text-primary"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -351,12 +351,12 @@ export function EmojiPicker({ onSelect, onClose }) {
   const emojis = ['👍', '❤️', '😂', '😮', '😢', '😡', '🎉', '🔥'];
 
   return (
-    <div className="absolute bottom-full mb-2 p-2 bg-white rounded-lg shadow-lg border flex gap-1">
+    <div className="absolute bottom-full mb-2 p-2 bg-card rounded-lg shadow-lg border flex gap-1">
       {emojis.map(emoji => (
         <button
           key={emoji}
           onClick={() => { onSelect(emoji); onClose(); }}
-          className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded text-lg"
+          className="w-8 h-8 flex items-center justify-center hover:bg-muted rounded text-lg"
         >
           {emoji}
         </button>

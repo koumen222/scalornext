@@ -77,7 +77,7 @@ const CampaignDetail = () => {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         <ErrorBanner message={error} />
-        <Link to="/ecom/campaigns" className="mt-4 inline-block text-primary-600 hover:text-primary-700">
+        <Link to="/ecom/campaigns" className="mt-4 inline-block text-primary hover:text-primary">
           ← Retour aux campagnes
         </Link>
       </div>
@@ -109,18 +109,18 @@ const CampaignDetail = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <Link to="/ecom/campaigns" className="text-gray-400 hover:text-gray-600">
+            <Link to="/ecom/campaigns" className="text-muted-foreground hover:text-muted-foreground">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/>
               </svg>
             </Link>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{campaign.name}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{campaign.name}</h1>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
               campaign.status === 'sent' ? 'bg-green-100 text-green-700' :
-              campaign.status === 'draft' ? 'bg-gray-100 text-gray-700' :
-              campaign.status === 'scheduled' ? 'bg-primary-100 text-primary-700' :
+              campaign.status === 'draft' ? 'bg-muted text-foreground' :
+              campaign.status === 'scheduled' ? 'bg-primary-100 text-primary' :
               campaign.status === 'sending' ? 'bg-yellow-100 text-yellow-700' :
               'bg-red-100 text-red-700'
             }`}>
@@ -130,9 +130,9 @@ const CampaignDetail = () => {
                campaign.status === 'sending' ? 'En cours' :
                'Échouée'}
             </span>
-            <span className="text-xs text-gray-500">{typeLabels[campaign.type] || campaign.type}</span>
+            <span className="text-xs text-muted-foreground">{typeLabels[campaign.type] || campaign.type}</span>
             {campaign.sentAt && (
-              <span className="text-xs text-gray-500">Envoyée le {fmtDate(campaign.sentAt)}</span>
+              <span className="text-xs text-muted-foreground">Envoyée le {fmtDate(campaign.sentAt)}</span>
             )}
           </div>
         </div>
@@ -150,7 +150,7 @@ const CampaignDetail = () => {
           )}
           <Link 
             to={`/ecom/campaigns/${campaign._id}/edit`}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm font-medium flex items-center gap-1.5"
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition text-sm font-medium flex items-center gap-1.5"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -162,44 +162,44 @@ const CampaignDetail = () => {
 
       {/* Statistiques */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
-          <div className="text-2xl font-bold text-gray-900">{campaign.stats?.targeted || 0}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Ciblés')}</div>
+        <div className="bg-card rounded-xl shadow-sm border p-4 text-center">
+          <div className="text-2xl font-bold text-foreground">{campaign.stats?.targeted || 0}</div>
+          <div className="text-xs text-muted-foreground uppercase font-medium mt-1">{tp('Ciblés')}</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
+        <div className="bg-card rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-green-600">{sentCount}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Envoyés')}</div>
+          <div className="text-xs text-muted-foreground uppercase font-medium mt-1">{tp('Envoyés')}</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
+        <div className="bg-card rounded-xl shadow-sm border p-4 text-center">
           <div className="text-2xl font-bold text-red-600">{failedCount}</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Échecs')}</div>
+          <div className="text-xs text-muted-foreground uppercase font-medium mt-1">{tp('Échecs')}</div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
-          <div className="text-2xl font-bold text-primary-600">{successRate}%</div>
-          <div className="text-xs text-gray-500 uppercase font-medium mt-1">{tp('Taux succès')}</div>
+        <div className="bg-card rounded-xl shadow-sm border p-4 text-center">
+          <div className="text-2xl font-bold text-primary">{successRate}%</div>
+          <div className="text-xs text-muted-foreground uppercase font-medium mt-1">{tp('Taux succès')}</div>
         </div>
       </div>
 
       {/* Message template */}
       {campaign.messageTemplate && (
-        <div className="bg-white rounded-xl shadow-sm border p-5 mb-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-3">{tp('📝 Message envoyé')}</h2>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <p className="text-sm text-gray-800 whitespace-pre-wrap">{campaign.messageTemplate}</p>
+        <div className="bg-card rounded-xl shadow-sm border p-5 mb-6">
+          <h2 className="text-sm font-semibold text-foreground mb-3">{tp('📝 Message envoyé')}</h2>
+          <div className="bg-background rounded-lg p-4 border border-border">
+            <p className="text-sm text-foreground whitespace-pre-wrap">{campaign.messageTemplate}</p>
           </div>
         </div>
       )}
 
       {/* Filtres et recherche */}
-      <div className="bg-white rounded-xl shadow-sm border p-4 mb-4">
+      <div className="bg-card rounded-xl shadow-sm border p-4 mb-4">
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setFilterStatus('all')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                 filterStatus === 'all' 
-                  ? 'bg-primary-600 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-primary text-white' 
+                  : 'bg-muted text-muted-foreground hover:bg-gray-200'
               }`}
             >
               Tous ({results.length})
@@ -209,7 +209,7 @@ const CampaignDetail = () => {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                 filterStatus === 'sent' 
                   ? 'bg-green-600 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-muted text-muted-foreground hover:bg-gray-200'
               }`}
             >
               ✅ Envoyés ({sentCount})
@@ -219,7 +219,7 @@ const CampaignDetail = () => {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                 filterStatus === 'failed' 
                   ? 'bg-red-600 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-muted text-muted-foreground hover:bg-gray-200'
               }`}
             >
               ❌ Échecs ({failedCount})
@@ -230,7 +230,7 @@ const CampaignDetail = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                   filterStatus === 'pending' 
                     ? 'bg-yellow-600 text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-muted text-muted-foreground hover:bg-gray-200'
                 }`}
               >
                 ⏳ En attente ({pendingCount})
@@ -245,7 +245,7 @@ const CampaignDetail = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
             />
-            <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </div>
@@ -253,39 +253,39 @@ const CampaignDetail = () => {
       </div>
 
       {/* Liste des résultats */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-          <h2 className="text-sm font-semibold text-gray-900">
+      <div className="bg-card rounded-xl shadow-sm border overflow-hidden">
+        <div className="px-4 py-3 border-b border-border bg-background">
+          <h2 className="text-sm font-semibold text-foreground">
             📊 Activité détaillée ({filteredResults.length} résultat{filteredResults.length > 1 ? 's' : ''})
           </h2>
         </div>
         
         {filteredResults.length === 0 ? (
           <div className="p-8 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
               </svg>
             </div>
-            <p className="text-sm text-gray-500">{tp('Aucun résultat trouvé')}</p>
+            <p className="text-sm text-muted-foreground">{tp('Aucun résultat trouvé')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-background border-b border-border">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Statut')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Client')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Téléphone')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Date')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{tp('Erreur')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{tp('Statut')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{tp('Client')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{tp('Téléphone')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{tp('Date')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{tp('Erreur')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredResults.map((result, idx) => {
                   const config = statusConfig[result.status] || statusConfig.pending;
                   return (
-                    <tr key={idx} className="hover:bg-gray-50 transition">
+                    <tr key={idx} className="hover:bg-background transition">
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${config.color}`}>
                           <span>{config.icon}</span>
@@ -293,13 +293,13 @@ const CampaignDetail = () => {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-sm font-medium text-gray-900">{result.clientName || tp('Inconnu')}</div>
+                        <div className="text-sm font-medium text-foreground">{result.clientName || tp('Inconnu')}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-sm text-gray-600 font-mono">{result.phone || '-'}</div>
+                        <div className="text-sm text-muted-foreground font-mono">{result.phone || '-'}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-xs text-gray-500">{fmtDate(result.sentAt)}</div>
+                        <div className="text-xs text-muted-foreground">{fmtDate(result.sentAt)}</div>
                       </td>
                       <td className="px-4 py-3 max-w-xs">
                         {result.error ? (
@@ -307,7 +307,7 @@ const CampaignDetail = () => {
                             {result.error}
                           </div>
                         ) : (
-                          <span className="text-xs text-gray-400">-</span>
+                          <span className="text-xs text-muted-foreground">-</span>
                         )}
                       </td>
                     </tr>

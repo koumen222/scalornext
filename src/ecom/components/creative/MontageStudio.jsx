@@ -7,7 +7,7 @@ import {
 import creativeApi from '../../services/creativeApi.js';
 import { tp } from '../../i18n/platform.js';
 import { ACCENTS, StudioHeader, Field, ImportProductBar, stripHtml, downloadFile } from './creativeShared.jsx';
-import { consumeMontageDraft, consumeMontageProject } from './montageBridge.js';
+import { consumeMontageDraft, consumeMontageProject, stashMontageResult, readMontageResult, clearMontageResult } from './montageBridge.js';
 import { TRANSITIONS, CAPTION_STYLES, CAPTION_ANIMS, CAPTION_POSITIONS, CAPTION_FONTS } from './montageStyles.js';
 import ProEditor from './ProEditor.jsx';
 
@@ -20,14 +20,8 @@ const FORMATS = [
 ];
 
 // Voix off partagée (une seule voix pour TOUTES les scènes) — mêmes IDs que le Studio Lancement.
-const VOICES = [
-  { id: '498c39373700473b9e5251cb2f2049bc', label: 'Dame africaine' },
-  { id: '13f7f6e260f94079b9d51c961fa6c9e2', label: 'Michelle' },
-  { id: '14b22748e04a48a58f92fbcde088ee50', label: 'Rita' },
-  { id: 'e3a12335ddd040209a99002ee76b682f', label: 'Sophie' },
-  { id: '4f2a0684dd0247dda68f339738c780e6', label: 'Le narrateur' },
-  { id: '', label: tp('Voix du modèle') },
-];
+// Voix off : catalogue unifié (voix Scalor priorisées + tout Fish Audio).
+import { VoiceSelect, VoicePreviewButton, DEFAULT_VOICE_ID } from './voiceCatalog.jsx';
 
 let SCENE_SEQ = 1;
 const newScene = () => ({
@@ -73,36 +67,36 @@ function GalleryPicker({ open, type, onPick, onClose }) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-2xl bg-white shadow-xl flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 h-14 border-b border-gray-100">
-          <p className="text-sm font-bold text-gray-900">{type === 'video' ? tp('Choisir un clip') : tp('Choisir une voix off')}</p>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"><X size={16} /></button>
+      <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-2xl bg-card shadow-xl flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 h-14 border-b border-border">
+          <p className="text-sm font-bold text-foreground">{type === 'video' ? tp('Choisir un clip') : tp('Choisir une voix off')}</p>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted"><X size={16} /></button>
         </div>
         <div className="p-4 overflow-y-auto">
           {loading ? (
             <div className="py-16 flex justify-center"><Loader2 className="animate-spin text-gray-300" /></div>
           ) : !items.length ? (
-            <p className="py-16 text-center text-[13px] text-gray-400">{tp('Aucun contenu dans la galerie pour le moment.')}</p>
+            <p className="py-16 text-center text-[13px] text-muted-foreground">{tp('Aucun contenu dans la galerie pour le moment.')}</p>
           ) : type === 'video' ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {items.filter((it) => it.videoUrl).map((it) => (
                 <button key={it._id} onClick={() => onPick(it)}
-                  className="group text-left rounded-xl overflow-hidden border border-gray-200 hover:border-cyan-400 hover:shadow-md transition">
+                  className="group text-left rounded-xl overflow-hidden border border-border hover:border-primary/40 hover:shadow-md transition">
                   <div className="aspect-video bg-black/90 flex items-center justify-center overflow-hidden">
                     {it.thumbnailUrl || it.imageUrl
                       ? <img src={it.thumbnailUrl || it.imageUrl} alt="" className="w-full h-full object-cover" />
                       : <Film size={22} className="text-white/60" />}
                   </div>
-                  <p className="px-2 py-1.5 text-[11px] font-medium text-gray-700 truncate">{it.label || it.title || it.productName || tp('Clip')}</p>
+                  <p className="px-2 py-1.5 text-[11px] font-medium text-foreground truncate">{it.label || it.title || it.productName || tp('Clip')}</p>
                 </button>
               ))}
             </div>
           ) : (
             <div className="space-y-2">
               {items.filter((it) => it.audioUrl).map((it) => (
-                <div key={it._id} className="flex items-center gap-3 rounded-xl border border-gray-200 p-2.5">
+                <div key={it._id} className="flex items-center gap-3 rounded-xl border border-border p-2.5">
                   <audio src={it.audioUrl} controls className="h-8 flex-1" />
-                  <button onClick={() => onPick(it)} className="h-8 px-3 rounded-lg bg-cyan-600 text-white text-[12px] font-semibold hover:bg-cyan-700">{tp('Choisir')}</button>
+                  <button onClick={() => onPick(it)} className="h-8 px-3 rounded-lg bg-primary text-white text-[12px] font-semibold hover:bg-primary-700">{tp('Choisir')}</button>
                 </div>
               ))}
             </div>
@@ -168,12 +162,12 @@ function PreviewPlayer({ scenes, format, narrationUrl, subtitlesOn, musicUrl, mu
           </div>
         )}
         <div className="absolute top-0 inset-x-0 flex gap-1 p-2">
-          {scenes.map((sc, i) => <div key={sc.id} className={`h-1 flex-1 rounded-full ${i <= idx ? 'bg-white' : 'bg-white/30'}`} />)}
+          {scenes.map((sc, i) => <div key={sc.id} className={`h-1 flex-1 rounded-full ${i <= idx ? 'bg-card' : 'bg-card/30'}`} />)}
         </div>
       </div>
       <div className="mt-3 flex items-center gap-3">
         <span className="text-white/70 text-[12px]">{tp('Aperçu')} — {tp('plan')} {idx + 1}/{scenes.length}</span>
-        <button onClick={onClose} className="h-9 px-4 rounded-xl bg-white/15 text-white text-[13px] font-semibold hover:bg-white/25">{tp('Fermer')}</button>
+        <button onClick={onClose} className="h-9 px-4 rounded-xl bg-card/15 text-white text-[13px] font-semibold hover:bg-card/25">{tp('Fermer')}</button>
       </div>
       <audio ref={audioRef} className="hidden" />
       {narrationUrl && <audio ref={narrRef} src={narrationUrl} className="hidden" />}
@@ -186,6 +180,18 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
   const [scenes, setScenes] = useState(() => [newScene(), newScene()]);
   const [prefillInfo, setPrefillInfo] = useState('');
   const [narrationUrl, setNarrationUrl] = useState('');
+  // Créateur UGC imposé (flux Studio Vidéo → UGC) : description + référence
+  // visage, appliqués à CHAQUE plan généré (cohérence du hook au CTA).
+  const [creatorDesc, setCreatorDesc] = useState('');
+  const [creatorRefUrl, setCreatorRefUrl] = useState('');
+  // MONTAGE UGC (≠ montage classique) : hook et CTA parlants (OmniHuman),
+  // transitions simples, sous-titres créateur, musique discrète — les règles
+  // UGC priment sur le directeur IA.
+  const [ugcMode, setUgcMode] = useState(false);
+  // Parole UGC : 'lipsync' (OmniHuman hook/CTA + voix Fish) | 'veo' (SANS lip
+  // sync : chaque scène = clip parlé ~10 s (Kling V3 Turbo) en français,
+  // audio natif conservé au montage — aucune voix Fish).
+  const [ugcTalk, setUgcTalk] = useState('lipsync');
   const [format, setFormat] = useState('9:16');
   const [subtitlesOn, setSubtitlesOn] = useState(true);
   const [captionMode, setCaptionMode] = useState('dynamic');
@@ -201,7 +207,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
   const [transition, setTransition] = useState('dynamic');
   const [renderWarning, setRenderWarning] = useState('');
   const [musicOk, setMusicOk] = useState(false); // confirmation « musique bien mixée » du moteur
-  const [voiceRefId, setVoiceRefId] = useState(VOICES[0].id);
+  const [voiceRefId, setVoiceRefId] = useState(DEFAULT_VOICE_ID);
   const [musicUrl, setMusicUrl] = useState('');
   const [musicVolume, setMusicVolume] = useState(0.5);
   const [musicBusy, setMusicBusy] = useState(false);
@@ -218,9 +224,21 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
   const [preview, setPreview] = useState(false);
   const [proOpen, setProOpen] = useState(false);
 
+  // Dernier rendu persisté : ré-affiché tel quel en revenant sur l'onglet
+  // montage (un brouillon/projet entrant l'efface via setResultUrl('')).
+  const [restoredResult] = useState(() => readMontageResult());
   const [rendering, setRendering] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [resultUrl, setResultUrl] = useState('');
+  const [resultUrl, setResultUrl] = useState(restoredResult?.url || '');
+
+  // Ré-affichage des annotations du rendu restauré (warning musique, etc.).
+  useEffect(() => {
+    if (restoredResult?.url) {
+      if (restoredResult.warning) setRenderWarning(String(restoredResult.warning));
+      setMusicOk(!!restoredResult.musicApplied);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
 
@@ -236,6 +254,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
   const [autoDone, setAutoDone] = useState(0);
   const [autoTotal, setAutoTotal] = useState(0);
   const autoPendingRef = useRef(false);
+  const openEditorOnResultRef = useRef(false); // montage auto fini → rendu envoyé à l'éditeur
 
   // Produit du brouillon de lancement (image/description saisies à la main dans
   // « Lancement produit ») : sert de repli quand aucun produit boutique n'est importé.
@@ -260,6 +279,8 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
       subtitleText: sc.subtitleText || sc.voiceText || '',
       clipPrompt: sc.clipPrompt || '',
       showProduct: sc.showProduct !== false,
+      // Rôle narratif : indispensable au repérage des plans PARLANTS (hook/cta).
+      role: sc.role || '',
       // Stratégie mixte du storyboard (vidéo / image animée) — était perdue ici.
       genMode: sc.genMode === 'image' ? 'image' : 'video',
       // Décisions de monteur expert : transition selon le rôle narratif,
@@ -271,12 +292,20 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
       imageUrl: imgs.length ? imgs[i % imgs.length] : '',
     })));
     setNarrationUrl(draft.voiceoverUrl || '');
+    // Créateur UGC imposé par le Studio Vidéo (genre, âge, peau + visage).
+    setCreatorDesc(String(draft.characterDesc || '').slice(0, 400));
+    setCreatorRefUrl(String(draft.characterRefUrl || ''));
+    // Voix off choisie à l'étape Assembler du Studio Vidéo.
+    if (draft.voiceRefId) setVoiceRefId(String(draft.voiceRefId));
+    // Montage UGC (pas le montage classique) : règles UGC verrouillées.
+    setUgcMode(draft.ugc === true);
+    setUgcTalk(draft.ugcTalk === 'veo' ? 'veo' : 'lipsync');
     // Produit transmis par le lancement (y compris saisi à la main là-bas).
     if (draft.productName || draft.productImage || draft.productContext) {
       setDraftProduct({ name: draft.productName || '', imageUrl: draft.productImage || '', context: String(draft.productContext || '').slice(0, 1500) });
     }
     setResultUrl(''); setProgress(0); setSaved(false); setError('');
-    setPrefillInfo(draft.angleTitle || draft.productName || '');
+    setPrefillInfo(`${draft.ugc ? `${tp('Montage UGC')} — ` : ''}${draft.angleTitle || draft.productName || ''}`);
     if (draft.auto) autoPendingRef.current = true; // → pipeline complet dès que les scènes sont posées
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -310,6 +339,47 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
     setScenes((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
   }, []);
   const addScene = () => setScenes((prev) => [...prev, newScene()]);
+  // ── « Générer une scène » : instruction libre (« un CTA », « un hook qui
+  //    choque », description…) → l'IA écrit la phrase + le brief visuel, puis
+  //    le visuel ET la voix sont générés avec les MÊMES cœurs que le manuel. ──
+  const [aiSceneBrief, setAiSceneBrief] = useState('');
+  const [aiSceneBusy, setAiSceneBusy] = useState(false);
+  const generateFullScene = async () => {
+    const inst = aiSceneBrief.trim();
+    if (inst.length < 2) { setError(tp('Dis ce que tu veux : « un CTA », « un hook », ou décris la scène.')); return; }
+    setAiSceneBusy(true); setError('');
+    let sc = null;
+    try {
+      const { data } = await creativeApi.montage.sceneBrief({
+        instruction: inst,
+        productName: subject || '',
+        productContext: productContext || '',
+        existingLines: scenes.map((s) => String(s.voiceText || s.subtitleText || '').trim()).filter(Boolean),
+      });
+      if (!data?.success || !data.scene) throw new Error(data?.message || tp('Génération de la scène impossible'));
+      const b = data.scene;
+      sc = newScene();
+      sc = {
+        ...sc,
+        voiceText: b.voiceText, subtitleText: b.subtitleText, clipPrompt: b.clipPrompt,
+        genMode: b.media === 'image' ? 'image' : 'video',
+        // Produit visible seulement si une photo produit est disponible.
+        showProduct: b.showProduct !== false && !!productImage,
+        role: b.role || '',
+      };
+      setScenes((prev) => [...prev, sc]);
+      setAiSceneBrief('');
+      // Visuel puis voix — mêmes systèmes de prompt que les boutons par plan.
+      patchScene(sc.id, { busy: 'clip' });
+      const pv = await generateVisualCore(sc);
+      patchScene(sc.id, { ...pv, busy: 'voice' });
+      const pw = await generateVoiceCore({ ...sc, ...pv });
+      patchScene(sc.id, { ...(pw || {}), busy: '' });
+    } catch (e) {
+      if (sc) patchScene(sc.id, { busy: '' });
+      setError(e?.response?.data?.message || e.message);
+    } finally { setAiSceneBusy(false); }
+  };
   const removeScene = (id) => setScenes((prev) => (prev.length > 1 ? prev.filter((s) => s.id !== id) : prev));
   const duplicateScene = (id) => setScenes((prev) => {
     const i = prev.findIndex((s) => s.id === id);
@@ -350,10 +420,12 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
     const prompt = (sc.clipPrompt || '').trim();
     const useProduct = sc.showProduct !== false;
     if (useProduct && !productImage) throw new Error(tp('Importe un produit (avec photo) pour un plan AVEC produit, ou décoche « Produit visible », ou choisis/uploade un clip.'));
-    if (!useProduct && prompt.length < 8) throw new Error(tp('Décris le plan à générer (quelques mots) quand le produit n’est pas visible.'));
+    // Montage UGC : le scénario UGC porte le brief (réalisateur + style réel),
+    // la phrase du plan suffit — pas d'erreur « décris le plan ».
+    if (!ugcMode && !useProduct && prompt.length < 8) throw new Error(tp('Décris le plan à générer (quelques mots) quand le produit n’est pas visible.'));
     const asImage = sc.genMode === 'image';
     const { data } = await creativeApi.video.generateScene({
-      mode: 'scene', prompt, scenario: '',
+      mode: 'scene', prompt, scenario: ugcMode ? 'ugc_testimonial' : '',
       // Stratégie mixte éco : stage 'character' = image IA seule (le montage
       // l'anime en Ken Burns), sans passage par la génération vidéo payante.
       ...(asImage ? { stage: 'character' } : {}),
@@ -362,6 +434,9 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
       voiceoverText: String(sc.voiceText || sc.subtitleText || '').trim(),
       sourceUrl: useProduct ? productImage : null,
       showProduct: useProduct,
+      // Créateur imposé (flux UGC) : même personne sur tous les plans.
+      ...(creatorDesc ? { characterDesc: creatorDesc } : {}),
+      ...(creatorRefUrl ? { characterRefUrl: creatorRefUrl } : {}),
       // Clip IA : durée de la scène (rythme par rôle), bornée 3-6 s.
       subject, productContext, durationSec: Math.max(3, Math.min(6, Math.round(sc.durationSec || 5))),
     });
@@ -376,6 +451,73 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
     return { genMode: 'video', videoUrl: url, imageUrl: '', videoName: tp('Clip IA'), trimStart: 0, ...(dur ? { durationSec: Math.round(dur * 10) / 10, srcDuration: Math.round(dur * 10) / 10 } : {}) };
   };
 
+  // ── Plan PARLANT (flux UGC) : hook et CTA face caméra — le créateur PARLE
+  //    réellement. 1) voix du plan (Fish, voix choisie) si absente, 2) OmniHuman
+  //    (lip sync sémantique via kie, tier cinéma de l'avatar) : image du
+  //    créateur + audio → clip parlant. Le montage mixe ensuite LE MÊME fichier
+  //    audio sur ce plan → lèvres parfaitement synchrones, zéro changement du
+  //    moteur d'assemblage. Les autres plans restent des rushs classiques. ──
+  const isTalkingScene = (s, i, arr) => ugcTalk !== 'veo' && Boolean(creatorRefUrl) && (
+    s.role === 'hook' || s.role === 'cta' || i === 0 || i === (arr?.length || 0) - 1
+  );
+
+  // ── UGC SANS lip sync : la scène est un clip parlé ~10 s (Kling) où le créateur DIT la
+  //    phrase en FRANÇAIS (voix native du modèle). L'image du créateur sert de
+  //    frame de départ (même personne partout) et l'audio du clip est conservé
+  //    tel quel au montage (useClipAudio) — aucune voix Fish. ──
+  const isVeoTalkScene = (s) => ugcTalk === 'veo' && Boolean(creatorRefUrl) && String(s.voiceText || s.subtitleText || '').trim().length >= 2;
+
+  const generateVeoTalkCore = async (sc) => {
+    const line = String(sc.voiceText || sc.subtitleText || '').trim();
+    const { data } = await creativeApi.video.generateScene({
+      mode: 'scene', stage: 'video', scenario: 'ugc_testimonial',
+      speakText: line,
+      prompt: '', // il parle face caméra, sans mise en scène (verrouillé backend)
+      voiceoverText: line,
+      sourceUrl: sc.showProduct !== false ? (productImage || null) : null,
+      showProduct: sc.showProduct !== false,
+      preparedImageUrl: creatorRefUrl, // le créateur validé = frame de départ du clip
+      characterDesc: creatorDesc, characterRefUrl: creatorRefUrl,
+      subject, productContext, durationSec: 10,
+    });
+    const url = data?.videoUrl || '';
+    if (!data?.success || !url) throw new Error(data?.message || tp('Génération du clip parlant impossible'));
+    const dur = await readMediaDuration(url, 'video');
+    return {
+      genMode: 'video', videoUrl: url, imageUrl: '', videoName: tp('Clip parlé (Veo)'), trimStart: 0,
+      useClipAudio: true, audioUrl: '',
+      ...(dur ? { durationSec: Math.round(dur * 10) / 10, srcDuration: Math.round(dur * 10) / 10 } : { durationSec: 10 }),
+    };
+  };
+
+  const generateTalkingCore = async (sc) => {
+    let voicePatch = null;
+    let audioUrl = sc.audioUrl || '';
+    if (!audioUrl) {
+      voicePatch = await generateVoiceCore({ ...sc, voiceText: sc.voiceText || sc.subtitleText || '' });
+      if (!voicePatch?.audioUrl) throw new Error(tp('La voix du plan est requise pour un plan parlant.'));
+      audioUrl = voicePatch.audioUrl;
+    }
+    const { data } = await creativeApi.lipsync.create({ imageUrl: creatorRefUrl, audioUrl, tier: 'cinema' });
+    if (!data?.success || !data.jobId) throw new Error(data?.message || tp('Lancement du plan parlant impossible'));
+    const deadline = Date.now() + 14 * 60 * 1000;
+    for (;;) {
+      if (Date.now() > deadline) throw new Error(tp('Plan parlant trop long (timeout 14 min) — réessaye'));
+      await new Promise((r) => setTimeout(r, 5000));
+      let j = null;
+      try { const r = await creativeApi.lipsync.job(data.jobId); j = r.data; } catch { continue; }
+      if (j?.status === 'done' && j.url) {
+        const dur = await readMediaDuration(j.url, 'video');
+        return {
+          ...(voicePatch || {}),
+          genMode: 'video', videoUrl: j.url, imageUrl: '', videoName: tp('Plan parlant (créateur)'), trimStart: 0,
+          ...(dur ? { durationSec: Math.round(dur * 10) / 10, srcDuration: Math.round(dur * 10) / 10 } : {}),
+        };
+      }
+      if (j?.status === 'error') throw new Error(j.error || tp('Plan parlant impossible'));
+    }
+  };
+
   const generateVoiceCore = async (sc) => {
     const text = (sc.voiceText || '').trim();
     if (text.length < 2) return null;
@@ -385,7 +527,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
     return {
       audioUrl: data.url,
       subtitleText: sc.subtitleText || text,
-      ...(dur ? { durationSec: Math.max(1, Math.round(dur * 10) / 10) } : {}),
+      ...(dur ? { durationSec: Math.max(1.2, Math.round((dur + 0.1) * 10) / 10) } : {}),
     };
   };
 
@@ -396,7 +538,16 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
     patchScene(id, { busy: 'clip' });
     setError('');
     try {
-      const p = await generateVisualCore({ ...sc, clipPrompt: (promptText ?? sc.clipPrompt) || '' });
+      const idx = scenes.findIndex((s) => s.id === id);
+      // UGC sans lip sync : clip Veo parlé. Sinon plan parlant OmniHuman
+      // (hook/CTA + créateur), sinon rush classique.
+      const p = isVeoTalkScene(sc)
+        ? await generateVeoTalkCore(sc)
+        : isTalkingScene(sc, idx, scenes)
+          ? await generateTalkingCore(sc)
+          // Sans description : la phrase du plan sert de brief (même règle
+          // que le pipeline auto) — plus d'erreur « décris le plan ».
+          : await generateVisualCore({ ...sc, clipPrompt: ((promptText ?? sc.clipPrompt) || sc.voiceText || sc.subtitleText || '').trim() });
       patchScene(id, { ...p, busy: '' });
     } catch (e) {
       setError(e?.response?.data?.message || e.message);
@@ -430,8 +581,8 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
       const { data } = await creativeApi.media.upload(fd);
       if (!data?.url) throw new Error(tp('Upload impossible'));
       const dur = await readMediaDuration(data.url, 'audio');
-      // La durée planifiée du plan (rythme) reste le plancher ; la voix peut l'allonger.
-      patchScene(id, { audioUrl: data.url, busy: '', ...(dur ? { durationSec: Math.max(Number(sc?.durationSec) || 3, Math.round(dur * 10) / 10) } : {}) });
+      // La voix dicte le rythme : plan = phrase + courte finale (comme le rendu).
+      patchScene(id, { audioUrl: data.url, busy: '', ...(dur ? { durationSec: Math.max(1.2, Math.round((dur + 0.1) * 10) / 10) } : {}) });
     } catch (e) {
       setError(e?.response?.data?.message || e.message);
       patchScene(id, { busy: '' });
@@ -485,6 +636,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
     }
     const { data } = await creativeApi.montage.director({
       productName: subject, productContext,
+      ugc: ugcMode, // règles UGC prioritaires côté directeur
       musicPresets: presetList.map((p) => p.id),
       scenes: list.map((s) => ({
         voiceText: s.voiceText, subtitleText: s.subtitleText, clipPrompt: s.clipPrompt,
@@ -582,13 +734,24 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
           scs.splice(0, scs.length, ...applied.scs);
           renderOverrides = applied.overrides;
           // Mixte : la pertinence décidée par le directeur fixe le type de
-          // chaque plan encore sans visuel.
+          // chaque plan encore sans visuel — SAUF les plans parlants (UGC),
+          // verrouillés en vidéo quoi que le directeur décide.
           if (genStrategy === 'mixte' && Array.isArray(res.plan.scenes)) {
             res.plan.scenes.forEach((p, i) => {
               if (!scs[i] || scs[i].videoUrl || scs[i].imageUrl || !p.media) return;
+              if (isTalkingScene(scs[i], i, scs)) return; // hook/CTA parlants : toujours vidéo
               scs[i] = { ...scs[i], genMode: p.media };
               patchScene(scs[i].id, { genMode: p.media });
             });
+          }
+          // MONTAGE UGC : règles verrouillées après le passage du directeur —
+          // les plans parlants restent des vidéos, sans Ken Burns ni accents.
+          if (ugcMode) {
+            for (let i = 0; i < scs.length; i += 1) {
+              if (!isTalkingScene(scs[i], i, scs)) continue;
+              scs[i] = { ...scs[i], genMode: 'video' };
+              patchScene(scs[i].id, { genMode: 'video' });
+            }
           }
           directed = true;
         }
@@ -618,11 +781,10 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
           }
         }
       }
-      // ── 2. Génération des visuels manquants (mêmes fonctions que les boutons),
-      //    en DEUX VOIES PARALLÈLES : les plans image (gpt-image) d'un côté,
-      //    les plans vidéo (xAI/Grok) de l'autre — chaque voie séquentielle
-      //    pour respecter les limites de débit, mais les deux avancent en
-      //    même temps → le montage mixte va ~2× plus vite. ──
+      // ── 2. GÉNÉRATION RAPIDE : pool de 3 visuels SIMULTANÉS (kie.ai encaisse
+      //    très bien la concurrence) + les VOIX générées EN PARALLÈLE des
+      //    visuels (elles ne dépendent que du texte) → 3-4× plus vite que le
+      //    séquentiel, avec EXACTEMENT les mêmes fonctions que les boutons. ──
       setAutoStep('visuals');
       let done = 0;
       const jobs = [];
@@ -634,42 +796,57 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
       const runVisualJob = async ({ i, mode }) => {
         const s = scs[i];
         // EXACTEMENT la même génération que le bouton « Générer ce plan ».
-        // Plan sans description visuelle : sa phrase sert de brief, comme si
-        // on l'avait tapée dans le champ du plan.
+        // Plan PARLANT (hook/CTA + créateur) : OmniHuman — sa voix est générée
+        // DANS le job (l'audio pilote les lèvres), les autres plans en rush.
         const brief = (s.clipPrompt || s.voiceText || s.subtitleText || '').trim();
-        const p = await generateVisualCore({ ...s, genMode: mode, clipPrompt: brief });
-        scs[i] = { ...s, ...p, clipPrompt: s.clipPrompt || brief };
+        const p = isVeoTalkScene(s)
+          ? await generateVeoTalkCore({ ...scs[i] })
+          : isTalkingScene(s, i, scs)
+            ? await generateTalkingCore({ ...scs[i] })
+            : await generateVisualCore({ ...s, genMode: mode, clipPrompt: brief });
+        // Merge sur l'état COURANT de la scène (sa voix a pu arriver entre-temps).
+        scs[i] = { ...scs[i], ...p, clipPrompt: scs[i].clipPrompt || brief };
         patchScene(s.id, { ...p, clipPrompt: scs[i].clipPrompt });
         done += 1; setAutoDone(done);
       };
-      const lane = async (list) => { for (const j of list) await runVisualJob(j); };
-      const laneErrors = [];
-      await Promise.all([
-        lane(jobs.filter((j) => j.mode === 'image')).catch((e) => laneErrors.push(e)),
-        lane(jobs.filter((j) => j.mode === 'video')).catch((e) => laneErrors.push(e)),
+      // Pool générique : n travailleurs piochent dans la file jusqu'à épuisement.
+      const pool = async (list, n, run) => {
+        const q = [...list];
+        const errs = [];
+        await Promise.all(Array.from({ length: Math.min(n, q.length) }, async () => {
+          while (q.length) {
+            const job = q.shift();
+            try { await run(job); } catch (e) { errs.push(e); }
+          }
+        }));
+        return errs;
+      };
+      // Voix off par plan (sauf narration globale du kit) — MÊME génération que
+      // le bouton « Générer la voix », lancée en parallèle des visuels.
+      const voiceJobs = narrationUrl ? [] : scs
+        .map((s, i) => ({ i }))
+        // Plans parlants exclus : leur voix est générée DANS le job visuel
+        // (elle pilote les lèvres). Mode Veo : AUCUNE voix Fish — la parole
+        // est native dans chaque clip.
+        .filter(({ i }) => !isVeoTalkScene(scs[i]) && !isTalkingScene(scs[i], i, scs) && !scs[i].audioUrl && String(scs[i].voiceText || scs[i].subtitleText || '').trim().length >= 2);
+      const runVoiceJob = async ({ i }) => {
+        const p = await generateVoiceCore({ ...scs[i], voiceText: scs[i].voiceText || scs[i].subtitleText || '' });
+        if (p) { scs[i] = { ...scs[i], ...p }; patchScene(scs[i].id, p); }
+      };
+      const [visualErrs] = await Promise.all([
+        pool(jobs, 3, runVisualJob),
+        // Voix best-effort : un échec laisse le plan muet plutôt que d'échouer.
+        pool(voiceJobs, 2, runVoiceJob),
       ]);
-      if (laneErrors.length) throw laneErrors[0];
-      // Voix off par plan (sauf si la narration globale du kit est fournie).
-      if (!narrationUrl) {
-        setAutoStep('voices');
-        for (let i = 0; i < scs.length; i += 1) {
-          const s = scs[i];
-          if (s.audioUrl) continue;
-          try {
-            // MÊME génération que le bouton « Générer la voix » du plan.
-            const p = await generateVoiceCore({ ...s, voiceText: s.voiceText || s.subtitleText || '' });
-            if (p) {
-              scs[i] = { ...s, ...p };
-              patchScene(s.id, p);
-            }
-          } catch { /* voix best-effort : le plan reste muet plutôt que d'échouer */ }
-        }
-      }
+      if (visualErrs.length) throw visualErrs[0];
+      setAutoStep('voices');
       setAutoStep('render');
+      openEditorOnResultRef.current = true; // à la fin : le rendu s'ouvre dans l'éditeur
       await startRender(scs, renderOverrides);
     } catch (e) {
       setError(e?.response?.data?.message || e.message);
       setAutoStep('');
+      openEditorOnResultRef.current = false;
     }
   };
 
@@ -683,6 +860,15 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
 
   // Fin du pipeline auto : résultat arrivé ou erreur → l'overlay se ferme.
   useEffect(() => { if (resultUrl || error) setAutoStep(''); }, [resultUrl, error]);
+
+  // Montage auto terminé → le MÊME rendu s'ouvre directement dans l'éditeur
+  // (vidéo finale + scènes de la timeline prêtes pour retouche/ré-export).
+  useEffect(() => {
+    if (resultUrl && openEditorOnResultRef.current) {
+      openEditorOnResultRef.current = false;
+      setProOpen(true);
+    }
+  }, [resultUrl]);
 
   // startRender(list?, ov?) : liste + overrides explicites pour le pipeline auto
   // (l'état React n'est pas encore à jour pendant la boucle de génération).
@@ -712,6 +898,9 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
           videoUrl: s.videoUrl || undefined,
           imageUrl: (!s.videoUrl && s.imageUrl) ? s.imageUrl : undefined,
           audioUrl: narrationUrl ? null : (s.audioUrl || null),
+          // UGC sans lip sync : la parole est DANS le clip (Veo) — le moteur
+          // garde la piste audio du clip et cale la durée du plan dessus.
+          useClipAudio: s.useClipAudio ? true : undefined,
           trimStart: s.videoUrl ? (Number(s.trimStart) || 0) : 0,
           durationSec: Math.max(1, Number(s.durationSec) || 4),
           volume: s.volume == null ? 1 : Number(s.volume),
@@ -749,6 +938,9 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
             setResultUrl(j.url); setRendering(false); setProgress(100);
             if (j.warning) setRenderWarning(String(j.warning)); // ex. musique/voix off ignorée
             setMusicOk(!!j.musicApplied);
+            // Persiste le rendu : il reste affiché sur l'onglet montage tel quel,
+            // même après changement d'onglet ou rechargement de la page.
+            stashMontageResult({ url: j.url, warning: j.warning || '', musicApplied: !!j.musicApplied });
 
             saveToGallery(j.url); // enregistrement automatique dans la galerie Scalor
           } else if (j?.status === 'error') {
@@ -790,7 +982,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
     }
   };
 
-  const resetResult = () => { setResultUrl(''); setProgress(0); setSaved(false); setRenderWarning(''); };
+  const resetResult = () => { setResultUrl(''); setProgress(0); setSaved(false); setRenderWarning(''); setMusicOk(false); clearMontageResult(); };
 
   return (
     <div className="space-y-5">
@@ -810,35 +1002,35 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
 
       {/* ── Chargement plein page : pipeline AUTO *et* rendu manuel ── */}
       {(autoStep || rendering) && !resultUrl && (
-        <div className="fixed inset-0 z-[65] bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-6">
-          <Loader2 size={34} className="animate-spin text-cyan-600" />
-          <p className="mt-4 text-[15px] font-bold text-gray-900">{autoStep && autoStep !== 'render' ? tp('Montage automatique en cours…') : tp('Montage en cours…')}</p>
+        <div className="fixed inset-0 z-[65] bg-card/95 backdrop-blur-sm flex flex-col items-center justify-center p-6">
+          <Loader2 size={34} className="animate-spin text-primary" />
+          <p className="mt-4 text-[15px] font-bold text-foreground">{autoStep && autoStep !== 'render' ? tp('Montage automatique en cours…') : tp('Montage en cours…')}</p>
           <div className="mt-4 w-full max-w-xs space-y-2 text-[12.5px]">
             {autoStep && (
               <>
-                <div className={`flex items-center gap-2 ${autoStep === 'director' ? 'text-cyan-700 font-semibold' : 'text-gray-400'}`}>
+                <div className={`flex items-center gap-2 ${autoStep === 'director' ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
                   {autoStep === 'director' ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
                   {tp('Direction artistique IA')}
                 </div>
-                <div className={`flex items-center gap-2 ${autoStep === 'visuals' ? 'text-cyan-700 font-semibold' : ['voices', 'render'].includes(autoStep) ? 'text-gray-400' : 'text-gray-300'}`}>
+                <div className={`flex items-center gap-2 ${autoStep === 'visuals' ? 'text-primary font-semibold' : ['voices', 'render'].includes(autoStep) ? 'text-muted-foreground' : 'text-gray-300'}`}>
                   {['voices', 'render'].includes(autoStep) ? <Check size={13} /> : autoStep === 'visuals' ? <Loader2 size={13} className="animate-spin" /> : <Film size={13} />}
                   {tp('Génération des visuels')}{autoTotal > 0 ? ` — ${Math.min(autoDone, autoTotal)}/${autoTotal}` : ''}
                 </div>
-                <div className={`flex items-center gap-2 ${autoStep === 'voices' ? 'text-cyan-700 font-semibold' : autoStep === 'render' ? 'text-gray-400' : 'text-gray-300'}`}>
+                <div className={`flex items-center gap-2 ${autoStep === 'voices' ? 'text-primary font-semibold' : autoStep === 'render' ? 'text-muted-foreground' : 'text-gray-300'}`}>
                   {autoStep === 'render' ? <Check size={13} /> : autoStep === 'voices' ? <Loader2 size={13} className="animate-spin" /> : <Mic size={13} />}
                   {tp('Voix off des plans')}
                 </div>
               </>
             )}
-            <div className={`flex items-center gap-2 ${autoStep === 'render' || (!autoStep && rendering) ? 'text-cyan-700 font-semibold' : 'text-gray-300'}`}>
+            <div className={`flex items-center gap-2 ${autoStep === 'render' || (!autoStep && rendering) ? 'text-primary font-semibold' : 'text-gray-300'}`}>
               {autoStep === 'render' || (!autoStep && rendering) ? <Loader2 size={13} className="animate-spin" /> : <Film size={13} />}
               {tp('Assemblage de la vidéo')}{autoStep === 'render' || (!autoStep && rendering) ? ` — ${progress}%` : ''}
             </div>
           </div>
           {(autoStep === 'render' || (!autoStep && rendering)) && (
-            <div className="mt-4 w-full max-w-xs h-2 rounded-full bg-gray-100 overflow-hidden"><div className="h-full bg-cyan-600 transition-all" style={{ width: `${progress}%` }} /></div>
+            <div className="mt-4 w-full max-w-xs h-2 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} /></div>
           )}
-          <p className="mt-4 text-[11.5px] text-gray-400">
+          <p className="mt-4 text-[11.5px] text-muted-foreground">
             {autoStep && autoStep !== 'render'
               ? tp('Quelques minutes selon le nombre de plans — tu peux laisser cette page ouverte.')
               : tp('Normalisation des clips, voix off, sous-titres puis encodage — patiente une minute.')}
@@ -847,7 +1039,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
       )}
 
       {prefillInfo && !resultUrl && (
-        <div className="flex items-start gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-3.5 py-2.5 text-[12.5px] text-cyan-800">
+        <div className="flex items-start gap-2 rounded-xl border border-primary/25 bg-primary/10 px-3.5 py-2.5 text-[12.5px] text-primary">
           <Sparkles size={15} className="mt-0.5 shrink-0" />
           <span>{tp('Récupéré depuis l’angle')} <b>« {prefillInfo} »</b> : {tp('script')}{scenes.some((s) => s.imageUrl) ? tp(', images du kit') : ''}{narrationUrl ? tp(', voix off du kit') : ''}. {tp('Ajuste si besoin, ajoute un clip là où il manque un visuel, puis lance le montage.')}</span>
         </div>
@@ -855,18 +1047,18 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
 
       {/* ── Résultat final ── */}
       {resultUrl && (
-        <div className="rounded-2xl border border-cyan-200 bg-cyan-50/40 p-4">
+        <div className="rounded-2xl border border-primary/25 bg-primary/10/40 p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Check size={16} className="text-cyan-600" />
-            <p className="text-[13.5px] font-bold text-gray-900">{tp('Montage prêt')}</p>
+            <Check size={16} className="text-primary" />
+            <p className="text-[13.5px] font-bold text-foreground">{tp('Montage prêt')}</p>
           </div>
           {renderWarning && (
-            <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-[12.5px] text-amber-800">
+            <div className="mb-3 flex items-start gap-2 rounded-xl border border-primary/25 bg-primary/10 px-3.5 py-2.5 text-[12.5px] text-primary">
               <AlertCircle size={15} className="mt-0.5 shrink-0" /><span>{renderWarning}</span>
             </div>
           )}
           {musicOk && (
-            <div className="mb-3 inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11.5px] font-semibold text-emerald-700">
+            <div className="mb-3 inline-flex items-center gap-1.5 rounded-lg border border-primary/25 bg-primary/10 px-2.5 py-1 text-[11.5px] font-semibold text-primary">
               <Music size={12} /> {tp('Musique de fond appliquée')}
             </div>
           )}
@@ -874,12 +1066,12 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
             <video src={resultUrl} controls playsInline className="max-h-[560px] w-auto rounded-xl bg-black" />
           </div>
           <div className="mt-3 flex flex-wrap gap-2 justify-center">
-            <button onClick={() => downloadFile(resultUrl, 'montage-creatif.mp4')} className="h-9 px-4 rounded-xl bg-cyan-600 text-white text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-cyan-700"><Download size={14} /> {tp('Télécharger')}</button>
-            <button onClick={() => setProOpen(true)} className="h-9 px-4 rounded-xl border border-cyan-300 bg-white text-cyan-700 text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-cyan-50"><Film size={14} /> {tp('Ouvrir l’éditeur')}</button>
-            <button onClick={saveToGallery} disabled={saved} className="h-9 px-4 rounded-xl border border-cyan-300 bg-white text-cyan-700 text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-cyan-50 disabled:opacity-60">
+            <button onClick={() => downloadFile(resultUrl, 'montage-creatif.mp4')} className="h-9 px-4 rounded-xl bg-primary text-white text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-primary-700"><Download size={14} /> {tp('Télécharger')}</button>
+            <button onClick={() => setProOpen(true)} className="h-9 px-4 rounded-xl border border-primary/30 bg-card text-primary text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-primary/10"><Film size={14} /> {tp('Ouvrir l’éditeur')}</button>
+            <button onClick={saveToGallery} disabled={saved} className="h-9 px-4 rounded-xl border border-primary/30 bg-card text-primary text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-primary/10 disabled:opacity-60">
               {saved ? <><Check size={14} /> {tp('Enregistré')}</> : <><Save size={14} /> {tp('Enregistrer dans la galerie')}</>}
             </button>
-            <button onClick={resetResult} className="h-9 px-4 rounded-xl border border-gray-200 bg-white text-gray-600 text-[13px] font-semibold hover:bg-gray-50">{tp('Nouveau montage')}</button>
+            <button onClick={resetResult} className="h-9 px-4 rounded-xl border border-border bg-card text-muted-foreground text-[13px] font-semibold hover:bg-background">{tp('Nouveau montage')}</button>
           </div>
         </div>
       )}
@@ -887,22 +1079,22 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
       {/* ── Timeline des scènes ── */}
       {!resultUrl && (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3">
             <div className="flex items-center gap-2">
-              <Mic size={15} className="text-cyan-600" />
-              <span className="text-[12.5px] font-semibold text-gray-700">{tp('Voix off')}</span>
-              <select value={voiceRefId} onChange={(e) => setVoiceRefId(e.target.value)} className="h-9 rounded-lg border border-gray-200 px-2 text-[12.5px] font-medium outline-none focus:border-cyan-400">
-                {VOICES.map((v) => <option key={v.id || 'model'} value={v.id}>{v.label}</option>)}
-              </select>
-              <span className="text-[11px] text-gray-400">{tp('une seule voix pour toutes les scènes')}</span>
+              <Mic size={15} className="text-primary" />
+              <span className="text-[12.5px] font-semibold text-foreground">{tp('Voix off')}</span>
+              <VoiceSelect value={voiceRefId} onChange={setVoiceRefId} includeModelVoice
+                className="h-9 max-w-[260px] rounded-lg border border-border px-2 text-[12.5px] font-medium outline-none focus:border-primary/40" />
+              <VoicePreviewButton voiceId={voiceRefId} />
+              <span className="text-[11px] text-muted-foreground">{tp('une seule voix pour toutes les scènes')}</span>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setPreview(true)} disabled={!readyScenes.length}
-                className="h-9 px-4 rounded-xl border border-cyan-300 bg-cyan-50 text-cyan-700 text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-cyan-100 disabled:opacity-40">
+                className="h-9 px-4 rounded-xl border border-primary/30 bg-primary/10 text-primary text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-primary/12 disabled:opacity-40">
                 <Play size={14} /> {tp('Aperçu')}
               </button>
               <button onClick={() => setProOpen(true)} disabled={!readyScenes.length}
-                className="h-9 px-4 rounded-xl bg-cyan-600 text-white text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-cyan-700 disabled:opacity-40">
+                className="h-9 px-4 rounded-xl bg-primary text-white text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-primary-700 disabled:opacity-40">
                 <Maximize2 size={14} /> {tp('Ouvrir l\'éditeur')}
               </button>
             </div>
@@ -911,17 +1103,22 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
           <>
           <div className="space-y-3">
             {scenes.map((s, idx) => (
-              <div key={s.id} className="rounded-2xl border border-gray-200 bg-white p-3.5">
+              <div key={s.id} className={`rounded-2xl border bg-card p-3.5 ${isTalkingScene(s, idx, scenes) ? 'border-primary/25 ring-1 ring-primary/20' : 'border-border'}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-cyan-600 text-white text-[12px] font-bold flex items-center justify-center">{idx + 1}</span>
-                    <span className="text-[12.5px] font-semibold text-gray-700">{tp('Scène')} {idx + 1}</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={`w-6 h-6 rounded-lg text-white text-[12px] font-bold flex items-center justify-center shrink-0 ${isTalkingScene(s, idx, scenes) ? 'bg-primary' : 'bg-primary'}`}>{idx + 1}</span>
+                    <span className="text-[12.5px] font-semibold text-foreground shrink-0">{tp('Scène')} {idx + 1}</span>
+                    {isTalkingScene(s, idx, scenes) && (
+                      <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide bg-primary/10 text-primary border border-primary/20 rounded-full px-2 py-0.5 truncate">
+                        <Mic size={10} className="shrink-0" /> {tp('Plan parlant — le créateur parle (lip sync)')}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => moveScene(s.id, -1)} disabled={idx === 0} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 disabled:opacity-30"><ChevronUp size={15} /></button>
-                    <button onClick={() => moveScene(s.id, 1)} disabled={idx === scenes.length - 1} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 disabled:opacity-30"><ChevronDown size={15} /></button>
-                    <button onClick={() => duplicateScene(s.id)} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"><Copy size={14} /></button>
-                    <button onClick={() => removeScene(s.id)} disabled={scenes.length <= 1} className="p-1.5 rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500 disabled:opacity-30"><Trash2 size={14} /></button>
+                    <button onClick={() => moveScene(s.id, -1)} disabled={idx === 0} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted disabled:opacity-30"><ChevronUp size={15} /></button>
+                    <button onClick={() => moveScene(s.id, 1)} disabled={idx === scenes.length - 1} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted disabled:opacity-30"><ChevronDown size={15} /></button>
+                    <button onClick={() => duplicateScene(s.id)} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted"><Copy size={14} /></button>
+                    <button onClick={() => removeScene(s.id)} disabled={scenes.length <= 1} className="p-1.5 rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-500 disabled:opacity-30"><Trash2 size={14} /></button>
                   </div>
                 </div>
 
@@ -930,39 +1127,55 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
                   <div>
                     <div className="aspect-video rounded-xl bg-gray-900/95 overflow-hidden flex items-center justify-center relative">
                       {s.busy === 'clip' ? (
-                        <div className="flex flex-col items-center gap-1.5 text-white/70"><Loader2 className="animate-spin" size={20} /><span className="text-[11px]">{tp('Traitement…')}</span></div>
+                        <div className="flex flex-col items-center gap-1.5 text-white/70 px-3 text-center">
+                          <Loader2 className="animate-spin" size={20} />
+                          <span className="text-[11px]">{isTalkingScene(s, idx, scenes) ? tp('Plan parlant en cours (voix + lip sync OmniHuman) — 2 à 6 min…') : tp('Traitement…')}</span>
+                        </div>
                       ) : s.videoUrl ? (
                         <video src={s.videoUrl} poster={s.videoPoster || undefined} controls playsInline className="w-full h-full object-contain bg-black" />
                       ) : s.imageUrl ? (
                         <>
                           <img src={s.imageUrl} alt="" className="w-full h-full object-cover" />
-                          <span className="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wide bg-white/90 text-gray-700 px-1.5 py-0.5 rounded">{tp('Image — animée au montage')}</span>
+                          <span className="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wide bg-card/90 text-foreground px-1.5 py-0.5 rounded">{tp('Image — animée au montage')}</span>
                         </>
                       ) : (
                         <div className="flex flex-col items-center gap-1 text-white/40"><Film size={22} /><span className="text-[11px]">{tp('Aucun clip')}</span></div>
                       )}
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      <button onClick={() => openPicker('video', s.id)} disabled={!!s.busy} className="h-8 px-2.5 rounded-lg border border-gray-200 text-[11.5px] font-medium text-gray-700 inline-flex items-center gap-1.5 hover:bg-gray-50 disabled:opacity-50"><Images size={13} /> {tp('Galerie')}</button>
-                      <label className={`h-8 px-2.5 rounded-lg border border-gray-200 text-[11.5px] font-medium text-gray-700 inline-flex items-center gap-1.5 cursor-pointer hover:bg-gray-50 ${s.busy ? 'opacity-50 pointer-events-none' : ''}`}>
+                      <button onClick={() => openPicker('video', s.id)} disabled={!!s.busy} className="h-8 px-2.5 rounded-lg border border-border text-[11.5px] font-medium text-foreground inline-flex items-center gap-1.5 hover:bg-background disabled:opacity-50"><Images size={13} /> {tp('Galerie')}</button>
+                      <label className={`h-8 px-2.5 rounded-lg border border-border text-[11.5px] font-medium text-foreground inline-flex items-center gap-1.5 cursor-pointer hover:bg-background ${s.busy ? 'opacity-50 pointer-events-none' : ''}`}>
                         <Upload size={13} /> {tp('Uploader')}
                         <input type="file" accept="video/*" className="hidden" onChange={(e) => uploadClip(s.id, e.target.files?.[0])} />
                       </label>
-                      {(s.videoUrl || s.imageUrl) && <button onClick={() => patchScene(s.id, { videoUrl: '', videoName: '', videoPoster: '', imageUrl: '' })} className="h-8 px-2 rounded-lg text-[11.5px] text-gray-400 hover:text-red-500">{tp('Retirer')}</button>}
+                      {(s.videoUrl || s.imageUrl) && <button onClick={() => patchScene(s.id, { videoUrl: '', videoName: '', videoPoster: '', imageUrl: '' })} className="h-8 px-2 rounded-lg text-[11.5px] text-muted-foreground hover:text-red-500">{tp('Retirer')}</button>}
                     </div>
-                    {/* Plan précis de la scène → génération exacte du visuel */}
+                    {/* Plan PARLANT (UGC) : le créateur parle — pas de brief visuel,
+                        l'image du créateur + la voix du plan font tout. */}
+                    {isTalkingScene(s, idx, scenes) ? (
+                      <div className="mt-2 rounded-xl border border-primary/20 bg-primary/10/60 p-2.5 flex items-center gap-2.5">
+                        {creatorRefUrl && <img src={creatorRefUrl} alt="" className="h-11 w-11 rounded-lg object-cover border border-white shadow-sm shrink-0" />}
+                        <p className="flex-1 text-[10.5px] text-primary leading-snug">
+                          {tp('Ton créateur prononce la voix off de ce plan, bouche synchronisée (OmniHuman). La voix est générée avec le plan.')}
+                        </p>
+                        <button onClick={() => generateClip(s.id, '')} disabled={!!s.busy}
+                          className="h-9 px-2.5 rounded-lg bg-primary text-white text-[11.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700 disabled:opacity-50 shrink-0">
+                          <Mic size={13} /> {tp('Générer le plan parlant')}
+                        </button>
+                      </div>
+                    ) : (
                     <div className="mt-2">
                       <div className="flex items-center justify-between mb-1 gap-2">
-                        <label className="text-[10.5px] font-semibold text-gray-500 flex items-center gap-1"><Wand2 size={11} /> {tp('Plan à générer (visuel exact)')}</label>
+                        <label className="text-[10.5px] font-semibold text-muted-foreground flex items-center gap-1"><Wand2 size={11} /> {tp('Plan à générer (visuel exact)')}</label>
                         <div className="flex items-center gap-1.5">
-                          <div className="inline-flex rounded-full border border-gray-200 overflow-hidden" title={tp('Vidéo IA : mouvement réel, plus cher. Image IA : photo animée au montage, ~2-5× moins cher.')}>
+                          <div className="inline-flex rounded-full border border-border overflow-hidden" title={tp('Vidéo IA : mouvement réel, plus cher. Image IA : photo animée au montage, ~2-5× moins cher.')}>
                             <button type="button" onClick={() => patchScene(s.id, { genMode: 'video' })}
-                              className={`px-2 py-0.5 text-[10.5px] font-bold transition ${(s.genMode || 'video') === 'video' ? 'bg-cyan-600 text-white' : 'bg-white text-gray-400 hover:bg-gray-50'}`}>{tp('Vidéo')}</button>
+                              className={`px-2 py-0.5 text-[10.5px] font-bold transition ${(s.genMode || 'video') === 'video' ? 'bg-primary text-white' : 'bg-card text-muted-foreground hover:bg-background'}`}>{tp('Vidéo')}</button>
                             <button type="button" onClick={() => patchScene(s.id, { genMode: 'image' })}
-                              className={`px-2 py-0.5 text-[10.5px] font-bold transition ${s.genMode === 'image' ? 'bg-emerald-600 text-white' : 'bg-white text-gray-400 hover:bg-gray-50'}`}>{tp('Image éco')}</button>
+                              className={`px-2 py-0.5 text-[10.5px] font-bold transition ${s.genMode === 'image' ? 'bg-primary text-white' : 'bg-card text-muted-foreground hover:bg-background'}`}>{tp('Image éco')}</button>
                           </div>
                           <button type="button" onClick={() => patchScene(s.id, { showProduct: !s.showProduct })} title={tp('Afficher ou non le produit dans ce plan')}
-                            className={`inline-flex items-center gap-1 text-[10.5px] font-bold px-2 py-0.5 rounded-full border transition ${s.showProduct ? 'border-cyan-300 bg-cyan-50 text-cyan-700' : 'border-gray-200 bg-gray-50 text-gray-400'}`}>
+                            className={`inline-flex items-center gap-1 text-[10.5px] font-bold px-2 py-0.5 rounded-full border transition ${s.showProduct ? 'border-primary/30 bg-primary/10 text-primary' : 'border-border bg-background text-muted-foreground'}`}>
                             {s.showProduct ? <Check size={11} /> : <X size={11} />} {tp('Produit visible')}
                           </button>
                         </div>
@@ -970,26 +1183,27 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
                       <div className="flex items-start gap-1.5">
                         <textarea value={s.clipPrompt} onChange={(e) => patchScene(s.id, { clipPrompt: e.target.value })} rows={2}
                           placeholder={s.showProduct ? tp('Ex. gros plan du produit sur une étagère, lumière du matin…') : tp('Ex. femme souriante qui se réveille reposée dans sa chambre (sans le produit)…')}
-                          className="flex-1 rounded-lg border border-gray-200 px-2.5 py-1.5 text-[11.5px] outline-none focus:border-cyan-400 resize-y" />
+                          className="flex-1 rounded-lg border border-border px-2.5 py-1.5 text-[11.5px] outline-none focus:border-primary/40 resize-y" />
                         <button onClick={() => generateClip(s.id, s.clipPrompt)} disabled={!!s.busy || (!s.showProduct && !s.clipPrompt.trim())} title={tp('Générer exactement ce plan')}
-                          className="h-9 px-2.5 rounded-lg bg-cyan-600 text-white text-[11.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-cyan-700 disabled:opacity-50 shrink-0"><Wand2 size={13} /> {tp('Générer ce plan')}</button>
+                          className="h-9 px-2.5 rounded-lg bg-primary text-white text-[11.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700 disabled:opacity-50 shrink-0"><Wand2 size={13} /> {tp('Générer ce plan')}</button>
                       </div>
                     </div>
+                    )}
                   </div>
 
                   {/* Colonne voix off + durée + sous-titre */}
                   <div className="space-y-2">
                     <div>
-                      <label className="text-[11px] font-semibold text-gray-500 flex items-center gap-1.5 mb-1"><Mic size={12} /> {tp('Voix off (texte)')}</label>
+                      <label className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5 mb-1"><Mic size={12} /> {tp('Voix off (texte)')}</label>
                       <textarea value={s.voiceText} onChange={(e) => patchScene(s.id, { voiceText: e.target.value })} rows={2}
                         placeholder={tp('Ce que dit la voix sur cette scène…')}
-                        className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-[12px] outline-none focus:border-cyan-400 resize-y" />
+                        className="w-full rounded-lg border border-border px-2.5 py-1.5 text-[12px] outline-none focus:border-primary/40 resize-y" />
                       <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                         <button onClick={() => generateVoice(s.id)} disabled={!!s.busy} className="h-8 px-2.5 rounded-lg bg-gray-900 text-white text-[11.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-black disabled:opacity-50">
                           {s.busy === 'voice' ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />} {tp('Générer la voix')}
                         </button>
-                        <button onClick={() => openPicker('audio', s.id)} disabled={!!s.busy} className="h-8 px-2.5 rounded-lg border border-gray-200 text-[11.5px] font-medium text-gray-700 inline-flex items-center gap-1.5 hover:bg-gray-50 disabled:opacity-50"><Images size={13} /> {tp('Galerie')}</button>
-                        <label className={`h-8 px-2.5 rounded-lg border border-gray-200 text-[11.5px] font-medium text-gray-700 inline-flex items-center gap-1.5 cursor-pointer hover:bg-gray-50 ${s.busy ? 'opacity-50 pointer-events-none' : ''}`}>
+                        <button onClick={() => openPicker('audio', s.id)} disabled={!!s.busy} className="h-8 px-2.5 rounded-lg border border-border text-[11.5px] font-medium text-foreground inline-flex items-center gap-1.5 hover:bg-background disabled:opacity-50"><Images size={13} /> {tp('Galerie')}</button>
+                        <label className={`h-8 px-2.5 rounded-lg border border-border text-[11.5px] font-medium text-foreground inline-flex items-center gap-1.5 cursor-pointer hover:bg-background ${s.busy ? 'opacity-50 pointer-events-none' : ''}`}>
                           <Upload size={13} /> {tp('Uploader')}
                           <input type="file" accept="audio/*" className="hidden" onChange={(e) => uploadVoice(s.id, e.target.files?.[0])} />
                         </label>
@@ -997,25 +1211,25 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
                       {s.audioUrl && (
                         <div className="mt-1.5 flex items-center gap-2">
                           <audio src={s.audioUrl} controls className="h-8 flex-1" />
-                          <button onClick={() => patchScene(s.id, { audioUrl: '' })} className="p-1 text-gray-400 hover:text-red-500"><X size={14} /></button>
+                          <button onClick={() => patchScene(s.id, { audioUrl: '' })} className="p-1 text-muted-foreground hover:text-red-500"><X size={14} /></button>
                         </div>
                       )}
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <label className="text-[11px] font-semibold text-gray-500">{tp('Durée')}</label>
+                      <label className="text-[11px] font-semibold text-muted-foreground">{tp('Durée')}</label>
                       <input type="number" min={1} max={30} step={0.5} value={s.durationSec}
                         onChange={(e) => patchScene(s.id, { durationSec: Math.max(1, Math.min(30, Number(e.target.value) || 1)) })}
-                        className="w-20 h-8 rounded-lg border border-gray-200 px-2 text-[12px] outline-none focus:border-cyan-400" />
-                      <span className="text-[11px] text-gray-400">{tp('sec')}{s.audioUrl ? tp(' (auto voix)') : ''}</span>
+                        className="w-20 h-8 rounded-lg border border-border px-2 text-[12px] outline-none focus:border-primary/40" />
+                      <span className="text-[11px] text-muted-foreground">{tp('sec')}{s.audioUrl ? tp(' (auto voix)') : ''}</span>
                     </div>
 
                     {subtitlesOn && (
                       <div>
-                        <label className="text-[11px] font-semibold text-gray-500 flex items-center gap-1.5 mb-1"><Type size={12} /> {tp('Sous-titre affiché')}</label>
+                        <label className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5 mb-1"><Type size={12} /> {tp('Sous-titre affiché')}</label>
                         <input value={s.subtitleText} onChange={(e) => patchScene(s.id, { subtitleText: e.target.value })}
                           placeholder={tp('Texte incrusté (par défaut = voix off)')}
-                          className="w-full h-8 rounded-lg border border-gray-200 px-2.5 text-[12px] outline-none focus:border-cyan-400" />
+                          className="w-full h-8 rounded-lg border border-border px-2.5 text-[12px] outline-none focus:border-primary/40" />
                       </div>
                     )}
                   </div>
@@ -1024,19 +1238,35 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
             ))}
           </div>
 
-          <button onClick={addScene} className="w-full h-11 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 text-[13px] font-semibold inline-flex items-center justify-center gap-2 hover:border-cyan-300 hover:text-cyan-600 transition">
-            <Plus size={16} /> {tp('Ajouter une scène')}
-          </button>
+          <div className="w-full rounded-xl border-2 border-dashed border-border p-2.5 space-y-2 hover:border-primary/25 transition">
+            <button onClick={addScene} className="w-full h-9 rounded-lg text-muted-foreground text-[13px] font-semibold inline-flex items-center justify-center gap-2 hover:bg-background hover:text-primary transition">
+              <Plus size={16} /> {tp('Ajouter une scène')}
+            </button>
+            {/* Générer une scène : « un CTA », « un hook », ou description libre → l'IA écrit et génère TOUT (texte, visuel, voix). */}
+            <div className="flex gap-1.5">
+              <input
+                value={aiSceneBrief}
+                onChange={(e) => setAiSceneBrief(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !aiSceneBusy) generateFullScene(); }}
+                placeholder={tp('Ex. « un CTA urgent », « un hook qui choque », ou décris la scène…')}
+                className="flex-1 h-9 rounded-lg border border-border px-2.5 text-[12.5px] outline-none focus:border-primary/40"
+              />
+              <button onClick={generateFullScene} disabled={aiSceneBusy}
+                className="h-9 px-3 rounded-lg bg-primary text-white text-[12.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700 disabled:opacity-50">
+                {aiSceneBusy ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />} {tp('Générer une scène')}
+              </button>
+            </div>
+          </div>
           </>
 
           {/* ── Réglages globaux ── */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-4 space-y-4">
+          <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
             <Field label={tp('Format')}>
               <div className="flex flex-wrap gap-2">
                 {FORMATS.map((f) => (
                   <button key={f.id} onClick={() => setFormat(f.id)}
-                    className={`px-3.5 h-9 rounded-xl text-[12.5px] font-semibold border transition ${format === f.id ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}>
-                    {f.label} <span className={`ml-1 font-normal ${format === f.id ? 'text-white/70' : 'text-gray-400'}`}>· {f.hint}</span>
+                    className={`px-3.5 h-9 rounded-xl text-[12.5px] font-semibold border transition ${format === f.id ? 'border-primary/30 bg-primary text-white' : 'border-border bg-card text-muted-foreground hover:bg-background'}`}>
+                    {f.label} <span className={`ml-1 font-normal ${format === f.id ? 'text-white/70' : 'text-muted-foreground'}`}>· {f.hint}</span>
                   </button>
                 ))}
               </div>
@@ -1046,7 +1276,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
               <div className="flex flex-wrap gap-2">
                 {TRANSITIONS.map((t) => (
                   <button key={t.id} onClick={() => setTransition(t.id)}
-                    className={`px-3 h-9 rounded-xl text-[12.5px] font-semibold border transition ${transition === t.id ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}>
+                    className={`px-3 h-9 rounded-xl text-[12.5px] font-semibold border transition ${transition === t.id ? 'border-primary/30 bg-primary text-white' : 'border-border bg-card text-muted-foreground hover:bg-background'}`}>
                     {t.label}
                   </button>
                 ))}
@@ -1055,75 +1285,75 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Type size={15} className="text-gray-400" />
-                <span className="text-[13px] font-semibold text-gray-700">{tp('Sous-titres incrustés')}</span>
+                <Type size={15} className="text-muted-foreground" />
+                <span className="text-[13px] font-semibold text-foreground">{tp('Sous-titres incrustés')}</span>
               </div>
-              <button onClick={() => setSubtitlesOn((v) => !v)} className={`relative w-11 h-6 rounded-full transition ${subtitlesOn ? 'bg-cyan-600' : 'bg-gray-300'}`}>
-                <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${subtitlesOn ? 'translate-x-5' : ''}`} />
+              <button onClick={() => setSubtitlesOn((v) => !v)} className={`relative w-11 h-6 rounded-full transition ${subtitlesOn ? 'bg-primary' : 'bg-gray-300'}`}>
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-card shadow transition-transform ${subtitlesOn ? 'translate-x-5' : ''}`} />
               </button>
             </div>
 
             {subtitlesOn && (
               <div>
-                <p className="text-[11px] font-semibold text-gray-500 mb-1.5">{tp('Style des sous-titres')}</p>
+                <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">{tp('Style des sous-titres')}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {CAPTION_STYLES.map((s) => (
                     <button key={s.id} onClick={() => setCaptionStyle(s.id)}
-                      className={`h-8 px-2 rounded-lg border text-[11px] font-bold inline-flex items-center gap-1.5 transition ${captionStyle === s.id ? 'border-cyan-500 ring-2 ring-cyan-100' : 'border-gray-200 hover:bg-gray-50'}`}>
+                      className={`h-8 px-2 rounded-lg border text-[11px] font-bold inline-flex items-center gap-1.5 transition ${captionStyle === s.id ? 'border-primary/30 ring-2 ring-primary/20' : 'border-border hover:bg-background'}`}>
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded text-[11px]" style={{ background: s.bg === 'transparent' ? '#1f2937' : s.bg, color: s.text }}>A</span>
                       {s.label}
                     </button>
                   ))}
                 </div>
-                <p className="text-[11px] font-semibold text-gray-500 mb-1.5 mt-3">{tp('Animation des sous-titres')}</p>
+                <p className="text-[11px] font-semibold text-muted-foreground mb-1.5 mt-3">{tp('Animation des sous-titres')}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {CAPTION_ANIMS.map((a) => (
                     <button key={a.id} onClick={() => setCaptionAnim(a.id)}
-                      className={`h-8 px-2.5 rounded-lg border text-[11.5px] font-semibold transition ${captionAnim === a.id ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+                      className={`h-8 px-2.5 rounded-lg border text-[11.5px] font-semibold transition ${captionAnim === a.id ? 'border-primary/30 bg-primary text-white' : 'border-border text-muted-foreground hover:bg-background'}`}>
                       {a.label}
                     </button>
                   ))}
                 </div>
-                <p className="text-[11px] font-semibold text-gray-500 mb-1.5 mt-3">{tp('Position des sous-titres')}</p>
+                <p className="text-[11px] font-semibold text-muted-foreground mb-1.5 mt-3">{tp('Position des sous-titres')}</p>
                 <div className="flex flex-wrap items-center gap-1.5">
                   {CAPTION_POSITIONS.map((p) => (
                     <button key={p.id} onClick={() => { setCaptionPosition(p.id); setCaptionOffsetPct(null); }}
-                      className={`h-8 px-3 rounded-lg border text-[11.5px] font-semibold transition ${captionPosition === p.id && captionOffsetPct == null ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+                      className={`h-8 px-3 rounded-lg border text-[11.5px] font-semibold transition ${captionPosition === p.id && captionOffsetPct == null ? 'border-primary/30 bg-primary text-white' : 'border-border text-muted-foreground hover:bg-background'}`}>
                       {p.label}
                     </button>
                   ))}
                   {captionOffsetPct != null && (
-                    <span className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-cyan-300 bg-cyan-50 text-[11px] font-bold text-cyan-700">
+                    <span className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-primary/30 bg-primary/10 text-[11px] font-bold text-primary">
                       {tp('Libre')} · {Math.round(captionOffsetPct)}%
-                      <button onClick={() => setCaptionOffsetPct(null)} className="text-cyan-500 hover:text-red-500"><X size={11} /></button>
+                      <button onClick={() => setCaptionOffsetPct(null)} className="text-primary hover:text-red-500"><X size={11} /></button>
                     </span>
                   )}
                 </div>
-                <p className="mt-1 text-[10.5px] text-gray-400">{tp('Astuce : dans l’éditeur Pro, fais glisser le sous-titre directement sur l’aperçu.')}</p>
+                <p className="mt-1 text-[10.5px] text-muted-foreground">{tp('Astuce : dans l’éditeur Pro, fais glisser le sous-titre directement sur l’aperçu.')}</p>
                 <div className="mt-3 flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold text-gray-500">{tp('Police')}</span>
-                    <select value={captionFont} onChange={(e) => setCaptionFont(e.target.value)} className="h-8 rounded-lg border border-gray-200 px-2 text-[12px] outline-none focus:border-cyan-400">
+                    <span className="text-[11px] font-semibold text-muted-foreground">{tp('Police')}</span>
+                    <select value={captionFont} onChange={(e) => setCaptionFont(e.target.value)} className="h-8 rounded-lg border border-border px-2 text-[12px] outline-none focus:border-primary/40">
                       {CAPTION_FONTS.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
                     </select>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-semibold text-gray-500">{tp('Casse')}</span>
+                    <span className="text-[11px] font-semibold text-muted-foreground">{tp('Casse')}</span>
                     <button onClick={() => setCaptionCase('none')} title={tp('Texte tel quel')}
-                      className={`h-7 px-2.5 rounded-lg border text-[11.5px] font-bold transition ${captionCase !== 'upper' ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>Aa</button>
+                      className={`h-7 px-2.5 rounded-lg border text-[11.5px] font-bold transition ${captionCase !== 'upper' ? 'border-primary/30 bg-primary text-white' : 'border-border text-muted-foreground hover:bg-background'}`}>Aa</button>
                     <button onClick={() => setCaptionCase('upper')} title={tp('Tout en majuscules')}
-                      className={`h-7 px-2.5 rounded-lg border text-[11.5px] font-bold transition ${captionCase === 'upper' ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>AA</button>
+                      className={`h-7 px-2.5 rounded-lg border text-[11.5px] font-bold transition ${captionCase === 'upper' ? 'border-primary/30 bg-primary text-white' : 'border-border text-muted-foreground hover:bg-background'}`}>AA</button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold text-gray-500">{tp('Taille')}</span>
-                    <input type="range" min={0.5} max={2} step={0.05} value={captionScale} onChange={(e) => setCaptionScale(Number(e.target.value))} className="w-28 accent-cyan-600" />
-                    <span className="text-[11px] font-bold text-gray-600 tabular-nums w-10">{Math.round(captionScale * 100)}%</span>
+                    <span className="text-[11px] font-semibold text-muted-foreground">{tp('Taille')}</span>
+                    <input type="range" min={0.5} max={2} step={0.05} value={captionScale} onChange={(e) => setCaptionScale(Number(e.target.value))} className="w-28 accent-primary" />
+                    <span className="text-[11px] font-bold text-muted-foreground tabular-nums w-10">{Math.round(captionScale * 100)}%</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-semibold text-gray-500">{tp('Lignes')}</span>
+                    <span className="text-[11px] font-semibold text-muted-foreground">{tp('Lignes')}</span>
                     {[1, 2, 3].map((n) => (
                       <button key={n} onClick={() => setCaptionMaxLines(n)}
-                        className={`h-7 w-7 rounded-lg border text-[11.5px] font-bold transition ${captionMaxLines === n ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+                        className={`h-7 w-7 rounded-lg border text-[11.5px] font-bold transition ${captionMaxLines === n ? 'border-primary/30 bg-primary text-white' : 'border-border text-muted-foreground hover:bg-background'}`}>
                         {n}
                       </button>
                     ))}
@@ -1133,29 +1363,29 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
             )}
 
             {narrationUrl && (
-              <div className="rounded-xl border border-cyan-200 bg-cyan-50/50 p-3">
+              <div className="rounded-xl border border-primary/25 bg-primary/10/50 p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Mic size={15} className="text-cyan-600" />
-                    <span className="text-[13px] font-semibold text-gray-700">{tp('Narration (voix off du kit)')}</span>
+                    <Mic size={15} className="text-primary" />
+                    <span className="text-[13px] font-semibold text-foreground">{tp('Narration (voix off du kit)')}</span>
                   </div>
-                  <button onClick={() => setNarrationUrl('')} className="text-[12px] text-gray-400 hover:text-red-500 inline-flex items-center gap-1"><X size={13} /> {tp('Retirer')}</button>
+                  <button onClick={() => setNarrationUrl('')} className="text-[12px] text-muted-foreground hover:text-red-500 inline-flex items-center gap-1"><X size={13} /> {tp('Retirer')}</button>
                 </div>
                 <audio src={narrationUrl} controls className="mt-2 h-8 w-full" />
-                <p className="mt-1 text-[11px] text-gray-400">{tp('Sert de voix off sur toute la vidéo ; les voix par scène sont ignorées.')}</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">{tp('Sert de voix off sur toute la vidéo ; les voix par scène sont ignorées.')}</p>
               </div>
             )}
 
             <div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Music size={15} className="text-gray-400" />
-                  <span className="text-[13px] font-semibold text-gray-700">{tp('Musique de fond')} <span className="text-gray-400 font-normal">({tp('optionnel')})</span></span>
+                  <Music size={15} className="text-muted-foreground" />
+                  <span className="text-[13px] font-semibold text-foreground">{tp('Musique de fond')} <span className="text-muted-foreground font-normal">({tp('optionnel')})</span></span>
                 </div>
                 {musicUrl ? (
-                  <button onClick={() => setMusicUrl('')} className="text-[12px] text-gray-400 hover:text-red-500 inline-flex items-center gap-1"><X size={13} /> {tp('Retirer')}</button>
+                  <button onClick={() => setMusicUrl('')} className="text-[12px] text-muted-foreground hover:text-red-500 inline-flex items-center gap-1"><X size={13} /> {tp('Retirer')}</button>
                 ) : (
-                  <label className={`h-8 px-3 rounded-lg border border-gray-200 text-[12px] font-medium text-gray-700 inline-flex items-center gap-1.5 cursor-pointer hover:bg-gray-50 ${musicBusy ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <label className={`h-8 px-3 rounded-lg border border-border text-[12px] font-medium text-foreground inline-flex items-center gap-1.5 cursor-pointer hover:bg-background ${musicBusy ? 'opacity-50 pointer-events-none' : ''}`}>
                     {musicBusy ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />} {tp('Uploader une piste')}
                     <input type="file" accept="audio/*" className="hidden" onChange={(e) => uploadMusic(e.target.files?.[0])} />
                   </label>
@@ -1165,7 +1395,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {musicPresets.map((p) => (
                     <button key={p.id} onClick={() => setMusicUrl(musicUrl === p.url ? '' : p.url)}
-                      className={`h-7 px-2.5 rounded-full border text-[11px] font-semibold transition ${musicUrl === p.url ? 'border-cyan-500 bg-cyan-600 text-white' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+                      className={`h-7 px-2.5 rounded-full border text-[11px] font-semibold transition ${musicUrl === p.url ? 'border-primary/30 bg-primary text-white' : 'border-border text-muted-foreground hover:bg-background'}`}>
                       {p.label}
                     </button>
                   ))}
@@ -1175,8 +1405,8 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
                 <div className="mt-2 flex items-center gap-3">
                   <audio src={musicUrl} controls className="h-8 flex-1" />
                   <div className="flex items-center gap-1.5">
-                    <Volume2 size={14} className="text-gray-400" />
-                    <input type="range" min={0} max={1.2} step={0.05} value={musicVolume} onChange={(e) => setMusicVolume(Number(e.target.value))} className="w-24 accent-cyan-600" />
+                    <Volume2 size={14} className="text-muted-foreground" />
+                    <input type="range" min={0} max={1.2} step={0.05} value={musicVolume} onChange={(e) => setMusicVolume(Number(e.target.value))} className="w-24 accent-primary" />
                   </div>
                 </div>
               )}
@@ -1184,27 +1414,27 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
           </div>
 
           {/* ── Rendu ── */}
-          <div className="rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-blue-50 p-4">
+          <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary to-primary-700 p-4">
             {rendering ? (
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-[12.5px] font-semibold text-gray-700">
-                  <span className="inline-flex items-center gap-2"><Loader2 size={14} className="animate-spin text-cyan-600" /> {tp('Montage en cours…')}</span>
+                <div className="flex items-center justify-between text-[12.5px] font-semibold text-foreground">
+                  <span className="inline-flex items-center gap-2"><Loader2 size={14} className="animate-spin text-primary" /> {tp('Montage en cours…')}</span>
                   <span>{progress}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-white overflow-hidden"><div className="h-full bg-cyan-600 transition-all" style={{ width: `${progress}%` }} /></div>
-                <p className="text-[11px] text-gray-400">{tp('Normalisation des clips, voix off, sous-titres puis encodage — patiente une minute.')}</p>
+                <div className="h-2 rounded-full bg-card overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} /></div>
+                <p className="text-[11px] text-muted-foreground">{tp('Normalisation des clips, voix off, sous-titres puis encodage — patiente une minute.')}</p>
               </div>
             ) : (
               <div className="flex items-center justify-between gap-3 flex-wrap">
-                <div className="text-[12.5px] text-gray-600">
-                  <span className="font-bold text-gray-900">{readyScenes.length}</span>/{scenes.length} {tp('scène(s) prête(s)')} · <span className="font-bold text-gray-900">≈ {Math.round(totalDuration)}s</span> · {format}
+                <div className="text-[12.5px] text-muted-foreground">
+                  <span className="font-bold text-foreground">{readyScenes.length}</span>/{scenes.length} {tp('scène(s) prête(s)')} · <span className="font-bold text-foreground">≈ {Math.round(totalDuration)}s</span> · {format}
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] font-semibold text-gray-500">{tp('Génération')}</span>
-                  <div className="inline-flex rounded-full border border-gray-200 overflow-hidden" title={tp('Mixte : l’IA répartit vidéo/image selon la pertinence de chaque plan. Vidéo : tout en clips IA. Image : tout en images animées (le plus économique).')}>
+                  <span className="text-[11px] font-semibold text-muted-foreground">{tp('Génération')}</span>
+                  <div className="inline-flex rounded-full border border-border overflow-hidden" title={tp('Mixte : l’IA répartit vidéo/image selon la pertinence de chaque plan. Vidéo : tout en clips IA. Image : tout en images animées (le plus économique).')}>
                     {[['mixte', tp('Mixte IA')], ['video', tp('Vidéo')], ['image', tp('Image éco')]].map(([id, label]) => (
                       <button key={id} onClick={() => setGenStrategy(id)}
-                        className={`px-2.5 h-8 text-[11.5px] font-bold transition ${genStrategy === id ? (id === 'image' ? 'bg-emerald-600 text-white' : 'bg-cyan-600 text-white') : 'bg-white text-gray-400 hover:bg-gray-50'}`}>
+                        className={`px-2.5 h-8 text-[11.5px] font-bold transition ${genStrategy === id ? (id === 'image' ? 'bg-primary text-white' : 'bg-primary text-white') : 'bg-card text-muted-foreground hover:bg-background'}`}>
                         {label}
                       </button>
                     ))}
@@ -1212,18 +1442,18 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport }) => {
                   {scenes.some((s) => !s.videoUrl && !s.imageUrl || (!narrationUrl && !s.audioUrl && (s.voiceText || s.subtitleText))) && (
                     <button onClick={() => runAutoMontage(scenes)} disabled={!!autoStep}
                       title={tp('Génère tous les visuels manquants et les voix, applique la direction IA puis assemble — en un clic')}
-                      className="h-11 px-5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-[13.5px] font-bold inline-flex items-center gap-2 hover:from-cyan-700 hover:to-blue-700 disabled:opacity-50 shadow-sm">
+                      className="h-11 px-5 rounded-xl bg-gradient-to-r from-primary to-primary-700 text-white text-[13.5px] font-bold inline-flex items-center gap-2 hover:from-primary hover:to-primary-700 disabled:opacity-50 shadow-sm">
                       ⚡ {tp('Tout générer et monter')}
                     </button>
                   )}
                 </div>
                 <div className="flex items-center gap-3">
                   <button onClick={() => setDirectorOn((v) => !v)} title={tp('L’IA choisit transitions, habillage, musique et accents — sans écraser tes réglages')}
-                    className={`h-8 px-2.5 rounded-full border text-[11.5px] font-bold inline-flex items-center gap-1.5 transition ${directorOn ? 'border-cyan-400 bg-cyan-50 text-cyan-700' : 'border-gray-200 bg-white text-gray-400'}`}>
+                    className={`h-8 px-2.5 rounded-full border text-[11.5px] font-bold inline-flex items-center gap-1.5 transition ${directorOn ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-card text-muted-foreground'}`}>
                     <Sparkles size={12} /> {tp('Direction IA')} {directorOn ? 'ON' : 'OFF'}
                   </button>
                   <button onClick={renderWithDirector} disabled={!canRender}
-                    className="h-11 px-6 rounded-xl bg-cyan-600 text-white text-[14px] font-bold inline-flex items-center gap-2 hover:bg-cyan-700 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm">
+                    className="h-11 px-6 rounded-xl bg-primary text-white text-[14px] font-bold inline-flex items-center gap-2 hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm">
                     <Play size={16} /> {tp('Monter la vidéo')}
                   </button>
                 </div>

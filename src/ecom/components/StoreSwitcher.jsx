@@ -34,7 +34,7 @@ const StoreSwitcher = ({ children }) => {
       ) : (
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all shadow-sm max-w-[200px]"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-background transition-all shadow-sm max-w-[200px]"
       >
         {/* Color dot */}
         <span
@@ -43,7 +43,7 @@ const StoreSwitcher = ({ children }) => {
         />
         <span className="truncate flex-1 text-left">{displayName}</span>
         {stores.length > 1 && (
-          <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         )}
@@ -53,10 +53,10 @@ const StoreSwitcher = ({ children }) => {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-full mt-1.5 z-50 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 min-w-[220px]">
-            <p className="px-3 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Mes boutiques')}</p>
+          <div className="absolute left-0 top-full mt-1.5 z-50 bg-card rounded-xl shadow-xl border border-border py-1.5 min-w-[220px]">
+            <p className="px-3 py-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Mes boutiques')}</p>
             {!hasStores && (
-              <p className="px-3 py-3 text-sm text-gray-400 text-center">{tp('Aucune boutique')}</p>
+              <p className="px-3 py-3 text-sm text-muted-foreground text-center">{tp('Aucune boutique')}</p>
             )}
             {hasStores && stores.map(s => {
               const name = s.storeSettings?.storeName || s.name;
@@ -68,7 +68,7 @@ const StoreSwitcher = ({ children }) => {
                   <button
                     onClick={() => { switchStore(s); setOpen(false); }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-colors ${
-                      isActive ? 'bg-scalor-green/10 text-scalor-green' : 'text-gray-700 hover:bg-gray-50'
+                      isActive ? 'bg-scalor-green/10 text-scalor-green' : 'text-foreground hover:bg-background'
                     }`}
                   >
                     <span
@@ -80,7 +80,7 @@ const StoreSwitcher = ({ children }) => {
                     <div className="flex-1 text-left min-w-0">
                       <p className="font-medium truncate">{name}</p>
                       {s.subdomain && (
-                        <p className="text-xs text-gray-400 truncate">{s.subdomain}.scalor.net</p>
+                        <p className="text-xs text-muted-foreground truncate">{s.subdomain}.scalor.net</p>
                       )}
                     </div>
                     {isActive && (
@@ -107,7 +107,7 @@ const StoreSwitcher = ({ children }) => {
               );
             })}
 
-            <div className="border-t border-gray-100 mt-1 pt-1">
+            <div className="border-t border-border mt-1 pt-1">
               {(stores?.length || 0) < 3 ? (
                 <Link
                   to={hasStores ? "/ecom/boutique/nouvelle" : "/ecom/boutique/wizard"}
@@ -122,7 +122,7 @@ const StoreSwitcher = ({ children }) => {
                   <span className="font-medium">{hasStores ? 'Nouvelle boutique' : tp('Créer une boutique')}</span>
                 </Link>
               ) : (
-                <p className="px-3 py-2 text-xs text-gray-400 text-center">{tp('Maximum 3 boutiques atteint')}</p>
+                <p className="px-3 py-2 text-xs text-muted-foreground text-center">{tp('Maximum 3 boutiques atteint')}</p>
               )}
             </div>
           </div>

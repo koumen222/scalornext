@@ -85,7 +85,7 @@ const ScalorPayCard = ({ config, onToggle }) => {
     >
       <div className="px-5 py-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-white flex-shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-card/15 backdrop-blur flex items-center justify-center text-white flex-shrink-0">
             <IcoWallet />
           </div>
           <div className="flex-1 min-w-0">
@@ -100,9 +100,9 @@ const ScalorPayCard = ({ config, onToggle }) => {
           <button
             onClick={() => onToggle('scalor_pay')}
             aria-label="toggle-scalor-pay"
-            className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${isEnabled ? 'bg-white' : 'bg-white/30'}`}
+            className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${isEnabled ? 'bg-card' : 'bg-card/30'}`}
           >
-            <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full shadow transition-transform ${isEnabled ? 'translate-x-5 bg-[#0F6B4F]' : 'bg-white'}`} />
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full shadow transition-transform ${isEnabled ? 'translate-x-5 bg-[#0F6B4F]' : 'bg-card'}`} />
           </button>
         </div>
 
@@ -112,7 +112,7 @@ const ScalorPayCard = ({ config, onToggle }) => {
             { k: tp('Versement'), v: tp('Sur votre solde') },
             { k: tp('Mise en place'), v: tp('Instantanée') },
           ].map((s) => (
-            <div key={s.k} className="rounded-xl bg-white/10 px-3 py-2">
+            <div key={s.k} className="rounded-xl bg-card/10 px-3 py-2">
               <p className="text-[10px] text-white/70">{s.k}</p>
               <p className="text-xs font-bold text-white mt-0.5">{s.v}</p>
             </div>
@@ -120,9 +120,9 @@ const ScalorPayCard = ({ config, onToggle }) => {
         </div>
 
         {isEnabled && (
-          <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3">
-            <p className="text-xs text-gray-600">
-              {tp('Vos paiements sont crédités sur votre solde')} <span className="font-semibold text-gray-900">({tp('commission')} {SCALOR_PAY_COMMISSION})</span>.
+          <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-card px-4 py-3">
+            <p className="text-xs text-muted-foreground">
+              {tp('Vos paiements sont crédités sur votre solde')} <span className="font-semibold text-foreground">({tp('commission')} {SCALOR_PAY_COMMISSION})</span>.
             </p>
             <Link
               to="/ecom/boutique/wallet"
@@ -141,37 +141,37 @@ const ProviderCard = ({ provider, config, onToggle, onUpdate }) => {
   const isEnabled = config?.enabled;
 
   return (
-    <div className={`bg-white rounded-2xl border-2 transition-all ${isEnabled ? 'border-[#6CB198] shadow-md' : 'border-gray-200'}`}>
+    <div className={`bg-card rounded-2xl border-2 transition-all ${isEnabled ? 'border-[#6CB198] shadow-md' : 'border-border'}`}>
       <div className="flex items-center gap-4 px-5 py-4">
         <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: provider.color + '15', color: provider.color }}>
           {provider.icon}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-bold text-gray-900">{provider.name}</p>
+            <p className="text-sm font-bold text-foreground">{provider.name}</p>
             {provider.popular && <span className="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded-full">{tp('POPULAIRE')}</span>}
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">{provider.desc}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{provider.desc}</p>
         </div>
         <button
           onClick={() => onToggle(provider.id)}
           className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${isEnabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
         >
-          <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${isEnabled ? 'translate-x-5' : ''}`} />
+          <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform ${isEnabled ? 'translate-x-5' : ''}`} />
         </button>
       </div>
 
       {isEnabled && provider.fields.length > 0 && (
-        <div className="px-5 pb-4 space-y-3 border-t border-gray-100 pt-4">
+        <div className="px-5 pb-4 space-y-3 border-t border-border pt-4">
           {provider.fields.map(f => (
             <div key={f.key}>
-              <label className="text-xs font-semibold text-gray-600 mb-1 block">{f.label}</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">{f.label}</label>
               <input
                 type={f.key.toLowerCase().includes('secret') ? 'password' : 'text'}
                 value={config?.[f.key] || ''}
                 onChange={(e) => onUpdate(provider.id, f.key, e.target.value)}
                 placeholder={f.placeholder}
-                className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent transition bg-gray-50 focus:bg-white"
+                className="w-full px-3 py-2.5 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent transition bg-background focus:bg-card"
               />
             </div>
           ))}
@@ -182,7 +182,7 @@ const ProviderCard = ({ provider, config, onToggle, onUpdate }) => {
 };
 
 const SectionTitle = ({ children }) => (
-  <h2 className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2 mt-1">{children}</h2>
+  <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2 mt-1">{children}</h2>
 );
 
 const BoutiquePayments = () => {
@@ -239,8 +239,8 @@ const BoutiquePayments = () => {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{tp('Paiements')}</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{tp('Configurez vos modes de paiement')}</p>
+          <h1 className="text-xl font-bold text-foreground">{tp('Paiements')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{tp('Configurez vos modes de paiement')}</p>
         </div>
         <button
           onClick={handleSave}
@@ -274,13 +274,13 @@ const BoutiquePayments = () => {
       </div>
 
       {/* Security note */}
-      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex items-start gap-3">
-        <svg className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-background border border-border rounded-2xl p-4 flex items-start gap-3">
+        <svg className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
         <div>
-          <p className="text-xs font-semibold text-gray-700">{tp('Sécurité des données')}</p>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs font-semibold text-foreground">{tp('Sécurité des données')}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
             {tp('Vos clés API sont chiffrées et stockées de manière sécurisée. Elles ne sont jamais exposées côté client.')}
           </p>
         </div>

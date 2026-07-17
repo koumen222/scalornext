@@ -241,7 +241,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
     }
   }, [input, loading, messages, medias, mode, context, onPatch]);
 
-  const accentBtn = 'bg-indigo-600 hover:bg-indigo-700';
+  const accentBtn = 'bg-primary hover:bg-primary-700';
 
   if (!open) {
     // Mode ancré (builders) : barre de chat flottante centrée en bas —
@@ -257,20 +257,20 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
       };
       return (
         <div className="fixed bottom-5 -translate-x-1/2 z-[9999] w-[min(620px,92vw)]" style={{ left: `calc(50% + ${Math.round(dockBarOffset / 2)}px)` }}>
-          <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white shadow-2xl pl-4 pr-1.5 py-1.5 focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-100 transition">
-            <Sparkles className="h-4 w-4 text-indigo-600 flex-shrink-0" />
+          <div className="flex items-center gap-2 rounded-full border border-border bg-card shadow-2xl pl-4 pr-1.5 py-1.5 focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/20 transition">
+            <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); submitFromBar(); } }}
               placeholder={tp('Décris ce que tu veux créer ou modifier…')}
-              className="flex-1 bg-transparent text-sm text-gray-800 outline-none placeholder:text-gray-400 min-w-0"
+              className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground min-w-0"
             />
             <button
               type="button"
               onClick={submitFromBar}
               title={input.trim() ? tp('Envoyer') : tp('Ouvrir l\'assistant')}
-              className="flex-shrink-0 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 p-2.5 text-white hover:opacity-90 transition"
+              className="flex-shrink-0 rounded-full bg-gradient-to-r from-primary to-primary-700 p-2.5 text-white hover:opacity-90 transition"
             >
               <Send className="h-4 w-4" />
             </button>
@@ -281,7 +281,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-white shadow-2xl transition-all hover:scale-105 hover:shadow-purple-500/30"
+        className="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-700 px-4 py-3 text-white shadow-2xl transition-all hover:scale-105 hover:shadow-primary-700/30"
       >
         <Sparkles className="h-5 w-5" />
         <span className="text-sm font-semibold hidden sm:inline">{tp('Assistant IA')}</span>
@@ -294,8 +294,8 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
       ref={panelRef}
       style={variant === 'docked' ? { width: dockWidth } : undefined}
       className={variant === 'docked'
-        ? 'relative flex flex-col h-full bg-white border-l border-gray-200 flex-shrink-0 overflow-hidden'
-        : 'fixed bottom-6 right-6 z-[9999] flex flex-col w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-hidden'}>
+        ? 'relative flex flex-col h-full bg-card border-l border-border flex-shrink-0 overflow-hidden'
+        : 'fixed bottom-6 right-6 z-[9999] flex flex-col w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden'}>
 
       {/* Poignée de redimensionnement — glisser pour élargir/réduire, double-clic = largeur par défaut */}
       {variant === 'docked' && (
@@ -303,19 +303,19 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
           onPointerDown={startResize}
           onDoubleClick={() => setDockWidth(400)}
           title="Glisser pour redimensionner"
-          className="absolute left-0 top-0 bottom-0 w-1.5 z-20 cursor-col-resize hover:bg-indigo-400/60 active:bg-indigo-500/70 transition-colors"
+          className="absolute left-0 top-0 bottom-0 w-1.5 z-20 cursor-col-resize hover:bg-primary/60 active:bg-primary/70 transition-colors"
         />
       )}
 
       {/* Header — blanc minimal en mode ancré (style Sidekick), dégradé en flottant */}
       <div className={`flex items-center justify-between px-4 py-3 flex-shrink-0 ${variant === 'docked'
-        ? 'bg-white border-b border-gray-100 text-gray-900'
-        : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'}`}>
+        ? 'bg-card border-b border-border text-foreground'
+        : 'bg-gradient-to-r from-primary to-primary-700 text-white'}`}>
         <div className="flex items-center gap-2">
-          <Sparkles className={`h-4 w-4 ${variant === 'docked' ? 'text-indigo-600' : ''}`} />
+          <Sparkles className={`h-4 w-4 ${variant === 'docked' ? 'text-primary' : ''}`} />
           <span className="text-sm font-bold">{tp('Assistant Builder IA')}</span>
         </div>
-        <button onClick={() => setOpen(false)} className={`rounded-full p-1 transition ${variant === 'docked' ? 'text-gray-400 hover:bg-gray-100 hover:text-gray-700' : 'hover:bg-white/20'}`}>
+        <button onClick={() => setOpen(false)} className={`rounded-full p-1 transition ${variant === 'docked' ? 'text-muted-foreground hover:bg-muted hover:text-foreground' : 'hover:bg-card/20'}`}>
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -327,7 +327,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
             {msg.medias?.length > 0 && (
               <div className="flex flex-wrap gap-1.5 max-w-[85%]">
                 {msg.medias.map((m, mi) => (
-                  <div key={mi} className="relative rounded-xl overflow-hidden border border-white/20 bg-indigo-500">
+                  <div key={mi} className="relative rounded-xl overflow-hidden border border-white/20 bg-primary">
                     {m.type === 'image' && <img src={m.localUrl} alt={m.name} className="w-20 h-20 object-cover" />}
                     {m.type === 'audio' && (
                       <div className="flex items-center gap-1.5 px-2.5 py-2 text-white text-[10px]">
@@ -349,14 +349,14 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
               </div>
             )}
             <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] ${
-              msg.role === 'user' ? 'bg-indigo-600 text-white rounded-br-md whitespace-pre-wrap leading-relaxed' : 'bg-gray-100 text-gray-800 rounded-bl-md'
+              msg.role === 'user' ? 'bg-primary text-white rounded-br-md whitespace-pre-wrap leading-relaxed' : 'bg-muted text-foreground rounded-bl-md'
             }`}>
               {msg.role === 'assistant' ? <AiMessageText content={msg.content} /> : msg.content}
               {msg.isProError && (
                 <div className="mt-3">
                   <button 
                     onClick={() => navigate('/ecom/billing')}
-                    className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition"
+                    className="flex items-center gap-1.5 text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary/15 px-3 py-1.5 rounded-lg transition"
                   >
                     <Lock className="w-3 h-3" />
                     {tp('Découvrir les plans')}
@@ -368,7 +368,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
         ))}
         {loading && (
           <div className="flex justify-start">
-            <span className="text-sm text-gray-500 px-1 py-1 select-none">
+            <span className="text-sm text-muted-foreground px-1 py-1 select-none">
               {tp('Réflexion')}
               <span className="rai-dot">.</span>
               <span className="rai-dot" style={{ animationDelay: '0.2s' }}>.</span>
@@ -388,14 +388,14 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
 
       {/* Médias en attente */}
       {medias.length > 0 && (
-        <div className="px-3 py-2 border-t border-gray-100 bg-gray-50 flex-shrink-0">
+        <div className="px-3 py-2 border-t border-border bg-background flex-shrink-0">
           <div className="flex flex-wrap gap-2">
             {medias.map((m, i) => (
-              <div key={i} className="relative group rounded-xl overflow-hidden border border-gray-200 bg-white flex-shrink-0">
+              <div key={i} className="relative group rounded-xl overflow-hidden border border-border bg-card flex-shrink-0">
                 {m.type === 'image' ? (
                   <img src={m.localUrl} alt={m.name} className="w-14 h-14 object-cover" />
                 ) : (
-                  <div className="w-14 h-14 flex flex-col items-center justify-center bg-indigo-50 text-indigo-600">
+                  <div className="w-14 h-14 flex flex-col items-center justify-center bg-primary/10 text-primary">
                     {m.type === 'audio'
                       ? <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-1 13V8l6 4-6 4z"/></svg>
                       : <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>
@@ -417,12 +417,12 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-gray-400 mt-1.5">{tp('Cliquez sur "où ?" pour indiquer l\'emplacement de chaque média')}</p>
+          <p className="text-[10px] text-muted-foreground mt-1.5">{tp('Cliquez sur "où ?" pour indiquer l\'emplacement de chaque média')}</p>
         </div>
       )}
 
       {/* Input */}
-      <div className="border-t border-gray-100 px-3 py-3 flex-shrink-0">
+      <div className="border-t border-border px-3 py-3 flex-shrink-0">
         <input
           ref={fileRef}
           type="file"
@@ -431,11 +431,11 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
           className="hidden"
           onChange={e => { handleFileAdd(e.target.files); e.target.value = ''; }}
         />
-        <div className={`flex items-end gap-2 rounded-xl border bg-gray-50 px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-100 transition ${recording ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus-within:border-indigo-400'}`}>
+        <div className={`flex items-end gap-2 rounded-xl border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-primary/20 transition ${recording ? 'border-red-400 ring-2 ring-red-100' : 'border-border focus-within:border-primary/40'}`}>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex-shrink-0 mb-0.5 text-gray-400 hover:text-indigo-500 transition"
+            className="flex-shrink-0 mb-0.5 text-muted-foreground hover:text-primary transition"
             title={tp('Joindre image, audio ou vidéo')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -455,13 +455,13 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
             placeholder={recording ? '🔴 Enregistrement vocal...' : tp('Décris ce que tu veux créer ou modifier...')}
             rows={1}
             style={{ maxHeight: 160 }}
-            className="flex-1 resize-none bg-transparent text-sm text-gray-800 placeholder:text-gray-400 outline-none overflow-y-auto"
+            className="flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none overflow-y-auto"
           />
           <button
             type="button"
             onClick={toggleRecording}
             disabled={transcribing}
-            className={`flex-shrink-0 mb-0.5 rounded-lg p-1.5 transition disabled:opacity-40 ${recording ? 'bg-red-500 text-white animate-pulse' : 'text-gray-400 hover:text-red-500'}`}
+            className={`flex-shrink-0 mb-0.5 rounded-lg p-1.5 transition disabled:opacity-40 ${recording ? 'bg-red-500 text-white animate-pulse' : 'text-muted-foreground hover:text-red-500'}`}
             title={recording ? 'Arrêter et transcrire' : tp('Note vocale')}
           >
             <svg className="w-4 h-4" fill={recording ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>

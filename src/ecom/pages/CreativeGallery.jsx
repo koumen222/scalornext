@@ -70,7 +70,7 @@ const CreativeGallery = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
 
       {/* Content */}
       <div className="px-4 lg:px-8 py-6 max-w-7xl mx-auto">
@@ -78,8 +78,8 @@ const CreativeGallery = () => {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-6">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{tp('Mes Visuels')}</h1>
-            <p className="text-sm text-gray-400 mt-0.5">{tp('Bibliothèque de créatives générées')}</p>
+            <h1 className="text-xl font-bold text-foreground">{tp('Mes Visuels')}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">{tp('Bibliothèque de créatives générées')}</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-100 px-2.5 py-1 rounded-md">
@@ -110,11 +110,11 @@ const CreativeGallery = () => {
         {loading && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-200 animate-pulse">
-                <div className="aspect-square bg-gray-100" />
+              <div key={i} className="bg-card rounded-xl overflow-hidden border border-border animate-pulse">
+                <div className="aspect-square bg-muted" />
                 <div className="p-3 space-y-2">
-                  <div className="h-3 bg-gray-100 rounded w-3/4" />
-                  <div className="h-2 bg-gray-100 rounded w-1/2" />
+                  <div className="h-3 bg-muted rounded w-3/4" />
+                  <div className="h-2 bg-muted rounded w-1/2" />
                 </div>
               </div>
             ))}
@@ -127,8 +127,8 @@ const CreativeGallery = () => {
             <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mb-5">
               <Image size={28} className="text-green-600" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">{tp('Aucun visuel stocké')}</h2>
-            <p className="text-gray-400 text-sm max-w-xs mb-6">
+            <h2 className="text-xl font-semibold text-foreground mb-2">{tp('Aucun visuel stocké')}</h2>
+            <p className="text-muted-foreground text-sm max-w-xs mb-6">
               {tp('Générez vos premières créatives produit pour les retrouver ici et les télécharger.')}
             </p>
             <Link
@@ -148,11 +148,11 @@ const CreativeGallery = () => {
               {assets.map(asset => (
                 <div
                   key={asset._id}
-                  className="group bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-sm transition-shadow"
+                  className="group bg-card rounded-xl overflow-hidden border border-border hover:shadow-sm transition-shadow"
                 >
                   {/* Image */}
                   <div
-                    className="aspect-square relative overflow-hidden bg-gray-50 cursor-pointer"
+                    className="aspect-square relative overflow-hidden bg-background cursor-pointer"
                     onClick={() => setLightbox(asset)}
                   >
                     <img
@@ -162,17 +162,17 @@ const CreativeGallery = () => {
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                      <div className="w-9 h-9 bg-white/90 rounded-xl flex items-center justify-center">
-                        <ExternalLink size={14} className="text-gray-700" />
+                      <div className="w-9 h-9 bg-card/90 rounded-xl flex items-center justify-center">
+                        <ExternalLink size={14} className="text-foreground" />
                       </div>
                     </div>
                   </div>
 
                   {/* Meta */}
                   <div className="p-3">
-                    <p className="text-xs font-semibold text-gray-800 truncate">{asset.label || asset.formatId}</p>
+                    <p className="text-xs font-semibold text-foreground truncate">{asset.label || asset.formatId}</p>
                     {asset.productName && (
-                      <p className="text-[10px] text-gray-400 truncate mt-0.5">{asset.productName}</p>
+                      <p className="text-[10px] text-muted-foreground truncate mt-0.5">{asset.productName}</p>
                     )}
                     <p className="text-[10px] text-gray-300 mt-1">{formatDate(asset.createdAt)}</p>
                   </div>
@@ -189,10 +189,10 @@ const CreativeGallery = () => {
                     <button
                       onClick={() => handleDelete(asset._id)}
                       disabled={deletingId === asset._id}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-50 border border-gray-200 text-red-400 rounded-lg hover:bg-red-50 hover:border-red-100 transition-colors disabled:opacity-50 shrink-0"
+                      className="w-8 h-8 flex items-center justify-center bg-background border border-border text-red-400 rounded-lg hover:bg-red-50 hover:border-red-100 transition-colors disabled:opacity-50 shrink-0"
                     >
                       {deletingId === asset._id
-                        ? <Loader2 size={12} className="animate-spin text-gray-400" />
+                        ? <Loader2 size={12} className="animate-spin text-muted-foreground" />
                         : <Trash2 size={12} />
                       }
                     </button>
@@ -207,17 +207,17 @@ const CreativeGallery = () => {
                 <button
                   onClick={() => { setPage(p => p - 1); fetchAssets(page - 1); }}
                   disabled={page <= 1}
-                  className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="h-9 px-4 text-sm font-medium bg-card border border-border rounded-xl hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   ← Précédent
                 </button>
-                <span className="text-sm text-gray-500 px-2">
+                <span className="text-sm text-muted-foreground px-2">
                   Page {page} / {pages}
                 </span>
                 <button
                   onClick={() => { setPage(p => p + 1); fetchAssets(page + 1); }}
                   disabled={page >= pages}
-                  className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="h-9 px-4 text-sm font-medium bg-card border border-border rounded-xl hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   Suivant →
                 </button>
@@ -234,19 +234,19 @@ const CreativeGallery = () => {
           onClick={() => setLightbox(null)}
         >
           <div
-            className="bg-white rounded-2xl overflow-hidden max-w-xl w-full"
+            className="bg-card rounded-2xl overflow-hidden max-w-xl w-full"
             onClick={e => e.stopPropagation()}
           >
             <img
               src={lightbox.imageUrl}
               alt={lightbox.label}
-              className="w-full aspect-square object-contain bg-gray-50"
+              className="w-full aspect-square object-contain bg-background"
             />
             <div className="p-4 flex items-center justify-between gap-3">
               <div>
-                <p className="font-semibold text-gray-800">{lightbox.label}</p>
+                <p className="font-semibold text-foreground">{lightbox.label}</p>
                 {lightbox.productName && (
-                  <p className="text-xs text-gray-400 mt-0.5">{lightbox.productName}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{lightbox.productName}</p>
                 )}
               </div>
               <div className="flex gap-2 shrink-0">
@@ -259,7 +259,7 @@ const CreativeGallery = () => {
                 </button>
                 <button
                   onClick={() => setLightbox(null)}
-                  className="h-9 w-9 flex items-center justify-center bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition-colors"
+                  className="h-9 w-9 flex items-center justify-center bg-muted text-muted-foreground rounded-xl hover:bg-gray-200 transition-colors"
                 >
                   <X size={16} />
                 </button>

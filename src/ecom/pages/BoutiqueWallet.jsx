@@ -14,10 +14,10 @@ const fmt = (n, currency = 'XAF') => {
 const IcoWallet = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 12V7H5a2 2 0 010-4h14v4M3 5v14a2 2 0 002 2h16v-5M18 12a2 2 0 000 4h4v-4h-4z" /></svg>;
 
 const StatTile = ({ label, value, sub, accent }) => (
-  <div className="bg-white rounded-2xl border border-gray-200 p-4">
-    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{label}</p>
-    <p className={`text-lg font-extrabold mt-1 ${accent || 'text-gray-900'}`}>{value}</p>
-    {sub && <p className="text-[11px] text-gray-400 mt-0.5">{sub}</p>}
+  <div className="bg-card rounded-2xl border p-4">
+    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+    <p className={`text-lg font-extrabold mt-1 ${accent || 'text-foreground'}`}>{value}</p>
+    {sub && <p className="text-[11px] text-muted-foreground mt-0.5">{sub}</p>}
   </div>
 );
 
@@ -53,21 +53,21 @@ const WithdrawModal = ({ wallet, onClose, onDone }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-card rounded-2xl w-full max-w-sm p-5 space-y-4" onClick={(e) => e.stopPropagation()}>
         <div>
-          <h3 className="text-base font-bold text-gray-900">{tp('Retirer mon solde')}</h3>
-          <p className="text-xs text-gray-500 mt-0.5">{tp('Disponible')} : <span className="font-semibold text-gray-900">{fmt(max, wallet?.currency)}</span></p>
+          <h3 className="text-base font-bold text-foreground">{tp('Retirer mon solde')}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">{tp('Disponible')} : <span className="font-semibold text-foreground">{fmt(max, wallet?.currency)}</span></p>
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Montant à retirer')}</label>
+          <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Montant à retirer')}</label>
           <div className="flex gap-2">
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent bg-gray-50 focus:bg-white"
+              className="flex-1 px-3 py-2.5 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent bg-background focus:bg-card"
             />
             <button
               onClick={() => setAmount(String(max))}
@@ -79,20 +79,20 @@ const WithdrawModal = ({ wallet, onClose, onDone }) => {
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Numéro Mobile Money')}</label>
+          <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Numéro Mobile Money')}</label>
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+225 07 00 00 00 00"
-            className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent bg-gray-50 focus:bg-white"
+            className="w-full px-3 py-2.5 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent bg-background focus:bg-card"
           />
         </div>
 
         {error && <p className="text-xs text-red-600">{error}</p>}
 
         <div className="flex gap-2 pt-1">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200">
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 text-sm font-semibold text-muted-foreground bg-muted rounded-xl hover:bg-gray-200">
             {tp('Annuler')}
           </button>
           <button
@@ -116,7 +116,7 @@ const statusBadge = (type, status) => {
   }
   if (status === 'paid') return { label: tp('Payé'), cls: 'bg-green-100 text-green-700' };
   if (status === 'failure' || status === 'no paid') return { label: tp('Échoué'), cls: 'bg-red-100 text-red-700' };
-  return { label: tp('En attente'), cls: 'bg-gray-100 text-gray-600' };
+  return { label: tp('En attente'), cls: 'bg-muted text-muted-foreground' };
 };
 
 const BoutiqueWallet = () => {
@@ -149,8 +149,8 @@ const BoutiqueWallet = () => {
     <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-6">
 
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{tp('Solde Scalor Pay')}</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{tp('Vos encaissements en ligne et vos retraits')}</p>
+        <h1 className="text-xl font-bold text-foreground">{tp('Solde Scalor Pay')}</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">{tp('Vos encaissements en ligne et vos retraits')}</p>
       </div>
 
       {/* Balance card */}
@@ -160,7 +160,7 @@ const BoutiqueWallet = () => {
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-card/15 flex items-center justify-center">
               <IcoWallet />
             </div>
             <div>
@@ -171,7 +171,7 @@ const BoutiqueWallet = () => {
           <button
             onClick={() => setShowWithdraw(true)}
             disabled={!wallet || wallet.balance <= 0}
-            className="px-4 py-2 text-sm font-bold text-[#0F6B4F] bg-white rounded-xl hover:bg-white/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-bold text-[#0F6B4F] bg-card rounded-xl hover:bg-card/90 disabled:opacity-50"
           >
             {tp('Retirer')}
           </button>
@@ -193,14 +193,14 @@ const BoutiqueWallet = () => {
 
       {/* Transactions */}
       <div>
-        <h2 className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">{tp('Historique')}</h2>
-        <div className="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100">
+        <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">{tp('Historique')}</h2>
+        <div className="bg-card rounded-2xl border divide-y divide-gray-100">
           {loading ? (
-            <div className="p-6 text-center text-sm text-gray-400">{tp('Chargement...')}</div>
+            <div className="p-6 text-center text-sm text-muted-foreground">{tp('Chargement...')}</div>
           ) : txs.length === 0 ? (
             <div className="p-8 text-center">
-              <p className="text-sm text-gray-500">{tp('Aucune transaction pour le moment')}</p>
-              <p className="text-xs text-gray-400 mt-1">{tp('Les paiements Scalor Pay de vos clients apparaîtront ici.')}</p>
+              <p className="text-sm text-muted-foreground">{tp('Aucune transaction pour le moment')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{tp('Les paiements Scalor Pay de vos clients apparaîtront ici.')}</p>
             </div>
           ) : (
             txs.map((tx) => {
@@ -212,11 +212,11 @@ const BoutiqueWallet = () => {
                     {isPayout ? '↑' : '↓'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
+                    <p className="text-sm font-semibold text-foreground truncate">
                       {isPayout ? tp('Retrait') : (tx.orderNumber || tp('Commande'))}
                       {!isPayout && tx.customerName ? ` · ${tx.customerName}` : ''}
                     </p>
-                    <p className="text-[11px] text-gray-400">
+                    <p className="text-[11px] text-muted-foreground">
                       {tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}
                       {tx.paymentMethod ? ` · ${tx.paymentMethod}` : ''}
                     </p>

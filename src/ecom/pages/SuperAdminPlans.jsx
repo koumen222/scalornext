@@ -170,8 +170,8 @@ const SuperAdminPlans = () => {
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{tp('Gestion des plans')}</h1>
-        <p className="text-sm text-gray-500 mt-1">{tp('Configurez les prix, les limites et les fonctionnalités de chaque plan. Les comptes sans abonnement utilisent automatiquement le plan')} <strong>{tp('Gratuit')}</strong>.</p>
+        <h1 className="text-2xl font-bold text-foreground">{tp('Gestion des plans')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{tp('Configurez les prix, les limites et les fonctionnalités de chaque plan. Les comptes sans abonnement utilisent automatiquement le plan')} <strong>{tp('Gratuit')}</strong>.</p>
       </div>
 
       {error && (
@@ -187,11 +187,11 @@ const SuperAdminPlans = () => {
         </div>
       )}
 
-      <div className="mb-6 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="mb-6 bg-card rounded-xl border p-5 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">{tp('Tarifs credits IA pages produit')}</h2>
-            <p className="text-sm text-gray-500 mt-1">{tp('Modifiez les prix affiches dans le studio produit et appliquez une promo temporaire sans toucher au code.')}</p>
+            <h2 className="text-lg font-bold text-foreground">{tp('Tarifs credits IA pages produit')}</h2>
+            <p className="text-sm text-muted-foreground mt-1">{tp('Modifiez les prix affiches dans le studio produit et appliquez une promo temporaire sans toucher au code.')}</p>
           </div>
           <a
             href="/ecom/super-admin/promo-codes"
@@ -202,7 +202,7 @@ const SuperAdminPlans = () => {
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mb-4">
-          <label className="text-xs text-gray-600">
+          <label className="text-xs text-muted-foreground">
             Prix unitaire normal ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
@@ -211,7 +211,7 @@ const SuperAdminPlans = () => {
               className="mt-1 w-full px-2 py-1.5 border border-gray-300 rounded focus:border-[#0F6B4F] focus:outline-none text-sm"
             />
           </label>
-          <label className="text-xs text-gray-600">
+          <label className="text-xs text-muted-foreground">
             Prix unitaire promo ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
@@ -221,7 +221,7 @@ const SuperAdminPlans = () => {
               className="mt-1 w-full px-2 py-1.5 border border-gray-300 rounded focus:border-[#0F6B4F] focus:outline-none text-sm"
             />
           </label>
-          <label className="text-xs text-gray-600">
+          <label className="text-xs text-muted-foreground">
             Pack 3 normal ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
@@ -230,7 +230,7 @@ const SuperAdminPlans = () => {
               className="mt-1 w-full px-2 py-1.5 border border-gray-300 rounded focus:border-[#0F6B4F] focus:outline-none text-sm"
             />
           </label>
-          <label className="text-xs text-gray-600">
+          <label className="text-xs text-muted-foreground">
             Pack 3 promo ({generationPricing.currency || tp('FCFA')})
             <input
               type="number"
@@ -242,7 +242,7 @@ const SuperAdminPlans = () => {
           </label>
         </div>
 
-        <div className={`mb-4 p-3 rounded-lg border ${generationPricing.promoActive ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'}`}>
+        <div className={`mb-4 p-3 rounded-lg border ${generationPricing.promoActive ? 'bg-orange-50 border-orange-200' : 'bg-background border-border'}`}>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -251,10 +251,10 @@ const SuperAdminPlans = () => {
               className="w-4 h-4 rounded accent-orange-600"
             />
             <Clock className="w-4 h-4 text-orange-600" />
-            <span className="text-sm font-medium text-gray-700">{tp('Promo credits IA active')}</span>
+            <span className="text-sm font-medium text-foreground">{tp('Promo credits IA active')}</span>
           </label>
           {generationPricing.promoActive && (
-            <label className="block mt-2 text-xs text-gray-600">
+            <label className="block mt-2 text-xs text-muted-foreground">
               {tp('Expire le')}
               <input
                 type="datetime-local"
@@ -280,30 +280,30 @@ const SuperAdminPlans = () => {
         {plans.map(plan => {
           const promoExpired = plan.promoActive && plan.promoExpiresAt && new Date(plan.promoExpiresAt).getTime() < Date.now();
           return (
-            <div key={plan.key} className={`bg-white rounded-xl border-2 ${plan.highlighted ? 'border-[#0F6B4F]' : 'border-gray-200'} p-5 shadow-sm`}>
+            <div key={plan.key} className={`bg-card rounded-xl border-2 ${plan.highlighted ? 'border-[#0F6B4F]' : 'border-border'} p-5 shadow-sm`}>
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded">{plan.key}</span>
+                    <span className="text-xs font-mono bg-muted px-2 py-0.5 rounded">{plan.key}</span>
                     {plan.highlighted && <span className="text-[10px] font-bold text-[#0F6B4F] bg-[#E6F4EF] px-2 py-0.5 rounded">POPULAIRE</span>}
                   </div>
                   <input
                     value={plan.displayName}
                     onChange={e => update(plan.key, { displayName: e.target.value })}
-                    className="text-lg font-bold text-gray-900 mt-2 w-full border-b border-transparent hover:border-gray-300 focus:border-[#0F6B4F] focus:outline-none"
+                    className="text-lg font-bold text-foreground mt-2 w-full border-b border-transparent hover:border-gray-300 focus:border-[#0F6B4F] focus:outline-none"
                   />
                   <input
                     value={plan.tagline || ''}
                     onChange={e => update(plan.key, { tagline: e.target.value })}
                     placeholder={tp('Sous-titre')}
-                    className="text-sm text-gray-500 mt-1 w-full border-b border-transparent hover:border-gray-300 focus:border-[#0F6B4F] focus:outline-none"
+                    className="text-sm text-muted-foreground mt-1 w-full border-b border-transparent hover:border-gray-300 focus:border-[#0F6B4F] focus:outline-none"
                   />
                 </div>
               </div>
 
               {/* Prices */}
               <div className="grid grid-cols-2 gap-3 mb-4">
-                <label className="text-xs text-gray-600">
+                <label className="text-xs text-muted-foreground">
                   {tp('Prix normal (FCFA)')}
                   <input
                     type="number"
@@ -312,7 +312,7 @@ const SuperAdminPlans = () => {
                     className="mt-1 w-full px-2 py-1.5 border border-gray-300 rounded focus:border-[#0F6B4F] focus:outline-none text-sm"
                   />
                 </label>
-                <label className="text-xs text-gray-600">
+                <label className="text-xs text-muted-foreground">
                   {tp('Prix promo (FCFA)')}
                   <input
                     type="number"
@@ -325,7 +325,7 @@ const SuperAdminPlans = () => {
               </div>
 
               {/* Promo toggle */}
-              <div className={`mb-4 p-3 rounded-lg border ${plan.promoActive ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'}`}>
+              <div className={`mb-4 p-3 rounded-lg border ${plan.promoActive ? 'bg-orange-50 border-orange-200' : 'bg-background border-border'}`}>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -334,11 +334,11 @@ const SuperAdminPlans = () => {
                     className="w-4 h-4 rounded accent-orange-600"
                   />
                   <Clock className="w-4 h-4 text-orange-600" />
-                  <span className="text-sm font-medium text-gray-700">{tp('Offre limitée active')}</span>
+                  <span className="text-sm font-medium text-foreground">{tp('Offre limitée active')}</span>
                   {promoExpired && <span className="text-xs text-red-600 font-medium">{tp('(expirée)')}</span>}
                 </label>
                 {plan.promoActive && (
-                  <label className="block mt-2 text-xs text-gray-600">
+                  <label className="block mt-2 text-xs text-muted-foreground">
                     {tp('Expire le')}
                     <input
                       type="datetime-local"
@@ -352,10 +352,10 @@ const SuperAdminPlans = () => {
 
               {/* Limits */}
               <div className="mb-4">
-                <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">{tp('Limites (–1 = illimité)')}</h3>
+                <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">{tp('Limites (–1 = illimité)')}</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {LIMIT_FIELDS.map(f => (
-                    <label key={f.key} className="text-xs text-gray-600">
+                    <label key={f.key} className="text-xs text-muted-foreground">
                       {f.label}
                       <input
                         type="number"
@@ -370,10 +370,10 @@ const SuperAdminPlans = () => {
 
               {/* Features */}
               <div className="mb-4">
-                <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">{tp('Fonctionnalités')}</h3>
+                <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">{tp('Fonctionnalités')}</h3>
                 <div className="grid grid-cols-2 gap-1.5">
                   {FEATURE_FIELDS.map(f => (
-                    <label key={f.key} className="flex items-center gap-2 text-xs text-gray-700 py-0.5">
+                    <label key={f.key} className="flex items-center gap-2 text-xs text-foreground py-0.5">
                       <input
                         type="checkbox"
                         checked={!!plan.features?.[f.key]}
@@ -389,7 +389,7 @@ const SuperAdminPlans = () => {
               {/* Features list (bullets) */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">{tp('Bullets affichés')}</h3>
+                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">{tp('Bullets affichés')}</h3>
                   <button
                     onClick={() => addFeatureLine(plan.key)}
                     className="text-xs text-[#0F6B4F] hover:underline flex items-center gap-1"
@@ -415,7 +415,7 @@ const SuperAdminPlans = () => {
 
               {/* Misc */}
               <div className="grid grid-cols-2 gap-3 mb-4">
-                <label className="text-xs text-gray-600">
+                <label className="text-xs text-muted-foreground">
                   {tp('Label du bouton')}
                   <input
                     value={plan.ctaLabel || ''}
@@ -423,7 +423,7 @@ const SuperAdminPlans = () => {
                     className="mt-1 w-full px-2 py-1.5 border border-gray-300 rounded focus:border-[#0F6B4F] focus:outline-none text-sm"
                   />
                 </label>
-                <label className="text-xs text-gray-600">
+                <label className="text-xs text-muted-foreground">
                   Ordre d'affichage
                   <input
                     type="number"
@@ -434,7 +434,7 @@ const SuperAdminPlans = () => {
                 </label>
               </div>
 
-              <label className="flex items-center gap-2 mb-4 text-sm text-gray-700">
+              <label className="flex items-center gap-2 mb-4 text-sm text-foreground">
                 <input
                   type="checkbox"
                   checked={!!plan.highlighted}

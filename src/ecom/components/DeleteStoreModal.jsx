@@ -54,22 +54,22 @@ const DeleteStoreModal = ({ store, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[130] flex items-center justify-center bg-slate-950/60 px-4" onClick={() => !deleting && onClose?.(false)}>
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start gap-3">
           <span className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
             <AlertTriangle size={19} />
           </span>
           <div>
-            <h3 className="text-base font-black text-gray-900">{tp('Supprimer définitivement ?')}</h3>
-            <p className="text-xs text-gray-500 mt-1 leading-5">
-              {tp('La boutique')} <span className="font-bold text-gray-800">{name}</span>{' '}
+            <h3 className="text-base font-black text-foreground">{tp('Supprimer définitivement ?')}</h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-5">
+              {tp('La boutique')} <span className="font-bold text-foreground">{name}</span>{' '}
               {tp('sera mise hors ligne immédiatement. Ses produits, commandes et pages ne seront plus accessibles. Cette action ne peut pas être annulée depuis l\'interface.')}
             </p>
           </div>
         </div>
 
         <div className="mt-5">
-          <label className="text-xs font-bold text-gray-700">
+          <label className="text-xs font-bold text-foreground">
             {tp('Tapez le nom de la boutique pour confirmer :')}{' '}
             <span className="text-red-600">{name}</span>
           </label>
@@ -79,7 +79,7 @@ const DeleteStoreModal = ({ store, onClose }) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleDelete(); }}
             placeholder={name}
-            className="mt-2 w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+            className="mt-2 w-full px-4 py-2.5 bg-background border-2 border-border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
           />
         </div>
 
@@ -89,7 +89,7 @@ const DeleteStoreModal = ({ store, onClose }) => {
           <button
             onClick={() => onClose?.(false)}
             disabled={deleting}
-            className="px-4 py-2.5 rounded-xl text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition disabled:opacity-50"
+            className="px-4 py-2.5 rounded-xl text-sm font-bold text-muted-foreground bg-muted hover:bg-gray-200 transition disabled:opacity-50"
           >
             {tp('Annuler')}
           </button>

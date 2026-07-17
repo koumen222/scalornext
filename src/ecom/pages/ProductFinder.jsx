@@ -4,18 +4,18 @@ import ecomApi from '../services/ecommApi.js';
 import { tp } from '../i18n/platform.js';
 
 const SectionCard = ({ icon, color, title, badge, children }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-    <div className={`px-5 py-3.5 border-b border-gray-100 flex items-center gap-2.5 ${color}`}>
+  <div className="bg-card rounded-2xl border overflow-hidden">
+    <div className={`px-5 py-3.5 border-b border-border flex items-center gap-2.5 ${color}`}>
       <span className="text-base">{icon}</span>
-      <h2 className="text-sm font-bold text-gray-900">{title}</h2>
-      {badge && <span className="ml-auto text-[10px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{badge}</span>}
+      <h2 className="text-sm font-bold text-foreground">{title}</h2>
+      {badge && <span className="ml-auto text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{badge}</span>}
     </div>
     <div className="p-5 space-y-4">{children}</div>
   </div>
 );
 
 const Label = ({ children, required }) => (
-  <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1.5">
+  <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">
     {children}{required && <span className="text-red-400 ml-0.5">*</span>}
   </label>
 );
@@ -23,7 +23,7 @@ const Label = ({ children, required }) => (
 const TextInput = (props) => (
   <input
     {...props}
-    className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition placeholder-gray-300"
+    className="w-full px-3.5 py-2.5 text-sm border border-border rounded-xl bg-background/60 focus:bg-card focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition placeholder-gray-300"
   />
 );
 
@@ -34,7 +34,7 @@ const Chips = ({ value, onChange, options }) => (
         className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
           value === v
             ? 'bg-[#0F6B4F] text-white border-[#0F6B4F] shadow-sm'
-            : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+            : 'bg-card text-muted-foreground border-border hover:border-gray-300'
         }`}>
         {l}
       </button>
@@ -42,11 +42,11 @@ const Chips = ({ value, onChange, options }) => (
   </div>
 );
 
-const KpiPill = ({ label, value, sub, color = 'text-gray-900' }) => (
-  <div className="flex-1 min-w-0 bg-gray-50 rounded-xl px-3.5 py-3 text-center border border-gray-100">
-    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest truncate">{label}</p>
+const KpiPill = ({ label, value, sub, color = 'text-foreground' }) => (
+  <div className="flex-1 min-w-0 bg-background rounded-xl px-3.5 py-3 text-center border border-border">
+    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest truncate">{label}</p>
     <p className={`text-base font-bold mt-0.5 ${color}`}>{value}</p>
-    {sub && <p className="text-[10px] text-gray-400 mt-0.5">{sub}</p>}
+    {sub && <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>}
   </div>
 );
 
@@ -103,7 +103,7 @@ const ProductFinder = () => {
     const sp = parseFloat(product.sourcingPrice) || 0;
     return Math.max(10000, Math.ceil((sp < 10000 ? sp * 3 : sp * 2.25) / 50) * 50);
   };
-  const marginColor = margin === null ? '' : parseFloat(margin) >= 60 ? 'text-primary-600' : parseFloat(margin) >= 40 ? 'text-amber-500' : 'text-red-500';
+  const marginColor = margin === null ? '' : parseFloat(margin) >= 60 ? 'text-primary' : parseFloat(margin) >= 40 ? 'text-amber-500' : 'text-red-500';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -145,20 +145,20 @@ const ProductFinder = () => {
   const showKpis = product.sourcingPrice && product.sellingPrice;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4 sticky top-0 z-10">
+      <div className="bg-card border-b border-border px-4 sm:px-6 py-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <button onClick={() => navigate('/ecom/product-research')}
-            className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition flex-shrink-0">
+            className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-muted-foreground transition flex-shrink-0">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <div className="min-w-0">
-            <h1 className="text-sm font-bold text-gray-900 truncate">{tp('Nouveau produit')}</h1>
-            <p className="text-[11px] text-gray-400">{tp('Veille produit')}</p>
+            <h1 className="text-sm font-bold text-foreground truncate">{tp('Nouveau produit')}</h1>
+            <p className="text-[11px] text-muted-foreground">{tp('Veille produit')}</p>
           </div>
           <button type="submit" form="product-form" disabled={loading}
             className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#0F6B4F] hover:bg-[#0a5740] disabled:opacity-50 text-white text-xs font-bold rounded-xl transition shadow-sm flex-shrink-0">
@@ -179,7 +179,7 @@ const ProductFinder = () => {
           </div>
         )}
         {success && (
-          <div className="px-4 py-3 bg-primary-50 border border-primary-200 rounded-xl text-sm text-primary-700 flex items-center gap-2">
+          <div className="px-4 py-3 bg-primary-50 border border-primary-200 rounded-xl text-sm text-primary flex items-center gap-2">
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
             {success}
           </div>
@@ -235,7 +235,7 @@ const ProductFinder = () => {
                     className={`flex-1 py-2.5 text-sm font-semibold rounded-xl border transition-all ${
                       product.sourcingType === v
                         ? 'bg-[#0F6B4F] text-white border-[#0F6B4F]'
-                        : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                        : 'bg-card text-muted-foreground border-border hover:border-gray-300'
                     }`}>
                     {l}
                   </button>
@@ -264,8 +264,8 @@ const ProductFinder = () => {
                     placeholder="12 000" min="0" step="any" />
                 </div>
                 {product.shippingUnitCost && (
-                  <div className="col-span-2 flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-sky-100 text-xs">
-                    <span className="text-gray-500">{tp('Frais de livraison calculés')}</span>
+                  <div className="col-span-2 flex items-center justify-between bg-card rounded-lg px-3 py-2 border border-sky-100 text-xs">
+                    <span className="text-muted-foreground">{tp('Frais de livraison calculés')}</span>
                     <span className="font-bold text-sky-700">{parseInt(product.shippingUnitCost).toLocaleString('fr-FR')} FCFA</span>
                   </div>
                 )}
@@ -278,10 +278,10 @@ const ProductFinder = () => {
               <div className="relative">
                 <input type="number" value={product.cogs} onChange={e => set('cogs', e.target.value)}
                   placeholder={calcCOGS() || '0'} min="0" step="any"
-                  className="w-full px-3.5 py-2.5 pr-16 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
+                  className="w-full px-3.5 py-2.5 pr-16 text-sm border border-border rounded-xl bg-background/60 focus:bg-card focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
                 />
                 <button type="button" onClick={() => set('cogs', calcCOGS())}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[11px] font-bold bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition">
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[11px] font-bold bg-primary-100 text-primary rounded-lg hover:bg-primary-200 transition">
                   {tp('Auto')}
                 </button>
               </div>
@@ -293,14 +293,14 @@ const ProductFinder = () => {
               <div className="relative">
                 <input type="number" value={product.sellingPrice} onChange={e => set('sellingPrice', e.target.value)}
                   placeholder={tp('Ex: 1 560')} min="0" step="any" required
-                  className="w-full px-3.5 py-2.5 pr-24 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
+                  className="w-full px-3.5 py-2.5 pr-24 text-sm border border-border rounded-xl bg-background/60 focus:bg-card focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
                 />
                 <button type="button" onClick={() => set('sellingPrice', suggested())}
                   className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[11px] font-bold bg-[#0F6B4F]/10 text-[#0F6B4F] rounded-lg hover:bg-[#0F6B4F]/20 transition">
                   {tp('Suggérer')}
                 </button>
               </div>
-              <p className="mt-1 text-[11px] text-gray-400">
+              <p className="mt-1 text-[11px] text-muted-foreground">
                 {product.sourcingPrice && parseFloat(product.sourcingPrice) > 0
                   ? `Prix suggéré : ${suggested().toLocaleString('fr-FR')} FCFA`
                   : tp('Saisissez un prix sourcing pour voir la suggestion')}
@@ -311,10 +311,10 @@ const ProductFinder = () => {
             {showKpis && (
               <div className="flex gap-2 pt-1">
                 <KpiPill label="Marge" value={`${margin}%`} color={marginColor} />
-                <KpiPill label="Bénéfice" value={`${parseInt(profit).toLocaleString('fr-FR')} F`} color="text-primary-600" />
+                <KpiPill label="Bénéfice" value={`${parseInt(profit).toLocaleString('fr-FR')} F`} color="text-primary" />
                 <KpiPill label="ROI" value={roi ? `${roi}%` : '—'} color="text-[#0F6B4F]" />
-                <div className="flex-1 min-w-0 bg-gray-50 rounded-xl px-3 py-3 border border-gray-100">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest text-center">{tp('Ventes/mois')}</p>
+                <div className="flex-1 min-w-0 bg-background rounded-xl px-3 py-3 border border-border">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest text-center">{tp('Ventes/mois')}</p>
                   <input type="number" value={product.monthlyEstimate} onChange={e => set('monthlyEstimate', e.target.value)}
                     className="w-full mt-0.5 text-sm font-bold text-center bg-transparent outline-none border-0 focus:ring-0 placeholder-gray-300"
                     placeholder="0" min="0"
@@ -328,48 +328,48 @@ const ProductFinder = () => {
           <SectionCard icon="📊" color="" title={tp('Analyse marché')}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">{tp('Demande')}</span>
+                <span className="text-xs font-semibold text-muted-foreground">{tp('Demande')}</span>
                 <Chips value={product.demand} onChange={v => set('demand', v)}
                   options={[{v:'low',l: tp('Faible')},{v:'medium',l: tp('Moyenne')},{v:'high',l: tp('Élevée')}]} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">{tp('Concurrence')}</span>
+                <span className="text-xs font-semibold text-muted-foreground">{tp('Concurrence')}</span>
                 <Chips value={product.competition} onChange={v => set('competition', v)}
                   options={[{v:'low',l: tp('Faible')},{v:'medium',l: tp('Moyenne')},{v:'high',l: tp('Élevée')}]} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">{tp('Tendance')}</span>
+                <span className="text-xs font-semibold text-muted-foreground">{tp('Tendance')}</span>
                 <Chips value={product.trend} onChange={v => set('trend', v)}
                   options={[{v:'rising',l:'📈'},{v:'stable',l:'➡️'},{v:'falling',l:'📉'}]} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500">{tp('Fiabilité fourn.')}</span>
+                <span className="text-xs font-semibold text-muted-foreground">{tp('Fiabilité fourn.')}</span>
                 <Chips value={product.supplierReliability} onChange={v => set('supplierReliability', v)}
                   options={[{v:'low',l: tp('Faible')},{v:'medium',l: tp('Moyenne')},{v:'high',l: tp('Élevée')}]} />
               </div>
               <div className="flex items-center gap-3 pt-1">
-                <span className="text-xs font-semibold text-gray-500 flex-shrink-0">{tp('Nb fournisseurs')}</span>
+                <span className="text-xs font-semibold text-muted-foreground flex-shrink-0">{tp('Nb fournisseurs')}</span>
                 <input type="number" value={product.supplierCount} onChange={e => set('supplierCount', e.target.value)}
                   placeholder="0" min="0"
-                  className="w-20 px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none"
+                  className="w-20 px-2.5 py-1.5 text-sm border border-border rounded-lg bg-background focus:bg-card focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none"
                 />
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-100">
-              <p className="text-xs font-semibold text-gray-500 mb-2">{tp('Score d\'opportunité')}</p>
+            <div className="pt-2 border-t border-border">
+              <p className="text-xs font-semibold text-muted-foreground mb-2">{tp('Score d\'opportunité')}</p>
               <div className="flex items-center gap-1.5">
                 {[1,2,3,4,5].map(n => (
                   <button key={n} type="button" onClick={() => set('opportunityScore', n)}
                     className={`w-9 h-9 rounded-xl text-sm font-bold border transition-all ${
                       product.opportunityScore >= n
                         ? 'bg-amber-400 text-white border-amber-400'
-                        : 'bg-white text-gray-300 border-gray-200 hover:border-amber-300'
+                        : 'bg-card text-gray-300 border-border hover:border-amber-300'
                     }`}>
                     {n}
                   </button>
                 ))}
-                <span className="text-sm font-semibold text-gray-500 ml-1">{product.opportunityScore}/5</span>
+                <span className="text-sm font-semibold text-muted-foreground ml-1">{product.opportunityScore}/5</span>
               </div>
             </div>
           </SectionCard>
@@ -378,12 +378,12 @@ const ProductFinder = () => {
           <SectionCard icon="⚡" color="" title="Forces & Faiblesses">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <p className="text-[11px] font-bold text-primary-600 uppercase tracking-widest">{tp('✓ Avantages')}</p>
+                <p className="text-[11px] font-bold text-primary uppercase tracking-widest">{tp('✓ Avantages')}</p>
                 {product.pros.map((p, i) => (
                   <div key={i} className="flex items-center gap-1.5">
                     <input type="text" value={p} onChange={e => updateList('pros', i, e.target.value)}
                       placeholder={tp('Ex: Forte marge…')}
-                      className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 outline-none transition placeholder-gray-300"
+                      className="flex-1 px-3 py-2 text-sm border border-border rounded-xl bg-background/60 focus:bg-card focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 outline-none transition placeholder-gray-300"
                     />
                     {product.pros.length > 1 && (
                       <button type="button" onClick={() => removeItem('pros', i)}
@@ -409,7 +409,7 @@ const ProductFinder = () => {
                   <div key={i} className="flex items-center gap-1.5">
                     <input type="text" value={c} onChange={e => updateList('cons', i, e.target.value)}
                       placeholder={tp('Ex: Forte concurrence…')}
-                      className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-400 outline-none transition placeholder-gray-300"
+                      className="flex-1 px-3 py-2 text-sm border border-border rounded-xl bg-background/60 focus:bg-card focus:ring-2 focus:ring-red-500/20 focus:border-red-400 outline-none transition placeholder-gray-300"
                     />
                     {product.cons.length > 1 && (
                       <button type="button" onClick={() => removeItem('cons', i)}
@@ -435,14 +435,14 @@ const ProductFinder = () => {
           <SectionCard icon="📝" color="" title={tp('Notes')}>
             <textarea value={product.notes} onChange={e => set('notes', e.target.value)} rows={3}
               placeholder={tp('Observations, idées marketing, notes importantes…')}
-              className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50/60 focus:bg-white focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition resize-none placeholder-gray-300"
+              className="w-full px-3.5 py-2.5 text-sm border border-border rounded-xl bg-background/60 focus:bg-card focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition resize-none placeholder-gray-300"
             />
           </SectionCard>
 
           {/* ── Actions ── */}
           <div className="flex items-center justify-between gap-3 pb-8">
             <button type="button" onClick={() => navigate('/ecom/product-research')}
-              className="px-5 py-2.5 text-sm font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+              className="px-5 py-2.5 text-sm font-semibold text-muted-foreground border border-border rounded-xl hover:bg-background transition">
               {tp('Annuler')}
             </button>
             <button type="submit" disabled={loading}

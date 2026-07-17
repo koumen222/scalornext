@@ -16,17 +16,17 @@ const PlanLimitsDisplay = ({ plan, limits }) => {
       <div className="flex items-start gap-3">
         <MessageSquare className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <p className="font-semibold text-gray-900 text-sm">Plan {limits.label}</p>
+          <p className="font-semibold text-foreground text-sm">Plan {limits.label}</p>
           <div className="grid grid-cols-2 gap-3 mt-2">
             <div>
-              <p className="text-xs text-gray-600">{tp('Messages/jour')}</p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className="text-xs text-muted-foreground">{tp('Messages/jour')}</p>
+              <p className="text-lg font-bold text-foreground">
                 {isUnlimited ? '∞' : messagesPerDay?.toLocaleString('fr-FR')}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-600">{tp('Messages/mois')}</p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className="text-xs text-muted-foreground">{tp('Messages/mois')}</p>
+              <p className="text-lg font-bold text-foreground">
                 {isUnlimited ? '∞' : messagesPerMonth?.toLocaleString('fr-FR')}
               </p>
             </div>

@@ -4,9 +4,9 @@ import { getContextualError } from '../utils/errorMessages';
 import { tp } from '../i18n/platform.js';
 
 const statusConfig = {
-  sent:        { label: 'Envoyé',    color: 'bg-primary-100 text-primary-700',    dot: 'bg-primary-600' },
+  sent:        { label: 'Envoyé',    color: 'bg-primary-100 text-primary',    dot: 'bg-primary' },
   delivered:   { label: 'Livré',     color: 'bg-green-100 text-green-700',  dot: 'bg-green-500' },
-  read:        { label: 'Lu',        color: 'bg-primary-100 text-primary-700', dot: 'bg-primary-500' },
+  read:        { label: 'Lu',        color: 'bg-primary-100 text-primary', dot: 'bg-primary' },
   failed:      { label: 'Échoué',    color: 'bg-red-100 text-red-700',      dot: 'bg-red-500' },
   pending:     { label: 'En attente',color: 'bg-yellow-100 text-yellow-700',dot: 'bg-yellow-500' },
   undelivered: { label: 'Non livré', color: 'bg-orange-100 text-orange-700',dot: 'bg-orange-500' },
@@ -61,22 +61,22 @@ const SuperAdminWhatsAppLogs = () => {
     <div className="p-4 sm:p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{tp('Logs WhatsApp')}</h1>
-        <p className="text-sm text-gray-500 mt-1">{tp('Historique de tous les envois WhatsApp — diagnostiquez les échecs')}</p>
+        <h1 className="text-2xl font-bold text-foreground">{tp('Logs WhatsApp')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{tp('Historique de tous les envois WhatsApp — diagnostiquez les échecs')}</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         {[
-          { label: 'Total', value: stats.total, color: 'text-gray-700', bg: 'bg-gray-50 border-gray-200' },
-          { get label() { return tp('Envoyés'); }, value: stats.sent, color: 'text-primary-700', bg: 'bg-primary-50 border-primary-200' },
+          { label: 'Total', value: stats.total, color: 'text-foreground', bg: 'bg-background border-border' },
+          { get label() { return tp('Envoyés'); }, value: stats.sent, color: 'text-primary', bg: 'bg-primary-50 border-primary-200' },
           { get label() { return tp('Livrés'); }, value: stats.delivered, color: 'text-green-700', bg: 'bg-green-50 border-green-200' },
           { get label() { return tp('Échoués'); }, value: stats.failed, color: 'text-red-700', bg: 'bg-red-50 border-red-200' },
           { label: 'En attente', value: stats.pending, color: 'text-yellow-700', bg: 'bg-yellow-50 border-yellow-200' },
         ].map((s, i) => (
           <div key={i} className={`${s.bg} border rounded-xl p-4 text-center`}>
             <p className={`text-2xl font-bold ${s.color}`}>{s.value ?? 0}</p>
-            <p className="text-xs text-gray-500 font-medium mt-0.5">{s.label}</p>
+            <p className="text-xs text-muted-foreground font-medium mt-0.5">{s.label}</p>
           </div>
         ))}
       </div>
@@ -104,8 +104,8 @@ const SuperAdminWhatsAppLogs = () => {
               onClick={() => { setFilterStatus(f.value); setPage(1); }}
               className={`px-3 py-2 rounded-lg text-xs font-medium transition border ${
                 filterStatus === f.value
-                  ? 'bg-primary-600 text-white border-primary-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                  ? 'bg-primary text-white border-primary-600'
+                  : 'bg-card text-muted-foreground border-gray-300 hover:bg-background'
               }`}
             >
               {f.label}
@@ -114,7 +114,7 @@ const SuperAdminWhatsAppLogs = () => {
         </div>
         <button
           onClick={fetchLogs}
-          className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition flex items-center gap-1.5"
+          className="px-4 py-2.5 bg-muted text-foreground rounded-lg text-sm font-medium hover:bg-gray-200 transition flex items-center gap-1.5"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -131,62 +131,62 @@ const SuperAdminWhatsAppLogs = () => {
       {loading ? (
         <div className="space-y-2">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-xl p-4">
+            <div key={i} className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
                 <div className="flex-1 space-y-2">
                   <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-3 w-24 bg-gray-100 rounded animate-pulse" />
+                  <div className="h-3 w-24 bg-muted rounded animate-pulse" />
                 </div>
-                <div className="h-6 w-16 bg-gray-100 rounded-full animate-pulse" />
+                <div className="h-6 w-16 bg-muted rounded-full animate-pulse" />
               </div>
             </div>
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
-          <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-            <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-card border border-border rounded-xl p-12 text-center">
+          <div className="w-14 h-14 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg className="w-7 h-7 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
           </div>
-          <p className="text-gray-500 font-medium">{tp('Aucun log trouvé')}</p>
-          <p className="text-gray-400 text-sm mt-1">{tp('Les logs d\'envoi WhatsApp apparaîtront ici')}</p>
+          <p className="text-muted-foreground font-medium">{tp('Aucun log trouvé')}</p>
+          <p className="text-muted-foreground text-sm mt-1">{tp('Les logs d\'envoi WhatsApp apparaîtront ici')}</p>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-background border-b border-border">
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statut')}</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Téléphone')}</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Nom')}</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Workspace')}</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Campagne')}</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Envoyé le')}</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Erreur')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Statut')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Téléphone')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Nom')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Workspace')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Campagne')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Envoyé le')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Erreur')}</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filtered.map(log => {
-                  const sc = statusConfig[log.status] || { label: log.status, color: 'bg-gray-100 text-gray-600', dot: 'bg-gray-400' };
+                  const sc = statusConfig[log.status] || { label: log.status, color: 'bg-muted text-muted-foreground', dot: 'bg-gray-400' };
                   const isExpanded = expandedId === log._id;
                   return (
                     <React.Fragment key={log._id}>
-                      <tr className={`hover:bg-gray-50 transition ${log.status === 'failed' ? 'bg-red-50/30' : ''}`}>
+                      <tr className={`hover:bg-background transition ${log.status === 'failed' ? 'bg-red-50/30' : ''}`}>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${sc.color}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`}></span>
                             {sc.label}
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-mono text-gray-700">{log.phone || '—'}</td>
-                        <td className="px-4 py-3 text-gray-700">{log.firstName || '—'}</td>
-                        <td className="px-4 py-3 text-gray-600 text-xs">{log.workspaceId?.name || '—'}</td>
-                        <td className="px-4 py-3 text-gray-600 text-xs">{log.campaignId?.name || '—'}</td>
-                        <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{fmt(log.sentAt)}</td>
+                        <td className="px-4 py-3 font-mono text-foreground">{log.phone || '—'}</td>
+                        <td className="px-4 py-3 text-foreground">{log.firstName || '—'}</td>
+                        <td className="px-4 py-3 text-muted-foreground text-xs">{log.workspaceId?.name || '—'}</td>
+                        <td className="px-4 py-3 text-muted-foreground text-xs">{log.campaignId?.name || '—'}</td>
+                        <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">{fmt(log.sentAt)}</td>
                         <td className="px-4 py-3 max-w-[200px]">
                           {log.error ? (
                             <span className="text-red-600 text-xs truncate block" title={log.error}>{log.error}</span>
@@ -197,7 +197,7 @@ const SuperAdminWhatsAppLogs = () => {
                         <td className="px-4 py-3">
                           <button
                             onClick={() => setExpandedId(isExpanded ? null : log._id)}
-                            className="text-xs text-primary-600 hover:text-primary-800 font-medium"
+                            className="text-xs text-primary hover:text-primary-800 font-medium"
                           >
                             {isExpanded ? 'Masquer' : tp('Détails')}
                           </button>
@@ -205,36 +205,36 @@ const SuperAdminWhatsAppLogs = () => {
                       </tr>
                       {isExpanded && (
                         <tr>
-                          <td colSpan={8} className="px-4 py-4 bg-gray-50 border-t border-gray-200">
+                          <td colSpan={8} className="px-4 py-4 bg-background border-t border-border">
                             <div className="grid sm:grid-cols-2 gap-4 text-xs">
                               <div>
-                                <p className="font-semibold text-gray-700 mb-2">{tp('Message envoyé')}</p>
-                                <div className="bg-white border border-gray-200 rounded-lg p-3 whitespace-pre-wrap text-gray-700 max-h-40 overflow-y-auto">
-                                  {log.messageSent || <span className="text-gray-400 italic">{tp('Aucun message enregistré')}</span>}
+                                <p className="font-semibold text-foreground mb-2">{tp('Message envoyé')}</p>
+                                <div className="bg-card border border-border rounded-lg p-3 whitespace-pre-wrap text-foreground max-h-40 overflow-y-auto">
+                                  {log.messageSent || <span className="text-muted-foreground italic">{tp('Aucun message enregistré')}</span>}
                                 </div>
                               </div>
                               <div className="space-y-2">
-                                <p className="font-semibold text-gray-700 mb-2">{tp('Détails techniques')}</p>
-                                <div className="bg-white border border-gray-200 rounded-lg p-3 space-y-1.5">
+                                <p className="font-semibold text-foreground mb-2">{tp('Détails techniques')}</p>
+                                <div className="bg-card border border-border rounded-lg p-3 space-y-1.5">
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">{tp('ID Log')}</span>
-                                    <span className="font-mono text-gray-700 text-[10px]">{log._id}</span>
+                                    <span className="text-muted-foreground">{tp('ID Log')}</span>
+                                    <span className="font-mono text-foreground text-[10px]">{log._id}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">{tp('Message ID')}</span>
-                                    <span className="font-mono text-gray-700 text-[10px]">{log.messageId || '—'}</span>
+                                    <span className="text-muted-foreground">{tp('Message ID')}</span>
+                                    <span className="font-mono text-foreground text-[10px]">{log.messageId || '—'}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">{tp('Livré le')}</span>
-                                    <span className="text-gray-700">{fmt(log.deliveredAt)}</span>
+                                    <span className="text-muted-foreground">{tp('Livré le')}</span>
+                                    <span className="text-foreground">{fmt(log.deliveredAt)}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">{tp('Lu le')}</span>
-                                    <span className="text-gray-700">{fmt(log.readAt)}</span>
+                                    <span className="text-muted-foreground">{tp('Lu le')}</span>
+                                    <span className="text-foreground">{fmt(log.readAt)}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-gray-500">{tp('Envoyé par')}</span>
-                                    <span className="text-gray-700">{log.userId?.email || '—'}</span>
+                                    <span className="text-muted-foreground">{tp('Envoyé par')}</span>
+                                    <span className="text-foreground">{log.userId?.email || '—'}</span>
                                   </div>
                                   {log.error && (
                                     <div className="mt-2 pt-2 border-t border-red-100">
@@ -243,9 +243,9 @@ const SuperAdminWhatsAppLogs = () => {
                                     </div>
                                   )}
                                   {log.providerResponse && Object.keys(log.providerResponse).length > 0 && (
-                                    <div className="mt-2 pt-2 border-t border-gray-100">
-                                      <p className="text-gray-500 font-medium mb-1">{tp('Réponse provider :')}</p>
-                                      <pre className="text-[10px] text-gray-600 overflow-auto max-h-24 bg-gray-50 p-2 rounded">
+                                    <div className="mt-2 pt-2 border-t border-border">
+                                      <p className="text-muted-foreground font-medium mb-1">{tp('Réponse provider :')}</p>
+                                      <pre className="text-[10px] text-muted-foreground overflow-auto max-h-24 bg-background p-2 rounded">
                                         {JSON.stringify(log.providerResponse, null, 2)}
                                       </pre>
                                     </div>
@@ -265,22 +265,22 @@ const SuperAdminWhatsAppLogs = () => {
 
           {/* Pagination */}
           {total > LIMIT && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
-              <p className="text-xs text-gray-500">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-background">
+              <p className="text-xs text-muted-foreground">
                 {(page - 1) * LIMIT + 1}–{Math.min(page * LIMIT, total)} sur {total} logs
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-100 transition"
+                  className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-muted transition"
                 >
                   ← Précédent
                 </button>
                 <button
                   onClick={() => setPage(p => p + 1)}
                   disabled={page * LIMIT >= total}
-                  className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-100 transition"
+                  className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-muted transition"
                 >
                   Suivant →
                 </button>

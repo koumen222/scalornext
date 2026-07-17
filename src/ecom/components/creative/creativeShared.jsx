@@ -11,11 +11,13 @@ import { tp } from '../../i18n/platform.js';
 
 // ─── Palette d'accent par module ────────────────────────────────────────────
 export const ACCENTS = {
-  text:  { ring: 'ring-blue-100',    text: 'text-blue-600',    bg: 'bg-blue-50',    solid: 'bg-blue-600',    grad: 'from-blue-500 to-indigo-500' },
-  image: { ring: 'ring-primary-100', text: 'text-primary-600', bg: 'bg-primary-50', solid: 'bg-primary-500', grad: 'from-primary-500 to-emerald-500' },
-  video: { ring: 'ring-orange-100',  text: 'text-scalor-copper', bg: 'bg-orange-50', solid: 'bg-scalor-copper', grad: 'from-scalor-copper to-amber-500' },
-  launch:{ ring: 'ring-violet-100',  text: 'text-violet-600',  bg: 'bg-violet-50',  solid: 'bg-violet-600',   grad: 'from-violet-500 to-purple-500' },
-  montage:{ ring: 'ring-cyan-100',   text: 'text-cyan-600',    bg: 'bg-cyan-50',    solid: 'bg-cyan-600',     grad: 'from-cyan-500 to-blue-500' },
+  text:  { ring: 'ring-primary/20',    text: 'text-primary',    bg: 'bg-primary/10',    solid: 'bg-primary',    grad: 'from-primary to-primary-700' },
+  image: { ring: 'ring-primary-100', text: 'text-primary', bg: 'bg-primary-50', solid: 'bg-primary', grad: 'from-primary-500 to-primary-700' },
+  video: { ring: 'ring-primary/20',  text: 'text-primary', bg: 'bg-primary/10', solid: 'bg-primary', grad: 'from-primary to-primary-700' },
+  launch:{ ring: 'ring-primary/20',  text: 'text-primary',  bg: 'bg-primary/10',  solid: 'bg-primary',   grad: 'from-primary to-primary-700' },
+  montage:{ ring: 'ring-primary/20',   text: 'text-primary',    bg: 'bg-primary/10',    solid: 'bg-primary',     grad: 'from-primary to-primary-700' },
+  translation:{ ring: 'ring-primary/20', text: 'text-primary', bg: 'bg-primary/10', solid: 'bg-primary', grad: 'from-primary to-primary-700' },
+  voice: { ring: 'ring-primary-100', text: 'text-primary', bg: 'bg-primary-50', solid: 'bg-primary', grad: 'from-primary-500 to-primary-700' },
 };
 
 export const CREDIT_PACKS = [
@@ -89,7 +91,7 @@ export function ChoiceChip({ active, onClick, children, icon: Icon, accent = ACC
       className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-[13px] font-medium border transition-all disabled:opacity-40
         ${active
           ? `${accent.bg} ${accent.text} border-transparent ring-2 ${accent.ring}`
-          : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}
+          : 'bg-card text-muted-foreground border-border hover:border-gray-300'}`}
     >
       {Icon && <Icon size={14} />}
       {children}
@@ -102,8 +104,8 @@ export function Field({ label, hint, children }) {
     <label className="block">
       {label && (
         <span className="flex items-center justify-between mb-1.5">
-          <span className="text-[13px] font-semibold text-gray-700">{label}</span>
-          {hint && <span className="text-[11px] text-gray-400">{hint}</span>}
+          <span className="text-[13px] font-semibold text-foreground">{label}</span>
+          {hint && <span className="text-[11px] text-muted-foreground">{hint}</span>}
         </span>
       )}
       {children}
@@ -114,11 +116,11 @@ export function Field({ label, hint, children }) {
 export function EmptyState({ icon: Icon, title, description, action }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-5 ring-1 ring-gray-100">
+      <div className="w-16 h-16 bg-background rounded-2xl flex items-center justify-center mb-5 ring-1 ring-gray-100">
         {Icon && <Icon size={26} className="text-gray-300" />}
       </div>
-      <h3 className="text-lg font-semibold text-gray-800 mb-1.5">{title}</h3>
-      {description && <p className="text-gray-400 text-sm max-w-xs mb-6">{description}</p>}
+      <h3 className="text-lg font-semibold text-foreground mb-1.5">{title}</h3>
+      {description && <p className="text-muted-foreground text-sm max-w-xs mb-6">{description}</p>}
       {action}
     </div>
   );
@@ -179,20 +181,20 @@ export function BuyCreditsModal({ open, onClose, onSuccess, initialPack }) {
 
   return (
     <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={onClose}>
-      <div className="bg-white w-full sm:max-w-sm sm:mx-4 rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="bg-card w-full sm:max-w-sm sm:mx-4 rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="pt-3 pb-1 flex justify-center sm:hidden"><div className="w-10 h-1 bg-gray-200 rounded-full" /></div>
 
         <div className="px-6 pt-5 pb-4 flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-primary-50 flex items-center justify-center">
-              <Wallet size={18} className="text-primary-600" />
+              <Wallet size={18} className="text-primary" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-gray-900">{tp('Recharger des crédits')}</h3>
-              <p className="text-[12px] text-gray-400">{tp('1 crédit = 1 génération')}</p>
+              <h3 className="text-base font-bold text-foreground">{tp('Recharger des crédits')}</h3>
+              <p className="text-[12px] text-muted-foreground">{tp('1 crédit = 1 génération')}</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400">
+          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground">
             <X size={16} />
           </button>
         </div>
@@ -200,10 +202,10 @@ export function BuyCreditsModal({ open, onClose, onSuccess, initialPack }) {
         {success ? (
           <div className="px-6 pb-8 pt-2 text-center">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
-              <CheckCircle size={26} className="text-primary-600" />
+              <CheckCircle size={26} className="text-primary" />
             </div>
-            <p className="text-sm font-medium text-gray-800 mb-5">{success}</p>
-            <button onClick={onClose} className="w-full h-11 rounded-xl bg-primary-500 text-white font-semibold hover:bg-primary-600 transition-colors">
+            <p className="text-sm font-medium text-foreground mb-5">{success}</p>
+            <button onClick={onClose} className="w-full h-11 rounded-xl bg-primary text-white font-semibold hover:bg-primary transition-colors">
               {tp('Terminer')}
             </button>
           </div>
@@ -214,21 +216,21 @@ export function BuyCreditsModal({ open, onClose, onSuccess, initialPack }) {
                 <button
                   key={p.quantity}
                   onClick={() => setPack(p)}
-                  className={`relative rounded-2xl border p-3 text-center transition-all ${pack.quantity === p.quantity ? 'border-primary-500 bg-primary-50/50 ring-2 ring-primary-100' : 'border-gray-200 hover:border-gray-300'}`}
+                  className={`relative rounded-2xl border p-3 text-center transition-all ${pack.quantity === p.quantity ? 'border-primary-500 bg-primary-50/50 ring-2 ring-primary-100' : 'border-border hover:border-gray-300'}`}
                 >
-                  {p.badge && <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold uppercase tracking-wide bg-scalor-copper text-white px-1.5 py-0.5 rounded-full whitespace-nowrap">{p.badge}</span>}
-                  <div className="text-lg font-bold text-gray-900">{p.quantity}</div>
-                  <div className="text-[10px] text-gray-400 -mt-0.5">{tp('crédits')}</div>
-                  <div className="text-[11px] font-semibold text-primary-600 mt-1">{p.price} F</div>
+                  {p.badge && <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold uppercase tracking-wide bg-primary text-white px-1.5 py-0.5 rounded-full whitespace-nowrap">{p.badge}</span>}
+                  <div className="text-lg font-bold text-foreground">{p.quantity}</div>
+                  <div className="text-[10px] text-muted-foreground -mt-0.5">{tp('crédits')}</div>
+                  <div className="text-[11px] font-semibold text-primary mt-1">{p.price} F</div>
                 </button>
               ))}
             </div>
 
             <div className="space-y-2.5">
               <input value={name} onChange={e => setName(e.target.value)} placeholder={tp('Votre nom')}
-                className="w-full h-11 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
+                className="w-full h-11 px-3.5 rounded-xl bg-background border border-border text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
               <input value={phone} onChange={e => setPhone(e.target.value)} placeholder={tp('Numéro de téléphone')} inputMode="tel"
-                className="w-full h-11 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
+                className="w-full h-11 px-3.5 rounded-xl bg-background border border-border text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
             </div>
 
             {error && <p className="text-[12px] text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>}
@@ -237,7 +239,7 @@ export function BuyCreditsModal({ open, onClose, onSuccess, initialPack }) {
               className="w-full h-12 rounded-xl bg-gray-900 text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors disabled:opacity-60">
               {loading ? <><Loader2 size={16} className="animate-spin" /> {tp('En attente du paiement…')}</> : <><CreditCard size={16} /> {tp('Payer')} {pack.price} F</>}
             </button>
-            <p className="text-center text-[11px] text-gray-400">{tp('Paiement mobile money sécurisé')}</p>
+            <p className="text-center text-[11px] text-muted-foreground">{tp('Paiement mobile money sécurisé')}</p>
           </div>
         )}
       </div>
@@ -255,8 +257,8 @@ export function StudioHeader({ icon: Icon, kind, title, subtitle, right }) {
           {Icon && <Icon size={20} className={a.text} />}
         </div>
         <div>
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          {subtitle && <p className="text-[13px] text-gray-400 mt-0.5">{subtitle}</p>}
+          <h2 className="text-lg font-bold text-foreground">{title}</h2>
+          {subtitle && <p className="text-[13px] text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
       </div>
       {right}
@@ -265,6 +267,26 @@ export function StudioHeader({ icon: Icon, kind, title, subtitle, right }) {
 }
 
 // ─── Helpers produit ────────────────────────────────────────────────────────
+// ─── Barre de chargement (remplace les spinners circulaires) ────────────────
+// Progression SIMULÉE asymptotique (avance vite puis ralentit, plafonne à
+// 96 %) : agréable et honnête pour les générations sans progression réelle.
+export function LoadingBar({ label = '', expectedMs = 20000, className = '' }) {
+  const [p, setP] = useState(4);
+  useEffect(() => {
+    const step = Math.max(150, expectedMs / 60);
+    const t = setInterval(() => setP((v) => v + (93 - v) * 0.06), step);
+    return () => clearInterval(t);
+  }, [expectedMs]);
+  return (
+    <div className={`w-full ${className}`}>
+      {label && <p className="text-[11px] font-medium text-muted-foreground mb-1">{label}</p>}
+      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${Math.min(96, p)}%` }} />
+      </div>
+    </div>
+  );
+}
+
 export function stripHtml(html) {
   if (!html) return '';
   return String(html)
@@ -292,22 +314,22 @@ export async function urlToFile(url, filename = 'produit.png') {
 export function ImportProductBar({ product, onImport, onClear, accent = ACCENTS.image }) {
   if (product) {
     return (
-      <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50/70 p-2.5">
+      <div className="flex items-center gap-3 rounded-2xl border border-border bg-background/70 p-2.5">
         {product.imageUrl
-          ? <img src={product.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover border border-gray-200 shrink-0" />
-          : <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0"><Package size={16} className="text-gray-300" /></div>}
+          ? <img src={product.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover border border-border shrink-0" />
+          : <div className="w-11 h-11 rounded-xl bg-card border border-border flex items-center justify-center shrink-0"><Package size={16} className="text-gray-300" /></div>}
         <div className="min-w-0 flex-1">
-          <p className="text-[9.5px] font-bold uppercase tracking-wide text-gray-400">{tp('Produit importé')}</p>
-          <p className="text-[13px] font-semibold text-gray-800 truncate">{product.name}</p>
+          <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">{tp('Produit importé')}</p>
+          <p className="text-[13px] font-semibold text-foreground truncate">{product.name}</p>
         </div>
-        <button onClick={onImport} className="text-[12px] font-medium text-gray-500 hover:text-gray-800 px-1.5 shrink-0">{tp('Changer')}</button>
-        <button onClick={onClear} className="w-7 h-7 rounded-lg hover:bg-gray-200 flex items-center justify-center text-gray-400 shrink-0"><X size={14} /></button>
+        <button onClick={onImport} className="text-[12px] font-medium text-muted-foreground hover:text-foreground px-1.5 shrink-0">{tp('Changer')}</button>
+        <button onClick={onClear} className="w-7 h-7 rounded-lg hover:bg-gray-200 flex items-center justify-center text-muted-foreground shrink-0"><X size={14} /></button>
       </div>
     );
   }
   return (
     <button type="button" onClick={onImport}
-      className="w-full h-11 rounded-xl border-2 border-dashed border-gray-200 hover:border-gray-300 hover:bg-gray-50 flex items-center justify-center gap-2 text-[13px] font-medium text-gray-600 transition-colors">
+      className="w-full h-11 rounded-xl border-2 border-dashed border-border hover:border-gray-300 hover:bg-background flex items-center justify-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors">
       <Store size={15} className={accent.text} /> {tp('Importer un produit de ma boutique')}
     </button>
   );

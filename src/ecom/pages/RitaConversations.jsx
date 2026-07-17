@@ -90,13 +90,13 @@ export default function RitaConversations() {
     : null;
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* ── Sidebar liste ── */}
-      <div className="w-72 flex flex-col border-r border-gray-200 bg-white flex-shrink-0">
+      <div className="w-72 flex flex-col border-r border-border bg-card flex-shrink-0">
         {/* Header */}
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-1">
-            <h1 className="font-semibold text-gray-900 flex items-center gap-2">
+            <h1 className="font-semibold text-foreground flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-primary-500" />
               {agentName ? (
                 <span className="flex items-center gap-1.5">
@@ -108,14 +108,14 @@ export default function RitaConversations() {
             <div className="flex items-center gap-2">
               {isConnected
                 ? <Wifi className="w-4 h-4 text-primary-500" title={tp('Connecté')} />
-                : <WifiOff className="w-4 h-4 text-gray-400" title={tp('Déconnecté')} />
+                : <WifiOff className="w-4 h-4 text-muted-foreground" title={tp('Déconnecté')} />
               }
-              <button onClick={fetchConversations} className="text-gray-400 hover:text-gray-600">
+              <button onClick={fetchConversations} className="text-muted-foreground hover:text-muted-foreground">
                 <RefreshCw className="w-4 h-4" />
               </button>
             </div>
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted-foreground">
             {conversations.length} active{conversations.length !== 1 ? 's' : ''}
             {lastRefresh && ` · màj ${timeAgo(lastRefresh)}`}
           </p>
@@ -124,10 +124,10 @@ export default function RitaConversations() {
         {/* Liste */}
         <div className="flex-1 overflow-y-auto">
           {loading && (
-            <div className="p-6 text-center text-gray-400 text-sm">{tp('Chargement…')}</div>
+            <div className="p-6 text-center text-muted-foreground text-sm">{tp('Chargement…')}</div>
           )}
           {!loading && conversations.length === 0 && (
-            <div className="p-6 text-center text-gray-400 text-sm">
+            <div className="p-6 text-center text-muted-foreground text-sm">
               Aucune conversation active.<br />
               Les conversations apparaîtront ici en temps réel dès qu'un client écrit.
             </div>
@@ -139,22 +139,22 @@ export default function RitaConversations() {
               <button
                 key={conv.key}
                 onClick={() => setSelected(conv)}
-                className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${isActive ? 'bg-primary-50 border-l-2 border-l-primary-500' : ''}`}
+                className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-background transition-colors ${isActive ? 'bg-primary-50 border-l-2 border-l-primary-500' : ''}`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-medium text-sm text-gray-900 truncate">
+                  <span className="font-medium text-sm text-foreground truncate">
                     {conv.state?.nom || conv.phone}
                   </span>
-                  <span className="text-xs text-gray-400 ml-2 flex-shrink-0">
+                  <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
                     {timeAgo(conv.tracker?.lastClientMessage || conv.lastActivity)}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 truncate">{conv.phone}</p>
+                <p className="text-xs text-muted-foreground truncate">{conv.phone}</p>
                 {conv.state?.produit && (
-                  <p className="text-xs text-primary-600 truncate mt-0.5">{conv.state.produit}</p>
+                  <p className="text-xs text-primary truncate mt-0.5">{conv.state.produit}</p>
                 )}
                 {lastMsg && (
-                  <p className="text-xs text-gray-400 truncate mt-1">
+                  <p className="text-xs text-muted-foreground truncate mt-1">
                     {lastMsg.role === 'assistant' ? '🤖 ' : '👤 '}
                     {lastMsg.content?.substring(0, 60)}
                   </p>
@@ -167,7 +167,7 @@ export default function RitaConversations() {
 
       {/* ── Panel conversation ── */}
       {!selectedConv ? (
-        <div className="flex-1 flex items-center justify-center text-gray-400">
+        <div className="flex-1 flex items-center justify-center text-muted-foreground">
           <div className="text-center">
             <MessageCircle className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p>{tp('Sélectionnez une conversation')}</p>
@@ -176,42 +176,42 @@ export default function RitaConversations() {
       ) : (
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header client */}
-          <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="bg-card border-b border-border px-6 py-4">
             <div className="flex items-start justify-between">
               <div>
-                <h2 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <User className="w-4 h-4 text-gray-400" />
+                <h2 className="font-semibold text-foreground flex items-center gap-2">
+                  <User className="w-4 h-4 text-muted-foreground" />
                   {selectedConv.state?.nom || tp('Client inconnu')}
                 </h2>
                 <div className="flex flex-wrap gap-3 mt-2">
                   {selectedConv.phone && (
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Phone className="w-3 h-3" />
                       {selectedConv.phone}
                     </span>
                   )}
                   {selectedConv.state?.telephoneAppel && selectedConv.state.telephoneAppel !== selectedConv.phone && (
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Phone className="w-3 h-3 text-blue-400" />
                       {selectedConv.state.telephoneAppel} (appel)
                     </span>
                   )}
                   {selectedConv.state?.ville && (
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="w-3 h-3" />
                       {selectedConv.state.ville}
                       {selectedConv.state?.adresse && ` – ${selectedConv.state.adresse}`}
                     </span>
                   )}
                   {selectedConv.state?.produit && (
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Package className="w-3 h-3" />
                       {selectedConv.state.produit}
                       {selectedConv.state?.prix && ` · ${selectedConv.state.prix}`}
                     </span>
                   )}
                   {selectedConv.state?.quantite && selectedConv.state.quantite > 1 && (
-                    <span className="text-xs text-gray-500">x{selectedConv.state.quantite}</span>
+                    <span className="text-xs text-muted-foreground">x{selectedConv.state.quantite}</span>
                   )}
                 </div>
               </div>
@@ -222,11 +222,11 @@ export default function RitaConversations() {
                   </span>
                 )}
                 {selectedConv.state?.statut && (
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATE_COLORS[selectedConv.state.statut] || 'bg-gray-100 text-gray-600'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATE_COLORS[selectedConv.state.statut] || 'bg-muted text-muted-foreground'}`}>
                     {selectedConv.state.statut}
                   </span>
                 )}
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-muted-foreground">
                   {selectedConv.messageCount} message{selectedConv.messageCount !== 1 ? 's' : ''}
                   {selectedConv.tracker?.relanceCount > 0 && ` · ${selectedConv.tracker.relanceCount} relance(s)`}
                 </span>
@@ -242,8 +242,8 @@ export default function RitaConversations() {
                 <div key={i} className={`flex ${isRita ? 'justify-start' : 'justify-end'}`}>
                   <div className={`max-w-[70%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
                     isRita
-                      ? 'bg-white text-gray-800 rounded-bl-sm border border-gray-100'
-                      : 'bg-primary-500 text-white rounded-br-sm'
+                      ? 'bg-card text-foreground rounded-bl-sm border border-border'
+                      : 'bg-primary text-white rounded-br-sm'
                   }`}>
                     {!isRita && (
                       <p className="text-xs font-medium mb-0.5 opacity-75">

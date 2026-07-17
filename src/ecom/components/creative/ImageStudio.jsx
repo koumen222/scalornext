@@ -23,13 +23,13 @@ const FORMATS = [
 ];
 
 const TEMPLATES = [
-  { id: 'listing-green', title: tp('Listing'), color: 'from-emerald-500 to-green-700' },
+  { id: 'listing-green', title: tp('Listing'), color: 'from-primary to-primary-700' },
   { id: 'general',       title: 'Premium',     color: 'from-gray-700 to-gray-900' },
-  { id: 'beauty',        title: tp('Beauté'),  color: 'from-pink-400 to-rose-500' },
-  { id: 'health',        title: tp('Santé'),   color: 'from-teal-500 to-green-600' },
-  { id: 'tech',          title: 'Tech',        color: 'from-blue-600 to-indigo-700' },
-  { id: 'fashion',       title: tp('Mode'),    color: 'from-amber-500 to-yellow-600' },
-  { id: 'home',          title: tp('Maison'),  color: 'from-orange-400 to-amber-500' },
+  { id: 'beauty',        title: tp('Beauté'),  color: 'from-primary to-primary-700' },
+  { id: 'health',        title: tp('Santé'),   color: 'from-primary to-primary-700' },
+  { id: 'tech',          title: 'Tech',        color: 'from-primary to-primary-700' },
+  { id: 'fashion',       title: tp('Mode'),    color: 'from-primary to-primary-700' },
+  { id: 'home',          title: tp('Maison'),  color: 'from-primary to-primary-700' },
 ];
 
 const QUALITIES = [
@@ -186,43 +186,43 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
         <div className="space-y-4 max-w-xl">
           <ImportProductBar product={importedProduct} onImport={onImport} onClear={onClearImport} accent={A} />
           {imagePreview ? (
-            <div className="relative rounded-2xl overflow-hidden border border-gray-200">
-              <img src={imagePreview} alt="produit" className="w-full h-48 object-contain bg-gray-50" />
-              <button onClick={removeImage} className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/90 backdrop-blur flex items-center justify-center text-gray-500 hover:text-red-500 shadow-sm"><X size={15} /></button>
+            <div className="relative rounded-2xl overflow-hidden border border-border">
+              <img src={imagePreview} alt="produit" className="w-full h-48 object-contain bg-background" />
+              <button onClick={removeImage} className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-card/90 backdrop-blur flex items-center justify-center text-muted-foreground hover:text-red-500 shadow-sm"><X size={15} /></button>
             </div>
           ) : (
             <button onClick={() => fileInputRef.current?.click()}
-              className="w-full h-40 rounded-2xl border-2 border-dashed border-gray-200 hover:border-primary-300 hover:bg-primary-50/30 transition-colors flex flex-col items-center justify-center gap-2 text-gray-400">
-              <div className="w-11 h-11 rounded-2xl bg-gray-50 flex items-center justify-center"><Upload size={18} /></div>
-              <span className="text-[13px] font-medium text-gray-500">{tp('Importer une image')}</span>
+              className="w-full h-40 rounded-2xl border-2 border-dashed border-border hover:border-primary-300 hover:bg-primary-50/30 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground">
+              <div className="w-11 h-11 rounded-2xl bg-background flex items-center justify-center"><Upload size={18} /></div>
+              <span className="text-[13px] font-medium text-muted-foreground">{tp('Importer une image')}</span>
               <span className="text-[11px]">{tp('PNG / JPG · max 10 MB')}</span>
             </button>
           )}
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageSelect} className="hidden" />
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-gray-100" /><span className="text-[11px] font-medium text-gray-300 uppercase tracking-wide">{tp('ou')}</span><div className="flex-1 h-px bg-gray-100" />
+            <div className="flex-1 h-px bg-muted" /><span className="text-[11px] font-medium text-gray-300 uppercase tracking-wide">{tp('ou')}</span><div className="flex-1 h-px bg-muted" />
           </div>
           <Field label={tp('Lien de la page produit')}>
             <div className="relative">
               <Link2 size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
               <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://…"
-                className="w-full h-11 pl-9 pr-3 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
+                className="w-full h-11 pl-9 pr-3 rounded-xl bg-background border border-border text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition" />
             </div>
           </Field>
           <Field label={tp('Précisions')} hint={tp('optionnel')}>
             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} placeholder={tp('Offre, promo, angle à mettre en avant…')}
-              className="w-full px-3.5 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition resize-none" />
+              className="w-full px-3.5 py-3 rounded-xl bg-background border border-border text-sm outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-50 transition resize-none" />
           </Field>
           <div className="flex items-center gap-3">
             {logoPreview ? (
               <div className="relative">
-                <img src={logoPreview} alt="logo" className="w-12 h-12 rounded-xl object-contain bg-gray-50 border border-gray-200" />
+                <img src={logoPreview} alt="logo" className="w-12 h-12 rounded-xl object-contain bg-background border border-border" />
                 <button onClick={removeLogo} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-900 text-white flex items-center justify-center"><X size={11} /></button>
               </div>
             ) : (
-              <button onClick={() => logoInputRef.current?.click()} className="w-12 h-12 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300 hover:border-gray-300"><Plus /></button>
+              <button onClick={() => logoInputRef.current?.click()} className="w-12 h-12 rounded-xl border-2 border-dashed border-border flex items-center justify-center text-gray-300 hover:border-gray-300"><Plus /></button>
             )}
-            <div><p className="text-[13px] font-semibold text-gray-700">{tp('Logo de marque')}</p><p className="text-[11px] text-gray-400">{tp('Ajouté sur les visuels · optionnel')}</p></div>
+            <div><p className="text-[13px] font-semibold text-foreground">{tp('Logo de marque')}</p><p className="text-[11px] text-muted-foreground">{tp('Ajouté sur les visuels · optionnel')}</p></div>
             <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoSelect} className="hidden" />
           </div>
         </div>
@@ -237,7 +237,7 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
               className={`relative rounded-xl overflow-hidden aspect-[4/3] ring-2 transition-all ${visualTemplate === t.id ? 'ring-primary-500' : 'ring-transparent hover:ring-gray-200'}`}>
               <div className={`absolute inset-0 bg-gradient-to-br ${t.color}`} />
               <span className="absolute inset-x-0 bottom-0 text-[10px] font-bold text-white/95 py-1 bg-black/15 text-center">{t.title}</span>
-              {visualTemplate === t.id && <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white flex items-center justify-center"><Check size={10} className="text-primary-600" /></span>}
+              {visualTemplate === t.id && <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-card flex items-center justify-center"><Check size={10} className="text-primary" /></span>}
             </button>
           ))}
         </div>
@@ -248,8 +248,8 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
       content: (
         <div className="max-w-2xl">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[12px] text-gray-400">{selectedFormats.length}/{FORMATS.length} {tp('sélectionnés')}</span>
-            <button onClick={() => setSelectedFormats(selectedFormats.length === FORMATS.length ? [] : FORMATS.map(f => f.id))} className="text-[12px] font-medium text-primary-600 hover:text-primary-700">
+            <span className="text-[12px] text-muted-foreground">{selectedFormats.length}/{FORMATS.length} {tp('sélectionnés')}</span>
+            <button onClick={() => setSelectedFormats(selectedFormats.length === FORMATS.length ? [] : FORMATS.map(f => f.id))} className="text-[12px] font-medium text-primary hover:text-primary">
               {selectedFormats.length === FORMATS.length ? tp('Tout désélectionner') : tp('Tout sélectionner')}
             </button>
           </div>
@@ -258,9 +258,9 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
               const Icon = f.icon; const active = selectedFormats.includes(f.id);
               return (
                 <button key={f.id} onClick={() => toggleFormat(f.id)}
-                  className={`text-left rounded-xl border p-3 transition-all ${active ? `${A.bg} border-transparent ring-2 ${A.ring}` : 'bg-white border-gray-200 hover:border-gray-300'}`}>
-                  <div className="flex items-center gap-1.5"><Icon size={15} className={active ? A.text : 'text-gray-400'} /><span className={`text-[12.5px] font-semibold ${active ? 'text-gray-900' : 'text-gray-600'}`}>{f.label}</span></div>
-                  <p className="text-[10.5px] text-gray-400 mt-0.5 leading-tight">{f.desc}</p>
+                  className={`text-left rounded-xl border p-3 transition-all ${active ? `${A.bg} border-transparent ring-2 ${A.ring}` : 'bg-card border-border hover:border-gray-300'}`}>
+                  <div className="flex items-center gap-1.5"><Icon size={15} className={active ? A.text : 'text-muted-foreground'} /><span className={`text-[12.5px] font-semibold ${active ? 'text-foreground' : 'text-muted-foreground'}`}>{f.label}</span></div>
+                  <p className="text-[10.5px] text-muted-foreground mt-0.5 leading-tight">{f.desc}</p>
                 </button>
               );
             })}
@@ -273,19 +273,19 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
       content: (
         <div className="space-y-4 max-w-md">
           <div className="flex items-center justify-between">
-            <span className="text-[13px] font-semibold text-gray-700">{tp('Qualité des images')}</span>
-            <div className="inline-flex bg-gray-100 rounded-xl p-1">
+            <span className="text-[13px] font-semibold text-foreground">{tp('Qualité des images')}</span>
+            <div className="inline-flex bg-muted rounded-xl p-1">
               {QUALITIES.map(q => (
-                <button key={q.id} onClick={() => setImageQuality(q.id)} className={`h-8 px-3.5 rounded-lg text-[12px] font-semibold transition-all ${imageQuality === q.id ? 'bg-white shadow-sm text-primary-600' : 'text-gray-400'}`}>{q.label}</button>
+                <button key={q.id} onClick={() => setImageQuality(q.id)} className={`h-8 px-3.5 rounded-lg text-[12px] font-semibold transition-all ${imageQuality === q.id ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground'}`}>{q.label}</button>
               ))}
             </div>
           </div>
           <div className="rounded-xl bg-primary-50/60 border border-primary-100 px-3.5 py-3 flex items-center justify-between">
             <span className="text-[13px] text-primary-800 font-medium">{cost} {tp('crédit(s)')} {tp('seront utilisés')}</span>
-            <span className="text-[12px] text-primary-600">{tp('Solde')} : {credits ?? '—'}</span>
+            <span className="text-[12px] text-primary">{tp('Solde')} : {credits ?? '—'}</span>
           </div>
           {insufficient && (
-            <div className="flex items-center gap-2 text-[12px] text-amber-700 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-2 text-[12px] text-primary bg-primary/10 border border-primary/20 rounded-xl px-3 py-2">
               <AlertCircle size={14} className="shrink-0" /> {tp('Crédits insuffisants')} ({credits}/{cost}).
               <button onClick={onNeedCredits} className="ml-auto font-semibold underline">{tp('Recharger')}</button>
             </div>
@@ -300,7 +300,7 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
       <StudioHeader icon={ImageIcon} kind="image" title={tp('Studio Affiches')}
         subtitle={tp('Transformez une image ou une page produit en visuels publicitaires.')}
         right={
-          <button onClick={onNeedCredits} className="inline-flex items-center gap-2 h-9 px-3 rounded-xl bg-primary-50 border border-primary-100 text-primary-700 text-[13px] font-semibold hover:bg-primary-100 transition-colors">
+          <button onClick={onNeedCredits} className="inline-flex items-center gap-2 h-9 px-3 rounded-xl bg-primary-50 border border-primary-100 text-primary text-[13px] font-semibold hover:bg-primary-100 transition-colors">
             <Wallet size={14} /> {credits ?? '—'} {tp('crédits')}
           </button>
         } />
@@ -312,16 +312,16 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
       )}
 
       {loading ? (
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+        <div className="bg-card rounded-3xl border border-border shadow-sm p-8">
           <div className="flex flex-col items-center text-center mb-7">
             <div className="w-14 h-14 rounded-2xl bg-primary-50 flex items-center justify-center mb-3">
-              <Loader2 size={24} className="text-primary-600 animate-spin" />
+              <Loader2 size={24} className="text-primary animate-spin" />
             </div>
-            <p className="text-[15px] font-semibold text-gray-800">{tp('Génération de vos affiches…')}</p>
-            <p className="text-[12px] text-gray-400 mt-1">{tp('Cela prend quelques dizaines de secondes.')}</p>
+            <p className="text-[15px] font-semibold text-foreground">{tp('Génération de vos affiches…')}</p>
+            <p className="text-[12px] text-muted-foreground mt-1">{tp('Cela prend quelques dizaines de secondes.')}</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {Array.from({ length: Math.min(6, selectedFormats.length || 3) }).map((_, i) => <div key={i} className="aspect-square rounded-2xl bg-gray-50 animate-pulse" />)}
+            {Array.from({ length: Math.min(6, selectedFormats.length || 3) }).map((_, i) => <div key={i} className="aspect-square rounded-2xl bg-background animate-pulse" />)}
           </div>
         </div>
       ) : result ? (
@@ -329,41 +329,41 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
           <div className="flex items-center justify-between gap-3 flex-wrap px-1">
             <div className="flex items-center gap-2">
               <CheckCircle size={17} className="text-primary-500" />
-              <p className="text-[14px] font-semibold text-gray-800">{result.creatives?.filter(c => c.imageUrl).length || 0} {tp('visuels générés')}</p>
-              {result.cost && <span className="text-[12px] text-gray-400">· ~{result.cost.costFcfa} FCFA</span>}
+              <p className="text-[14px] font-semibold text-foreground">{result.creatives?.filter(c => c.imageUrl).length || 0} {tp('visuels générés')}</p>
+              {result.cost && <span className="text-[12px] text-muted-foreground">· ~{result.cost.costFcfa} FCFA</span>}
             </div>
             <div className="flex items-center gap-2">
-              <Link to="/ecom/creatives?tab=galerie" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary-600 hover:text-primary-700">{tp('Galerie')} <ExternalLink size={13} /></Link>
-              <button onClick={reset} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-[13px] font-medium hover:bg-gray-50"><RotateCcw size={13} /> {tp('Recommencer')}</button>
+              <Link to="/ecom/creatives?tab=galerie" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary hover:text-primary">{tp('Galerie')} <ExternalLink size={13} /></Link>
+              <button onClick={reset} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-muted-foreground text-[13px] font-medium hover:bg-background"><RotateCcw size={13} /> {tp('Recommencer')}</button>
             </div>
           </div>
           {result.analysis && (
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <button onClick={() => setShowAnalysis(s => !s)} className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50/60">
-                <span className="flex items-center gap-2 text-[13px] font-semibold text-gray-700"><Package size={15} className="text-primary-500" />{result.analysis.productName || tp('Analyse marketing')}</span>
-                <ChevronDown size={16} className={`text-gray-400 transition-transform ${showAnalysis ? 'rotate-180' : ''}`} />
+            <div className="bg-card rounded-2xl border overflow-hidden">
+              <button onClick={() => setShowAnalysis(s => !s)} className="w-full flex items-center justify-between px-4 py-3 hover:bg-background/60">
+                <span className="flex items-center gap-2 text-[13px] font-semibold text-foreground"><Package size={15} className="text-primary-500" />{result.analysis.productName || tp('Analyse marketing')}</span>
+                <ChevronDown size={16} className={`text-muted-foreground transition-transform ${showAnalysis ? 'rotate-180' : ''}`} />
               </button>
               {showAnalysis && (
                 <div className="px-4 pb-4 pt-1 space-y-3 border-t border-gray-50">
-                  {(result.analysis.category || result.analysis.targetAudience) && <p className="text-[12px] text-gray-400">{result.analysis.category}{result.analysis.category && result.analysis.targetAudience ? ' · ' : ''}{result.analysis.targetAudience}</p>}
-                  {result.analysis.emotionalHook && <p className="text-[13px] text-gray-700"><span className="font-semibold">{tp('Accroche')} : </span>{result.analysis.emotionalHook}</p>}
-                  {result.analysis.promoAngle && <p className="text-[13px] text-gray-700"><span className="font-semibold">{tp('Angle promo')} : </span>{result.analysis.promoAngle}</p>}
-                  {result.analysis.keyBenefits?.length > 0 && <div className="flex flex-wrap gap-1.5">{result.analysis.keyBenefits.map((b, i) => <span key={i} className="text-[11px] bg-primary-50 text-primary-700 px-2 py-1 rounded-lg">{b}</span>)}</div>}
+                  {(result.analysis.category || result.analysis.targetAudience) && <p className="text-[12px] text-muted-foreground">{result.analysis.category}{result.analysis.category && result.analysis.targetAudience ? ' · ' : ''}{result.analysis.targetAudience}</p>}
+                  {result.analysis.emotionalHook && <p className="text-[13px] text-foreground"><span className="font-semibold">{tp('Accroche')} : </span>{result.analysis.emotionalHook}</p>}
+                  {result.analysis.promoAngle && <p className="text-[13px] text-foreground"><span className="font-semibold">{tp('Angle promo')} : </span>{result.analysis.promoAngle}</p>}
+                  {result.analysis.keyBenefits?.length > 0 && <div className="flex flex-wrap gap-1.5">{result.analysis.keyBenefits.map((b, i) => <span key={i} className="text-[11px] bg-primary-50 text-primary px-2 py-1 rounded-lg">{b}</span>)}</div>}
                 </div>
               )}
             </div>
           )}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {result.creatives?.map((creative) => (
-              <div key={creative.id} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <div className="aspect-square relative bg-gray-50 overflow-hidden">
+              <div key={creative.id} className="group bg-card rounded-2xl border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div className="aspect-square relative bg-background overflow-hidden">
                   {creative.imageUrl ? (
                     <>
                       <img src={creative.imageUrl} alt={creative.label} className="w-full h-full object-cover" loading="lazy" />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                        <button onClick={() => downloadFile(creative.imageUrl, `${creative.id}.png`)} className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-gray-700 hover:scale-105 transition-transform"><Download size={15} /></button>
-                        <button onClick={() => copyUrl(creative.imageUrl, creative.id)} className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-gray-700 hover:scale-105 transition-transform">{copiedId === creative.id ? <Check size={15} className="text-primary-600" /> : <Copy size={15} />}</button>
-                        <a href={creative.imageUrl} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-gray-700 hover:scale-105 transition-transform"><ExternalLink size={15} /></a>
+                        <button onClick={() => downloadFile(creative.imageUrl, `${creative.id}.png`)} className="w-9 h-9 rounded-xl bg-card flex items-center justify-center text-foreground hover:scale-105 transition-transform"><Download size={15} /></button>
+                        <button onClick={() => copyUrl(creative.imageUrl, creative.id)} className="w-9 h-9 rounded-xl bg-card flex items-center justify-center text-foreground hover:scale-105 transition-transform">{copiedId === creative.id ? <Check size={15} className="text-primary" /> : <Copy size={15} />}</button>
+                        <a href={creative.imageUrl} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-xl bg-card flex items-center justify-center text-foreground hover:scale-105 transition-transform"><ExternalLink size={15} /></a>
                       </div>
                     </>
                   ) : (
@@ -371,8 +371,8 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
                   )}
                 </div>
                 <div className="p-3">
-                  <p className="text-[12px] font-semibold text-gray-800 leading-tight truncate">{creative.label}</p>
-                  {creative.imageUrl && <button onClick={() => downloadFile(creative.imageUrl, `${creative.id}.png`)} className="mt-2 w-full h-8 rounded-lg bg-primary-500 text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-primary-600"><Download size={11} /> {tp('Télécharger')}</button>}
+                  <p className="text-[12px] font-semibold text-foreground leading-tight truncate">{creative.label}</p>
+                  {creative.imageUrl && <button onClick={() => downloadFile(creative.imageUrl, `${creative.id}.png`)} className="mt-2 w-full h-8 rounded-lg bg-primary text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-primary"><Download size={11} /> {tp('Télécharger')}</button>}
                 </div>
               </div>
             ))}

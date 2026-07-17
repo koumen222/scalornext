@@ -97,35 +97,35 @@ export default function GenerationSuccess() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
+      <div className="bg-card rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
 
         {status === 'checking' && (
           <>
             <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="animate-spin w-8 h-8 text-primary-600" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Vérification du paiement…')}</h1>
-            <p className="text-gray-500 text-sm">{tp('Tes crédits seront ajoutés automatiquement dès confirmation.')}</p>
+            <h1 className="text-xl font-bold text-foreground mb-2">{tp('Vérification du paiement…')}</h1>
+            <p className="text-muted-foreground text-sm">{tp('Tes crédits seront ajoutés automatiquement dès confirmation.')}</p>
           </>
         )}
 
         {status === 'paid' && (
           <>
             <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Crédits ajoutés !')}</h1>
-            <p className="text-gray-600 text-sm mb-6">
+            <h1 className="text-xl font-bold text-foreground mb-2">{tp('Crédits ajoutés !')}</h1>
+            <p className="text-muted-foreground text-sm mb-6">
               Tes crédits de génération ont bien été ajoutés à ton compte. Tu peux maintenant générer tes pages produit.
             </p>
             <button
               onClick={() => navigate('/ecom/products')}
-              className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition"
+              className="w-full py-3 bg-primary hover:bg-primary-700 text-white font-bold rounded-xl transition"
             >
               {tp('Générer mes pages produit')}
             </button>
@@ -139,13 +139,13 @@ export default function GenerationSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Paiement échoué')}</h1>
-            <p className="text-gray-600 text-sm mb-6">
+            <h1 className="text-xl font-bold text-foreground mb-2">{tp('Paiement échoué')}</h1>
+            <p className="text-muted-foreground text-sm mb-6">
               La transaction n'a pas abouti. Vérifiez votre solde Mobile Money et réessayez.
             </p>
             <button
               onClick={() => navigate('/ecom/products')}
-              className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition"
+              className="w-full py-3 bg-primary hover:bg-primary-700 text-white font-bold rounded-xl transition"
             >
               {tp('Réessayer')}
             </button>
@@ -159,11 +159,11 @@ export default function GenerationSuccess() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">{tp('Paiement en attente')}</h1>
-            <p className="text-gray-600 text-sm mb-4">
+            <h1 className="text-xl font-bold text-foreground mb-2">{tp('Paiement en attente')}</h1>
+            <p className="text-muted-foreground text-sm mb-4">
               Ton paiement est en cours de traitement. Tes crédits seront ajoutés automatiquement dès confirmation.
             </p>
-            <p className="text-gray-500 text-xs mb-6">
+            <p className="text-muted-foreground text-xs mb-6">
               Si tu as déjà validé le paiement sur Mobile Money mais que tes crédits ne sont pas apparus, clique sur le bouton ci-dessous.
             </p>
             <button
@@ -176,11 +176,11 @@ export default function GenerationSuccess() {
               ) : 'J\'ai payé — Vérifier mes crédits'}
             </button>
             {syncMsg && (
-              <p className="text-xs text-gray-500 mb-3">{syncMsg}</p>
+              <p className="text-xs text-muted-foreground mb-3">{syncMsg}</p>
             )}
             <button
               onClick={() => navigate('/ecom/products')}
-              className="w-full py-2.5 border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold rounded-xl transition text-sm"
+              className="w-full py-2.5 border border-border text-muted-foreground hover:bg-background font-semibold rounded-xl transition text-sm"
             >
               {tp('Retour aux produits')}
             </button>

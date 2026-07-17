@@ -205,24 +205,24 @@ const BoutiqueLayoutInner = ({ children }) => {
   // Show spinner only while stores are actively loading
   if (storeLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-gray-200 rounded-full animate-spin" style={{ borderTopColor: '#0F6B4F' }} />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-border rounded-full animate-spin" style={{ borderTopColor: '#0F6B4F' }} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-gray-50 flex flex-col lg:flex-row max-w-[100vw] overflow-x-hidden">
+    <div className="min-h-screen min-h-[100dvh] bg-background flex flex-col lg:flex-row max-w-[100vw] overflow-x-hidden">
 
       {/* ── Desktop Sidebar ────────────────────────────────────────────────── */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-[240px] lg:fixed lg:inset-y-0 z-30 bg-white border-r border-gray-200">
+      <aside className="hidden lg:flex lg:flex-col lg:w-[240px] lg:fixed lg:inset-y-0 z-30 bg-sidebar border-r border-sidebar-border">
         <div className="flex flex-col h-full">
 
           {/* Header — Boutique branding */}
-          <div className="px-4 pt-4 pb-3 border-b border-gray-100">
+          <div className="px-4 pt-4 pb-3 border-b border-border">
             <button
               onClick={() => navigate('/ecom/dashboard/admin')}
-              className="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 transition mb-3 group"
+              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-muted-foreground transition mb-3 group"
             >
               <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -230,15 +230,15 @@ const BoutiqueLayoutInner = ({ children }) => {
               <span>{t('Retour à Scalor')}</span>
             </button>
             <StoreSwitcher>
-              <div className="flex items-center gap-3 rounded-xl px-2 py-1.5 -mx-2 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3 rounded-xl px-2 py-1.5 -mx-2 hover:bg-background transition-colors">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: layoutAccentSoft }}>
                   <svg className="w-5 h-5" style={{ color: layoutAccentColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-gray-900 truncate">{storeName}</p>
-                  <p className="text-[10px] text-gray-400 font-medium">{t('Module Boutique')}</p>
+                  <p className="text-sm font-bold text-foreground truncate">{storeName}</p>
+                  <p className="text-[10px] text-muted-foreground font-medium">{t('Module Boutique')}</p>
                 </div>
                 <svg className="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
@@ -258,25 +258,22 @@ const BoutiqueLayoutInner = ({ children }) => {
                   <div key={item.name}>
                     <button
                       onClick={() => setExpandedParent(expanded ? null : item.name)}
-                      className={`w-full group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-                        parentActive && !expanded
-                          ? 'text-white shadow-md'
-                          : parentActive
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      className={`w-full group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-colors duration-150 ${
+                        parentActive
+                          ? 'bg-sidebar-accent text-sidebar-foreground font-semibold'
+                          : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
                       }`}
-                              style={parentActive && !expanded ? { backgroundColor: layoutAccentColor } : {}}
                     >
-                      <span className={`flex-shrink-0 ${parentActive && !expanded ? 'text-white' : parentActive ? 'text-gray-700' : 'text-gray-400 group-hover:text-gray-600'}`}>
+                      <span className={`flex-shrink-0 ${parentActive ? 'text-sidebar-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
                         {item.icon}
                       </span>
                       <span className="truncate flex-1 text-left">{t(item.name)}</span>
-                      <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''} ${parentActive && !expanded ? 'text-white/70' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''} text-muted-foreground`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
                     {expanded && (
-                      <div className="ml-5 pl-3 border-l-2 border-gray-200 mt-1 space-y-0.5">
+                      <div className="ml-5 pl-3 border-l-2 border-border mt-1 space-y-0.5">
                         {item.children.map(child => {
                           const [childPath, childQuery] = (child.href || '').split('?');
                           const childActive = location.pathname === childPath && (!childQuery || location.search === `?${childQuery}`);
@@ -284,12 +281,11 @@ const BoutiqueLayoutInner = ({ children }) => {
                             <Link
                               key={child.href}
                               to={child.href}
-                              className={`block px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                              className={`block px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-150 ${
                                 childActive
-                                  ? 'text-white shadow-sm'
-                                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                                  ? 'bg-sidebar-accent text-sidebar-foreground font-semibold'
+                                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
                               }`}
-                              style={childActive ? { backgroundColor: layoutAccentColor } : {}}
                             >
                               {t(child.name)}
                             </Link>
@@ -307,14 +303,13 @@ const BoutiqueLayoutInner = ({ children }) => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-colors duration-150 ${
                     active
-                      ? 'text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-sidebar-accent text-sidebar-foreground font-semibold'
+                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
                   }`}
-                  style={active ? { backgroundColor: layoutAccentColor } : {}}
                 >
-                  <span className={`flex-shrink-0 ${active ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'}`}>
+                  <span className={`flex-shrink-0 ${active ? 'text-sidebar-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
                     {item.icon}
                   </span>
                   <span className="truncate flex-1">{t(item.name)}</span>
@@ -324,14 +319,14 @@ const BoutiqueLayoutInner = ({ children }) => {
           </nav>
 
           {/* Bottom: Preview store link */}
-          <div className="border-t border-gray-100 p-3">
+          <div className="border-t border-border p-3">
             <a
               href={storeUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition group"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-muted transition group"
             >
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-muted-foreground group-hover:text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
               <span>{t('Voir ma boutique')}</span>
@@ -347,11 +342,11 @@ const BoutiqueLayoutInner = ({ children }) => {
       >
 
         {/* Mobile header */}
-        {!location.pathname.includes('/form-builder') && <header className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white border-b border-gray-200">
+        {!location.pathname.includes('/form-builder') && <header className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-card border-b border-border">
           <div className="flex items-center justify-between h-14 px-4">
             <div className="flex items-center gap-3">
-              <button onClick={() => navigate('/ecom/dashboard/admin')} className="p-1.5 rounded-lg hover:bg-gray-100 transition">
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button onClick={() => navigate('/ecom/dashboard/admin')} className="p-1.5 rounded-lg hover:bg-muted transition">
+                <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
@@ -361,16 +356,16 @@ const BoutiqueLayoutInner = ({ children }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                 </div>
-                <span className="text-sm font-bold text-gray-900">{t('Boutique')}</span>
+                <span className="text-sm font-bold text-foreground">{t('Boutique')}</span>
               </div>
             </div>
             <a
               href={storeUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg hover:bg-gray-100 transition"
+              className="p-2 rounded-lg hover:bg-muted transition"
             >
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             </a>
@@ -378,8 +373,8 @@ const BoutiqueLayoutInner = ({ children }) => {
         </header>}
 
         {/* Desktop header */}
-        {!location.pathname.includes('/form-builder') && <header className="hidden lg:flex border-b h-14 items-center px-6 fixed top-0 left-[240px] z-20 bg-white border-gray-200" style={{ right: 'var(--store-assistant-dock, 0px)', transition: 'right 200ms ease' }}>
-          <h1 className="text-[15px] font-semibold text-gray-900">
+        {!location.pathname.includes('/form-builder') && <header className="hidden lg:flex border-b h-14 items-center px-6 fixed top-0 left-[240px] z-20 bg-card border-border" style={{ right: 'var(--store-assistant-dock, 0px)', transition: 'right 200ms ease' }}>
+          <h1 className="text-[15px] font-semibold text-foreground">
             {getBoutiquePageTitle(location.pathname, t)}
           </h1>
           <div className="flex-1" />
@@ -399,7 +394,7 @@ const BoutiqueLayoutInner = ({ children }) => {
       )}
 
       {/* ── Mobile Bottom Tab Bar ──────────────────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border">
         <div className="flex items-stretch px-2" style={{ height: '60px' }}>
           {mobileTabs.map((item) => {
             const active = isActive(item);
@@ -410,10 +405,10 @@ const BoutiqueLayoutInner = ({ children }) => {
                 onClick={() => setMoreOpen(false)}
                 className="flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-200 active:scale-95"
               >
-                <span className={`transition-colors duration-200 ${active ? '' : 'text-gray-500'}`} style={active ? { color: layoutAccentColor } : {}}>
+                <span className={`transition-colors duration-200 ${active ? '' : 'text-muted-foreground'}`} style={active ? { color: layoutAccentColor } : {}}>
                   {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
                 </span>
-                <span className={`text-[10px] font-medium leading-none transition-colors duration-200 ${active ? 'text-gray-900' : 'text-gray-500'}`}>
+                <span className={`text-[10px] font-medium leading-none transition-colors duration-200 ${active ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {t(item.name)}
                 </span>
               </Link>
@@ -426,21 +421,21 @@ const BoutiqueLayoutInner = ({ children }) => {
               onClick={() => setMoreOpen(!moreOpen)}
               className="flex flex-col items-center justify-center w-full h-full gap-1 transition-all duration-200 active:scale-95"
             >
-              <svg className={`w-5 h-5 transition-colors duration-200 ${moreOpen ? 'text-[#0F6B4F]' : 'text-gray-500'}`} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 transition-colors duration-200 ${moreOpen ? 'text-[#0F6B4F]' : 'text-muted-foreground'}`} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01" />
                 <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
               </svg>
-              <span className={`text-[10px] font-medium leading-none ${moreOpen ? 'text-gray-900' : 'text-gray-500'}`}>{t('Plus')}</span>
+              <span className={`text-[10px] font-medium leading-none ${moreOpen ? 'text-foreground' : 'text-muted-foreground'}`}>{t('Plus')}</span>
             </button>
 
             {moreOpen && (
               <>
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[45]" onClick={() => setMoreOpen(false)} />
                 <div className="fixed bottom-0 left-0 right-0 z-50 px-3" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)' }}>
-                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl mb-2">
+                  <div className="bg-card/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl mb-2">
                     <div className="px-5 pt-3 pb-2">
                       <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3" />
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{t("Plus d'options")}</p>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("Plus d'options")}</p>
                     </div>
                     <div className="divide-y divide-gray-100 max-h-[60vh] overflow-y-auto overscroll-contain">
                       {mobileMoreItems.map((item) => {
@@ -451,19 +446,19 @@ const BoutiqueLayoutInner = ({ children }) => {
                             <div key={item.name}>
                               <button
                                 onClick={() => setMobileExpandedGroup(groupExpanded ? null : item.name)}
-                                className={`flex items-center gap-4 px-5 py-4 w-full text-left text-[16px] font-medium active:bg-gray-100 transition-colors ${groupActive ? '' : 'text-gray-900'}`}
+                                className={`flex items-center gap-4 px-5 py-4 w-full text-left text-[16px] font-medium active:bg-muted transition-colors ${groupActive ? '' : 'text-foreground'}`}
                                 style={groupActive ? { color: layoutAccentColor } : {}}
                               >
-                                <span className={`flex-shrink-0 ${groupActive ? '' : 'text-gray-400'}`} style={groupActive ? { color: layoutAccentColor } : {}}>
+                                <span className={`flex-shrink-0 ${groupActive ? '' : 'text-muted-foreground'}`} style={groupActive ? { color: layoutAccentColor } : {}}>
                                   {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
                                 </span>
                                 <span className="flex-1 truncate">{t(item.name)}</span>
-                                <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${groupExpanded ? 'rotate-180' : ''} text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${groupExpanded ? 'rotate-180' : ''} text-muted-foreground`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                               </button>
                               {groupExpanded && (
-                                <div className="bg-gray-50/80 pb-1">
+                                <div className="bg-background/80 pb-1">
                                   {item.children.map(child => {
                                     const [childPath, childQuery] = (child.href || '').split('?');
                                     const childActive = location.pathname === childPath && (!childQuery || location.search === `?${childQuery}`);
@@ -472,7 +467,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                                         key={child.href}
                                         to={child.href}
                                         onClick={() => setMoreOpen(false)}
-                                        className={`flex items-center gap-3 pl-14 pr-5 py-3 text-[15px] font-medium active:bg-gray-200 transition-colors ${childActive ? '' : 'text-gray-600'}`}
+                                        className={`flex items-center gap-3 pl-14 pr-5 py-3 text-[15px] font-medium active:bg-gray-200 transition-colors ${childActive ? '' : 'text-muted-foreground'}`}
                                         style={childActive ? { color: layoutAccentColor } : {}}
                                       >
                                         <span className="truncate">{t(child.name)}</span>
@@ -490,10 +485,10 @@ const BoutiqueLayoutInner = ({ children }) => {
                             key={item.name}
                             to={item.href}
                             onClick={() => setMoreOpen(false)}
-                            className={`flex items-center gap-4 px-5 py-4 text-[16px] font-medium active:bg-gray-100 transition-colors ${active ? '' : 'text-gray-900'}`}
+                            className={`flex items-center gap-4 px-5 py-4 text-[16px] font-medium active:bg-muted transition-colors ${active ? '' : 'text-foreground'}`}
                             style={active ? { color: layoutAccentColor } : {}}
                           >
-                            <span className={`flex-shrink-0 ${active ? '' : 'text-gray-400'}`} style={active ? { color: layoutAccentColor } : {}}>
+                            <span className={`flex-shrink-0 ${active ? '' : 'text-muted-foreground'}`} style={active ? { color: layoutAccentColor } : {}}>
                               {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
                             </span>
                             <span className="flex-1 truncate">{t(item.name)}</span>

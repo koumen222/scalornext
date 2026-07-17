@@ -62,17 +62,17 @@ const ColorPicker = ({ label, value, onChange }) => (
         type="color"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer appearance-none"
+        className="w-10 h-10 rounded-xl border-2 border-border cursor-pointer appearance-none"
         style={{ backgroundColor: value }}
       />
     </div>
     <div className="flex-1">
-      <p className="text-sm font-medium text-gray-900">{label}</p>
+      <p className="text-sm font-medium text-foreground">{label}</p>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="text-xs text-gray-500 font-mono bg-transparent border-none p-0 focus:ring-0 w-24"
+        className="text-xs text-muted-foreground font-mono bg-transparent border-none p-0 focus:ring-0 w-24"
       />
     </div>
   </div>
@@ -81,14 +81,14 @@ const ColorPicker = ({ label, value, onChange }) => (
 const Toggle = ({ checked, onChange, label, desc }) => (
   <div className="flex items-center justify-between py-3">
     <div>
-      <p className="text-sm font-medium text-gray-900">{label}</p>
-      {desc && <p className="text-xs text-gray-500 mt-0.5">{desc}</p>}
+      <p className="text-sm font-medium text-foreground">{label}</p>
+      {desc && <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>}
     </div>
     <button
       onClick={() => onChange(!checked)}
       className={`relative w-11 h-6 rounded-full transition-colors ${checked ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
     >
-      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : ''}`} />
+      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform ${checked ? 'translate-x-5' : ''}`} />
     </button>
   </div>
 );
@@ -148,14 +148,14 @@ const BoutiqueTheme = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Thème & Apparence</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{tp('Les modifications s\'appliquent et se sauvegardent automatiquement')}</p>
+          <h1 className="text-xl font-bold text-foreground">Thème & Apparence</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{tp('Les modifications s\'appliquent et se sauvegardent automatiquement')}</p>
         </div>
         {/* Auto-save indicator */}
         <div className="flex items-center gap-2 h-10 px-1">
           {autoSave === 'saving' && (
-            <span className="flex items-center gap-1.5 text-xs text-gray-400">
-              <span className="w-3 h-3 rounded-full border-2 border-gray-200 border-t-[#0F6B4F] animate-spin inline-block flex-shrink-0" />
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="w-3 h-3 rounded-full border-2 border-border border-t-[#0F6B4F] animate-spin inline-block flex-shrink-0" />
               {tp('Sauvegarde...')}
             </span>
           )}
@@ -176,8 +176,8 @@ const BoutiqueTheme = () => {
       </div>
 
       {/* ── 1. Template Selection ──────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Template')}</h2>
+      <section className="bg-card rounded-2xl border p-5">
+        <h2 className="text-sm font-bold text-foreground mb-4">{tp('Template')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TEMPLATES.map(t => (
             <button
@@ -186,12 +186,12 @@ const BoutiqueTheme = () => {
               className={`p-4 rounded-xl border-2 text-left transition-all ${
                 localTheme.template === t.id
                   ? 'border-[#0F6B4F] bg-[#E6F2ED] shadow-md'
-                  : 'border-gray-200 hover:border-gray-300'
+                  : 'border-border hover:border-gray-300'
               }`}
             >
-              <span className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 mb-3">{TEMPLATE_ICONS[t.id]}</span>
-              <p className="text-sm font-bold text-gray-900">{t.name}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{t.desc}</p>
+              <span className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground mb-3">{TEMPLATE_ICONS[t.id]}</span>
+              <p className="text-sm font-bold text-foreground">{t.name}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{t.desc}</p>
               {localTheme.template === t.id && (
                 <span className="inline-block mt-2 px-2 py-0.5 text-[10px] font-bold text-[#0A5740] bg-[#C0DDD2] rounded-full">ACTIF</span>
               )}
@@ -201,8 +201,8 @@ const BoutiqueTheme = () => {
       </section>
 
       {/* ── 2. Colors ─────────────────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Couleurs')}</h2>
+      <section className="bg-card rounded-2xl border p-5">
+        <h2 className="text-sm font-bold text-foreground mb-4">{tp('Couleurs')}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <ColorPicker label="Couleur principale" value={localTheme.primaryColor} onChange={(v) => updateTheme('primaryColor', v)} />
           <ColorPicker label="Couleur CTA" value={localTheme.ctaColor} onChange={(v) => updateTheme('ctaColor', v)} />
@@ -211,7 +211,7 @@ const BoutiqueTheme = () => {
         </div>
 
         {/* Live preview bar */}
-        <div className="mt-5 p-4 rounded-xl border border-gray-200" style={{ backgroundColor: localTheme.backgroundColor }}>
+        <div className="mt-5 p-4 rounded-xl border border-border" style={{ backgroundColor: localTheme.backgroundColor }}>
           <p className="text-sm font-bold mb-2" style={{ color: localTheme.textColor, fontFamily: FONTS.find(f => f.id === localTheme.font)?.family }}>
             {tp('Aperçu en temps réel')}
           </p>
@@ -230,8 +230,8 @@ const BoutiqueTheme = () => {
       </section>
 
       {/* ── 3. Typography ─────────────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Typographie')}</h2>
+      <section className="bg-card rounded-2xl border p-5">
+        <h2 className="text-sm font-bold text-foreground mb-4">{tp('Typographie')}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {FONTS.map(f => (
             <button
@@ -240,19 +240,19 @@ const BoutiqueTheme = () => {
               className={`p-3 rounded-xl border-2 text-left transition-all ${
                 localTheme.font === f.id
                   ? 'border-[#0F6B4F] bg-[#E6F2ED]'
-                  : 'border-gray-200 hover:border-gray-300'
+                  : 'border-border hover:border-gray-300'
               }`}
             >
-              <p className="text-lg font-bold text-gray-900 mb-0.5" style={{ fontFamily: f.family }}>{f.name}</p>
-              <p className="text-xs text-gray-500" style={{ fontFamily: f.family }}>{tp('Aa Bb Cc 123')}</p>
+              <p className="text-lg font-bold text-foreground mb-0.5" style={{ fontFamily: f.family }}>{f.name}</p>
+              <p className="text-xs text-muted-foreground" style={{ fontFamily: f.family }}>{tp('Aa Bb Cc 123')}</p>
             </button>
           ))}
         </div>
       </section>
 
       {/* ── 4. Border Radius ──────────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">{tp('Coins arrondis (Border Radius)')}</h2>
+      <section className="bg-card rounded-2xl border p-5">
+        <h2 className="text-sm font-bold text-foreground mb-4">{tp('Coins arrondis (Border Radius)')}</h2>
         <div className="flex flex-wrap gap-3">
           {RADIUS_OPTIONS.map(r => (
             <button
@@ -261,23 +261,23 @@ const BoutiqueTheme = () => {
               className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all min-w-[80px] ${
                 localTheme.borderRadius === r.id
                   ? 'border-[#0F6B4F] bg-[#E6F2ED]'
-                  : 'border-gray-200 hover:border-gray-300'
+                  : 'border-border hover:border-gray-300'
               }`}
             >
               <div
                 className="w-12 h-8 bg-[#E6F2ED] border-2 border-[#0F6B4F]"
                 style={{ borderRadius: r.value }}
               />
-              <span className="text-xs font-medium text-gray-700">{r.label}</span>
+              <span className="text-xs font-medium text-foreground">{r.label}</span>
             </button>
           ))}
         </div>
       </section>
 
       {/* ── 5. Sections Toggle ────────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-2">{tp('Sections de la boutique')}</h2>
-        <p className="text-xs text-gray-500 mb-4">{tp('Activez ou désactivez les sections visibles sur votre boutique')}</p>
+      <section className="bg-card rounded-2xl border p-5">
+        <h2 className="text-sm font-bold text-foreground mb-2">{tp('Sections de la boutique')}</h2>
+        <p className="text-xs text-muted-foreground mb-4">{tp('Activez ou désactivez les sections visibles sur votre boutique')}</p>
         <div className="divide-y divide-gray-100">
           {SECTION_TOGGLES.map(s => (
             <Toggle

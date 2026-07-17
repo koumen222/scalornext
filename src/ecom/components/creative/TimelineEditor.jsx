@@ -248,60 +248,60 @@ export default function TimelineEditor({
       {/* Transport */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <button onClick={togglePlay} className="h-9 w-9 rounded-full bg-cyan-600 text-white flex items-center justify-center hover:bg-cyan-700">
+          <button onClick={togglePlay} className="h-9 w-9 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-700">
             {playing ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
           </button>
-          <span className="text-[12px] font-mono text-gray-600 tabular-nums">{fmtTime(currentTime)} / {fmtTime(total)}</span>
+          <span className="text-[12px] font-mono text-muted-foreground tabular-nums">{fmtTime(currentTime)} / {fmtTime(total)}</span>
           <button onClick={splitAtPlayhead} title={tp('Couper au curseur')} className="h-9 px-3 rounded-lg bg-gray-900 text-white text-[12px] font-semibold inline-flex items-center gap-1.5 hover:bg-black"><Scissors size={14} /> {tp('Couper')}</button>
         </div>
         <div className="flex items-center gap-2">
           {subtitlesOn && (
-            <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
-              <button onClick={() => onSetCaptionMode?.('dynamic')} className={`h-9 px-2.5 text-[11.5px] font-semibold inline-flex items-center gap-1 ${captionMode === 'dynamic' ? 'bg-cyan-600 text-white' : 'bg-white text-gray-600'}`}><Sparkles size={12} /> {tp('Dynamique')}</button>
-              <button onClick={() => onSetCaptionMode?.('block')} className={`h-9 px-2.5 text-[11.5px] font-semibold ${captionMode === 'block' ? 'bg-cyan-600 text-white' : 'bg-white text-gray-600'}`}>{tp('Bloc')}</button>
+            <div className="inline-flex rounded-lg border border-border overflow-hidden">
+              <button onClick={() => onSetCaptionMode?.('dynamic')} className={`h-9 px-2.5 text-[11.5px] font-semibold inline-flex items-center gap-1 ${captionMode === 'dynamic' ? 'bg-primary text-white' : 'bg-card text-muted-foreground'}`}><Sparkles size={12} /> {tp('Dynamique')}</button>
+              <button onClick={() => onSetCaptionMode?.('block')} className={`h-9 px-2.5 text-[11.5px] font-semibold ${captionMode === 'block' ? 'bg-primary text-white' : 'bg-card text-muted-foreground'}`}>{tp('Bloc')}</button>
             </div>
           )}
           {onOpenPro && (
-            <button onClick={onOpenPro} title={tp('Éditeur plein écran')} className="h-9 px-3 rounded-lg border border-gray-200 text-gray-600 text-[12px] font-semibold inline-flex items-center gap-1.5 hover:bg-gray-50"><Maximize2 size={13} /> {tp('Plein écran')}</button>
+            <button onClick={onOpenPro} title={tp('Éditeur plein écran')} className="h-9 px-3 rounded-lg border border-border text-muted-foreground text-[12px] font-semibold inline-flex items-center gap-1.5 hover:bg-background"><Maximize2 size={13} /> {tp('Plein écran')}</button>
           )}
-          <button onClick={() => setPxPerSec((z) => clamp(z - 16, 24, 220))} className="h-9 w-9 rounded-lg border border-gray-200 text-gray-500 flex items-center justify-center hover:bg-gray-50"><ZoomOut size={15} /></button>
-          <button onClick={() => setPxPerSec((z) => clamp(z + 16, 24, 220))} className="h-9 w-9 rounded-lg border border-gray-200 text-gray-500 flex items-center justify-center hover:bg-gray-50"><ZoomIn size={15} /></button>
+          <button onClick={() => setPxPerSec((z) => clamp(z - 16, 24, 220))} className="h-9 w-9 rounded-lg border border-border text-muted-foreground flex items-center justify-center hover:bg-background"><ZoomOut size={15} /></button>
+          <button onClick={() => setPxPerSec((z) => clamp(z + 16, 24, 220))} className="h-9 w-9 rounded-lg border border-border text-muted-foreground flex items-center justify-center hover:bg-background"><ZoomIn size={15} /></button>
         </div>
       </div>
 
       {/* Choix de transition pour la jonction sélectionnée */}
       {junctionMenu !== null && scenes[junctionMenu] && (
-        <div className="flex items-center gap-2 flex-wrap rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2">
-          <span className="text-[12px] font-semibold text-cyan-800">{tp('Transition après le plan')} {junctionMenu + 1} :</span>
+        <div className="flex items-center gap-2 flex-wrap rounded-lg border border-primary/25 bg-primary/10 px-3 py-2">
+          <span className="text-[12px] font-semibold text-primary">{tp('Transition après le plan')} {junctionMenu + 1} :</span>
           {TRANSITIONS.map((t) => (
             <button key={t.id} onClick={() => patch(scenes[junctionMenu].id, { transitionOut: t.id })}
-              className={`h-7 px-2.5 rounded-md text-[12px] font-semibold transition ${(scenes[junctionMenu].transitionOut || transition) === t.id ? 'bg-cyan-600 text-white' : 'bg-white border border-cyan-200 text-cyan-700 hover:bg-cyan-100'}`}>
+              className={`h-7 px-2.5 rounded-md text-[12px] font-semibold transition ${(scenes[junctionMenu].transitionOut || transition) === t.id ? 'bg-primary text-white' : 'bg-card border border-primary/25 text-primary hover:bg-primary/12'}`}>
               {t.label}
             </button>
           ))}
-          <button onClick={() => setJunctionMenu(null)} className="ml-auto text-gray-400 hover:text-gray-700"><X size={14} /></button>
+          <button onClick={() => setJunctionMenu(null)} className="ml-auto text-muted-foreground hover:text-foreground"><X size={14} /></button>
         </div>
       )}
 
       {/* Pistes */}
-      <div className="rounded-xl border border-gray-200 bg-gray-50 overflow-x-auto">
+      <div className="rounded-xl border border-border bg-background overflow-x-auto">
         <div className="relative" style={{ width: trackW }}>
           {/* Règle */}
-          <div className="relative h-6 border-b border-gray-200 cursor-pointer select-none" onClick={seekFromEvent}>
+          <div className="relative h-6 border-b border-border cursor-pointer select-none" onClick={seekFromEvent}>
             {Array.from({ length: Math.ceil(total) + 1 }).map((_, s) => (
-              <div key={s} className="absolute top-0 h-full border-l border-gray-200" style={{ left: s * pxPerSec }}>
-                <span className="absolute top-0.5 left-1 text-[9px] text-gray-400">{s}s</span>
+              <div key={s} className="absolute top-0 h-full border-l border-border" style={{ left: s * pxPerSec }}>
+                <span className="absolute top-0.5 left-1 text-[9px] text-muted-foreground">{s}s</span>
               </div>
             ))}
           </div>
 
           {/* Piste vidéo */}
-          <div className="relative border-b border-gray-200" style={{ height: 66 }} onClick={seekFromEvent}>
+          <div className="relative border-b border-border" style={{ height: 66 }} onClick={seekFromEvent}>
             {scenes.map((s, i) => {
               const isSel = sel.type === 'clip' && s.id === sel.id;
               return (
                 <div key={s.id} onClick={(e) => { e.stopPropagation(); setSel({ type: 'clip', id: s.id }); }}
-                  className={`absolute top-1.5 bottom-1.5 rounded-md overflow-hidden cursor-pointer border-2 ${isSel ? 'border-cyan-500' : 'border-black/10'}`}
+                  className={`absolute top-1.5 bottom-1.5 rounded-md overflow-hidden cursor-pointer border-2 ${isSel ? 'border-primary/30' : 'border-black/10'}`}
                   style={{ left: starts[i] * pxPerSec, width: Math.max(10, durOf(s) * pxPerSec) }}>
                   {s.videoPoster || s.imageUrl ? (
                     <img src={s.videoPoster || s.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
@@ -311,8 +311,8 @@ export default function TimelineEditor({
                     {s.videoUrl ? <Film size={15} /> : s.imageUrl ? <ImageIcon size={15} /> : <Mic size={15} />}
                   </div>
                   <span className="absolute bottom-0.5 left-1 text-[9px] font-bold text-white/90 drop-shadow">{durOf(s).toFixed(1)}s</span>
-                  <div onPointerDown={(e) => startTrim(e, s, 'l')} className="absolute left-0 top-0 bottom-0 w-2 bg-cyan-500/80 cursor-ew-resize hover:bg-cyan-400" />
-                  <div onPointerDown={(e) => startTrim(e, s, 'r')} className="absolute right-0 top-0 bottom-0 w-2 bg-cyan-500/80 cursor-ew-resize hover:bg-cyan-400" />
+                  <div onPointerDown={(e) => startTrim(e, s, 'l')} className="absolute left-0 top-0 bottom-0 w-2 bg-primary/80 cursor-ew-resize hover:bg-primary" />
+                  <div onPointerDown={(e) => startTrim(e, s, 'r')} className="absolute right-0 top-0 bottom-0 w-2 bg-primary/80 cursor-ew-resize hover:bg-primary" />
                 </div>
               );
             })}
@@ -322,25 +322,25 @@ export default function TimelineEditor({
               return (
                 <button key={`j${scenes[j].id}`} onClick={(e) => { e.stopPropagation(); setJunctionMenu(junctionMenu === j ? null : j); }}
                   title={`${tp('Transition')} : ${transLabel(cur)}`}
-                  className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-5 h-5 rounded-full border-2 flex items-center justify-center shadow ${junctionMenu === j ? 'bg-cyan-600 border-cyan-600' : 'bg-white border-cyan-500 hover:bg-cyan-50'}`}
+                  className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-5 h-5 rounded-full border-2 flex items-center justify-center shadow ${junctionMenu === j ? 'bg-primary border-primary/30' : 'bg-card border-primary/30 hover:bg-primary/10'}`}
                   style={{ left: starts[j + 1] * pxPerSec }}>
-                  <ArrowLeftRight size={11} className={junctionMenu === j ? 'text-white' : 'text-cyan-600'} />
+                  <ArrowLeftRight size={11} className={junctionMenu === j ? 'text-white' : 'text-primary'} />
                 </button>
               );
             })}
           </div>
 
           {/* Piste sous-titres */}
-          <div className="relative border-b border-gray-200 bg-white/40" style={{ height: 34 }} onClick={seekFromEvent}>
+          <div className="relative border-b border-border bg-card/40" style={{ height: 34 }} onClick={seekFromEvent}>
             {subtitlesOn ? scenes.map((s, i) => {
               const cap = (s.subtitleText || s.voiceText || '').trim();
               const isSel = sel.type === 'subtitle' && s.id === sel.id;
               return (
                 <div key={s.id} onClick={(e) => { e.stopPropagation(); setSel({ type: 'subtitle', id: s.id }); }}
-                  className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center overflow-hidden cursor-pointer border ${isSel ? 'border-cyan-500 bg-cyan-50' : 'border-cyan-200 bg-cyan-50/60'}`}
+                  className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center overflow-hidden cursor-pointer border ${isSel ? 'border-primary/30 bg-primary/10' : 'border-primary/25 bg-primary/10/60'}`}
                   style={{ left: starts[i] * pxPerSec, width: Math.max(10, durOf(s) * pxPerSec) }}>
-                  <Type size={10} className="text-cyan-600 mr-1 shrink-0" />
-                  <span className="text-[10px] text-cyan-800 truncate">{cap || tp('(vide)')}</span>
+                  <Type size={10} className="text-primary mr-1 shrink-0" />
+                  <span className="text-[10px] text-primary truncate">{cap || tp('(vide)')}</span>
                 </div>
               );
             }) : <span className="absolute left-2 top-1.5 text-[10px] text-gray-300">{tp('Sous-titres désactivés')}</span>}
@@ -350,13 +350,13 @@ export default function TimelineEditor({
           <div className="relative" style={{ height: 34 }} onClick={seekFromEvent}>
             {musicUrl ? (
               <div onClick={(e) => { e.stopPropagation(); setSel({ type: 'music', id: 'music' }); }}
-                className={`absolute top-1 bottom-1 left-0 rounded px-2 flex items-center gap-1.5 overflow-hidden cursor-pointer border ${sel.type === 'music' ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-200 bg-emerald-50/60'}`}
+                className={`absolute top-1 bottom-1 left-0 rounded px-2 flex items-center gap-1.5 overflow-hidden cursor-pointer border ${sel.type === 'music' ? 'border-primary/30 bg-primary/10' : 'border-primary/25 bg-primary/10/60'}`}
                 style={{ width: Math.max(40, total * pxPerSec) }}>
-                <Music size={11} className="text-emerald-600 shrink-0" />
-                <span className="text-[10px] text-emerald-800 truncate">{tp('Musique de fond')}</span>
+                <Music size={11} className="text-primary shrink-0" />
+                <span className="text-[10px] text-primary truncate">{tp('Musique de fond')}</span>
               </div>
             ) : (
-              <label className={`absolute top-1 left-2 h-[26px] px-2.5 rounded border border-dashed border-gray-300 text-[10.5px] font-semibold text-gray-500 inline-flex items-center gap-1.5 cursor-pointer hover:border-emerald-300 ${musicBusy ? 'opacity-50 pointer-events-none' : ''}`}>
+              <label className={`absolute top-1 left-2 h-[26px] px-2.5 rounded border border-dashed border-gray-300 text-[10.5px] font-semibold text-muted-foreground inline-flex items-center gap-1.5 cursor-pointer hover:border-primary/30 ${musicBusy ? 'opacity-50 pointer-events-none' : ''}`}>
                 {musicBusy ? <Loader2 size={11} className="animate-spin" /> : <Music size={11} />} {tp('Ajouter une musique')}
                 <input type="file" accept="audio/*" className="hidden" onClick={(e) => e.stopPropagation()} onChange={(e) => addMusic(e.target.files?.[0])} />
               </label>
@@ -371,47 +371,47 @@ export default function TimelineEditor({
       </div>
 
       {/* Fonds sonores prédéfinis */}
-      <div className="flex items-center gap-2 flex-wrap rounded-xl border border-gray-200 bg-white px-3 py-2">
-        <span className="text-[12px] font-semibold text-gray-700 inline-flex items-center gap-1.5"><Music size={13} className="text-emerald-600" /> {tp('Fonds sonores')} :</span>
+      <div className="flex items-center gap-2 flex-wrap rounded-xl border border-border bg-card px-3 py-2">
+        <span className="text-[12px] font-semibold text-foreground inline-flex items-center gap-1.5"><Music size={13} className="text-primary" /> {tp('Fonds sonores')} :</span>
         {presetsLoading ? <Loader2 size={14} className="animate-spin text-gray-300" /> : presets.length ? presets.map((p) => (
           <button key={p.id} onClick={() => onSetMusicUrl?.(p.url)}
-            className={`h-7 px-2.5 rounded-md text-[12px] font-semibold transition ${musicUrl === p.url ? 'bg-emerald-600 text-white' : 'bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100'}`}>
+            className={`h-7 px-2.5 rounded-md text-[12px] font-semibold transition ${musicUrl === p.url ? 'bg-primary text-white' : 'bg-primary/10 border border-primary/25 text-primary hover:bg-primary/12'}`}>
             {p.label}
           </button>
-        )) : <span className="text-[11px] text-gray-400">{tp('Indisponibles')}</span>}
-        <label className={`h-7 px-2.5 rounded-md text-[12px] font-semibold border border-dashed border-gray-300 text-gray-500 inline-flex items-center gap-1.5 cursor-pointer hover:border-emerald-300 ${musicBusy ? 'opacity-50 pointer-events-none' : ''}`}>
+        )) : <span className="text-[11px] text-muted-foreground">{tp('Indisponibles')}</span>}
+        <label className={`h-7 px-2.5 rounded-md text-[12px] font-semibold border border-dashed border-gray-300 text-muted-foreground inline-flex items-center gap-1.5 cursor-pointer hover:border-primary/30 ${musicBusy ? 'opacity-50 pointer-events-none' : ''}`}>
           <Upload size={12} /> {tp('Importer')}
           <input type="file" accept="audio/*" className="hidden" onChange={(e) => addMusic(e.target.files?.[0])} />
         </label>
-        {musicUrl && <button onClick={() => onSetMusicUrl?.('')} className="text-[11px] text-gray-400 hover:text-red-500 inline-flex items-center gap-1"><X size={12} /> {tp('Retirer')}</button>}
+        {musicUrl && <button onClick={() => onSetMusicUrl?.('')} className="text-[11px] text-muted-foreground hover:text-red-500 inline-flex items-center gap-1"><X size={12} /> {tp('Retirer')}</button>}
       </div>
 
       {/* Inspecteur */}
       {sel.type === 'clip' && selScene && (
-        <div className="rounded-xl border border-gray-200 bg-white p-3 flex flex-wrap items-center gap-3">
-          <span className="text-[12px] font-semibold text-gray-700">{tp('Plan')}</span>
-          <span className="text-[11px] text-gray-400">{selScene.videoUrl ? tp('Clip') : selScene.imageUrl ? tp('Image') : tp('Sans visuel')} · {durOf(selScene).toFixed(1)}s{selScene.videoUrl && selScene.srcDuration ? ` / ${Number(selScene.srcDuration).toFixed(1)}s` : ''}</span>
+        <div className="rounded-xl border border-border bg-card p-3 flex flex-wrap items-center gap-3">
+          <span className="text-[12px] font-semibold text-foreground">{tp('Plan')}</span>
+          <span className="text-[11px] text-muted-foreground">{selScene.videoUrl ? tp('Clip') : selScene.imageUrl ? tp('Image') : tp('Sans visuel')} · {durOf(selScene).toFixed(1)}s{selScene.videoUrl && selScene.srcDuration ? ` / ${Number(selScene.srcDuration).toFixed(1)}s` : ''}</span>
           <div className="ml-auto flex items-center gap-1.5">
-            <button onClick={() => move(selScene.id, -1)} className="h-8 w-8 rounded-lg border border-gray-200 text-gray-500 flex items-center justify-center hover:bg-gray-50"><ChevronLeft size={15} /></button>
-            <button onClick={() => move(selScene.id, 1)} className="h-8 w-8 rounded-lg border border-gray-200 text-gray-500 flex items-center justify-center hover:bg-gray-50"><ChevronRight size={15} /></button>
-            <button onClick={() => { if (selScene.videoUrl) patch(selScene.id, { trimStart: 0, durationSec: selScene.srcDuration || durOf(selScene) }); }} disabled={!selScene.videoUrl} className="h-8 px-3 rounded-lg border border-gray-200 text-[12px] text-gray-600 hover:bg-gray-50 disabled:opacity-40">{tp('Réinit. rognage')}</button>
-            <button onClick={() => removeScene(selScene.id)} disabled={scenes.length <= 1} className="h-8 w-8 rounded-lg border border-gray-200 text-red-400 flex items-center justify-center hover:bg-red-50 disabled:opacity-40"><Trash2 size={14} /></button>
+            <button onClick={() => move(selScene.id, -1)} className="h-8 w-8 rounded-lg border border-border text-muted-foreground flex items-center justify-center hover:bg-background"><ChevronLeft size={15} /></button>
+            <button onClick={() => move(selScene.id, 1)} className="h-8 w-8 rounded-lg border border-border text-muted-foreground flex items-center justify-center hover:bg-background"><ChevronRight size={15} /></button>
+            <button onClick={() => { if (selScene.videoUrl) patch(selScene.id, { trimStart: 0, durationSec: selScene.srcDuration || durOf(selScene) }); }} disabled={!selScene.videoUrl} className="h-8 px-3 rounded-lg border border-border text-[12px] text-muted-foreground hover:bg-background disabled:opacity-40">{tp('Réinit. rognage')}</button>
+            <button onClick={() => removeScene(selScene.id)} disabled={scenes.length <= 1} className="h-8 w-8 rounded-lg border border-border text-red-400 flex items-center justify-center hover:bg-red-50 disabled:opacity-40"><Trash2 size={14} /></button>
           </div>
         </div>
       )}
       {sel.type === 'subtitle' && selScene && (
-        <div className="rounded-xl border border-gray-200 bg-white p-3">
-          <label className="text-[11px] font-semibold text-gray-500 flex items-center gap-1.5 mb-1"><Type size={12} /> {tp('Sous-titre de ce plan')}</label>
+        <div className="rounded-xl border border-border bg-card p-3">
+          <label className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5 mb-1"><Type size={12} /> {tp('Sous-titre de ce plan')}</label>
           <textarea value={selScene.subtitleText || ''} onChange={(e) => patch(selScene.id, { subtitleText: e.target.value })} rows={2}
             placeholder={tp('Texte affiché à l\'écran…')}
-            className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-[12.5px] outline-none focus:border-cyan-400 resize-y" />
+            className="w-full rounded-lg border border-border px-2.5 py-1.5 text-[12.5px] outline-none focus:border-primary/40 resize-y" />
           {onSetCaptionStyle && (
             <div className="mt-2">
-              <p className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Modèle de sous-titre (global)')}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Modèle de sous-titre (global)')}</p>
               <div className="flex flex-wrap gap-1.5">
                 {CAPTION_STYLES.map((cs) => (
                   <button key={cs.id} onClick={() => onSetCaptionStyle(cs.id)}
-                    className={`h-8 px-2 rounded-lg border text-[11px] font-bold inline-flex items-center gap-1.5 transition ${captionStyle === cs.id ? 'border-cyan-500 ring-2 ring-cyan-100' : 'border-gray-200 hover:bg-gray-50'}`}>
+                    className={`h-8 px-2 rounded-lg border text-[11px] font-bold inline-flex items-center gap-1.5 transition ${captionStyle === cs.id ? 'border-primary/30 ring-2 ring-primary/20' : 'border-border hover:bg-background'}`}>
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded" style={{ background: cs.bg === 'transparent' ? '#1f2937' : cs.bg, color: cs.text }}>A</span>
                     {cs.label}
                   </button>
@@ -422,18 +422,18 @@ export default function TimelineEditor({
         </div>
       )}
       {sel.type === 'music' && musicUrl && (
-        <div className="rounded-xl border border-gray-200 bg-white p-3 flex flex-wrap items-center gap-3">
-          <Music size={15} className="text-emerald-600" />
+        <div className="rounded-xl border border-border bg-card p-3 flex flex-wrap items-center gap-3">
+          <Music size={15} className="text-primary" />
           <audio src={musicUrl} controls className="h-8 flex-1 min-w-[180px]" />
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-gray-500">{tp('Volume')}</span>
-            <input type="range" min={0} max={0.5} step={0.05} value={musicVolume} onChange={(e) => setMusicVolume?.(Number(e.target.value))} className="w-28 accent-emerald-600" />
+            <span className="text-[11px] text-muted-foreground">{tp('Volume')}</span>
+            <input type="range" min={0} max={0.5} step={0.05} value={musicVolume} onChange={(e) => setMusicVolume?.(Number(e.target.value))} className="w-28 accent-primary" />
           </div>
-          <button onClick={() => { onSetMusicUrl?.(''); setSel({ type: 'clip', id: scenes[0]?.id }); }} className="h-8 px-3 rounded-lg border border-gray-200 text-[12px] text-red-500 hover:bg-red-50">{tp('Retirer')}</button>
+          <button onClick={() => { onSetMusicUrl?.(''); setSel({ type: 'clip', id: scenes[0]?.id }); }} className="h-8 px-3 rounded-lg border border-border text-[12px] text-red-500 hover:bg-red-50">{tp('Retirer')}</button>
         </div>
       )}
 
-      <p className="text-[11px] text-gray-400">{tp('Règle = déplacer la lecture · « Couper » = scinder au curseur · bords cyan = rogner · piste sous-titres = éditer le texte · piste musique = fond sonore.')}</p>
+      <p className="text-[11px] text-muted-foreground">{tp('Règle = déplacer la lecture · « Couper » = scinder au curseur · bords cyan = rogner · piste sous-titres = éditer le texte · piste musique = fond sonore.')}</p>
 
       <audio ref={audioRef} className="hidden" />
       {narrationUrl && <audio ref={narrRef} src={narrationUrl} className="hidden" />}

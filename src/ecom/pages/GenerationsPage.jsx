@@ -28,7 +28,7 @@ const statusConfig = {
   pending: { label: 'En attente', color: 'bg-amber-100 text-amber-700', icon: Clock },
   generating_text: { label: 'Texte en cours', color: 'bg-blue-100 text-blue-700', icon: Loader2, animate: true },
   generating_images: { label: 'Images en cours', color: 'bg-purple-100 text-purple-700', icon: Loader2, animate: true },
-  done: { label: 'Terminee', color: 'bg-primary-100 text-primary-700', icon: CheckCircle },
+  done: { label: 'Terminee', color: 'bg-primary-100 text-primary', icon: CheckCircle },
   error: { label: 'Echec partiel', color: 'bg-red-100 text-red-700', icon: XCircle },
 };
 
@@ -301,7 +301,7 @@ export default function GenerationsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
   }
@@ -310,18 +310,18 @@ export default function GenerationsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 border border-primary-100">
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary border border-primary-100">
             <Layers3 className="w-3.5 h-3.5" />
             {tp('Product Page Studio')}
           </div>
-          <h1 className="mt-3 text-2xl font-black text-gray-900">{pageMeta.title}</h1>
-          <p className="text-sm text-gray-500 mt-1 max-w-2xl">{pageMeta.description}</p>
+          <h1 className="mt-3 text-2xl font-black text-foreground">{pageMeta.title}</h1>
+          <p className="text-sm text-muted-foreground mt-1 max-w-2xl">{pageMeta.description}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={fetchTasks}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-sm font-semibold text-muted-foreground hover:bg-background transition"
             title={tp('Rafraichir')}
           >
             <RefreshCw className="w-4 h-4" />
@@ -329,7 +329,7 @@ export default function GenerationsPage() {
           </button>
           <button
             onClick={() => navigate('/ecom/boutique/product-page-studio')}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-sm font-semibold text-muted-foreground hover:bg-background transition"
           >
             <Wand2 className="w-4 h-4" />
             {tp('Vue studio')}
@@ -346,7 +346,7 @@ export default function GenerationsPage() {
             <>
               <button
                 onClick={() => navigate('/ecom/boutique/products/generator', { state: { from: location.pathname } })}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition"
               >
                 <Plus className="w-4 h-4" />
                 {tp('Nouvelle generation')}
@@ -385,14 +385,14 @@ export default function GenerationsPage() {
             {syncing ? 'Sync…' : tp('Sync crédits')}
           </button>
           {syncResult && (
-            <div className={`absolute -bottom-8 left-0 right-0 text-center text-[11px] font-semibold px-2 py-1 rounded-lg ${syncResult.startsWith('✓') ? 'bg-primary-50 text-primary-700' : 'bg-red-50 text-red-600'}`}>
+            <div className={`absolute -bottom-8 left-0 right-0 text-center text-[11px] font-semibold px-2 py-1 rounded-lg ${syncResult.startsWith('✓') ? 'bg-primary-50 text-primary' : 'bg-red-50 text-red-600'}`}>
               {syncResult}
             </div>
           )}
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 space-y-4">
+      <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           {filterOptions.map((filter) => {
             const active = activeFilter === filter.id;
@@ -402,11 +402,11 @@ export default function GenerationsPage() {
                 type="button"
                 onClick={() => setActiveFilter(filter.id)}
                 className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition ${
-                  active ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  active ? 'bg-gray-900 text-white' : 'bg-muted text-muted-foreground hover:bg-gray-200'
                 }`}
               >
                 <span>{filter.label}</span>
-                <span className={`rounded-full px-1.5 py-0.5 text-[11px] ${active ? 'bg-white/20 text-white' : 'bg-white text-gray-500'}`}>
+                <span className={`rounded-full px-1.5 py-0.5 text-[11px] ${active ? 'bg-card/20 text-white' : 'bg-card text-muted-foreground'}`}>
                   {filter.count}
                 </span>
               </button>
@@ -419,8 +419,8 @@ export default function GenerationsPage() {
             <div className="w-16 h-16 mx-auto mb-4 bg-primary-50 rounded-2xl flex items-center justify-center">
               <Sparkles className="w-8 h-8 text-primary-500" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">{pageMeta.emptyTitle}</h3>
-            <p className="text-sm text-gray-500 mb-6">{pageMeta.emptyDescription}</p>
+            <h3 className="text-lg font-semibold text-foreground mb-1">{pageMeta.emptyTitle}</h3>
+            <p className="text-sm text-muted-foreground mb-6">{pageMeta.emptyDescription}</p>
             <button
               onClick={() => navigate(
                 storeTemplate === 'magazine'
@@ -431,7 +431,7 @@ export default function GenerationsPage() {
               className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition ${
                 storeTemplate === 'magazine'
                   ? 'border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800'
-                  : 'bg-primary-600 hover:bg-primary-700 text-white'
+                  : 'bg-primary hover:bg-primary-700 text-white'
               }`}
             >
               {storeTemplate === 'magazine' ? <Crown className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
@@ -481,18 +481,18 @@ export default function GenerationsPage() {
 function StudioCard({ label, value, hint, tone, icon }) {
   const toneClass = {
     blue: 'bg-blue-50 text-blue-700 border-blue-100',
-    emerald: 'bg-primary-50 text-primary-700 border-primary-100',
+    emerald: 'bg-primary-50 text-primary border-primary-100',
     red: 'bg-red-50 text-red-700 border-red-100',
     amber: 'bg-amber-50 text-amber-700 border-amber-100',
-  }[tone] || 'bg-gray-50 text-gray-700 border-gray-100';
+  }[tone] || 'bg-background text-foreground border-border';
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-4">
+    <div className="bg-card border border-border rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">{label}</p>
-          <p className="mt-2 text-2xl font-black text-gray-900">{value}</p>
-          <p className="mt-1 text-xs text-gray-500">{hint}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-black text-foreground">{value}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
         </div>
         <div className={`inline-flex items-center justify-center w-9 h-9 rounded-xl border ${toneClass}`}>
           {icon}
@@ -517,9 +517,9 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
   const thumbnail = getTaskThumbnail(task);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-sm transition">
+    <div className="bg-card border border-border rounded-2xl p-4 hover:shadow-sm transition">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-        <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+        <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex items-center justify-center shrink-0">
           {thumbnail ? (
             <img src={thumbnail} alt="Apercu generation" className="w-full h-full object-cover" />
           ) : (
@@ -529,7 +529,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
 
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold text-gray-900 truncate max-w-full">
+            <h3 className="text-sm font-semibold text-foreground truncate max-w-full">
               {task.productName || task.product?.title || tp('Generation sans nom')}
             </h3>
             <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${config.color}`}>
@@ -558,13 +558,13 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
 
           {isActive && (
             <div>
-              <div className="flex items-center justify-between text-[11px] text-gray-500 mb-1">
+              <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
                 <span>{task.currentStep || tp('En cours...')}</span>
                 <span>{task.progressPercent || 0}%</span>
               </div>
-              <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary-500 rounded-full transition-all duration-500"
+                  className="h-full bg-primary rounded-full transition-all duration-500"
                   style={{ width: `${task.progressPercent || 0}%` }}
                 />
               </div>
@@ -578,14 +578,14 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
                 {task.errorMessage || 'La generation s\'est arretee avant la fin.'}
               </p>
               {hasSavedContent && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Le texte et les elements deja generes restent disponibles. Tu peux ouvrir le contenu ou relancer la suite.
                 </p>
               )}
             </div>
           )}
 
-          <p className="text-[11px] text-gray-400">
+          <p className="text-[11px] text-muted-foreground">
             Creee le {formatTaskDate(task.createdAt)}
             {task.updatedAt ? ` · mise a jour ${formatTaskDate(task.updatedAt)}` : ''}
           </p>
@@ -595,7 +595,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
           {hasSavedContent && (
             <button
               onClick={() => onOpen(task._id)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-semibold rounded-xl transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2 border border-border text-muted-foreground hover:bg-background text-xs font-semibold rounded-xl transition"
               title={tp('Ouvrir le contenu genere')}
             >
               <Eye className="w-3.5 h-3.5" />
@@ -610,7 +610,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
               className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition disabled:opacity-60 ${
                 hasDigitalProduct
                   ? 'border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                  : 'border border-border text-muted-foreground hover:bg-background'
               }`}
               title={tp('Produit digital de ce produit')}
             >
@@ -626,7 +626,7 @@ function TaskCard({ task, deleting, retrying, digitalProductLoading, onDelete, o
           {isDone && (
             <button
               onClick={() => onApply(task._id)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-xl transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-primary-700 text-white text-xs font-semibold rounded-xl transition"
               title={tp('Utiliser cette generation')}
             >
               <ArrowRight className="w-3.5 h-3.5" />

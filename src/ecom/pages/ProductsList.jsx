@@ -68,7 +68,7 @@ const MarginBar = ({ pct }) => {
   const color = pct >= 40 ? 'bg-scalor-green' : pct >= 20 ? 'bg-amber-400' : 'bg-red-400';
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${clamped}%` }} />
       </div>
       <span className={`text-xs font-semibold tabular-nums ${pct >= 40 ? 'text-scalor-green' : pct >= 20 ? 'text-amber-600' : 'text-red-500'}`}>
@@ -86,7 +86,7 @@ const ProductAvatar = ({ product, size = 'md' }) => {
 
   if (img && !imgError) {
     return (
-      <div className={`${sizeClass} rounded-xl overflow-hidden shrink-0 bg-gray-100`}>
+      <div className={`${sizeClass} rounded-xl overflow-hidden shrink-0 bg-muted`}>
         <img src={img} alt={product.name} className="w-full h-full object-cover" onError={() => setImgError(true)} />
       </div>
     );
@@ -113,7 +113,7 @@ const RowMenu = ({ product, onDelete }) => {
     <div className="relative">
       <button
         onClick={() => setOpen(o => !o)}
-        className={`w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 border border-gray-200 ${T}`}
+        className={`w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted border border-border ${T}`}
         aria-label={tp('Actions')}
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -123,13 +123,13 @@ const RowMenu = ({ product, onDelete }) => {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-9 z-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden min-w-[150px]">
+          <div className="absolute right-0 top-9 z-20 bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[150px]">
             <Link
               to={`/ecom/products/${product._id}/edit`}
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 ${T}`}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-background ${T}`}
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
               {tp('Modifier')}
@@ -137,15 +137,15 @@ const RowMenu = ({ product, onDelete }) => {
             <Link
               to={`/ecom/products/${product._id}`}
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 ${T}`}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-background ${T}`}
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               {tp('Voir détails')}
             </Link>
-            <div className="border-t border-gray-100" />
+            <div className="border-t border-border" />
             <button
               onClick={() => { setOpen(false); onDelete(product._id); }}
               className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 ${T}`}
@@ -262,7 +262,7 @@ export default function ProductsList() {
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-7 h-7 rounded-full border-[3px] border-gray-200 border-t-scalor-green animate-spin" />
+      <div className="w-7 h-7 rounded-full border-[3px] border-border border-t-scalor-green animate-spin" />
     </div>
   );
 
@@ -270,7 +270,7 @@ export default function ProductsList() {
     <div className="min-h-full bg-slate-50/60">
 
       {/* Header */}
-      <div className="border-b border-slate-200/80 bg-white px-4 py-5 sm:px-6">
+      <div className="border-b border-slate-200/80 bg-card px-4 py-5 sm:px-6">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-slate-900">{tp('Produits')}</h1>
@@ -296,7 +296,7 @@ export default function ProductsList() {
             { label: 'À corriger', value: stats.incomplete, detail: 'prix ou coût manquant', icon: AlertTriangle, tone: stats.incomplete ? 'amber' : 'emerald' },
             { label: 'Bénéfice potentiel', value: fmt(stats.ben), detail: `sur ${stats.evaluated} produits évalués`, icon: CircleDollarSign, tone: 'violet' },
           ].map(card => { const Icon = card.icon; const tones = { slate: 'bg-slate-100 text-slate-600', emerald: 'bg-emerald-50 text-emerald-700', amber: 'bg-amber-50 text-amber-700', violet: 'bg-violet-50 text-violet-700' }; return (
-            <div key={card.label} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+            <div key={card.label} className="rounded-2xl border border-slate-200/80 bg-card p-4 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
               <div className="flex items-start justify-between gap-3"><p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{card.label}</p><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${tones[card.tone]}`}><Icon className="h-4 w-4" /></span></div>
               <p className="mt-2 truncate text-xl font-semibold tracking-tight text-slate-900">{card.value}</p>
               <p className="mt-1 text-[10px] text-slate-400">{card.detail}</p>
@@ -305,7 +305,7 @@ export default function ProductsList() {
         </div>
 
         {/* Filters */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-3 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+        <div className="rounded-2xl border border-slate-200/80 bg-card p-3 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
           <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center">
           <div className="relative min-w-[220px] flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -314,14 +314,14 @@ export default function ProductsList() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={tp('Rechercher...')}
-              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-[12px] text-slate-800 outline-none transition focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-50"
+              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-[12px] text-slate-800 outline-none transition focus:border-emerald-300 focus:bg-card focus:ring-4 focus:ring-emerald-50"
             />
           </div>
 
           <select
             value={activeFilter}
             onChange={e => setActive(e.target.value)}
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-medium text-slate-600 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-50"
+            className="h-10 rounded-xl border border-slate-200 bg-card px-3 text-[11px] font-medium text-slate-600 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-50"
           >
             <option value="">{tp('Tous')}</option>
             <option value="true">{tp('Actifs')}</option>
@@ -331,7 +331,7 @@ export default function ProductsList() {
           {hasFilters && (
             <button
               onClick={() => { setSearch(''); setStatus(''); setActive(''); setBusinessFilter(''); }}
-              className={`h-10 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 ${T}`}
+              className={`h-10 rounded-xl border border-slate-200 bg-card px-3 text-[11px] font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 ${T}`}
             >
               {tp('Effacer filtres')}
             </button>
@@ -355,11 +355,11 @@ export default function ProductsList() {
 
         {/* Empty state */}
         {sorted.length === 0 && (
-          <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center">
-            <p className="text-sm font-medium text-gray-900">
+          <div className="bg-card border border-dashed border-gray-300 rounded-xl p-12 text-center">
+            <p className="text-sm font-medium text-foreground">
               {hasFilters ? 'Aucun produit pour ces critères' : tp('Aucun produit')}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {hasFilters ? 'Essayez de modifier vos filtres' : tp('Créez votre premier produit pour commencer')}
             </p>
             {!hasFilters && (
@@ -379,7 +379,7 @@ export default function ProductsList() {
         {sorted.length > 0 && (
           <>
             {/* Mobile cards */}
-            <div className="sm:hidden divide-y divide-gray-100 border border-gray-200 rounded-xl overflow-hidden bg-white">
+            <div className="sm:hidden divide-y divide-gray-100 border border-border rounded-xl overflow-hidden bg-card">
               {sorted.map(product => {
                 const benefit    = calcBenefit(product);
                 const profitable = benefit !== null && benefit > 0;
@@ -392,7 +392,7 @@ export default function ProductsList() {
                         <div className="min-w-0">
                           <Link
                             to={`/ecom/products/${product._id}`}
-                            className={`font-semibold text-gray-900 text-sm truncate block hover:text-scalor-green ${T}`}
+                            className={`font-semibold text-foreground text-sm truncate block hover:text-scalor-green ${T}`}
                           >
                             {product.name}
                           </Link>
@@ -400,7 +400,7 @@ export default function ProductsList() {
                             <StatusChip status={product.status} />
                             {duplicateNames.has(normalizedName(product.name)) && <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-semibold text-blue-600">Doublon</span>}
                             {hasIncompleteCosts(product) && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-semibold text-amber-700">Coût à compléter</span>}
-                            <span className={`text-xs font-medium ${product.isActive ? 'text-scalor-green' : 'text-gray-400'}`}>
+                            <span className={`text-xs font-medium ${product.isActive ? 'text-scalor-green' : 'text-muted-foreground'}`}>
                               {product.isActive ? 'Actif' : tp('Inactif')}
                             </span>
                           </div>
@@ -410,13 +410,13 @@ export default function ProductsList() {
                     </div>
                     <div className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1">
                       <div>
-                        <p className="text-xs text-gray-400">{tp('Prix')}</p>
-                        <p className="text-sm font-semibold tabular-nums text-gray-900">
+                        <p className="text-xs text-muted-foreground">{tp('Prix')}</p>
+                        <p className="text-sm font-semibold tabular-nums text-foreground">
                           {product.sellingPrice != null ? fmt(product.sellingPrice) : '—'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">{tp('Bénéfice')}</p>
+                        <p className="text-xs text-muted-foreground">{tp('Bénéfice')}</p>
                         <p className={`text-sm font-semibold tabular-nums ${benefit === null ? 'text-gray-300' : profitable ? 'text-scalor-green' : 'text-red-600'}`}>
                           {benefit === null ? '—' : `${profitable ? '+' : ''}${fmt(benefit)}`}
                         </p>
@@ -429,7 +429,7 @@ export default function ProductsList() {
             </div>
 
             {/* Desktop table */}
-            <div className="hidden overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_rgba(15,23,42,0.03)] sm:block">
+            <div className="hidden overflow-x-auto rounded-2xl border border-slate-200/80 bg-card shadow-[0_1px_3px_rgba(15,23,42,0.03)] sm:block">
               <table className="w-full table-fixed divide-y divide-slate-100 text-sm">
                 <colgroup>
                   <col className="w-[260px]" />
@@ -443,29 +443,29 @@ export default function ProductsList() {
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/70">
                     <th className="px-4 py-3 text-left">
-                      <button onClick={() => toggleSort('name')} className={`inline-flex items-center text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('name')} className={`inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Produit <SortIcon active={sort.key === 'name'} dir={sort.dir} />
                       </button>
                     </th>
                     <th className="px-4 py-3 text-right">
-                      <button onClick={() => toggleSort('price')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('price')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Prix <SortIcon active={sort.key === 'price'} dir={sort.dir} />
                       </button>
                     </th>
                     <th className="px-4 py-3 text-right">
-                      <span className="text-xs font-medium text-gray-500">Coût total</span>
+                      <span className="text-xs font-medium text-muted-foreground">Coût total</span>
                     </th>
                     <th className="px-4 py-3 text-right">
-                      <button onClick={() => toggleSort('benefit')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('benefit')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Bénéfice <SortIcon active={sort.key === 'benefit'} dir={sort.dir} />
                       </button>
                     </th>
                     <th className="px-4 py-3">
-                      <button onClick={() => toggleSort('margin')} className={`inline-flex items-center text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('margin')} className={`inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Marge <SortIcon active={sort.key === 'margin'} dir={sort.dir} />
                       </button>
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500">{tp('État')}</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">{tp('État')}</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
@@ -478,14 +478,14 @@ export default function ProductsList() {
                     const margin     = calcMarginPct(product);
 
                     return (
-                      <tr key={product._id} className={`border-b border-slate-100 bg-white hover:bg-emerald-50/20 ${T}`}>
+                      <tr key={product._id} className={`border-b border-slate-100 bg-card hover:bg-emerald-50/20 ${T}`}>
                         <td className="px-4 py-3 align-top">
                           <div className="flex items-center gap-3">
                             <ProductAvatar product={product} size="md" />
                             <div className="min-w-0">
                               <Link
                                 to={`/ecom/products/${product._id}`}
-                                className={`font-medium text-gray-900 hover:text-scalor-green ${T} block truncate`}
+                                className={`font-medium text-foreground hover:text-scalor-green ${T} block truncate`}
                               >
                                 {product.name}
                               </Link>
@@ -501,7 +501,7 @@ export default function ProductsList() {
                         </td>
 
                         <td className="px-4 py-3 align-top text-right">
-                          <span className="font-semibold text-gray-900 tabular-nums">
+                          <span className="font-semibold text-foreground tabular-nums">
                             {product.sellingPrice != null ? fmt(product.sellingPrice) : '—'}
                           </span>
                           {suggest && !product.sellingPrice && (
@@ -539,7 +539,7 @@ export default function ProductsList() {
                               {tp('Actif')}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
                               <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
                               {tp('Inactif')}
                             </span>
@@ -554,7 +554,7 @@ export default function ProductsList() {
                   })}
                 </tbody>
               </table>
-              <div className="px-4 py-2.5 border-t border-gray-100 text-xs text-gray-400 bg-white">
+              <div className="px-4 py-2.5 border-t border-border text-xs text-muted-foreground bg-card">
                 {sorted.length} produit{sorted.length !== 1 ? 's' : ''}{hasFilters ? ' (filtré)' : ''}
               </div>
             </div>

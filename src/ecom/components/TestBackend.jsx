@@ -89,7 +89,7 @@ const TestBackend = () => {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Status Backend */}
-        <div className="bg-white rounded-lg border shadow-sm">
+        <div className="bg-card rounded-lg border shadow-sm">
           <div className="p-4 border-b">
             <h3 className="font-semibold flex items-center gap-2">
               {status?.success ? (
@@ -107,19 +107,19 @@ const TestBackend = () => {
                   {status.message}
                 </p>
                 {status.data && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-muted-foreground">
                     <p>Timestamp: {new Date(status.timestamp).toLocaleString()}</p>
                     <p>Status: {status.data.status}</p>
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-gray-500">{tp('Chargement...')}</p>
+              <p className="text-muted-foreground">{tp('Chargement...')}</p>
             )}
             <button
               onClick={testBackendStatus}
               disabled={loading}
-              className="mt-3 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 transition"
+              className="mt-3 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-background disabled:opacity-50 transition"
             >
               {loading ? 'Test...' : tp('Retester')}
             </button>
@@ -127,7 +127,7 @@ const TestBackend = () => {
         </div>
 
         {/* Status WhatsApp */}
-        <div className="bg-white rounded-lg border shadow-sm">
+        <div className="bg-card rounded-lg border shadow-sm">
           <div className="p-4 border-b">
             <h3 className="font-semibold flex items-center gap-2">
               <Smartphone className="h-5 w-5" />
@@ -141,7 +141,7 @@ const TestBackend = () => {
                   {whatsappStatus.message}
                 </p>
                 {whatsappStatus.data && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-muted-foreground">
                     <p>Status: {whatsappStatus.data.status}</p>
                     <div className="mt-2">
                       <p>{tp('Routes disponibles:')}</p>
@@ -155,11 +155,11 @@ const TestBackend = () => {
                 )}
               </div>
             ) : (
-              <p className="text-gray-500">{tp('Chargement...')}</p>
+              <p className="text-muted-foreground">{tp('Chargement...')}</p>
             )}
             <button
               onClick={testWhatsappStatus}
-              className="mt-3 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition"
+              className="mt-3 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-background transition"
             >
               {tp('Retester')}
             </button>
@@ -167,7 +167,7 @@ const TestBackend = () => {
         </div>
 
         {/* Test Message */}
-        <div className="bg-white rounded-lg border shadow-sm md:col-span-2">
+        <div className="bg-card rounded-lg border shadow-sm md:col-span-2">
           <div className="p-4 border-b">
             <h3 className="font-semibold flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />

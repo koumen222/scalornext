@@ -99,7 +99,7 @@ function CopyButton({ text }) {
           setTimeout(() => setCopied(false), 2000);
         });
       }}
-      className="p-1 text-gray-400 hover:text-scalor-green transition"
+      className="p-1 text-muted-foreground hover:text-scalor-green transition"
       title={tp('Copier')}
     >
       {copied ? <CheckCircle className="w-3.5 h-3.5 text-scalor-green" /> : <Copy className="w-3.5 h-3.5" />}
@@ -110,8 +110,8 @@ function CopyButton({ text }) {
 
 function ImagePreview({ src, label, className = '' }) {
   if (!src) return (
-    <div className={`flex items-center justify-center bg-gray-100 rounded-xl border border-dashed border-gray-300 ${className}`}>
-      <div className="text-center text-gray-400 p-4">
+    <div className={`flex items-center justify-center bg-muted rounded-xl border border-dashed border-gray-300 ${className}`}>
+      <div className="text-center text-muted-foreground p-4">
         <ImageIcon className="w-8 h-8 mx-auto mb-1 opacity-40" />
         <p className="text-xs">{tp('Image non disponible')}</p>
       </div>
@@ -119,10 +119,10 @@ function ImagePreview({ src, label, className = '' }) {
   );
   return (
     <div className="space-y-2">
-      <div className={`relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 ${className}`}>
+      <div className={`relative rounded-xl overflow-hidden bg-muted border border-border ${className}`}>
         <img src={src} alt={label || tp('Product image')} className="w-full h-full object-cover" />
       </div>
-      {label && <p className="text-xs font-medium text-gray-500 px-1">{label}</p>}
+      {label && <p className="text-xs font-medium text-muted-foreground px-1">{label}</p>}
     </div>
   );
 }
@@ -131,14 +131,14 @@ function GifPreview({ src, label, className = '' }) {
   if (!src) return null;
   return (
     <div className="space-y-2">
-      <div className={`relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 ${className}`}>
+      <div className={`relative rounded-xl overflow-hidden bg-muted border border-border ${className}`}>
         <img
           src={src}
           alt={label || tp('GIF généré')}
           className="w-full h-full object-cover"
         />
       </div>
-      {label && <p className="text-xs font-medium text-gray-500 px-1">{label}</p>}
+      {label && <p className="text-xs font-medium text-muted-foreground px-1">{label}</p>}
     </div>
   );
 }
@@ -2327,15 +2327,15 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
   return (
     <>
-    <div className={pageMode ? 'min-h-screen bg-white' : 'fixed inset-0 z-50 h-screen w-screen overflow-hidden bg-black/50 backdrop-blur-sm'}>
+    <div className={pageMode ? 'min-h-screen bg-card' : 'fixed inset-0 z-50 h-screen w-screen overflow-hidden bg-black/50 backdrop-blur-sm'}>
       <div className={pageMode ? 'mx-auto min-h-screen w-full max-w-[1120px] px-4 py-6 sm:px-6 lg:px-8' : 'flex h-full w-full items-stretch justify-stretch'}>
-        <div className={pageMode ? 'relative flex min-h-[calc(100vh-3rem)] w-full flex-col overflow-hidden rounded-[24px] border border-gray-200 bg-white shadow-sm' : 'relative flex h-full w-full flex-col overflow-hidden bg-white shadow-2xl'}>
+        <div className={pageMode ? 'relative flex min-h-[calc(100vh-3rem)] w-full flex-col overflow-hidden rounded-[24px] border border-border bg-card shadow-sm' : 'relative flex h-full w-full flex-col overflow-hidden bg-card shadow-2xl'}>
 
           <button
             type="button"
             onClick={onClose}
             aria-label={tp('Fermer')}
-            className={pageMode ? 'absolute right-5 top-5 z-20 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900' : 'absolute right-6 top-6 z-20 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'}
+            className={pageMode ? 'absolute right-5 top-5 z-20 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition hover:border-gray-300 hover:bg-background hover:text-foreground' : 'absolute right-6 top-6 z-20 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition hover:border-gray-300 hover:bg-background hover:text-foreground'}
           >
             <X className="w-4 h-4" />
           </button>
@@ -2344,12 +2344,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
           {/* Header */}
           {pageMode ? (
-            <div className="border-b border-gray-200 px-5 py-5 sm:px-6 lg:px-7">
+            <div className="border-b border-border px-5 py-5 sm:px-6 lg:px-7">
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-50"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-background"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   {tp('Retour catalogue')}
@@ -2359,7 +2359,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {tp('Générateur de page produit')}
                 </span>
                 {pageStyle === 'hero_page' ? (
-                  <span className="inline-flex items-center gap-2 rounded-full border border-primary-300 bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary-700">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-primary-300 bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary">
                     <CheckCircle className="h-3.5 w-3.5" />
                     {tp('Gratuit')}
                   </span>
@@ -2375,7 +2375,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 <h2 className="text-[28px] font-black leading-tight tracking-[-0.03em] text-black sm:text-[34px]">
                   {tp('Crée une page produit simple, propre et prête à publier.')}
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-gray-600">
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
                   {tp('Produit, copywriting, ciblage, puis génération.')}
                 </p>
               </div>
@@ -2389,17 +2389,17 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         step === s.num
                           ? 'border-[#96C7B5] bg-[#E6F2ED]'
                           : step > s.num
-                          ? 'border-gray-200 bg-gray-50'
-                          : 'border-gray-200 bg-white'
+                          ? 'border-border bg-background'
+                          : 'border-border bg-card'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${step >= s.num ? 'bg-[#0F6B4F] text-white' : 'bg-gray-100 text-gray-500'}`}>
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${step >= s.num ? 'bg-[#0F6B4F] text-white' : 'bg-muted text-muted-foreground'}`}>
                           {step > s.num ? '✓' : s.num}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{s.label}</p>
-                          <p className="text-xs text-gray-500">Etape {s.num}</p>
+                          <p className="text-sm font-semibold text-foreground">{s.label}</p>
+                          <p className="text-xs text-muted-foreground">Etape {s.num}</p>
                         </div>
                       </div>
                     </div>
@@ -2408,7 +2408,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               )}
             </div>
           ) : (
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
               <div className="flex w-full items-center justify-between gap-4">
                 <div className="flex-1">
                   <div className="mb-2.5 flex items-center gap-3">
@@ -2416,8 +2416,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <Sparkles className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xl font-black text-gray-900 leading-tight">{tp('Générateur de page produit IA')}</h2>
-                      <p className="mt-0.5 text-xs text-gray-600">{tp('Crée une page produit claire, simple et prête à publier.')}</p>
+                      <h2 className="text-xl font-black text-foreground leading-tight">{tp('Générateur de page produit IA')}</h2>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{tp('Crée une page produit claire, simple et prête à publier.')}</p>
                     </div>
                   </div>
                 </div>
@@ -2438,55 +2438,55 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
             </div>
           )}
 
-        <div className={pageMode ? 'flex-1 overflow-y-auto bg-white' : 'flex-1 overflow-y-auto'}>
+        <div className={pageMode ? 'flex-1 overflow-y-auto bg-card' : 'flex-1 overflow-y-auto'}>
 
           {/* ─── INPUT PHASE ─── */}
           {phase === 'input' && (
             <div className="p-6 space-y-5">
 
               {/* Sélecteur style de page */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-4">
+              <div className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Layers className="h-4 w-4 text-gray-400" />
-                  <label className="text-sm font-bold text-gray-900">{tp('Style de page')}</label>
+                  <Layers className="h-4 w-4 text-muted-foreground" />
+                  <label className="text-sm font-bold text-foreground">{tp('Style de page')}</label>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <button
                     type="button"
                     onClick={() => { setPageStyle('classic'); setInfographicsTaskResult(null); }}
-                    className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'classic' ? 'border-scalor-green bg-[#E6F2ED]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                    className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'classic' ? 'border-scalor-green bg-[#E6F2ED]' : 'border-border bg-card hover:border-gray-300'}`}
                   >
-                    <p className="text-sm font-bold text-gray-900">{tp('Classique')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('Hero, bénéfices, avis, FAQ, blocs conversion')}</p>
+                    <p className="text-sm font-bold text-foreground">{tp('Classique')}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Hero, bénéfices, avis, FAQ, blocs conversion')}</p>
                   </button>
                   <button
                     type="button"
                     onClick={() => setPageStyle('infographics')}
-                    className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'infographics' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                    className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'infographics' ? 'border-blue-600 bg-blue-50' : 'border-border bg-card hover:border-gray-300'}`}
                   >
-                    <p className="text-sm font-bold text-gray-900">{tp('Infographies 9:16')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('Pile d\'infographies verticales + formulaire minimal')}</p>
+                    <p className="text-sm font-bold text-foreground">{tp('Infographies 9:16')}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Pile d\'infographies verticales + formulaire minimal')}</p>
                   </button>
                   <button
                     type="button"
                     onClick={() => { setPageStyle('hero_page'); setInfographicsTaskResult(null); }}
-                    className={`relative text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'hero_page' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                    className={`relative text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'hero_page' ? 'border-primary-500 bg-primary-50' : 'border-border bg-card hover:border-gray-300'}`}
                   >
-                    <span className="absolute -top-2 -right-2 text-[10px] font-black bg-primary-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">{tp('Gratuit')}</span>
-                    <p className="text-sm font-bold text-gray-900">{tp('Page Complète — Image réduite')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('Page IA complète + hero généré par IA — sans images d\'angles ni GIFs')}</p>
+                    <span className="absolute -top-2 -right-2 text-[10px] font-black bg-primary text-white px-2 py-0.5 rounded-full uppercase tracking-wide">{tp('Gratuit')}</span>
+                    <p className="text-sm font-bold text-foreground">{tp('Page Complète — Image réduite')}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Page IA complète + hero généré par IA — sans images d\'angles ni GIFs')}</p>
                   </button>
                 </div>
 
                 {/* Langue du contenu généré — visible sur tout le wizard (gratuit + pro + infographies) */}
                 {(usesStandardProductGenerator || pageStyle === 'infographics') && (
-                  <div className="mt-4 border-t border-gray-100 pt-4">
+                  <div className="mt-4 border-t border-border pt-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4 text-gray-400" />
+                        <Globe className="h-4 w-4 text-muted-foreground" />
                         <div>
-                          <label className="text-sm font-bold text-gray-900">{tp('Langue du contenu généré')}</label>
-                          <p className="text-xs text-gray-500">{tp('Par défaut : la langue de la boutique. S\'applique à toute la page générée.')}</p>
+                          <label className="text-sm font-bold text-foreground">{tp('Langue du contenu généré')}</label>
+                          <p className="text-xs text-muted-foreground">{tp('Par défaut : la langue de la boutique. S\'applique à toute la page générée.')}</p>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -2501,11 +2501,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                               key={l.code}
                               type="button"
                               onClick={() => setGenLanguage(l.code)}
-                              className={`rounded-xl border px-3 py-2 text-center transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-gray-200 bg-white hover:border-[#96C7B5]'}`}
+                              className={`rounded-xl border px-3 py-2 text-center transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-border bg-card hover:border-[#96C7B5]'}`}
                             >
                               <span className="text-sm leading-none">{l.flag}</span>
                               <span className={`ml-1.5 text-xs font-semibold ${isActive ? 'text-[#0F6B4F]' : 'text-slate-900'}`}>{l.label}</span>
-                              {l.code === storeLanguageCode && <span className="ml-1 text-[10px] text-gray-400">{tp('(boutique)')}</span>}
+                              {l.code === storeLanguageCode && <span className="ml-1 text-[10px] text-muted-foreground">{tp('(boutique)')}</span>}
                             </button>
                           );
                         })}
@@ -2517,45 +2517,45 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
               {/* ── Hero Image Builder (gratuit, canvas) ────────────────────────────── */}
               {pageStyle === 'hero' && (
-                <div className="rounded-2xl border border-primary-200 bg-white overflow-hidden">
+                <div className="rounded-2xl border border-primary-200 bg-card overflow-hidden">
                   {/* Header */}
                   <div className="flex items-center gap-3 px-5 py-4 bg-primary-50 border-b border-primary-100">
-                    <div className="w-8 h-8 rounded-xl bg-primary-500 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
                       <ImageIcon className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">{tp('Image Hero — Gratuit')}</p>
-                      <p className="text-xs text-primary-700">{tp('Compose une image 1080×1080 avec ta photo + texte. Aucun crédit requis.')}</p>
+                      <p className="text-sm font-bold text-foreground">{tp('Image Hero — Gratuit')}</p>
+                      <p className="text-xs text-primary">{tp('Compose une image 1080×1080 avec ta photo + texte. Aucun crédit requis.')}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                     {/* Left: form */}
-                    <div className="p-5 space-y-4 border-r border-gray-100">
+                    <div className="p-5 space-y-4 border-r border-border">
 
                       {/* Photo upload */}
                       <div>
-                        <label className="text-xs font-bold text-gray-700 mb-1.5 block">{tp('Photo du produit')}</label>
+                        <label className="text-xs font-bold text-foreground mb-1.5 block">{tp('Photo du produit')}</label>
                         <div
                           onDragOver={(e) => { e.preventDefault(); setHeroDragOver(true); }}
                           onDragLeave={() => setHeroDragOver(false)}
                           onDrop={(e) => { e.preventDefault(); setHeroDragOver(false); const f = e.dataTransfer.files[0]; if (f) handleHeroFile(f); }}
-                          className={`relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed cursor-pointer transition p-4 ${heroDragOver ? 'border-primary-500 bg-primary-50' : heroImg ? 'border-primary-300 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}
+                          className={`relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed cursor-pointer transition p-4 ${heroDragOver ? 'border-primary-500 bg-primary-50' : heroImg ? 'border-primary-300 bg-primary-50' : 'border-border hover:border-gray-300'}`}
                           style={{ minHeight: 120 }}
                           onClick={() => { const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.onchange=(e)=>{ if(e.target.files[0]) handleHeroFile(e.target.files[0]); }; inp.click(); }}
                         >
                           {heroImg ? (
                             <div className="flex items-center gap-3 w-full">
-                              <img src={heroImg.src} alt="preview" className="w-16 h-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />
+                              <img src={heroImg.src} alt="preview" className="w-16 h-16 object-cover rounded-lg border border-border flex-shrink-0" />
                               <div className="min-w-0">
-                                <p className="text-xs font-semibold text-gray-800 truncate">{heroFile?.name || tp('Image chargée')}</p>
-                                <button type="button" className="text-[11px] text-primary-600 font-semibold mt-0.5" onClick={(e)=>{ e.stopPropagation(); setHeroFile(null); setHeroImg(null); }}>{tp('Changer d\'image')}</button>
+                                <p className="text-xs font-semibold text-foreground truncate">{heroFile?.name || tp('Image chargée')}</p>
+                                <button type="button" className="text-[11px] text-primary font-semibold mt-0.5" onClick={(e)=>{ e.stopPropagation(); setHeroFile(null); setHeroImg(null); }}>{tp('Changer d\'image')}</button>
                               </div>
                             </div>
                           ) : (
                             <>
-                              <Upload className="w-6 h-6 text-gray-400" />
-                              <p className="text-xs text-gray-500 text-center">{tp('Glisse ta photo ici ou')} <span className="text-primary-600 font-semibold">{tp('clique pour choisir')}</span></p>
+                              <Upload className="w-6 h-6 text-muted-foreground" />
+                              <p className="text-xs text-muted-foreground text-center">{tp('Glisse ta photo ici ou')} <span className="text-primary font-semibold">{tp('clique pour choisir')}</span></p>
                             </>
                           )}
                         </div>
@@ -2571,22 +2571,22 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           { label: 'Badge promo (en haut)', val: heroBadge, set: setHeroBadge, ph: 'Ex: Livraison gratuite', max: 32 },
                         ].map(({ label, val, set, ph, max }) => (
                           <div key={label}>
-                            <label className="text-[11px] font-semibold text-gray-600 mb-1 block">{label}</label>
+                            <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">{label}</label>
                             <input
                               type="text"
                               value={val}
                               onChange={(e) => set(e.target.value.slice(0, max))}
                               placeholder={ph}
-                              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                              className="w-full px-3 py-2 text-sm border border-border rounded-xl bg-background focus:bg-card focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
                             />
                           </div>
                         ))}
 
                         {/* Accent color */}
                         <div>
-                          <label className="text-[11px] font-semibold text-gray-600 mb-1.5 block">{tp('Couleur accent')}</label>
+                          <label className="text-[11px] font-semibold text-muted-foreground mb-1.5 block">{tp('Couleur accent')}</label>
                           <div className="flex items-center gap-3">
-                            <input type="color" value={heroAccent} onChange={(e) => setHeroAccent(e.target.value)} className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer p-0.5" />
+                            <input type="color" value={heroAccent} onChange={(e) => setHeroAccent(e.target.value)} className="w-10 h-10 rounded-xl border-2 border-border cursor-pointer p-0.5" />
                             {['#0F6B4F','#1877F2','#DC2626','#7C3AED','#B45309','#000000'].map(c => (
                               <button key={c} type="button" onClick={() => setHeroAccent(c)} className="w-8 h-8 rounded-full border-2 transition" style={{ backgroundColor: c, borderColor: heroAccent === c ? '#fff' : 'transparent', boxShadow: heroAccent === c ? `0 0 0 2px ${c}` : 'none' }} />
                             ))}
@@ -2596,8 +2596,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     </div>
 
                     {/* Right: canvas preview + download */}
-                    <div className="p-5 flex flex-col items-center gap-4 bg-gray-50">
-                      <p className="text-xs font-bold text-gray-600 self-start">{tp('Aperçu (1080×1080)')}</p>
+                    <div className="p-5 flex flex-col items-center gap-4 bg-background">
+                      <p className="text-xs font-bold text-muted-foreground self-start">{tp('Aperçu (1080×1080)')}</p>
                       <canvas
                         ref={heroCanvasRef}
                         style={{ width: '100%', maxWidth: 340, aspectRatio: '1/1', borderRadius: 16, border: '1.5px solid #e5e7eb', boxShadow: '0 4px 24px rgba(0,0,0,0.10)' }}
@@ -2613,7 +2613,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         {tp('Télécharger PNG (1080×1080)')}
                       </button>
-                      <p className="text-[11px] text-gray-400 text-center max-w-[300px]">{tp('Image haute résolution prête pour Facebook Ads, TikTok ou votre boutique. 100% gratuit, aucun crédit.')}</p>
+                      <p className="text-[11px] text-muted-foreground text-center max-w-[300px]">{tp('Image haute résolution prête pour Facebook Ads, TikTok ou votre boutique. 100% gratuit, aucun crédit.')}</p>
                     </div>
                   </div>
                 </div>
@@ -2655,12 +2655,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
               {/* Task list panel */}
               {showTaskList && backgroundTasks.length > 0 && (
-                <div className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden shadow-sm">
+                <div className="rounded-xl border border-border bg-card divide-y divide-gray-100 overflow-hidden shadow-sm">
                   {backgroundTasks.map(task => (
-                    <div key={task._id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition">
+                    <div key={task._id} className="flex items-center justify-between px-4 py-3 hover:bg-background transition">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{task.productName || tp('Produit')}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-semibold text-foreground truncate">{task.productName || tp('Produit')}</p>
+                        <p className="text-xs text-muted-foreground">
                           {task.status === 'done' ? '✅ Terminé' :
                            task.status === 'error' ? '❌ Erreur' :
                            `⏳ ${task.currentStep || 'En cours'} — ${task.progressPercent || 0}%`}
@@ -2734,12 +2734,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 <>
                   {/* Template de page produit */}
                   {productSubstep === 1 && (
-                  <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6">
+                  <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
                     <div className="flex items-center gap-2 mb-1">
-                      <Layers className="h-4 w-4 text-gray-400" />
-                      <label className="text-sm font-semibold text-gray-800">{tp('Template visuel')}</label>
+                      <Layers className="h-4 w-4 text-muted-foreground" />
+                      <label className="text-sm font-semibold text-foreground">{tp('Template visuel')}</label>
                     </div>
-                    <p className="text-xs text-gray-400 mb-4">{tp('Choisie le type de produit — chaque template a son propre style d\'images')}</p>
+                    <p className="text-xs text-muted-foreground mb-4">{tp('Choisie le type de produit — chaque template a son propre style d\'images')}</p>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {VISUAL_TEMPLATES.map(t => {
                         const isActive = visualTemplate === t.id;
@@ -2775,28 +2775,28 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       })}
                     </div>
 
-                    <p className="mt-3 text-[11px] text-gray-400">
+                    <p className="mt-3 text-[11px] text-muted-foreground">
                       Le template sert uniquement de point de départ visuel. La page et les visuels restent générés dynamiquement.
                     </p>
 
                     {/* Couleur de thème personnalisée */}
-                    <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-4">
+                    <div className="mt-4 rounded-2xl border border-border bg-card p-4">
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full border border-gray-200 flex-shrink-0" style={{ background: templateTheme.primary }} />
-                          <span className="text-xs font-semibold text-gray-800">{tp('Couleur de votre thème')}</span>
+                          <div className="w-5 h-5 rounded-full border border-border flex-shrink-0" style={{ background: templateTheme.primary }} />
+                          <span className="text-xs font-semibold text-foreground">{tp('Couleur de votre thème')}</span>
                         </div>
                         {customPrimaryColor && (
                           <button
                             type="button"
                             onClick={() => setCustomPrimaryColor(null)}
-                            className="text-[10px] text-gray-400 hover:text-red-500 transition underline"
+                            className="text-[10px] text-muted-foreground hover:text-red-500 transition underline"
                           >
                             {tp('Réinitialiser')}
                           </button>
                         )}
                       </div>
-                      <p className="text-[11px] text-gray-400 mb-3">
+                      <p className="text-[11px] text-muted-foreground mb-3">
                         Les images générées adopteront automatiquement cette couleur — fonds, accents et ambiance visuelle.
                       </p>
                       <div className="flex items-center gap-3">
@@ -2805,7 +2805,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             type="color"
                             value={customPrimaryColor || templateTheme.primary}
                             onChange={e => setCustomPrimaryColor(e.target.value)}
-                            className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer p-0.5"
+                            className="w-10 h-10 rounded-xl border-2 border-border cursor-pointer p-0.5"
                             style={{ backgroundColor: customPrimaryColor || templateTheme.primary }}
                           />
                         </div>
@@ -2817,7 +2817,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             if (/^#[0-9A-Fa-f]{0,6}$/.test(v)) setCustomPrimaryColor(v.length === 7 ? v : null);
                           }}
                           placeholder="#000000"
-                          className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-xs font-mono text-gray-700 focus:outline-none focus:border-gray-400"
+                          className="flex-1 rounded-xl border border-border px-3 py-2 text-xs font-mono text-foreground focus:outline-none focus:border-gray-400"
                         />
                         {/* Palettes rapides */}
                         <div className="flex gap-1.5 flex-shrink-0">
@@ -2857,11 +2857,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                 key={opt.value}
                                 type="button"
                                 onClick={() => setFashionAvatar(opt.value)}
-                                className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition ${fashionAvatar === opt.value ? 'border-purple-500 bg-white shadow-sm' : 'border-transparent bg-white/60 hover:border-purple-200'}`}
+                                className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition ${fashionAvatar === opt.value ? 'border-purple-500 bg-card shadow-sm' : 'border-transparent bg-card/60 hover:border-purple-200'}`}
                               >
                                 <span className="text-2xl">{opt.icon}</span>
-                                <span className="text-xs font-semibold text-gray-800">{opt.label}</span>
-                                <span className="text-[10px] text-gray-500 leading-tight text-center">{opt.hint}</span>
+                                <span className="text-xs font-semibold text-foreground">{opt.label}</span>
+                                <span className="text-[10px] text-muted-foreground leading-tight text-center">{opt.hint}</span>
                               </button>
                             ))}
                           </div>
@@ -2871,11 +2871,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <div className="mb-5">
                           <div className="flex items-center justify-between mb-2">
                             <label className="text-xs font-semibold uppercase tracking-wider text-purple-800">{tp('Tailles disponibles')}</label>
-                            <span className="text-[10px] text-gray-500">{fashionSizes.length} sélectionnée{fashionSizes.length > 1 ? 's' : ''}</span>
+                            <span className="text-[10px] text-muted-foreground">{fashionSizes.length} sélectionnée{fashionSizes.length > 1 ? 's' : ''}</span>
                           </div>
                           <div className="space-y-2">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[10px] font-bold text-gray-500 w-14">LETTRES</span>
+                              <span className="text-[10px] font-bold text-muted-foreground w-14">LETTRES</span>
                               {FASHION_SIZES_LETTER.map(s => {
                                 const active = fashionSizes.includes(s);
                                 return (
@@ -2883,13 +2883,13 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                     key={s}
                                     type="button"
                                     onClick={() => setFashionSizes(prev => active ? prev.filter(x => x !== s) : [...prev, s])}
-                                    className={`min-w-[40px] px-2.5 py-1.5 rounded-lg text-xs font-bold border-2 transition ${active ? 'border-purple-500 bg-purple-500 text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-purple-300'}`}
+                                    className={`min-w-[40px] px-2.5 py-1.5 rounded-lg text-xs font-bold border-2 transition ${active ? 'border-purple-500 bg-purple-500 text-white' : 'border-border bg-card text-foreground hover:border-purple-300'}`}
                                   >{s}</button>
                                 );
                               })}
                             </div>
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[10px] font-bold text-gray-500 w-14">EU</span>
+                              <span className="text-[10px] font-bold text-muted-foreground w-14">EU</span>
                               {FASHION_SIZES_NUMERIC.map(s => {
                                 const active = fashionSizes.includes(s);
                                 return (
@@ -2897,13 +2897,13 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                     key={s}
                                     type="button"
                                     onClick={() => setFashionSizes(prev => active ? prev.filter(x => x !== s) : [...prev, s])}
-                                    className={`min-w-[40px] px-2.5 py-1.5 rounded-lg text-xs font-bold border-2 transition ${active ? 'border-purple-500 bg-purple-500 text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-purple-300'}`}
+                                    className={`min-w-[40px] px-2.5 py-1.5 rounded-lg text-xs font-bold border-2 transition ${active ? 'border-purple-500 bg-purple-500 text-white' : 'border-border bg-card text-foreground hover:border-purple-300'}`}
                                   >{s}</button>
                                 );
                               })}
                             </div>
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[10px] font-bold text-gray-500 w-14">POINTURE</span>
+                              <span className="text-[10px] font-bold text-muted-foreground w-14">POINTURE</span>
                               {FASHION_SIZES_SHOES.map(s => {
                                 const key = `p${s}`;
                                 const active = fashionSizes.includes(key);
@@ -2912,7 +2912,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                     key={key}
                                     type="button"
                                     onClick={() => setFashionSizes(prev => active ? prev.filter(x => x !== key) : [...prev, key])}
-                                    className={`min-w-[40px] px-2.5 py-1.5 rounded-lg text-xs font-bold border-2 transition ${active ? 'border-purple-500 bg-purple-500 text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-purple-300'}`}
+                                    className={`min-w-[40px] px-2.5 py-1.5 rounded-lg text-xs font-bold border-2 transition ${active ? 'border-purple-500 bg-purple-500 text-white' : 'border-border bg-card text-foreground hover:border-purple-300'}`}
                                   >{s}</button>
                                 );
                               })}
@@ -2924,7 +2924,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <div className="mb-5">
                           <div className="flex items-center justify-between mb-2">
                             <label className="text-xs font-semibold uppercase tracking-wider text-purple-800">{tp('Couleurs disponibles')}</label>
-                            <span className="text-[10px] text-gray-500">{fashionColors.length} sélectionnée{fashionColors.length > 1 ? 's' : ''}</span>
+                            <span className="text-[10px] text-muted-foreground">{fashionColors.length} sélectionnée{fashionColors.length > 1 ? 's' : ''}</span>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             {FASHION_COLORS.map(c => {
@@ -2934,10 +2934,10 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                   key={c.hex}
                                   type="button"
                                   onClick={() => setFashionColors(prev => active ? prev.filter(x => x.hex !== c.hex) : [...prev, c])}
-                                  className={`flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full border-2 text-xs font-medium transition ${active ? 'border-purple-500 bg-white shadow-sm' : 'border-gray-200 bg-white hover:border-purple-300'}`}
+                                  className={`flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full border-2 text-xs font-medium transition ${active ? 'border-purple-500 bg-card shadow-sm' : 'border-border bg-card hover:border-purple-300'}`}
                                 >
-                                  <span className="w-5 h-5 rounded-full border border-gray-200" style={{ background: c.hex }} />
-                                  <span className="text-gray-700">{c.name}</span>
+                                  <span className="w-5 h-5 rounded-full border border-border" style={{ background: c.hex }} />
+                                  <span className="text-foreground">{c.name}</span>
                                   {active && <span className="text-purple-600 text-sm leading-none">✓</span>}
                                 </button>
                               );
@@ -2946,7 +2946,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         </div>
 
                         {/* Style minimaliste */}
-                        <label className="flex items-start gap-3 p-3 bg-white rounded-xl border-2 border-purple-100 cursor-pointer hover:border-purple-300 transition">
+                        <label className="flex items-start gap-3 p-3 bg-card rounded-xl border-2 border-purple-100 cursor-pointer hover:border-purple-300 transition">
                           <input
                             type="checkbox"
                             checked={fashionMinimalist}
@@ -2954,8 +2954,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             className="mt-0.5 w-4 h-4 accent-purple-600"
                           />
                           <div className="flex-1">
-                            <p className="text-xs font-semibold text-gray-800">{tp('Page produit minimaliste')}</p>
-                            <p className="text-[11px] text-gray-500 mt-0.5">{tp('Layout éditorial épuré : focus silhouette, détails matière, moins de sections marketing. Recommandé pour la mode.')}</p>
+                            <p className="text-xs font-semibold text-foreground">{tp('Page produit minimaliste')}</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{tp('Layout éditorial épuré : focus silhouette, détails matière, moins de sections marketing. Recommandé pour la mode.')}</p>
                           </div>
                         </label>
                       </div>
@@ -2965,20 +2965,20 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Source + contenu source */}
                   {productSubstep === 2 && (
-                  <div className="space-y-4 rounded-[30px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
+                  <div className="space-y-4 rounded-[30px] border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
                     <div>
-                      <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                      <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                         <Globe className="h-4 w-4 text-slate-700" />
                         {tp('Source du produit')}
                       </label>
-                      <div className="flex gap-2 rounded-[18px] border border-gray-200 bg-gray-50 p-1.5 shadow-sm">
+                      <div className="flex gap-2 rounded-[18px] border border-border bg-background p-1.5 shadow-sm">
                         <button
                           type="button"
                           onClick={() => setInputMode('url')}
                           className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
                             inputMode === 'url'
                                 ? 'rounded-2xl bg-[#0F6B4F] text-white shadow-[0_10px_22px_rgba(15,107,79,0.16)]'
-                              : 'text-gray-600 hover:text-gray-900'
+                              : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
                           <span className="inline-flex items-center gap-2">
@@ -2992,7 +2992,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
                             inputMode === 'description'
                                 ? 'rounded-2xl bg-[#0F6B4F] text-white shadow-[0_10px_22px_rgba(15,107,79,0.16)]'
-                              : 'text-gray-600 hover:text-gray-900'
+                              : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
                           <span className="inline-flex items-center gap-2">
@@ -3004,8 +3004,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     </div>
 
                     {inputMode === 'url' ? (
-                      <div className="rounded-[22px] border border-gray-200 bg-white p-4 shadow-sm">
-                        <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                      <div className="rounded-[22px] border border-border bg-card p-4 shadow-sm">
+                        <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-foreground">
                           <Globe className="h-4 w-4 text-slate-700" />
                           {tp('Lien du produit (Amazon, Alibaba, AliExpress, etc.)')}
                         </label>
@@ -3015,18 +3015,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             value={url}
                             onChange={e => setUrl(e.target.value)}
                             placeholder="https://www.amazon.com/.../... ou https://www.alibaba.com/..."
-                            className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-[#96C7B5]"
+                            className="w-full px-4 py-3 pr-10 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-[#96C7B5]"
                           />
                           {url && (
-                            <a href={url} target="_blank" rel="noopener noreferrer" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-scalor-green">
+                            <a href={url} target="_blank" rel="noopener noreferrer" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-scalor-green">
                               <ExternalLink className="w-4 h-4" />
                             </a>
                           )}
                         </div>
                       </div>
                     ) : (
-                      <div className="rounded-[22px] border border-gray-200 bg-white p-4 shadow-sm">
-                        <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                      <div className="rounded-[22px] border border-border bg-card p-4 shadow-sm">
+                        <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-foreground">
                           <FileText className="h-4 w-4 text-slate-700" />
                           {tp('Description du produit')}
                         </label>
@@ -3035,9 +3035,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           onChange={e => setDescription(e.target.value)}
                           placeholder="Décris ton produit ici... (ex: Gélules de Graviola bio, 60 capsules de 600mg, extrait naturel de feuilles de corossol, riche en antioxydants, aide à renforcer le système immunitaire...)"
                           rows={5}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-[#96C7B5] resize-none"
+                          className="w-full px-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-[#96C7B5] resize-none"
                         />
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Minimum 20 caractères • Décris les bénéfices, caractéristiques et usages du produit
                         </p>
                       </div>
@@ -3047,10 +3047,10 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Photo Upload */}
                   {productSubstep === 3 && (
-                  <div className="rounded-[30px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
-                    <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  <div className="rounded-[30px] border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
+                    <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-foreground">
                       <Upload className="h-4 w-4 text-slate-700" />
-                      Tes vraies photos du produit <span className="font-normal text-gray-500">{tp('(3–8 recommandées)')}</span>
+                      Tes vraies photos du produit <span className="font-normal text-muted-foreground">{tp('(3–8 recommandées)')}</span>
                     </label>
                     <div
                       onDrop={handleDrop}
@@ -3058,12 +3058,12 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       onDragLeave={() => setDragOver(false)}
                       onClick={() => fileInputRef.current?.click()}
                       className={`relative rounded-[24px] border-2 border-dashed p-6 text-center cursor-pointer transition ${
-                        dragOver ? 'border-[#0F6B4F] bg-[#E6F2ED]' : 'border-gray-200 hover:border-[#96C7B5] hover:bg-gray-50'
+                        dragOver ? 'border-[#0F6B4F] bg-[#E6F2ED]' : 'border-border hover:border-[#96C7B5] hover:bg-background'
                       }`}
                     >
-                      <Upload className="w-7 h-7 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm font-medium text-gray-600">{tp('Glisse tes photos ici ou')} <span className="text-scalor-green">{tp('clique pour sélectionner')}</span></p>
-                      <p className="text-xs text-gray-400 mt-1">{tp('JPG, PNG, WEBP — max 10MB chaque — jusqu\'à 8 photos')}</p>
+                      <Upload className="w-7 h-7 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm font-medium text-muted-foreground">{tp('Glisse tes photos ici ou')} <span className="text-scalor-green">{tp('clique pour sélectionner')}</span></p>
+                      <p className="text-xs text-muted-foreground mt-1">{tp('JPG, PNG, WEBP — max 10MB chaque — jusqu\'à 8 photos')}</p>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -3077,7 +3077,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     {photos.length > 0 && (
                       <div className="mt-4 grid grid-cols-4 gap-3">
                         {photos.map((photo, i) => (
-                          <div key={i} className="relative group aspect-square rounded-[18px] overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
+                          <div key={i} className="relative group aspect-square rounded-[18px] overflow-hidden bg-muted border border-border shadow-sm">
                             <img
                               src={URL.createObjectURL(photo)}
                               alt={`Photo ${i + 1}`}
@@ -3099,7 +3099,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="aspect-square rounded-[18px] border-2 border-dashed border-gray-200 hover:border-[#96C7B5] flex items-center justify-center text-gray-400 hover:text-scalor-green transition bg-white/75"
+                            className="aspect-square rounded-[18px] border-2 border-dashed border-border hover:border-[#96C7B5] flex items-center justify-center text-muted-foreground hover:text-scalor-green transition bg-card/75"
                           >
                             <Upload className="w-5 h-5" />
                           </button>
@@ -3115,11 +3115,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               {usesStandardProductGenerator && step === 2 && (
                 <>
                   {/* 3 Méthodes Copywriting */}
-                  <div className="rounded-[30px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <div className="rounded-[30px] border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
+                    <label className="block text-sm font-semibold text-foreground mb-2">
                       {tp('Choisis ta méthode copywriting')}
                     </label>
-                    <p className="text-xs text-gray-500 mb-3">{tp('La méthode choisie pilote tout : texte, images, structure de la page')}</p>
+                    <p className="text-xs text-muted-foreground mb-3">{tp('La méthode choisie pilote tout : texte, images, structure de la page')}</p>
                     <div className="grid grid-cols-1 gap-3">
                       {COPYWRITING_APPROACHES.map(approach => (
                         <button
@@ -3129,7 +3129,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           className={`p-4 rounded-[22px] border text-left transition ${
                             marketingApproach === approach.value
                               ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-[0_14px_28px_rgba(15,107,79,0.10)]'
-                              : 'border-gray-200 hover:border-[#96C7B5] bg-white'
+                              : 'border-border hover:border-[#96C7B5] bg-card'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1">
@@ -3138,7 +3138,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                 <approach.icon className="h-4 w-4" />
                               </span>
                               <span className={`text-base font-bold ${
-                                marketingApproach === approach.value ? 'text-[#0A5740]' : 'text-gray-900'
+                                marketingApproach === approach.value ? 'text-[#0A5740]' : 'text-foreground'
                               }`}>
                                 {approach.label}
                               </span>
@@ -3147,8 +3147,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                               <CheckCircle className="w-5 h-5 text-scalor-green" />
                             )}
                           </div>
-                          <p className="text-xs font-medium text-gray-600 mb-1">{approach.desc}</p>
-                          <p className="text-xs text-gray-400 leading-relaxed">{approach.detail}</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-1">{approach.desc}</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{approach.detail}</p>
                         </button>
                       ))}
                     </div>
@@ -3166,16 +3166,16 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <Star className="w-4 h-4 text-slate-600" />
                       <span className="text-sm font-bold text-slate-800">{tp('Optionnel')}</span>
                     </div>
-                    <p className="text-xs text-gray-500">{tp('Ces infos aident l\'IA a mieux cibler ta page produit')}</p>
+                    <p className="text-xs text-muted-foreground">{tp('Ces infos aident l\'IA a mieux cibler ta page produit')}</p>
                   </div>
 
-                  <div className="space-y-3 rounded-[28px] border border-gray-200 bg-white p-5 mb-4 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
+                  <div className="space-y-3 rounded-[28px] border border-border bg-card p-5 mb-4 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+                      <label className="block text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1.5">
                         <ImageIcon className="h-3.5 w-3.5 text-scalor-green" />
                         {tp('Visuels de la page')}
                       </label>
-                      <p className="text-xs text-gray-500">{tp('Choisis le type de visuels que le modèle doit générer pour cette page produit.')}</p>
+                      <p className="text-xs text-muted-foreground">{tp('Choisis le type de visuels que le modèle doit générer pour cette page produit.')}</p>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -3186,14 +3186,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             key={mode.id}
                             type="button"
                             onClick={() => setImageGenerationMode(mode.id)}
-                            className={`rounded-[20px] border p-4 text-left transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-gray-200 bg-white hover:border-[#96C7B5] hover:bg-gray-50'}`}
+                            className={`rounded-[20px] border p-4 text-left transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-border bg-card hover:border-[#96C7B5] hover:bg-background'}`}
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
                                 <p className="text-sm font-semibold text-slate-900">{mode.label}</p>
-                                <p className="mt-1 text-xs leading-5 text-gray-500">{mode.description}</p>
+                                <p className="mt-1 text-xs leading-5 text-muted-foreground">{mode.description}</p>
                               </div>
-                              <div className={`mt-0.5 h-4 w-4 rounded-full border ${isActive ? 'border-[#0F6B4F] bg-[#0F6B4F]' : 'border-stone-300 bg-white'}`} />
+                              <div className={`mt-0.5 h-4 w-4 rounded-full border ${isActive ? 'border-[#0F6B4F] bg-[#0F6B4F]' : 'border-stone-300 bg-card'}`} />
                             </div>
                           </button>
                         );
@@ -3208,17 +3208,17 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   </div>
 
                   {/* Avatar cible */}
-                  <div className="space-y-4 rounded-[28px] border border-gray-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
+                  <div className="space-y-4 rounded-[28px] border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+                      <label className="block text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1.5">
                         <User className="h-3.5 w-3.5 text-scalor-green" />
                         {tp('Avatar client cible')}
                       </label>
-                      <p className="text-xs text-gray-500">{tp('Choisis le genre, l’âge et le profil sans devoir tout écrire à la main.')}</p>
+                      <p className="text-xs text-muted-foreground">{tp('Choisis le genre, l’âge et le profil sans devoir tout écrire à la main.')}</p>
                     </div>
 
                     <div>
-                      <p className="mb-2 text-xs font-semibold text-gray-700">{tp('Genre')}</p>
+                      <p className="mb-2 text-xs font-semibold text-foreground">{tp('Genre')}</p>
                       <div className="grid gap-2 sm:grid-cols-2">
                         {TARGET_GENDER_OPTIONS.map((option) => {
                           const isActive = targetGender === option.value;
@@ -3227,14 +3227,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                               key={option.value}
                               type="button"
                               onClick={() => setTargetGender(option.value)}
-                              className={`rounded-[20px] border px-3 py-3 text-left transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-gray-200 bg-white hover:border-[#96C7B5]'}`}
+                              className={`rounded-[20px] border px-3 py-3 text-left transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-border bg-card hover:border-[#96C7B5]'}`}
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div>
                                   <p className="text-sm font-semibold text-slate-900">{option.label}</p>
-                                  <p className="mt-1 text-xs text-gray-500">{option.hint}</p>
+                                  <p className="mt-1 text-xs text-muted-foreground">{option.hint}</p>
                                 </div>
-                                <div className={`mt-0.5 h-4 w-4 rounded-full border ${isActive ? 'border-[#0F6B4F] bg-[#0F6B4F]' : 'border-stone-300 bg-white'}`} />
+                                <div className={`mt-0.5 h-4 w-4 rounded-full border ${isActive ? 'border-[#0F6B4F] bg-[#0F6B4F]' : 'border-stone-300 bg-card'}`} />
                               </div>
                             </button>
                           );
@@ -3244,11 +3244,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div>
-                        <label className="mb-1.5 block text-xs font-semibold text-gray-700">{tp('Tranche d’âge')}</label>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">{tp('Tranche d’âge')}</label>
                         <select
                           value={targetAgeRange}
                           onChange={(e) => setTargetAgeRange(e.target.value)}
-                          className="w-full rounded-[16px] border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-[#96C7B5] focus:outline-none focus:ring-2 focus:ring-scalor-green"
+                          className="w-full rounded-[16px] border border-border bg-card px-3 py-2.5 text-sm focus:border-[#96C7B5] focus:outline-none focus:ring-2 focus:ring-scalor-green"
                         >
                           {TARGET_AGE_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
@@ -3257,11 +3257,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       </div>
 
                       <div>
-                        <label className="mb-1.5 block text-xs font-semibold text-gray-700">{tp('Profil')}</label>
+                        <label className="mb-1.5 block text-xs font-semibold text-foreground">{tp('Profil')}</label>
                         <select
                           value={targetProfile}
                           onChange={(e) => setTargetProfile(e.target.value)}
-                          className="w-full rounded-[16px] border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-[#96C7B5] focus:outline-none focus:ring-2 focus:ring-scalor-green"
+                          className="w-full rounded-[16px] border border-border bg-card px-3 py-2.5 text-sm focus:border-[#96C7B5] focus:outline-none focus:ring-2 focus:ring-scalor-green"
                         >
                           {TARGET_PROFILE_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
@@ -3270,14 +3270,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       </div>
                     </div>
 
-                    <div className="rounded-[18px] border border-dashed border-[#96C7B5] bg-gray-50 px-3 py-3 shadow-sm">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">{tp('Résumé avatar')}</p>
+                    <div className="rounded-[18px] border border-dashed border-[#96C7B5] bg-background px-3 py-3 shadow-sm">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{tp('Résumé avatar')}</p>
                       <p className="mt-1 text-sm font-medium text-slate-800">{targetAvatarSummary || tp('Auto selon le produit et les photos')}</p>
                     </div>
 
                     {/* Probleme principal */}
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+                      <label className="block text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1.5">
                         <AlertTriangle className="h-3.5 w-3.5 text-scalor-green" />
                         {tp('Problème principal')}
                       </label>
@@ -3286,9 +3286,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         onChange={(e) => setMainProblem(e.target.value)}
                         placeholder={tp('Ex: Peau terne avec des taches, perte de confiance en soi...')}
                         rows={2}
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-[16px] text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-[#96C7B5] resize-none bg-white"
+                        className="w-full px-3 py-2.5 border border-border rounded-[16px] text-sm focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-[#96C7B5] resize-none bg-card"
                       />
-                      <p className="text-xs text-gray-400 mt-1">{tp('Quel probleme ton produit resout ?')}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{tp('Quel probleme ton produit resout ?')}</p>
                     </div>
                   </div>
                 </>
@@ -3297,7 +3297,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               {error && (
                 <div className={`p-4 rounded-xl border ${
                   limitReached 
-                    ? 'bg-white border-gray-200' 
+                    ? 'bg-card border-border' 
                     : 'bg-red-50 border-red-200'
                 }`}>
                   {limitReached ? (
@@ -3306,8 +3306,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <Zap className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-sm font-bold text-gray-900">{tp('Tu n\'as plus de crédits')}</h3>
-                        <p className="text-xs text-gray-500">{tp('Achète des crédits pour générer des pages produit IA.')}</p>
+                        <h3 className="text-sm font-bold text-foreground">{tp('Tu n\'as plus de crédits')}</h3>
+                        <p className="text-xs text-muted-foreground">{tp('Achète des crédits pour générer des pages produit IA.')}</p>
                       </div>
                       <button type="button" onClick={() => openCreditsPaymentModal('Tu n\'as plus de crédits. Choisis un pack pour acheter de nouveaux crédits.')}
                         className="px-4 py-2 bg-scalor-copper text-white font-bold rounded-xl hover:bg-scalor-copper-dark transition text-sm shadow-lg whitespace-nowrap">
@@ -3320,8 +3320,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <Lock className="w-5 h-5 text-red-500" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-sm font-bold text-gray-900">{tp('Session expirée')}</h3>
-                        <p className="text-xs text-gray-500">{tp('Reconnecte-toi pour continuer à générer des pages.')}</p>
+                        <h3 className="text-sm font-bold text-foreground">{tp('Session expirée')}</h3>
+                        <p className="text-xs text-muted-foreground">{tp('Reconnecte-toi pour continuer à générer des pages.')}</p>
                       </div>
                       <button type="button" onClick={() => { window.location.href = '/ecom/login'; }}
                         className="px-4 py-2 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition text-sm shadow-lg whitespace-nowrap">
@@ -3371,7 +3371,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         <>
                           <div className="rounded-xl border border-[#96C7B5] bg-[#E6F2ED] p-4">
                             <div className="flex items-start gap-3">
-                              <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-white/80">
+                              <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-card/80">
                                 <Loader2 className="h-4 w-4 animate-spin text-scalor-green" />
                               </div>
                               <div>
@@ -3408,7 +3408,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             type="button"
                             onClick={() => checkPendingGenerationPayment()}
                             disabled={paymentChecking}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold transition hover:bg-gray-50 text-sm disabled:opacity-50"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-foreground font-semibold transition hover:bg-background text-sm disabled:opacity-50"
                           >
                             {paymentChecking ? (
                               <><Loader2 className="w-4 h-4 animate-spin" /> {tp('Vérification...')}</>
@@ -3417,7 +3417,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                             )}
                           </button>
 
-                          <p className="text-xs text-center text-gray-400">
+                          <p className="text-xs text-center text-muted-foreground">
                             Le bouton principal relance MoneyFusion avec le montant de recharge. Le statut peut aussi être vérifié sans recharger la page.
                           </p>
                         </>
@@ -3452,7 +3452,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                   className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all ${
                                     selected
                                       ? 'border-scalor-green bg-scalor-green/5 shadow-[0_4px_16px_rgba(15,107,79,0.12)]'
-                                      : 'border-gray-200 bg-white hover:border-gray-300'
+                                      : 'border-border bg-card hover:border-gray-300'
                                   }`}
                                 >
                                   {/* Radio */}
@@ -3461,17 +3461,17 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                                   </span>
                                   <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                      <p className="text-sm font-bold text-gray-900">{pack.title}</p>
+                                      <p className="text-sm font-bold text-foreground">{pack.title}</p>
                                       {pack.best && (
                                         <span className="rounded-full bg-scalor-green px-2 py-0.5 text-[9px] font-black tracking-wide text-white">
                                           MEILLEURE OFFRE
                                         </span>
                                       )}
                                     </div>
-                                    <p className="mt-0.5 text-xs text-gray-500">{pack.desc}</p>
+                                    <p className="mt-0.5 text-xs text-muted-foreground">{pack.desc}</p>
                                   </div>
                                   <div className="shrink-0 text-right">
-                                    <p className="text-sm font-black tabular-nums text-gray-900">{pack.price} FCFA</p>
+                                    <p className="text-sm font-black tabular-nums text-foreground">{pack.price} FCFA</p>
                                     {pack.perCredit && (
                                       <p className="text-[10px] font-semibold text-scalor-green">{pack.perCredit} FCFA / crédit</p>
                                     )}
@@ -3484,16 +3484,16 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           {/* Formulaire paiement */}
                           <div className="space-y-3 pt-1">
                             <div>
-                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-600"><Phone className="h-3.5 w-3.5 text-scalor-green" />{tp('Numéro de téléphone')}</label>
+                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"><Phone className="h-3.5 w-3.5 text-scalor-green" />{tp('Numéro de téléphone')}</label>
                               <input type="tel" value={paymentPhone} onChange={(e) => setPaymentPhone(e.target.value)}
                                 placeholder={tp('Ex: 0707070707')}
-                                className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium transition focus:border-scalor-green focus:bg-white focus:outline-none focus:ring-2 focus:ring-scalor-green/20" />
+                                className="w-full rounded-xl border-2 border-border bg-background px-4 py-2.5 text-sm font-medium transition focus:border-scalor-green focus:bg-card focus:outline-none focus:ring-2 focus:ring-scalor-green/20" />
                             </div>
                             <div>
-                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-gray-600"><User className="h-3.5 w-3.5 text-scalor-green" />{tp('Votre nom')}</label>
+                              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"><User className="h-3.5 w-3.5 text-scalor-green" />{tp('Votre nom')}</label>
                               <input type="text" value={paymentName} onChange={(e) => setPaymentName(e.target.value)}
                                 placeholder={tp('Ex: Jean Dupont')}
-                                className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium transition focus:border-scalor-green focus:bg-white focus:outline-none focus:ring-2 focus:ring-scalor-green/20" />
+                                className="w-full rounded-xl border-2 border-border bg-background px-4 py-2.5 text-sm font-medium transition focus:border-scalor-green focus:bg-card focus:outline-none focus:ring-2 focus:ring-scalor-green/20" />
                             </div>
                           </div>
 
@@ -3514,7 +3514,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           </button>
 
                           {(generationsInfo?.totalUsed || 0) > 0 && (
-                            <p className="text-xs text-center text-gray-400">
+                            <p className="text-xs text-center text-muted-foreground">
                               Tu as déjà généré {generationsInfo.totalUsed} page{generationsInfo.totalUsed > 1 ? 's' : ''} produit.
                             </p>
                           )}
@@ -3537,7 +3537,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
             ];
             const activeStep = Math.min(buildStep, STEPS.length - 1);
             return (
-              <div className="relative flex flex-col items-center justify-center bg-white min-h-[640px] w-full select-none px-6">
+              <div className="relative flex flex-col items-center justify-center bg-card min-h-[640px] w-full select-none px-6">
                 <style dangerouslySetInnerHTML={{ __html: `
                   @keyframes spin-slow { to { transform: rotate(360deg) } }
                   @keyframes pulse-dot { 0%,100%{opacity:.4;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
@@ -3600,17 +3600,17 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-4 ${
                     imageGenerationFailed ? 'bg-red-50' : 'bg-primary-50'
                   }`}>
-                    <div className={`w-1.5 h-1.5 rounded-full ${imageGenerationFailed ? 'bg-red-500' : 'bg-primary-500'}`}
+                    <div className={`w-1.5 h-1.5 rounded-full ${imageGenerationFailed ? 'bg-red-500' : 'bg-primary'}`}
                          style={imageGenerationFailed ? undefined : { animation: 'pulse-dot 1.4s ease-in-out infinite' }} />
                     <span className={`text-[11px] font-semibold tracking-wide uppercase ${
-                      imageGenerationFailed ? 'text-red-700' : 'text-primary-700'
+                      imageGenerationFailed ? 'text-red-700' : 'text-primary'
                     }`}>
                       {imageGenerationFailed ? 'Échec génération images' : tp('IA en cours')}
                     </span>
                   </div>
 
                   {/* Titre — soit étape en cours, soit message d'erreur */}
-                  <h2 className="text-[22px] font-bold text-gray-900 mb-2 leading-tight tracking-tight">
+                  <h2 className="text-[22px] font-bold text-foreground mb-2 leading-tight tracking-tight">
                     {imageGenerationFailed
                       ? "Les images n'ont pas pu être générées"
                       : (['Analyse de votre produit','Génération du contenu','Construction de la page','Finalisation','Génération des visuels'][activeStep] || 'Préparation')
@@ -3618,7 +3618,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   </h2>
 
                   {/* Sous-titre — soit message dynamique, soit détail erreur */}
-                  <p className={`text-sm min-h-[22px] mb-7 ${imageGenerationFailed ? 'text-red-700' : 'text-gray-500'}`}>
+                  <p className={`text-sm min-h-[22px] mb-7 ${imageGenerationFailed ? 'text-red-700' : 'text-muted-foreground'}`}>
                     {imageGenerationFailed
                       ? imageGenerationFailed.message
                       : <TypingText text={buildMessage} />
@@ -3628,11 +3628,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* Barre de progression — masquée en cas d'échec */}
                   {!imageGenerationFailed && (
                     <div className="w-full mb-7">
-                      <div className="flex items-center justify-between text-[11px] font-medium text-gray-400 mb-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground mb-1.5">
                         <span>{tp('Progression')}</span>
-                        <span className="text-gray-900 font-semibold">{Math.round(buildProgress)}%</span>
+                        <span className="text-foreground font-semibold">{Math.round(buildProgress)}%</span>
                       </div>
-                      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+                      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
                         <div
                           className="absolute inset-y-0 left-0 rounded-full"
                           style={{
@@ -3662,23 +3662,23 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           }`}
                         >
                           <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
-                            done ? 'bg-primary-600' : active ? 'bg-white ring-2 ring-primary-600' : 'bg-gray-100'
+                            done ? 'bg-primary' : active ? 'bg-card ring-2 ring-primary-600' : 'bg-muted'
                           }`}>
                             {done
                               ? <CheckCircle className="w-4 h-4 text-white" />
                               : active
-                                ? <Icon className="w-3.5 h-3.5 text-primary-600" />
-                                : <Icon className="w-3.5 h-3.5 text-gray-400" />
+                                ? <Icon className="w-3.5 h-3.5 text-primary" />
+                                : <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                             }
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className={`text-[13px] font-semibold ${done ? 'text-gray-900' : active ? 'text-primary-700' : 'text-gray-500'}`}>
+                            <p className={`text-[13px] font-semibold ${done ? 'text-foreground' : active ? 'text-primary' : 'text-muted-foreground'}`}>
                               {s.label}
                             </p>
-                            <p className="text-[11px] text-gray-400 truncate">{s.desc}</p>
+                            <p className="text-[11px] text-muted-foreground truncate">{s.desc}</p>
                           </div>
                           {active && (
-                            <Loader2 className="w-3.5 h-3.5 text-primary-600 animate-spin shrink-0" />
+                            <Loader2 className="w-3.5 h-3.5 text-primary animate-spin shrink-0" />
                           )}
                         </div>
                       );
@@ -3740,7 +3740,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           setPhase('preview');
                           setActiveTab('page');
                         }}
-                        className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 transition"
+                        className="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-background transition"
                       >
                         {tp('Voir quand même le contenu texte')}
                       </button>
@@ -3755,7 +3755,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           setBuildMessage('');
                           setShowConfetti(false);
                         }}
-                        className="text-xs text-gray-400 hover:text-gray-600 transition px-2 py-2"
+                        className="text-xs text-muted-foreground hover:text-muted-foreground transition px-2 py-2"
                       >
                         {tp('Annuler')}
                       </button>
@@ -3765,14 +3765,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                       <button
                         type="button"
                         onClick={handleContinueInBackground}
-                        className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 hover:border-gray-300 transition"
+                        className="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-background hover:border-gray-300 transition"
                       >
                         {tp('Continuer en arrière-plan')}
                       </button>
                       <button
                         type="button"
                         onClick={() => { abortRef.current?.abort(); setPhase('input'); setBuildStep(0); setBuildProgress(0); setBuildMessage(''); setShowConfetti(false); }}
-                        className="text-xs text-gray-400 hover:text-gray-600 transition px-2 py-2"
+                        className="text-xs text-muted-foreground hover:text-muted-foreground transition px-2 py-2"
                       >
                         {tp('Annuler')}
                       </button>
@@ -3788,7 +3788,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
             <div className="p-6 space-y-5">
 
               {/* Success Banner */}
-              <div className={pageMode ? 'rounded-[28px] border border-[#cfe5dc] bg-white p-5 shadow-[0_14px_40px_rgba(15,107,79,0.06)]' : 'rounded-xl border-2 border-[#96C7B5] bg-[#E6F2ED] p-4'}>
+              <div className={pageMode ? 'rounded-[28px] border border-[#cfe5dc] bg-card p-5 shadow-[0_14px_40px_rgba(15,107,79,0.06)]' : 'rounded-xl border-2 border-[#96C7B5] bg-[#E6F2ED] p-4'}>
                 <div className="flex items-center gap-3">
                   <div className={pageMode ? 'flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#0A5740] shadow-[0_14px_34px_rgba(15,107,79,0.18)]' : 'w-12 h-12 rounded-full bg-scalor-green flex items-center justify-center shrink-0'}>
                     <CheckCircle className="w-7 h-7 text-white" />
@@ -3803,7 +3803,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               </div>
 
               {/* Tabs */}
-              <div className={pageMode ? 'flex gap-1.5 rounded-[20px] border border-gray-200 bg-white p-1.5 shadow-[0_10px_28px_rgba(15,23,42,0.04)]' : 'flex gap-1 p-1 bg-gray-100 rounded-xl'}>
+              <div className={pageMode ? 'flex gap-1.5 rounded-[20px] border border-border bg-card p-1.5 shadow-[0_10px_28px_rgba(15,23,42,0.04)]' : 'flex gap-1 p-1 bg-muted rounded-xl'}>
                 {[
                   { id: 'page', label: 'Page', icon: Package },
                   { id: 'final', label: 'Finale', icon: Smartphone },
@@ -3817,8 +3817,8 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     onClick={() => setActiveTab(id)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-xs font-medium transition ${
                       activeTab === id
-                        ? `${pageMode ? 'rounded-2xl bg-[#0F6B4F] text-white shadow-[0_12px_24px_rgba(15,107,79,0.18)]' : 'bg-white text-[#0A5740] shadow-sm ring-1 ring-[#96C7B5]'}`
-                        : `${pageMode ? 'rounded-2xl text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-500 hover:text-gray-700'}`
+                        ? `${pageMode ? 'rounded-2xl bg-[#0F6B4F] text-white shadow-[0_12px_24px_rgba(15,107,79,0.18)]' : 'bg-card text-[#0A5740] shadow-sm ring-1 ring-[#96C7B5]'}`
+                        : `${pageMode ? 'rounded-2xl text-muted-foreground hover:bg-muted hover:text-foreground' : 'text-muted-foreground hover:text-foreground'}`
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -3836,7 +3836,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 <div className="space-y-4">
                   {/* Images loading banner */}
                   {imagesLoading && (
-                    <div className="flex items-center gap-3 rounded-xl border border-[#96C7B5] bg-white p-3">
+                    <div className="flex items-center gap-3 rounded-xl border border-[#96C7B5] bg-card p-3">
                       <Loader2 className="w-4 h-4 text-scalor-green animate-spin shrink-0" />
                       <span className="text-sm font-medium text-[#0A5740]">
                         {tp('Les images sont en cours de génération en arrière-plan...')}
@@ -3845,18 +3845,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   )}
                   {/* Hero photo avec textes */}
                   {product.heroImage && (
-                    <div className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="border border-border rounded-xl overflow-hidden">
                       <ImagePreview src={product.heroImage} label="Image HERO principale" className="w-full aspect-square" />
                       {(product.hero_headline || product.hero_slogan || product.hero_baseline) && (
-                        <div className="border-t border-gray-200 bg-white p-4">
+                        <div className="border-t border-border bg-card p-4">
                           {product.hero_headline && (
-                            <p className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-1"><Megaphone className="h-4 w-4 text-scalor-green" />{product.hero_headline}</p>
+                            <p className="flex items-center gap-2 text-sm font-bold text-foreground mb-1"><Megaphone className="h-4 w-4 text-scalor-green" />{product.hero_headline}</p>
                           )}
                           {product.hero_slogan && (
                             <p className="flex items-center gap-2 text-sm text-[#0F6B4F] italic mb-1"><Sparkles className="h-4 w-4" />{product.hero_slogan}</p>
                           )}
                           {product.hero_baseline && (
-                            <p className="text-xs text-gray-600">{product.hero_baseline}</p>
+                            <p className="text-xs text-muted-foreground">{product.hero_baseline}</p>
                           )}
                         </div>
                       )}
@@ -3865,18 +3865,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Hero Poster (affiche graphique) */}
                   {product.heroPosterImage && (
-                    <div className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="border border-border rounded-xl overflow-hidden">
                       <ImagePreview src={product.heroPosterImage} label="Affiche publicitaire hero" className="w-full aspect-square" />
-                      <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-                        <p className="text-xs text-gray-500">{tp('🎨 Visuel affiche — idéal pour publicités Facebook/Instagram')}</p>
+                      <div className="px-4 py-2 bg-background border-t border-border">
+                        <p className="text-xs text-muted-foreground">{tp('🎨 Visuel affiche — idéal pour publicités Facebook/Instagram')}</p>
                       </div>
                     </div>
                   )}
 
                   {/* Titre */}
-                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                  <div className="p-4 bg-card rounded-xl border">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-lg font-bold text-gray-900">{product.title}</h3>
+                      <h3 className="text-lg font-bold text-foreground">{product.title}</h3>
                       <CopyButton text={product.title} />
                     </div>
                     {/* CTA + Badge urgence */}
@@ -3901,7 +3901,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {product.stats_bar?.length > 0 && (
                     <div className="grid grid-cols-3 gap-2">
                       {product.stats_bar.map((stat, i) => (
-                        <div key={i} className="p-3 bg-white rounded-xl border border-gray-200 text-center">
+                        <div key={i} className="p-3 bg-card rounded-xl border text-center">
                           <p className="text-xs font-bold text-[#0A5740] leading-tight">{stat}</p>
                         </div>
                       ))}
@@ -3910,17 +3910,17 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Problem / Solution */}
                   {product.problem_section && (
-                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <div className="p-4 bg-card rounded-xl border">
                       <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><AlertTriangle className="h-3.5 w-3.5" />{tp('Problème')}</p>
                       {product.problem_section.title && (
                         <div className="flex items-start justify-between gap-2 mb-3">
-                          <p className="text-sm font-bold text-gray-900">{product.problem_section.title}</p>
+                          <p className="text-sm font-bold text-foreground">{product.problem_section.title}</p>
                           <CopyButton text={product.problem_section.title} />
                         </div>
                       )}
                       <div className="space-y-2">
                         {(product.problem_section.pain_points || []).map((point, i) => (
-                          <div key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                          <div key={i} className="flex items-start gap-2 text-sm text-foreground">
                             <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0A5740]" />
                             <span>{point}</span>
                           </div>
@@ -3930,17 +3930,17 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   )}
 
                   {product.solution_section && (
-                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <div className="p-4 bg-card rounded-xl border">
                       <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><CheckCircle className="h-3.5 w-3.5" />{tp('Solution')}</p>
                       {product.solution_section.title && (
                         <div className="flex items-start justify-between gap-2 mb-2">
-                          <p className="text-sm font-bold text-gray-900">{product.solution_section.title}</p>
+                          <p className="text-sm font-bold text-foreground">{product.solution_section.title}</p>
                           <CopyButton text={product.solution_section.title} />
                         </div>
                       )}
                       {product.solution_section.description && (
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm text-gray-700 leading-relaxed flex-1">{product.solution_section.description}</p>
+                          <p className="text-sm text-foreground leading-relaxed flex-1">{product.solution_section.description}</p>
                           <CopyButton text={product.solution_section.description} />
                         </div>
                       )}
@@ -3949,11 +3949,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Benefits Bullets */}
                   {product.benefits_bullets?.length > 0 && (
-                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <div className="p-4 bg-card rounded-xl border">
                       <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Sparkles className="h-3.5 w-3.5" />Bénéfices ({product.benefits_bullets.length})</p>
                       <div className="space-y-2">
                         {product.benefits_bullets.map((benefit, i) => (
-                          <div key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                          <div key={i} className="flex items-start gap-2 text-sm text-foreground">
                             <span className="text-base flex-shrink-0">{benefit.match(/^[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u)?.[0] || '•'}</span>
                             <span>{benefit.replace(/^[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]\s*/u, '')}</span>
                           </div>
@@ -3964,18 +3964,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Offer Block */}
                   {product.offer_block && (
-                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <div className="p-4 bg-card rounded-xl border">
                       <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Package className="h-3.5 w-3.5" />{tp('Offre')}</p>
                       <div className="space-y-2">
                         {product.offer_block.offer_label && (
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-bold text-gray-900">{product.offer_block.offer_label}</p>
+                            <p className="text-sm font-bold text-foreground">{product.offer_block.offer_label}</p>
                             <CopyButton text={product.offer_block.offer_label} />
                           </div>
                         )}
                         {product.offer_block.guarantee_text && (
                           <div className="flex items-start justify-between gap-2">
-                            <p className="flex flex-1 items-start gap-2 text-sm text-gray-700"><Lock className="mt-0.5 h-4 w-4 text-[#0A5740]" />{product.offer_block.guarantee_text}</p>
+                            <p className="flex flex-1 items-start gap-2 text-sm text-foreground"><Lock className="mt-0.5 h-4 w-4 text-[#0A5740]" />{product.offer_block.guarantee_text}</p>
                             <CopyButton text={product.offer_block.guarantee_text} />
                           </div>
                         )}
@@ -3991,31 +3991,31 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* SEO */}
                   {product.seo && (
-                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                      <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-gray-600"><Search className="h-3.5 w-3.5" />SEO</p>
+                    <div className="p-4 bg-background rounded-xl border border-border">
+                      <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground"><Search className="h-3.5 w-3.5" />SEO</p>
                       <div className="space-y-3">
                         {product.seo.meta_title && (
                           <div>
-                            <p className="text-xs text-gray-400 mb-1">Meta title ({product.seo.meta_title.length}/60)</p>
+                            <p className="text-xs text-muted-foreground mb-1">Meta title ({product.seo.meta_title.length}/60)</p>
                             <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm font-semibold text-gray-800 flex-1">{product.seo.meta_title}</p>
+                              <p className="text-sm font-semibold text-foreground flex-1">{product.seo.meta_title}</p>
                               <CopyButton text={product.seo.meta_title} />
                             </div>
                           </div>
                         )}
                         {product.seo.meta_description && (
                           <div>
-                            <p className="text-xs text-gray-400 mb-1">Meta description ({product.seo.meta_description.length}/155)</p>
+                            <p className="text-xs text-muted-foreground mb-1">Meta description ({product.seo.meta_description.length}/155)</p>
                             <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm text-gray-700 flex-1">{product.seo.meta_description}</p>
+                              <p className="text-sm text-foreground flex-1">{product.seo.meta_description}</p>
                               <CopyButton text={product.seo.meta_description} />
                             </div>
                           </div>
                         )}
                         {product.seo.slug && (
                           <div>
-                            <p className="text-xs text-gray-400 mb-1">{tp('URL slug')}</p>
-                            <div className="flex items-center justify-between gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200">
+                            <p className="text-xs text-muted-foreground mb-1">{tp('URL slug')}</p>
+                            <div className="flex items-center justify-between gap-2 bg-card px-3 py-2 rounded-lg border border-border">
                               <code className="text-xs text-scalor-green font-mono">/products/{product.seo.slug}</code>
                               <CopyButton text={product.seo.slug} />
                             </div>
@@ -4027,23 +4027,23 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Urgency Elements */}
                   {product.urgency_elements && (
-                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <div className="p-4 bg-card rounded-xl border">
                       <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Zap className="h-3.5 w-3.5" />{tp('Urgence psychologique')}</p>
                       <div className="space-y-2 text-sm">
                         {product.urgency_elements.stock_limited && (
-                          <div className="flex items-center gap-2 text-gray-700">
+                          <div className="flex items-center gap-2 text-foreground">
                             <Package className="h-4 w-4" />
                             <span>{tp('Stock limité activé')}</span>
                           </div>
                         )}
                         {product.urgency_elements.social_proof_count && (
-                          <div className="flex items-center gap-2 text-gray-700">
+                          <div className="flex items-center gap-2 text-foreground">
                             <Star className="h-4 w-4" />
                             <span>{product.urgency_elements.social_proof_count}</span>
                           </div>
                         )}
                         {product.urgency_elements.quick_result && (
-                          <div className="flex items-center gap-2 text-gray-700">
+                          <div className="flex items-center gap-2 text-foreground">
                             <Clock3 className="h-4 w-4" />
                             <span>{product.urgency_elements.quick_result}</span>
                           </div>
@@ -4054,13 +4054,13 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Conversion Blocks */}
                   {product.conversion_blocks?.length > 0 && (
-                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <div className="p-4 bg-card rounded-xl border">
                       <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Zap className="h-3.5 w-3.5" />Blocs conversion ({product.conversion_blocks.length})</p>
                       <div className="grid grid-cols-2 gap-2">
                         {product.conversion_blocks.map((block, i) => (
-                          <div key={i} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                          <div key={i} className="flex items-center gap-2 p-2 bg-background rounded-lg border border-border">
                             <span className="text-lg">{block.icon}</span>
-                            <span className="text-xs font-medium text-gray-700">{block.text}</span>
+                            <span className="text-xs font-medium text-foreground">{block.text}</span>
                           </div>
                         ))}
                       </div>
@@ -4071,18 +4071,18 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <div>
                     <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><Target className="h-3.5 w-3.5" />{tp('4 arguments marketing')}</p>
                     {(product.angles || []).map((angle, i) => (
-                      <div key={i} className="mb-3 border border-gray-200 rounded-xl overflow-hidden bg-white">
+                      <div key={i} className="mb-3 border border-border rounded-xl overflow-hidden bg-card">
                         {angle.poster_url && (
                           <ImagePreview src={angle.poster_url} label={`Visuel angle ${i + 1}`} className="w-full aspect-square" />
                         )}
                         <div className="p-4">
-                          <h4 className="text-sm font-bold text-gray-800 mb-2">{angle.titre_angle}</h4>
+                          <h4 className="text-sm font-bold text-foreground mb-2">{angle.titre_angle}</h4>
                           {angle.explication && (
-                            <p className="text-sm text-gray-600 mb-2 leading-relaxed">{angle.explication}</p>
+                            <p className="text-sm text-muted-foreground mb-2 leading-relaxed">{angle.explication}</p>
                           )}
                           <p className="flex items-center gap-2 text-sm text-[#0F6B4F] font-medium italic mb-1"><Target className="h-4 w-4" />{angle.message_principal}</p>
                           {angle.promesse && (
-                            <p className="flex items-center gap-2 text-xs text-gray-500 italic"><Sparkles className="h-3.5 w-3.5" />{angle.promesse}</p>
+                            <p className="flex items-center gap-2 text-xs text-muted-foreground italic"><Sparkles className="h-3.5 w-3.5" />{angle.promesse}</p>
                           )}
                         </div>
                       </div>
@@ -4091,13 +4091,13 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* Raisons d'acheter */}
                   {product.raisons_acheter?.length > 0 && (
-                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <div className="p-4 bg-card rounded-xl border">
                       <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><CheckCircle className="h-3.5 w-3.5" />{tp('Raisons d\'acheter')}</p>
                       <div className="space-y-2">
                         {product.raisons_acheter.map((r, i) => (
                           <div key={i} className="flex items-start gap-2">
                             <span className="text-scalor-green font-bold text-sm mt-0.5">✓</span>
-                            <p className="text-sm text-gray-700">{r}</p>
+                            <p className="text-sm text-foreground">{r}</p>
                           </div>
                         ))}
                       </div>
@@ -4109,7 +4109,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               {/* Tab: Affiches publicitaires */}
               {activeTab === 'affiches' && (
                 <div className="space-y-4">
-                  <p className="text-xs text-gray-500 font-medium">{tp('5 visuels d\'angles marketing, simples et sans surcharge de texte')}</p>
+                  <p className="text-xs text-muted-foreground font-medium">{tp('5 visuels d\'angles marketing, simples et sans surcharge de texte')}</p>
                   {!imagesLoading && (product.angles || []).every(a => !a.poster_url) && (
                     <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
                       <ImageIcon className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
@@ -4117,24 +4117,24 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     </div>
                   )}
                   {(product.angles || []).map((angle, i) => (
-                    <div key={i} className="border border-gray-100 rounded-xl overflow-hidden">
+                    <div key={i} className="border border-border rounded-xl overflow-hidden">
                       {angle.poster_url ? (
-                        <div className="bg-gray-50">
+                        <div className="bg-background">
                           <img src={angle.poster_url} alt={angle.titre_angle} className="w-full aspect-square object-cover" />
                         </div>
                       ) : imagesLoading ? (
-                        <div className="p-6 bg-gray-50 text-center">
+                        <div className="p-6 bg-background text-center">
                           <Loader2 className="w-6 h-6 mx-auto mb-2 text-gray-300 animate-spin" />
-                          <p className="text-xs text-gray-400">{tp('Génération en cours...')}</p>
+                          <p className="text-xs text-muted-foreground">{tp('Génération en cours...')}</p>
                         </div>
                       ) : (
-                        <div className="p-6 bg-gray-50 text-center">
+                        <div className="p-6 bg-background text-center">
                           <ImageIcon className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                          <p className="text-xs text-gray-400">{tp('Affiche non générée')}</p>
+                          <p className="text-xs text-muted-foreground">{tp('Affiche non générée')}</p>
                         </div>
                       )}
-                        <div className="p-3 bg-white">
-                        <p className="text-sm font-semibold text-gray-800 mb-1">{angle.titre_angle}</p>
+                        <div className="p-3 bg-card">
+                        <p className="text-sm font-semibold text-foreground mb-1">{angle.titre_angle}</p>
                         <p className="text-xs text-[#0F6B4F] italic">{angle.message_principal}</p>
                       </div>
                     </div>
@@ -4167,16 +4167,16 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
 
                   {/* FAQ */}
                   <div>
-                    <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-gray-600"><AlertCircle className="h-3.5 w-3.5" />{tp('FAQ - 5 questions')}</p>
+                    <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground"><AlertCircle className="h-3.5 w-3.5" />{tp('FAQ - 5 questions')}</p>
                     <div className="space-y-2">
                       {(product.faq || []).map((item, i) => (
-                        <div key={i} className="border border-gray-100 rounded-xl overflow-hidden">
-                          <div className="px-4 py-3 bg-gray-50 flex items-start justify-between gap-2">
-                            <p className="text-sm font-semibold text-gray-800">{item.question}</p>
+                        <div key={i} className="border border-border rounded-xl overflow-hidden">
+                          <div className="px-4 py-3 bg-background flex items-start justify-between gap-2">
+                            <p className="text-sm font-semibold text-foreground">{item.question}</p>
                             <CopyButton text={`${item.question}\n${item.reponse}`} />
                           </div>
                           <div className="px-4 py-3">
-                            <p className="text-sm text-gray-600">{item.reponse}</p>
+                            <p className="text-sm text-muted-foreground">{item.reponse}</p>
                           </div>
                         </div>
                       ))}
@@ -4188,10 +4188,10 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     <div>
                       <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#0A5740]"><CheckCircle className="h-3.5 w-3.5" />{product.raisons_acheter.length} raisons d'acheter</p>
                       {product.raisons_acheter.map((r, i) => (
-                        <div key={i} className="flex items-start gap-2 p-3 mb-2 bg-white rounded-lg border border-gray-200">
+                        <div key={i} className="flex items-start gap-2 p-3 mb-2 bg-card rounded-lg border">
                           <span className="text-scalor-green font-bold">{i + 1}.</span>
                           <div className="flex-1 flex items-start justify-between gap-2">
-                            <p className="text-sm text-gray-700">{r}</p>
+                            <p className="text-sm text-foreground">{r}</p>
                             <CopyButton text={r} />
                           </div>
                         </div>
@@ -4221,13 +4221,13 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         {product.heroImage && (
                           <div>
                             <ImagePreview src={product.heroImage} label="Hero — Showcase produit" className="aspect-square" />
-                            <p className="text-xs text-center text-gray-400 mt-1">{tp('1ère image galerie')}</p>
+                            <p className="text-xs text-center text-muted-foreground mt-1">{tp('1ère image galerie')}</p>
                           </div>
                         )}
                         {product.heroPosterImage && (
                           <div>
                             <ImagePreview src={product.heroPosterImage} label="Affiche Hero" className="aspect-square" />
-                            <p className="text-xs text-center text-gray-400 mt-1">{tp('Affiche publicitaire')}</p>
+                            <p className="text-xs text-center text-muted-foreground mt-1">{tp('Affiche publicitaire')}</p>
                           </div>
                         )}
                       </div>
@@ -4240,7 +4240,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                         {(product.socialProofImages || []).map((imgUrl, i) => (
                           <div key={`sp-${i}`}>
                             <ImagePreview src={imgUrl} label={`Preuve sociale ${i + 1}`} className="aspect-square" />
-                            <p className="text-xs text-center text-gray-400 mt-1">{tp('Carré 1:1 pour le carousel')}</p>
+                            <p className="text-xs text-center text-muted-foreground mt-1">{tp('Carré 1:1 pour le carousel')}</p>
                           </div>
                         ))}
                       </div>
@@ -4248,7 +4248,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   )}
                   {/* Photos réelles */}
                   <div>
-                    <p className="text-xs text-gray-500 font-medium mb-2">{(product.realPhotos || []).length} photos réelles uploadées</p>
+                    <p className="text-xs text-muted-foreground font-medium mb-2">{(product.realPhotos || []).length} photos réelles uploadées</p>
                     <div className="grid grid-cols-2 gap-3">
                       {(product.realPhotos || []).map((imgUrl, i) => (
                         <ImagePreview
@@ -4263,7 +4263,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {/* Affiches générées */}
                   {(product.angles || []).some(a => a.poster_url) && (
                     <div>
-                      <p className="text-xs text-gray-500 font-medium mb-2">{tp('Affiches publicitaires IA')}</p>
+                      <p className="text-xs text-muted-foreground font-medium mb-2">{tp('Affiches publicitaires IA')}</p>
                       <div className="grid grid-cols-2 gap-3">
                         {(product.angles || []).filter(a => a.poster_url).map((angle, i) => (
                           <ImagePreview
@@ -4278,10 +4278,10 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   )}
 
                   {(product.descriptionGifs || []).length > 0 && (
-                    <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 space-y-4">
+                    <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-4">
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">{tp('GIFs dans la description')}</p>
-                        <p className="text-xs text-gray-500 mt-1">{tp('2 clips générés automatiquement et injectés dans la description finale.')}</p>
+                        <p className="text-sm font-semibold text-foreground">{tp('GIFs dans la description')}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{tp('2 clips générés automatiquement et injectés dans la description finale.')}</p>
                       </div>
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {(product.descriptionGifs || []).map((gif, index) => (
@@ -4302,14 +4302,14 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
         </div>
 
         {/* Footer */}
-              <div className={pageMode ? 'border-t border-gray-200 bg-white px-6 py-4 shadow-[0_-14px_40px_rgba(15,23,42,0.04)] backdrop-blur-sm shrink-0' : 'px-6 py-4 border-t border-gray-100 shrink-0'}>
+              <div className={pageMode ? 'border-t border-border bg-card px-6 py-4 shadow-[0_-14px_40px_rgba(15,23,42,0.04)] backdrop-blur-sm shrink-0' : 'px-6 py-4 border-t border-border shrink-0'}>
           {phase === 'input' && usesStandardProductGenerator && (
             <>
               {/* Info générations restantes / mode gratuit */}
               {pageStyle === 'hero_page' && !pageMode && (
                 <div className="mb-3 rounded-lg border border-primary-200 bg-primary-50 p-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="w-4 h-4 text-primary-600 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-primary shrink-0" />
                     <span className="font-medium text-primary-800">{tp('Mode gratuit — page complète + hero IA, sans images d\'angles ni GIFs')}</span>
                   </div>
                 </div>
@@ -4319,7 +4319,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
                       <Zap className="w-4 h-4 text-scalor-green" />
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-foreground">
                         Crédits restants :
                       </span>
                     </div>
@@ -4328,7 +4328,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                     </div>
                   </div>
                   {generationsInfo.totalUsed > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Tu as déjà généré {generationsInfo.totalUsed} page{generationsInfo.totalUsed > 1 ? 's' : ''} avec succès.
                     </p>
                   )}
@@ -4338,7 +4338,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               {/* Navigation buttons */}
               <div className={pageMode ? 'flex flex-col gap-3 md:flex-row md:items-center' : 'flex items-center gap-3'}>
                 {pageMode && (
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-xs leading-5 text-gray-600 md:max-w-[340px]">
+                  <div className="rounded-2xl border border-border bg-background px-4 py-3 text-xs leading-5 text-muted-foreground md:max-w-[340px]">
                     {step < 3
                       ? 'Renseigne le produit, définis la méthode puis affine le ciblage avant de lancer la génération.'
                       : pageStyle === 'hero_page'
@@ -4350,7 +4350,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   <button
                     type="button"
                     onClick={handlePrevStep}
-                    className={pageMode ? 'min-w-[180px] py-3 border border-gray-200 bg-white text-gray-700 rounded-2xl font-semibold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2' : 'flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2'}
+                    className={pageMode ? 'min-w-[180px] py-3 border border-border bg-card text-foreground rounded-2xl font-semibold text-sm hover:bg-background transition flex items-center justify-center gap-2' : 'flex-1 py-3 border-2 border-gray-300 text-foreground rounded-xl font-semibold text-sm hover:bg-background transition flex items-center justify-center gap-2'}
                   >
                     <ArrowLeft className="h-4 w-4" />
                     {tp('Précédent')}
@@ -4390,9 +4390,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
           {phase === 'preview' && (
             <div className="space-y-3">
               {/* Info message — clean, neutre */}
-              <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5">
-                <p className="text-xs text-gray-700 text-center">
-                  Aperçu ci-dessus. Cliquez sur <strong className="text-primary-700">{tp('"Utiliser cette page"')}</strong> pour l'appliquer à votre produit.
+              <div className="rounded-xl border border-border bg-background px-4 py-2.5">
+                <p className="text-xs text-foreground text-center">
+                  Aperçu ci-dessus. Cliquez sur <strong className="text-primary">{tp('"Utiliser cette page"')}</strong> pour l'appliquer à votre produit.
                 </p>
               </div>
 
@@ -4424,7 +4424,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 >
                   {digitalProductLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
                   {product?.ebook ? "Régénérer l'ebook" : "Produit digital de ce produit"}
-                  <span className="ml-1 px-1.5 py-0.5 bg-white/20 text-white text-[10px] font-black rounded-full leading-none border border-white/30">{tp('3 crédits')}</span>
+                  <span className="ml-1 px-1.5 py-0.5 bg-card/20 text-white text-[10px] font-black rounded-full leading-none border border-white/30">{tp('3 crédits')}</span>
                 </button>
               </div>
 
@@ -4432,7 +4432,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                 <button
                   type="button"
                   onClick={handleRestart}
-                  className="flex-1 py-3 border border-gray-200 bg-white text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition flex items-center justify-center gap-2"
+                  className="flex-1 py-3 border border-border bg-card text-foreground rounded-xl font-semibold text-sm hover:bg-background hover:border-gray-300 transition flex items-center justify-center gap-2"
                 >
                   <RefreshCw className="h-4 w-4" />
                   {tp('Recommencer')}

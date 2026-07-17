@@ -87,23 +87,23 @@ const GalleryStudio = ({ onNavigate }) => {
     <div>
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">{tp('Galerie')}</h2>
-          <p className="text-[13px] text-gray-400">{tp('Toutes vos créations, au même endroit.')}</p>
+          <h2 className="text-lg font-bold text-foreground">{tp('Galerie')}</h2>
+          <p className="text-[13px] text-muted-foreground">{tp('Toutes vos créations, au même endroit.')}</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">{total} {tp('élément(s)')}</span>
-          <button onClick={() => fetchAssets(page, filter)} className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50"><RefreshCw size={14} /></button>
+          <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-2.5 py-1 rounded-lg">{total} {tp('élément(s)')}</span>
+          <button onClick={() => fetchAssets(page, filter)} className="w-9 h-9 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-background"><RefreshCw size={14} /></button>
         </div>
       </div>
 
       {/* Filtres */}
-      <div className="inline-flex bg-gray-100 rounded-2xl p-1 mb-6">
+      <div className="inline-flex bg-muted rounded-2xl p-1 mb-6">
         {FILTERS.map(f => {
           const Icon = f.icon;
           return (
             <button key={f.id} onClick={() => setFilter(f.id)}
-              className={`h-9 px-3.5 rounded-xl text-[13px] font-semibold inline-flex items-center gap-1.5 transition-all ${filter === f.id ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
-              <Icon size={14} className={filter === f.id ? 'text-primary-600' : ''} /> {f.label}
+              className={`h-9 px-3.5 rounded-xl text-[13px] font-semibold inline-flex items-center gap-1.5 transition-all ${filter === f.id ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+              <Icon size={14} className={filter === f.id ? 'text-primary' : ''} /> {f.label}
             </button>
           );
         })}
@@ -119,22 +119,22 @@ const GalleryStudio = ({ onNavigate }) => {
       {loading && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
-              <div className="aspect-square bg-gray-100" />
-              <div className="p-3 space-y-2"><div className="h-3 bg-gray-100 rounded w-3/4" /><div className="h-2 bg-gray-100 rounded w-1/2" /></div>
+            <div key={i} className="bg-card rounded-2xl overflow-hidden border border-border animate-pulse">
+              <div className="aspect-square bg-muted" />
+              <div className="p-3 space-y-2"><div className="h-3 bg-muted rounded w-3/4" /><div className="h-2 bg-muted rounded w-1/2" /></div>
             </div>
           ))}
         </div>
       )}
 
       {!loading && assets.length === 0 && !error && (
-        <div className="bg-white rounded-3xl border border-gray-100">
+        <div className="bg-card rounded-3xl border border-border">
           <EmptyState
             icon={Sparkles}
             title={tp('Aucune création pour le moment')}
             description={tp('Générez du texte, des affiches ou des vidéos pour les retrouver ici.')}
             action={
-              <button onClick={() => onNavigate?.('image')} className="inline-flex items-center gap-2 bg-primary-500 text-white font-medium px-5 py-2.5 rounded-xl hover:bg-primary-600 text-sm">
+              <button onClick={() => onNavigate?.('image')} className="inline-flex items-center gap-2 bg-primary text-white font-medium px-5 py-2.5 rounded-xl hover:bg-primary text-sm">
                 <Sparkles size={14} /> {tp('Créer maintenant')}
               </button>
             }
@@ -148,27 +148,27 @@ const GalleryStudio = ({ onNavigate }) => {
             {assets.map(asset => {
               const type = assetType(asset);
               return (
-                <div key={asset._id} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
+                <div key={asset._id} className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-md transition-shadow">
                   {type === 'launch' ? (
-                    <div className="p-3.5 h-40 flex flex-col cursor-pointer bg-violet-50/40" onClick={() => setLightbox(asset)}>
+                    <div className="p-3.5 h-40 flex flex-col cursor-pointer bg-primary/10/40" onClick={() => setLightbox(asset)}>
                       <div className="flex items-center gap-1.5 mb-2 shrink-0">
-                        <Rocket size={15} className="text-violet-600" />
-                        <span className="text-[9px] font-bold uppercase tracking-wide bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded">{tp('Lancement')} {asset.meta?.day || 'J1'}</span>
+                        <Rocket size={15} className="text-primary" />
+                        <span className="text-[9px] font-bold uppercase tracking-wide bg-primary/12 text-primary px-1.5 py-0.5 rounded">{tp('Lancement')} {asset.meta?.day || 'J1'}</span>
                       </div>
-                      <p className="text-[11.5px] text-gray-600 leading-snug line-clamp-4 flex-1 overflow-hidden">{asset.content}</p>
+                      <p className="text-[11.5px] text-muted-foreground leading-snug line-clamp-4 flex-1 overflow-hidden">{asset.content}</p>
                     </div>
                   ) : type === 'text' ? (
                     <div className="p-3.5 h-40 flex flex-col cursor-pointer" onClick={() => setLightbox(asset)}>
-                      <FileText size={16} className="text-blue-500 mb-2 shrink-0" />
-                      <p className="text-[11.5px] text-gray-600 leading-snug line-clamp-5 flex-1 overflow-hidden">{asset.content}</p>
+                      <FileText size={16} className="text-primary mb-2 shrink-0" />
+                      <p className="text-[11.5px] text-muted-foreground leading-snug line-clamp-5 flex-1 overflow-hidden">{asset.content}</p>
                     </div>
                   ) : type === 'audio' ? (
-                    <div className="p-3.5 h-40 flex flex-col items-center justify-center gap-3 bg-violet-50/40">
-                      <div className="w-11 h-11 rounded-2xl bg-violet-100 flex items-center justify-center"><Mic size={18} className="text-violet-600" /></div>
+                    <div className="p-3.5 h-40 flex flex-col items-center justify-center gap-3 bg-primary/10/40">
+                      <div className="w-11 h-11 rounded-2xl bg-primary/12 flex items-center justify-center"><Mic size={18} className="text-primary" /></div>
                       <audio src={asset.audioUrl} controls className="w-full h-8" />
                     </div>
                   ) : (
-                    <div className="aspect-square relative overflow-hidden bg-gray-50 cursor-pointer" onClick={() => setLightbox(asset)}>
+                    <div className="aspect-square relative overflow-hidden bg-background cursor-pointer" onClick={() => setLightbox(asset)}>
                       {(() => {
                         // Jamais de src vide (le navigateur re-téléchargerait la page).
                         // Vidéo sans miniature (ex. montage) : la 1re image du mp4 sert d'aperçu.
@@ -186,44 +186,44 @@ const GalleryStudio = ({ onNavigate }) => {
                           <div className="w-10 h-10 rounded-full bg-black/45 backdrop-blur flex items-center justify-center"><Play size={16} className="text-white fill-white ml-0.5" /></div>
                         </div>
                       )}
-                      <span className="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wide bg-white/90 text-gray-600 px-1.5 py-0.5 rounded-md">{type}</span>
+                      <span className="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wide bg-card/90 text-muted-foreground px-1.5 py-0.5 rounded-md">{type}</span>
                     </div>
                   )}
 
                   <div className="p-3">
-                    <p className="text-[12px] font-semibold text-gray-800 truncate">{asset.label || asset.title || asset.formatId || tp('Sans titre')}</p>
-                    {asset.productName && <p className="text-[10px] text-gray-400 truncate mt-0.5">{asset.productName}</p>}
+                    <p className="text-[12px] font-semibold text-foreground truncate">{asset.label || asset.title || asset.formatId || tp('Sans titre')}</p>
+                    {asset.productName && <p className="text-[10px] text-muted-foreground truncate mt-0.5">{asset.productName}</p>}
                     <p className="text-[10px] text-gray-300 mt-1">{formatDate(asset.createdAt)}</p>
                     <div className="flex gap-2 mt-2.5">
                       {type === 'text' || type === 'launch' ? (
-                        <button onClick={() => copyText(asset)} className="flex-1 h-8 rounded-lg bg-blue-600 text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-blue-700">
+                        <button onClick={() => copyText(asset)} className="flex-1 h-8 rounded-lg bg-primary text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-primary-700">
                           {copiedId === asset._id ? <><Check size={11} /> {tp('Copié')}</> : <><Copy size={11} /> {tp('Copier le récap')}</>}
                         </button>
                       ) : type === 'audio' ? (
                         <button onClick={() => downloadFile(asset.audioUrl, `${asset.label || 'voix-off'}.mp3`)}
-                          className="flex-1 h-8 rounded-lg bg-violet-600 text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-violet-700">
+                          className="flex-1 h-8 rounded-lg bg-primary text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-primary-700">
                           <Download size={11} /> {tp('Télécharger')}
                         </button>
                       ) : type === 'video' ? (
                         <>
                           <button onClick={() => editVideo(asset)}
-                            className="flex-1 h-8 rounded-lg bg-cyan-600 text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-cyan-700">
+                            className="flex-1 h-8 rounded-lg bg-primary text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-primary-700">
                             <Scissors size={11} /> {tp('Éditer')}
                           </button>
                           <button onClick={() => downloadFile(asset.videoUrl, `${asset.label || 'video'}.mp4`)} title={tp('Télécharger')}
-                            className="h-8 w-8 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 shrink-0">
+                            className="h-8 w-8 rounded-lg bg-muted text-muted-foreground flex items-center justify-center hover:bg-gray-200 shrink-0">
                             <Download size={12} />
                           </button>
                         </>
                       ) : (
                         <button onClick={() => downloadFile(asset.imageUrl, `${asset.label || 'creative'}.png`)}
-                          className="flex-1 h-8 rounded-lg bg-primary-500 text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-primary-600">
+                          className="flex-1 h-8 rounded-lg bg-primary text-white text-[11px] font-medium flex items-center justify-center gap-1.5 hover:bg-primary">
                           <Download size={11} /> {tp('Télécharger')}
                         </button>
                       )}
                       <button onClick={() => handleDelete(asset._id)} disabled={deletingId === asset._id}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-50 border border-gray-200 text-red-400 rounded-lg hover:bg-red-50 hover:border-red-100 disabled:opacity-50 shrink-0">
-                        {deletingId === asset._id ? <Loader2 size={12} className="animate-spin text-gray-400" /> : <Trash2 size={12} />}
+                        className="w-8 h-8 flex items-center justify-center bg-background border border-border text-red-400 rounded-lg hover:bg-red-50 hover:border-red-100 disabled:opacity-50 shrink-0">
+                        {deletingId === asset._id ? <Loader2 size={12} className="animate-spin text-muted-foreground" /> : <Trash2 size={12} />}
                       </button>
                     </div>
                   </div>
@@ -235,10 +235,10 @@ const GalleryStudio = ({ onNavigate }) => {
           {pages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-8">
               <button onClick={() => fetchAssets(page - 1, filter)} disabled={page <= 1}
-                className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">← {tp('Précédent')}</button>
-              <span className="text-sm text-gray-500 px-2">{tp('Page')} {page} / {pages}</span>
+                className="h-9 px-4 text-sm font-medium bg-card border border-border rounded-xl hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed">← {tp('Précédent')}</button>
+              <span className="text-sm text-muted-foreground px-2">{tp('Page')} {page} / {pages}</span>
               <button onClick={() => fetchAssets(page + 1, filter)} disabled={page >= pages}
-                className="h-9 px-4 text-sm font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">{tp('Suivant')} →</button>
+                className="h-9 px-4 text-sm font-medium bg-card border border-border rounded-xl hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed">{tp('Suivant')} →</button>
             </div>
           )}
         </>
@@ -247,13 +247,13 @@ const GalleryStudio = ({ onNavigate }) => {
       {/* Lightbox */}
       {lightbox && (
         <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
-          <div className="bg-white rounded-3xl overflow-hidden max-w-xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-card rounded-3xl overflow-hidden max-w-xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {assetType(lightbox) === 'launch' ? (
               <div className="p-6">
-                <div className="flex items-center gap-2 mb-4"><Rocket size={18} className="text-violet-600" /><span className="font-semibold text-gray-800">{lightbox.label || tp('Lancement produit')}</span></div>
-                <p className="text-[14px] leading-relaxed text-gray-700 whitespace-pre-wrap mb-4">{lightbox.content}</p>
+                <div className="flex items-center gap-2 mb-4"><Rocket size={18} className="text-primary" /><span className="font-semibold text-foreground">{lightbox.label || tp('Lancement produit')}</span></div>
+                <p className="text-[14px] leading-relaxed text-foreground whitespace-pre-wrap mb-4">{lightbox.content}</p>
                 {lightbox.meta?.launch && (
-                  <div className="rounded-xl bg-violet-50/60 border border-violet-100 p-3 text-[12.5px] text-gray-700 space-y-1.5">
+                  <div className="rounded-xl bg-primary/10/60 border border-primary/20 p-3 text-[12.5px] text-foreground space-y-1.5">
                     <p><b>{tp('Date')} :</b> {lightbox.meta.launchDate || '—'} · {lightbox.meta.day || 'J1'}</p>
                     <p><b>{tp('Angles')} :</b> {lightbox.meta.launch.counts?.angles ?? 0} · <b>{tp('Scripts')} :</b> {lightbox.meta.launch.counts?.scripts ?? 0} · <b>{tp('Voix-off')} :</b> {lightbox.meta.launch.counts?.voiceovers ?? 0} · <b>{tp('Affiches')} :</b> {lightbox.meta.launch.counts?.images ?? 0}</p>
                     {Array.isArray(lightbox.meta.launch.angles) && lightbox.meta.launch.angles.length > 0 && (
@@ -267,40 +267,40 @@ const GalleryStudio = ({ onNavigate }) => {
               </div>
             ) : assetType(lightbox) === 'text' ? (
               <div className="p-6">
-                <div className="flex items-center gap-2 mb-4"><FileText size={18} className="text-blue-500" /><span className="font-semibold text-gray-800">{lightbox.label || lightbox.title || tp('Texte')}</span></div>
-                <p className="text-[14px] leading-relaxed text-gray-700 whitespace-pre-wrap">{lightbox.content}</p>
+                <div className="flex items-center gap-2 mb-4"><FileText size={18} className="text-primary" /><span className="font-semibold text-foreground">{lightbox.label || lightbox.title || tp('Texte')}</span></div>
+                <p className="text-[14px] leading-relaxed text-foreground whitespace-pre-wrap">{lightbox.content}</p>
               </div>
             ) : assetType(lightbox) === 'video' ? (
               <video src={lightbox.videoUrl} controls autoPlay className="w-full bg-black max-h-[70vh]" />
             ) : assetType(lightbox) === 'audio' ? (
-              <div className="p-8 flex flex-col items-center gap-4 bg-violet-50/40">
-                <div className="w-14 h-14 rounded-2xl bg-violet-100 flex items-center justify-center"><Mic size={24} className="text-violet-600" /></div>
+              <div className="p-8 flex flex-col items-center gap-4 bg-primary/10/40">
+                <div className="w-14 h-14 rounded-2xl bg-primary/12 flex items-center justify-center"><Mic size={24} className="text-primary" /></div>
                 <audio src={lightbox.audioUrl} controls autoPlay className="w-full" />
               </div>
             ) : lightbox.imageUrl ? (
-              <img src={lightbox.imageUrl} alt={lightbox.label} className="w-full aspect-square object-contain bg-gray-50" />
+              <img src={lightbox.imageUrl} alt={lightbox.label} className="w-full aspect-square object-contain bg-background" />
             ) : (
-              <div className="w-full aspect-square flex items-center justify-center bg-gray-50 text-gray-300"><ImageIcon size={40} /></div>
+              <div className="w-full aspect-square flex items-center justify-center bg-background text-gray-300"><ImageIcon size={40} /></div>
             )}
             <div className="p-4 flex items-center justify-between gap-3 border-t border-gray-50">
               <div className="min-w-0">
-                <p className="font-semibold text-gray-800 truncate">{lightbox.label || lightbox.title}</p>
-                {lightbox.productName && <p className="text-xs text-gray-400 truncate">{lightbox.productName}</p>}
+                <p className="font-semibold text-foreground truncate">{lightbox.label || lightbox.title}</p>
+                {lightbox.productName && <p className="text-xs text-muted-foreground truncate">{lightbox.productName}</p>}
               </div>
               <div className="flex gap-2 shrink-0">
                 {assetType(lightbox) === 'text' || assetType(lightbox) === 'launch' ? (
-                  <button onClick={() => copyText(lightbox)} className="h-9 px-4 rounded-xl bg-blue-600 text-white text-sm font-medium flex items-center gap-1.5 hover:bg-blue-700">
+                  <button onClick={() => copyText(lightbox)} className="h-9 px-4 rounded-xl bg-primary text-white text-sm font-medium flex items-center gap-1.5 hover:bg-primary-700">
                     {copiedId === lightbox._id ? <Check size={14} /> : <Copy size={14} />} {tp('Copier')}
                   </button>
                 ) : assetType(lightbox) === 'audio' ? (
                   <button onClick={() => downloadFile(lightbox.audioUrl, `${lightbox.label || 'voix-off'}.mp3`)}
-                    className="h-9 px-4 rounded-xl bg-violet-600 text-white text-sm font-medium flex items-center gap-1.5 hover:bg-violet-700"><Download size={14} /> {tp('Télécharger')}</button>
+                    className="h-9 px-4 rounded-xl bg-primary text-white text-sm font-medium flex items-center gap-1.5 hover:bg-primary-700"><Download size={14} /> {tp('Télécharger')}</button>
                 ) : (
                   <button onClick={() => downloadFile(assetType(lightbox) === 'video' ? lightbox.videoUrl : lightbox.imageUrl, `${lightbox.label || 'creative'}.${assetType(lightbox) === 'video' ? 'mp4' : 'png'}`)}
-                    className="h-9 px-4 rounded-xl bg-primary-500 text-white text-sm font-medium flex items-center gap-1.5 hover:bg-primary-600"><Download size={14} /> {tp('Télécharger')}</button>
+                    className="h-9 px-4 rounded-xl bg-primary text-white text-sm font-medium flex items-center gap-1.5 hover:bg-primary"><Download size={14} /> {tp('Télécharger')}</button>
                 )}
-                <button onClick={() => handleDelete(lightbox._id)} className="h-9 w-9 rounded-xl bg-gray-100 text-red-400 flex items-center justify-center hover:bg-red-50"><Trash2 size={15} /></button>
-                <button onClick={() => setLightbox(null)} className="h-9 w-9 rounded-xl bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200"><X size={16} /></button>
+                <button onClick={() => handleDelete(lightbox._id)} className="h-9 w-9 rounded-xl bg-muted text-red-400 flex items-center justify-center hover:bg-red-50"><Trash2 size={15} /></button>
+                <button onClick={() => setLightbox(null)} className="h-9 w-9 rounded-xl bg-muted text-muted-foreground flex items-center justify-center hover:bg-gray-200"><X size={16} /></button>
               </div>
             </div>
           </div>

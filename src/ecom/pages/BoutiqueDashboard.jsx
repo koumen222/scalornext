@@ -56,7 +56,7 @@ const KpiCard = ({ label, value, sub, spark, color, icon: Icon }) => {
     : null;
 
   return (
-    <div className="relative bg-white rounded-2xl border border-gray-100 p-5 overflow-hidden group hover:border-gray-200 hover:shadow-md transition-all duration-200">
+    <div className="relative bg-card rounded-2xl border p-5 overflow-hidden group hover:border-border hover:shadow-md transition-all duration-200">
       {/* subtle bg glow */}
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
@@ -68,17 +68,17 @@ const KpiCard = ({ label, value, sub, spark, color, icon: Icon }) => {
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: color + '15' }}>
               <Icon size={15} style={{ color }} />
             </div>
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{label}</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{label}</span>
           </div>
           {d && (
-            <div className={`flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-full ${d.up ? 'bg-primary-50 text-primary-600' : 'bg-red-50 text-red-500'}`}>
+            <div className={`flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-full ${d.up ? 'bg-primary-50 text-primary' : 'bg-red-50 text-red-500'}`}>
               {d.up ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
               {Math.abs(d.pct)}%
             </div>
           )}
         </div>
-        <p className="text-2xl font-black text-gray-900 tracking-tight">{value}</p>
-        {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
+        <p className="text-2xl font-black text-foreground tracking-tight">{value}</p>
+        {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
         {spark && spark.length > 1 && (
           <div className="mt-3 -mx-1">
             <Spark data={spark} color={color} />
@@ -96,15 +96,15 @@ const StatusDot = ({ ok }) => (
 
 /* ─── Order badge ────────────────────────────────────────────────────── */
 const STATUS_STYLES = {
-  delivered:  'bg-primary-50 text-primary-700 border-primary-100',
+  delivered:  'bg-primary-50 text-primary border-primary-100',
   confirmed:  'bg-blue-50   text-blue-700   border-blue-100',
   pending:    'bg-amber-50  text-amber-700  border-amber-100',
   shipped:    'bg-violet-50 text-violet-700 border-violet-100',
   cancelled:  'bg-red-50    text-red-600    border-red-100',
-  returned:   'bg-gray-50   text-gray-500   border-gray-200',
+  returned:   'bg-background   text-muted-foreground   border-border',
 };
 const StatusBadge = ({ status }) => {
-  const cls = STATUS_STYLES[status] || 'bg-gray-50 text-gray-500 border-gray-200';
+  const cls = STATUS_STYLES[status] || 'bg-background text-muted-foreground border-border';
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${cls}`}>
       {status || 'nouveau'}
@@ -116,14 +116,14 @@ const StatusBadge = ({ status }) => {
 const Action = ({ label, desc, href, icon: Icon, color }) => (
   <Link
     to={href}
-    className="group flex items-center gap-3.5 bg-white border border-gray-100 rounded-2xl p-4 hover:border-gray-200 hover:shadow-md transition-all duration-200"
+    className="group flex items-center gap-3.5 bg-card border border-border rounded-2xl p-4 hover:border-border hover:shadow-md transition-all duration-200"
   >
     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105" style={{ backgroundColor: color + '15' }}>
       <Icon size={18} style={{ color }} />
     </div>
     <div className="flex-1 min-w-0">
-      <p className="text-sm font-bold text-gray-900 leading-tight">{label}</p>
-      <p className="text-[11px] text-gray-400 mt-0.5 truncate">{desc}</p>
+      <p className="text-sm font-bold text-foreground leading-tight">{label}</p>
+      <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{desc}</p>
     </div>
     <ChevronRight size={14} className="text-gray-300 shrink-0 transition-transform group-hover:translate-x-0.5" />
   </Link>
@@ -132,14 +132,14 @@ const Action = ({ label, desc, href, icon: Icon, color }) => (
 /* ─── Store health checklist ─────────────────────────────────────────── */
 const CheckItem = ({ label, done, href }) => (
   <Link to={href} className="flex items-center gap-2.5 py-2 hover:opacity-80 transition-opacity group">
-    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${done ? 'border-primary-500 bg-primary-500' : 'border-gray-200'}`}>
+    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${done ? 'border-primary-500 bg-primary' : 'border-border'}`}>
       {done && (
         <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 12">
           <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
     </div>
-    <span className={`text-xs font-semibold ${done ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{label}</span>
+    <span className={`text-xs font-semibold ${done ? 'text-muted-foreground line-through' : 'text-foreground'}`}>{label}</span>
     {!done && <ChevronRight size={11} className="text-gray-300 ml-auto shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />}
   </Link>
 );
@@ -245,13 +245,13 @@ const BoutiqueDashboard = () => {
   if (loading) {
     return (
       <div className="p-5 lg:p-7 max-w-7xl mx-auto space-y-5 animate-pulse">
-        <div className="h-28 bg-gray-100 rounded-3xl" />
+        <div className="h-28 bg-muted rounded-3xl" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-gray-100 rounded-2xl" />)}
+          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-muted rounded-2xl" />)}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 h-64 bg-gray-100 rounded-2xl" />
-          <div className="h-64 bg-gray-100 rounded-2xl" />
+          <div className="lg:col-span-2 h-64 bg-muted rounded-2xl" />
+          <div className="h-64 bg-muted rounded-2xl" />
         </div>
       </div>
     );
@@ -305,7 +305,7 @@ const BoutiqueDashboard = () => {
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <h1 className="text-white font-black text-lg lg:text-xl tracking-tight">{storeName}</h1>
-                <div className="flex items-center gap-1 bg-primary-500/20 border border-primary-500/30 text-primary-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <div className="flex items-center gap-1 bg-primary/20 border border-primary-500/30 text-primary-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
                   <span className="w-1 h-1 rounded-full bg-primary-400 animate-pulse" />
                   {tp('LIVE')}
                 </div>
@@ -326,7 +326,7 @@ const BoutiqueDashboard = () => {
           {/* right: score + actions */}
           <div className="flex items-center gap-3">
             {/* health score pill */}
-            <div className="hidden lg:flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5">
+            <div className="hidden lg:flex items-center gap-2 bg-card/5 border border-white/10 rounded-2xl px-4 py-2.5">
               <div className="relative w-8 h-8">
                 <svg className="w-8 h-8 -rotate-90" viewBox="0 0 32 32">
                   <circle cx="16" cy="16" r="12" fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="3" />
@@ -347,7 +347,7 @@ const BoutiqueDashboard = () => {
             <button
               onClick={() => load(true)}
               disabled={refreshing}
-              className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all"
+              className="w-9 h-9 rounded-xl bg-card/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-card/10 transition-all"
             >
               <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
             </button>
@@ -374,7 +374,7 @@ const BoutiqueDashboard = () => {
             { get label() { return tp('Paramètres'); }, href: '/ecom/boutique/settings', icon: Settings },
           ].map(({ label, href, icon: Icon }) => (
             <Link key={label} to={href}
-              className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/60 hover:text-white/90 text-[11px] font-semibold px-3 py-1.5 rounded-lg transition-all">
+              className="flex items-center gap-1.5 bg-card/5 hover:bg-card/10 border border-white/10 hover:border-white/20 text-white/60 hover:text-white/90 text-[11px] font-semibold px-3 py-1.5 rounded-lg transition-all">
               <Icon size={11} />
               {label}
             </Link>
@@ -422,11 +422,11 @@ const BoutiqueDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Recent orders */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="lg:col-span-2 bg-card rounded-2xl border overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShoppingCart size={15} className="text-gray-400" />
-              <h2 className="text-sm font-bold text-gray-900">{tp('Dernières commandes')}</h2>
+              <ShoppingCart size={15} className="text-muted-foreground" />
+              <h2 className="text-sm font-bold text-foreground">{tp('Dernières commandes')}</h2>
             </div>
             <Link to="/ecom/boutique/orders"
               className="flex items-center gap-1 text-xs font-semibold text-[#0F6B4F] hover:text-[#0A5740] transition-colors">
@@ -436,29 +436,29 @@ const BoutiqueDashboard = () => {
 
           {recentOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-14 text-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center">
                 <ShoppingCart size={20} className="text-gray-300" />
               </div>
-              <p className="text-sm font-semibold text-gray-400">{tp('Aucune commande')}</p>
+              <p className="text-sm font-semibold text-muted-foreground">{tp('Aucune commande')}</p>
               <p className="text-xs text-gray-300">{tp('Les commandes de votre boutique apparaîtront ici')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
               {recentOrders.map((order, i) => (
-                <div key={order._id || i} className="px-5 py-3.5 flex items-center gap-3 hover:bg-gray-50/50 transition-colors">
-                  <div className="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center text-xs font-black text-gray-500 shrink-0">
+                <div key={order._id || i} className="px-5 py-3.5 flex items-center gap-3 hover:bg-background/50 transition-colors">
+                  <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center text-xs font-black text-muted-foreground shrink-0">
                     #{String(order.orderNumber || order._id?.slice(-3) || i + 1).slice(-3)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
+                    <p className="text-sm font-semibold text-foreground truncate">
                       {order.customerName || order.customer?.name || tp('Client')}
                     </p>
-                    <p className="text-[11px] text-gray-400 truncate">
+                    <p className="text-[11px] text-muted-foreground truncate">
                       {order.items?.map(it => it.name || it.productName).join(', ') || order.product || '—'}
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <p className="text-sm font-black text-gray-900">
+                    <p className="text-sm font-black text-foreground">
                       {fmt(order.totalAmount || order.total || order.price)} {currency}
                     </p>
                     <StatusBadge status={order.status} />
@@ -473,14 +473,14 @@ const BoutiqueDashboard = () => {
         <div className="space-y-3">
 
           {/* Store health */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-card rounded-2xl border p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Shield size={14} className="text-primary-500" />
-                <h3 className="text-sm font-bold text-gray-900">{tp('Santé boutique')}</h3>
+                <h3 className="text-sm font-bold text-foreground">{tp('Santé boutique')}</h3>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="h-1.5 w-16 rounded-full bg-gray-100 overflow-hidden">
+                <div className="h-1.5 w-16 rounded-full bg-muted overflow-hidden">
                   <div className="h-full rounded-full transition-all duration-700"
                     style={{
                       width: `${healthScore}%`,
@@ -488,7 +488,7 @@ const BoutiqueDashboard = () => {
                     }}
                   />
                 </div>
-                <span className="text-[11px] font-black text-gray-500">{healthScore}%</span>
+                <span className="text-[11px] font-black text-muted-foreground">{healthScore}%</span>
               </div>
             </div>
             <div className="space-y-0.5">
@@ -501,7 +501,7 @@ const BoutiqueDashboard = () => {
           {/* Add product CTA */}
           <Link to="/ecom/boutique/products/new"
             className="group flex items-center gap-3 bg-gradient-to-r from-[#0F6B4F] to-[#14B585] rounded-2xl p-4 hover:shadow-lg hover:shadow-primary-900/20 transition-all">
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-card/20 flex items-center justify-center shrink-0">
               <Plus size={18} className="text-white" />
             </div>
             <div className="flex-1">
@@ -516,7 +516,7 @@ const BoutiqueDashboard = () => {
 
       {/* ── QUICK ACTIONS GRID ────────────────────────────────────────── */}
       <div>
-        <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">{tp('Accès rapide')}</h2>
+        <h2 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-3">{tp('Accès rapide')}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Action label="Produits"      desc="Gérer le catalogue"         href="/ecom/boutique/products"       icon={Package}    color="#0F6B4F" />
           <Action label="Commandes"     desc="Suivi des ventes"           href="/ecom/boutique/orders"         icon={ShoppingCart} color="#2563EB" />

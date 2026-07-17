@@ -86,7 +86,7 @@ const StockAlert = ({ alerts, onDismiss }) => {
                     <span className={`px-2 py-1 rounded text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border}`}>
                       {alert.urgency.toUpperCase()}
                     </span>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-foreground">
                       {alert.product?.name || alert.name}
                     </span>
                   </div>
@@ -96,7 +96,7 @@ const StockAlert = ({ alerts, onDismiss }) => {
                   
                   {/* Détails du produit */}
                   {alert.product && (
-                    <div className="grid grid-cols-2 gap-4 text-xs text-gray-600 mb-3">
+                    <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground mb-3">
                       <div>
                         <span className="font-medium">{tp('Stock actuel:')}</span> {alert.product.stock} unités
                       </div>
@@ -117,7 +117,7 @@ const StockAlert = ({ alerts, onDismiss }) => {
                   <div className="flex space-x-2">
                     <Link
                       to={`/stock/orders/new?productId=${alert.product?._id || alert.productId}`}
-                      className="inline-flex items-center px-3 py-1 bg-primary-600 text-white text-xs font-medium rounded hover:bg-primary-700 transition"
+                      className="inline-flex items-center px-3 py-1 bg-primary text-white text-xs font-medium rounded hover:bg-primary-700 transition"
                     >
                       <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z" />
@@ -137,7 +137,7 @@ const StockAlert = ({ alerts, onDismiss }) => {
                     {onDismiss && (
                       <button
                         onClick={() => onDismiss(alert)}
-                        className="inline-flex items-center px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium rounded hover:bg-gray-50 transition"
+                        className="inline-flex items-center px-3 py-1 border border-gray-300 text-foreground text-xs font-medium rounded hover:bg-background transition"
                       >
                         {tp('Ignorer')}
                       </button>
@@ -152,9 +152,9 @@ const StockAlert = ({ alerts, onDismiss }) => {
       
       {/* Résumé des alertes */}
       {alerts.length > 1 && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <div className="bg-background border border-border rounded-lg p-3">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">
+            <span className="text-muted-foreground">
               {alerts.length} alerte{alerts.length > 1 ? 's' : ''} de stock
             </span>
             <div className="flex space-x-4 text-xs">

@@ -420,12 +420,12 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{tp('Paramètres')}</h1>
-              <p className="mt-1.5 text-sm text-gray-500">{tp('Gérez votre compte et les paramètres de votre espace de travail.')}</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{tp('Paramètres')}</h1>
+              <p className="mt-1.5 text-sm text-muted-foreground">{tp('Gérez votre compte et les paramètres de votre espace de travail.')}</p>
             </div>
             {hasChanges && (
               <div className="flex items-center gap-2">
@@ -440,7 +440,7 @@ const Settings = () => {
 
       <div className="flex flex-col gap-6">
         {/* Tabs - Modern Pills Style */}
-        <nav className="bg-white rounded-xl shadow-sm border border-gray-200 p-2">
+        <nav className="bg-card rounded-xl shadow-sm border border-border p-2">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-2 px-2">
             {tabs.map(tab => (
               <button
@@ -448,11 +448,11 @@ const Settings = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold whitespace-nowrap rounded-lg transition-all flex-shrink-0 ${
                   activeTab === tab.id
-                    ? 'bg-primary-600 text-white shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
               >
-                <span className={activeTab === tab.id ? 'text-white' : 'text-gray-400'}>{tab.icon}</span>
+                <span className={activeTab === tab.id ? 'text-white' : 'text-muted-foreground'}>{tab.icon}</span>
                 {tab.label}
               </button>
             ))}
@@ -466,10 +466,10 @@ const Settings = () => {
           {activeTab === 'general' && (
             <div className="space-y-6">
               {/* Profil */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-5 border-b border-gray-100">
-                  <h2 className="text-lg font-bold text-gray-900">{tp('Profil')}</h2>
-                  <p className="text-sm text-gray-500 mt-1">{tp('Informations de votre compte')}</p>
+              <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                <div className="px-6 py-5 border-b border-border">
+                  <h2 className="text-lg font-bold text-foreground">{tp('Profil')}</h2>
+                  <p className="text-sm text-muted-foreground mt-1">{tp('Informations de votre compte')}</p>
                 </div>
                 <div className="p-6">
                   <div className="flex items-start gap-5 mb-6">
@@ -477,14 +477,14 @@ const Settings = () => {
                       <span className="text-white text-3xl font-bold">{user?.email?.charAt(0).toUpperCase() || 'U'}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-bold text-gray-900">{user?.name || user?.email?.split('@')[0]}</h3>
-                      <p className="text-sm text-gray-500 mt-0.5">{user?.email}</p>
+                      <h3 className="text-xl font-bold text-foreground">{user?.name || user?.email?.split('@')[0]}</h3>
+                      <p className="text-sm text-muted-foreground mt-0.5">{user?.email}</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary-50 text-primary-700 border border-primary-200 uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary-50 text-primary border border-primary-200 uppercase tracking-wide">
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                           {roleLabels[user?.role] || user?.role}
                         </span>
-                        <Link to="/ecom/profile" className="px-4 py-1.5 text-sm font-semibold text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors">
+                        <Link to="/ecom/profile" className="px-4 py-1.5 text-sm font-semibold text-primary bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors">
                           {tp('Mon compte')}
                         </Link>
                       </div>
@@ -492,50 +492,50 @@ const Settings = () => {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Nom complet')}</label>
+                      <label className="block text-sm font-medium text-foreground mb-2">{tp('Nom complet')}</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         </div>
-                        <input type="text" value={profileName} onChange={e => setProfileName(e.target.value)} placeholder={tp('Votre nom')} className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" />
+                        <input type="text" value={profileName} onChange={e => setProfileName(e.target.value)} placeholder={tp('Votre nom')} className="w-full pl-10 pr-3 py-2.5 text-sm text-foreground bg-card border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <label className="block text-sm font-medium text-foreground mb-2">Email</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                         </div>
-                        <input type="text" value={user?.email || '—'} readOnly className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-500 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none cursor-default select-none" />
+                        <input type="text" value={user?.email || '—'} readOnly className="w-full pl-10 pr-3 py-2.5 text-sm text-muted-foreground bg-background border border-border rounded-lg focus:outline-none cursor-default select-none" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Téléphone')}</label>
+                      <label className="block text-sm font-medium text-foreground mb-2">{tp('Téléphone')}</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                         </div>
-                        <input type="tel" value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+225 07 00 00 00 00" className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" />
+                        <input type="tel" value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+225 07 00 00 00 00" className="w-full pl-10 pr-3 py-2.5 text-sm text-foreground bg-card border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Rôle')}</label>
+                      <label className="block text-sm font-medium text-foreground mb-2">{tp('Rôle')}</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                         </div>
-                        <input type="text" value={roleLabels[user?.role] || user?.role} readOnly className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-500 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none cursor-default select-none" />
+                        <input type="text" value={roleLabels[user?.role] || user?.role} readOnly className="w-full pl-10 pr-3 py-2.5 text-sm text-muted-foreground bg-background border border-border rounded-lg focus:outline-none cursor-default select-none" />
                       </div>
                     </div>
                     <div className="sm:col-span-2 flex items-center justify-between gap-3 pt-1">
                       <div className="flex-1">
                         {profileError && <p className="text-sm text-red-600">{profileError}</p>}
-                        {profileSaved && <p className="text-sm text-primary-600 flex items-center gap-1"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>{tp('Profil mis à jour')}</p>}
+                        {profileSaved && <p className="text-sm text-primary flex items-center gap-1"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>{tp('Profil mis à jour')}</p>}
                       </div>
                       <button
                         onClick={saveProfile}
                         disabled={profileSaving}
-                        className="px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
                       >
                         {profileSaving ? <><svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>{tp('Sauvegarde...')}</> : tp('Sauvegarder')}
                       </button>
@@ -546,34 +546,34 @@ const Settings = () => {
 
               {/* Espace de travail */}
               {workspace && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="px-6 py-4 border-b border-gray-100">
-                    <h2 className="text-base font-semibold text-gray-900">{tp('Espace de travail')}</h2>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('Configuration de votre espace')}</p>
+                <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                  <div className="px-6 py-4 border-b border-border">
+                    <h2 className="text-base font-semibold text-foreground">{tp('Espace de travail')}</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Configuration de votre espace')}</p>
                   </div>
                   <div className="p-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Nom')}</label>
-                        <p className="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-200">{workspace.name || '—'}</p>
+                        <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">{tp('Nom')}</label>
+                        <p className="text-sm text-foreground bg-background rounded-lg px-3 py-2.5 border border-border">{workspace.name || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Slug')}</label>
-                        <p className="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-200 font-mono">{workspace.slug || '—'}</p>
+                        <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">{tp('Slug')}</label>
+                        <p className="text-sm text-foreground bg-background rounded-lg px-3 py-2.5 border border-border font-mono">{workspace.slug || '—'}</p>
                       </div>
                       {workspace.inviteCode && user?.role === 'ecom_admin' && (
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{tp('Code d\'invitation')}</label>
+                          <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">{tp('Code d\'invitation')}</label>
                           <div className="flex items-center gap-2">
-                            <p className="flex-1 text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-200 font-mono tracking-widest">{workspace.inviteCode}</p>
+                            <p className="flex-1 text-sm text-foreground bg-background rounded-lg px-3 py-2.5 border border-border font-mono tracking-widest">{workspace.inviteCode}</p>
                             <button
                               onClick={() => { navigator.clipboard.writeText(workspace.inviteCode); }}
-                              className="px-3 py-2.5 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition text-sm font-medium"
+                              className="px-3 py-2.5 bg-primary-50 text-primary rounded-lg hover:bg-primary-100 transition text-sm font-medium"
                             >
                               {tp('Copier')}
                             </button>
                           </div>
-                          <p className="text-xs text-gray-400 mt-1">{tp('Partagez ce code pour inviter des membres dans votre espace.')}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{tp('Partagez ce code pour inviter des membres dans votre espace.')}</p>
                         </div>
                       )}
                     </div>
@@ -587,26 +587,26 @@ const Settings = () => {
           {/* === DEVISE === */}
           {activeTab === 'currency' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">{tp('Devise préférée')}</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">{tp('Tous les montants seront convertis et affichés dans cette devise.')}</p>
+              <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-base font-semibold text-foreground">{tp('Devise préférée')}</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tp('Tous les montants seront convertis et affichés dans cette devise.')}</p>
                 </div>
                 <div className="p-6">
                   <CurrencySelector />
 
-                  <div className="mt-6 bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <div className="mt-6 bg-background rounded-xl p-5 border border-border">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-semibold text-gray-700">{tp('Aperçu de conversion')}</h3>
-                      <span className="text-xs font-medium px-2.5 py-1 bg-primary-100 text-primary-700 rounded-full">{currency} {symbol}</span>
+                      <h3 className="text-sm font-semibold text-foreground">{tp('Aperçu de conversion')}</h3>
+                      <span className="text-xs font-medium px-2.5 py-1 bg-primary-100 text-primary rounded-full">{currency} {symbol}</span>
                     </div>
                     <div className="space-y-0 divide-y divide-gray-200">
                       {examples.map((ex, i) => (
                         <div key={i} className="flex justify-between items-center py-3">
-                          <span className="text-sm text-gray-600">{ex.label}</span>
+                          <span className="text-sm text-muted-foreground">{ex.label}</span>
                           <div className="flex items-center gap-3">
-                            <span className="text-xs text-gray-400 line-through">XAF {ex.amount.toLocaleString('fr-FR')}</span>
-                            <span className="text-sm font-semibold text-gray-900">{fmt(ex.amount)}</span>
+                            <span className="text-xs text-muted-foreground line-through">XAF {ex.amount.toLocaleString('fr-FR')}</span>
+                            <span className="text-sm font-semibold text-foreground">{fmt(ex.amount)}</span>
                           </div>
                         </div>
                       ))}
@@ -616,12 +616,12 @@ const Settings = () => {
               </div>
 
               <div className="bg-primary-50 rounded-xl p-4 border border-primary-200 flex items-start gap-3">
-                <svg className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
                   <h4 className="text-sm font-medium text-primary-900">{tp('Comment ça marche ?')}</h4>
-                  <p className="text-sm text-primary-700 mt-1">
+                  <p className="text-sm text-primary mt-1">
                     Les taux de conversion sont basés sur le FCFA (XAF). Quand vous changez de devise,
                     tous les montants dans l'application sont automatiquement convertis.
                   </p>
@@ -639,10 +639,10 @@ const Settings = () => {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                        <h3 className="text-lg font-bold text-gray-900">{tp('Activer les notifications push')}</h3>
+                        <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                        <h3 className="text-lg font-bold text-foreground">{tp('Activer les notifications push')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3">{tp('Recevez des notifications en temps réel sur votre appareil, même quand l\'application est fermée.')}</p>
+                      <p className="text-sm text-muted-foreground mb-3">{tp('Recevez des notifications en temps réel sur votre appareil, même quand l\'application est fermée.')}</p>
                       {isSubscribed ? (
                         <div className="flex items-center gap-2 text-sm">
                           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
@@ -651,14 +651,14 @@ const Settings = () => {
                       ) : (
                         <div className="flex items-center gap-2 text-sm">
                           <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                          <span className="text-gray-600">{tp('Notifications push désactivées')}</span>
+                          <span className="text-muted-foreground">{tp('Notifications push désactivées')}</span>
                         </div>
                       )}
                     </div>
                     <button
                       onClick={handlePushToggle}
                       disabled={pushLoading || !pushSupported || pushPermission === 'denied'}
-                      className={`px-5 py-2.5 text-white font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 ${isSubscribed ? 'bg-gray-700 hover:bg-gray-800' : 'bg-primary-600 hover:bg-primary-700'}`}
+                      className={`px-5 py-2.5 text-white font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 ${isSubscribed ? 'bg-gray-700 hover:bg-gray-800' : 'bg-primary hover:bg-primary-700'}`}
                     >
                       {pushLoading ? 'Chargement...' : isSubscribed ? 'Désactiver' : tp('Activer')}
                     </button>
@@ -669,7 +669,7 @@ const Settings = () => {
                     </p>
                   )}
                   {!pushSupported && (
-                    <p className="mt-3 text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+                    <p className="mt-3 text-sm text-muted-foreground bg-background border border-border rounded-lg px-3 py-2">
                       {tp('Cet appareil ou navigateur ne supporte pas les notifications push.')}
                     </p>
                   )}
@@ -681,16 +681,16 @@ const Settings = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">{tp('Préférences de notification')}</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">{tp('Choisissez comment et quand vous souhaitez être notifié.')}</p>
+              <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-base font-semibold text-foreground">{tp('Préférences de notification')}</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tp('Choisissez comment et quand vous souhaitez être notifié.')}</p>
                 </div>
                 <div className="divide-y divide-gray-100">
                   {/* Email notifications */}
                   <div className="p-6">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       {tp('Notifications par email')}
@@ -703,16 +703,16 @@ const Settings = () => {
                       ].map(item => (
                         <div key={item.key} className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{item.label}</p>
-                            <p className="text-xs text-gray-500">{item.desc}</p>
+                            <p className="text-sm font-medium text-foreground">{item.label}</p>
+                            <p className="text-xs text-muted-foreground">{item.desc}</p>
                           </div>
                           <button
                             onClick={() => saveEmailPreferences(item.key, !notifications[item.key])}
                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              notifications[item.key] ? 'bg-primary-600' : 'bg-gray-300'
+                              notifications[item.key] ? 'bg-primary' : 'bg-gray-300'
                             }`}
                           >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform shadow-sm ${
                               notifications[item.key] ? 'translate-x-6' : 'translate-x-1'
                             }`} />
                           </button>
@@ -723,8 +723,8 @@ const Settings = () => {
 
                   {/* Push notifications */}
                   <div className="p-6">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                       </svg>
                       {tp('Notifications push (mobile)')}
@@ -740,17 +740,17 @@ const Settings = () => {
                       ].map(item => (
                         <div key={item.key} className="flex items-center justify-between">
                           <div className="flex-1 pr-4">
-                            <p className="text-sm font-medium text-gray-700">{item.label}</p>
-                            <p className="text-xs text-gray-500">{item.desc}</p>
+                            <p className="text-sm font-medium text-foreground">{item.label}</p>
+                            <p className="text-xs text-muted-foreground">{item.desc}</p>
                           </div>
                           <button
                             onClick={() => savePushPreferences(item.key, !notifications[item.key])}
                             disabled={!isSubscribed}
                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${
-                              notifications[item.key] ? 'bg-primary-600' : 'bg-gray-300'
+                              notifications[item.key] ? 'bg-primary' : 'bg-gray-300'
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                           >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform shadow-sm ${
                               notifications[item.key] ? 'translate-x-6' : 'translate-x-1'
                             }`} />
                           </button>
@@ -758,7 +758,7 @@ const Settings = () => {
                       ))}
                     </div>
                     {!isSubscribed && (
-                      <p className="mt-4 text-xs text-gray-500">
+                      <p className="mt-4 text-xs text-muted-foreground">
                         Active d'abord les notifications push sur cet appareil pour pouvoir gérer ces alertes.
                       </p>
                     )}
@@ -771,18 +771,18 @@ const Settings = () => {
           {/* === GOOGLE SHEETS === */}
           {activeTab === 'google_sheets' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+              <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border flex justify-between items-center">
                   <div>
-                    <h2 className="text-base font-semibold text-gray-900">{tp('Sources Google Sheets')}</h2>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('Gérez plusieurs feuilles de calcul pour vos commandes.')}</p>
+                    <h2 className="text-base font-semibold text-foreground">{tp('Sources Google Sheets')}</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Gérez plusieurs feuilles de calcul pour vos commandes.')}</p>
                   </div>
                 </div>
 
                 <div className="p-6 space-y-6">
                   {/* Ajouter une source */}
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Ajouter une nouvelle source')}</h3>
+                  <div className="bg-background rounded-xl p-4 border border-border">
+                    <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Ajouter une nouvelle source')}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <input
                         type="text"
@@ -809,7 +809,7 @@ const Settings = () => {
                     <button
                       onClick={handleAddSource}
                       disabled={!newSource.name || !newSource.spreadsheetId}
-                      className="mt-3 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
+                      className="mt-3 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
                     >
                       {tp('Ajouter la source')}
                     </button>
@@ -818,21 +818,21 @@ const Settings = () => {
                   {/* Liste des sources */}
                   <div className="space-y-3">
                     {sourcesLoading ? (
-                      <div className="text-center py-4 text-gray-500 text-sm">{tp('Chargement des sources...')}</div>
+                      <div className="text-center py-4 text-muted-foreground text-sm">{tp('Chargement des sources...')}</div>
                     ) : sources.length === 0 ? (
-                      <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed text-gray-400 text-sm">
+                      <div className="text-center py-8 bg-background rounded-lg border border-dashed text-muted-foreground text-sm">
                         {tp('Aucune source configurée')}
                       </div>
                     ) : (
                       sources.map(source => (
-                        <div key={source._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white border rounded-lg hover:border-primary-200 transition-colors gap-4">
+                        <div key={source._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card border rounded-lg hover:border-primary-200 transition-colors gap-4">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className={`w-2 h-2 rounded-full ${source.isActive ? 'bg-green-500' : 'bg-gray-300'}`}></span>
-                              <h4 className="font-semibold text-gray-900 truncate">{source.name}</h4>
+                              <h4 className="font-semibold text-foreground truncate">{source.name}</h4>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1 truncate">ID: {source.spreadsheetId}</p>
-                            <p className="text-xs text-gray-400">Onglet: {source.sheetName} • Sync: {source.lastSyncAt ? new Date(source.lastSyncAt).toLocaleString() : tp('Jamais')}</p>
+                            <p className="text-xs text-muted-foreground mt-1 truncate">ID: {source.spreadsheetId}</p>
+                            <p className="text-xs text-muted-foreground">Onglet: {source.sheetName} • Sync: {source.lastSyncAt ? new Date(source.lastSyncAt).toLocaleString() : tp('Jamais')}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
@@ -863,14 +863,14 @@ const Settings = () => {
         <div className="space-y-5">
 
         {/* ── Numéro rapport ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-card rounded-2xl shadow-sm border border-border p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">{tp('Numéro WhatsApp — Rapports')}</h2>
-              <p className="text-xs text-gray-400">{tp('Ce numéro reçoit automatiquement la notification lors de la soumission d\'un rapport.')}</p>
+              <h2 className="text-base font-bold text-foreground">{tp('Numéro WhatsApp — Rapports')}</h2>
+              <p className="text-xs text-muted-foreground">{tp('Ce numéro reçoit automatiquement la notification lors de la soumission d\'un rapport.')}</p>
             </div>
           </div>
           <div className="flex gap-3">
@@ -879,13 +879,13 @@ const Settings = () => {
               value={reportWANumber}
               onChange={e => setReportWANumber(e.target.value)}
               placeholder={tp('ex : 237699887766')}
-              className="flex-1 px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white focus:outline-none transition placeholder:text-gray-400"
+              className="flex-1 px-3 py-2.5 border border-border rounded-xl text-sm bg-background focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-card focus:outline-none transition placeholder:text-muted-foreground"
             />
             <button
               type="button"
               onClick={saveReportWANumber}
               disabled={savingReportWA}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition"
             >
               {savingReportWA
                 ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
@@ -894,19 +894,19 @@ const Settings = () => {
               {savingReportWA ? 'Enregistrement…' : tp('Enregistrer')}
             </button>
           </div>
-          {reportWASaved && <p className="mt-2 text-sm text-primary-600 font-medium">{tp('✅ Numéro enregistré')}</p>}
+          {reportWASaved && <p className="mt-2 text-sm text-primary font-medium">{tp('✅ Numéro enregistré')}</p>}
           {reportWAError && <p className="mt-2 text-sm text-red-500">❌ {reportWAError}</p>}
         </div>
 
         {/* ── Groupes livraison ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-card rounded-2xl shadow-sm border border-border p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
               <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">{tp('Groupes de Livraison WhatsApp')}</h2>
-              <p className="text-xs text-gray-400">{tp('Ces groupes reçoivent les commandes à livrer quand vous cliquez "Envoyer au groupe".')}</p>
+              <h2 className="text-base font-bold text-foreground">{tp('Groupes de Livraison WhatsApp')}</h2>
+              <p className="text-xs text-muted-foreground">{tp('Ces groupes reçoivent les commandes à livrer quand vous cliquez "Envoyer au groupe".')}</p>
             </div>
           </div>
 
@@ -919,7 +919,7 @@ const Settings = () => {
           ) : (
             <div className="space-y-3 mb-4">
               {deliveryGroups.length === 0 && (
-                <p className="text-sm text-gray-400 italic py-2">{tp('Aucun groupe configuré. Ajoutez-en un ci-dessous.')}</p>
+                <p className="text-sm text-muted-foreground italic py-2">{tp('Aucun groupe configuré. Ajoutez-en un ci-dessous.')}</p>
               )}
               {deliveryGroups.map((item, idx) => (
                 <div key={idx} className="bg-orange-50 border border-orange-100 rounded-xl p-3 space-y-2">
@@ -937,7 +937,7 @@ const Settings = () => {
                               label: n.label || g?.name || ''
                             } : n));
                           }}
-                          className="flex-1 px-3 py-2 border border-orange-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                          className="flex-1 px-3 py-2 border border-orange-200 rounded-lg text-sm bg-card focus:ring-2 focus:ring-orange-400 focus:outline-none"
                         >
                           <option value="">{tp('— Choisir un groupe WhatsApp —')}</option>
                           {waGroups.map(g => (
@@ -964,7 +964,7 @@ const Settings = () => {
                             const isLink = val.includes('chat.whatsapp.com/');
                             setDeliveryGroups(prev => prev.map((n, i) => i === idx ? { ...n, inviteLink: isLink ? val : '', phoneNumber: isLink ? n.phoneNumber : val } : n));
                           }}
-                          className="flex-1 px-3 py-2 border border-orange-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                          className="flex-1 px-3 py-2 border border-orange-200 rounded-lg text-sm bg-card focus:ring-2 focus:ring-orange-400 focus:outline-none"
                         />
                         {(item.inviteLink || (item.phoneNumber && item.phoneNumber.includes('chat.whatsapp.com'))) && !item.phoneNumber?.includes('@g.us') && (
                           <button
@@ -991,7 +991,7 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={() => setDeliveryGroups(prev => prev.map((n, i) => i === idx ? { ...n, isActive: n.isActive === false ? true : false } : n))}
-                      className={`p-2 rounded-lg border transition ${item.isActive !== false ? 'bg-orange-100 border-orange-300 text-orange-600' : 'bg-gray-50 border-gray-200 text-gray-400'}`}
+                      className={`p-2 rounded-lg border transition ${item.isActive !== false ? 'bg-orange-100 border-orange-300 text-orange-600' : 'bg-background border-border text-muted-foreground'}`}
                       title={item.isActive !== false ? 'Actif — cliquer pour désactiver' : 'Inactif — cliquer pour activer'}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
@@ -1010,10 +1010,10 @@ const Settings = () => {
                     placeholder={tp('Nom affiché (optionnel — auto-rempli)')}
                     value={item.label || ''}
                     onChange={e => setDeliveryGroups(prev => prev.map((n, i) => i === idx ? { ...n, label: e.target.value } : n))}
-                    className="w-full px-3 py-2 border border-orange-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                    className="w-full px-3 py-2 border border-orange-200 rounded-lg text-sm bg-card focus:ring-2 focus:ring-orange-400 focus:outline-none"
                   />
                   {item.phoneNumber && item.phoneNumber.includes('@g.us') && (
-                    <p className="text-xs text-primary-600 font-mono">✅ {item.label || item.phoneNumber}</p>
+                    <p className="text-xs text-primary font-mono">✅ {item.label || item.phoneNumber}</p>
                   )}
                   {item._resolveError && (
                     <p className="text-xs text-red-500">❌ {item._resolveError}</p>
@@ -1036,7 +1036,7 @@ const Settings = () => {
               type="button"
               onClick={saveDeliveryGroups}
               disabled={savingGroups}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition"
             >
               {savingGroups
                 ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
@@ -1044,13 +1044,13 @@ const Settings = () => {
               }
               {savingGroups ? 'Enregistrement...' : tp('Enregistrer')}
             </button>
-            {groupsSaved && <span className="text-sm text-primary-600 font-medium">{tp('✅ Groupes enregistrés')}</span>}
+            {groupsSaved && <span className="text-sm text-primary font-medium">{tp('✅ Groupes enregistrés')}</span>}
             {groupsError && <span className="text-sm text-red-500">❌ {groupsError}</span>}
           </div>
         </div>
 
         {/* ── Groupes WhatsApp par produit ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-card rounded-2xl shadow-sm border border-border p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
               <svg className="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="currentColor">
@@ -1059,8 +1059,8 @@ const Settings = () => {
               </svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">{tp('Groupes WhatsApp par produit')}</h2>
-              <p className="text-xs text-gray-400">{tp('Chaque nouvelle commande est automatiquement notifiée dans le groupe assigné au produit concerné.')}</p>
+              <h2 className="text-base font-bold text-foreground">{tp('Groupes WhatsApp par produit')}</h2>
+              <p className="text-xs text-muted-foreground">{tp('Chaque nouvelle commande est automatiquement notifiée dans le groupe assigné au produit concerné.')}</p>
             </div>
           </div>
 
@@ -1073,13 +1073,13 @@ const Settings = () => {
           {productGroupsLoading ? (
             <div className="py-8 flex justify-center"><div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"/></div>
           ) : products.length === 0 ? (
-            <p className="text-sm text-gray-400 italic py-2">{tp('Aucun produit actif trouvé.')}</p>
+            <p className="text-sm text-muted-foreground italic py-2">{tp('Aucun produit actif trouvé.')}</p>
           ) : (
             <div className="space-y-2">
               {products.map(product => (
-                <div key={product._id} className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-100 rounded-xl">
+                <div key={product._id} className="flex items-center gap-3 p-3 bg-background border border-border rounded-xl">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{product.name}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{product.name}</p>
                     {product.whatsappGroupName && (
                       <p className="text-[11px] text-green-600 truncate">→ {product.whatsappGroupName}</p>
                     )}
@@ -1093,7 +1093,7 @@ const Settings = () => {
                         saveProductGroup(product._id, jid, grp?.name || '');
                       }}
                       disabled={!waGroupsConnected || productGroupsSaving[product._id]}
-                      className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:outline-none max-w-[200px] disabled:opacity-50"
+                      className="text-sm border border-border rounded-lg px-2 py-1.5 bg-card focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:outline-none max-w-[200px] disabled:opacity-50"
                     >
                       <option value="">{tp('— Aucun groupe —')}</option>
                       {waGroups.map(g => (
@@ -1114,18 +1114,18 @@ const Settings = () => {
         </div>
 
         {/* ── Message client automatique par produit ───────────────────── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mt-6">
+        <div className="bg-card rounded-2xl border shadow-sm p-5 mt-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
               <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.117 1.533 5.84L0 24l6.335-1.507A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">{tp('Message client automatique par produit')}</h2>
-              <p className="text-xs text-gray-400">{tp('À chaque commande, l\'instance choisie envoie automatiquement un WhatsApp au client. Sans instance, l\'instance par défaut du workspace est utilisée.')}</p>
+              <h2 className="text-base font-bold text-foreground">{tp('Message client automatique par produit')}</h2>
+              <p className="text-xs text-muted-foreground">{tp('À chaque commande, l\'instance choisie envoie automatiquement un WhatsApp au client. Sans instance, l\'instance par défaut du workspace est utilisée.')}</p>
             </div>
           </div>
 
-          <div className="mb-4 p-2.5 bg-gray-50 border border-gray-100 rounded-lg text-[11px] text-gray-500 leading-relaxed">
+          <div className="mb-4 p-2.5 bg-background border border-border rounded-lg text-[11px] text-muted-foreground leading-relaxed">
             Variables disponibles dans le message : <code className="text-emerald-600">{'{prenom}'}</code> <code className="text-emerald-600">{'{produit}'}</code> <code className="text-emerald-600">{'{commande}'}</code> <code className="text-emerald-600">{'{prix}'}</code> <code className="text-emerald-600">{'{quantite}'}</code> <code className="text-emerald-600">{'{total}'}</code> <code className="text-emerald-600">{'{ville}'}</code> <code className="text-emerald-600">{'{devise}'}</code>
           </div>
 
@@ -1153,11 +1153,11 @@ const Settings = () => {
           {productGroupsLoading ? (
             <div className="py-8 flex justify-center"><div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"/></div>
           ) : products.length === 0 ? (
-            <p className="text-sm text-gray-400 italic py-2">{tp('Aucun produit actif trouvé.')}</p>
+            <p className="text-sm text-muted-foreground italic py-2">{tp('Aucun produit actif trouvé.')}</p>
           ) : (
             <div className="space-y-3">
               {products.map(product => (
-                <div key={product._id} className="p-3 bg-gray-50 border border-gray-100 rounded-xl">
+                <div key={product._id} className="p-3 bg-background border border-border rounded-xl">
                   <div className="flex items-center gap-3 flex-wrap">
                     <label className="flex items-center gap-2 cursor-pointer shrink-0">
                       <input
@@ -1167,7 +1167,7 @@ const Settings = () => {
                         disabled={productClientSaving[product._id]}
                         className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                       />
-                      <span className="text-sm font-semibold text-gray-900 truncate max-w-[150px]">{product.name}</span>
+                      <span className="text-sm font-semibold text-foreground truncate max-w-[150px]">{product.name}</span>
                     </label>
 
                     <select
@@ -1181,7 +1181,7 @@ const Settings = () => {
                         });
                       }}
                       disabled={productClientSaving[product._id]}
-                      className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 focus:outline-none max-w-[200px] disabled:opacity-50 ml-auto"
+                      className="text-sm border border-border rounded-lg px-2 py-1.5 bg-card focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 focus:outline-none max-w-[200px] disabled:opacity-50 ml-auto"
                     >
                       <option value="">{tp('— Instance par défaut —')}</option>
                       {waInstances.map(i => (
@@ -1204,7 +1204,7 @@ const Settings = () => {
                       onBlur={e => { if ((e.target.value || '') !== (product.whatsappClientMessage || '')) saveProductClient(product._id, { message: e.target.value }); }}
                       rows={3}
                       placeholder={'Bonjour {prenom} 👋\nMerci pour votre commande {produit} ✅\nTotal : {total} {devise}\nNous vous contactons vite pour la livraison.'}
-                      className="mt-2 w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 focus:outline-none resize-y"
+                      className="mt-2 w-full text-sm border border-border rounded-lg px-3 py-2 bg-card focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 focus:outline-none resize-y"
                     />
                   )}
                 </div>
@@ -1219,25 +1219,25 @@ const Settings = () => {
       {activeTab === 'account' && (
             <div className="space-y-6">
               {/* Sécurité */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">{tp('Sécurité')}</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">{tp('Gérez la sécurité de votre compte.')}</p>
+              <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-base font-semibold text-foreground">{tp('Sécurité')}</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tp('Gérez la sécurité de votre compte.')}</p>
                 </div>
                 <div className="p-6 space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-background rounded-lg border border-border">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{tp('Mot de passe')}</p>
-                      <p className="text-xs text-gray-500">{tp('Dernière modification : inconnue')}</p>
+                      <p className="text-sm font-medium text-foreground">{tp('Mot de passe')}</p>
+                      <p className="text-xs text-muted-foreground">{tp('Dernière modification : inconnue')}</p>
                     </div>
-                    <button className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition">
+                    <button className="px-4 py-2 text-sm font-medium text-primary bg-primary-50 rounded-lg hover:bg-primary-100 transition">
                       {tp('Modifier')}
                     </button>
                   </div>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-background rounded-lg border border-border">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{tp('Sessions actives')}</p>
-                      <p className="text-xs text-gray-500">{tp('Gérez vos appareils connectés')}</p>
+                      <p className="text-sm font-medium text-foreground">{tp('Sessions actives')}</p>
+                      <p className="text-xs text-muted-foreground">{tp('Gérez vos appareils connectés')}</p>
                     </div>
                     <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">{tp('1 active')}</span>
                   </div>
@@ -1245,12 +1245,12 @@ const Settings = () => {
               </div>
 
               {/* Déconnexion */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900">{tp('Déconnexion')}</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">{tp('Vous serez redirigé vers la page de connexion.')}</p>
+                      <h3 className="text-sm font-semibold text-foreground">{tp('Déconnexion')}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{tp('Vous serez redirigé vers la page de connexion.')}</p>
                     </div>
                     <button
                       onClick={logout}
@@ -1263,7 +1263,7 @@ const Settings = () => {
               </div>
 
               {/* Zone de danger */}
-              <div className="bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden">
+              <div className="bg-card rounded-xl shadow-sm border border-red-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-red-100 bg-red-50">
                   <h2 className="text-base font-semibold text-red-900">{tp('Zone de danger')}</h2>
                   <p className="text-xs text-red-600 mt-0.5">{tp('Actions irréversibles sur votre compte.')}</p>
@@ -1271,8 +1271,8 @@ const Settings = () => {
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{tp('Supprimer toutes mes données')}</p>
-                      <p className="text-xs text-gray-500">{tp('Toutes vos données seront définitivement supprimées.')}</p>
+                      <p className="text-sm font-medium text-foreground">{tp('Supprimer toutes mes données')}</p>
+                      <p className="text-xs text-muted-foreground">{tp('Toutes vos données seront définitivement supprimées.')}</p>
                     </div>
                     <button
                       onClick={() => setShowDeleteConfirm(true)}
@@ -1287,15 +1287,15 @@ const Settings = () => {
               {/* Modal de confirmation de suppression */}
               {showDeleteConfirm && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmWord(''); setDeleteError(''); }}>
-                  <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+                  <div className="bg-card rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
                     <div className="flex items-center justify-between mb-5">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                           <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900">{tp('Supprimer toutes mes données')}</h3>
+                        <h3 className="text-lg font-bold text-foreground">{tp('Supprimer toutes mes données')}</h3>
                       </div>
-                      <button onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmWord(''); setDeleteError(''); }} className="text-gray-400 hover:text-gray-600 transition">
+                      <button onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmWord(''); setDeleteError(''); }} className="text-muted-foreground hover:text-muted-foreground transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     </div>
@@ -1312,7 +1312,7 @@ const Settings = () => {
                         </ul>
                       </div>
                       
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         {tp('Pour confirmer, tapez le mot :')} <span className="text-red-600 font-bold text-base">SUPPRIMER</span>
                       </label>
                       <input
@@ -1333,7 +1333,7 @@ const Settings = () => {
                         type="button"
                         onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmWord(''); setDeleteError(''); }}
                         disabled={isDeleting}
-                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium transition disabled:opacity-50"
+                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-foreground hover:bg-background font-medium transition disabled:opacity-50"
                       >
                         {tp('Annuler')}
                       </button>
@@ -1387,26 +1387,26 @@ const Settings = () => {
           {/* === SÉCURITÉ === */}
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-base font-semibold text-gray-900">{tp('Tableau de bord sécurité')}</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">{tp('Consultez les journaux d\'activité et les alertes de sécurité.')}</p>
+              <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-base font-semibold text-foreground">{tp('Tableau de bord sécurité')}</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tp('Consultez les journaux d\'activité et les alertes de sécurité.')}</p>
                 </div>
                 <div className="p-6">
                   <Link
                     to="/ecom/security"
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-primary-400 hover:bg-primary-50 transition-colors group"
+                    className="flex items-center justify-between p-4 bg-background rounded-xl border border-border hover:border-primary-400 hover:bg-primary-50 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">{tp('Ouvrir le tableau de bord sécurité')}</p>
-                        <p className="text-xs text-gray-500">{tp('Journaux d\'accès, alertes et activité suspecte')}</p>
+                        <p className="text-sm font-semibold text-foreground">{tp('Ouvrir le tableau de bord sécurité')}</p>
+                        <p className="text-xs text-muted-foreground">{tp('Journaux d\'accès, alertes et activité suspecte')}</p>
                       </div>
                     </div>
-                    <svg className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                    <svg className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                   </Link>
                 </div>
               </div>
@@ -1418,27 +1418,27 @@ const Settings = () => {
 
       {/* Barre d'actions sticky - apparait quand il y a des modifications */}
       {hasChanges && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg z-50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
-                <span className="text-sm font-medium text-gray-700">{tp('Vous avez des modifications non sauvegardées')}</span>
+                <span className="text-sm font-medium text-foreground">{tp('Vous avez des modifications non sauvegardées')}</span>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleCancelChanges}
                   disabled={isSaving}
-                  className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-semibold text-foreground bg-card border border-gray-300 rounded-lg hover:bg-background transition-colors disabled:opacity-50"
                 >
                   {tp('Annuler')}
                 </button>
                 <button
                   onClick={handleSaveChanges}
                   disabled={isSaving}
-                  className="px-4 py-2 text-sm font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-4 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isSaving ? (
                     <>

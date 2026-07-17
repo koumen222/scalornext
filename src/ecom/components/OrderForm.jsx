@@ -118,11 +118,11 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
 
       {/* Sélection du produit */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           Produit *
         </label>
         {productId ? (
-          <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+          <div className="p-3 bg-background border border-border rounded-lg">
             <span className="font-medium">{selectedProduct?.name || tp('Chargement...')}</span>
           </div>
         ) : (
@@ -149,7 +149,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
 
       {/* Date */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           Date *
         </label>
         <input
@@ -165,7 +165,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
       {/* Commandes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             Commandes Reçues *
           </label>
           <input
@@ -185,7 +185,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             Commandes Livrées *
           </label>
           <input
@@ -207,7 +207,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
 
       {/* Dépenses publicitaires (admin/compta seulement) */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           Dépenses Publicitaires ({symbol})
         </label>
         <input
@@ -229,7 +229,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
 
       {/* Notes */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           {tp('Notes')}
         </label>
         <textarea
@@ -248,19 +248,19 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
           <h4 className="font-medium text-primary-900 mb-2">{tp('Informations produit')}</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <span className="text-primary-700">{tp('Stock actuel:')}</span>
+              <span className="text-primary">{tp('Stock actuel:')}</span>
               <span className="ml-2 font-medium text-primary-900">{selectedProduct.stock}</span>
             </div>
             <div>
-              <span className="text-primary-700">{tp('Prix vente:')}</span>
+              <span className="text-primary">{tp('Prix vente:')}</span>
               <span className="ml-2 font-medium text-primary-900">{fmt(selectedProduct.sellingPrice)}</span>
             </div>
             <div>
-              <span className="text-primary-700">{tp('Coût produit:')}</span>
+              <span className="text-primary">{tp('Coût produit:')}</span>
               <span className="ml-2 font-medium text-primary-900">{fmt(selectedProduct.productCost)}</span>
             </div>
             <div>
-              <span className="text-primary-700">{tp('Statut:')}</span>
+              <span className="text-primary">{tp('Statut:')}</span>
               <span className="ml-2 font-medium text-primary-900 capitalize">{selectedProduct.status}</span>
             </div>
           </div>
@@ -274,7 +274,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
             type="button"
             onClick={onCancel}
             disabled={submitting}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+            className="px-4 py-2 border border-gray-300 text-foreground rounded-lg hover:bg-background transition disabled:opacity-50"
           >
             {tp('Annuler')}
           </button>
@@ -282,7 +282,7 @@ const OrderForm = ({ productId, initialData = {}, onSubmit, onCancel }) => {
         <button
           type="submit"
           disabled={submitting}
-          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {submitting ? (
             <div className="flex items-center">

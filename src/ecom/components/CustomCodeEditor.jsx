@@ -129,7 +129,7 @@ const ALL_TABS = [
   { id: 'code', label: 'Code', icon: CodeIcon },
 ];
 
-const numInputCls = 'w-full px-2 py-1.5 border border-gray-200 rounded-lg text-[12px] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent';
+const numInputCls = 'w-full px-2 py-1.5 border border-border rounded-lg text-[12px] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent';
 
 const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onChangeStyle }) => {
   const [tab, setTab] = useState(html.trim() ? 'design' : 'code');
@@ -186,12 +186,12 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
   return (
     <div className="space-y-3">
       {/* Onglets */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex gap-1 bg-muted p-1 rounded-lg">
         {tabs.map((t) => {
           const Icon = t.icon;
           return (
             <button key={t.id} type="button" onClick={() => setTab(t.id)}
-              className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-md text-[10.5px] font-bold transition ${tab === t.id ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-md text-[10.5px] font-bold transition ${tab === t.id ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
               <Icon className="w-3.5 h-3.5" /> {t.label}
             </button>
           );
@@ -202,12 +202,12 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
       {tab === 'design' && (
         html.trim() ? (
           <div className="space-y-3">
-            <div className="border border-gray-200 rounded-xl bg-white overflow-auto max-h-[320px]">
+            <div className="border border-border rounded-xl bg-card overflow-auto max-h-[320px]">
               <CustomCodeSection content={{ html, style: st }} />
             </div>
             {colors.length > 0 ? (
               <div>
-                <p className="text-[11px] font-semibold text-gray-500 mb-1.5">Couleurs du bloc</p>
+                <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">Couleurs du bloc</p>
                 <div className="space-y-1.5">
                   {colors.map((c, i) => (
                     <div key={i} className="flex items-center gap-2">
@@ -215,21 +215,21 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
                         type="color"
                         value={colorToHex(c)}
                         onChange={(e) => onChangeHtml(applyColorChange(html, c, e.target.value))}
-                        className="w-8 h-8 rounded-lg border border-gray-200 p-0.5 cursor-pointer flex-shrink-0"
+                        className="w-8 h-8 rounded-lg border border-border p-0.5 cursor-pointer flex-shrink-0"
                         title="Changer cette couleur partout dans le bloc"
                       />
-                      <span className="text-[12px] font-mono text-gray-600 truncate">{c}</span>
+                      <span className="text-[12px] font-mono text-muted-foreground truncate">{c}</span>
                     </div>
                   ))}
                 </div>
-                <p className="text-[10px] text-gray-400 mt-1.5">Chaque couleur est remplacée partout où elle apparaît dans le bloc.</p>
+                <p className="text-[10px] text-muted-foreground mt-1.5">Chaque couleur est remplacée partout où elle apparaît dans le bloc.</p>
               </div>
             ) : (
-              <p className="text-[11px] text-gray-400 italic">Aucune couleur détectée dans le code.</p>
+              <p className="text-[11px] text-muted-foreground italic">Aucune couleur détectée dans le code.</p>
             )}
           </div>
         ) : (
-          <p className="text-xs text-gray-400 italic border border-dashed border-gray-200 rounded-xl p-6 text-center">
+          <p className="text-xs text-muted-foreground italic border border-dashed border-border rounded-xl p-6 text-center">
             Section vide — générez du code avec l'IA ou écrivez-le dans l'onglet Code.
           </p>
         )
@@ -238,17 +238,17 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
       {/* Mise en page — réglages du conteneur de la section */}
       {tab === 'layout' && onChangeStyle && (
         <div className="space-y-3">
-          <div className="border border-gray-200 rounded-xl bg-white overflow-auto max-h-[240px]">
+          <div className="border border-border rounded-xl bg-card overflow-auto max-h-[240px]">
             {html.trim()
               ? <CustomCodeSection content={{ html, style: st }} />
-              : <p className="text-xs text-gray-400 italic p-6 text-center">Section vide</p>}
+              : <p className="text-xs text-muted-foreground italic p-6 text-center">Section vide</p>}
           </div>
           <div>
-            <p className="text-[10.5px] text-gray-400 mb-1">Alignement du texte</p>
-            <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+            <p className="text-[10.5px] text-muted-foreground mb-1">Alignement du texte</p>
+            <div className="flex gap-1 bg-muted p-1 rounded-lg">
               {[['', 'Auto'], ['left', 'Gauche'], ['center', 'Centre'], ['right', 'Droite']].map(([v, l]) => (
                 <button key={v} type="button" onClick={() => setSt('textAlign', v)}
-                  className={`flex-1 py-1 rounded-md text-[11px] font-semibold transition ${(st.textAlign || '') === v ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+                  className={`flex-1 py-1 rounded-md text-[11px] font-semibold transition ${(st.textAlign || '') === v ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
                   {l}
                 </button>
               ))}
@@ -256,39 +256,39 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Marge haut (px)</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Marge haut (px)</p>
               <input type="number" min="0" value={st.marginTop ?? ''} onChange={(e) => setSt('marginTop', e.target.value)} placeholder="0" className={numInputCls} />
             </div>
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Marge bas (px)</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Marge bas (px)</p>
               <input type="number" min="0" value={st.marginBottom ?? ''} onChange={(e) => setSt('marginBottom', e.target.value)} placeholder="0" className={numInputCls} />
             </div>
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Espacement haut (px)</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Espacement haut (px)</p>
               <input type="number" min="0" value={st.paddingTop ?? ''} onChange={(e) => setSt('paddingTop', e.target.value)} placeholder="0" className={numInputCls} />
             </div>
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Espacement bas (px)</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Espacement bas (px)</p>
               <input type="number" min="0" value={st.paddingBottom ?? ''} onChange={(e) => setSt('paddingBottom', e.target.value)} placeholder="0" className={numInputCls} />
             </div>
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Espacement côtés (px)</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Espacement côtés (px)</p>
               <input type="number" min="0" value={st.paddingX ?? ''} onChange={(e) => setSt('paddingX', e.target.value)} placeholder="0" className={numInputCls} />
             </div>
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Largeur max (px)</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Largeur max (px)</p>
               <input type="number" min="0" value={st.maxWidth ?? ''} onChange={(e) => setSt('maxWidth', e.target.value)} placeholder="Pleine largeur" className={numInputCls} />
             </div>
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Arrondi (px)</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Arrondi (px)</p>
               <input type="number" min="0" value={st.borderRadius ?? ''} onChange={(e) => setSt('borderRadius', e.target.value)} placeholder="0" className={numInputCls} />
             </div>
             <div>
-              <p className="text-[10.5px] text-gray-400 mb-1">Fond du conteneur</p>
+              <p className="text-[10.5px] text-muted-foreground mb-1">Fond du conteneur</p>
               <div className="flex items-center gap-1">
-                <input type="color" value={st.backgroundColor || '#ffffff'} onChange={(e) => setSt('backgroundColor', e.target.value)} className="w-8 h-8 rounded-lg border border-gray-200 p-0.5 cursor-pointer flex-shrink-0" />
+                <input type="color" value={st.backgroundColor || '#ffffff'} onChange={(e) => setSt('backgroundColor', e.target.value)} className="w-8 h-8 rounded-lg border border-border p-0.5 cursor-pointer flex-shrink-0" />
                 {st.backgroundColor && (
-                  <button type="button" onClick={() => setSt('backgroundColor', '')} className="text-[10px] text-gray-400 hover:text-red-500 underline">retirer</button>
+                  <button type="button" onClick={() => setSt('backgroundColor', '')} className="text-[10px] text-muted-foreground hover:text-red-500 underline">retirer</button>
                 )}
               </div>
             </div>
@@ -300,7 +300,7 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
       {tab === 'contenu' && (
         <div className="space-y-2">
           {texts.length === 0 && images.length === 0 && (
-            <p className="text-xs text-gray-400 italic">Aucun texte ni image détecté — utilisez l'onglet Code.</p>
+            <p className="text-xs text-muted-foreground italic">Aucun texte ni image détecté — utilisez l'onglet Code.</p>
           )}
           {texts.map((txt, i) => (
             <div key={`t-${i}`}>
@@ -309,21 +309,21 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
                   value={txt}
                   rows={3}
                   onChange={(e) => onChangeHtml(replaceTextAt(html, i, e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-[13px] resize-y focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg text-[13px] resize-y focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
                 />
               ) : (
                 <input
                   type="text"
                   value={txt}
                   onChange={(e) => onChangeHtml(replaceTextAt(html, i, e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
                 />
               )}
             </div>
           ))}
           {images.length > 0 && (
             <div className="pt-1 space-y-2">
-              <p className="text-[11px] font-semibold text-gray-500">Images</p>
+              <p className="text-[11px] font-semibold text-muted-foreground">Images</p>
               {images.map((src, i) => (
                 <div key={`i-${i}`} className="space-y-1">
                 <div
@@ -333,20 +333,20 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
                   className={`flex items-center gap-2 rounded-lg p-0.5 transition ${dragOverIndex === i ? 'ring-2 ring-indigo-400 bg-indigo-50/60' : ''}`}
                   title="Déposez une image ici pour la remplacer"
                 >
-                  {src ? <img src={src} alt="" className="w-9 h-9 rounded-lg object-cover border border-gray-200 flex-shrink-0" /> : <div className="w-9 h-9 rounded-lg bg-gray-100 flex-shrink-0" />}
+                  {src ? <img src={src} alt="" className="w-9 h-9 rounded-lg object-cover border border-border flex-shrink-0" /> : <div className="w-9 h-9 rounded-lg bg-muted flex-shrink-0" />}
                   <input
                     type="text"
                     value={src}
                     onChange={(e) => onChangeHtml(replaceImageAt(html, i, e.target.value))}
                     placeholder="https://…"
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-[12px] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-border rounded-lg text-[12px] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
                   />
                   <button
                     type="button"
                     title="Uploader une image"
                     disabled={uploadingIndex !== null}
                     onClick={() => triggerImageUpload(i)}
-                    className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition flex-shrink-0 disabled:opacity-40"
+                    className="p-2 rounded-lg border border-border text-muted-foreground hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition flex-shrink-0 disabled:opacity-40"
                   >
                     {uploadingIndex === i ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                   </button>
@@ -362,8 +362,8 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
           )}
 
           {/* Générer une NOUVELLE image par IA et l'insérer dans le code */}
-          <div className="pt-2 border-t border-gray-100">
-            <p className="text-[11px] font-semibold text-gray-500 mb-1">
+          <div className="pt-2 border-t border-border">
+            <p className="text-[11px] font-semibold text-muted-foreground mb-1">
               {images.length > 0 ? 'Ajouter une image générée par IA' : 'Images — générer par IA'}
             </p>
             <AiImagePromptBox
@@ -384,7 +384,7 @@ const CustomCodeEditor = ({ html = '', onChangeHtml, onRemove, style = {}, onCha
           onChange={(e) => onChangeHtml(e.target.value)}
           rows={16}
           spellCheck={false}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-green-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+          className="w-full border border-border rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-green-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           placeholder={'<style>\n  .ma-section { padding: 20px; }\n</style>\n\n<div class="ma-section">\n  Votre HTML, embed, widget…\n</div>\n\n<script>\n  // Votre JavaScript\n</script>'}
         />
       )}

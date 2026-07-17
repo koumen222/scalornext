@@ -64,7 +64,7 @@ const WorkspaceSwitcher = () => {
         <button
           onClick={() => canSwitch && setIsOpen(!isOpen)}
           disabled={!!switchingId || !canSwitch}
-          className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-xl transition-colors text-left group ${canSwitch ? 'hover:bg-gray-100 cursor-pointer' : 'cursor-default'}`}
+          className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-xl transition-colors text-left group ${canSwitch ? 'hover:bg-muted cursor-pointer' : 'cursor-default'}`}
         >
           {/* Avatar initiales */}
           <div
@@ -74,11 +74,11 @@ const WorkspaceSwitcher = () => {
             {wsInitials(wsName)}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-900 truncate leading-tight">{wsName}</p>
-            <p className="text-[10px] text-gray-400 leading-tight">{roleLabels[currentWorkspace?.role] || tp('Espace')}</p>
+            <p className="text-sm font-semibold text-foreground truncate leading-tight">{wsName}</p>
+            <p className="text-[10px] text-muted-foreground leading-tight">{roleLabels[currentWorkspace?.role] || tp('Espace')}</p>
           </div>
           {canSwitch && (
-            <svg className={`w-3.5 h-3.5 text-gray-400 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-3.5 h-3.5 text-muted-foreground transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           )}
@@ -86,8 +86,8 @@ const WorkspaceSwitcher = () => {
 
         {/* Dropdown */}
         {canSwitch && isOpen && (
-          <div className="absolute left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-200 py-1.5 z-50 overflow-hidden">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 pb-1.5 pt-0.5">
+          <div className="absolute left-0 right-0 mt-1 bg-card rounded-xl shadow-xl border border-border py-1.5 z-50 overflow-hidden">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-3 pb-1.5 pt-0.5">
               Mes espaces ({workspaces.length})
             </p>
 
@@ -100,13 +100,13 @@ const WorkspaceSwitcher = () => {
                 {wsInitials(currentWorkspace?.name || '')}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">{currentWorkspace?.name}</p>
+                <p className="text-sm font-semibold text-foreground truncate">{currentWorkspace?.name}</p>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-medium text-primary-600">{roleLabels[currentWorkspace?.role]}</span>
-                  {currentWorkspace?.isOwner && <span className="text-[10px] text-gray-400">{tp('· Propriétaire')}</span>}
+                  <span className="text-[10px] font-medium text-primary">{roleLabels[currentWorkspace?.role]}</span>
+                  {currentWorkspace?.isOwner && <span className="text-[10px] text-muted-foreground">{tp('· Propriétaire')}</span>}
                 </div>
               </div>
-              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 flex-shrink-0" />
+              <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
             </div>
 
             {/* Autres espaces */}
@@ -115,7 +115,7 @@ const WorkspaceSwitcher = () => {
                 key={ws._id}
                 onClick={() => onSwitch(ws)}
                 disabled={!!switchingId}
-                className="w-full px-3 py-2 hover:bg-gray-50 transition-colors text-left flex items-center gap-2.5 disabled:opacity-50"
+                className="w-full px-3 py-2 hover:bg-background transition-colors text-left flex items-center gap-2.5 disabled:opacity-50"
               >
                 <div
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
@@ -124,10 +124,10 @@ const WorkspaceSwitcher = () => {
                   {wsInitials(ws.name)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">{ws.name}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{ws.name}</p>
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-gray-400">{roleLabels[ws.role] || ws.role}</span>
-                    {ws.isOwner && <span className="text-[10px] text-gray-400">{tp('· Propriétaire')}</span>}
+                    <span className="text-[10px] text-muted-foreground">{roleLabels[ws.role] || ws.role}</span>
+                    {ws.isOwner && <span className="text-[10px] text-muted-foreground">{tp('· Propriétaire')}</span>}
                   </div>
                 </div>
                 <svg className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

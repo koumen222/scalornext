@@ -4,7 +4,7 @@ import ecomApi from '../services/ecommApi';
 import { tp } from '../i18n/platform.js';
 
 const PALETTE = [
-  'bg-primary-500', 'bg-violet-500', 'bg-blue-500',
+  'bg-primary', 'bg-violet-500', 'bg-blue-500',
   'bg-orange-500', 'bg-rose-500', 'bg-cyan-500', 'bg-amber-500'
 ];
 
@@ -47,8 +47,8 @@ const WorkspaceSwitcherMenu = ({ isSuperAdmin, onWorkspaceSwitch }) => {
       {switchingId && <SwitchOverlay name={switchingName} />}
 
       {/* Espace actuel */}
-      <div className={`px-4 py-3 border-b ${isSuperAdmin ? 'border-gray-700' : 'border-gray-100'}`}>
-        <p className={`text-[10px] font-semibold uppercase tracking-wider mb-2 ${isSuperAdmin ? 'text-gray-500' : 'text-gray-400'}`}>
+      <div className={`px-4 py-3 border-b ${isSuperAdmin ? 'border-gray-700' : 'border-border'}`}>
+        <p className={`text-[10px] font-semibold uppercase tracking-wider mb-2 ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
           {tp('Espace actuel')}
         </p>
         <div className="flex items-center gap-2.5">
@@ -56,24 +56,24 @@ const WorkspaceSwitcherMenu = ({ isSuperAdmin, onWorkspaceSwitch }) => {
             {wsInitials(currentWorkspace?.name)}
           </div>
           <div className="flex-1 min-w-0">
-            <p className={`text-sm font-semibold truncate ${isSuperAdmin ? 'text-gray-100' : 'text-gray-900'}`}>
+            <p className={`text-sm font-semibold truncate ${isSuperAdmin ? 'text-gray-100' : 'text-foreground'}`}>
               {currentWorkspace?.name}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[10px] font-medium text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-medium text-primary bg-primary-50 px-1.5 py-0.5 rounded-full">
                 {roleLabels[currentWorkspace?.role] || currentWorkspace?.role}
               </span>
-              {currentWorkspace?.isOwner && <span className="text-[10px] text-gray-400">{tp('Propriétaire')}</span>}
+              {currentWorkspace?.isOwner && <span className="text-[10px] text-muted-foreground">{tp('Propriétaire')}</span>}
             </div>
           </div>
-          <div className="w-2 h-2 rounded-full bg-primary-500 flex-shrink-0" />
+          <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
         </div>
       </div>
 
       {/* Autres espaces */}
       {otherWorkspaces.length > 0 && (
-        <div className={`border-b ${isSuperAdmin ? 'border-gray-700' : 'border-gray-100'}`}>
-          <p className={`text-[10px] font-semibold uppercase tracking-wider px-4 pt-2.5 pb-1 ${isSuperAdmin ? 'text-gray-500' : 'text-gray-400'}`}>
+        <div className={`border-b ${isSuperAdmin ? 'border-gray-700' : 'border-border'}`}>
+          <p className={`text-[10px] font-semibold uppercase tracking-wider px-4 pt-2.5 pb-1 ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
             Changer d'espace
           </p>
           {otherWorkspaces.map((ws) => (
@@ -82,24 +82,24 @@ const WorkspaceSwitcherMenu = ({ isSuperAdmin, onWorkspaceSwitch }) => {
               onClick={() => onSwitch(ws)}
               disabled={!!switchingId}
               className={`w-full px-4 py-2.5 text-left flex items-center gap-2.5 transition-colors disabled:opacity-50 ${
-                isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-gray-50'
+                isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-background'
               }`}
             >
               <div className={`w-7 h-7 rounded-lg ${wsColor(ws.name)} flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0`}>
                 {wsInitials(ws.name)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium truncate ${isSuperAdmin ? 'text-gray-200' : 'text-gray-800'}`}>{ws.name}</p>
+                <p className={`text-sm font-medium truncate ${isSuperAdmin ? 'text-gray-200' : 'text-foreground'}`}>{ws.name}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
-                    isSuperAdmin ? 'text-gray-400 bg-gray-700' : 'text-gray-500 bg-gray-100'
+                    isSuperAdmin ? 'text-muted-foreground bg-gray-700' : 'text-muted-foreground bg-muted'
                   }`}>
                     {roleLabels[ws.role] || ws.role}
                   </span>
-                  {ws.isOwner && <span className={`text-[10px] ${isSuperAdmin ? 'text-gray-500' : 'text-gray-400'}`}>{tp('Propriétaire')}</span>}
+                  {ws.isOwner && <span className={`text-[10px] ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>{tp('Propriétaire')}</span>}
                 </div>
               </div>
-              <svg className={`w-4 h-4 flex-shrink-0 ${isSuperAdmin ? 'text-gray-600' : 'text-gray-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-4 h-4 flex-shrink-0 ${isSuperAdmin ? 'text-muted-foreground' : 'text-gray-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>

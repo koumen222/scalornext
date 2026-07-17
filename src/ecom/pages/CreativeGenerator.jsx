@@ -294,12 +294,12 @@ const CreativeGenerator = () => {
   const insufficientCredits = credits !== null && credits < selectedFormats.length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
 
       {/* Buy Credits Modal — bottom-sheet */}
       {showBuyModal && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center">
-          <div className="bg-white w-full sm:max-w-sm sm:mx-4 rounded-t-3xl sm:rounded-2xl overflow-hidden">
+          <div className="bg-card w-full sm:max-w-sm sm:mx-4 rounded-t-3xl sm:rounded-2xl overflow-hidden">
             {/* Handle */}
             <div className="pt-3 pb-1 flex justify-center sm:hidden">
               <div className="w-10 h-1 bg-gray-200 rounded-full" />
@@ -317,7 +317,7 @@ const CreativeGenerator = () => {
               </div>
               <button
                 onClick={() => { setShowBuyModal(false); clearInterval(pollIntervalRef.current); setBuyLoading(false); }}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-card/10 transition-colors"
               >
                 <X size={16} />
               </button>
@@ -329,8 +329,8 @@ const CreativeGenerator = () => {
                   <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <CheckCircle size={28} className="text-green-600" />
                   </div>
-                  <p className="font-semibold text-gray-900 text-base">{buySuccess}</p>
-                  <p className="text-sm text-gray-500 mt-1">{tp('Solde actuel :')} <strong>{credits}</strong> crédit{credits !== 1 ? 's' : ''}</p>
+                  <p className="font-semibold text-foreground text-base">{buySuccess}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{tp('Solde actuel :')} <strong>{credits}</strong> crédit{credits !== 1 ? 's' : ''}</p>
                   <button
                     onClick={() => setShowBuyModal(false)}
                     className="mt-4 w-full h-11 bg-green-600 text-white font-medium rounded-2xl text-sm hover:bg-green-700 transition-colors"
@@ -341,7 +341,7 @@ const CreativeGenerator = () => {
               ) : (
                 <>
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Choisir un pack')}</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Choisir un pack')}</p>
                     <div className="space-y-2">
                       {CREDIT_PACKS.map(pack => (
                         <button
@@ -350,11 +350,11 @@ const CreativeGenerator = () => {
                           className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 transition-all ${
                             buyPack.quantity === pack.quantity
                               ? 'border-green-600 bg-green-50'
-                              : 'border-gray-100 hover:border-gray-200'
+                              : 'border-border hover:border-border'
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm text-gray-800">{pack.label}</span>
+                            <span className="font-medium text-sm text-foreground">{pack.label}</span>
                             {pack.badge && (
                               <span className="text-[10px] font-semibold bg-green-100 text-green-700 px-2 py-0.5 rounded-md">
                                 {pack.badge}
@@ -371,23 +371,23 @@ const CreativeGenerator = () => {
 
                   <div className="space-y-2">
                     <div>
-                      <label className="text-xs font-semibold text-gray-500 mb-1 block">{tp('Numéro de téléphone')}</label>
+                      <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Numéro de téléphone')}</label>
                       <input
                         type="tel"
                         value={buyPhone}
                         onChange={e => setBuyPhone(e.target.value)}
                         placeholder={tp('Ex: 6XXXXXXXX')}
-                        className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all"
+                        className="w-full h-10 px-3 rounded-xl border border-border text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-gray-500 mb-1 block">{tp('Nom complet')}</label>
+                      <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Nom complet')}</label>
                       <input
                         type="text"
                         value={buyName}
                         onChange={e => setBuyName(e.target.value)}
                         placeholder={tp('Votre nom')}
-                        className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all"
+                        className="w-full h-10 px-3 rounded-xl border border-border text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all"
                       />
                     </div>
                   </div>
@@ -398,7 +398,7 @@ const CreativeGenerator = () => {
                     </div>
                   )}
                   {buyLoading && (
-                    <div className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex items-center gap-2 text-xs text-gray-600 font-medium">
+                    <div className="bg-background border border-border rounded-xl px-3 py-2 flex items-center gap-2 text-xs text-muted-foreground font-medium">
                       <Loader2 size={13} className="animate-spin" /> Attente de confirmation du paiement…
                     </div>
                   )}
@@ -423,21 +423,21 @@ const CreativeGenerator = () => {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-6">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{tp('Creatives Image')}</h1>
-            <p className="text-sm text-gray-400 mt-0.5">{tp('Visuels produit premium · IA')}</p>
+            <h1 className="text-xl font-bold text-foreground">{tp('Creatives Image')}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">{tp('Visuels produit premium · IA')}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Link
               to="/ecom/creatives/gallery"
-              className="h-10 px-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors"
+              className="h-10 px-3.5 bg-card border border-border text-foreground rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-background transition-colors"
             >
-              <LayoutGrid size={14} className="text-gray-400" />
+              <LayoutGrid size={14} className="text-muted-foreground" />
               <span className="hidden sm:inline">{tp('Mes visuels')}</span>
             </Link>
-            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl h-10 px-3.5">
+            <div className="flex items-center gap-2 bg-card border border-border rounded-xl h-10 px-3.5">
               <Wallet size={14} className="text-green-600" />
-              <span className="text-gray-900 font-semibold text-sm">{credits === null ? '…' : credits}</span>
-              <span className="text-gray-400 text-xs hidden sm:inline">crédit{credits !== 1 ? 's' : ''}</span>
+              <span className="text-foreground font-semibold text-sm">{credits === null ? '…' : credits}</span>
+              <span className="text-muted-foreground text-xs hidden sm:inline">crédit{credits !== 1 ? 's' : ''}</span>
             </div>
             <button
               onClick={() => { setShowBuyModal(true); setBuyError(''); setBuySuccess(null); }}
@@ -454,31 +454,31 @@ const CreativeGenerator = () => {
           <div className="w-full lg:w-[360px] shrink-0 space-y-4 lg:sticky lg:top-[68px]">
 
             {/* Upload produit */}
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="bg-card rounded-xl border overflow-hidden">
               <div className="px-4 pt-4 pb-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Image produit')}</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Image produit')}</p>
               </div>
               <div className="p-4">
                 <input type="file" ref={fileInputRef} onChange={handleImageSelect} accept="image/*" className="hidden" />
                 {!imagePreview ? (
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full py-7 border-2 border-dashed border-gray-200 rounded-xl hover:border-green-600 hover:bg-green-50/40 transition-all flex flex-col items-center gap-2.5 group"
+                    className="w-full py-7 border-2 border-dashed border-border rounded-xl hover:border-green-600 hover:bg-green-50/40 transition-all flex flex-col items-center gap-2.5 group"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-gray-100 group-hover:bg-green-100 flex items-center justify-center transition-colors">
-                      <Upload size={18} className="text-gray-400 group-hover:text-green-600" />
+                    <div className="w-10 h-10 rounded-xl bg-muted group-hover:bg-green-100 flex items-center justify-center transition-colors">
+                      <Upload size={18} className="text-muted-foreground group-hover:text-green-600" />
                     </div>
                     <div className="text-center">
-                      <span className="block text-sm font-medium text-gray-600 group-hover:text-green-700">{tp('Glissez ou cliquez')}</span>
-                      <span className="text-xs text-gray-400">{tp('PNG, JPG, WebP — max 10 MB')}</span>
+                      <span className="block text-sm font-medium text-muted-foreground group-hover:text-green-700">{tp('Glissez ou cliquez')}</span>
+                      <span className="text-xs text-muted-foreground">{tp('PNG, JPG, WebP — max 10 MB')}</span>
                     </div>
                   </button>
                 ) : (
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                    <img src={imagePreview} alt="Produit" className="w-14 h-14 object-cover rounded-lg border border-gray-200 shrink-0" />
+                  <div className="flex items-center gap-3 p-3 bg-background rounded-xl border border-border">
+                    <img src={imagePreview} alt="Produit" className="w-14 h-14 object-cover rounded-lg border border-border shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{productImage?.name}</p>
-                      <p className="text-xs text-gray-400">{productImage ? `${(productImage.size / 1024).toFixed(0)} KB` : ''}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{productImage?.name}</p>
+                      <p className="text-xs text-muted-foreground">{productImage ? `${(productImage.size / 1024).toFixed(0)} KB` : ''}</p>
                       <button onClick={() => fileInputRef.current?.click()} className="text-xs font-medium text-green-600 mt-1 hover:text-green-700">{tp('Changer l\'image')}</button>
                     </div>
                     <button onClick={removeImage} className="w-7 h-7 rounded-lg bg-red-50 border border-red-100 text-red-400 flex items-center justify-center hover:bg-red-100 transition-colors shrink-0">
@@ -490,31 +490,31 @@ const CreativeGenerator = () => {
             </div>
 
             {/* Logo */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="bg-card rounded-xl border p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Logo de marque')}</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Logo de marque')}</p>
                 <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-md">{tp('Optionnel')}</span>
               </div>
               <input type="file" ref={logoInputRef} onChange={handleLogoSelect} accept="image/*" className="hidden" />
               {!logoPreview ? (
                 <button
                   onClick={() => logoInputRef.current?.click()}
-                  className="w-full py-4 border-2 border-dashed border-gray-100 rounded-xl hover:border-green-600/40 hover:bg-green-50/30 transition-all flex items-center gap-3 px-4 group"
+                  className="w-full py-4 border-2 border-dashed border-border rounded-xl hover:border-green-600/40 hover:bg-green-50/30 transition-all flex items-center gap-3 px-4 group"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-gray-50 group-hover:bg-green-100 flex items-center justify-center transition-colors shrink-0">
-                    <Package size={15} className="text-gray-400 group-hover:text-green-600" />
+                  <div className="w-9 h-9 rounded-lg bg-background group-hover:bg-green-100 flex items-center justify-center transition-colors shrink-0">
+                    <Package size={15} className="text-muted-foreground group-hover:text-green-600" />
                   </div>
                   <div className="text-left">
-                    <span className="block text-xs font-medium text-gray-500 group-hover:text-green-700">{tp('Ajouter votre logo')}</span>
-                    <span className="text-[10px] text-gray-400">{tp('PNG transparent recommandé')}</span>
+                    <span className="block text-xs font-medium text-muted-foreground group-hover:text-green-700">{tp('Ajouter votre logo')}</span>
+                    <span className="text-[10px] text-muted-foreground">{tp('PNG transparent recommandé')}</span>
                   </div>
                 </button>
               ) : (
-                <div className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl border border-gray-100">
-                  <img src={logoPreview} alt="Logo" className="w-12 h-12 object-contain rounded-lg bg-white border border-gray-200 p-1 shrink-0" />
+                <div className="flex items-center gap-3 p-2.5 bg-background rounded-xl border border-border">
+                  <img src={logoPreview} alt="Logo" className="w-12 h-12 object-contain rounded-lg bg-card border border-border p-1 shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-700 truncate">{logoImage?.name}</p>
-                    <p className="text-[10px] text-gray-400">{logoImage ? `${(logoImage.size / 1024).toFixed(0)} KB` : ''}</p>
+                    <p className="text-xs font-medium text-foreground truncate">{logoImage?.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{logoImage ? `${(logoImage.size / 1024).toFixed(0)} KB` : ''}</p>
                     <p className="text-[10px] text-green-600 font-medium mt-0.5">{tp('Sera intégré dans les visuels')}</p>
                   </div>
                   <button onClick={removeLogo} className="w-6 h-6 rounded-lg bg-red-50 border border-red-100 text-red-400 flex items-center justify-center hover:bg-red-100 transition-colors shrink-0">
@@ -525,36 +525,36 @@ const CreativeGenerator = () => {
             </div>
 
             {/* URL + Description */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Informations produit')}</p>
+            <div className="bg-card rounded-xl border p-4 space-y-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Informations produit')}</p>
               <div>
-                <label className="text-xs font-medium text-gray-600 mb-1.5 block">{tp('Lien produit')} <span className="text-gray-400 font-normal">{tp('(optionnel)')}</span></label>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{tp('Lien produit')} <span className="text-muted-foreground font-normal">{tp('(optionnel)')}</span></label>
                 <div className="relative">
-                  <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="url"
                     value={url}
                     onChange={e => setUrl(e.target.value)}
                     placeholder="https://alibaba.com/product/..."
-                    className="w-full h-10 pl-9 pr-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-gray-50 placeholder:text-gray-400"
+                    className="w-full h-10 pl-9 pr-3 rounded-xl border border-border text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-background placeholder:text-muted-foreground"
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 mb-1.5 block">{tp('Description')} <span className="text-gray-400 font-normal">{tp('(optionnel)')}</span></label>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{tp('Description')} <span className="text-muted-foreground font-normal">{tp('(optionnel)')}</span></label>
                 <textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   placeholder={tp('Ex: Gélules nootropiques au collagène, 60 capsules, ingrédients naturels…')}
                   rows={3}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-gray-50 placeholder:text-gray-400 resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-background placeholder:text-muted-foreground resize-none"
                 />
               </div>
             </div>
 
             {/* Template */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Univers visuel')}</p>
+            <div className="bg-card rounded-xl border p-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">{tp('Univers visuel')}</p>
               <div className="grid grid-cols-4 gap-2">
                 {TEMPLATES.map(tpl => (
                   <button
@@ -563,11 +563,11 @@ const CreativeGenerator = () => {
                     className={`relative flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl border-2 transition-all ${
                       visualTemplate === tpl.id
                         ? 'border-green-600 bg-green-50'
-                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                        : 'border-border hover:border-border hover:bg-background'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${tpl.color} shadow-sm`} />
-                    <span className={`text-[10px] font-semibold leading-none text-center ${visualTemplate === tpl.id ? 'text-green-700' : 'text-gray-500'}`}>
+                    <span className={`text-[10px] font-semibold leading-none text-center ${visualTemplate === tpl.id ? 'text-green-700' : 'text-muted-foreground'}`}>
                       {tpl.title}
                     </span>
                     {visualTemplate === tpl.id && (
@@ -581,8 +581,8 @@ const CreativeGenerator = () => {
             </div>
 
             {/* Qualité d'image */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Qualité des images')}</p>
+            <div className="bg-card rounded-xl border p-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">{tp('Qualité des images')}</p>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: 'low', title: tp('Brouillon'), desc: tp('Rapide, pour tester'), badge: '⚡' },
@@ -596,12 +596,12 @@ const CreativeGenerator = () => {
                     className={`relative flex flex-col items-center gap-1 py-3 px-2 rounded-xl border-2 transition-all ${
                       imageQuality === q.id
                         ? 'border-green-600 bg-green-50'
-                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                        : 'border-border hover:border-border hover:bg-background'
                     }`}
                   >
                     <span className="text-lg leading-none">{q.badge}</span>
-                    <span className={`text-[11px] font-bold leading-none ${imageQuality === q.id ? 'text-green-700' : 'text-gray-700'}`}>{q.title}</span>
-                    <span className="text-[9.5px] text-gray-400 leading-tight text-center">{q.desc}</span>
+                    <span className={`text-[11px] font-bold leading-none ${imageQuality === q.id ? 'text-green-700' : 'text-foreground'}`}>{q.title}</span>
+                    <span className="text-[9.5px] text-muted-foreground leading-tight text-center">{q.desc}</span>
                     {imageQuality === q.id && (
                       <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-600 rounded-full flex items-center justify-center">
                         <CheckCircle size={10} className="text-white" />
@@ -613,9 +613,9 @@ const CreativeGenerator = () => {
             </div>
 
             {/* Formats */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="bg-card rounded-xl border p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Slides à générer')}</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Slides à générer')}</p>
                 <button
                   onClick={() => setSelectedFormats(selectedFormats.length === FORMATS.length ? [] : FORMATS.map(f => f.id))}
                   className="text-[11px] font-medium text-green-600 hover:text-green-700"
@@ -634,20 +634,20 @@ const CreativeGenerator = () => {
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all text-left ${
                         active
                           ? 'border-green-200 bg-green-50'
-                          : 'border-gray-100 bg-gray-50/50 hover:bg-gray-100/60'
+                          : 'border-border bg-background/50 hover:bg-muted/60'
                       }`}
                     >
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-green-100' : 'bg-gray-100'}`}>
-                        <FIcon size={14} className={active ? 'text-green-700' : 'text-gray-400'} strokeWidth={1.75} />
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-green-100' : 'bg-muted'}`}>
+                        <FIcon size={14} className={active ? 'text-green-700' : 'text-muted-foreground'} strokeWidth={1.75} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className={`text-xs font-semibold block ${active ? 'text-green-800' : 'text-gray-600'}`}>{f.label}</span>
-                        <span className="text-[10px] text-gray-400">{f.desc}</span>
+                        <span className={`text-xs font-semibold block ${active ? 'text-green-800' : 'text-muted-foreground'}`}>{f.label}</span>
+                        <span className="text-[10px] text-muted-foreground">{f.desc}</span>
                       </div>
                       <div className={`w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${
                         active ? 'border-green-600 bg-green-600' : 'border-gray-300'
                       }`}>
-                        {active && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        {active && <div className="w-1.5 h-1.5 rounded-full bg-card" />}
                       </div>
                     </button>
                   );
@@ -680,7 +680,7 @@ const CreativeGenerator = () => {
                   )}
                 </div>
               ) : (
-                <p className="text-xs text-gray-400">{tp('Sélectionnez des slides')}</p>
+                <p className="text-xs text-muted-foreground">{tp('Sélectionnez des slides')}</p>
               )}
               {insufficientCredits && (
                 <button
@@ -706,7 +706,7 @@ const CreativeGenerator = () => {
                 : `Générer ${selectedFormats.length} image${selectedFormats.length > 1 ? 's' : ''}`}
             </button>
             {!canGenerate && !insufficientCredits && (
-              <p className="text-[11px] text-center text-gray-400 -mt-2">{tp('Ajoutez une image produit ou un lien produit')}</p>
+              <p className="text-[11px] text-center text-muted-foreground -mt-2">{tp('Ajoutez une image produit ou un lien produit')}</p>
             )}
           </div>
 
@@ -715,15 +715,15 @@ const CreativeGenerator = () => {
 
             {/* Loading */}
             {loading && (
-              <div className="bg-white rounded-xl border border-gray-200 p-10">
+              <div className="bg-card rounded-xl border p-10">
                 <div className="flex flex-col items-center">
                   <div className="relative mb-8">
                     <div className="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center">
                       <Loader2 size={32} className="text-green-600 animate-spin" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">{tp('L\'IA crée vos visuels…')}</h3>
-                  <p className="text-sm text-gray-500 mb-8">Ça prend ~2 minutes pour {selectedFormats.length} image{selectedFormats.length > 1 ? 's' : ''}</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-1">{tp('L\'IA crée vos visuels…')}</h3>
+                  <p className="text-sm text-muted-foreground mb-8">Ça prend ~2 minutes pour {selectedFormats.length} image{selectedFormats.length > 1 ? 's' : ''}</p>
                   <div className="w-full max-w-xs space-y-2">
                     {STEPS.map((step, i) => {
                       const StepIcon = step.icon;
@@ -732,8 +732,8 @@ const CreativeGenerator = () => {
                       return (
                         <div key={i} className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
                           isCurrent ? 'bg-green-50 border-green-200' :
-                          isDone ? 'bg-gray-50 border-gray-200' :
-                          'bg-gray-50 border-gray-100'
+                          isDone ? 'bg-background border-border' :
+                          'bg-background border-border'
                         }`}>
                           {isDone ? (
                             <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center shrink-0">
@@ -745,11 +745,11 @@ const CreativeGenerator = () => {
                             </div>
                           ) : (
                             <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                              <StepIcon size={14} className="text-gray-400" />
+                              <StepIcon size={14} className="text-muted-foreground" />
                             </div>
                           )}
                           <span className={`text-sm font-medium ${
-                            isDone ? 'text-gray-700' : isCurrent ? 'text-green-800' : 'text-gray-400'
+                            isDone ? 'text-foreground' : isCurrent ? 'text-green-800' : 'text-muted-foreground'
                           }`}>{step.label}</span>
                         </div>
                       );
@@ -778,14 +778,14 @@ const CreativeGenerator = () => {
                 {/* Topbar */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md border bg-gray-100 text-gray-700 border-gray-200">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md border bg-muted text-foreground border-border">
                       {activeTpl.title}
                     </span>
-                    <span className="text-sm font-semibold text-gray-700">
+                    <span className="text-sm font-semibold text-foreground">
                       {result.creatives?.filter(c => c.imageUrl).length} visuels générés
                     </span>
                     {result.cost && (
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200">
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-md border border-border">
                         ~{result.cost.costFcfa} FCFA
                       </span>
                     )}
@@ -801,18 +801,18 @@ const CreativeGenerator = () => {
 
                 {/* Analysis accordion */}
                 {result.analysis && (
-                  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div className="bg-card rounded-xl border overflow-hidden">
                     <button
                       onClick={() => setShowAnalysis(!showAnalysis)}
-                      className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                      className="w-full px-4 py-3 flex items-center justify-between hover:bg-background transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center">
-                          <Globe size={14} className="text-gray-500" />
+                        <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center">
+                          <Globe size={14} className="text-muted-foreground" />
                         </div>
                         <div className="text-left">
-                          <span className="text-sm font-semibold text-gray-800">{result.analysis.productName}</span>
-                          <span className="text-xs text-gray-400 block">{result.analysis.category} · {result.analysis.targetAudience}</span>
+                          <span className="text-sm font-semibold text-foreground">{result.analysis.productName}</span>
+                          <span className="text-xs text-muted-foreground block">{result.analysis.category} · {result.analysis.targetAudience}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -821,22 +821,22 @@ const CreativeGenerator = () => {
                             {tp('Image détectée')}
                           </span>
                         )}
-                        <ChevronDown size={15} className={`text-gray-400 transition-transform ${showAnalysis ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={15} className={`text-muted-foreground transition-transform ${showAnalysis ? 'rotate-180' : ''}`} />
                       </div>
                     </button>
                     {showAnalysis && (
-                      <div className="px-4 pb-4 border-t border-gray-100 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="px-4 pb-4 border-t border-border pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{tp('Accroche')}</p>
-                          <p className="text-sm text-gray-700">{result.analysis.emotionalHook}</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">{tp('Accroche')}</p>
+                          <p className="text-sm text-foreground">{result.analysis.emotionalHook}</p>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{tp('Angle promo')}</p>
-                          <p className="text-sm text-gray-700">{result.analysis.promoAngle}</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">{tp('Angle promo')}</p>
+                          <p className="text-sm text-foreground">{result.analysis.promoAngle}</p>
                         </div>
                         {result.analysis.keyBenefits?.length > 0 && (
                           <div className="sm:col-span-2">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Bénéfices')}</p>
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Bénéfices')}</p>
                             <div className="flex flex-wrap gap-1.5">
                               {result.analysis.keyBenefits.map((b, i) => (
                                 <span key={i} className="text-xs bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-md font-medium">{b}</span>
@@ -846,10 +846,10 @@ const CreativeGenerator = () => {
                         )}
                         {result.analysis.slogans?.length > 0 && (
                           <div className="sm:col-span-2">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Slogans')}</p>
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Slogans')}</p>
                             <div className="space-y-1">
                               {result.analysis.slogans.map((s, i) => (
-                                <p key={i} className="text-sm text-gray-700 bg-gray-50 border border-gray-100 px-3 py-2 rounded-lg">{s}</p>
+                                <p key={i} className="text-sm text-foreground bg-background border border-border px-3 py-2 rounded-lg">{s}</p>
                               ))}
                             </div>
                           </div>
@@ -862,8 +862,8 @@ const CreativeGenerator = () => {
                 {/* Grid */}
                 <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
                   {result.creatives?.map((creative) => (
-                    <div key={creative.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden group hover:shadow-sm hover:-translate-y-0.5 transition-all">
-                      <div className="relative aspect-square bg-gray-100">
+                    <div key={creative.id} className="bg-card rounded-xl border overflow-hidden group hover:shadow-sm hover:-translate-y-0.5 transition-all">
+                      <div className="relative aspect-square bg-muted">
                         {creative.imageUrl ? (
                           <>
                             <img
@@ -875,13 +875,13 @@ const CreativeGenerator = () => {
                               <div className="absolute bottom-0 inset-x-0 p-3 flex gap-2 justify-center">
                                 <button
                                   onClick={() => downloadImage(creative.imageUrl, `${creative.id}.png`)}
-                                  className="flex items-center gap-1.5 bg-white text-gray-900 text-xs font-semibold px-3 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition-colors"
+                                  className="flex items-center gap-1.5 bg-card text-foreground text-xs font-semibold px-3 py-2 rounded-lg shadow-lg hover:bg-muted transition-colors"
                                 >
                                   <Download size={13} /> Télécharger
                                 </button>
                                 <button
                                   onClick={() => copyImageUrl(creative.imageUrl, creative.id)}
-                                  className="w-8 h-8 bg-white/90 text-gray-900 rounded-lg flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                                  className="w-8 h-8 bg-card/90 text-foreground rounded-lg flex items-center justify-center shadow-lg hover:bg-card transition-colors"
                                 >
                                   {copiedId === creative.id ? <CheckCircle size={14} className="text-green-600" /> : <Copy size={14} />}
                                 </button>
@@ -889,7 +889,7 @@ const CreativeGenerator = () => {
                                   href={creative.imageUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="w-8 h-8 bg-white/90 text-gray-900 rounded-lg flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                                  className="w-8 h-8 bg-card/90 text-foreground rounded-lg flex items-center justify-center shadow-lg hover:bg-card transition-colors"
                                 >
                                   <ExternalLink size={14} />
                                 </a>
@@ -901,14 +901,14 @@ const CreativeGenerator = () => {
                             <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
                               <AlertCircle size={18} className="text-red-400" />
                             </div>
-                            <p className="text-xs text-gray-400 text-center leading-tight">{creative.error || tp('Génération échouée')}</p>
+                            <p className="text-xs text-muted-foreground text-center leading-tight">{creative.error || tp('Génération échouée')}</p>
                           </div>
                         )}
                       </div>
-                      <div className="px-3 py-2.5 flex items-center justify-between border-t border-gray-100">
+                      <div className="px-3 py-2.5 flex items-center justify-between border-t border-border">
                         <div>
-                          <p className="text-xs font-semibold text-gray-800 leading-tight">{creative.label}</p>
-                          <p className="text-[10px] text-gray-400">{creative.aspectRatio}</p>
+                          <p className="text-xs font-semibold text-foreground leading-tight">{creative.label}</p>
+                          <p className="text-[10px] text-muted-foreground">{creative.aspectRatio}</p>
                         </div>
                         {creative.imageUrl && (
                           <button
@@ -927,20 +927,20 @@ const CreativeGenerator = () => {
 
             {/* Empty State */}
             {!loading && !result && !error && (
-              <div className="bg-white rounded-xl border border-dashed border-gray-200 flex flex-col items-center justify-center py-20 px-8 text-center">
+              <div className="bg-card rounded-xl border border-dashed border-border flex flex-col items-center justify-center py-20 px-8 text-center">
                 <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mb-5">
                   <LayoutGrid size={24} className="text-green-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{tp('Vos créas apparaîtront ici')}</h3>
-                <p className="text-sm text-gray-500 max-w-xs">
+                <h3 className="text-lg font-semibold text-foreground mb-2">{tp('Vos créas apparaîtront ici')}</h3>
+                <p className="text-sm text-muted-foreground max-w-xs">
                   {tp('Configurez votre produit à gauche, choisissez les slides et lancez la génération.')}
                 </p>
                 <div className="flex flex-wrap justify-center gap-2 mt-6">
                   {FORMATS.map(f => {
                     const FIcon = f.icon;
                     return (
-                      <span key={f.id} className="flex items-center gap-1 text-[11px] font-medium bg-gray-50 border border-gray-100 text-gray-500 px-3 py-1.5 rounded-lg">
-                        <FIcon size={11} className="text-gray-400" strokeWidth={1.75} />
+                      <span key={f.id} className="flex items-center gap-1 text-[11px] font-medium bg-background border border-border text-muted-foreground px-3 py-1.5 rounded-lg">
+                        <FIcon size={11} className="text-muted-foreground" strokeWidth={1.75} />
                         {f.label}
                       </span>
                     );

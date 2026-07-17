@@ -23,8 +23,9 @@ const Reveal = ({ children, className = '', delay = 0 }) => {
   return (
     <div ref={ref} className={className} style={{
       opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(28px)',
-      transition: `opacity 0.65s cubic-bezier(.16,1,.3,1) ${delay}ms, transform 0.65s cubic-bezier(.16,1,.3,1) ${delay}ms`,
+      transform: visible ? 'translateY(0)' : 'translateY(18px)',
+      transition: `opacity 0.5s cubic-bezier(.16,1,.3,1) ${delay}ms, transform 0.5s cubic-bezier(.16,1,.3,1) ${delay}ms`,
+      willChange: 'opacity, transform',
     }}>{children}</div>
   );
 };
@@ -433,15 +434,15 @@ const LandingPage = () => {
         {mobileMenu && (
           <div className="absolute top-[68px] left-4 right-4 rounded-2xl overflow-hidden shadow-xl" style={{ background: '#fff', border: '1px solid #e5e7eb' }}>
             <div className="px-3 py-3 space-y-0.5">
-              <a href="#features" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50">{tp('Fonctionnalités')}</a>
-              <a href="#agent-ia" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50">{tp('Agent IA')}</a>
-              <a href="#how-it-works" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50">{tp('Comment ça marche')}</a>
-              <a href="#boutique-ia" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50">{tp('Boutique IA')}</a>
-              <a href="#formation" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50">{tp('Formation')}</a>
-              <button onClick={() => { navigate('/ecom/tarifs'); setMobileMenu(false); }} className="block w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50">{tp('Tarifs')}</button>
+              <a href="#features" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-muted-foreground hover:bg-background">{tp('Fonctionnalités')}</a>
+              <a href="#agent-ia" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-muted-foreground hover:bg-background">{tp('Agent IA')}</a>
+              <a href="#how-it-works" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-muted-foreground hover:bg-background">{tp('Comment ça marche')}</a>
+              <a href="#boutique-ia" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-muted-foreground hover:bg-background">{tp('Boutique IA')}</a>
+              <a href="#formation" onClick={() => setMobileMenu(false)} className="block px-4 py-2.5 text-sm font-medium rounded-xl text-muted-foreground hover:bg-background">{tp('Formation')}</a>
+              <button onClick={() => { navigate('/ecom/tarifs'); setMobileMenu(false); }} className="block w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl text-muted-foreground hover:bg-background">{tp('Tarifs')}</button>
             </div>
             <div className="px-3 pb-3 flex flex-col gap-2" style={{ borderTop: '1px solid #f3f4f6' }}>
-              <button onClick={() => navigate('/ecom/login')} className="w-full py-2.5 text-sm font-medium rounded-full text-gray-700 mt-2" style={{ background: '#f3f4f6' }}>{tp('Connexion')}</button>
+              <button onClick={() => navigate('/ecom/login')} className="w-full py-2.5 text-sm font-medium rounded-full text-foreground mt-2" style={{ background: '#f3f4f6' }}>{tp('Connexion')}</button>
               <button onClick={() => navigate('/ecom/register')} className="w-full py-2.5 text-sm font-bold text-white rounded-full" style={{ background: '#111' }}>{tp('Commencer Scalor')}</button>
             </div>
           </div>
@@ -477,16 +478,16 @@ const LandingPage = () => {
 
           {/* Main heading */}
           <Reveal delay={80}>
-            <h1 className="text-[2rem] sm:text-5xl lg:text-[4.2rem] font-black tracking-tight leading-[1.1] mb-5 sm:mb-6 text-gray-900">
-              Le système qui <span style={{ color: '#05976D' }}>{tp('multiplie')}</span><br />
-              {tp('vos ventes en Afrique')}
+            <h1 className="text-[2rem] sm:text-5xl lg:text-[4.2rem] font-semibold tracking-tight leading-[1.1] mb-5 sm:mb-6 text-foreground">
+              L'IA qui <span style={{ color: '#05976D' }}>{tp('crée et vend')}</span><br />
+              {tp('ton e-commerce en Afrique')}
             </h1>
           </Reveal>
 
           {/* Subtitle */}
           <Reveal delay={140}>
-            <p className="text-sm sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-2xl mx-auto text-gray-500">
-              Récupérez vos paniers abandonnés, automatisez vos relances WhatsApp et pilotez toutes vos ventes depuis <span className="font-semibold text-gray-700">{tp('un seul tableau de bord')}</span>.
+            <p className="text-sm sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-2xl mx-auto text-muted-foreground">
+              Scalor génère ta <span className="font-semibold text-foreground">boutique</span> et tes <span className="font-semibold text-foreground">contenus</span> par IA, puis pilote tout ton <span className="font-semibold text-foreground">{tp('processus de vente')}</span> — commandes, WhatsApp, livraison — partout en Afrique.
             </p>
           </Reveal>
 
@@ -494,19 +495,19 @@ const LandingPage = () => {
           <Reveal delay={200}>
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
               <button onClick={() => navigate('/ecom/register')}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 text-white font-bold text-[15px] rounded-xl transition-all active:scale-[0.97]"
-                style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 6px 24px rgba(0,61,50,0.35)' }}
-                onMouseEnter={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}
-                onMouseLeave={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}>
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 text-white font-semibold text-[15px] rounded-xl transition-colors active:scale-[0.98]"
+                style={{ background: '#05976D' }}
+                onMouseEnter={e => e.currentTarget.style.background='#04835f'}
+                onMouseLeave={e => e.currentTarget.style.background='#05976D'}>
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
                 {tp('Commencer gratuitement')}
               </button>
               <button onClick={() => document.getElementById('formation')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 font-semibold text-[15px] rounded-xl transition-all text-gray-700"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 font-semibold text-[15px] rounded-xl transition-all text-foreground"
                 style={{ background: '#fff', border: '1px solid #e5e7eb' }}
                 onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
                 onMouseLeave={e => e.currentTarget.style.background='#fff'}>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                 {tp('Formation')}
               </button>
             </div>
@@ -514,14 +515,14 @@ const LandingPage = () => {
 
           {/* Social proof */}
           <Reveal delay={240}>
-            <div className="flex items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm flex-wrap text-gray-400">
+            <div className="flex items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm flex-wrap text-muted-foreground">
               <div className="flex items-center gap-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    <svg key={i} className={`w-4 h-4 ${i < 4 ? 'text-yellow-400' : 'text-yellow-400/40'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                   ))}
                 </div>
-                <span>{tp('5/5 satisfaction')}</span>
+                <span>{tp('4.5/5 satisfaction')}</span>
               </div>
               <span className="w-1 h-1 rounded-full bg-gray-300" />
               <span>{tp('1 000+ vendeurs actifs')}</span>
@@ -541,7 +542,7 @@ const LandingPage = () => {
                 <span className="w-3 h-3 rounded-full" style={{ background: '#f59e0b', opacity: 0.7 }} />
                 <span className="w-3 h-3 rounded-full" style={{ background: '#05976D', opacity: 0.7 }} />
                 <div className="ml-4 flex-1 h-6 rounded-md flex items-center px-3" style={{ background: '#fff', border: '1px solid #e5e7eb' }}>
-                  <span className="text-[11px] text-gray-400">{tp('app.scalor.pro/dashboard')}</span>
+                  <span className="text-[11px] text-muted-foreground">{tp('app.scalor.pro/dashboard')}</span>
                 </div>
               </div>
               <video autoPlay loop muted playsInline preload="auto" className="w-full block">
@@ -565,9 +566,12 @@ const LandingPage = () => {
         `}</style>
         <div className="max-w-4xl mx-auto px-4 text-center mb-10">
           <Reveal>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-2">
+            <h3 className="text-2xl sm:text-4xl font-semibold tracking-tight text-foreground mb-3">
               Vous dépensez beaucoup d'argent sur ces outils…
             </h3>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
+              {tp('Scalor les remplace tous — commandes, WhatsApp, IA, boutique — pour 0 FCFA au démarrage.')}
+            </p>
           </Reveal>
         </div>
 
@@ -575,13 +579,12 @@ const LandingPage = () => {
         <div className="relative w-full" style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)' }}>
           <div className="flex ticker-track" style={{ width: 'max-content' }}>
             {[...integrations, ...integrations].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 mx-2 px-3 py-2.5 rounded-xl flex-shrink-0"
-                style={{ background: '#fff', border: '1px solid #e5e7eb' }}>
+              <div key={i} className="flex items-center gap-2 mx-2 px-3 py-2.5 rounded-xl flex-shrink-0 bg-card border border-border">
                 <span className="flex-shrink-0 opacity-40" style={{ width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
                 </span>
-                <span className="text-sm font-semibold line-through" style={{ color: '#9ca3af' }}>{item.name}</span>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#fef2f2', color: '#dc2626' }}>{item.price}</span>
+                <span className="text-sm font-semibold line-through text-muted-foreground">{item.name}</span>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">{item.price}</span>
               </div>
             ))}
           </div>
@@ -590,33 +593,48 @@ const LandingPage = () => {
         {/* Comparaison finale */}
         <div className="max-w-3xl mx-auto px-4 mt-12">
           <Reveal delay={100}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Colonne outils */}
-              <div className="rounded-2xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4" style={{ background: '#fff5f5', border: '1px solid #fecaca' }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
-                  <svg className="w-5 h-5" fill="none" stroke="#dc2626" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 items-stretch">
+              {/* Colonne outils séparés — le problème */}
+              <div className="sm:col-span-2 rounded-2xl border border-destructive/20 bg-destructive/[0.04] p-5 sm:p-6 flex flex-col gap-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-destructive/10 text-destructive">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                  </div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-destructive">{tp('Avant')}</span>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-gray-800 mb-1">{tp('Outils séparés')}</p>
-                  <p className="text-xs text-gray-400 leading-relaxed">{tp('Shopify · WhatsApp · Meta Ads · Klaviyo · Loox…')}</p>
+                  <p className="text-base font-bold text-foreground">{tp('Outils séparés')}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-1">{tp('Shopify · WhatsApp · Meta Ads · Klaviyo · Loox…')}</p>
                 </div>
-                <div className="mt-auto">
-                  <p className="text-3xl font-black" style={{ color: '#dc2626' }}>~414 000</p>
-                  <p className="text-xs text-gray-400">{tp('FCFA / mois')}</p>
+                <div className="mt-auto pt-3 border-t border-destructive/15">
+                  <p className="text-3xl font-semibold text-destructive tabular-nums">~414 000<span className="text-base font-bold"> FCFA</span></p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tp('par mois · 5 abonnements')}</p>
                 </div>
               </div>
 
-              {/* Colonne Scalor */}
-              <div className="rounded-2xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #f4f4f4, #ebebeb)', border: '1px solid #e0e0e0' }}>
-                <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
+              {/* Colonne Scalor — la solution (mise en avant) */}
+              <div className="sm:col-span-3 relative rounded-2xl bg-card p-5 sm:p-7 flex flex-col gap-4" style={{ border: '2px solid #05976D', boxShadow: '0 24px 60px -24px rgba(5,151,109,0.45)' }}>
+                <span className="absolute top-4 right-4 text-[11px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: '#05976D' }}>{tp('Recommandé')}</span>
+                <img src="/logo.png" alt="Scalor" className="h-8 object-contain self-start" />
                 <div>
-                  <p className="text-sm font-bold text-gray-800 mb-1">{tp('Scalor — tout en un')}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{tp('Commandes · WhatsApp · IA · Analytics · Boutique')}</p>
+                  <p className="text-base font-bold text-foreground">{tp('Scalor — tout en un')}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-1">{tp('Commandes · WhatsApp · IA · Analytics · Boutique')}</p>
                 </div>
-                <div className="mt-auto">
-                  <p className="text-3xl font-black" style={{ color: '#05976D' }}>0 FCFA</p>
-                  <p className="text-xs text-gray-500">{tp('pour commencer')}</p>
+                <div className="mt-auto pt-3 flex items-end justify-between gap-3 flex-wrap" style={{ borderTop: '1px solid rgba(5,151,109,0.15)' }}>
+                  <div>
+                    <p className="text-4xl font-semibold tabular-nums" style={{ color: '#05976D' }}>0<span className="text-lg font-bold"> FCFA</span></p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('pour commencer')}</p>
+                  </div>
+                  <button onClick={() => navigate('/ecom/register')} className="px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all active:scale-95" style={{ background: '#05976D' }}>{tp('Commencer gratuitement')}</button>
                 </div>
+              </div>
+            </div>
+
+            {/* Bandeau économies */}
+            <div className="mt-5 flex justify-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ background: 'rgba(5,151,109,0.10)', color: '#05976D' }}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                {tp('Économise ~414 000 FCFA chaque mois avec Scalor')}
               </div>
             </div>
 
@@ -629,10 +647,10 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <Reveal>
             <div className="text-center mb-14">
-              <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-4 text-gray-900">
+              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-4 text-foreground">
                 {tp('Des chiffres qui parlent')}
               </h2>
-              <p className="text-base sm:text-lg max-w-lg mx-auto text-gray-500">
+              <p className="text-base sm:text-lg max-w-lg mx-auto text-muted-foreground">
                 {tp('Des vendeurs africains qui scalent leur business avec Scalor chaque jour.')}
               </p>
             </div>
@@ -646,15 +664,15 @@ const LandingPage = () => {
       </section>
 
       {/* ══ FEATURES ══ */}
-      <section id="features" className="py-20 sm:py-28" style={{ background: '#f8fafc', borderTop: '1px solid #e5e7eb' }}>
+      <section id="features" className="py-20 sm:py-28 bg-muted/40 border-t border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-14">
-              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-gray-900">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold tracking-tight mb-4 text-foreground">
                 Tout ce dont vous avez besoin<br className="hidden sm:block" />
-                <span className="text-gray-400"> {tp('pour vendre en Afrique')}</span>
+                <span className="text-muted-foreground"> {tp('pour vendre en Afrique')}</span>
               </h2>
-              <p className="text-base sm:text-lg max-w-lg mx-auto text-gray-500">
+              <p className="text-base sm:text-lg max-w-lg mx-auto text-muted-foreground">
                 {tp('Pas de fonctions gadgets. Juste ce qui compte pour vendre en COD.')}
               </p>
             </div>
@@ -662,18 +680,17 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {features.map((f, i) => (
               <Reveal key={i} delay={i * 55}>
-                <div className="group p-6 rounded-2xl h-full transition-all duration-300 cursor-default bg-white"
-                  style={{ border: '1px solid #e5e7eb' }}
-                  onMouseEnter={e => { e.currentTarget.style.border='1px solid #e0e0e0'; e.currentTarget.style.boxShadow='0 4px 20px rgba(0,61,50,0.08)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.border='1px solid #e5e7eb'; e.currentTarget.style.boxShadow='none'; }}>
+                <div className="group p-6 rounded-2xl h-full bg-card border border-border transition-all duration-300 cursor-default hover:-translate-y-1"
+                  onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(5,151,109,0.35)'; e.currentTarget.style.boxShadow='0 18px 44px -18px rgba(5,151,109,0.22)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor=''; e.currentTarget.style.boxShadow='none'; }}>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#f4f4f4', border: '1px solid #e0e0e0', color: '#05976D' }}>
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105" style={{ background: 'rgba(5,151,109,0.10)', color: '#05976D' }}>
                       {f.icon}
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ background: '#f3f4f6', color: '#9ca3af' }}>{f.tag}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-muted text-muted-foreground">{f.tag}</span>
                   </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-gray-500">{f.desc}</p>
+                  <h3 className="text-[17px] font-bold text-foreground mb-2">{f.title}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -731,11 +748,11 @@ const LandingPage = () => {
             {/* Text */}
             <Reveal delay={100}>
               <div>
-                <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-5 text-gray-900">
+                <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight mb-5 text-foreground">
                   Votre Agent IA WhatsApp,<br />
-                  <span className="text-gray-400">{tp('disponible 24h/24')}</span>
+                  <span className="text-muted-foreground">{tp('disponible 24h/24')}</span>
                 </h2>
-                <p className="text-base sm:text-lg mb-8 leading-relaxed text-gray-500">
+                <p className="text-base sm:text-lg mb-8 leading-relaxed text-muted-foreground">
                   Laissez Rita gérer 80% des questions clients sur WhatsApp pendant que vous vous concentrez sur la croissance. Rapide, intelligent, toujours disponible.
                 </p>
                 <div className="space-y-4 mb-8">
@@ -749,13 +766,13 @@ const LandingPage = () => {
                       <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#f4f4f4', border: '1px solid #e0e0e0' }}>
                         <svg className="w-3 h-3" fill="none" stroke="#05976D" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                       </div>
-                      <span className="text-sm font-medium text-gray-700">{item}</span>
+                      <span className="text-sm font-medium text-foreground">{item}</span>
                     </div>
                   ))}
                 </div>
                 <button onClick={() => navigate('/ecom/register')}
                   className="flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-white transition-all"
-                  style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 4px 20px rgba(0,61,50,0.25)' }}
+                  style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 4px 20px rgba(0,61,50,0.10)' }}
                   onMouseEnter={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}
                   onMouseLeave={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}>
                   {tp('Commencer gratuitement')}
@@ -776,13 +793,13 @@ const LandingPage = () => {
             {/* Texte — gauche */}
             <Reveal>
               <div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-5 text-gray-900">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight mb-5 text-foreground">
                   Créez votre boutique IA<br />
                   <span style={{ background: 'linear-gradient(135deg, #05976D 0%, #05976D 60%, #05976D 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                     {tp('sur Scalor')}
                   </span>
                 </h2>
-                <p className="text-base sm:text-lg text-gray-500 leading-relaxed mb-8">
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8">
                   Décrivez votre produit, l'IA génère votre boutique complète en quelques secondes — page produit, photos, descriptions et tunnel de vente inclus.
                 </p>
 
@@ -793,10 +810,10 @@ const LandingPage = () => {
                     { num: '03', title: 'Lancez & vendez', desc: "Partagez le lien, les commandes arrivent dans Scalor." },
                   ].map((s, i) => (
                     <div key={i} className="flex items-start gap-4">
-                      <span className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black flex-shrink-0 mt-0.5" style={{ background: '#f4f4f4', border: '1px solid #e0e0e0', color: '#05976D' }}>{s.num}</span>
+                      <span className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ background: '#f4f4f4', border: '1px solid #e0e0e0', color: '#05976D' }}>{s.num}</span>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">{s.title}</p>
-                        <p className="text-sm text-gray-500">{s.desc}</p>
+                        <p className="text-sm font-bold text-foreground">{s.title}</p>
+                        <p className="text-sm text-muted-foreground">{s.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -804,13 +821,13 @@ const LandingPage = () => {
 
                 <button onClick={() => navigate('/ecom/register')}
                   className="inline-flex items-center gap-2.5 px-7 py-3.5 text-white font-bold text-[15px] rounded-xl transition-all active:scale-[0.97]"
-                  style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 8px 32px rgba(0,61,50,0.3)' }}
+                  style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 8px 32px rgba(0,61,50,0.12)' }}
                   onMouseEnter={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}
                   onMouseLeave={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
                   {tp('Créer ma boutique IA gratuitement')}
                 </button>
-                <p className="mt-3 text-sm text-gray-400">{tp('Aucune carte bancaire · Prêt en moins de 2 minutes')}</p>
+                <p className="mt-3 text-sm text-muted-foreground">{tp('Aucune carte bancaire · Prêt en moins de 2 minutes')}</p>
               </div>
             </Reveal>
 
@@ -843,10 +860,10 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-4 text-gray-900">
+              <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight mb-4 text-foreground">
                 {tp('Connectez vos outils à Scalor')}
               </h2>
-              <p className="text-base text-gray-500 max-w-lg mx-auto">
+              <p className="text-base text-muted-foreground max-w-lg mx-auto">
                 {tp('Tous vos outils préférés, synchronisés en un seul endroit.')}
               </p>
             </div>
@@ -925,12 +942,12 @@ const LandingPage = () => {
               },
             ].map((item, i) => (
               <Reveal key={i} delay={i * 40}>
-                <div className="flex flex-col items-center justify-center gap-2.5 py-5 px-3 rounded-2xl transition-all cursor-default bg-white"
+                <div className="flex flex-col items-center justify-center gap-2.5 py-5 px-3 rounded-2xl transition-all cursor-default bg-card"
                   style={{ border: '1px solid #e5e7eb' }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor='#e0e0e0'; e.currentTarget.style.boxShadow='0 4px 20px rgba(0,61,50,0.08)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor='#e5e7eb'; e.currentTarget.style.boxShadow='none'; }}>
                   {item.icon}
-                  <span className="text-xs font-semibold text-gray-700 text-center">{item.name}</span>
+                  <span className="text-xs font-semibold text-foreground text-center">{item.name}</span>
                 </div>
               </Reveal>
             ))}
@@ -945,10 +962,10 @@ const LandingPage = () => {
           {/* Header */}
           <Reveal>
             <div className="text-center mb-14">
-              <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-3 text-gray-900">
+              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-3 text-foreground">
                 Maîtrisez Scalor <span style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{tp('en 17 leçons')}</span>
               </h2>
-              <p className="text-base sm:text-lg text-gray-500 max-w-xl mx-auto">
+              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
                 Un module complet offert — de la prise en main jusqu'à l'agent IA.
               </p>
             </div>
@@ -958,10 +975,10 @@ const LandingPage = () => {
 
             {/* Liste des leçons */}
             <Reveal>
-              <div className="rounded-2xl overflow-hidden bg-white" style={{ border: '1px solid #e5e7eb', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+              <div className="rounded-2xl overflow-hidden bg-card" style={{ border: '1px solid #e5e7eb', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
                 {/* Header module */}
                 <div className="px-5 py-4 flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', borderBottom: '1px solid #e5e7eb' }}>
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm text-white flex-shrink-0" style={{ background: 'rgba(255,255,255,0.2)' }}>7</div>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center font-semibold text-sm text-white flex-shrink-0" style={{ background: 'rgba(255,255,255,0.2)' }}>7</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'rgba(255,255,255,0.7)' }}>{tp('Module 7 · 17 leçons')}</p>
                     <p className="text-sm font-bold text-white">{tp('Prise en main de Scalor')}</p>
@@ -1024,7 +1041,7 @@ const LandingPage = () => {
                 />
                 <button onClick={() => navigate('/ecom/formation')}
                   className="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 font-bold text-white rounded-xl transition-all active:scale-[0.97] text-sm"
-                  style={{ background: 'linear-gradient(135deg, #05976D, #04795a)', boxShadow: '0 8px 24px rgba(0,61,50,0.35)' }}>
+                  style={{ background: 'linear-gradient(135deg, #05976D, #04795a)', boxShadow: '0 8px 24px rgba(0,61,50,0.12)' }}>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
                   {tp('Accéder gratuitement')}
                 </button>
@@ -1039,10 +1056,10 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 mb-3">
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground mb-3">
                 Disponible partout <span style={{ color: '#05976D' }}>{tp('en Afrique')}</span>
               </h2>
-              <p className="text-base text-gray-500 max-w-xl mx-auto">
+              <p className="text-base text-muted-foreground max-w-xl mx-auto">
                 Scalor est conçu pour les marchés africains — paiement à la livraison, WhatsApp, et logistique locale.
               </p>
             </div>
@@ -1072,10 +1089,10 @@ const LandingPage = () => {
               ].map((c) => (
                 <div
                   key={c.name}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-white hover:border-primary-200 hover:shadow-sm transition-all"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border bg-card hover:border-primary-200 hover:shadow-sm transition-all"
                 >
                   <span style={{ fontSize: '32px', lineHeight: 1 }}>{c.flag}</span>
-                  <span className="text-xs font-medium text-gray-600 text-center leading-tight">{c.name}</span>
+                  <span className="text-xs font-medium text-muted-foreground text-center leading-tight">{c.name}</span>
                 </div>
               ))}
             </div>
@@ -1083,7 +1100,7 @@ const LandingPage = () => {
 
           <Reveal delay={100}>
             <div className="mt-10 text-center">
-              <p className="text-xs text-gray-400">{tp('Et bien d\'autres pays en cours d\'intégration…')}</p>
+              <p className="text-xs text-muted-foreground">{tp('Et bien d\'autres pays en cours d\'intégration…')}</p>
             </div>
           </Reveal>
         </div>
@@ -1094,18 +1111,18 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-4 text-gray-900">
+              <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight mb-4 text-foreground">
                 Prenez Scalor en main en{' '}
                 <span style={{ color: '#ef4444' }}>{tp('15 minutes')}</span>
               </h2>
-              <p className="text-base sm:text-lg max-w-2xl mx-auto text-gray-500">
+              <p className="text-base sm:text-lg max-w-2xl mx-auto text-muted-foreground">
                 Du premier produit à l'envoi de campagnes WhatsApp — cette vidéo couvre tout.
               </p>
             </div>
           </Reveal>
           <Reveal delay={80}>
             <div className="rounded-2xl overflow-hidden mb-8" style={{ border: '1px solid #e5e7eb', boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}>
-              <div className="relative aspect-video bg-gray-100">
+              <div className="relative aspect-video bg-muted">
                 <iframe src="https://www.youtube.com/embed/405eKEysE0Q?rel=0&modestbranding=1&playsinline=1" title={tp('Tutoriel Complet Scalor')}
                   className="w-full h-full" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
               </div>
@@ -1115,7 +1132,7 @@ const LandingPage = () => {
             <div className="text-center">
               <a href="https://youtu.be/405eKEysE0Q" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-xl transition"
-                style={{ background: '#ef4444', color: '#fff', boxShadow: '0 4px 16px rgba(239,68,68,0.25)' }}>
+                style={{ background: '#ef4444', color: '#fff', boxShadow: '0 4px 16px rgba(239,68,68,0.10)' }}>
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 {tp('Regarder sur YouTube')}
               </a>
@@ -1136,8 +1153,8 @@ const LandingPage = () => {
 
         <Reveal>
           <div className="text-center mb-14 px-4">
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-gray-900 mb-4">{tp('Ils ont choisi Scalor')}</h2>
-            <p className="text-base sm:text-lg text-gray-500 max-w-lg mx-auto">{tp('Découvrez les avis de ceux qui utilisent Scalor au quotidien.')}</p>
+            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-foreground mb-4">{tp('Ils ont choisi Scalor')}</h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-lg mx-auto">{tp('Découvrez les avis de ceux qui utilisent Scalor au quotidien.')}</p>
           </div>
         </Reveal>
 
@@ -1162,12 +1179,12 @@ const LandingPage = () => {
                   <svg key={j} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 ))}
               </div>
-              <p className="text-sm text-gray-700 leading-relaxed mb-4">"{t.text}"</p>
+              <p className="text-sm text-foreground leading-relaxed mb-4">"{t.text}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-black flex-shrink-0" style={{ background: t.color }}>{t.initials}</div>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0" style={{ background: t.color }}>{t.initials}</div>
                 <div>
-                  <p className="text-sm font-bold text-gray-900">{t.name}</p>
-                  <p className="text-xs text-gray-400">{t.role}</p>
+                  <p className="text-sm font-bold text-foreground">{t.name}</p>
+                  <p className="text-xs text-muted-foreground">{t.role}</p>
                 </div>
               </div>
             </div>
@@ -1197,7 +1214,7 @@ const LandingPage = () => {
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-gray-900">{tp('Questions fréquentes')}</h2>
+              <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-foreground">{tp('Questions fréquentes')}</h2>
             </div>
           </Reveal>
           <div className="space-y-3">
@@ -1210,12 +1227,12 @@ const LandingPage = () => {
               { q: "Comment fonctionne le WhatsApp intégré ?", a: "Tu peux envoyer des confirmations de commande, des relances et des campagnes marketing directement depuis Scalor via WhatsApp." },
             ].map((item, i) => (
               <Reveal key={i} delay={i * 40}>
-                <details className="group rounded-xl overflow-hidden bg-white" style={{ border: '1px solid #e5e7eb' }}>
-                  <summary className="flex items-center justify-between cursor-pointer px-5 sm:px-6 py-4 text-sm font-semibold text-gray-900 transition select-none hover:bg-gray-50">
+                <details className="group rounded-xl overflow-hidden bg-card" style={{ border: '1px solid #e5e7eb' }}>
+                  <summary className="flex items-center justify-between cursor-pointer px-5 sm:px-6 py-4 text-sm font-semibold text-foreground transition select-none hover:bg-background">
                     {item.q}
-                    <svg className="w-4 h-4 group-open:rotate-180 transition-transform flex-shrink-0 ml-3 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    <svg className="w-4 h-4 group-open:rotate-180 transition-transform flex-shrink-0 ml-3 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/></svg>
                   </summary>
-                  <div className="px-5 sm:px-6 pb-4 text-sm leading-relaxed text-gray-500">{item.a}</div>
+                  <div className="px-5 sm:px-6 pb-4 text-sm leading-relaxed text-muted-foreground">{item.a}</div>
                 </details>
               </Reveal>
             ))}
@@ -1228,24 +1245,24 @@ const LandingPage = () => {
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(34,197,94,0.08) 0%, transparent 70%)' }} />
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <Reveal>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-5 text-gray-900">
+            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-5 text-foreground">
               Prêt à scaler<br />
               <span style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{tp('votre e-commerce ?')}</span>
             </h2>
-            <p className="text-base sm:text-xl mb-10 text-gray-500">
+            <p className="text-base sm:text-xl mb-10 text-muted-foreground">
               Rejoignez 1 000+ vendeurs qui utilisent Scalor pour structurer et scaler leur business.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button onClick={() => navigate('/ecom/register')}
                 className="flex items-center justify-center gap-2 px-8 py-4 text-white font-bold text-base rounded-xl transition-all active:scale-[0.97]"
-                style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 8px 32px rgba(0,61,50,0.3)' }}
+                style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 8px 32px rgba(0,61,50,0.12)' }}
                 onMouseEnter={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}
                 onMouseLeave={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}>
                 {tp('Commencer gratuitement')}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
               </button>
               <button onClick={() => navigate('/ecom/login')}
-                className="flex items-center justify-center gap-2 px-8 py-4 font-semibold text-base rounded-xl transition-all text-gray-700"
+                className="flex items-center justify-center gap-2 px-8 py-4 font-semibold text-base rounded-xl transition-all text-foreground"
                 style={{ background: '#fff', border: '1px solid #d1d5db' }}
                 onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
                 onMouseLeave={e => e.currentTarget.style.background='#fff'}>
@@ -1264,7 +1281,7 @@ const LandingPage = () => {
               <button onClick={() => navigate('/')} className="flex items-center gap-2 mb-4">
                 <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
               </button>
-              <p className="text-sm leading-relaxed max-w-[220px] text-gray-400">
+              <p className="text-sm leading-relaxed max-w-[220px] text-muted-foreground">
                 Le système d'exploitation du e-commerce africain.
               </p>
             </div>
@@ -1303,19 +1320,19 @@ const LandingPage = () => {
               },
             ].map((col, ci) => (
               <div key={ci}>
-                <h4 className="text-[10px] font-bold uppercase tracking-[2.5px] mb-5 text-gray-400">{col.title}</h4>
+                <h4 className="text-[10px] font-bold uppercase tracking-[2.5px] mb-5 text-muted-foreground">{col.title}</h4>
                 <div className="space-y-3">
                   {col.links.map((link, li) => (
                     link.onClick
-                      ? <button key={li} onClick={link.onClick} className="block text-sm transition text-left text-gray-500 hover:text-gray-900">{link.label}</button>
-                      : <a key={li} href={link.href} className="block text-sm transition text-gray-500 hover:text-gray-900">{link.label}</a>
+                      ? <button key={li} onClick={link.onClick} className="block text-sm transition text-left text-muted-foreground hover:text-foreground">{link.label}</button>
+                      : <a key={li} href={link.href} className="block text-sm transition text-muted-foreground hover:text-foreground">{link.label}</a>
                   ))}
                 </div>
               </div>
             ))}
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8" style={{ borderTop: '1px solid #e5e7eb' }}>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} SCALOR by Safitech. Tous droits réservés.
             </span>
           </div>

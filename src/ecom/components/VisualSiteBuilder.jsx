@@ -98,7 +98,7 @@ const SortableSection = ({ section, isSelected, onSelect, onDelete, onDuplicate 
       className={`group border-2 rounded-xl p-3 cursor-pointer transition-all ${
         isSelected 
           ? 'border-blue-500 bg-blue-50' 
-          : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-md'
+          : 'border-border hover:border-gray-300 bg-card hover:shadow-md'
       }`}
       onClick={() => onSelect(section.id)}
     >
@@ -106,7 +106,7 @@ const SortableSection = ({ section, isSelected, onSelect, onDelete, onDuplicate 
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
+          className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground hover:text-muted-foreground"
         >
           <Move className="w-4 h-4" />
         </div>
@@ -114,17 +114,17 @@ const SortableSection = ({ section, isSelected, onSelect, onDelete, onDuplicate 
         <span className="text-lg">{SECTION_TEMPLATES[section.type]?.icon || '📦'}</span>
         
         <div className="flex-1">
-          <h4 className="text-sm font-semibold text-gray-900">{section.label || section.type}</h4>
-          <p className="text-xs text-gray-500">{section.type}</p>
+          <h4 className="text-sm font-semibold text-foreground">{section.label || section.type}</h4>
+          <p className="text-xs text-muted-foreground">{section.type}</p>
         </div>
         
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => { e.stopPropagation(); onDuplicate(section.id); }}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition"
+            className="p-1.5 hover:bg-muted rounded-lg transition"
             title={tp('Dupliquer')}
           >
-            <Copy className="w-3.5 h-3.5 text-gray-500" />
+            <Copy className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(section.id); }}
@@ -143,7 +143,7 @@ const SortableSection = ({ section, isSelected, onSelect, onDelete, onDuplicate 
 const PropertyEditor = ({ section, onChange, theme }) => {
   if (!section) {
     return (
-      <div className="p-6 text-center text-gray-500">
+      <div className="p-6 text-center text-muted-foreground">
         <Settings className="w-12 h-12 mx-auto mb-2 opacity-50" />
         <p>{tp('Sélectionnez une section pour la modifier')}</p>
       </div>
@@ -159,19 +159,19 @@ const PropertyEditor = ({ section, onChange, theme }) => {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="border-b border-gray-200 pb-3">
-        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+      <div className="border-b border-border pb-3">
+        <h3 className="font-semibold text-foreground flex items-center gap-2">
           <span>{SECTION_TEMPLATES[section.type]?.icon}</span>
           {section.label || section.type}
         </h3>
-        <p className="text-xs text-gray-500 mt-1">{tp('Personnalisez cette section')}</p>
+        <p className="text-xs text-muted-foreground mt-1">{tp('Personnalisez cette section')}</p>
       </div>
 
       {/* Hero Section Properties */}
       {section.type === 'hero' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
@@ -182,7 +182,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Sous-titre')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Sous-titre')}</label>
             <textarea
               value={section.config.subtitle || ''}
               onChange={(e) => updateConfig('subtitle', e.target.value)}
@@ -193,7 +193,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Texte du bouton')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Texte du bouton')}</label>
             <input
               type="text"
               value={section.config.ctaText || ''}
@@ -204,7 +204,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Image de fond')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Image de fond')}</label>
             <input
               type="url"
               value={section.config.bgImage || ''}
@@ -215,7 +215,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Hauteur')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Hauteur')}</label>
             <select
               value={section.config.height || 'large'}
               onChange={(e) => updateConfig('height', e.target.value)}
@@ -234,7 +234,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
       {section.type === 'featured_products' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
@@ -245,7 +245,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Nombre de produits')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Nombre de produits')}</label>
             <input
               type="number"
               value={section.config.count || 8}
@@ -257,7 +257,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Colonnes')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Colonnes')}</label>
             <select
               value={section.config.columns || 4}
               onChange={(e) => updateConfig('columns', parseInt(e.target.value))}
@@ -276,7 +276,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
       {section.type === 'text' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
@@ -287,7 +287,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Contenu')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Contenu')}</label>
             <textarea
               value={section.config.content || ''}
               onChange={(e) => updateConfig('content', e.target.value)}
@@ -303,7 +303,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
       {section.type === 'cta' && (
         <>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Titre')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Titre')}</label>
             <input
               type="text"
               value={section.config.title || ''}
@@ -314,7 +314,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Texte du bouton')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Texte du bouton')}</label>
             <input
               type="text"
               value={section.config.buttonText || ''}
@@ -325,7 +325,7 @@ const PropertyEditor = ({ section, onChange, theme }) => {
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">{tp('Lien du bouton')}</label>
+            <label className="block text-xs font-medium text-foreground mb-2">{tp('Lien du bouton')}</label>
             <input
               type="text"
               value={section.config.buttonUrl || ''}
@@ -409,12 +409,12 @@ const SectionPreview = ({ section, theme }) => {
             </h2>
             <div className={`grid gap-6 grid-cols-${config.columns || 4}`}>
               {Array.from({ length: Math.min(config.count || 8, 8) }).map((_, i) => (
-                <div key={i} className="bg-white border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300" style={{ borderRadius: theme?.radius || '0.75rem' }}>
-                  <div className="aspect-square bg-gray-100 flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">Produit {i + 1}</span>
+                <div key={i} className="bg-card border border-border overflow-hidden group hover:shadow-xl transition-all duration-300" style={{ borderRadius: theme?.radius || '0.75rem' }}>
+                  <div className="aspect-square bg-muted flex items-center justify-center">
+                    <span className="text-muted-foreground text-sm">Produit {i + 1}</span>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-2">{tp('Produit exemple')}</h3>
+                    <h3 className="font-semibold text-foreground mb-2">{tp('Produit exemple')}</h3>
                     <p className="text-lg font-black" style={{ color: theme?.cta || '#0F6B4F' }}>{tp('25,000 XAF')}</p>
                   </div>
                 </div>
@@ -450,7 +450,7 @@ const SectionPreview = ({ section, theme }) => {
     case 'cta':
       return (
         <section className="py-16 px-4">
-          <div className="max-w-2xl mx-auto text-center p-8 bg-white border border-gray-100" style={{ borderRadius: theme?.radius || '0.75rem' }}>
+          <div className="max-w-2xl mx-auto text-center p-8 bg-card border border-border" style={{ borderRadius: theme?.radius || '0.75rem' }}>
             {config.title && (
               <h2 
                 className="text-2xl md:text-3xl font-black mb-6"
@@ -476,8 +476,8 @@ const SectionPreview = ({ section, theme }) => {
       
     default:
       return (
-        <section className="py-8 px-4 bg-gray-50 border-2 border-dashed border-gray-300">
-          <div className="text-center text-gray-500">
+        <section className="py-8 px-4 bg-background border-2 border-dashed border-gray-300">
+          <div className="text-center text-muted-foreground">
             <p>Section: {section.type}</p>
             <p className="text-sm">{tp('Aperçu non disponible')}</p>
           </div>
@@ -570,26 +570,26 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
   };
 
   return (
-    <div className="h-screen flex bg-gray-50">
+    <div className="h-screen flex bg-background">
       {/* Left Sidebar - Sections List */}
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-bold text-gray-900">{tp('Site Builder')}</h2>
-          <p className="text-sm text-gray-500">{tp('Glissez-déposez pour réorganiser')}</p>
+      <div className="w-80 bg-card border-r border-border flex flex-col">
+        <div className="p-4 border-b border-border">
+          <h2 className="text-lg font-bold text-foreground">{tp('Site Builder')}</h2>
+          <p className="text-sm text-muted-foreground">{tp('Glissez-déposez pour réorganiser')}</p>
         </div>
         
         {/* Add Section Templates */}
-        <div className="p-4 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Ajouter une section')}</h3>
+        <div className="p-4 border-b border-border">
+          <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Ajouter une section')}</h3>
           <div className="grid grid-cols-2 gap-2">
             {Object.entries(SECTION_TEMPLATES).map(([key, template]) => (
               <button
                 key={key}
                 onClick={() => addSection(key)}
-                className="flex flex-col items-center gap-1 p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition text-center"
+                className="flex flex-col items-center gap-1 p-3 border border-border rounded-lg hover:border-blue-300 hover:bg-blue-50 transition text-center"
               >
                 <span className="text-lg">{template.icon}</span>
-                <span className="text-xs font-medium text-gray-600">{template.label}</span>
+                <span className="text-xs font-medium text-muted-foreground">{template.label}</span>
               </button>
             ))}
           </div>
@@ -618,7 +618,7 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
         </div>
         
         {/* Save Button */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-border">
           <button
             onClick={handleSave}
             disabled={saving}
@@ -633,12 +633,12 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
       {/* Center - Preview */}
       <div className="flex-1 flex flex-col">
         {/* Preview Toolbar */}
-        <div className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+        <div className="h-14 bg-card border-b border-border flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
-            <h3 className="font-semibold text-gray-900">{tp('Aperçu')}</h3>
+            <h3 className="font-semibold text-foreground">{tp('Aperçu')}</h3>
             
             {/* Device Selector */}
-            <div className="flex items-center border border-gray-200 rounded-lg p-1">
+            <div className="flex items-center border border-border rounded-lg p-1">
               {[
                 { key: 'desktop', icon: Monitor, label: 'Desktop' },
                 { key: 'tablet', icon: Tablet, label: 'Tablet' },
@@ -650,7 +650,7 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
                   className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded transition ${
                     previewMode === key 
                       ? 'bg-blue-100 text-blue-700' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                      : 'text-muted-foreground hover:bg-muted'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -661,16 +661,16 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
           </div>
           
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">{sections.length} sections</span>
+            <span className="text-sm text-muted-foreground">{sections.length} sections</span>
           </div>
         </div>
         
         {/* Preview Content */}
         <div className="flex-1 overflow-y-auto p-6" style={{ backgroundColor: '#f8fafc' }}>
           <div className={`${previewWidths[previewMode]} transition-all duration-300`}>
-            <div className="bg-white shadow-lg" style={{ borderRadius: theme?.radius || '0.75rem' }}>
+            <div className="bg-card shadow-lg" style={{ borderRadius: theme?.radius || '0.75rem' }}>
               {sections.length === 0 ? (
-                <div className="py-20 text-center text-gray-500">
+                <div className="py-20 text-center text-muted-foreground">
                   <Layout className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>{tp('Ajoutez des sections pour voir l\'aperçu')}</p>
                 </div>
@@ -701,9 +701,9 @@ const VisualSiteBuilder = ({ initialSections = [], theme = {}, onSave }) => {
       </div>
 
       {/* Right Sidebar - Properties */}
-      <div className="w-80 bg-white border-l border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">{tp('Propriétés')}</h3>
+      <div className="w-80 bg-card border-l border-border">
+        <div className="p-4 border-b border-border">
+          <h3 className="font-semibold text-foreground">{tp('Propriétés')}</h3>
         </div>
         <div className="overflow-y-auto">
           <PropertyEditor 

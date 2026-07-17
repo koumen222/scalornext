@@ -50,7 +50,7 @@ const ProductSearch = () => {
       winner: { color: 'bg-primary-100 text-primary-800', label: '🏆 Winner' },
       stable: { color: 'bg-primary-100 text-primary-800', label: '📈 Stable' },
       test: { color: 'bg-amber-100 text-amber-800', label: '🧪 Test' },
-      pause: { color: 'bg-gray-100 text-gray-800', label: '⏸️ Pause' },
+      pause: { color: 'bg-muted text-foreground', label: '⏸️ Pause' },
       stop: { color: 'bg-red-100 text-red-800', label: '🛑 Stop' }
     };
     
@@ -79,7 +79,7 @@ const ProductSearch = () => {
             {loading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600"></div>
             ) : (
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             )}
@@ -88,7 +88,7 @@ const ProductSearch = () => {
 
         {/* Résultats de recherche */}
         {showResults && (
-          <div className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-96 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-2 bg-card border border-border rounded-xl shadow-lg max-h-96 overflow-y-auto">
             {error && (
               <div className="p-4 text-red-600 text-sm">
                 {error}
@@ -96,22 +96,22 @@ const ProductSearch = () => {
             )}
             
             {!loading && !error && products.length === 0 && searchTerm && (
-              <div className="p-4 text-gray-500 text-center">
+              <div className="p-4 text-muted-foreground text-center">
                 Aucun produit trouvé pour "{searchTerm}"
               </div>
             )}
             
             {products.map((product) => (
-              <div key={product._id} className="p-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0">
+              <div key={product._id} className="p-4 hover:bg-background border-b border-border last:border-b-0">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
-                    <div className="flex items-center gap-3 text-sm text-gray-600">
-                      <span className="font-medium text-primary-600">{formatPrice(product.sellingPrice)}</span>
+                    <h3 className="font-semibold text-foreground mb-1">{product.name}</h3>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <span className="font-medium text-primary">{formatPrice(product.sellingPrice)}</span>
                       {getStatusBadge(product.status)}
                     </div>
                     {product.stock > 0 && (
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         Stock: {product.stock} unités
                       </div>
                     )}
@@ -121,10 +121,10 @@ const ProductSearch = () => {
             ))}
             
             {products.length > 0 && (
-              <div className="p-3 bg-gray-50 border-t border-gray-200">
+              <div className="p-3 bg-background border-t border-border">
                 <button 
                   onClick={() => window.location.href = '/ecom/login'}
-                  className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium transition"
+                  className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 text-sm font-medium transition"
                 >
                   Voir tous les produits →
                 </button>
@@ -137,13 +137,13 @@ const ProductSearch = () => {
       {/* Suggestions populaires */}
       {!searchTerm && !showResults && (
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500 mb-3">{tp('Produits populaires:')}</p>
+          <p className="text-sm text-muted-foreground mb-3">{tp('Produits populaires:')}</p>
           <div className="flex flex-wrap gap-2 justify-center">
             {['Gummies', 'Sérum', 'Ceinture', 'Crème'].map((term) => (
               <button
                 key={term}
                 onClick={() => setSearchTerm(term)}
-                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                className="px-3 py-1 bg-muted text-foreground rounded-full text-sm hover:bg-gray-200 transition-colors"
               >
                 {term}
               </button>

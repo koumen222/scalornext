@@ -495,14 +495,14 @@ const StoreCheckout = () => {
     const star = required ? ' *' : '';
     const IconComp = FIELD_ICON_MAP[field.icon] || DEFAULT_ICON_BY_TYPE[field.type];
     const labelEl = label ? (
-      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label}{star}</label>
+      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{label}{star}</label>
     ) : null;
 
     // Téléphone : indicatif + numéro (logique checkout conservée)
     if (field.type === 'phone') {
       return (
         <div key={field.name}>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label || t('checkout.whatsappPhone')}{star}</label>
+          <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{label || t('checkout.whatsappPhone')}{star}</label>
           <div className="flex gap-0">
             <div className="relative flex-shrink-0">
               <select
@@ -536,7 +536,7 @@ const StoreCheckout = () => {
     if (field.type === 'city_select') {
       return (
         <div key={field.name}>
-          {labelEl || <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Ville{star}</label>}
+          {labelEl || <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Ville{star}</label>}
           <div className="field-row has-icon">
             <span className="field-icon"><MapPin className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
             {cityOptions.length > 0 ? (
@@ -628,7 +628,7 @@ const StoreCheckout = () => {
     // Case à cocher (consentement)
     if (field.type === 'consent') {
       return (
-        <label key={field.name} className="flex items-start gap-2 text-xs text-gray-600 cursor-pointer">
+        <label key={field.name} className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer">
           <input
             type="checkbox"
             checked={!!form[key]}
@@ -857,7 +857,7 @@ const StoreCheckout = () => {
       <div className="min-h-screen" style={{ backgroundColor: '#f8f9fb' }}>
         <style>{CO_SKEL_CSS}</style>
         {/* Header skeleton */}
-        <div className="bg-white sticky top-0 z-40 px-4 py-3" style={{ boxShadow: '0 1px 0 rgba(0,0,0,0.07)' }}>
+        <div className="bg-card sticky top-0 z-40 px-4 py-3" style={{ boxShadow: '0 1px 0 rgba(0,0,0,0.07)' }}>
           <div className="max-w-lg mx-auto flex items-center gap-3">
             <div className="co-sk w-8 h-8 rounded-xl" />
             <div className="flex-1 space-y-1.5">
@@ -868,7 +868,7 @@ const StoreCheckout = () => {
         </div>
         <div className="max-w-lg mx-auto px-4 pt-4 pb-8 space-y-3">
           {/* Order summary card skeleton */}
-          <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <div className="bg-card rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
             <div className="co-sk h-1" style={{ borderRadius: 0 }} />
             <div className="p-4 space-y-3">
               <div className="co-sk h-4 w-32" />
@@ -889,7 +889,7 @@ const StoreCheckout = () => {
             </div>
           </div>
           {/* Form skeleton */}
-          <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <div className="bg-card rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
             <div className="co-sk h-1" style={{ borderRadius: 0 }} />
             <div className="p-4 space-y-4">
               <div className="co-sk h-4 w-48" />
@@ -972,7 +972,7 @@ const StoreCheckout = () => {
             />
           ))}
 
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          <div className="bg-card rounded-3xl shadow-2xl overflow-hidden">
             {/* Top colored banner */}
             <div className="h-2" style={{ background: `linear-gradient(90deg, ${themeColor}, #25D366)` }} />
 
@@ -985,8 +985,8 @@ const StoreCheckout = () => {
 
               {/* Thank you message */}
               <div className="slide-up-1">
-                <h1 className="text-2xl font-extrabold text-gray-900">Merci {form.customerName.split(' ')[0]} !</h1>
-                <p className="text-gray-500 mt-2 text-sm leading-relaxed">
+                <h1 className="text-2xl font-extrabold text-foreground">Merci {form.customerName.split(' ')[0]} !</h1>
+                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                   {t('success.recorded')}<br/>
                   {t('success.confirmWhatsappHint')}
                 </p>
@@ -995,28 +995,28 @@ const StoreCheckout = () => {
               {/* Order recap */}
               <div className="slide-up-2 rounded-2xl p-4 space-y-2 text-left" style={{ backgroundColor: themeColor + '08', border: `1px solid ${themeColor}25` }}>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">N° commande</span>
-                  <span className="font-bold text-gray-900">{orderResult.orderNumber}</span>
+                  <span className="text-muted-foreground">N° commande</span>
+                  <span className="font-bold text-foreground">{orderResult.orderNumber}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Total</span>
+                  <span className="text-muted-foreground">Total</span>
                   <span className="font-bold text-lg" style={{ color: themeColor }}>
                     {formatPrice(orderResult.total, orderResult.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Statut</span>
+                  <span className="text-muted-foreground">Statut</span>
                   <span className="font-semibold" style={{ color: themeColor }}>{t('success.pendingConfirmation')}</span>
                 </div>
                 {deliveryStatus.type === 'livraison' && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Livraison</span>
-                    <span className="text-primary-600 font-medium">{t('checkout.payOnDelivery')}</span>
+                    <span className="text-muted-foreground">Livraison</span>
+                    <span className="text-primary font-medium">{t('checkout.payOnDelivery')}</span>
                   </div>
                 )}
                 {deliveryStatus.type === 'expedition' && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Mode</span>
+                    <span className="text-muted-foreground">Mode</span>
                     <span className="text-amber-600 font-medium">Paiement avant envoi</span>
                   </div>
                 )}
@@ -1038,12 +1038,12 @@ const StoreCheckout = () => {
                     <span>{t('success.confirmOnWhatsapp')}</span>
                   </a>
                 ) : (
-                  <p className="text-xs text-gray-400 text-center">{t('checkout.contactSoon')}</p>
+                  <p className="text-xs text-muted-foreground text-center">{t('checkout.contactSoon')}</p>
                 )}
 
                 <button
                   onClick={() => navigate(storePath('/'))}
-                  className="w-full px-4 py-3 border border-gray-200 text-gray-500 rounded-xl text-sm hover:bg-gray-50 transition"
+                  className="w-full px-4 py-3 border border-border text-muted-foreground rounded-xl text-sm hover:bg-background transition"
                 >
                   {t('checkout.continueShopping')}
                 </button>
@@ -1093,17 +1093,17 @@ const StoreCheckout = () => {
       `}</style>
 
       {/* Header */}
-      <header className="bg-white sticky top-0 z-40 px-4 py-3" style={{ boxShadow: '0 1px 0 rgba(0,0,0,0.07)' }}>
+      <header className="bg-card sticky top-0 z-40 px-4 py-3" style={{ boxShadow: '0 1px 0 rgba(0,0,0,0.07)' }}>
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors flex-shrink-0"
+            className="p-2 rounded-xl hover:bg-muted transition-colors flex-shrink-0"
           >
-            <ArrowLeft className="w-4 h-4 text-gray-600" />
+            <ArrowLeft className="w-4 h-4 text-muted-foreground" />
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm font-bold text-gray-900 truncate">{t('checkout.title')}</h1>
-            {store?.name && <p className="text-xs text-gray-400 truncate">{store.name}</p>}
+            <h1 className="text-sm font-bold text-foreground truncate">{t('checkout.title')}</h1>
+            {store?.name && <p className="text-xs text-muted-foreground truncate">{store.name}</p>}
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: btnColor + '15', color: btnColor }}>
             <Package className="w-3 h-3" />
@@ -1115,16 +1115,16 @@ const StoreCheckout = () => {
       <div className="max-w-lg mx-auto px-4 pt-4 pb-8 space-y-3">
 
         {/* Order summary card */}
-        <div className="fade-in-up bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+        <div className="fade-in-up bg-card rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           {/* Colored top bar */}
           <div className="h-1" style={{ background: `linear-gradient(90deg, ${btnColor}, ${btnColor}99)` }} />
           <div className="p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+              <h2 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                 <ShoppingCart className="w-3.5 h-3.5" style={{ color: btnColor }} />
                 {t('checkout.summary')}
               </h2>
-              <span className="text-xs text-gray-400">{cartProducts.length} article{cartProducts.length > 1 ? 's' : ''}</span>
+              <span className="text-xs text-muted-foreground">{cartProducts.length} article{cartProducts.length > 1 ? 's' : ''}</span>
             </div>
 
             <div className="space-y-2.5">
@@ -1138,8 +1138,8 @@ const StoreCheckout = () => {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 truncate">{p.name}</p>
-                    <p className="text-xs text-gray-400">Qté : {p.quantity}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
+                    <p className="text-xs text-muted-foreground">Qté : {p.quantity}</p>
                   </div>
                   <span className="text-sm font-bold flex-shrink-0" style={{ color: formTextColor }}>
                     {formatPrice(getCartLineTotal(p), currency)}
@@ -1160,17 +1160,17 @@ const StoreCheckout = () => {
             </div>
 
             <div className="pt-2.5 space-y-1.5" style={{ borderTop: `1px dashed ${formBorderColor}` }}>
-              <div className="flex justify-between text-xs text-gray-500">
+              <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Sous-total</span>
                 <span className="font-medium">{formatPrice(subtotal, currency)}</span>
               </div>
               {deliveryCost > 0 && (
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Truck className="w-3 h-3" />
                     {t('shipping.fee')}
                   </span>
-                  <span className="font-medium text-primary-600">{formatPrice(deliveryCost, currency)}</span>
+                  <span className="font-medium text-primary">{formatPrice(deliveryCost, currency)}</span>
                 </div>
               )}
               {/* Free shipping indicator */}
@@ -1189,13 +1189,13 @@ const StoreCheckout = () => {
                 </div>
               )}
               {deliveryStatus.type === 'expedition' && deliveryCost === 0 && (
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>{t('checkout.shipping')}</span>
                   <span className="font-medium text-amber-600">À calculer</span>
                 </div>
               )}
               <div className="flex justify-between items-center pt-1.5" style={{ borderTop: `1px solid ${formBorderColor}` }}>
-                <span className="text-sm font-bold text-gray-800">{t('checkout.totalToPay')}</span>
+                <span className="text-sm font-bold text-foreground">{t('checkout.totalToPay')}</span>
                 <span className="text-lg font-extrabold" style={{ color: btnColor }}>
                   {formatPrice(total, currency)}
                 </span>
@@ -1220,10 +1220,10 @@ const StoreCheckout = () => {
         )}
 
         {/* Checkout form */}
-        <form onSubmit={handleSubmit} className="fade-in-up-2 bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+        <form onSubmit={handleSubmit} className="fade-in-up-2 bg-card rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           <div className="h-1" style={{ background: `linear-gradient(90deg, ${btnColor}60, ${btnColor}20)` }} />
           <div className="p-4 space-y-4">
-            <h2 className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+            <h2 className="text-sm font-bold text-foreground flex items-center gap-1.5">
               <User className="w-3.5 h-3.5" style={{ color: btnColor }} />
               {t('checkout.yourInfo')}
             </h2>
@@ -1231,7 +1231,7 @@ const StoreCheckout = () => {
             {/* Pays — conservé pour la logique de livraison du panier */}
             {hasDeliveryConfig && (
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Pays *</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Pays *</label>
                 <div className="field-row has-icon">
                   <span className="field-icon"><MapPin className="w-3.5 h-3.5" style={{ color: fieldIconColor }} /></span>
                   <select
@@ -1268,7 +1268,7 @@ const StoreCheckout = () => {
             {hasDeliveryConfig && form.country && form.city && deliveryStatus.type !== 'blocked' && deliveryStatus.type !== 'pending' && (
               <div className={`flex items-start gap-2.5 p-3 rounded-xl text-sm ${
                 deliveryStatus.type === 'livraison'
-                  ? 'bg-primary-50 border border-primary-200 text-primary-700'
+                  ? 'bg-primary-50 border border-primary-200 text-primary'
                   : 'bg-amber-50 border border-amber-200 text-amber-700'
               }`}>
                 {deliveryStatus.type === 'livraison' ? (
@@ -1290,7 +1290,7 @@ const StoreCheckout = () => {
                 Masqué s'il n'y a qu'un seul mode (rien à choisir). */}
             {availablePaymentMethods.length > 1 && (
               <div className="space-y-2">
-                <p className="text-xs font-bold uppercase tracking-wide text-gray-400">Mode de paiement</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Mode de paiement</p>
                 {availablePaymentMethods.map((id) => {
                   const opt = PAYMENT_METHOD_META[id];
                   if (!opt) return null;
@@ -1301,13 +1301,13 @@ const StoreCheckout = () => {
                       key={id}
                       onClick={() => setPaymentMethod(id)}
                       className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all ${
-                        active ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white'
+                        active ? 'border-primary-500 bg-primary-50' : 'border-border bg-card'
                       }`}
                     >
                       <span className="text-xl">{opt.icon}</span>
                       <span className="flex-1 min-w-0">
-                        <span className="block text-sm font-bold text-gray-900">{opt.label}</span>
-                        <span className="block text-xs text-gray-500">{opt.sub}</span>
+                        <span className="block text-sm font-bold text-foreground">{opt.label}</span>
+                        <span className="block text-xs text-muted-foreground">{opt.sub}</span>
                         {Array.isArray(opt.badges) && opt.badges.length > 0 && (
                           <span className="mt-1.5 flex flex-wrap gap-1">
                             {opt.badges.map((b) => (
@@ -1318,7 +1318,7 @@ const StoreCheckout = () => {
                           </span>
                         )}
                       </span>
-                      <span className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${active ? 'border-primary-500 bg-primary-500' : 'border-gray-300'}`} />
+                      <span className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${active ? 'border-primary-500 bg-primary' : 'border-gray-300'}`} />
                     </button>
                   );
                 })}
@@ -1350,7 +1350,7 @@ const StoreCheckout = () => {
               </span>
             </button>
 
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-muted-foreground">
               En commandant, vous acceptez d'être contacté pour confirmer votre livraison
             </p>
           </div>
@@ -1363,9 +1363,9 @@ const StoreCheckout = () => {
             { icon: '📦', label: 'Livraison rapide' },
             { icon: '✅', label: 'Satisfaction garantie' },
           ].map((t, i) => (
-            <div key={i} className="bg-white rounded-xl p-2.5 text-center" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div key={i} className="bg-card rounded-xl p-2.5 text-center" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
               <div className="text-lg mb-0.5">{t.icon}</div>
-              <p className="text-xs text-gray-500 leading-tight">{t.label}</p>
+              <p className="text-xs text-muted-foreground leading-tight">{t.label}</p>
             </div>
           ))}
         </div>

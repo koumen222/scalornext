@@ -19,7 +19,7 @@ const ThemeTest = () => {
       <h2 className="text-2xl font-bold">{tp('Dynamic Theme Test')}</h2>
       
       {/* Theme Controls */}
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div className="bg-card p-4 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">{tp('Theme Controls')}</h3>
         
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
@@ -27,7 +27,7 @@ const ThemeTest = () => {
             <button
               key={color.name}
               onClick={() => updateTheme({ primaryColor: color.value })}
-              className="flex flex-col items-center p-2 rounded border hover:bg-gray-50"
+              className="flex flex-col items-center p-2 rounded border hover:bg-background"
             >
               <div 
                 className="w-8 h-8 rounded-full border mb-1"
@@ -58,7 +58,7 @@ const ThemeTest = () => {
       </div>
 
       {/* Dynamic Components Demo */}
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div className="bg-card p-4 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">{tp('Dynamic Components')}</h3>
         
         <div className="space-y-4">
@@ -93,9 +93,9 @@ const ThemeTest = () => {
       </div>
 
       {/* Current Theme Display */}
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div className="bg-card p-4 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">{tp('Current Theme Values')}</h3>
-        <pre className="text-sm bg-gray-100 p-3 rounded">
+        <pre className="text-sm bg-muted p-3 rounded">
           {JSON.stringify(theme, null, 2)}
         </pre>
       </div>

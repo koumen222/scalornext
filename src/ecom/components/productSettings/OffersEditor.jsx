@@ -5,7 +5,7 @@ import { tp } from '../../i18n/platform.js';
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR').format(n);
 
-const inputCls = 'w-full px-2.5 py-2 rounded-xl border border-gray-200 text-[12px] focus:outline-none focus:border-primary-400';
+const inputCls = 'w-full px-2.5 py-2 rounded-xl border border-border text-[12px] focus:outline-none focus:border-primary-400';
 
 const DEFAULT_OFFER_DESIGN = {
   displayType: 'radio',
@@ -30,20 +30,20 @@ const DEFAULT_OFFER_DESIGN = {
 
 const ColorRow = ({ label, value, onChange }) => (
   <div className="flex items-center justify-between gap-2">
-    <label className="text-[11px] text-gray-600 flex-1 truncate">{label}</label>
+    <label className="text-[11px] text-muted-foreground flex-1 truncate">{label}</label>
     <div className="flex items-center gap-1.5">
       <input
         type="color"
         value={value || '#000000'}
         onChange={e => onChange(e.target.value)}
-        className="w-7 h-7 rounded-lg border border-gray-200 cursor-pointer p-0.5"
+        className="w-7 h-7 rounded-lg border border-border cursor-pointer p-0.5"
       />
       <input
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={tp('auto')}
-        className="w-20 px-2 py-1 rounded-lg border border-gray-200 text-[11px] focus:outline-none focus:border-primary-400 font-mono"
+        className="w-20 px-2 py-1 rounded-lg border border-border text-[11px] focus:outline-none focus:border-primary-400 font-mono"
       />
       {value && (
         <button onClick={() => onChange('')} className="text-gray-300 hover:text-red-400 transition-colors text-[10px]">✕</button>
@@ -55,8 +55,8 @@ const ColorRow = ({ label, value, onChange }) => (
 const SliderRow = ({ label, value, onChange, min = 0, max = 24, unit = 'px' }) => (
   <div>
     <div className="flex items-center justify-between mb-1">
-      <label className="text-[11px] text-gray-600">{label}</label>
-      <span className="text-[11px] font-mono text-gray-500">{value}{unit}</span>
+      <label className="text-[11px] text-muted-foreground">{label}</label>
+      <span className="text-[11px] font-mono text-muted-foreground">{value}{unit}</span>
     </div>
     <input
       type="range" min={min} max={max} value={value}
@@ -272,7 +272,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
       {offersEnabled && basePrice > 0 && (
         <button
           onClick={autofillPrices}
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-primary-300 text-[12px] font-semibold text-primary-700 hover:bg-primary-50 transition-colors"
+          className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-primary-300 text-[12px] font-semibold text-primary hover:bg-primary-50 transition-colors"
         >
           <Wand2 size={13} />
           Pré-remplir depuis le prix du produit ({fmt(basePrice)} F)
@@ -280,7 +280,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
       )}
 
       {offersEnabled && basePrice === 0 && (
-        <p className="mt-2 text-[10px] text-gray-400 italic px-1">
+        <p className="mt-2 text-[10px] text-muted-foreground italic px-1">
           {tp('Sélectionnez un produit en haut pour activer le pré-remplissage automatique des prix.')}
         </p>
       )}
@@ -290,7 +290,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
           {/* ── Type d'affichage des offres ── */}
           <div>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Type d\'affichage')}</p>
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Type d\'affichage')}</p>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { val: 'radio', label: 'Radio', desc: 'Liste avec bouton radio', icon: '☰' },
@@ -302,8 +302,8 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                   onClick={() => updateOD('displayType', val)}
                   className={`py-2 px-1 rounded-xl border text-center transition-colors ${
                     (od.displayType || 'radio') === val
-                      ? 'border-primary-400 bg-primary-50 text-primary-700'
-                      : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                      ? 'border-primary-400 bg-primary-50 text-primary'
+                      : 'border-border text-muted-foreground hover:border-gray-300'
                   }`}
                 >
                   <div className="text-base leading-none mb-1">{icon}</div>
@@ -323,11 +323,11 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                 className={`relative rounded-2xl border-2 p-4 transition-all ${
                   offer.selected
                     ? 'border-primary-400 bg-primary-50/50 shadow-sm ring-1 ring-primary-200/50'
-                    : 'border-gray-150 bg-white hover:border-gray-200'
+                    : 'border-gray-150 bg-card hover:border-border'
                 }`}
               >
                 {offer.selected && (
-                  <div className="absolute -top-2.5 left-4 px-2.5 py-0.5 rounded-full bg-primary-500 text-white text-[10px] font-bold flex items-center gap-1">
+                  <div className="absolute -top-2.5 left-4 px-2.5 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center gap-1">
                     <Check size={9} /> Par défaut
                   </div>
                 )}
@@ -335,12 +335,12 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2.5">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg ${
-                      offer.selected ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-500'
+                      offer.selected ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
                     }`}>
                       {offer.qty}×
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-gray-800">
+                      <div className="text-sm font-bold text-foreground">
                         {offer.qty} {offer.qty === 1 ? 'unité' : 'unités'}
                       </div>
                       {discount > 0 && (
@@ -355,7 +355,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                     {!offer.selected && (
                       <button
                         onClick={() => selectOffer(idx)}
-                        className="text-[10px] font-medium text-primary-600 hover:text-primary-700 px-2 py-1 rounded-lg hover:bg-primary-50 transition-colors"
+                        className="text-[10px] font-medium text-primary hover:text-primary px-2 py-1 rounded-lg hover:bg-primary-50 transition-colors"
                       >
                         {tp('Sélectionner')}
                       </button>
@@ -373,36 +373,36 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Quantité')}</label>
+                    <label className="block text-[10px] font-semibold text-muted-foreground mb-1 uppercase tracking-wider">{tp('Quantité')}</label>
                     <input
                       type="number" min="1"
                       value={offer.qty}
                       onChange={e => updateOffer(idx, 'qty', parseInt(e.target.value) || 1)}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+                      className="w-full px-3 py-2 rounded-xl border border-border text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Prix')}</label>
+                    <label className="block text-[10px] font-semibold text-muted-foreground mb-1 uppercase tracking-wider">{tp('Prix')}</label>
                     <input
                       type="number" min="0"
                       value={offer.price || ''}
                       onChange={e => updateOffer(idx, 'price', parseInt(e.target.value) || 0)}
                       placeholder={tp('Prix net')}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+                      className="w-full px-3 py-2 rounded-xl border border-border text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Prix barré')}</label>
+                    <label className="block text-[10px] font-semibold text-muted-foreground mb-1 uppercase tracking-wider">{tp('Prix barré')}</label>
                     <input
                       type="number" min="0"
                       value={offer.comparePrice || ''}
                       onChange={e => updateOffer(idx, 'comparePrice', parseInt(e.target.value) || 0)}
                       placeholder={tp('Ancien prix')}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+                      className="w-full px-3 py-2 rounded-xl border border-border text-sm font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 mb-1 uppercase tracking-wider">{tp('Badge')}</label>
+                    <label className="block text-[10px] font-semibold text-muted-foreground mb-1 uppercase tracking-wider">{tp('Badge')}</label>
                     <div className="relative">
                       <Tag size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
                       <input
@@ -410,22 +410,22 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                         value={offer.badge}
                         onChange={e => updateOffer(idx, 'badge', e.target.value)}
                         placeholder={tp('Ex: Populaire')}
-                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-border text-sm focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
                       />
                     </div>
                   </div>
                 </div>
 
                 {offer.price > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-base font-black text-gray-900">{fmt(offer.price)} F</span>
+                      <span className="text-base font-black text-foreground">{fmt(offer.price)} F</span>
                       {offer.comparePrice > offer.price && (
-                        <span className="text-xs text-gray-400 line-through">{fmt(offer.comparePrice)} F</span>
+                        <span className="text-xs text-muted-foreground line-through">{fmt(offer.comparePrice)} F</span>
                       )}
                     </div>
                     {offer.qty > 1 && (
-                      <span className="text-[10px] font-medium text-gray-400">
+                      <span className="text-[10px] font-medium text-muted-foreground">
                         {fmt(Math.round(offer.price / offer.qty))} F/unité
                       </span>
                     )}
@@ -437,30 +437,30 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
           <button
             onClick={addOffer}
-            className="w-full py-3 rounded-2xl border-2 border-dashed border-gray-200 text-sm font-medium text-gray-400 hover:border-primary-300 hover:text-primary-600 hover:bg-primary-50/30 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-2xl border-2 border-dashed border-border text-sm font-medium text-muted-foreground hover:border-primary-300 hover:text-primary hover:bg-primary-50/30 transition-all flex items-center justify-center gap-2"
           >
             <Plus size={16} /> Ajouter une offre
           </button>
 
           {/* ── Design des cartes ── */}
-          <div className="rounded-2xl border border-gray-200 overflow-hidden">
+          <div className="rounded-2xl border border-border overflow-hidden">
             <button
               onClick={() => setDesignOpen(v => !v)}
-              className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 bg-background hover:bg-muted transition-colors"
             >
-              <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
+              <div className="flex items-center gap-2 text-[12px] font-semibold text-foreground">
                 <Palette size={14} className="text-primary-500" />
                 {tp('Design des cartes')}
               </div>
-              {designOpen ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
+              {designOpen ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
             </button>
 
             {designOpen && (
-              <div className="p-4 space-y-5 bg-white">
+              <div className="p-4 space-y-5 bg-card">
 
                 {/* Couleurs de carte */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Couleurs de carte')}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Couleurs de carte')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Bordure sélectionnée" value={od.borderColorSelected} onChange={v => updateOD('borderColorSelected', v)} />
                     <ColorRow label="Bordure non-sélectionnée" value={od.borderColorUnselected} onChange={v => updateOD('borderColorUnselected', v)} />
@@ -471,7 +471,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Style de bordure */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Style de bordure')}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Style de bordure')}</p>
                   <div className="flex gap-2">
                     {[
                       { val: 'solid', label: 'Plein' },
@@ -483,8 +483,8 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
                         onClick={() => updateOD('borderStyle', val)}
                         className={`flex-1 py-1.5 rounded-xl border text-[11px] font-semibold transition-colors ${
                           od.borderStyle === val
-                            ? 'border-primary-400 bg-primary-50 text-primary-700'
-                            : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                            ? 'border-primary-400 bg-primary-50 text-primary'
+                            : 'border-border text-muted-foreground hover:border-gray-300'
                         }`}
                       >
                         {label}
@@ -498,13 +498,13 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Radio dot */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Point radio')}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Point radio')}</p>
                   <ColorRow label="Couleur du point" value={od.radioColor} onChange={v => updateOD('radioColor', v)} />
                 </div>
 
                 {/* Badge */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Badge')}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Badge')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Fond du badge" value={od.badgeBg} onChange={v => updateOD('badgeBg', v)} />
                     <ColorRow label="Texte du badge" value={od.badgeTextColor} onChange={v => updateOD('badgeTextColor', v)} />
@@ -514,7 +514,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Prix */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Prix')}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Prix')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Couleur du prix" value={od.priceColor} onChange={v => updateOD('priceColor', v)} />
                     <SliderRow label="Taille du prix" value={od.priceFontSize} onChange={v => updateOD('priceFontSize', v)} min={10} max={22} unit="px" />
@@ -523,7 +523,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Badge remise */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Badge remise')}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Badge remise')}</p>
                   <div className="space-y-2.5">
                     <ColorRow label="Fond remise" value={od.discountBg} onChange={v => updateOD('discountBg', v)} />
                     <ColorRow label="Texte remise" value={od.discountTextColor} onChange={v => updateOD('discountTextColor', v)} />
@@ -532,7 +532,7 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Section label */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Titre de la section')}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Titre de la section')}</p>
                   <input
                     type="text"
                     value={od.sectionLabel}
@@ -544,9 +544,9 @@ const OffersEditor = ({ config, onChange, basePrice = 0 }) => {
 
                 {/* Live preview */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp('Aperçu')}</p>
-                  <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
-                    <p className="text-[11px] font-semibold text-gray-600 mb-2">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{tp('Aperçu')}</p>
+                  <div className="rounded-xl border border-border bg-background p-3">
+                    <p className="text-[11px] font-semibold text-muted-foreground mb-2">
                       {od.sectionLabel || tp('Choisissez votre offre')}
                     </p>
                     {(od.displayType || 'radio') === 'grid' ? (

@@ -62,7 +62,7 @@ function formatNumber(n) {
 }
 
 // ─── Mini bar chart (pure CSS) ───
-const MiniBar = ({ value, max, color = 'bg-primary-600' }) => {
+const MiniBar = ({ value, max, color = 'bg-primary' }) => {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
     <div className="w-full bg-slate-100 rounded-full h-2.5 shadow-inner">
@@ -73,10 +73,10 @@ const MiniBar = ({ value, max, color = 'bg-primary-600' }) => {
 
 // ─── KPI Card ───
 const KpiCard = ({ label, value, sub, color = 'text-slate-900', icon: Icon }) => (
-  <div className="group bg-white rounded-2xl border-2 border-slate-200 p-4 sm:p-6 flex flex-col gap-1.5 sm:gap-2 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/5 hover:-translate-y-1 overflow-hidden">
+  <div className="group bg-card rounded-2xl border-2 border-slate-200 p-4 sm:p-6 flex flex-col gap-1.5 sm:gap-2 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/5 hover:-translate-y-1 overflow-hidden">
     <div className="flex items-center justify-between mb-0.5 sm:mb-1 gap-1">
       <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">{label}</span>
-      {Icon && typeof Icon === 'string' ? <span className="text-sm flex-shrink-0">{Icon}</span> : Icon && <Icon className="w-4 h-4 text-slate-400 group-hover:text-primary-600 transition-colors flex-shrink-0" />}
+      {Icon && typeof Icon === 'string' ? <span className="text-sm flex-shrink-0">{Icon}</span> : Icon && <Icon className="w-4 h-4 text-slate-400 group-hover:text-primary transition-colors flex-shrink-0" />}
     </div>
     <p className={`text-xl sm:text-3xl font-black tracking-tight ${color} truncate`}>{value}</p>
     {sub && <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate">{sub}</p>}
@@ -86,10 +86,10 @@ const KpiCard = ({ label, value, sub, color = 'text-slate-900', icon: Icon }) =>
 // ─── Funnel step ───
 const FunnelStep = ({ step, count, rate, isLast, dropRate, lost }) => (
   <div className="flex flex-col items-center flex-1 min-w-[120px]">
-    <div className="bg-white border border-gray-200/80 rounded-2xl p-5 w-full text-center shadow-sm transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50">
-      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-2">{step}</p>
-      <p className="text-2xl font-semibold text-gray-900 tracking-tight">{formatNumber(count)}</p>
-      <p className="text-xs text-primary-700 font-semibold mt-1.5">{rate}%</p>
+    <div className="bg-card border border-border/80 rounded-2xl p-5 w-full text-center shadow-sm transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50">
+      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">{step}</p>
+      <p className="text-2xl font-semibold text-foreground tracking-tight">{formatNumber(count)}</p>
+      <p className="text-xs text-primary font-semibold mt-1.5">{rate}%</p>
     </div>
     {!isLast && (
       <div className="flex flex-col items-center my-2.5">
@@ -116,7 +116,7 @@ const EmptyState = ({ message }) => (
 
 /* ─── Section Card wrapper ─── */
 const SectionCard = ({ title, children, className = '', icon: Icon }) => (
-  <div className={`bg-white rounded-2xl border-2 border-slate-200 overflow-hidden shadow-lg ${className}`}>
+  <div className={`bg-card rounded-2xl border-2 border-slate-200 overflow-hidden shadow-lg ${className}`}>
     {title && (
       <div className="px-4 sm:px-6 py-3 sm:py-4 border-b-2 border-slate-100 bg-slate-50/50">
         <div className="flex items-center gap-2 min-w-0">
@@ -130,8 +130,8 @@ const SectionCard = ({ title, children, className = '', icon: Icon }) => (
 );
 
 // ─── Bar chart avec labels dates réels ───
-const DailyBarChart = ({ data, valueKey = 'sessions', color = 'bg-primary-600', hoverColor = 'bg-primary-700', height = 'h-36' }) => {
-  if (!data || data.length === 0) return <p className="text-xs text-gray-400 text-center py-8">{tp('Aucune donnée')}</p>;
+const DailyBarChart = ({ data, valueKey = 'sessions', color = 'bg-primary', hoverColor = 'bg-primary-700', height = 'h-36' }) => {
+  if (!data || data.length === 0) return <p className="text-xs text-muted-foreground text-center py-8">{tp('Aucune donnée')}</p>;
   const maxVal = Math.max(...data.map(d => d[valueKey] || 0), 1);
   // Afficher au max 15 labels sur l'axe X
   const step = Math.ceil(data.length / 15);
@@ -146,7 +146,7 @@ const DailyBarChart = ({ data, valueKey = 'sessions', color = 'bg-primary-600', 
             <div key={i} className="flex-1 flex flex-col items-center group relative min-w-0">
               <div className="hidden group-hover:flex absolute -top-12 bg-gray-900 text-white text-[10px] px-2 py-1.5 rounded-lg whitespace-nowrap z-20 shadow-xl flex-col items-center gap-0.5 pointer-events-none">
                 <span className="font-semibold">{val}</span>
-                <span className="text-gray-400">{dateLabel}</span>
+                <span className="text-muted-foreground">{dateLabel}</span>
               </div>
               <div
                 className={`w-full ${color} hover:${hoverColor} rounded-t-sm transition-colors cursor-default`}
@@ -165,7 +165,7 @@ const DailyBarChart = ({ data, valueKey = 'sessions', color = 'bg-primary-600', 
           return (
             <div key={i} className="flex-1 min-w-0">
               {show && (
-                <span className="block text-[9px] text-gray-400 text-center truncate">{short}</span>
+                <span className="block text-[9px] text-muted-foreground text-center truncate">{short}</span>
               )}
             </div>
           );
@@ -252,12 +252,12 @@ const SuperAdminAnalytics = () => {
           <KpiCard label="Visiteurs uniques" value={formatNumber(k.uniqueVisitors)} icon={Users} />
           <KpiCard label="Pages vues" value={formatNumber(k.totalPageViews)} icon={Eye} />
           <KpiCard label="Durée moy." value={formatDuration(k.avgSessionDuration)} icon={Clock} />
-          <KpiCard label="Taux de rebond" value={`${k.bounceRate}%`} icon={TrendingDown} color={k.bounceRate > 60 ? 'text-amber-600' : 'text-primary-600'} />
+          <KpiCard label="Taux de rebond" value={`${k.bounceRate}%`} icon={TrendingDown} color={k.bounceRate > 60 ? 'text-amber-600' : 'text-primary'} />
           <KpiCard label="Inscriptions" value={formatNumber(k.signups)} icon={Users} color="text-teal-600" />
-          <KpiCard label="Activés" value={formatNumber(k.activatedUsers)} sub={`${k.conversionActivation}% des inscrits`} icon={CheckCircle2} color="text-primary-600" />
-          <KpiCard label="Workspaces créés" value={formatNumber(k.workspacesCreated)} icon={Package} color="text-primary-700" />
+          <KpiCard label="Activés" value={formatNumber(k.activatedUsers)} sub={`${k.conversionActivation}% des inscrits`} icon={CheckCircle2} color="text-primary" />
+          <KpiCard label="Workspaces créés" value={formatNumber(k.workspacesCreated)} icon={Package} color="text-primary" />
           <KpiCard label="Conv. inscription" value={`${k.conversionSignup}%`} sub="visiteur → compte" icon={TrendingUp} color="text-teal-600" />
-          <KpiCard label="Rétention 7j" value={`${k.retention7d}%`} icon={RotateCcw} color={k.retention7d > 30 ? 'text-primary-600' : 'text-amber-600'} />
+          <KpiCard label="Rétention 7j" value={`${k.retention7d}%`} icon={RotateCcw} color={k.retention7d > 30 ? 'text-primary' : 'text-amber-600'} />
         </div>
 
         {/* DAU / WAU / MAU */}
@@ -265,15 +265,15 @@ const SuperAdminAnalytics = () => {
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center">
               <p className="text-xl sm:text-3xl font-semibold text-teal-600 tracking-tight">{formatNumber(k.dau)}</p>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">{tp('DAU (24h)')}</p>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium mt-1">{tp('DAU (24h)')}</p>
             </div>
             <div className="text-center">
-              <p className="text-xl sm:text-3xl font-semibold text-primary-700 tracking-tight">{formatNumber(k.wau)}</p>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">{tp('WAU (7j)')}</p>
+              <p className="text-xl sm:text-3xl font-semibold text-primary tracking-tight">{formatNumber(k.wau)}</p>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium mt-1">{tp('WAU (7j)')}</p>
             </div>
             <div className="text-center">
-              <p className="text-xl sm:text-3xl font-semibold text-primary-700 tracking-tight">{formatNumber(k.mau)}</p>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium mt-1">{tp('MAU (30j)')}</p>
+              <p className="text-xl sm:text-3xl font-semibold text-primary tracking-tight">{formatNumber(k.mau)}</p>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium mt-1">{tp('MAU (30j)')}</p>
             </div>
           </div>
         </SectionCard>
@@ -281,7 +281,7 @@ const SuperAdminAnalytics = () => {
         {/* Daily sessions */}
         <SectionCard title={tp('Sessions par jour')} icon={Activity}>
           {overview.trends?.dailySessions?.length > 0
-            ? <DailyBarChart data={overview.trends.dailySessions} valueKey="sessions" color="bg-primary-600" hoverColor="bg-primary-700" height="h-36" />
+            ? <DailyBarChart data={overview.trends.dailySessions} valueKey="sessions" color="bg-primary" hoverColor="bg-primary-700" height="h-36" />
             : <EmptyState message="Aucune session enregistrée" />}
         </SectionCard>
 
@@ -361,7 +361,7 @@ const SuperAdminAnalytics = () => {
         {/* Affiliate attribution */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <KpiCard label="Signups attribués (affiliés)" value={formatNumber(a.attributedSignups)}
-            sub="via code de parrainage" color="text-primary-600" icon={Award} />
+            sub="via code de parrainage" color="text-primary" icon={Award} />
           <KpiCard label="Signups organiques" value={formatNumber(a.organicSignups)}
             sub="sans code affilié" color="text-slate-900" icon={Globe} />
         </div>
@@ -375,7 +375,7 @@ const SuperAdminAnalytics = () => {
                     <p className="text-sm font-bold text-slate-900 truncate">{aff.affiliateName || aff.affiliateCode}</p>
                     <p className="text-[11px] text-slate-400 font-medium truncate">{aff.affiliateCode}</p>
                   </div>
-                  <div className="flex-1"><MiniBar value={aff.signups} max={maxAff} color="bg-primary-500" /></div>
+                  <div className="flex-1"><MiniBar value={aff.signups} max={maxAff} color="bg-primary" /></div>
                   <span className="text-sm font-black text-slate-900 w-10 text-right">{formatNumber(aff.signups)}</span>
                 </div>
               ))}
@@ -421,14 +421,14 @@ const SuperAdminAnalytics = () => {
                 <div key={i} className="flex items-center gap-3">
                   <div className="flex-1">
                     <div className="flex justify-between text-xs mb-1.5">
-                      <span className="text-gray-600 font-medium">{d.from} → {d.to}</span>
-                      <span className={`font-semibold ${d.dropRate > 50 ? 'text-amber-600' : d.dropRate > 30 ? 'text-amber-500' : 'text-primary-600'}`}>
+                      <span className="text-muted-foreground font-medium">{d.from} → {d.to}</span>
+                      <span className={`font-semibold ${d.dropRate > 50 ? 'text-amber-600' : d.dropRate > 30 ? 'text-amber-500' : 'text-primary'}`}>
                         -{d.dropRate}%
                       </span>
                     </div>
-                    <MiniBar value={d.dropRate} max={100} color={d.dropRate > 50 ? 'bg-amber-500' : d.dropRate > 30 ? 'bg-amber-400' : 'bg-primary-500'} />
+                    <MiniBar value={d.dropRate} max={100} color={d.dropRate > 50 ? 'bg-amber-500' : d.dropRate > 30 ? 'bg-amber-400' : 'bg-primary'} />
                   </div>
-                  <span className="text-xs text-gray-400 w-16 text-right">-{formatNumber(d.lost)}</span>
+                  <span className="text-xs text-muted-foreground w-16 text-right">-{formatNumber(d.lost)}</span>
                 </div>
               ))}
             </div>
@@ -446,13 +446,13 @@ const SuperAdminAnalytics = () => {
                 </p>
               </div>
               <div className="bg-primary-50/60 border border-primary-200/60 rounded-2xl p-5 text-center transition-all duration-200 hover:shadow-lg hover:shadow-primary-100/50">
-                <p className="text-[11px] text-primary-600 font-medium uppercase tracking-wider">{tp('Inscription → Activation')}</p>
-                <p className="text-xl sm:text-3xl font-semibold text-primary-700 mt-2 tracking-tight">
+                <p className="text-[11px] text-primary font-medium uppercase tracking-wider">{tp('Inscription → Activation')}</p>
+                <p className="text-xl sm:text-3xl font-semibold text-primary mt-2 tracking-tight">
                   {steps[1].count > 0 ? Math.round((steps[3].count / steps[1].count) * 100) : 0}%
                 </p>
               </div>
               <div className="bg-primary-50/60 border border-primary-200/60 rounded-2xl p-5 text-center transition-all duration-200 hover:shadow-lg hover:shadow-primary-100/50">
-                <p className="text-[11px] text-primary-700 font-medium uppercase tracking-wider">{tp('Activation → Actif')}</p>
+                <p className="text-[11px] text-primary font-medium uppercase tracking-wider">{tp('Activation → Actif')}</p>
                 <p className="text-xl sm:text-3xl font-semibold text-primary-800 mt-2 tracking-tight">
                   {steps[3].count > 0 ? Math.round((steps[4].count / steps[3].count) * 100) : 0}%
                 </p>
@@ -486,8 +486,8 @@ const SuperAdminAnalytics = () => {
                       <span className="text-lg">{icons[d._id] || '❓'}</span>
                       <div className="flex-1">
                         <div className="flex justify-between text-xs mb-1.5">
-                          <span className="font-medium text-gray-700 capitalize">{d._id || tp('Unknown')}</span>
-                          <span className="text-gray-500">{d.sessions} ({pct}%)</span>
+                          <span className="font-medium text-foreground capitalize">{d._id || tp('Unknown')}</span>
+                          <span className="text-muted-foreground">{d.sessions} ({pct}%)</span>
                         </div>
                         <MiniBar value={d.sessions} max={byDevice[0]?.sessions || 1} />
                       </div>
@@ -495,7 +495,7 @@ const SuperAdminAnalytics = () => {
                   );
                 })}
               </div>
-            ) : <p className="text-xs text-gray-400">{tp('Les appareils s\'afficheront dès que des sessions sont enregistrées.')}</p>}
+            ) : <p className="text-xs text-muted-foreground">{tp('Les appareils s\'afficheront dès que des sessions sont enregistrées.')}</p>}
           </SectionCard>
 
           <SectionCard title={tp('Par navigateur')}>
@@ -505,15 +505,15 @@ const SuperAdminAnalytics = () => {
                   <div key={b._id} className="flex items-center gap-3">
                     <div className="flex-1">
                       <div className="flex justify-between text-xs mb-1.5">
-                        <span className="font-medium text-gray-700">{b._id || tp('Unknown')}</span>
-                        <span className="text-gray-500">{b.sessions}</span>
+                        <span className="font-medium text-foreground">{b._id || tp('Unknown')}</span>
+                        <span className="text-muted-foreground">{b.sessions}</span>
                       </div>
                       <MiniBar value={b.sessions} max={byBrowser[0]?.sessions || 1} color="bg-teal-500" />
                     </div>
                   </div>
                 ))}
               </div>
-            ) : <p className="text-xs text-gray-400">{tp('Aucune donnée')}</p>}
+            ) : <p className="text-xs text-muted-foreground">{tp('Aucune donnée')}</p>}
           </SectionCard>
         </div>
 
@@ -526,15 +526,15 @@ const SuperAdminAnalytics = () => {
                   <div key={o._id} className="flex items-center gap-3">
                     <div className="flex-1">
                       <div className="flex justify-between text-xs mb-1.5">
-                        <span className="font-medium text-gray-700">{o._id || tp('Unknown')}</span>
-                        <span className="text-gray-500">{o.sessions}</span>
+                        <span className="font-medium text-foreground">{o._id || tp('Unknown')}</span>
+                        <span className="text-muted-foreground">{o.sessions}</span>
                       </div>
-                      <MiniBar value={o.sessions} max={byOS[0]?.sessions || 1} color="bg-primary-500" />
+                      <MiniBar value={o.sessions} max={byOS[0]?.sessions || 1} color="bg-primary" />
                     </div>
                   </div>
                 ))}
               </div>
-            ) : <p className="text-xs text-gray-400">{tp('Aucune donnée')}</p>}
+            ) : <p className="text-xs text-muted-foreground">{tp('Aucune donnée')}</p>}
           </SectionCard>
 
           <SectionCard title={tp('Heures d\'activité (sessions/heure)')}>
@@ -556,7 +556,7 @@ const SuperAdminAnalytics = () => {
                         <div key={h} className="flex-1 flex flex-col items-center group relative min-w-0">
                           <div className="hidden group-hover:flex absolute -top-12 bg-gray-900 text-white text-[10px] px-2 py-1.5 rounded-lg whitespace-nowrap z-20 shadow-xl flex-col items-center pointer-events-none">
                             <span className="font-semibold">{val}</span>
-                            <span className="text-gray-400">{h}h</span>
+                            <span className="text-muted-foreground">{h}h</span>
                           </div>
                           <div
                             className={`w-full rounded-t-sm transition-colors ${isPeak ? 'bg-amber-500' : 'bg-amber-300 hover:bg-amber-400'}`}
@@ -568,12 +568,12 @@ const SuperAdminAnalytics = () => {
                   </div>
                   <div className="flex justify-between mt-1.5">
                     {[0, 3, 6, 9, 12, 15, 18, 21, 23].map(h => (
-                      <span key={h} className="text-[9px] text-gray-400">{h}h</span>
+                      <span key={h} className="text-[9px] text-muted-foreground">{h}h</span>
                     ))}
                   </div>
                 </>
               );
-            })() : <p className="text-xs text-gray-400">{tp('Aucune donnée')}</p>}
+            })() : <p className="text-xs text-muted-foreground">{tp('Aucune donnée')}</p>}
           </SectionCard>
         </div>
 
@@ -585,10 +585,10 @@ const SuperAdminAnalytics = () => {
                 <div key={r._id} className="flex items-center gap-3">
                   <div className="flex-1">
                     <div className="flex justify-between text-xs mb-1.5">
-                      <span className="font-medium text-gray-700 truncate max-w-[250px]">{r._id}</span>
-                      <span className="text-gray-500">{r.sessions}</span>
+                      <span className="font-medium text-foreground truncate max-w-[250px]">{r._id}</span>
+                      <span className="text-muted-foreground">{r.sessions}</span>
                     </div>
-                    <MiniBar value={r.sessions} max={byReferrer[0]?.sessions || 1} color="bg-primary-600" />
+                    <MiniBar value={r.sessions} max={byReferrer[0]?.sessions || 1} color="bg-primary" />
                   </div>
                 </div>
               ))}
@@ -604,10 +604,10 @@ const SuperAdminAnalytics = () => {
   // ═══════════════════════════════════════════════════════════════════════════
   const renderCountries = () => {
     if (!countries?.countries?.length) return (
-      <div className="bg-white rounded-2xl border border-gray-200/80 p-12 text-center shadow-sm">
+      <div className="bg-card rounded-2xl border/80 p-12 text-center shadow-sm">
         <MapPin className="w-10 h-10 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-600 font-semibold text-sm">{tp('Aucune donnée géographique')}</p>
-        <p className="text-gray-400 text-xs mt-2 max-w-xs mx-auto">
+        <p className="text-muted-foreground font-semibold text-sm">{tp('Aucune donnée géographique')}</p>
+        <p className="text-muted-foreground text-xs mt-2 max-w-xs mx-auto">
           Les pays s'afficheront dès que des visiteurs accèdent à la plateforme.
           La géolocalisation est détectée automatiquement via leur adresse IP.
         </p>
@@ -616,42 +616,42 @@ const SuperAdminAnalytics = () => {
     const data = countries.countries;
     const maxSessions = data[0]?.sessions || 1;
     return (
-      <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900">{tp('Top pays')}</h3>
+      <div className="bg-card rounded-2xl border/80 overflow-hidden shadow-sm">
+        <div className="px-5 py-4 border-b border-border">
+          <h3 className="text-sm font-semibold text-foreground">{tp('Top pays')}</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-gray-100">
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">#</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Pays')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Sessions')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Utilisateurs')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Inscriptions')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Conversion')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Durée moy.')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Rebond')}</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold text-gray-400 w-32"></th>
+              <tr className="border-b border-border">
+                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">#</th>
+                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Pays')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Sessions')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Utilisateurs')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Inscriptions')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Conversion')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Durée moy.')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Rebond')}</th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold text-muted-foreground w-32"></th>
               </tr>
             </thead>
             <tbody>
               {data.map((c, i) => (
-                <tr key={c.country} className={`border-b border-gray-50 transition-colors hover:bg-gray-50/80 ${i % 2 === 1 ? 'bg-gray-50/30' : ''}`}>
-                  <td className="px-5 py-3.5 text-gray-400 font-medium">{i + 1}</td>
-                  <td className="px-5 py-3.5 font-medium text-gray-900">
+                <tr key={c.country} className={`border-b border-gray-50 transition-colors hover:bg-background/80 ${i % 2 === 1 ? 'bg-background/30' : ''}`}>
+                  <td className="px-5 py-3.5 text-muted-foreground font-medium">{i + 1}</td>
+                  <td className="px-5 py-3.5 font-medium text-foreground">
                     {countryNames[c.country] || c.country}
                   </td>
-                  <td className="px-5 py-3.5 text-right text-gray-700">{formatNumber(c.sessions)}</td>
-                  <td className="px-5 py-3.5 text-right text-gray-700">{formatNumber(c.uniqueUsers)}</td>
-                  <td className="px-5 py-3.5 text-right text-gray-700">{formatNumber(c.signups)}</td>
+                  <td className="px-5 py-3.5 text-right text-foreground">{formatNumber(c.sessions)}</td>
+                  <td className="px-5 py-3.5 text-right text-foreground">{formatNumber(c.uniqueUsers)}</td>
+                  <td className="px-5 py-3.5 text-right text-foreground">{formatNumber(c.signups)}</td>
                   <td className="px-5 py-3.5 text-right">
-                    <span className={`font-semibold ${c.conversionRate > 5 ? 'text-primary-600' : c.conversionRate > 0 ? 'text-amber-500' : 'text-gray-400'}`}>
+                    <span className={`font-semibold ${c.conversionRate > 5 ? 'text-primary' : c.conversionRate > 0 ? 'text-amber-500' : 'text-muted-foreground'}`}>
                       {c.conversionRate}%
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-right text-gray-500">{formatDuration(c.avgDuration)}</td>
-                  <td className="px-5 py-3.5 text-right text-gray-500">{c.bounceRate}%</td>
+                  <td className="px-5 py-3.5 text-right text-muted-foreground">{formatDuration(c.avgDuration)}</td>
+                  <td className="px-5 py-3.5 text-right text-muted-foreground">{c.bounceRate}%</td>
                   <td className="px-5 py-3.5">
                     <MiniBar value={c.sessions} max={maxSessions} />
                   </td>
@@ -669,10 +669,10 @@ const SuperAdminAnalytics = () => {
   // ═══════════════════════════════════════════════════════════════════════════
   const renderPages = () => {
     if (!pages?.pages?.length) return (
-      <div className="bg-white rounded-2xl border border-gray-200/80 p-12 text-center shadow-sm">
+      <div className="bg-card rounded-2xl border/80 p-12 text-center shadow-sm">
         <FileText className="w-10 h-10 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-600 font-semibold text-sm">{tp('Aucune page visitée enregistrée')}</p>
-        <p className="text-gray-400 text-xs mt-2 max-w-xs mx-auto">
+        <p className="text-muted-foreground font-semibold text-sm">{tp('Aucune page visitée enregistrée')}</p>
+        <p className="text-muted-foreground text-xs mt-2 max-w-xs mx-auto">
           Les pages s'afficheront dès que des utilisateurs naviguent sur la plateforme.
         </p>
       </div>
@@ -680,39 +680,39 @@ const SuperAdminAnalytics = () => {
     const data = pages.pages;
     const maxViews = data[0]?.views || 1;
     return (
-      <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900">{tp('Pages les plus visitées')}</h3>
+      <div className="bg-card rounded-2xl border/80 overflow-hidden shadow-sm">
+        <div className="px-5 py-4 border-b border-border">
+          <h3 className="text-sm font-semibold text-foreground">{tp('Pages les plus visitées')}</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-gray-100">
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">#</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Page')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Vues')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Sessions')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Utilisateurs')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Entrées')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Sorties')}</th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Taux sortie')}</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold text-gray-400 w-28"></th>
+              <tr className="border-b border-border">
+                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">#</th>
+                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Page')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Vues')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Sessions')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Utilisateurs')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Entrées')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Sorties')}</th>
+                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Taux sortie')}</th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold text-muted-foreground w-28"></th>
               </tr>
             </thead>
             <tbody>
               {data.map((p, i) => (
-                <tr key={p.page} className={`border-b border-gray-50 transition-colors hover:bg-gray-50/80 ${i % 2 === 1 ? 'bg-gray-50/30' : ''}`}>
-                  <td className="px-5 py-3.5 text-gray-400 font-medium">{i + 1}</td>
-                  <td className="px-5 py-3.5 font-medium text-gray-900 max-w-[200px] truncate" title={p.page}>
+                <tr key={p.page} className={`border-b border-gray-50 transition-colors hover:bg-background/80 ${i % 2 === 1 ? 'bg-background/30' : ''}`}>
+                  <td className="px-5 py-3.5 text-muted-foreground font-medium">{i + 1}</td>
+                  <td className="px-5 py-3.5 font-medium text-foreground max-w-[200px] truncate" title={p.page}>
                     {p.page}
                   </td>
-                  <td className="px-5 py-3.5 text-right text-gray-700 font-semibold">{formatNumber(p.views)}</td>
-                  <td className="px-5 py-3.5 text-right text-gray-500">{formatNumber(p.sessions)}</td>
-                  <td className="px-5 py-3.5 text-right text-gray-500">{formatNumber(p.uniqueUsers)}</td>
-                  <td className="px-5 py-3.5 text-right text-gray-500">{formatNumber(p.entries)}</td>
-                  <td className="px-5 py-3.5 text-right text-gray-500">{formatNumber(p.exits)}</td>
+                  <td className="px-5 py-3.5 text-right text-foreground font-semibold">{formatNumber(p.views)}</td>
+                  <td className="px-5 py-3.5 text-right text-muted-foreground">{formatNumber(p.sessions)}</td>
+                  <td className="px-5 py-3.5 text-right text-muted-foreground">{formatNumber(p.uniqueUsers)}</td>
+                  <td className="px-5 py-3.5 text-right text-muted-foreground">{formatNumber(p.entries)}</td>
+                  <td className="px-5 py-3.5 text-right text-muted-foreground">{formatNumber(p.exits)}</td>
                   <td className="px-5 py-3.5 text-right">
-                    <span className={`font-semibold ${p.exitRate > 50 ? 'text-amber-500' : 'text-gray-500'}`}>
+                    <span className={`font-semibold ${p.exitRate > 50 ? 'text-amber-500' : 'text-muted-foreground'}`}>
                       {p.exitRate}%
                     </span>
                   </td>
@@ -743,9 +743,9 @@ const SuperAdminAnalytics = () => {
       super_admin: 'bg-amber-50 text-amber-700 ring-amber-600/10',
       ecom_admin: 'bg-primary-50 text-primary-800 ring-primary-700/10',
       ecom_closeuse: 'bg-sky-50 text-sky-700 ring-teal-600/10',
-      ecom_compta: 'bg-primary-50 text-primary-700 ring-primary-600/10',
+      ecom_compta: 'bg-primary-50 text-primary ring-primary-600/10',
       ecom_livreur: 'bg-amber-50 text-amber-700 ring-amber-600/10',
-      null: 'bg-gray-50 text-gray-600 ring-gray-200'
+      null: 'bg-background text-muted-foreground ring-gray-200'
     };
 
     return (
@@ -754,7 +754,7 @@ const SuperAdminAnalytics = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <KpiCard label="Connexions" value={formatNumber(activity.totalLogins)} icon="🔑" />
           <KpiCard label="Sans workspace" value={formatNumber(noWorkspace)} icon="⚠️" color="text-amber-600" />
-          <KpiCard label="Workspaces inactifs" value={formatNumber(inactiveWorkspaces)} sub={`/ ${totalWorkspaces} total`} icon="💤" color="text-gray-500" />
+          <KpiCard label="Workspaces inactifs" value={formatNumber(inactiveWorkspaces)} sub={`/ ${totalWorkspaces} total`} icon="💤" color="text-muted-foreground" />
           <KpiCard label="Actifs par rôle" value={activeByRole?.length || 0} icon="📊" />
         </div>
 
@@ -763,11 +763,11 @@ const SuperAdminAnalytics = () => {
           <SectionCard title={tp('Utilisateurs actifs par rôle')}>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {activeByRole.map(r => (
-                <div key={r.role || 'null'} className="flex items-center gap-3 p-3.5 bg-gray-50/80 rounded-xl">
+                <div key={r.role || 'null'} className="flex items-center gap-3 p-3.5 bg-background/80 rounded-xl">
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ring-1 ring-inset ${roleBadge[r.role] || roleBadge[null]}`}>
                     {roleLabels[r.role] || r.role || tp('Sans rôle')}
                   </span>
-                  <span className="text-lg font-semibold text-gray-900">{r.count}</span>
+                  <span className="text-lg font-semibold text-foreground">{r.count}</span>
                 </div>
               ))}
             </div>
@@ -775,39 +775,39 @@ const SuperAdminAnalytics = () => {
         )}
 
         {/* Recent logins table */}
-        <div className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Utilisateurs ({formatNumber(activity.totalLogins)})</h3>
-            <span className="text-[10px] text-gray-400">{tp('trié par date de connexion')}</span>
+        <div className="bg-card rounded-2xl border/80 overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-foreground">Utilisateurs ({formatNumber(activity.totalLogins)})</h3>
+            <span className="text-[10px] text-muted-foreground">{tp('trié par date de connexion')}</span>
           </div>
           {recentLogins?.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/60">
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Date')}</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Nom')}</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Email</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Rôle')}</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Pays')}</th>
-                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{tp('Appareil')}</th>
+                  <tr className="border-b border-border bg-background/60">
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Date')}</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Nom')}</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Rôle')}</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Pays')}</th>
+                    <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tp('Appareil')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentLogins.map((l, i) => (
-                    <tr key={i} className={`border-b border-gray-50 transition-colors hover:bg-primary-50/30 ${i % 2 === 1 ? 'bg-gray-50/30' : ''}`}>
-                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                    <tr key={i} className={`border-b border-gray-50 transition-colors hover:bg-primary-50/30 ${i % 2 === 1 ? 'bg-background/30' : ''}`}>
+                      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
                         {new Date(l.date).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
                       </td>
-                      <td className="px-4 py-3 text-gray-700 font-medium">{l.name || '—'}</td>
-                      <td className="px-4 py-3 text-gray-900">{l.email || '—'}</td>
+                      <td className="px-4 py-3 text-foreground font-medium">{l.name || '—'}</td>
+                      <td className="px-4 py-3 text-foreground">{l.email || '—'}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ring-1 ring-inset ${roleBadge[l.role] || roleBadge[null]}`}>
                           {roleLabels[l.role] || l.role || '—'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-500">{l.country ? (countryNames[l.country] || l.country) : '—'}</td>
-                      <td className="px-4 py-3 text-gray-500 capitalize">{l.device || '—'}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{l.country ? (countryNames[l.country] || l.country) : '—'}</td>
+                      <td className="px-4 py-3 text-muted-foreground capitalize">{l.device || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -815,29 +815,29 @@ const SuperAdminAnalytics = () => {
             </div>
           ) : (
             <div className="p-12 text-center">
-              <p className="text-gray-500 text-sm font-medium">{tp('Aucun utilisateur trouvé pour cette période')}</p>
-              <p className="text-gray-400 text-xs mt-1">{tp('Essayez la plage 90j ou une date plus large')}</p>
+              <p className="text-muted-foreground text-sm font-medium">{tp('Aucun utilisateur trouvé pour cette période')}</p>
+              <p className="text-muted-foreground text-xs mt-1">{tp('Essayez la plage 90j ou une date plus large')}</p>
             </div>
           )}
 
           {/* Pagination */}
           {pagination && pagination.pages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100">
-              <p className="text-xs text-gray-500">
+            <div className="flex items-center justify-between px-5 py-3.5 border-t border-border">
+              <p className="text-xs text-muted-foreground">
                 Page {pagination.page} / {pagination.pages} ({pagination.total} total)
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setActivityPage(p => Math.max(1, p - 1))}
                   disabled={pagination.page <= 1}
-                  className="px-4 py-2 text-xs font-medium border border-gray-200 rounded-xl disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-xs font-medium border border-border rounded-xl disabled:opacity-40 hover:bg-background transition-colors"
                 >
                   ← Précédent
                 </button>
                 <button
                   onClick={() => setActivityPage(p => Math.min(pagination.pages, p + 1))}
                   disabled={pagination.page >= pagination.pages}
-                  className="px-4 py-2 text-xs font-medium border border-gray-200 rounded-xl disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-xs font-medium border border-border rounded-xl disabled:opacity-40 hover:bg-background transition-colors"
                 >
                   Suivant →
                 </button>
@@ -913,7 +913,7 @@ const SuperAdminAnalytics = () => {
             style={{ background: 'rgba(255,255,255,0.08)', color: '#fff' }} />
           {startDate && (
             <button onClick={() => loadTab(tab, buildParams(activityPage))}
-              className="px-3 py-1.5 text-xs font-bold bg-primary-500 text-white rounded-lg hover:bg-primary-400 transition-colors">
+              className="px-3 py-1.5 text-xs font-bold bg-primary text-white rounded-lg hover:bg-primary-400 transition-colors">
               {tp('Appliquer')}
             </button>
           )}
@@ -933,7 +933,7 @@ const SuperAdminAnalytics = () => {
     >
       <div className="space-y-5">
         {/* Tabs */}
-        <div className="flex gap-1 overflow-x-auto bg-white rounded-2xl border border-slate-200/80 p-1.5 shadow-sm" style={{ scrollbarWidth: 'none' }}>
+        <div className="flex gap-1 overflow-x-auto bg-card rounded-2xl border border-slate-200/80 p-1.5 shadow-sm" style={{ scrollbarWidth: 'none' }}>
           {TABS.map(t => {
             const TabIcon = t.icon;
             return (

@@ -401,23 +401,23 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
   if (phase === 'loading') {
     return (
       <div className="p-6 sm:p-8">
-        <div className="rounded-2xl border border-gray-200 bg-white p-6">
+        <div className="rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#0F6B4F]">
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">{tp('Generation en cours')}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">{tp('Generation en cours')}</p>
               <h3 className="mt-1 text-xl font-black text-black">{tp('Creation des infographies 9:16')}</h3>
             </div>
           </div>
 
-          <p className="mt-5 min-h-[20px] text-sm text-gray-600">
+          <p className="mt-5 min-h-[20px] text-sm text-muted-foreground">
             {currentStepLabel || tp('Preparation des infographies...')}
           </p>
 
           <div className="mt-5">
-            <div className="mb-2 flex items-center justify-between text-xs font-medium text-gray-500">
+            <div className="mb-2 flex items-center justify-between text-xs font-medium text-muted-foreground">
               <span>{tp('Progression')}</span>
               <span>{Math.round(progressPercent)}%</span>
             </div>
@@ -438,7 +438,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
                     ? 'bg-[#E6F2ED] text-[#0A5740]'
                     : index === loadingStepIndex
                     ? 'bg-[#0F6B4F] text-white'
-                    : 'bg-gray-100 text-gray-500'
+                    : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {index + 1}. {label}
@@ -457,7 +457,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             <button
               type="button"
               onClick={resetToForm}
-              className="text-sm text-gray-500 underline transition hover:text-gray-800"
+              className="text-sm text-muted-foreground underline transition hover:text-foreground"
             >
               {tp('Revenir au formulaire')}
             </button>
@@ -491,26 +491,26 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           </div>
         )}
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-4">
-            <p className="text-sm font-bold text-gray-900">{tp('Apercu des slides')}</p>
-            <p className="text-xs text-gray-500">{tp('Tu peux revoir le resultat avant application.')}</p>
+            <p className="text-sm font-bold text-foreground">{tp('Apercu des slides')}</p>
+            <p className="text-xs text-muted-foreground">{tp('Tu peux revoir le resultat avant application.')}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 xl:grid-cols-3">
             {result.infographics.map((slide, index) => {
               const slideMeta = SLIDE_CATALOG.find((entry) => entry.id === slide.type);
               return (
-                <div key={`${slide.type}-${index}`} className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
-                  <div className="aspect-[9/16] bg-gray-100">
+                <div key={`${slide.type}-${index}`} className="overflow-hidden rounded-2xl border border-border bg-background">
+                  <div className="aspect-[9/16] bg-muted">
                     {slide.url ? (
                       <img src={slide.url} alt={slideMeta?.label || `Slide ${index + 1}`} className="h-full w-full object-cover" />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-xs text-gray-400">{tp('Image indisponible')}</div>
+                      <div className="flex h-full items-center justify-center text-xs text-muted-foreground">{tp('Image indisponible')}</div>
                     )}
                   </div>
-                  <div className="border-t border-gray-200 px-3 py-2">
-                    <p className="text-xs font-bold text-gray-900">{index + 1}. {slideMeta?.label || slide.type}</p>
+                  <div className="border-t border-border px-3 py-2">
+                    <p className="text-xs font-bold text-foreground">{index + 1}. {slideMeta?.label || slide.type}</p>
                   </div>
                 </div>
               );
@@ -522,7 +522,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           <button
             type="button"
             onClick={resetToForm}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-foreground hover:bg-background"
           >
             {tp('Nouvelle generation')}
           </button>
@@ -561,14 +561,14 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         <button
           type="button"
           onClick={() => setMode('ai')}
-          className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition ${mode === 'ai' ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'}`}
+          className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition ${mode === 'ai' ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-border bg-card text-muted-foreground hover:border-gray-300'}`}
         >
           <Sparkles className="h-4 w-4" /> Générer avec l&apos;IA
         </button>
         <button
           type="button"
           onClick={() => setMode('manual')}
-          className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition ${mode === 'manual' ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'}`}
+          className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition ${mode === 'manual' ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-border bg-card text-muted-foreground hover:border-gray-300'}`}
         >
           <Upload className="h-4 w-4" /> Importer mes images
         </button>
@@ -576,12 +576,12 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
 
       {/* Photo du produit — IA seulement */}
       {mode === 'ai' && (
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <label className="text-sm font-bold text-gray-900 mb-1 block">{tp('Photo du produit')} <span className="text-red-500">*</span></label>
-        <p className="text-xs text-gray-500 mb-3">{tp('Le même packaging apparaîtra dans chaque infographie (image-to-image).')}</p>
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <label className="text-sm font-bold text-foreground mb-1 block">{tp('Photo du produit')} <span className="text-red-500">*</span></label>
+        <p className="text-xs text-muted-foreground mb-3">{tp('Le même packaging apparaîtra dans chaque infographie (image-to-image).')}</p>
         {photoPreview ? (
           <div className="relative inline-block">
-            <img src={photoPreview} alt="Produit" className="h-40 w-40 object-cover rounded-xl border border-gray-200" />
+            <img src={photoPreview} alt="Produit" className="h-40 w-40 object-cover rounded-xl border border-border" />
             <button
               type="button"
               onClick={() => { setPhoto(null); setPhotoPreview(''); if (fileInputRef.current) fileInputRef.current.value = ''; }}
@@ -594,7 +594,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center justify-center gap-2 w-full h-32 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition text-gray-600"
+            className="flex items-center justify-center gap-2 w-full h-32 rounded-xl border-2 border-dashed border-gray-300 bg-background hover:bg-muted transition text-muted-foreground"
           >
             <ImagePlus className="h-5 w-5" />
             <span className="text-sm font-semibold">{tp('Uploader la photo produit')}</span>
@@ -612,10 +612,10 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
 
       {/* Infos produit — IA seulement */}
       {mode === 'ai' && (
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3">
-        <label className="text-sm font-bold text-gray-900 block">{tp('Informations produit')}</label>
+      <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <label className="text-sm font-bold text-foreground block">{tp('Informations produit')}</label>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Nom du produit')} <span className="text-red-500">*</span></label>
+          <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Nom du produit')} <span className="text-red-500">*</span></label>
           <input
             type="text"
             value={productName}
@@ -625,7 +625,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Description courte')}</label>
+          <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Description courte')}</label>
           <textarea
             value={productDescription}
             onChange={(e) => setProductDescription(e.target.value)}
@@ -636,7 +636,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Pays cible')}</label>
+            <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Pays cible')}</label>
             <input
               type="text"
               value={country}
@@ -646,7 +646,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Cible')}</label>
+            <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Cible')}</label>
             <input
               type="text"
               value={targetAudience}
@@ -656,7 +656,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Zone corporelle')}</label>
+            <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Zone corporelle')}</label>
             <input
               type="text"
               value={bodyZone}
@@ -666,7 +666,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Problème principal')}</label>
+            <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Problème principal')}</label>
             <input
               type="text"
               value={painPoint}
@@ -676,7 +676,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Bénéfice principal')}</label>
+            <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Bénéfice principal')}</label>
             <input
               type="text"
               value={mainBenefit}
@@ -691,13 +691,13 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
 
       {/* Upload manuel — mode manuel seulement */}
       {mode === 'manual' && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <p className="text-sm font-bold text-gray-900 mb-1">Tes infographies ({manualSlides.length}/20)</p>
-          <p className="text-xs text-gray-500 mb-3">Ajoute tes slides 9:16 dans l&apos;ordre souhaité. Elles s&apos;afficheront empilées sur la page publique.</p>
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <p className="text-sm font-bold text-foreground mb-1">Tes infographies ({manualSlides.length}/20)</p>
+          <p className="text-xs text-muted-foreground mb-3">Ajoute tes slides 9:16 dans l&apos;ordre souhaité. Elles s&apos;afficheront empilées sur la page publique.</p>
           {manualSlides.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mb-3">
               {manualSlides.map((slide, idx) => (
-                <div key={idx} className="relative aspect-[9/16] overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
+                <div key={idx} className="relative aspect-[9/16] overflow-hidden rounded-xl border border-border bg-muted">
                   <img src={slide.preview} alt={`Slide ${idx + 1}`} className="h-full w-full object-cover" />
                   <button
                     type="button"
@@ -714,7 +714,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           <button
             type="button"
             onClick={() => manualFileInputRef.current?.click()}
-            className="flex items-center justify-center gap-2 w-full h-24 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition text-gray-600"
+            className="flex items-center justify-center gap-2 w-full h-24 rounded-xl border-2 border-dashed border-gray-300 bg-background hover:bg-muted transition text-muted-foreground"
           >
             <ImagePlus className="h-5 w-5" />
             <span className="text-sm font-semibold">{tp('Ajouter des images')}</span>
@@ -730,9 +730,9 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         </div>
       )}
 
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <label className="text-sm font-bold text-gray-900 mb-1 block">Couleurs & style</label>
-        <p className="text-xs text-gray-500 mb-3">{tp('La palette choisie sera appliquée à toutes les slides générées.')}</p>
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <label className="text-sm font-bold text-foreground mb-1 block">Couleurs & style</label>
+        <p className="text-xs text-muted-foreground mb-3">{tp('La palette choisie sera appliquée à toutes les slides générées.')}</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {COLOR_PRESETS.map(preset => (
             <button
@@ -752,22 +752,22 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <label className="text-xs font-semibold text-gray-600 whitespace-nowrap">Couleur sur-mesure&nbsp;:</label>
+          <label className="text-xs font-semibold text-muted-foreground whitespace-nowrap">Couleur sur-mesure&nbsp;:</label>
           <input
             type="color"
             value={brandColor}
             onChange={(e) => handleCustomColor(e.target.value)}
             className="h-8 w-12 cursor-pointer rounded border border-gray-300"
           />
-          <span className="text-xs font-mono text-gray-400">{brandColor}</span>
+          <span className="text-xs font-mono text-muted-foreground">{brandColor}</span>
         </div>
       </div>
 
       {/* Types de slides — IA seulement */}
       {mode === 'ai' && (
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <label className="text-sm font-bold text-gray-900 mb-1 block">Types d'infographies ({selectedSlides.length})</label>
-        <p className="text-xs text-gray-500 mb-3">{tp('Coche/décoche et réordonne. Chaque slide génère une image 9:16 dédiée.')}</p>
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <label className="text-sm font-bold text-foreground mb-1 block">Types d'infographies ({selectedSlides.length})</label>
+        <p className="text-xs text-muted-foreground mb-3">{tp('Coche/décoche et réordonne. Chaque slide génère une image 9:16 dédiée.')}</p>
 
         <div className="space-y-2 mb-3">
           {selectedSlides.map((id, idx) => {
@@ -791,15 +791,15 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         </div>
 
         {SLIDE_CATALOG.filter(s => !selectedSlides.includes(s.id)).length > 0 && (
-          <div className="border-t border-gray-100 pt-3">
-            <p className="text-xs font-semibold text-gray-500 mb-2">{tp('Ajouter une slide')}</p>
+          <div className="border-t border-border pt-3">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">{tp('Ajouter une slide')}</p>
             <div className="flex flex-wrap gap-2">
               {SLIDE_CATALOG.filter(s => !selectedSlides.includes(s.id)).map(slide => (
                 <button
                   key={slide.id}
                   type="button"
                   onClick={() => toggleSlide(slide.id)}
-                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:border-blue-400 hover:bg-blue-50"
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-foreground hover:border-blue-400 hover:bg-blue-50"
                 >
                   + {slide.label}
                 </button>
@@ -810,10 +810,10 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
       </div>
       )}
 
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3">
-        <label className="text-sm font-bold text-gray-900 block">{tp('Textes du formulaire de commande')}</label>
+      <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <label className="text-sm font-bold text-foreground block">{tp('Textes du formulaire de commande')}</label>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Accroche')}</label>
+          <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Accroche')}</label>
           <textarea
             value={form.headline}
             onChange={(e) => setForm(f => ({ ...f, headline: e.target.value }))}
@@ -823,7 +823,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Bouton principal')}</label>
+            <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Bouton principal')}</label>
             <input
               type="text"
               value={form.ctaLabel}
@@ -832,7 +832,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Bouton sticky')}</label>
+            <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Bouton sticky')}</label>
             <input
               type="text"
               value={form.stickyLabel}
@@ -842,7 +842,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           </div>
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-700 mb-1 block">{tp('Ligne de réassurance')}</label>
+          <label className="text-xs font-semibold text-foreground mb-1 block">{tp('Ligne de réassurance')}</label>
           <input
             type="text"
             value={form.reassurance}
@@ -853,7 +853,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {['fullname', 'phone', 'address', 'city'].map((key) => (
             <div key={key}>
-              <label className="text-xs font-semibold text-gray-700 mb-1 block capitalize">Placeholder {key}</label>
+              <label className="text-xs font-semibold text-foreground mb-1 block capitalize">Placeholder {key}</label>
               <input
                 type="text"
                 value={form.placeholders[key]}
@@ -877,7 +877,7 @@ const InfographicsGeneratorPanel = ({ onGenerated, onCancel, onContinueInBackgro
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-foreground hover:bg-background"
             disabled={phase === 'loading' || manualUploading}
           >
             {tp('Annuler')}

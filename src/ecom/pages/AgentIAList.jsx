@@ -24,7 +24,7 @@ function getSteps(agent) {
 function getAgentStatus(agent) {
   const steps = getSteps(agent);
   const done = steps.filter(s => s.done).length;
-  if (done === 4) return { label: 'Actif', color: 'emerald', bg: 'bg-primary-500' };
+  if (done === 4) return { label: 'Actif', color: 'emerald', bg: 'bg-primary' };
   if (done >= 2)  return { label: 'En cours', color: 'amber',   bg: 'bg-amber-400' };
   return           { label: 'À configurer', color: 'gray',    bg: 'bg-gray-400' };
 }
@@ -38,23 +38,23 @@ function daysLeft(dateStr) {
 // ─── StatCard ─────────────────────────────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, sub, loading, accent }) {
   const accents = {
-    green:  { ring: 'ring-primary-100', icon: 'bg-primary-100 text-primary-600', val: 'text-primary-700' },
+    green:  { ring: 'ring-primary-100', icon: 'bg-primary-100 text-primary', val: 'text-primary' },
     amber:  { ring: 'ring-amber-100',   icon: 'bg-amber-100  text-amber-600',   val: 'text-amber-700' },
     blue:   { ring: 'ring-blue-100',    icon: 'bg-blue-100   text-blue-600',    val: 'text-blue-700' },
-  }[accent] || { ring: 'ring-gray-100', icon: 'bg-gray-100 text-gray-500', val: 'text-gray-900' };
+  }[accent] || { ring: 'ring-gray-100', icon: 'bg-muted text-muted-foreground', val: 'text-foreground' };
 
   return (
-    <div className={`bg-white rounded-2xl p-5 ring-2 ${accents.ring} flex items-start gap-4`}>
+    <div className={`bg-card rounded-2xl p-5 ring-2 ${accents.ring} flex items-start gap-4`}>
       <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${accents.icon}`}>
         <Icon className="w-5 h-5" />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-semibold text-gray-500 mb-1">{label}</p>
+        <p className="text-xs font-semibold text-muted-foreground mb-1">{label}</p>
         {loading
           ? <div className="h-7 w-24 bg-gray-200 rounded-lg animate-pulse" />
           : <p className={`text-2xl font-black ${accents.val} leading-none`}>{value}</p>
         }
-        {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+        {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
       </div>
     </div>
   );
@@ -68,23 +68,23 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
   const pct    = Math.round((doneCt / steps.length) * 100);
 
   const statusStyles = {
-    emerald: { badge: 'bg-primary-100 text-primary-700', bar: 'from-primary-400 to-primary-600', ring: 'ring-primary-200' },
+    emerald: { badge: 'bg-primary-100 text-primary', bar: 'from-primary-400 to-primary-600', ring: 'ring-primary-200' },
     amber:   { badge: 'bg-amber-100  text-amber-700',   bar: 'from-amber-400  to-amber-500',    ring: 'ring-amber-200' },
-    gray:    { badge: 'bg-gray-100   text-gray-600',    bar: 'from-gray-300   to-gray-400',     ring: 'ring-gray-200' },
+    gray:    { badge: 'bg-muted   text-muted-foreground',    bar: 'from-gray-300   to-gray-400',     ring: 'ring-gray-200' },
   }[status.color];
 
   return (
     <div
       onClick={() => !isFreePlan && onConfigure(agent)}
-      className={`group relative bg-white rounded-2xl ring-2 ring-gray-100 p-5 transition-all duration-200 ${
+      className={`group relative bg-card rounded-2xl ring-2 ring-gray-100 p-5 transition-all duration-200 ${
         isFreePlan ? 'opacity-60 cursor-not-allowed' : `hover:ring-2 hover:${statusStyles.ring} cursor-pointer hover:shadow-lg`
       }`}
     >
       {/* Free plan overlay */}
       {isFreePlan && (
-        <div className="absolute inset-0 rounded-2xl bg-white/70 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 gap-2">
+        <div className="absolute inset-0 rounded-2xl bg-card/70 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 gap-2">
           <span className="text-2xl">🔒</span>
-          <p className="text-xs font-bold text-gray-600 text-center px-4">{tp('Passez à Pro pour activer cet agent')}</p>
+          <p className="text-xs font-bold text-muted-foreground text-center px-4">{tp('Passez à Pro pour activer cet agent')}</p>
         </div>
       )}
       {/* Delete button */}
@@ -102,18 +102,18 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
       {/* Top row */}
       <div className="flex items-start gap-4 mb-5 pr-8">
         <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${
-          status.color === 'emerald' ? 'bg-primary-100' : status.color === 'amber' ? 'bg-amber-100' : 'bg-gray-100'
+          status.color === 'emerald' ? 'bg-primary-100' : status.color === 'amber' ? 'bg-amber-100' : 'bg-muted'
         }`}>
           🤖
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-black text-gray-900 text-base truncate">{agent.name}</h3>
+            <h3 className="font-black text-foreground text-base truncate">{agent.name}</h3>
             <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${statusStyles.badge}`}>
               {status.label}
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {agent.productsCount || 0} produit{(agent.productsCount || 0) !== 1 ? 's' : ''}
             {agent.instanceId ? ' · WhatsApp connecté' : ' · WhatsApp non connecté'}
           </p>
@@ -124,7 +124,7 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
       <div className="grid grid-cols-2 gap-1.5 mb-4">
         {steps.map((step, i) => (
           <div key={i} className={`flex items-center gap-1.5 text-xs rounded-lg px-2.5 py-1.5 ${
-            step.done ? 'bg-primary-50 text-primary-700' : 'bg-gray-50 text-gray-400'
+            step.done ? 'bg-primary-50 text-primary' : 'bg-background text-muted-foreground'
           }`}>
             {step.done
               ? <CheckCircle className="w-3.5 h-3.5 flex-shrink-0" />
@@ -137,18 +137,18 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
 
       {/* Progress bar */}
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
           <div
             className={`h-full bg-gradient-to-r ${statusStyles.bar} transition-all duration-500`}
             style={{ width: `${pct}%` }}
           />
         </div>
-        <span className="text-xs font-black text-gray-600 w-10 text-right">{pct}%</span>
+        <span className="text-xs font-black text-muted-foreground w-10 text-right">{pct}%</span>
       </div>
 
       {/* CTA */}
-      <div className={`mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold ${
-        status.color === 'emerald' ? 'text-primary-600' : 'text-gray-500'
+      <div className={`mt-4 pt-4 border-t border-border flex items-center justify-between text-xs font-bold ${
+        status.color === 'emerald' ? 'text-primary' : 'text-muted-foreground'
       }`}>
         <span>{pct === 100 ? 'Voir les stats' : tp('Continuer la configuration')}</span>
         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -157,7 +157,7 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
       {/* Conversations button */}
       <button
         onClick={e => { e.stopPropagation(); onViewConversations(agent); }}
-        className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-xl transition-colors"
+        className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-primary bg-primary-50 hover:bg-primary-100 rounded-xl transition-colors"
       >
         <MessageSquare className="w-3.5 h-3.5" />
         {tp('Conversations')}
@@ -169,17 +169,17 @@ function AgentCard({ agent, onConfigure, onDelete, deleting, onViewConversations
 // ─── EmptyState ───────────────────────────────────────────────────────────────
 function EmptyState({ onCreateClick }) {
   return (
-    <div className="col-span-full bg-white rounded-2xl ring-2 ring-dashed ring-gray-200 p-12 text-center">
-      <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+    <div className="col-span-full bg-card rounded-2xl ring-2 ring-dashed ring-gray-200 p-12 text-center">
+      <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
         🤖
       </div>
-      <h3 className="text-lg font-black text-gray-900 mb-2">{tp('Aucun agent créé')}</h3>
-      <p className="text-gray-500 text-sm mb-6 max-w-xs mx-auto">
+      <h3 className="text-lg font-black text-foreground mb-2">{tp('Aucun agent créé')}</h3>
+      <p className="text-muted-foreground text-sm mb-6 max-w-xs mx-auto">
         {tp('Créez votre premier commercial IA et commencez à vendre automatiquement sur WhatsApp.')}
       </p>
       <button
         onClick={onCreateClick}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200"
+        className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200"
       >
         <Plus className="w-4 h-4" />
         {tp('Créer mon premier agent')}
@@ -210,7 +210,7 @@ function PlanBar({ planInfo, agentCount, agentLimit, onUpgrade, onBilling }) {
             <p className="text-slate-500 text-xs">{tp('Passez à Scalor + IA pour activer vos agents commerciaux IA.')}</p>
           </div>
         </div>
-        <button onClick={onUpgrade} className="text-xs font-bold px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition">
+        <button onClick={onUpgrade} className="text-xs font-bold px-4 py-2 bg-primary hover:bg-primary-700 text-white rounded-xl transition">
           Passer à Scalor + IA →
         </button>
       </div>
@@ -374,7 +374,7 @@ export default function AgentIAList() {
   const pendingAgents  = agents.length - activeAgents;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {showUpgradeWall && (
         <UpgradeWall
           onDismiss={() => { setShowUpgradeWall(false); setUpgradeTarget(null); }}
@@ -389,12 +389,12 @@ export default function AgentIAList() {
         {/* ── TOP BAR ─────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-gray-900">{tp('Commerciaux IA')}</h1>
-            <p className="text-gray-500 text-sm mt-0.5">{tp('Gérez vos agents WhatsApp et suivez leurs performances')}</p>
+            <h1 className="text-3xl font-black text-foreground">{tp('Commerciaux IA')}</h1>
+            <p className="text-muted-foreground text-sm mt-0.5">{tp('Gérez vos agents WhatsApp et suivez leurs performances')}</p>
           </div>
           <button
             onClick={handleCreate}
-            className="inline-flex items-center gap-2 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200 text-sm"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-primary hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200 text-sm"
           >
             <Plus className="w-4 h-4" />
             {tp('Nouvel agent')}
@@ -412,11 +412,11 @@ export default function AgentIAList() {
 
         {/* ── STATS ───────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statistiques du jour')}</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Statistiques du jour')}</p>
           <button
             onClick={loadStats}
             disabled={kpisLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${kpisLoading ? 'animate-spin' : ''}`} />
             {kpisLoading ? 'Chargement...' : tp('Actualiser')}
@@ -457,10 +457,10 @@ export default function AgentIAList() {
         {/* ── AGENTS GRID ─────────────────────────────────────────────────── */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-black text-gray-900">
+            <h2 className="text-lg font-black text-foreground">
               {tp('Mes agents')}
               {agents.length > 0 && (
-                <span className="ml-2 text-sm font-semibold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full">
+                <span className="ml-2 text-sm font-semibold text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
                   {agents.length}/{agentLimit}
                 </span>
               )}
@@ -469,7 +469,7 @@ export default function AgentIAList() {
               <button
                 onClick={handleCreate}
                 disabled={atLimit || isPlanExpired}
-                className="text-sm font-bold text-primary-600 hover:text-primary-700 disabled:text-gray-300 flex items-center gap-1 transition-colors"
+                className="text-sm font-bold text-primary hover:text-primary disabled:text-gray-300 flex items-center gap-1 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 {tp('Ajouter')}
@@ -480,16 +480,16 @@ export default function AgentIAList() {
           {loading ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[1, 2].map(i => (
-                <div key={i} className="bg-white rounded-2xl ring-2 ring-gray-100 p-5 animate-pulse">
+                <div key={i} className="bg-card rounded-2xl ring-2 ring-gray-100 p-5 animate-pulse">
                   <div className="flex items-center gap-4 mb-5">
                     <div className="w-12 h-12 bg-gray-200 rounded-xl" />
                     <div className="flex-1">
                       <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
-                      <div className="h-3 bg-gray-100 rounded w-1/2" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-1.5 mb-4">
-                    {[1,2,3,4].map(j => <div key={j} className="h-7 bg-gray-100 rounded-lg" />)}
+                    {[1,2,3,4].map(j => <div key={j} className="h-7 bg-muted rounded-lg" />)}
                   </div>
                   <div className="h-1.5 bg-gray-200 rounded-full" />
                 </div>
@@ -517,9 +517,9 @@ export default function AgentIAList() {
 
         {/* ── ONBOARDING GUIDE (si aucun agent actif) ─────────────────────── */}
         {!loading && agents.length > 0 && activeAgents === 0 && (
-          <div className="bg-white rounded-2xl ring-2 ring-primary-100 p-6 sm:p-8">
-            <h3 className="font-black text-gray-900 mb-1">{tp('3 étapes pour commencer à vendre')}</h3>
-            <p className="text-gray-500 text-sm mb-6">{tp('Suivez ces étapes pour activer votre commercial IA')}</p>
+          <div className="bg-card rounded-2xl ring-2 ring-primary-100 p-6 sm:p-8">
+            <h3 className="font-black text-foreground mb-1">{tp('3 étapes pour commencer à vendre')}</h3>
+            <p className="text-muted-foreground text-sm mb-6">{tp('Suivez ces étapes pour activer votre commercial IA')}</p>
             <div className="grid sm:grid-cols-3 gap-4">
               {[
                 { icon: Package,    num: 1, title: 'Ajoutez vos produits', desc: 'Importez votre catalogue ou ajoutez-les manuellement dans la config.' },
@@ -527,12 +527,12 @@ export default function AgentIAList() {
                 { icon: Zap,        num: 3, title: 'Activez l\'agent',     get desc() { return tp('Basculez le switch ON et votre commercial répond automatiquement.'); } },
               ].map(step => (
                 <div key={step.num} className="flex gap-4">
-                  <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary-700 font-black text-lg flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary font-black text-lg flex-shrink-0">
                     {step.num}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900 text-sm mb-1">{step.title}</p>
-                    <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
+                    <p className="font-bold text-foreground text-sm mb-1">{step.title}</p>
+                    <p className="text-muted-foreground text-xs leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}

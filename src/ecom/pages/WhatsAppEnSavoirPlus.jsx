@@ -21,17 +21,17 @@ const WhatsAppEnSavoirPlus = () => {
             </svg>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">{tp('WhatsApp Pro pour votre Business')}</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-2xl sm:text-4xl font-bold text-foreground mb-2">{tp('WhatsApp Pro pour votre Business')}</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             {tp('Transformez votre communication client avec votre propre numéro WhatsApp')}
           </p>
         </div>
 
         {/* Hero Section */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <div className="bg-card rounded-2xl shadow-xl p-8 mb-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold text-foreground mb-4">
                 📱 Actuellement vs WhatsApp Pro
               </h2>
               <div className="space-y-4">
@@ -42,8 +42,8 @@ const WhatsAppEnSavoirPlus = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{tp('Messages envoyés avec NOTRE numéro')}</p>
-                    <p className="text-sm text-gray-600">{tp('Les clients voient un numéro inconnu → Moins de confiance')}</p>
+                    <p className="font-semibold text-foreground">{tp('Messages envoyés avec NOTRE numéro')}</p>
+                    <p className="text-sm text-muted-foreground">{tp('Les clients voient un numéro inconnu → Moins de confiance')}</p>
                   </div>
                 </div>
 
@@ -54,8 +54,8 @@ const WhatsAppEnSavoirPlus = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{tp('Messages envoyés avec VOTRE numéro')}</p>
-                    <p className="text-sm text-gray-600">{tp('Les clients reconnaissent votre numéro → Plus de réponses')}</p>
+                    <p className="font-semibold text-foreground">{tp('Messages envoyés avec VOTRE numéro')}</p>
+                    <p className="text-sm text-muted-foreground">{tp('Les clients reconnaissent votre numéro → Plus de réponses')}</p>
                   </div>
                 </div>
               </div>
@@ -64,43 +64,43 @@ const WhatsAppEnSavoirPlus = () => {
             <div className="bg-gradient-to-br from-green-50 to-primary-50 rounded-xl p-6">
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600 mb-2">+40%</div>
-                <div className="text-sm text-gray-600">{tp('Taux de réponse moyen')}</div>
+                <div className="text-sm text-muted-foreground">{tp('Taux de réponse moyen')}</div>
                 <div className="text-3xl font-bold text-green-600 mb-2 mt-4">+25%</div>
-                <div className="text-sm text-gray-600">{tp('Taux de conversion')}</div>
+                <div className="text-sm text-muted-foreground">{tp('Taux de conversion')}</div>
                 <div className="text-3xl font-bold text-green-600 mb-2 mt-4">+60%</div>
-                <div className="text-sm text-gray-600">{tp('Confiance client')}</div>
+                <div className="text-sm text-muted-foreground">{tp('Confiance client')}</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bénéfices */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <div className="bg-card rounded-2xl shadow-xl p-8 mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
             🚀 Pourquoi utiliser votre propre numéro ?
           </h2>
 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">{tp('Confiance accrue')}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground mb-2">{tp('Confiance accrue')}</h3>
+              <p className="text-sm text-muted-foreground">
                 Vos clients reconnaissent votre numéro et sont plus enclins ù  répondre et ù  faire confiance ù  vos messages.
               </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">{tp('Réponse rapide')}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground mb-2">{tp('Réponse rapide')}</h3>
+              <p className="text-sm text-muted-foreground">
                 Les clients répondent plus rapidement aux messages provenant d'un numéro qu'ils connaissent déjù .
               </p>
             </div>
@@ -111,8 +111,8 @@ const WhatsAppEnSavoirPlus = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">{tp('Image professionnelle')}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground mb-2">{tp('Image professionnelle')}</h3>
+              <p className="text-sm text-muted-foreground">
                 Renforcez votre image de marque en utilisant un numéro professionnel associé ù  votre entreprise.
               </p>
             </div>
@@ -120,8 +120,8 @@ const WhatsAppEnSavoirPlus = () => {
         </div>
 
         {/* Comment ça marche */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <div className="bg-card rounded-2xl shadow-xl p-8 mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
             🛠️ Comment ça marche ?
           </h2>
 
@@ -131,8 +131,8 @@ const WhatsAppEnSavoirPlus = () => {
                 1
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">{tp('Postulez pour WhatsApp Pro')}</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-foreground mb-1">{tp('Postulez pour WhatsApp Pro')}</h3>
+                <p className="text-sm text-muted-foreground">
                   Remplissez le formulaire de postulation avec vos informations et votre numéro WhatsApp personnel.
                 </p>
               </div>
@@ -143,8 +143,8 @@ const WhatsAppEnSavoirPlus = () => {
                 2
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">{tp('Validation technique')}</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-foreground mb-1">{tp('Validation technique')}</h3>
+                <p className="text-sm text-muted-foreground">
                   {tp('Notre équipe technique configure votre numéro et réalise les tests nécessaires (24-48h).')}
                 </p>
               </div>
@@ -155,8 +155,8 @@ const WhatsAppEnSavoirPlus = () => {
                 3
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">{tp('Activation')}</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-foreground mb-1">{tp('Activation')}</h3>
+                <p className="text-sm text-muted-foreground">
                   {tp('Une fois activé, toutes vos campagnes sont automat votre numéro personnel automatiquement.')}
                 </p>
               </div>
@@ -165,36 +165,36 @@ const WhatsAppEnSavoirPlus = () => {
         </div>
 
         {/* FAQ */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <div className="bg-card rounded-2xl shadow-xl p-8 mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
             â“ Questions fréquentes
           </h2>
 
           <div className="space-y-6">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">{tp('Est-ce que mon numéro personnel reste privé ?')}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground mb-2">{tp('Est-ce que mon numéro personnel reste privé ?')}</h3>
+              <p className="text-sm text-muted-foreground">
                 Oui, votre numéro n'est utilisé que pour l'envoi de vos campagnes marketing. Les clients peuvent vous répondre mais vos informations personnelles restent protégées.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">{tp('Puis-je toujours utiliser mon numéro personnel ?')}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground mb-2">{tp('Puis-je toujours utiliser mon numéro personnel ?')}</h3>
+              <p className="text-sm text-muted-foreground">
                 Absolument ! La configuration ne perturbe pas votre usage personnel du numéro. Vous pouvez continuer ù  l'utiliser normalement.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">{tp('Y a-t-il des limites d\'envoi ?')}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground mb-2">{tp('Y a-t-il des limites d\'envoi ?')}</h3>
+              <p className="text-sm text-muted-foreground">
                 Oui, pour éviter le spam, nous appliquons les mêmes limites que pour le numéro partagé : 1 message toutes les 30 secondes avec une pause de 5 minutes après 10 envois.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">{tp('Que se passe-t-il si je change de numéro ?')}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground mb-2">{tp('Que se passe-t-il si je change de numéro ?')}</h3>
+              <p className="text-sm text-muted-foreground">
                 Pas de problème ! Il suffit de faire une nouvelle postulation et nous reconfigurerons le système avec votre nouveau numéro.
               </p>
             </div>
@@ -211,13 +211,13 @@ const WhatsAppEnSavoirPlus = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/ecom/whatsapp-postulation"
-              className="px-8 py-3 bg-white text-green-600 font-bold rounded-lg hover:bg-gray-100 transition shadow-lg"
+              className="px-8 py-3 bg-card text-green-600 font-bold rounded-lg hover:bg-muted transition shadow-lg"
             >
               📝 Postuler maintenant
             </Link>
             <Link
               to="/ecom/campaigns"
-              className="px-8 py-3 bg-white/20 text-white font-semibold rounded-lg hover:bg-white/30 transition border border-white/30"
+              className="px-8 py-3 bg-card/20 text-white font-semibold rounded-lg hover:bg-card/30 transition border border-white/30"
             >
               {tp('Retour au Marketing')}
             </Link>
@@ -225,7 +225,7 @@ const WhatsAppEnSavoirPlus = () => {
         </div>
 
         {/* Contact */}
-        <div className="mt-8 text-center text-sm text-gray-600">
+        <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>{tp('📞 Besoin d\'aide ? Contactez notre équipe')}</p>
           <p className="mt-1">{tp('⏰ Délai de traitement : 24-48h')}</p>
         </div>

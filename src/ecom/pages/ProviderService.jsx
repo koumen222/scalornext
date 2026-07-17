@@ -250,8 +250,8 @@ const ProviderService = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-lime-50 to-cyan-100">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mb-8 rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary-700">{tp('Provider Console')}</p>
+        <div className="mb-8 rounded-3xl border border-white/70 bg-card/80 p-6 shadow-xl backdrop-blur">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">{tp('Provider Console')}</p>
           <h1 className="mt-2 text-3xl font-black text-slate-900 sm:text-4xl">{tp('Interface Provider As A Service')}</h1>
           <p className="mt-3 max-w-3xl text-sm text-slate-600 sm:text-base">
             Creez vos instances, gerez vos boutiques et pilotez votre service avec un Bearer token dedie.
@@ -266,14 +266,14 @@ const ProviderService = () => {
         )}
 
         {message && (
-          <div className="mb-4 rounded-xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm text-primary-700">
+          <div className="mb-4 rounded-xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm text-primary">
             {message}
           </div>
         )}
 
         {!isAuthenticated && (
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-lg">
+            <div className="rounded-3xl border border-white/70 bg-card/90 p-6 shadow-lg">
               <div className="mb-4 flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -382,7 +382,7 @@ const ProviderService = () => {
                   <button
                     disabled={loading}
                     type="submit"
-                    className="w-full rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {loading ? 'Creation...' : tp('Creer mon compte Provider')}
                   </button>
@@ -412,7 +412,7 @@ const ProviderService = () => {
               )}
             </div>
 
-            <div className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-lg">
+            <div className="rounded-3xl border border-white/70 bg-card/90 p-6 shadow-lg">
               <h2 className="text-lg font-bold text-slate-900">{tp('Comment ca marche')}</h2>
               <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm text-slate-600">
                 <li>{tp('Inscrivez votre entreprise provider.')}</li>
@@ -433,7 +433,7 @@ const ProviderService = () => {
         {isAuthenticated && (
           <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
+              <div className="rounded-2xl border border-white/70 bg-card p-4 shadow-sm">
                 <div className="text-xs uppercase tracking-wider text-slate-500">{tp('Token')}</div>
                 <div className="mt-2 break-all font-mono text-sm text-slate-800">{tokenPreview}</div>
                 <div className="mt-3 flex gap-2">
@@ -453,13 +453,13 @@ const ProviderService = () => {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
+              <div className="rounded-2xl border border-white/70 bg-card p-4 shadow-sm">
                 <div className="text-xs uppercase tracking-wider text-slate-500">{tp('Entreprise')}</div>
                 <div className="mt-2 text-sm font-semibold text-slate-900">{provider?.company || '-'}</div>
                 <div className="mt-1 text-xs text-slate-600">{provider?.email || '-'}</div>
               </div>
 
-              <div className="rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
+              <div className="rounded-2xl border border-white/70 bg-card p-4 shadow-sm">
                 <div className="text-xs uppercase tracking-wider text-slate-500">{tp('Instances')}</div>
                 <div className="mt-2 text-sm text-slate-900">
                   {(provider?.limits?.activeInstances ?? provider?.stats?.activeInstances ?? instances.length) || 0}
@@ -469,7 +469,7 @@ const ProviderService = () => {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-white/70 bg-white p-6 shadow-lg">
+            <div className="rounded-3xl border border-white/70 bg-card p-6 shadow-lg">
               <h2 className="text-lg font-bold text-slate-900">{tp('Creer une nouvelle instance')}</h2>
               <form onSubmit={onCreateInstance} className="mt-4 grid gap-4 md:grid-cols-4">
                 <input
@@ -497,7 +497,7 @@ const ProviderService = () => {
                 </select>
                 <button
                   disabled={loading}
-                  className="rounded-xl bg-primary-600 px-4 py-2 font-semibold text-white hover:bg-primary-500 disabled:opacity-60"
+                  className="rounded-xl bg-primary px-4 py-2 font-semibold text-white hover:bg-primary disabled:opacity-60"
                   type="submit"
                 >
                   {loading ? 'Creation...' : tp('Creer instance')}
@@ -505,7 +505,7 @@ const ProviderService = () => {
               </form>
             </div>
 
-            <div className="rounded-3xl border border-white/70 bg-white p-6 shadow-lg">
+            <div className="rounded-3xl border border-white/70 bg-card p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-slate-900">{tp('Mes instances')}</h2>
                 <button

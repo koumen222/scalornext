@@ -23,13 +23,13 @@ const StatsSkeleton = () => (
     </div>
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
       {[...Array(8)].map((_, i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+        <div key={i} className="bg-card rounded-xl border p-4">
           <div className="h-3 w-20 bg-gray-200 rounded animate-pulse mb-2" />
           <div className="h-7 w-24 bg-gray-200 rounded animate-pulse" />
         </div>
       ))}
     </div>
-    <div className="bg-white rounded-xl border border-gray-100 p-4 h-48 animate-pulse" />
+    <div className="bg-card rounded-xl border p-4 h-48 animate-pulse" />
   </div>
 );
 
@@ -42,8 +42,8 @@ const IconCard = ({ icon: Icon, color, bgColor, size = 20 }) => (
 const RankBadge = ({ rank, color }) => {
   const icons = [Crown, Medal, Award];
   const Icon = icons[rank - 1] || Award;
-  const colors = ['text-yellow-600 bg-yellow-100', 'text-gray-600 bg-gray-200', 'text-orange-600 bg-orange-100'];
-  const colorClass = colors[rank - 1] || 'text-gray-500 bg-gray-100';
+  const colors = ['text-yellow-600 bg-yellow-100', 'text-muted-foreground bg-gray-200', 'text-orange-600 bg-orange-100'];
+  const colorClass = colors[rank - 1] || 'text-muted-foreground bg-muted';
   
   return (
     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${colorClass}`}>
@@ -56,13 +56,13 @@ const SL = { pending: 'En attente', confirmed: 'Confirmé', shipped: 'Expédié'
 
 const SC = {
   pending: { bg: 'bg-yellow-500', light: 'bg-yellow-100', text: 'text-yellow-600', icon: Package },
-  confirmed: { bg: 'bg-primary-600', light: 'bg-primary-100', text: 'text-primary-600', icon: CheckCircle },
-  shipped: { bg: 'bg-primary-600', light: 'bg-primary-100', text: 'text-primary-700', icon: Truck },
+  confirmed: { bg: 'bg-primary', light: 'bg-primary-100', text: 'text-primary', icon: CheckCircle },
+  shipped: { bg: 'bg-primary', light: 'bg-primary-100', text: 'text-primary', icon: Truck },
   delivered: { bg: 'bg-green-500', light: 'bg-green-100', text: 'text-green-600', icon: CheckCircle },
   returned: { bg: 'bg-orange-500', light: 'bg-orange-100', text: 'text-orange-600', icon: RotateCcw },
   cancelled: { bg: 'bg-red-500', light: 'bg-red-100', text: 'text-red-600', icon: RotateCcw },
-  unreachable: { bg: 'bg-gray-500', light: 'bg-gray-100', text: 'text-gray-600', icon: Users },
-  called: { bg: 'bg-primary-600', light: 'bg-primary-100', text: 'text-primary-700', icon: Users },
+  unreachable: { bg: 'bg-gray-500', light: 'bg-muted', text: 'text-muted-foreground', icon: Users },
+  called: { bg: 'bg-primary', light: 'bg-primary-100', text: 'text-primary', icon: Users },
   postponed: { bg: 'bg-amber-500', light: 'bg-amber-100', text: 'text-amber-600', icon: Calendar }
 };
 
@@ -138,12 +138,12 @@ const StatsPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate('/ecom/orders')} className="p-2.5 hover:bg-gray-100 rounded-xl transition border border-gray-200 shadow-sm">
-          <ArrowLeft size={20} className="text-gray-600" />
+          <button onClick={() => navigate('/ecom/orders')} className="p-2.5 hover:bg-muted rounded-xl transition border border-border shadow-sm">
+          <ArrowLeft size={20} className="text-muted-foreground" />
         </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{tp('Statistiques globales')}</h1>
-            <p className="text-sm text-gray-500">{tp('Vue d\'ensemble de votre activité e-commerce')}</p>
+            <h1 className="text-2xl font-bold text-foreground">{tp('Statistiques globales')}</h1>
+            <p className="text-sm text-muted-foreground">{tp('Vue d\'ensemble de votre activité e-commerce')}</p>
           </div>
         </div>
         
@@ -155,7 +155,7 @@ const StatsPage = () => {
             {tp('Stats Rapports')}
           </button>
           <select value={dateRange} onChange={(e) => setDateRange(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-transparent">
+            className="px-3 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-transparent">
             <option value="all">{tp('Tout le temps')}</option>
             <option value="7d">{tp('7 derniers jours')}</option>
             <option value="30d">{tp('30 derniers jours')}</option>
@@ -165,13 +165,13 @@ const StatsPage = () => {
           {dateRange === 'custom' && (
             <>
               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                className="px-1.5 sm:px-3 py-1 sm:py-2 border border-gray-200 rounded-lg text-[10px] sm:text-sm w-[110px] sm:w-auto" />
-              <span className="text-gray-400 text-[10px] sm:text-sm">→</span>
+                className="px-1.5 sm:px-3 py-1 sm:py-2 border border-border rounded-lg text-[10px] sm:text-sm w-[110px] sm:w-auto" />
+              <span className="text-muted-foreground text-[10px] sm:text-sm">→</span>
               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
-                className="px-1.5 sm:px-3 py-1 sm:py-2 border border-gray-200 rounded-lg text-[10px] sm:text-sm w-[110px] sm:w-auto" />
+                className="px-1.5 sm:px-3 py-1 sm:py-2 border border-border rounded-lg text-[10px] sm:text-sm w-[110px] sm:w-auto" />
             </>
           )}
-          <button onClick={fetchStats} className="p-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition shadow-sm">
+          <button onClick={fetchStats} className="p-2.5 bg-primary text-white rounded-xl hover:bg-primary-700 transition shadow-sm">
             <RefreshCw size={20} />
           </button>
         </div>
@@ -181,21 +181,21 @@ const StatsPage = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
         {[
           { label: tp('Revenu total'), value: fmt(stats?.orderStats?.totalRevenue || 0), sub: `${stats?.orderStats?.delivered || 0} ${tp('livrées')}`, icon: Wallet, tint: 'text-emerald-600', chip: 'bg-emerald-50' },
-          { label: tp('Commandes'), value: stats?.orderStats?.total || 0, sub: `${stats?.orderStats?.pending || 0} ${tp('en attente')}`, icon: ShoppingCart, tint: 'text-primary-600', chip: 'bg-primary-50' },
-          { label: tp('Taux livraison'), value: `${deliveryRate}%`, bar: { pct: deliveryRate, color: 'bg-primary-600' }, icon: TrendingUp, tint: 'text-primary-700', chip: 'bg-primary-50' },
+          { label: tp('Commandes'), value: stats?.orderStats?.total || 0, sub: `${stats?.orderStats?.pending || 0} ${tp('en attente')}`, icon: ShoppingCart, tint: 'text-primary', chip: 'bg-primary-50' },
+          { label: tp('Taux livraison'), value: `${deliveryRate}%`, bar: { pct: deliveryRate, color: 'bg-primary' }, icon: TrendingUp, tint: 'text-primary', chip: 'bg-primary-50' },
           { label: tp('Taux retour'), value: `${returnRate}%`, bar: { pct: returnRate, color: 'bg-orange-500' }, icon: RotateCcw, tint: 'text-orange-600', chip: 'bg-orange-50' },
           { label: tp('Clients'), value: stats?.clientStats?.total || 0, sub: `${stats?.clientStats?.delivered || 0} ${tp('livrés')}`, icon: Users, tint: 'text-sky-600', chip: 'bg-sky-50' },
           { label: tp('Panier moyen'), value: fmt(stats?.orderStats?.avgOrderValue || 0), sub: tp('par cmd livrée'), icon: CreditCard, tint: 'text-violet-600', chip: 'bg-violet-50' },
         ].map((k, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <div key={i} className="bg-card rounded-2xl border p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${k.chip}`}>
               <k.icon size={16} className={k.tint} strokeWidth={2.2} />
             </div>
-            <p className="text-xl font-extrabold text-gray-900 tracking-tight tabular-nums leading-none truncate" title={String(k.value)}>{k.value}</p>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mt-1.5">{k.label}</p>
-            {k.sub && <p className="text-xs text-gray-500 mt-1 truncate">{k.sub}</p>}
+            <p className="text-xl font-extrabold text-foreground tracking-tight tabular-nums leading-none truncate" title={String(k.value)}>{k.value}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-1.5">{k.label}</p>
+            {k.sub && <p className="text-xs text-muted-foreground mt-1 truncate">{k.sub}</p>}
             {k.bar && (
-              <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2 overflow-hidden">
+              <div className="w-full bg-muted rounded-full h-1.5 mt-2 overflow-hidden">
                 <div className={`${k.bar.color} h-1.5 rounded-full transition-all`} style={{ width: `${Math.min(k.bar.pct, 100)}%` }} />
               </div>
             )}
@@ -205,9 +205,9 @@ const StatsPage = () => {
 
       {/* Status Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <BarChart3 size={18} className="text-gray-500" />
+        <div className="bg-card rounded-xl border shadow-sm p-5 hover:shadow-md transition-shadow">
+          <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            <BarChart3 size={18} className="text-muted-foreground" />
             {tp('Répartition par statut')}
           </h3>
           <div className="space-y-1">
@@ -215,18 +215,18 @@ const StatsPage = () => {
               const count = stats?.orderStats?.[key] || 0;
               const percent = stats?.orderStats?.total ? ((count / stats.orderStats.total) * 100) : 0;
               return (
-                <div key={key} className="group px-2 py-2 rounded-xl hover:bg-gray-50 transition-colors">
+                <div key={key} className="group px-2 py-2 rounded-xl hover:bg-background transition-colors">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="flex items-center gap-2 text-sm text-gray-700">
+                    <span className="flex items-center gap-2 text-sm text-foreground">
                       <span className={`w-2 h-2 rounded-full ${SC[key].bg}`} />
                       {tp(label)}
                     </span>
                     <span className="flex items-baseline gap-2">
-                      <span className="text-sm font-bold text-gray-900 tabular-nums">{count}</span>
-                      <span className="text-[11px] text-gray-400 tabular-nums w-11 text-right">{percent.toFixed(1)}%</span>
+                      <span className="text-sm font-bold text-foreground tabular-nums">{count}</span>
+                      <span className="text-[11px] text-muted-foreground tabular-nums w-11 text-right">{percent.toFixed(1)}%</span>
                     </span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                     <div className={`${SC[key].bg} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${percent}%` }} />
                   </div>
                 </div>
@@ -236,26 +236,26 @@ const StatsPage = () => {
         </div>
 
         {/* Top Products */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <Package size={18} className="text-gray-500" />
+        <div className="bg-card rounded-xl border shadow-sm p-5 hover:shadow-md transition-shadow">
+          <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Package size={18} className="text-muted-foreground" />
             {tp('Produits les plus vendus')}
           </h3>
           <div className="divide-y divide-gray-50">
             {(stats?.topProducts || []).slice(0, 8).map((p, i) => (
-              <div key={i} className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-gray-50 transition-colors">
-                <span className={`w-7 h-7 shrink-0 rounded-lg flex items-center justify-center text-xs font-bold tabular-nums ${i === 0 ? 'bg-yellow-100 text-yellow-700' : i === 1 ? 'bg-gray-200 text-gray-600' : i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-400'}`}>
+              <div key={i} className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-background transition-colors">
+                <span className={`w-7 h-7 shrink-0 rounded-lg flex items-center justify-center text-xs font-bold tabular-nums ${i === 0 ? 'bg-yellow-100 text-yellow-700' : i === 1 ? 'bg-gray-200 text-muted-foreground' : i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-muted text-muted-foreground'}`}>
                   {i + 1}
                 </span>
-                <span className="text-sm text-gray-800 font-medium flex-1 truncate" title={p._id}>{p._id || tp('Non spécifié')}</span>
+                <span className="text-sm text-foreground font-medium flex-1 truncate" title={p._id}>{p._id || tp('Non spécifié')}</span>
                 <span className="shrink-0 text-right">
-                  <span className="block text-sm font-bold text-gray-900 tabular-nums">×{p.count}</span>
+                  <span className="block text-sm font-bold text-foreground tabular-nums">×{p.count}</span>
                   <span className="block text-[11px] text-emerald-600 font-semibold tabular-nums">{fmt(p.revenue)}</span>
                 </span>
               </div>
             ))}
             {(!stats?.topProducts || stats.topProducts.length === 0) && (
-              <p className="text-sm text-gray-400 text-center py-6">{tp('Aucun produit')}</p>
+              <p className="text-sm text-muted-foreground text-center py-6">{tp('Aucun produit')}</p>
             )}
           </div>
         </div>
@@ -264,67 +264,67 @@ const StatsPage = () => {
       {/* Cities and Sources */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Top Cities */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <MapPin size={18} className="text-gray-500" />
+        <div className="bg-card rounded-xl border shadow-sm p-5 hover:shadow-md transition-shadow">
+          <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            <MapPin size={18} className="text-muted-foreground" />
             {tp('Villes principales')}
           </h3>
           <div className="space-y-3">
             {(stats?.topCities || []).slice(0, 10).map((c, i) => {
               const percent = stats?.orderStats?.total ? ((c.count / stats.orderStats.total) * 100).toFixed(1) : 0;
               return (
-                <div key={i} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                <div key={i} className="flex items-center gap-3 hover:bg-background p-2 rounded-lg transition-colors">
                   <RankBadge rank={i + 1} />
-                  <span className="text-sm text-gray-700 flex-1 truncate">{c._id || tp('Non spécifié')}</span>
-                  <span className="text-sm font-semibold text-gray-900">{c.count}</span>
-                  <span className="text-xs text-gray-400 w-12 text-right">{percent}%</span>
-                  <div className="w-20 bg-gray-100 rounded-full h-2">
-                    <div className="bg-primary-600 h-2 rounded-full" style={{ width: `${percent}%` }}></div>
+                  <span className="text-sm text-foreground flex-1 truncate">{c._id || tp('Non spécifié')}</span>
+                  <span className="text-sm font-semibold text-foreground">{c.count}</span>
+                  <span className="text-xs text-muted-foreground w-12 text-right">{percent}%</span>
+                  <div className="w-20 bg-muted rounded-full h-2">
+                    <div className="bg-primary h-2 rounded-full" style={{ width: `${percent}%` }}></div>
                   </div>
                 </div>
               );
             })}
             {(!stats?.topCities || stats.topCities.length === 0) && (
-              <p className="text-sm text-gray-400 text-center py-4">{tp('Aucune ville')}</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{tp('Aucune ville')}</p>
             )}
           </div>
         </div>
 
         {/* Top Clients */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <Users size={18} className="text-gray-500" />
+        <div className="bg-card rounded-xl border shadow-sm p-5 hover:shadow-md transition-shadow">
+          <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Users size={18} className="text-muted-foreground" />
             {tp('Meilleurs clients')}
           </h3>
           <div className="space-y-3">
             {(stats?.topClients || []).slice(0, 8).map((c, i) => (
-              <div key={i} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
+              <div key={i} className="flex items-center gap-3 hover:bg-background p-2 rounded-lg transition-colors">
                 <RankBadge rank={i + 1} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">{c.clientName || tp('Client')}</p>
-                  <p className="text-xs text-gray-400">{c.phone}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{c.clientName || tp('Client')}</p>
+                  <p className="text-xs text-muted-foreground">{c.phone}</p>
                 </div>
-                <span className="text-sm font-semibold text-gray-900 tabular-nums">{c.orderCount} {tp('cmd')}</span>
+                <span className="text-sm font-semibold text-foreground tabular-nums">{c.orderCount} {tp('cmd')}</span>
                 <span className="text-xs text-green-600 font-medium">{fmt(c.totalSpent)}</span>
               </div>
             ))}
             {(!stats?.topClients || stats.topClients.length === 0) && (
-              <p className="text-sm text-gray-400 text-center py-4">{tp('Aucun client')}</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{tp('Aucun client')}</p>
             )}
           </div>
         </div>
       </div>
 
       {/* Products by Client and City */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-          <Package size={18} className="text-gray-500" />
+      <div className="bg-card rounded-xl border shadow-sm p-5 hover:shadow-md transition-shadow mb-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Package size={18} className="text-muted-foreground" />
           {tp('Produits vendus par client et ville')}
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[600px]">
             <thead>
-              <tr className="text-xs text-gray-500 uppercase tracking-wide border-b border-gray-100">
+              <tr className="text-xs text-muted-foreground uppercase tracking-wide border-b border-border">
                 <th className="text-left py-2 px-2 w-8">#</th>
                 <th className="text-left py-2 px-2">{tp('Client')}</th>
                 <th className="text-left py-2 px-2">{tp('Produit')}</th>
@@ -336,49 +336,49 @@ const StatsPage = () => {
             </thead>
             <tbody>
               {(stats?.productsByClientCity || []).slice(0, 15).map((item, i) => (
-                <tr key={i} className="hover:bg-gray-50 transition-colors border-b border-gray-50">
+                <tr key={i} className="hover:bg-background transition-colors border-b border-gray-50">
                   <td className="py-2.5 px-2"><RankBadge rank={i + 1} /></td>
                   <td className="py-2.5 px-2">
-                    <p className="text-sm font-medium text-gray-800 truncate max-w-[160px]" title={item._id?.client}>
+                    <p className="text-sm font-medium text-foreground truncate max-w-[160px]" title={item._id?.client}>
                       {item._id?.client || tp('Client inconnu')}
                     </p>
-                    <p className="text-xs text-gray-400">{item.phone || tp('N/A')}</p>
+                    <p className="text-xs text-muted-foreground">{item.phone || tp('N/A')}</p>
                   </td>
                   <td className="py-2.5 px-2">
-                    <p className="text-sm text-gray-700 font-medium truncate max-w-[180px]" title={item._id?.product}>
+                    <p className="text-sm text-foreground font-medium truncate max-w-[180px]" title={item._id?.product}>
                       {item._id?.product || tp('Produit inconnu')}
                     </p>
                   </td>
                   <td className="py-2.5 px-2">
-                    <p className="text-sm text-gray-600 truncate max-w-[120px] flex items-center gap-1" title={item._id?.city}>
+                    <p className="text-sm text-muted-foreground truncate max-w-[120px] flex items-center gap-1" title={item._id?.city}>
                       <MapPin size={12} className="shrink-0" />
                       {item._id?.city || tp('Ville inconnue')}
                     </p>
                   </td>
                   <td className="py-2.5 px-2 text-right">
-                    <span className="text-sm font-semibold text-gray-900">{item.quantity}</span>
+                    <span className="text-sm font-semibold text-foreground">{item.quantity}</span>
                   </td>
                   <td className="py-2.5 px-2 text-right">
                     <span className="text-xs text-green-600 font-medium">{fmt(item.revenue)}</span>
                   </td>
                   <td className="py-2.5 px-2 text-right">
-                    <span className="text-xs text-gray-400">{item.orderCount}</span>
+                    <span className="text-xs text-muted-foreground">{item.orderCount}</span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
           {(!stats?.productsByClientCity || stats.productsByClientCity.length === 0) && (
-            <p className="text-sm text-gray-400 text-center py-8">{tp('Aucune donnée disponible')}</p>
+            <p className="text-sm text-muted-foreground text-center py-8">{tp('Aucune donnée disponible')}</p>
           )}
         </div>
       </div>
 
       {/* Daily Trend */}
       {stats?.dailyTrend && stats.dailyTrend.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <TrendingUp size={18} className="text-gray-500" />
+        <div className="bg-card rounded-xl border shadow-sm p-5 hover:shadow-md transition-shadow">
+          <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            <TrendingUp size={18} className="text-muted-foreground" />
             {tp('Évolution quotidienne (30 derniers jours)')}
           </h3>
           <div className="overflow-x-auto">
@@ -388,11 +388,11 @@ const StatsPage = () => {
                 const height = maxCount > 0 ? (d.count / maxCount) * 100 : 0;
                 return (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-[9px] text-gray-400">{d.count}</span>
+                    <span className="text-[9px] text-muted-foreground">{d.count}</span>
                     <div className="w-full bg-primary-100 rounded-t" style={{ height: `${Math.max(height, 4)}%` }}>
-                      <div className="w-full h-full bg-primary-600 rounded-t hover:bg-primary-600 transition" title={`${d._id}: ${d.count} commandes - ${fmt(d.revenue)}`}></div>
+                      <div className="w-full h-full bg-primary rounded-t hover:bg-primary transition" title={`${d._id}: ${d.count} commandes - ${fmt(d.revenue)}`}></div>
                     </div>
-                    <span className="text-[8px] text-gray-400 -rotate-45 origin-top-left whitespace-nowrap">{new Date(d._id).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}</span>
+                    <span className="text-[8px] text-muted-foreground -rotate-45 origin-top-left whitespace-nowrap">{new Date(d._id).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}</span>
                   </div>
                 );
               })}

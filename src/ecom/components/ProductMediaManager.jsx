@@ -103,13 +103,13 @@ export default function ProductMediaManager({
   return (
     <div className="space-y-6">
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-gray-200">
+      <div className="flex gap-4 border-b border-border">
         <button
           onClick={() => setActiveTab('images')}
           className={`px-4 py-2 font-medium transition ${
             activeTab === 'images'
-              ? 'text-primary-600 border-b-2 border-primary-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-primary border-b-2 border-primary-600'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
           <ImageIcon size={18} className="inline mr-2" />
@@ -119,8 +119,8 @@ export default function ProductMediaManager({
           onClick={() => setActiveTab('videos')}
           className={`px-4 py-2 font-medium transition ${
             activeTab === 'videos'
-              ? 'text-primary-600 border-b-2 border-primary-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-primary border-b-2 border-primary-600'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
           <Video size={18} className="inline mr-2" />
@@ -150,17 +150,17 @@ export default function ProductMediaManager({
                 {uploadingImages ? (
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
                 ) : (
-                  <Upload className="text-primary-600" size={32} />
+                  <Upload className="text-primary" size={32} />
                 )}
               </div>
               <div>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-lg font-medium text-foreground">
                   {uploadingImages ? 'Upload en cours...' : tp('Ajouter des images')}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {tp('Cliquez ou glissez-déposez vos images ici')}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   JPG, PNG, WEBP jusqu'à 10MB
                 </p>
               </div>
@@ -188,13 +188,13 @@ export default function ProductMediaManager({
                             {/* Drag Handle */}
                             <div
                               {...provided.dragHandleProps}
-                              className="absolute top-2 left-2 z-10 bg-white rounded-lg p-1 shadow-lg opacity-0 group-hover:opacity-100 transition cursor-grab"
+                              className="absolute top-2 left-2 z-10 bg-card rounded-lg p-1 shadow-lg opacity-0 group-hover:opacity-100 transition cursor-grab"
                             >
-                              <GripVertical size={18} className="text-gray-600" />
+                              <GripVertical size={18} className="text-muted-foreground" />
                             </div>
 
                             {/* Image */}
-                            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                            <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                               <img
                                 src={image.url}
                                 alt={image.alt || `Image ${index + 1}`}
@@ -204,7 +204,7 @@ export default function ProductMediaManager({
 
                             {/* Badge première image */}
                             {index === 0 && (
-                              <div className="absolute top-2 right-2 bg-primary-500 text-white text-xs font-bold px-2 py-1 rounded">
+                              <div className="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded">
                                 {tp('Principal')}
                               </div>
                             )}
@@ -237,7 +237,7 @@ export default function ProductMediaManager({
           )}
 
           {images.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               {tp('Aucune image ajoutée')}
             </div>
           )}
@@ -255,11 +255,11 @@ export default function ProductMediaManager({
             >
               <div className="flex flex-col items-center gap-3">
                 <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center">
-                  <Plus className="text-primary-600" size={32} />
+                  <Plus className="text-primary" size={32} />
                 </div>
                 <div>
-                  <p className="text-lg font-medium text-gray-900">{tp('Ajouter une vidéo')}</p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-lg font-medium text-foreground">{tp('Ajouter une vidéo')}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
                     {tp('YouTube, Vimeo ou lien direct')}
                   </p>
                 </div>
@@ -269,11 +269,11 @@ export default function ProductMediaManager({
 
           {/* Video Form */}
           {showVideoForm && (
-            <div className="bg-gray-50 rounded-xl p-6 space-y-4">
-              <h3 className="font-semibold text-gray-900">{tp('Ajouter une vidéo')}</h3>
+            <div className="bg-background rounded-xl p-6 space-y-4">
+              <h3 className="font-semibold text-foreground">{tp('Ajouter une vidéo')}</h3>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   {tp('Type de vidéo')}
                 </label>
                 <select
@@ -288,7 +288,7 @@ export default function ProductMediaManager({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   URL de la vidéo *
                 </label>
                 <input
@@ -301,7 +301,7 @@ export default function ProductMediaManager({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   {tp('Titre (optionnel)')}
                 </label>
                 <input
@@ -316,7 +316,7 @@ export default function ProductMediaManager({
               <div className="flex gap-2">
                 <button
                   onClick={addVideo}
-                  className="flex-1 bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition"
+                  className="flex-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary transition"
                 >
                   {tp('Ajouter')}
                 </button>
@@ -325,7 +325,7 @@ export default function ProductMediaManager({
                     setShowVideoForm(false);
                     setVideoForm({ url: '', type: 'youtube', title: '' });
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-background transition"
                 >
                   {tp('Annuler')}
                 </button>
@@ -337,30 +337,30 @@ export default function ProductMediaManager({
           {videos.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {videos.map((video, index) => (
-                <div key={index} className="relative group bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div key={index} className="relative group bg-card border border-border rounded-lg overflow-hidden">
                   {/* Thumbnail */}
                   <div className="aspect-video bg-gray-900 relative">
                     {video.thumbnail ? (
                       <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Video size={48} className="text-gray-600" />
+                        <Video size={48} className="text-muted-foreground" />
                       </div>
                     )}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
-                        <Play size={32} className="text-gray-900 ml-1" />
+                      <div className="w-16 h-16 bg-card/90 rounded-full flex items-center justify-center">
+                        <Play size={32} className="text-foreground ml-1" />
                       </div>
                     </div>
                   </div>
 
                   {/* Info */}
                   <div className="p-3">
-                    <p className="font-medium text-sm text-gray-900 truncate">
+                    <p className="font-medium text-sm text-foreground truncate">
                       {video.title || tp('Vidéo sans titre')}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1 truncate">{video.url}</p>
-                    <span className="inline-block mt-2 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                    <p className="text-xs text-muted-foreground mt-1 truncate">{video.url}</p>
+                    <span className="inline-block mt-2 text-xs bg-muted text-foreground px-2 py-1 rounded">
                       {video.type}
                     </span>
                   </div>
@@ -378,7 +378,7 @@ export default function ProductMediaManager({
           )}
 
           {videos.length === 0 && !showVideoForm && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               {tp('Aucune vidéo ajoutée')}
             </div>
           )}

@@ -239,9 +239,9 @@ const Goals = () => {
     <div className="p-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg border border-gray-200 p-5">
-            <div className="h-3 w-24 bg-gray-100 rounded animate-pulse mb-4" />
-            <div className="h-7 w-20 bg-gray-100 rounded animate-pulse" />
+          <div key={i} className="bg-card rounded-lg border p-5">
+            <div className="h-3 w-24 bg-muted rounded animate-pulse mb-4" />
+            <div className="h-7 w-20 bg-muted rounded animate-pulse" />
           </div>
         ))}
       </div>
@@ -250,40 +250,40 @@ const Goals = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
+        <div className="bg-card border-b border-border sticky top-0 z-20">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">{tp('Objectifs')}</h1>
-                <p className="text-sm text-gray-500">{goals.length} objectif{goals.length !== 1 ? 's' : ''} · {goals.filter(g => g.progress >= 100).length} atteint{goals.filter(g => g.progress >= 100).length !== 1 ? 's' : ''}</p>
+                <h1 className="text-lg font-semibold text-foreground">{tp('Objectifs')}</h1>
+                <p className="text-sm text-muted-foreground">{goals.length} objectif{goals.length !== 1 ? 's' : ''} · {goals.filter(g => g.progress >= 100).length} atteint{goals.filter(g => g.progress >= 100).length !== 1 ? 's' : ''}</p>
               </div>
 
               <div className="flex items-center gap-3">
                 <select
                   value={period.periodType}
                   onChange={e => setPeriod({ ...period, periodType: e.target.value })}
-                  className="appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-700 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none"
+                  className="appearance-none bg-card border border-border rounded-lg px-3 py-2 pr-8 text-sm text-foreground focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none"
                 >
                   <option value="daily">{tp('Jour')}</option>
                   <option value="weekly">{tp('Semaine')}</option>
                   <option value="monthly">{tp('Mois')}</option>
                 </select>
 
-                <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                  <button onClick={() => changePeriod(-1)} className="px-2.5 py-2 hover:bg-gray-50 transition-colors border-r border-gray-200">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center border border-border rounded-lg overflow-hidden">
+                  <button onClick={() => changePeriod(-1)} className="px-2.5 py-2 hover:bg-background transition-colors border-r border-border">
+                    <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <span className="px-3 py-2 text-sm font-medium text-gray-700 min-w-[60px] text-center">
+                  <span className="px-3 py-2 text-sm font-medium text-foreground min-w-[60px] text-center">
                     {period.periodType === 'daily' && new Date(period.day).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                     {period.periodType === 'weekly' && `S${period.week}`}
                     {period.periodType === 'monthly' && new Date(period.year, period.month - 1).toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })}
                   </span>
-                  <button onClick={() => changePeriod(1)} className="px-2.5 py-2 hover:bg-gray-50 transition-colors border-l border-gray-200">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <button onClick={() => changePeriod(1)} className="px-2.5 py-2 hover:bg-background transition-colors border-l border-border">
+                    <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -315,15 +315,15 @@ const Goals = () => {
                 const totalTarget = revenueGoals.reduce((sum, g) => sum + g.targetValue, 0);
                 const avgProgress = revenueGoals.length > 0 ? revenueGoals.reduce((sum, g) => sum + g.progress, 0) / revenueGoals.length : 0;
                 return revenueGoals.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 p-5">
+                  <div className="bg-card rounded-lg border p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-500">{tp('Chiffre d\'Affaires')}</span>
-                      <span className="text-sm font-semibold text-gray-900">{avgProgress.toFixed(0)}%</span>
+                      <span className="text-sm font-medium text-muted-foreground">{tp('Chiffre d\'Affaires')}</span>
+                      <span className="text-sm font-semibold text-foreground">{avgProgress.toFixed(0)}%</span>
                     </div>
-                    <p className="text-2xl font-semibold text-gray-900 mb-1">{fmt(totalCurrent)}</p>
-                    <p className="text-xs text-gray-400 mb-3">sur {fmt(totalTarget)}</p>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
-                      <div className="h-full bg-primary-500 rounded-full transition-all duration-500" style={{ width: `${Math.min(avgProgress, 100)}%` }}></div>
+                    <p className="text-2xl font-semibold text-foreground mb-1">{fmt(totalCurrent)}</p>
+                    <p className="text-xs text-muted-foreground mb-3">sur {fmt(totalTarget)}</p>
+                    <div className="w-full bg-muted rounded-full h-1.5">
+                      <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${Math.min(avgProgress, 100)}%` }}></div>
                     </div>
                   </div>
                 );
@@ -334,14 +334,14 @@ const Goals = () => {
                 const totalTarget = ordersGoals.reduce((sum, g) => sum + g.targetValue, 0);
                 const progress = totalTarget > 0 ? (globalOrdersCount / totalTarget) * 100 : 0;
                 return ordersGoals.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 p-5">
+                  <div className="bg-card rounded-lg border p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-500">{tp('Commandes livrées')}</span>
-                      <span className="text-sm font-semibold text-gray-900">{progress.toFixed(0)}%</span>
+                      <span className="text-sm font-medium text-muted-foreground">{tp('Commandes livrées')}</span>
+                      <span className="text-sm font-semibold text-foreground">{progress.toFixed(0)}%</span>
                     </div>
-                    <p className="text-2xl font-semibold text-gray-900 mb-1">{globalOrdersCount}</p>
-                    <p className="text-xs text-gray-400 mb-3">sur {totalTarget}</p>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                    <p className="text-2xl font-semibold text-foreground mb-1">{globalOrdersCount}</p>
+                    <p className="text-xs text-muted-foreground mb-3">sur {totalTarget}</p>
+                    <div className="w-full bg-muted rounded-full h-1.5">
                       <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: `${Math.min(progress, 100)}%` }}></div>
                     </div>
                   </div>
@@ -354,30 +354,30 @@ const Goals = () => {
                 const avgTarget = deliveryGoals.length > 0 ? deliveryGoals.reduce((sum, g) => sum + g.targetValue, 0) / deliveryGoals.length : 0;
                 const avgProgress = deliveryGoals.length > 0 ? deliveryGoals.reduce((sum, g) => sum + g.progress, 0) / deliveryGoals.length : 0;
                 return deliveryGoals.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 p-5">
+                  <div className="bg-card rounded-lg border p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-500">{tp('Taux de livraison')}</span>
-                      <span className="text-sm font-semibold text-gray-900">{avgProgress.toFixed(0)}%</span>
+                      <span className="text-sm font-medium text-muted-foreground">{tp('Taux de livraison')}</span>
+                      <span className="text-sm font-semibold text-foreground">{avgProgress.toFixed(0)}%</span>
                     </div>
-                    <p className="text-2xl font-semibold text-gray-900 mb-1">{avgCurrent.toFixed(1)}%</p>
-                    <p className="text-xs text-gray-400 mb-3">objectif {avgTarget.toFixed(0)}%</p>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                    <p className="text-2xl font-semibold text-foreground mb-1">{avgCurrent.toFixed(1)}%</p>
+                    <p className="text-xs text-muted-foreground mb-3">objectif {avgTarget.toFixed(0)}%</p>
+                    <div className="w-full bg-muted rounded-full h-1.5">
                       <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${Math.min(avgProgress, 100)}%` }}></div>
                     </div>
                   </div>
                 );
               })()}
 
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
+              <div className="bg-card rounded-lg border p-5">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-500">{tp('Taux de réussite')}</span>
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm font-medium text-muted-foreground">{tp('Taux de réussite')}</span>
+                  <span className="text-sm font-semibold text-foreground">
                     {((goals.filter(g => g.progress >= 100).length / goals.length) * 100).toFixed(0)}%
                   </span>
                 </div>
-                <p className="text-2xl font-semibold text-gray-900 mb-1">{goals.filter(g => g.progress >= 100).length}/{goals.length}</p>
-                <p className="text-xs text-gray-400 mb-3">{tp('objectifs atteints')}</p>
-                <div className="w-full bg-gray-100 rounded-full h-1.5">
+                <p className="text-2xl font-semibold text-foreground mb-1">{goals.filter(g => g.progress >= 100).length}/{goals.length}</p>
+                <p className="text-xs text-muted-foreground mb-3">{tp('objectifs atteints')}</p>
+                <div className="w-full bg-muted rounded-full h-1.5">
                   <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${(goals.filter(g => g.progress >= 100).length / goals.length) * 100}%` }}></div>
                 </div>
               </div>
@@ -386,10 +386,10 @@ const Goals = () => {
 
           {/* Liste des objectifs */}
           {goals.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-300 rounded-lg p-12 text-center">
+            <div className="bg-card border border-dashed border-gray-300 rounded-lg p-12 text-center">
               <svg className="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-              <p className="text-sm font-medium text-gray-900">{tp('Aucun objectif défini')}</p>
-              <p className="text-sm text-gray-500 mt-1">{tp('Commencez par fixer vos buts pour cette période.')}</p>
+              <p className="text-sm font-medium text-foreground">{tp('Aucun objectif défini')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{tp('Commencez par fixer vos buts pour cette période.')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -439,15 +439,15 @@ const Goals = () => {
                   const hasDelivery = productData.summary.delivery_rate.count > 0;
 
                   return (
-                    <div key={productKey} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <div key={productKey} className="bg-card rounded-lg border overflow-hidden">
                       {/* En-tête du produit */}
-                      <div className="px-5 py-4 border-b border-gray-100">
+                      <div className="px-5 py-4 border-b border-border">
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0">
-                            <h3 className="font-semibold text-gray-900 text-sm">
+                            <h3 className="font-semibold text-foreground text-sm">
                               {productData.product || tp('Tous les produits')}
                             </h3>
-                            <p className="text-xs text-gray-500 mt-0.5">
+                            <p className="text-xs text-muted-foreground mt-0.5">
                               {productData.goals.length} objectif{productData.goals.length > 1 ? 's' : ''} · {periodLabels[period.periodType]?.toLowerCase() || 'hebdomadaire'}
                             </p>
                           </div>
@@ -455,12 +455,12 @@ const Goals = () => {
                           <div className="flex gap-5 text-right flex-shrink-0">
                             {hasRevenue && (
                               <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wide">CA</p>
-                                <p className="text-sm font-semibold text-gray-900">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wide">CA</p>
+                                <p className="text-sm font-semibold text-foreground">
                                   {fmt(productData.summary.revenue.current)}
                                 </p>
                                 {productData.summary.revenue.deliveries > 0 && (
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-muted-foreground">
                                     {productData.summary.revenue.currentDeliveries || 0}/{productData.summary.revenue.deliveries} livr.
                                   </p>
                                 )}
@@ -468,12 +468,12 @@ const Goals = () => {
                             )}
                             {hasOrders && (
                               <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wide">{tp('Cmds')}</p>
-                                <p className="text-sm font-semibold text-gray-900">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wide">{tp('Cmds')}</p>
+                                <p className="text-sm font-semibold text-foreground">
                                   {productData.summary.orders.current}
                                 </p>
                                 {productData.summary.orders.deliveries > 0 && (
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-muted-foreground">
                                     {productData.summary.orders.currentDeliveries || 0}/{productData.summary.orders.deliveries} livr.
                                   </p>
                                 )}
@@ -481,8 +481,8 @@ const Goals = () => {
                             )}
                             {hasDelivery && (
                               <div className="hidden sm:block">
-                                <p className="text-xs text-gray-400 uppercase tracking-wide">{tp('Livr.')}</p>
-                                <p className="text-sm font-semibold text-gray-900">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wide">{tp('Livr.')}</p>
+                                <p className="text-sm font-semibold text-foreground">
                                   {productData.summary.delivery_rate.count > 0
                                     ? (productData.summary.delivery_rate.current / productData.summary.delivery_rate.count).toFixed(1) + '%'
                                     : '0%'
@@ -505,16 +505,16 @@ const Goals = () => {
                             <div key={goal._id} className="px-5 py-4">
                               <div className="flex items-center justify-between mb-3">
                                 <div className="min-w-0">
-                                  <h4 className="font-medium text-gray-900 text-sm">
+                                  <h4 className="font-medium text-foreground text-sm">
                                     {isCloseuse && typeInfo?.value === 'revenue' ? "Mon CA" : typeInfo?.label}
                                   </h4>
-                                  <p className="text-xs text-gray-400 mt-0.5">
+                                  <p className="text-xs text-muted-foreground mt-0.5">
                                     {isCloseuse ? "Mon objectif" : "Objectif"} {periodLabels[goal.periodType]?.toLowerCase() || 'hebdomadaire'}
                                   </p>
                                 </div>
 
                                 <div className="flex items-center gap-3 flex-shrink-0">
-                                  <span className={`text-sm font-semibold ${goal.progress >= 100 ? 'text-primary-600' : 'text-gray-900'}`}>
+                                  <span className={`text-sm font-semibold ${goal.progress >= 100 ? 'text-primary' : 'text-foreground'}`}>
                                     {goal.progress.toFixed(1)}%
                                   </span>
                                   {isAdmin && (
@@ -538,19 +538,19 @@ const Goals = () => {
                               {/* Valeurs + barre */}
                               <div className="flex items-center gap-4 mb-2">
                                 <div className="flex-1">
-                                  <div className="w-full bg-gray-100 rounded-full h-2">
+                                  <div className="w-full bg-muted rounded-full h-2">
                                     <div
-                                      className={`h-full rounded-full transition-all duration-500 ${goal.progress >= 100 ? 'bg-primary-500' : 'bg-gray-900'}`}
+                                      className={`h-full rounded-full transition-all duration-500 ${goal.progress >= 100 ? 'bg-primary' : 'bg-gray-900'}`}
                                       style={{ width: `${Math.min(goal.progress, 100)}%` }}
                                     ></div>
                                   </div>
                                 </div>
                                 <div className="flex items-baseline gap-1 text-sm flex-shrink-0">
-                                  <span className="font-semibold text-gray-900">
+                                  <span className="font-semibold text-foreground">
                                     {isRevenue ? fmt(goal.currentValue) : isRate ? `${goal.currentValue.toFixed(1)}%` : goal.currentValue}
                                   </span>
-                                  <span className="text-gray-400">/</span>
-                                  <span className="text-gray-500">
+                                  <span className="text-muted-foreground">/</span>
+                                  <span className="text-muted-foreground">
                                     {isRevenue ? fmt(goal.targetValue) : isRate ? `${goal.targetValue.toFixed(0)}%` : goal.targetValue}
                                   </span>
                                 </div>
@@ -558,12 +558,12 @@ const Goals = () => {
 
                               {/* Livraisons */}
                               {goal.deliveryCount && (
-                                <div className="flex items-center gap-4 mt-2 pt-2 border-t border-gray-100">
-                                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                                <div className="flex items-center gap-4 mt-2 pt-2 border-t border-border">
+                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                                     <span>{goal.currentDeliveries || 0}/{goal.deliveryCount} livraisons</span>
                                   </div>
-                                  <span className="text-xs text-gray-400">
+                                  <span className="text-xs text-muted-foreground">
                                     reste {Math.max(0, goal.deliveryCount - (goal.currentDeliveries || 0))}
                                   </span>
                                 </div>
@@ -585,11 +585,11 @@ const Goals = () => {
       {isAdmin && showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setShowForm(false)}>
           <div className="absolute inset-0 bg-black/40" />
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-gray-200">
+          <div className="relative bg-card rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-border">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-gray-900">{tp('Nouvel objectif')}</h2>
-                <button onClick={() => setShowForm(false)} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                <h2 className="text-base font-semibold text-foreground">{tp('Nouvel objectif')}</h2>
+                <button onClick={() => setShowForm(false)} className="p-1.5 text-muted-foreground hover:text-muted-foreground rounded-lg hover:bg-muted transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -601,16 +601,16 @@ const Goals = () => {
               <form id="goal-form" onSubmit={(e) => { handleAddGoal(e); setShowForm(false); }} className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Période')}</label>
-                    <select value={newGoal.periodType} onChange={e => setNewSource({ ...newGoal, periodType: e.target.value })} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
+                    <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Période')}</label>
+                    <select value={newGoal.periodType} onChange={e => setNewSource({ ...newGoal, periodType: e.target.value })} className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
                       <option value="daily">{tp('Journalier')}</option>
                       <option value="weekly">{tp('Hebdomadaire')}</option>
                       <option value="monthly">{tp('Mensuel')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Type')}</label>
-                    <select value={newGoal.type} onChange={e => setNewSource({ ...newGoal, type: e.target.value })} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
+                    <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Type')}</label>
+                    <select value={newGoal.type} onChange={e => setNewSource({ ...newGoal, type: e.target.value })} className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
                       {goalTypes.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
                   </div>
@@ -619,8 +619,8 @@ const Goals = () => {
                 {newGoal.type === 'revenue' && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Produit')}</label>
-                      <select value={newGoal.product} onChange={e => handleProductChange(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
+                      <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Produit')}</label>
+                      <select value={newGoal.product} onChange={e => handleProductChange(e.target.value)} className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none">
                         <option value="">{tp('Sélectionner un produit')}</option>
                         {products.map(p => (
                           <option key={p._id} value={p.name}>
@@ -631,16 +631,16 @@ const Goals = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nombre de livraisons')}</label>
+                      <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Nombre de livraisons')}</label>
                       <input
                         type="number"
                         placeholder={tp('Ex: 50')}
                         value={newGoal.deliveryCount}
                         onChange={e => handleDeliveryCountChange(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none"
+                        className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none"
                       />
                       {newGoal.deliveryCount && newGoal.product && (
-                        <p className="text-xs text-gray-500 mt-1.5">
+                        <p className="text-xs text-muted-foreground mt-1.5">
                           {newGoal.deliveryCount} x {fmt(products.find(p => p.name === newGoal.product)?.sellingPrice || 0)} = {fmt(newGoal.targetValue)}
                         </p>
                       )}
@@ -649,7 +649,7 @@ const Goals = () => {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
                     Valeur cible {newGoal.type === 'revenue' && newGoal.deliveryCount && newGoal.product && '(auto)'}
                   </label>
                   <div className="relative">
@@ -659,19 +659,19 @@ const Goals = () => {
                       value={newGoal.targetValue}
                       onChange={e => setNewSource({ ...newGoal, targetValue: e.target.value })}
                       disabled={newGoal.type === 'revenue' && newGoal.deliveryCount && newGoal.product}
-                      className={`w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none ${newGoal.type === 'revenue' && newGoal.deliveryCount && newGoal.product ? 'bg-gray-50 text-gray-500' : ''}`}
+                      className={`w-full px-3 py-2.5 bg-card border border-border rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none ${newGoal.type === 'revenue' && newGoal.deliveryCount && newGoal.product ? 'bg-background text-muted-foreground' : ''}`}
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">{goalTypes.find(t => t.value === newGoal.type)?.unit}</span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{goalTypes.find(t => t.value === newGoal.type)?.unit}</span>
                   </div>
                   {newGoal.type === 'revenue' && !newGoal.product && (
-                    <p className="text-xs text-gray-500 mt-1.5">{tp('Sélectionnez un produit pour le calcul automatique')}</p>
+                    <p className="text-xs text-muted-foreground mt-1.5">{tp('Sélectionnez un produit pour le calcul automatique')}</p>
                   )}
                 </div>
               </form>
             </div>
 
-            <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
-              <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+            <div className="px-6 py-4 border-t border-border flex gap-3">
+              <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2.5 bg-card border border-border text-foreground rounded-lg text-sm font-medium hover:bg-background transition-colors">
                 {tp('Annuler')}
               </button>
               <button

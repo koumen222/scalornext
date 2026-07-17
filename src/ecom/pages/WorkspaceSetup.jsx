@@ -53,12 +53,12 @@ const WorkspaceSetup = () => {
   };
 
   if (authLoading) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="p-8">
         <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-6" />
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4 shadow-sm">
+        <div className="bg-card rounded-xl border p-6 space-y-4 shadow-sm">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" />
+            <div key={i} className="h-4 bg-muted rounded animate-pulse" />
           ))}
         </div>
       </div>
@@ -126,24 +126,24 @@ const WorkspaceSetup = () => {
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-50 border border-primary-100 mb-4 shadow-sm">
             {step === 1 ? (
-              <svg className="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             ) : (
-              <svg className="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             )}
           </div>
-          <h1 className="text-xl font-bold text-gray-900">
+          <h1 className="text-xl font-bold text-foreground">
             {step === 1 ? 'Créez votre espace' : tp('Parlez-nous de vous')}
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             {step === 1 ? 'Optionnel — vous pouvez le faire plus tard' : tp('Pour personnaliser votre expérience')}
           </p>
         </div>
 
-        <div className="bg-white/80 border border-gray-200 rounded-2xl p-6 backdrop-blur-xl shadow-xl">
+        <div className="bg-card/80 border border-border rounded-2xl p-6 backdrop-blur-xl shadow-xl">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm flex items-start gap-2 mb-4">
               <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -154,22 +154,22 @@ const WorkspaceSetup = () => {
           {step === 1 ? (
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Nom de votre espace')}</label>
+                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Nom de votre espace')}</label>
                 <input type="text" required placeholder={tp('Ex: Ma Boutique, Mon Business...')} value={workspaceName} onChange={e => setWorkspaceName(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm" />
+                  className="block w-full px-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">{tp('Votre rôle dans cet espace')}</label>
+                <label className="block text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wide">{tp('Votre rôle dans cet espace')}</label>
                 <div className="grid grid-cols-2 gap-2">
                   {roles.map(r => (
                     <button key={r.value} type="button" onClick={() => setSelectedRole(r.value)}
-                      className={`text-left px-3 py-2.5 rounded-xl border text-xs transition ${selectedRole === r.value ? 'border-primary-500 bg-primary-50 text-primary-800 shadow-sm' : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
+                      className={`text-left px-3 py-2.5 rounded-xl border text-xs transition ${selectedRole === r.value ? 'border-primary-500 bg-primary-50 text-primary-800 shadow-sm' : 'border-border bg-background text-muted-foreground hover:border-gray-300 hover:text-foreground'}`}>
                       <span className="font-bold block">{r.label}</span>
                       <span className="opacity-70 text-[10px]">{r.desc}</span>
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-muted-foreground">
                   {selectedRole === 'ecom_admin' 
                     ? 'En tant qu\'e-commerçant, vous aurez accès à toutes les fonctionnalités et pourrez gérer votre équipe.'
                     : 'Vous pourrez rejoindre une équipe existante pour accéder aux données partagées.'}
@@ -183,14 +183,14 @@ const WorkspaceSetup = () => {
           ) : (
             <form onSubmit={handleOnboarding} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Numéro WhatsApp / Téléphone')}</label>
+                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Numéro WhatsApp / Téléphone')}</label>
                 <input type="tel" placeholder="+237 6XX XX XX XX" value={phone} onChange={e => setPhone(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm" />
+                  className="block w-full px-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Que vendez-vous ?')}</label>
+                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Que vendez-vous ?')}</label>
                 <select value={businessType} onChange={e => setBusinessType(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm">
+                  className="block w-full px-4 py-3 bg-card border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm">
                   <option value="">{tp('Sélectionnez une catégorie...')}</option>
                   <option value="vetements">{tp('Vêtements mode et Beauté')}</option>
                   <option value="electronique">{tp('Électronique et Gadgets')}</option>
@@ -201,9 +201,9 @@ const WorkspaceSetup = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Commandes générées par mois')}</label>
+                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Commandes générées par mois')}</label>
                 <select value={ordersPerMonth} onChange={e => setOrdersPerMonth(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm">
+                  className="block w-full px-4 py-3 bg-card border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition shadow-sm">
                   <option value="">{tp('Sélectionnez un volume...')}</option>
                   <option value="0-50">{tp('0 à 50 commandes')}</option>
                   <option value="50-500">{tp('50 à 500 commandes')}</option>
@@ -219,15 +219,15 @@ const WorkspaceSetup = () => {
         </div>
 
         <button onClick={step === 1 ? () => navigate('/ecom/landing') : skipOnboarding}
-          className="mt-4 w-full py-3 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-700 border border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm">
+          className="mt-4 w-full py-3 rounded-xl text-sm font-bold text-muted-foreground hover:text-foreground border border-border hover:border-gray-300 bg-card hover:bg-background transition flex items-center justify-center gap-2 shadow-sm">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
           {tp('Passer cette étape')}
         </button>
 
-        <div className="mt-6 flex items-center justify-center gap-4 text-xs font-medium text-gray-400">
-          <button onClick={logout} className="hover:text-gray-700 transition">{tp('Se déconnecter')}</button>
+        <div className="mt-6 flex items-center justify-center gap-4 text-xs font-medium text-muted-foreground">
+          <button onClick={logout} className="hover:text-foreground transition">{tp('Se déconnecter')}</button>
           <span>·</span>
-          <button onClick={() => navigate('/ecom/privacy')} className="hover:text-gray-700 transition">{tp('Confidentialité')}</button>
+          <button onClick={() => navigate('/ecom/privacy')} className="hover:text-foreground transition">{tp('Confidentialité')}</button>
           <span>·</span>
           <span>&copy; {new Date().getFullYear()} Scalor</span>
         </div>

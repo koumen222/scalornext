@@ -18,6 +18,7 @@ export const CREATIVE_PROVIDERS = {
   text: { id: 'deepseek', label: 'DeepSeek', kind: 'text' },
   image: { id: 'gpt-image-2', label: 'GPT Image 2', kind: 'image' },
   video: { id: 'grok', label: 'Grok · Kie AI', kind: 'video' },
+  voice: { id: 'fish-audio', label: 'Fish Audio', kind: 'voice' },
 };
 
 // ─── Crédits ────────────────────────────────────────────────────────────────
@@ -53,6 +54,11 @@ const image = {
     }),
 
   job: (jobId) => ecomApi.get(`/ai/creative-generator/jobs/${jobId}`, { timeout: 15000 }),
+
+  /** Génération/édition d'image simple via gpt-image (sourceUrl = référence
+   *  exacte, ex. photo produit) → { success, url }. Utilisé par l'Avatar
+   *  parlant pour créer le personnage produit en main. */
+  simple: (payload) => ecomApi.post('/builder-ai/generate-image', payload, { timeout: 150000 }),
 };
 
 // ─── Vidéo — Grok Imagine via kie.ai (endpoint existant /builder-ai/generate-gif) ──
@@ -86,6 +92,25 @@ const launch = {
   voiceover: (payload) => ecomApi.post('/builder-ai/voiceover', payload, { timeout: 130000 }),
 };
 
+// ─── Voix — synthèse vocale (Fish Audio, endpoint /builder-ai/voiceover) ─────
+// Moteur TTS du Studio Voix. Contrat garanti côté backend : { text, referenceId }.
+// Les champs de réglage (speed, language, stability, similarity, style, format)
+// sont transmis en option ; le backend les ignore tant qu'ils ne sont pas gérés,
+// sans casser la génération. Réponse : { success, url } (fichier MP3 distant).
+const voice = {
+  /** @param {{text:string, referenceId?:string, speed?:number, language?:string,
+   *           stability?:number, similarity?:number, style?:number, format?:string}} payload */
+  generate: (payload) =>
+    ecomApi.post('/builder-ai/voiceover', payload, { timeout: 130000 }),
+
+  /** Catalogue de voix Fish Audio (proxy backend).
+   *  @param {{q?:string, language?:string, sort?:'score'|'task_count'|'created_at',
+   *           self?:boolean, page?:number, pageSize?:number}} params
+   *  → { success, total, page, pageSize, voices:[{ id, title, languages, tags, cover, sampleUrl, ... }] } */
+  list: (params = {}) =>
+    ecomApi.get('/builder-ai/voices', { params, timeout: 25000 }),
+};
+
 // ─── Montage vidéo créatif (timeline) — assemblage clips + voix off (job async) ──
 // create() rend { jobId }; on interroge job(id) jusqu'à status 'done' (url MP4) ou 'error'.
 const montage = {
@@ -102,6 +127,58 @@ const montage = {
   presets: () => ecomApi.get('/builder-ai/music-presets', { timeout: 60000 }),
   /** Directeur de montage IA : toutes les décisions d'expert → { success, plan } */
   director: (payload) => ecomApi.post('/builder-ai/montage-director', payload, { timeout: 90000 }),
+  /** « Générer une scène » : instruction libre (« un CTA », « un hook »…) →
+   *  { success, scene:{ role, voiceText, subtitleText, clipPrompt, media, showProduct } } */
+  sceneBrief: (payload) => ecomApi.post('/builder-ai/scene-brief', payload, { timeout: 90000 }),
+};
+
+// ─── Clonage de page produit concurrent (scrape + réécriture + images IA) ────
+const clone = {
+  /** @param {{url:string, maxImages?:number}} payload → { jobId } */
+  create: (payload) => ecomApi.post('/builder-ai/clone-product-page', payload, { timeout: 30000 }),
+  job: (jobId) => ecomApi.get(`/builder-ai/clone-product-page/jobs/${jobId}`, {
+    timeout: 15000,
+    validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
+  }),
+  /** Persiste l'aperçu (édité) en StoreProduct (brouillon). → { productId, slug } */
+  save: (product) => ecomApi.post('/builder-ai/clone-product-page/save', { product }, { timeout: 30000 }),
+};
+
+// ─── Avatar parlant (image/vidéo + voix → lip sync MuseTalk) ─────────────────
+const lipsync = {
+  /** @param {{imageUrl?:string, videoUrl?:string, audioUrl?:string, text?:string,
+   *           voiceRefId?:string, motion?:'presenter'|'hands'|'calm', motionPrompt?:string}} payload */
+  create: (payload) => ecomApi.post('/builder-ai/lipsync', payload, { timeout: 30000 }),
+  job: (jobId) => ecomApi.get(`/builder-ai/lipsync/jobs/${jobId}`, {
+    timeout: 15000,
+    validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
+  }),
+  /** Monologue de l'avatar généré depuis le produit (nom/description/photo)
+   *  → { success, script } — hook → bénéfice → preuve → CTA commande+livraison. */
+  script: (payload) => ecomApi.post('/builder-ai/avatar-script', payload, { timeout: 90000 }),
+};
+
+// ─── Traduction / doublage vidéo (upload marchand, job async) ────────────────
+// create() rend { jobId } ; on interroge job(id) jusqu'à status 'done'
+// (videoUrl MP4 doublé + srtUrl sous-titres) ou 'error'.
+// Backend : POST /video-translation/translate, GET /video-translation/:jobId.
+const translation = {
+  /** Langues cibles + voix disponibles → { languages:[{code,name}], voices:[{id,label}] } */
+  options: () => ecomApi.get('/video-translation/meta/options', { timeout: 15000 }),
+
+  /** @param {FormData} formData  video, targetLang, voice, keepOriginalAudio, burnSubtitles → { jobId } */
+  create: (formData, config = {}) =>
+    ecomApi.post('/video-translation/translate', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000,
+      ...config,
+    }),
+
+  // 404 accepté comme réponse normale du poll (job pas encore visible / expiré).
+  job: (jobId) => ecomApi.get(`/video-translation/${jobId}`, {
+    timeout: 15000,
+    validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
+  }),
 };
 
 // ─── Upload générique (clip vidéo / voix / musique) → { success, url, mime } ──
@@ -115,7 +192,7 @@ const media = {
     }),
 };
 
-const creativeApi = { credits, text, image, video, gallery, launch, montage, media, providers: CREATIVE_PROVIDERS };
+const creativeApi = { credits, text, image, video, voice, gallery, launch, montage, lipsync, clone, translation, media, providers: CREATIVE_PROVIDERS };
 
-export { credits as creativeCreditsApi, text as creativeTextApi, image as creativeImageApi, video as creativeVideoApi, gallery as creativeGalleryApi, launch as creativeLaunchApi, montage as creativeMontageApi, media as creativeMediaApi };
+export { credits as creativeCreditsApi, text as creativeTextApi, image as creativeImageApi, video as creativeVideoApi, voice as creativeVoiceApi, gallery as creativeGalleryApi, launch as creativeLaunchApi, montage as creativeMontageApi, translation as creativeTranslationApi, media as creativeMediaApi };
 export default creativeApi;

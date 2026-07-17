@@ -160,10 +160,10 @@ const BoutiqueDeliveryZones = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
             <IcoTruck /> Zones de livraison
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {tp('Définissez les pays et zones où vous livrez, avec les frais de livraison')}
           </p>
         </div>
@@ -188,13 +188,13 @@ const BoutiqueDeliveryZones = () => {
       )}
 
       {/* ── Flat shipping fee ──────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+      <div className="bg-card rounded-2xl border p-5 space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <IcoTruck />
             <div>
-              <h2 className="text-sm font-bold text-gray-900">{tp('Frais de livraison forfaitaires')}</h2>
-              <p className="text-xs text-gray-500">{tp('Un montant fixe ajouté automatiquement à chaque commande sur le formulaire de paiement.')}</p>
+              <h2 className="text-sm font-bold text-foreground">{tp('Frais de livraison forfaitaires')}</h2>
+              <p className="text-xs text-muted-foreground">{tp('Un montant fixe ajouté automatiquement à chaque commande sur le formulaire de paiement.')}</p>
             </div>
           </div>
           <button
@@ -202,7 +202,7 @@ const BoutiqueDeliveryZones = () => {
             onClick={() => setFlatShippingEnabled(v => !v)}
             className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${flatShippingEnabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
           >
-            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${flatShippingEnabled ? 'translate-x-5' : ''}`} />
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform ${flatShippingEnabled ? 'translate-x-5' : ''}`} />
           </button>
         </div>
 
@@ -210,7 +210,7 @@ const BoutiqueDeliveryZones = () => {
           <div className="space-y-4 pt-1">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1 block">
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
                   {tp('Montant des frais de livraison')}
                 </label>
                 <div className="flex items-center gap-2">
@@ -222,11 +222,11 @@ const BoutiqueDeliveryZones = () => {
                     placeholder="0"
                     className="flex-1 px-3 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                   />
-                  <span className="text-sm font-semibold text-gray-500">{symbol}</span>
+                  <span className="text-sm font-semibold text-muted-foreground">{symbol}</span>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1 block">
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
                   {tp('Livraison gratuite à partir de (optionnel)')}
                 </label>
                 <div className="flex items-center gap-2">
@@ -238,13 +238,13 @@ const BoutiqueDeliveryZones = () => {
                     placeholder={tp('0 = désactivé')}
                     className="flex-1 px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                   />
-                  <span className="text-sm font-semibold text-gray-500">{symbol}</span>
+                  <span className="text-sm font-semibold text-muted-foreground">{symbol}</span>
                 </div>
-                <p className="text-[10px] text-gray-400 mt-1">{tp('Laisser à 0 pour ne pas activer la livraison gratuite.')}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{tp('Laisser à 0 pour ne pas activer la livraison gratuite.')}</p>
               </div>
             </div>
 
-            <div className={`flex items-start gap-2.5 p-3 rounded-xl text-xs ${flatShippingFee > 0 ? 'bg-primary-50 border border-primary-200 text-primary-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>
+            <div className={`flex items-start gap-2.5 p-3 rounded-xl text-xs ${flatShippingFee > 0 ? 'bg-primary-50 border border-primary-200 text-primary' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>
               <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -261,19 +261,19 @@ const BoutiqueDeliveryZones = () => {
       </div>
 
       {/* Countries section */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+      <div className="bg-card rounded-2xl border p-5 space-y-4">
         <div className="flex items-center gap-2">
           <IcoGlobe />
           <div>
-            <h2 className="text-sm font-bold text-gray-900">{tp('Pays de vente')}</h2>
-            <p className="text-xs text-gray-500">{tp('Sélectionnez les pays où vous vendez. Si un client est hors de ces pays, il verra un message d\'indisponibilité.')}</p>
+            <h2 className="text-sm font-bold text-foreground">{tp('Pays de vente')}</h2>
+            <p className="text-xs text-muted-foreground">{tp('Sélectionnez les pays où vous vendez. Si un client est hors de ces pays, il verra un message d\'indisponibilité.')}</p>
           </div>
         </div>
 
         {/* Country tags */}
         <div className="flex flex-wrap gap-2">
           {countries.map(c => (
-            <span key={c} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
+            <span key={c} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary rounded-full text-sm font-medium">
               {c}
               <button
                 onClick={() => removeCountry(c)}
@@ -309,12 +309,12 @@ const BoutiqueDeliveryZones = () => {
 
           {/* Suggestions dropdown */}
           {showCountrySuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute z-10 top-full mt-1 left-0 right-12 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-10 top-full mt-1 left-0 right-12 bg-card border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
               {filteredSuggestions.map(c => (
                 <button
                   key={c}
                   onMouseDown={(e) => { e.preventDefault(); addCountry(c); }}
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition"
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-background transition"
                 >
                   {c}
                 </button>
@@ -335,13 +335,13 @@ const BoutiqueDeliveryZones = () => {
         const countryZones = zones.filter(z => z.country === country);
 
         return (
-          <div key={country} className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+          <div key={country} className="bg-card rounded-2xl border p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <IcoMapPin />
                 <div>
-                  <h2 className="text-sm font-bold text-gray-900">Zones — {country}</h2>
-                  <p className="text-xs text-gray-500">
+                  <h2 className="text-sm font-bold text-foreground">Zones — {country}</h2>
+                  <p className="text-xs text-muted-foreground">
                     Villes avec livraison. Hors zone = expédition (paiement avant envoi).
                   </p>
                 </div>
@@ -355,13 +355,13 @@ const BoutiqueDeliveryZones = () => {
             </div>
 
             {countryZones.length === 0 && (
-              <p className="text-xs text-gray-400 italic py-3 text-center">
+              <p className="text-xs text-muted-foreground italic py-3 text-center">
                 Aucune zone définie pour {country}. Les commandes seront traitées en expédition.
               </p>
             )}
 
             {countryZones.map(zone => (
-              <div key={zone.id} className={`border rounded-xl p-4 space-y-3 transition ${zone.enabled ? 'border-primary-200 bg-primary-50/30' : 'border-gray-200 bg-gray-50 opacity-60'}`}>
+              <div key={zone.id} className={`border rounded-xl p-4 space-y-3 transition ${zone.enabled ? 'border-primary-200 bg-primary-50/30' : 'border-border bg-background opacity-60'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <input
@@ -380,7 +380,7 @@ const BoutiqueDeliveryZones = () => {
                         min="0"
                         className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm text-right focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                       />
-                      <span className="text-xs text-gray-500 font-medium">{symbol}</span>
+                      <span className="text-xs text-muted-foreground font-medium">{symbol}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-2">
@@ -388,11 +388,11 @@ const BoutiqueDeliveryZones = () => {
                       onClick={() => updateZone(zone.id, 'enabled', !zone.enabled)}
                       className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 ${zone.enabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
                     >
-                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${zone.enabled ? 'translate-x-4' : ''}`} />
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-card rounded-full shadow transition-transform ${zone.enabled ? 'translate-x-4' : ''}`} />
                     </button>
                     <button
                       onClick={() => removeZone(zone.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                      className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition"
                     >
                       <IcoTrash />
                     </button>
@@ -401,7 +401,7 @@ const BoutiqueDeliveryZones = () => {
 
                 {/* Aliases */}
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 mb-1 block">
+                  <label className="text-xs font-semibold text-muted-foreground mb-1 block">
                     {tp('Variantes du nom (séparées par des virgules)')}
                   </label>
                   <input
@@ -409,9 +409,9 @@ const BoutiqueDeliveryZones = () => {
                     value={(zone.aliases || []).join(', ')}
                     onChange={(e) => handleAliasChange(zone.id, e.target.value)}
                     placeholder={tp('Ex: Dla, douala, DOUALA, Doualla, doula')}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-lg text-xs text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                   />
-                  <p className="text-[10px] text-gray-400 mt-1">
+                  <p className="text-[10px] text-muted-foreground mt-1">
                     Toutes les façons d'écrire cette ville. Le système fait une correspondance flexible.
                   </p>
                 </div>
@@ -422,15 +422,15 @@ const BoutiqueDeliveryZones = () => {
       })}
 
       {/* How it works */}
-      <div className="bg-gray-50 rounded-2xl border border-gray-200 p-5 space-y-3">
-        <h3 className="text-sm font-bold text-gray-900">{tp('Comment ça fonctionne')}</h3>
-        <div className="space-y-2 text-xs text-gray-600">
+      <div className="bg-background rounded-2xl border border-border p-5 space-y-3">
+        <h3 className="text-sm font-bold text-foreground">{tp('Comment ça fonctionne')}</h3>
+        <div className="space-y-2 text-xs text-muted-foreground">
           <div className="flex items-start gap-2">
-            <span className="w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">1</span>
+            <span className="w-5 h-5 rounded-full bg-primary-100 text-primary flex items-center justify-center text-[10px] font-bold flex-shrink-0">1</span>
             <p><strong>{tp('Pays définis')}</strong> {tp('— Seuls les clients dans ces pays peuvent commander. Message d\'erreur sinon.')}</p>
           </div>
           <div className="flex items-start gap-2">
-            <span className="w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">2</span>
+            <span className="w-5 h-5 rounded-full bg-primary-100 text-primary flex items-center justify-center text-[10px] font-bold flex-shrink-0">2</span>
             <p><strong>{tp('Zone de livraison')}</strong> {tp('— Si la ville du client correspond à une zone, la livraison est proposée avec paiement à la réception + frais de livraison définis.')}</p>
           </div>
           <div className="flex items-start gap-2">

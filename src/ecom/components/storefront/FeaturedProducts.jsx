@@ -3,10 +3,10 @@ import React from 'react';
 const ProductCard = ({ product, currency, theme }) => {
   return (
     <div 
-      className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group"
+      className="bg-card border border-border overflow-hidden hover:shadow-lg transition-all group"
       style={{ borderRadius: theme?.borderRadius || '0.75rem' }}
     >
-      <div className="aspect-square bg-gray-100 overflow-hidden">
+      <div className="aspect-square bg-muted overflow-hidden">
         {product.image ? (
           <img 
             src={product.image} 
@@ -24,7 +24,7 @@ const ProductCard = ({ product, currency, theme }) => {
       
       <div className="p-4">
         <h3 
-          className="font-bold text-gray-900 mb-2 line-clamp-2"
+          className="font-bold text-foreground mb-2 line-clamp-2"
           style={{ fontFamily: theme?.fontFamily || 'inherit' }}
         >
           {product.name}
@@ -36,7 +36,7 @@ const ProductCard = ({ product, currency, theme }) => {
           </span>
           
           {product.compareAtPrice && product.compareAtPrice > product.price && (
-            <span className="text-sm text-gray-400 line-through">
+            <span className="text-sm text-muted-foreground line-through">
               {new Intl.NumberFormat('fr-FR').format(product.compareAtPrice)} {currency}
             </span>
           )}

@@ -44,7 +44,7 @@ const roleConfig = {
   },
   ecom_compta: {
     bg: 'bg-primary-50',
-    text: 'text-primary-700',
+    text: 'text-primary',
     ring: 'ring-primary-600/20',
     icon: Calculator,
     gradient: 'from-primary-500 to-teal-500'
@@ -141,7 +141,7 @@ const SuperAdminUserDetail = () => {
         {/* Toasts */}
         {success && (
           <div className="flex items-center gap-3 p-4 bg-primary-50 border-2 border-primary-200 rounded-xl text-sm text-primary-800 shadow-lg">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-primary-600" />
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-primary" />
             <span className="font-semibold">{success}</span>
           </div>
         )}
@@ -162,7 +162,7 @@ const SuperAdminUserDetail = () => {
         </button>
 
         {/* User Header */}
-        <div className="bg-white rounded-2xl border-2 border-slate-200 overflow-hidden shadow-lg">
+        <div className="bg-card rounded-2xl border-2 border-slate-200 overflow-hidden shadow-lg">
           <div className={`h-2 bg-gradient-to-r ${user.isActive ? config.gradient : 'from-amber-500 to-red-500'}`} />
 
           <div className="p-8">
@@ -170,7 +170,7 @@ const SuperAdminUserDetail = () => {
               {/* Avatar */}
               <div className={`relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-2xl sm:text-4xl font-black ring-4 ring-inset ${user.isActive ? `${config.bg} ${config.text} ${config.ring}` : 'bg-amber-50 text-amber-600 ring-amber-200'}`}>
                 {user.email?.charAt(0).toUpperCase()}
-                <div className={`absolute -bottom-2 -right-2 w-8 h-8 rounded-full ${user.isActive ? 'bg-primary-500' : 'bg-amber-500'} ring-4 ring-white flex items-center justify-center shadow-lg`}>
+                <div className={`absolute -bottom-2 -right-2 w-8 h-8 rounded-full ${user.isActive ? 'bg-primary' : 'bg-amber-500'} ring-4 ring-white flex items-center justify-center shadow-lg`}>
                   {user.isActive ? <CheckCircle2 className="w-5 h-5 text-white" /> : <XCircle className="w-5 h-5 text-white" />}
                 </div>
               </div>
@@ -208,7 +208,7 @@ const SuperAdminUserDetail = () => {
                   disabled={user._id === currentUser?.id}
                   className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm rounded-xl font-bold transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed ring-2 ring-inset ${user.isActive
                       ? 'text-amber-700 bg-amber-50 hover:bg-amber-100 hover:shadow-md ring-amber-600/20'
-                      : 'text-primary-700 bg-primary-50 hover:bg-primary-100 hover:shadow-md ring-primary-600/20'
+                      : 'text-primary bg-primary-50 hover:bg-primary-100 hover:shadow-md ring-primary-600/20'
                     }`}
                 >
                   {user.isActive ? <><XCircle className="w-4 h-4" /> {tp('Bloquer')}</> : <><CheckCircle2 className="w-4 h-4" /> {tp('Activer')}</>}
@@ -229,7 +229,7 @@ const SuperAdminUserDetail = () => {
         {/* Details Grid */}
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Account Info */}
-          <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
+          <div className="bg-card rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-700 to-primary-700 flex items-center justify-center shadow-md">
                 <Shield className="w-5 h-5 text-white" />
@@ -264,7 +264,7 @@ const SuperAdminUserDetail = () => {
                     value={user.role}
                     onChange={(e) => handleChangeRole(e.target.value)}
                     disabled={user._id === currentUser?.id}
-                    className="w-full text-sm font-bold px-3 py-2 bg-white border-2 border-slate-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all"
+                    className="w-full text-sm font-bold px-3 py-2 bg-card border-2 border-slate-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-all"
                   >
                     <option value="super_admin">{tp('Super Admin')}</option>
                     <option value="ecom_admin">{tp('Admin')}</option>
@@ -291,7 +291,7 @@ const SuperAdminUserDetail = () => {
                 <div className="flex-1">
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{tp('Statut')}</p>
                   <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${user.isActive
-                      ? 'bg-primary-100 text-primary-700'
+                      ? 'bg-primary-100 text-primary'
                       : 'bg-amber-100 text-amber-700'
                     }`}>
                     {user.isActive ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
@@ -303,7 +303,7 @@ const SuperAdminUserDetail = () => {
           </div>
 
           {/* Activity Info */}
-          <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
+          <div className="bg-card rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-primary-600 flex items-center justify-center shadow-md">
                 <Clock className="w-5 h-5 text-white" />
@@ -384,7 +384,7 @@ const SuperAdminUserDetail = () => {
 
         {/* Additional workspaces if any */}
         {user.workspaces && user.workspaces.length > 0 && (
-          <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
+          <div className="bg-card rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-600 to-teal-600 flex items-center justify-center shadow-md">
                 <Building2 className="w-5 h-5 text-white" />
@@ -401,7 +401,7 @@ const SuperAdminUserDetail = () => {
                   </div>
                   <p className="text-xs text-slate-500 mb-1">{tp('Rôle:')} <span className="font-bold text-slate-700">{roleLabels[ws.role] || ws.role}</span></p>
                   <p className="text-xs text-slate-500">{tp('Rejoint:')} <span className="font-bold text-slate-700">{new Date(ws.joinedAt).toLocaleDateString('fr-FR')}</span></p>
-                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 ${ws.status === 'active' ? 'bg-primary-100 text-primary-700' : 'bg-amber-100 text-amber-700'
+                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 ${ws.status === 'active' ? 'bg-primary-100 text-primary' : 'bg-amber-100 text-amber-700'
                     }`}>
                     {ws.status}
                   </span>

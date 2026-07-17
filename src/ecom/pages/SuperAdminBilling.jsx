@@ -64,7 +64,7 @@ function MiniBar({ data, height = 60, color = '#059669' }) {
 
 function KpiCard({ icon: Icon, label, value, sub, accent = 'emerald', trend }) {
   const styles = {
-    emerald: { ring: 'ring-primary-100', icon: 'bg-primary-100 text-primary-600', val: 'text-primary-700' },
+    emerald: { ring: 'ring-primary-100', icon: 'bg-primary-100 text-primary', val: 'text-primary' },
     blue:    { ring: 'ring-blue-100',    icon: 'bg-blue-100 text-blue-600',       val: 'text-blue-700' },
     amber:   { ring: 'ring-amber-100',   icon: 'bg-amber-100 text-amber-600',    val: 'text-amber-700' },
     red:     { ring: 'ring-red-100',     icon: 'bg-red-100 text-red-600',         val: 'text-red-700' },
@@ -72,13 +72,13 @@ function KpiCard({ icon: Icon, label, value, sub, accent = 'emerald', trend }) {
     slate:   { ring: 'ring-slate-100',   icon: 'bg-slate-100 text-slate-500',     val: 'text-slate-700' },
   }[accent];
   return (
-    <div className={`bg-white rounded-2xl p-5 ring-2 ${styles.ring} hover:shadow-md transition-all`}>
+    <div className={`bg-card rounded-2xl p-5 ring-2 ${styles.ring} hover:shadow-md transition-all`}>
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${styles.icon}`}>
           <Icon className="w-5 h-5" />
         </div>
         {trend && (
-          <span className={`text-[11px] font-bold flex items-center gap-0.5 ${trend.up ? 'text-primary-600' : 'text-red-500'}`}>
+          <span className={`text-[11px] font-bold flex items-center gap-0.5 ${trend.up ? 'text-primary' : 'text-red-500'}`}>
             {trend.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
             {trend.label}
           </span>
@@ -95,7 +95,7 @@ function KpiCard({ icon: Icon, label, value, sub, accent = 'emerald', trend }) {
 
 function StatusBadge({ status }) {
   const map = {
-    paid:    { get label() { return tp('Payé'); },     cls: 'bg-primary-100 text-primary-700', icon: CheckCircle2 },
+    paid:    { get label() { return tp('Payé'); },     cls: 'bg-primary-100 text-primary', icon: CheckCircle2 },
     pending: { label: 'En attente', cls: 'bg-amber-100 text-amber-700',   icon: Clock },
     failure: { get label() { return tp('Echoué'); },   cls: 'bg-red-100 text-red-700',         icon: XCircle },
     'no paid': { get label() { return tp('Non payé'); }, cls: 'bg-slate-100 text-slate-600',   icon: XCircle },
@@ -112,7 +112,7 @@ function StatusBadge({ status }) {
 function PlanBadge({ plan }) {
   const map = {
     free:    { label: 'Gratuit',       cls: 'bg-slate-100 text-slate-600' },
-    starter: { label: 'Scalor',         cls: 'bg-primary-100 text-primary-700' },
+    starter: { label: 'Scalor',         cls: 'bg-primary-100 text-primary' },
     pro:     { label: 'Scalor + IA',    cls: 'bg-blue-100 text-blue-700' },
     ultra:   { label: 'Scalor IA Pro',  cls: 'bg-violet-100 text-violet-700' },
   };
@@ -223,7 +223,7 @@ function Tabs({ tabs, active, onChange }) {
           onClick={() => onChange(t.id)}
           className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
             active === t.id
-              ? 'bg-white text-slate-800 shadow-sm'
+              ? 'bg-card text-slate-800 shadow-sm'
               : 'text-slate-500 hover:text-slate-700'
           }`}
         >
@@ -408,7 +408,7 @@ const SuperAdminBilling = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-12 h-12 text-primary-700 animate-spin" />
+          <Loader2 className="w-12 h-12 text-primary animate-spin" />
           <p className="text-sm text-slate-600 font-semibold">{tp('Chargement des donnees facturation...')}</p>
         </div>
       </div>
@@ -421,7 +421,7 @@ const SuperAdminBilling = () => {
         <div className="text-center space-y-3">
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto" />
           <p className="text-sm text-slate-600">{error || tp('Impossible de charger les donnees')}</p>
-          <button onClick={() => fetchData()} className="text-sm font-bold text-primary-600 hover:underline">{tp('Reessayer')}</button>
+          <button onClick={() => fetchData()} className="text-sm font-bold text-primary hover:underline">{tp('Reessayer')}</button>
         </div>
       </div>
     );
@@ -518,7 +518,7 @@ const SuperAdminBilling = () => {
               placeholder={tp('Rechercher par nom, email, telephone, workspace...')}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-card ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all"
             />
           </div>
         )}
@@ -530,13 +530,13 @@ const SuperAdminBilling = () => {
             {/* Revenue chart + plan distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Revenue by month */}
-              <div className="lg:col-span-2 bg-white rounded-2xl ring-2 ring-slate-100 p-6">
+              <div className="lg:col-span-2 bg-card rounded-2xl ring-2 ring-slate-100 p-6">
                 <SectionHead icon={BarChart3} title={tp('Revenu mensuel')} subtitle="12 derniers mois" color="from-primary-600 to-teal-600" />
                 <MiniBar data={revenue.byMonth || []} height={55} />
               </div>
 
               {/* Plan distribution */}
-              <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
+              <div className="bg-card rounded-2xl ring-2 ring-slate-100 p-6">
                 <SectionHead icon={PieChart} title={tp('Repartition plans')} color="from-violet-600 to-purple-600" />
                 <div className="space-y-3 mt-4">
                   {[
@@ -589,7 +589,7 @@ const SuperAdminBilling = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
+              <div className="bg-card rounded-2xl ring-2 ring-slate-100 p-6">
                 <SectionHead icon={CreditCard} title={tp('Flux de paiements Scalor')} subtitle="Tous les achats suivis dans la plateforme" color="from-slate-700 to-slate-900" />
                 <div className="space-y-4 mt-4">
                   {paymentsByType.map(item => (
@@ -619,7 +619,7 @@ const SuperAdminBilling = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
+              <div className="bg-card rounded-2xl ring-2 ring-slate-100 p-6">
                 <SectionHead icon={Phone} title={tp('Methodes encaissees')} subtitle="Paiements confirmes par canal de collecte" color="from-primary-600 to-teal-600" />
                 <div className="space-y-4 mt-4">
                   {paymentMethods.map(method => (
@@ -628,7 +628,7 @@ const SuperAdminBilling = () => {
                         <p className="text-sm font-bold text-slate-800">{getPaymentMethodLabel(method._id)}</p>
                         <p className="text-xs text-slate-400">{method.count} transaction{method.count > 1 ? 's' : ''}</p>
                       </div>
-                      <span className="text-lg font-black text-primary-700">{fmtMoney(method.total)} F</span>
+                      <span className="text-lg font-black text-primary">{fmtMoney(method.total)} F</span>
                     </div>
                   ))}
                   {paymentMethods.length === 0 && (
@@ -641,7 +641,7 @@ const SuperAdminBilling = () => {
             {/* Notification success toast */}
             {notifSuccess && (
               <div className="flex items-center gap-3 p-3 bg-primary-50 border border-primary-200 rounded-xl text-sm text-primary-800 shadow-sm">
-                <CheckCircle2 className="w-4 h-4 text-primary-600 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                 {notifSuccess}
               </div>
             )}
@@ -649,7 +649,7 @@ const SuperAdminBilling = () => {
             {/* Expiring soon + Revenue by offer */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Expiring soon (paid plans + active trials) */}
-              <div className="bg-white rounded-2xl ring-2 ring-orange-100 p-6">
+              <div className="bg-card rounded-2xl ring-2 ring-orange-100 p-6">
                 <SectionHead icon={AlertTriangle} title={tp('Expirent bientôt')} subtitle="Abonnements & essais" color="from-orange-500 to-amber-500" />
                 {(() => {
                   const paidExpiring = (data.expiringSoon || []).map(ws => ({ ...ws, _kind: 'plan' }));
@@ -716,7 +716,7 @@ const SuperAdminBilling = () => {
               </div>
 
               {/* Revenue by offer */}
-              <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-6">
+              <div className="bg-card rounded-2xl ring-2 ring-slate-100 p-6">
                 <SectionHead icon={DollarSign} title={tp('Revenu par offre')} subtitle="Plans et credits pages produits" color="from-blue-600 to-indigo-600" />
                 <div className="space-y-4 mt-4">
                   {(revenue.byType || []).map(p => (
@@ -732,7 +732,7 @@ const SuperAdminBilling = () => {
                         </div>
                         <div className="w-full h-2 rounded-full bg-slate-100 mt-1">
                           <div
-                            className={`h-full rounded-full transition-all ${p._id === 'ultra' ? 'bg-violet-500' : p._id === 'generation' ? 'bg-primary-500' : 'bg-blue-500'}`}
+                            className={`h-full rounded-full transition-all ${p._id === 'ultra' ? 'bg-violet-500' : p._id === 'generation' ? 'bg-primary' : 'bg-blue-500'}`}
                             style={{ width: `${revenue.total > 0 ? (p.total / revenue.total) * 100 : 0}%` }}
                           />
                         </div>
@@ -748,7 +748,7 @@ const SuperAdminBilling = () => {
 
             {/* Expired paid plans */}
             {(data.expiredPaid || []).length > 0 && (
-              <div className="bg-white rounded-2xl ring-2 ring-red-100 p-6">
+              <div className="bg-card rounded-2xl ring-2 ring-red-100 p-6">
                 <SectionHead icon={AlertCircle} title={tp('Plans expires')} subtitle={`${data.expiredPaid.length} workspace(s) avec plan expire`} color="from-red-500 to-rose-500" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
                   {(data.expiredPaid || []).map(ws => (
@@ -785,7 +785,7 @@ const SuperAdminBilling = () => {
             />
 
             {/* Payments table */}
-            <div className="bg-white rounded-2xl ring-2 ring-slate-100 overflow-hidden">
+            <div className="bg-card rounded-2xl ring-2 ring-slate-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -907,7 +907,7 @@ const SuperAdminBilling = () => {
           <div className="space-y-4">
             <SectionHead icon={Crown} title={tp('Abonnements actifs')} subtitle={`${data.activeSubscriptions} abonnement(s) en cours`} color="from-blue-600 to-indigo-600" />
 
-            <div className="bg-white rounded-2xl ring-2 ring-slate-100 overflow-hidden">
+            <div className="bg-card rounded-2xl ring-2 ring-slate-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -940,7 +940,7 @@ const SuperAdminBilling = () => {
                               <span className="text-slate-600">{fmtDate(ws.planExpiresAt)}</span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className={`text-sm font-black ${days <= 3 ? 'text-red-600' : days <= 7 ? 'text-orange-600' : 'text-primary-600'}`}>
+                              <span className={`text-sm font-black ${days <= 3 ? 'text-red-600' : days <= 7 ? 'text-orange-600' : 'text-primary'}`}>
                                 {days}j
                               </span>
                               {days <= 7 && (
@@ -976,7 +976,7 @@ const SuperAdminBilling = () => {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {freeWorkspaces.map(ws => (
-                    <div key={ws._id} className="bg-white rounded-2xl ring-2 ring-slate-100 p-5 hover:shadow-md transition-all">
+                    <div key={ws._id} className="bg-card rounded-2xl ring-2 ring-slate-100 p-5 hover:shadow-md transition-all">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-slate-800 truncate">{ws.name}</p>
@@ -1002,7 +1002,7 @@ const SuperAdminBilling = () => {
             {/* Notification success toast */}
             {notifSuccess && (
               <div className="flex items-center gap-3 p-3 bg-primary-50 border border-primary-200 rounded-xl text-sm text-primary-800 shadow-sm">
-                <CheckCircle2 className="w-4 h-4 text-primary-600 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                 {notifSuccess}
               </div>
             )}
@@ -1022,7 +1022,7 @@ const SuperAdminBilling = () => {
                     const pct = Math.min(100, Math.round((elapsed / totalDays) * 100));
                     const tplKey = daysLeft <= 0 ? 'trial_expired' : 'trial_expiring';
                     return (
-                      <div key={ws._id} className="bg-white rounded-2xl ring-2 ring-amber-100 p-5 hover:shadow-md transition-all">
+                      <div key={ws._id} className="bg-card rounded-2xl ring-2 ring-amber-100 p-5 hover:shadow-md transition-all">
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <p className="font-bold text-slate-800">{ws.name}</p>
@@ -1107,7 +1107,7 @@ const SuperAdminBilling = () => {
                   {expiredTrials.map(ws => {
                     const daysExpired = Math.abs(daysUntil(ws.trialEndsAt) || 0);
                     return (
-                      <div key={ws._id} className="bg-white rounded-2xl ring-2 ring-red-100 p-5 hover:shadow-md transition-all">
+                      <div key={ws._id} className="bg-card rounded-2xl ring-2 ring-red-100 p-5 hover:shadow-md transition-all">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1 min-w-0">
                             <p className="font-bold text-slate-800 truncate">{ws.name}</p>
@@ -1124,7 +1124,7 @@ const SuperAdminBilling = () => {
                             <span>Fin: {fmtDate(ws.trialEndsAt)}</span>
                           </div>
                           {ws.trialExpiredNotifiedAt && (
-                            <div className="flex items-center gap-1 text-primary-600">
+                            <div className="flex items-center gap-1 text-primary">
                               <CheckCircle2 className="w-3 h-3" />
                               Notifié le {fmtDatetime(ws.trialExpiredNotifiedAt)}
                             </div>
@@ -1188,7 +1188,7 @@ const SuperAdminBilling = () => {
             )}
 
             {totalEssais === 0 && (
-              <div className="bg-white rounded-2xl ring-2 ring-slate-100 p-12 text-center">
+              <div className="bg-card rounded-2xl ring-2 ring-slate-100 p-12 text-center">
                 <Timer className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                 <p className="text-sm text-slate-400">{tp('Aucun compte gratuit ou essai en cours')}</p>
               </div>
@@ -1201,7 +1201,7 @@ const SuperAdminBilling = () => {
           <div className="space-y-4">
             <SectionHead icon={Building2} title={tp('Tous les workspaces')} subtitle={`${totalWs} workspace(s) enregistre(s)`} color="from-slate-600 to-slate-800" />
 
-            <div className="bg-white rounded-2xl ring-2 ring-slate-100 overflow-hidden">
+            <div className="bg-card rounded-2xl ring-2 ring-slate-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -1239,7 +1239,7 @@ const SuperAdminBilling = () => {
                           <td className="px-4 py-3"><PlanBadge plan={ws.plan} /></td>
                           <td className="px-4 py-3">
                             {isActive && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-primary-100 text-primary-700">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-primary-100 text-primary">
                                 <CheckCircle2 className="w-3 h-3" />Actif
                               </span>
                             )}
@@ -1300,7 +1300,7 @@ const SuperAdminBilling = () => {
 
       {emailComposer && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl ring-1 ring-slate-200 overflow-hidden">
+          <div className="w-full max-w-2xl bg-card rounded-3xl shadow-2xl ring-1 ring-slate-200 overflow-hidden">
             <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-lg font-black text-slate-900">{tp('Rédiger l’email')}</h3>
@@ -1321,7 +1321,7 @@ const SuperAdminBilling = () => {
                   type="text"
                   value={emailComposer.subject}
                   onChange={(e) => setEmailComposer((prev) => ({ ...prev, subject: e.target.value }))}
-                  className="w-full px-4 py-3 bg-white ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all"
+                  className="w-full px-4 py-3 bg-card ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all"
                   placeholder={tp('Sujet de l\'email')}
                 />
               </div>
@@ -1331,7 +1331,7 @@ const SuperAdminBilling = () => {
                 <textarea
                   value={emailComposer.message}
                   onChange={(e) => setEmailComposer((prev) => ({ ...prev, message: e.target.value }))}
-                  className="w-full min-h-[260px] px-4 py-3 bg-white ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all resize-y"
+                  className="w-full min-h-[260px] px-4 py-3 bg-card ring-2 ring-slate-200 rounded-xl text-sm focus:ring-primary-300 focus:outline-none transition-all resize-y"
                   placeholder={tp('Tapez votre email ici, sans HTML')}
                 />
                 <p className="text-xs text-slate-400 mt-2">{tp('Saisissez un texte simple. Scalor mettra automatiquement le message en forme dans l’email.')}</p>
@@ -1341,14 +1341,14 @@ const SuperAdminBilling = () => {
             <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3 bg-slate-50">
               <button
                 onClick={() => setEmailComposer(null)}
-                className="px-4 py-2 rounded-xl bg-white ring-2 ring-slate-200 text-slate-700 text-sm font-bold hover:ring-slate-300 transition-all"
+                className="px-4 py-2 rounded-xl bg-card ring-2 ring-slate-200 text-slate-700 text-sm font-bold hover:ring-slate-300 transition-all"
               >
                 {tp('Annuler')}
               </button>
               <button
                 onClick={sendComposedEmail}
                 disabled={sendingNotif === `${emailComposer.workspaceId}-email`}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 text-white text-sm font-bold hover:bg-primary-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary-700 transition-colors disabled:opacity-50"
               >
                 {sendingNotif === `${emailComposer.workspaceId}-email` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 Envoyer l’email

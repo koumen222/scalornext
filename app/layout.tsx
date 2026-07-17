@@ -2,14 +2,15 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import Script from 'next/script';
 import './styles/tailwind-base.css';
+import './styles/shadcn-tokens.css'; // tokens shadcn/ui (palette Scalor) — variables CSS
 import './styles/ecom.css';
 import './styles/base.css';
 
 // Métadonnées par défaut — reprises d'index.html (surchargées par generateMetadata en aval)
 export const metadata: Metadata = {
   metadataBase: new URL('https://scalor.net'),
-  title: 'Scalor — The Operating System for African Ecommerce',
-  description: 'Scalor — Growth. Structure. Intelligence. The Operating System for African Ecommerce.',
+  title: 'Scalor — L\'IA au service de ton e-commerce en Afrique',
+  description: 'Scalor génère ta boutique et tes contenus par IA, et pilote tout ton processus de vente e-commerce — commandes, WhatsApp, livraison — partout en Afrique.',
   manifest: '/manifest.json',
   icons: {
     icon: [{ url: '/icon.png', type: 'image/png' }],
@@ -23,8 +24,8 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: 'Scalor — The Operating System for African Ecommerce',
-    description: 'Scalor — Growth. Structure. Intelligence. The Operating System for African Ecommerce.',
+    title: 'Scalor — L\'IA au service de ton e-commerce en Afrique',
+    description: 'Scalor génère ta boutique et tes contenus par IA, et pilote tout ton processus de vente e-commerce — commandes, WhatsApp, livraison — partout en Afrique.',
     type: 'website',
     url: 'https://scalor.net/',
     siteName: 'Scalor',
@@ -32,8 +33,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Scalor — The Operating System for African Ecommerce',
-    description: 'Scalor — Growth. Structure. Intelligence. The Operating System for African Ecommerce.',
+    title: 'Scalor — L\'IA au service de ton e-commerce en Afrique',
+    description: 'Scalor génère ta boutique et tes contenus par IA, et pilote tout ton processus de vente e-commerce — commandes, WhatsApp, livraison — partout en Afrique.',
     images: ['https://scalor.net/icon.png'],
   },
   appleWebApp: {
@@ -66,6 +67,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     // Ne concerne que les attributs de cet élément, pas son contenu.
     <html lang="fr" suppressHydrationWarning>
       <body>
+        {/* Thème clair/sombre — appliqué AVANT le paint pour éviter le flash (FOUC).
+            Lit localStorage('theme'), sinon la préférence système. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);}catch(e){}})();",
+          }}
+        />
         {/* Préconnexions + fonts — reprises d'index.html (React 19 hoiste ces balises dans <head>) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

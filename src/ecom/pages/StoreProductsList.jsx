@@ -5,6 +5,7 @@ import { storeProductsApi, storeManageApi } from '../services/storeApi.js';
 import ecomApi from '../services/ecommApi.js';
 import { formatMoney } from '../utils/currency.js';
 import DigitalProductEbookModal from '../components/DigitalProductEbookModal.jsx';
+import CloneStudio from '../components/creative/CloneStudio.jsx';
 import { tp } from '../i18n/platform.js';
 
 const PRODUCT_VIEWS = {
@@ -58,6 +59,7 @@ const StoreProductsList = () => {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
   const [search, setSearch] = useState('');
+  const [cloneOpen, setCloneOpen] = useState(false); // clonage de page concurrente
   const [error, setError] = useState('');
   const [storeSubdomain, setStoreSubdomain] = useState(null);
   const [storeTemplate, setStoreTemplate] = useState('classic');
@@ -381,7 +383,7 @@ const StoreProductsList = () => {
     if (stock <= 5) {
       return { get label() { return tp('Faible'); }, className: 'bg-amber-50 text-amber-700 ring-amber-100' };
     }
-    return { get label() { return tp('Disponible'); }, className: 'bg-primary-50 text-primary-700 ring-primary-100' };
+    return { get label() { return tp('Disponible'); }, className: 'bg-primary-50 text-primary ring-primary-100' };
   };
 
   const normalizedSearch = search.trim().toLowerCase();
@@ -767,22 +769,22 @@ const StoreProductsList = () => {
     if (viewMode === 'categories') {
       return (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Catégories')}</p>
-            <p className="mt-2 text-2xl font-bold text-gray-900">{categorySummaries.length}</p>
+          <div className="rounded-2xl border border-border bg-card px-4 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Catégories')}</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{categorySummaries.length}</p>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Produits classés')}</p>
-            <p className="mt-2 text-2xl font-bold text-gray-900">{filteredProducts.filter((product) => product.category).length}</p>
+          <div className="rounded-2xl border border-border bg-card px-4 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Produits classés')}</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{filteredProducts.filter((product) => product.category).length}</p>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Non classés')}</p>
-            <p className="mt-2 text-2xl font-bold text-gray-900">{filteredProducts.filter((product) => !product.category).length}</p>
+          <div className="rounded-2xl border border-border bg-card px-4 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Non classés')}</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{filteredProducts.filter((product) => !product.category).length}</p>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Catégorie principale')}</p>
-            <p className="mt-2 text-base font-semibold text-gray-900">{categorySummaries[0]?.name || tp('Aucune')}</p>
-            <p className="mt-1 text-sm text-gray-500">{categorySummaries[0]?.productCount || 0} produit{categorySummaries[0]?.productCount > 1 ? 's' : ''}</p>
+          <div className="rounded-2xl border border-border bg-card px-4 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Catégorie principale')}</p>
+            <p className="mt-2 text-base font-semibold text-foreground">{categorySummaries[0]?.name || tp('Aucune')}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{categorySummaries[0]?.productCount || 0} produit{categorySummaries[0]?.productCount > 1 ? 's' : ''}</p>
           </div>
         </div>
       );
@@ -792,9 +794,9 @@ const StoreProductsList = () => {
       return (
         <div className="space-y-3">
           <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <div className="min-w-[170px] flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Unités en stock')}</p>
-              <p className="mt-2 text-2xl font-bold text-gray-900">{stockSummary.totalUnits}</p>
+            <div className="min-w-[170px] flex-1 rounded-2xl border border-border bg-card px-4 py-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Unités en stock')}</p>
+              <p className="mt-2 text-2xl font-bold text-foreground">{stockSummary.totalUnits}</p>
             </div>
             <div className="min-w-[170px] flex-1 rounded-2xl border border-red-100 bg-red-50 px-4 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-red-500">{tp('Rupture')}</p>
@@ -805,15 +807,15 @@ const StoreProductsList = () => {
               <p className="mt-2 text-2xl font-bold text-amber-700">{stockSummary.lowStock}</p>
             </div>
             <div className="min-w-[170px] flex-1 rounded-2xl border border-primary-100 bg-primary-50 px-4 py-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary-600">{tp('Disponibles')}</p>
-              <p className="mt-2 text-2xl font-bold text-primary-700">{stockSummary.available}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">{tp('Disponibles')}</p>
+              <p className="mt-2 text-2xl font-bold text-primary">{stockSummary.available}</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm">
+          <div className="rounded-2xl border border-border bg-card px-4 py-4 shadow-sm">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Valeur du stock')}</p>
-                <p className="mt-2 text-2xl font-bold text-gray-900">{formatPrice(stockValue)}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Valeur du stock')}</p>
+                <p className="mt-2 text-2xl font-bold text-foreground">{formatPrice(stockValue)}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {STOCK_FILTERS.map((filter) => {
@@ -823,7 +825,7 @@ const StoreProductsList = () => {
                       key={filter.key}
                       type="button"
                       onClick={() => setStockFilter(filter.key)}
-                      className={`rounded-full px-3 py-2 text-sm font-medium transition ${active ? 'bg-primary-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                      className={`rounded-full px-3 py-2 text-sm font-medium transition ${active ? 'bg-primary text-white shadow-sm' : 'bg-muted text-muted-foreground hover:bg-gray-200'}`}
                     >
                       {tp(filter.label)}
                     </button>
@@ -843,15 +845,15 @@ const StoreProductsList = () => {
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
       {/* Header (hidden on stock view) */}
       {viewMode !== 'stock' && (
-      <div className="rounded-2xl border border-gray-200/80 bg-white px-4 py-3 shadow-[0_1px_8px_rgba(15,23,42,0.05)] sm:px-5">
+      <div className="rounded-2xl border border-border/80 bg-card px-4 py-3 shadow-[0_1px_8px_rgba(15,23,42,0.05)] sm:px-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-[0_6px_16px_-8px_rgba(15,107,79,0.7)]">
               <Package className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold tracking-tight text-gray-900">{currentView.title()}</h1>
-              <p className="text-xs text-gray-500">{currentView.description(pagination.total, categorySummaries.length)}</p>
+              <h1 className="text-base sm:text-lg font-bold tracking-tight text-foreground">{currentView.title()}</h1>
+              <p className="text-xs text-muted-foreground">{currentView.description(pagination.total, categorySummaries.length)}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -864,12 +866,12 @@ const StoreProductsList = () => {
                   className="hidden"
                   onChange={handleImportCsv}
                 />
-                <div className="inline-flex overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.05)]">
+                <div className="inline-flex overflow-hidden rounded-xl border border-border bg-card shadow-[0_1px_2px_rgba(16,24,40,0.05)]">
                   <button
                     type="button"
                     onClick={handleTriggerImport}
                     disabled={csvBusy}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
                     title={tp('Importer un CSV')}
                   >
                     <Upload className="h-4 w-4" />
@@ -880,7 +882,7 @@ const StoreProductsList = () => {
                     type="button"
                     onClick={handleExportCsv}
                     disabled={csvBusy}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
                     title={tp('Exporter en CSV')}
                   >
                     <Download className="h-4 w-4" />
@@ -921,15 +923,15 @@ const StoreProductsList = () => {
 
         {/* Génération de page IA — regroupée et libellée */}
         {viewMode !== 'categories' && (
-          <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-xl border border-gray-100 bg-gray-50/70 px-2.5 py-2">
-            <span className="mr-1 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/70 px-2.5 py-2">
+            <span className="mr-1 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5 text-primary-500" />
               {tp('Générer une page')}
             </span>
             <div className="inline-flex overflow-hidden rounded-xl shadow-[0_1px_2px_rgba(16,24,40,0.06)]">
               <button
                 onClick={() => handleOpenPageGenerator('hero_page')}
-                className="inline-flex items-center justify-center gap-1.5 border-r border-primary-400/60 bg-primary-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary-600"
+                className="inline-flex items-center justify-center gap-1.5 border-r border-primary-400/60 bg-primary px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary"
                 title={tp('Page complète + hero IA — gratuit, sans images d\'angles')}
               >
                 <Sparkles className="h-4 w-4" />
@@ -943,7 +945,7 @@ const StoreProductsList = () => {
                 <Zap className="h-4 w-4" />
                 <span>Pro</span>
                 {generationsInfo && (generationsInfo.freeRemaining + generationsInfo.paidRemaining) > 0 && (
-                  <span className="ml-0.5 inline-flex items-center gap-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-bold">
+                  <span className="ml-0.5 inline-flex items-center gap-1 rounded-full bg-card/20 px-1.5 py-0.5 text-xs font-bold">
                     {generationsInfo.freeRemaining + generationsInfo.paidRemaining}
                   </span>
                 )}
@@ -962,29 +964,40 @@ const StoreProductsList = () => {
               <Crown className="h-4 w-4" />
               <span>Premium</span>
               {isPremiumStore && (
-                <span className="ml-0.5 rounded-full bg-white/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide">{tp('Actif')}</span>
+                <span className="ml-0.5 rounded-full bg-card/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide">{tp('Actif')}</span>
               )}
+            </button>
+            {/* Clonage d'une page produit concurrente : fiche réécrite + images IA */}
+            <button
+              type="button"
+              onClick={() => setCloneOpen(true)}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-cyan-300 bg-cyan-50 px-3 py-2 text-sm font-bold text-cyan-800 shadow-[0_1px_2px_rgba(16,24,40,0.06)] transition hover:bg-cyan-100"
+              title={tp('Colle l’URL d’un produit concurrent : fiche réécrite + images similaires générées par IA')}
+            >
+              <Copy className="h-4 w-4" />
+              <span>{tp('Cloner une page')}</span>
+              <span className="ml-0.5 rounded-full bg-cyan-600 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">NEW</span>
             </button>
           </div>
         )}
 
         <div className="mt-2.5 flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative max-w-2xl flex-1">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={currentView.searchPlaceholder()}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50/80 py-2 pl-10 pr-4 text-sm text-gray-700 transition placeholder:text-gray-400 focus:border-primary-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary-100"
+              className="w-full rounded-xl border border-border bg-background/80 py-2 pl-10 pr-4 text-sm text-foreground transition placeholder:text-muted-foreground focus:border-primary-300 focus:bg-card focus:outline-none focus:ring-4 focus:ring-primary-100"
             />
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span className="rounded-full bg-gray-100 px-3 py-1.5 font-medium text-gray-600 tabular-nums">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="rounded-full bg-muted px-3 py-1.5 font-medium text-muted-foreground tabular-nums">
               {tp('{n} affiché(s)', { n: viewMode === 'stock' ? stockFilteredProducts.length : filteredProducts.length })}
             </span>
             {search && (
-              <span className="rounded-full bg-primary-50 px-3 py-1.5 font-medium text-primary-700">
+              <span className="rounded-full bg-primary-50 px-3 py-1.5 font-medium text-primary">
                 {tp('Filtre actif')}
               </span>
             )}
@@ -996,11 +1009,11 @@ const StoreProductsList = () => {
       {renderOverview()}
 
       {viewMode === 'categories' && !loading && categorySummaries.length > 0 && (
-        <div className="overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)]">
-          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 sm:px-5">
+        <div className="overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)]">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-5">
             <div className="flex items-center gap-2">
-              <span className="rounded-xl bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700">{tp('Toutes')}</span>
-              <span className="text-sm text-gray-500">{categorySummaries.length} catégorie{categorySummaries.length > 1 ? 's' : ''}</span>
+              <span className="rounded-xl bg-muted px-3 py-1.5 text-sm font-medium text-foreground">{tp('Toutes')}</span>
+              <span className="text-sm text-muted-foreground">{categorySummaries.length} catégorie{categorySummaries.length > 1 ? 's' : ''}</span>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1016,7 +1029,7 @@ const StoreProductsList = () => {
               <button
                 type="button"
                 onClick={openCreateCategoryDialog}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground transition hover:bg-background"
               >
                 <Plus className="h-4 w-4" />
                 {tp('Nouvelle catégorie')}
@@ -1026,39 +1039,39 @@ const StoreProductsList = () => {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/70">
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Titre')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Produits')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Stock')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Prix moyen')}</th>
-                  <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Actions')}</th>
+                <tr className="border-b border-border bg-background/70">
+                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Titre')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Produits')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Stock')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Prix moyen')}</th>
+                  <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {categorySummaries.map((category) => (
-                  <tr key={category.name} className="transition hover:bg-gray-50/70">
+                  <tr key={category.name} className="transition hover:bg-background/70">
                     <td className="px-5 py-4">
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">{category.name}</p>
-                        <p className="mt-1 text-xs text-gray-500">{category.publishedCount} publié{category.publishedCount > 1 ? 's' : ''}</p>
+                        <p className="text-sm font-semibold text-foreground">{category.name}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{category.publishedCount} publié{category.publishedCount > 1 ? 's' : ''}</p>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm font-semibold text-gray-900">{category.productCount}</td>
-                    <td className="px-4 py-4 text-sm text-gray-700">{category.totalStock}</td>
-                    <td className="px-4 py-4 text-sm text-gray-700">{formatPrice(category.averagePrice)}</td>
+                    <td className="px-4 py-4 text-sm font-semibold text-foreground">{category.productCount}</td>
+                    <td className="px-4 py-4 text-sm text-foreground">{category.totalStock}</td>
+                    <td className="px-4 py-4 text-sm text-foreground">{formatPrice(category.averagePrice)}</td>
                     <td className="px-5 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           type="button"
                           onClick={() => navigate(`${basePath}/products/new`, { state: { category: category.name } })}
-                          className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                          className="rounded-xl border border-border px-3 py-2 text-xs font-medium text-foreground transition hover:bg-background"
                         >
                           {tp('Ajouter produit')}
                         </button>
                         <button
                           type="button"
                           onClick={() => openRenameCategoryDialog(category.name)}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary"
                           title={tp('Modifier')}
                         >
                           <Edit className="h-4 w-4" />
@@ -1066,7 +1079,7 @@ const StoreProductsList = () => {
                         <button
                           type="button"
                           onClick={() => handleDeleteCategory(category.name)}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-red-100 hover:bg-red-50 hover:text-red-600"
                           title={tp('Supprimer')}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -1083,10 +1096,10 @@ const StoreProductsList = () => {
               <div key={category.name} className="space-y-3 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{category.name}</p>
-                    <p className="mt-1 text-xs text-gray-500">{category.productCount} produit{category.productCount > 1 ? 's' : ''}</p>
+                    <p className="text-sm font-semibold text-foreground">{category.name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{category.productCount} produit{category.productCount > 1 ? 's' : ''}</p>
                   </div>
-                  <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                  <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
                     {category.totalStock} stock
                   </span>
                 </div>
@@ -1094,14 +1107,14 @@ const StoreProductsList = () => {
                   <button
                     type="button"
                     onClick={() => navigate(`${basePath}/products/new`, { state: { category: category.name } })}
-                    className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700"
+                    className="rounded-xl border border-border px-3 py-2 text-xs font-medium text-foreground"
                   >
                     {tp('Ajouter produit')}
                   </button>
                   <button
                     type="button"
                     onClick={() => openRenameCategoryDialog(category.name)}
-                    className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary-700"
+                    className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary"
                   >
                     {tp('Modifier')}
                   </button>
@@ -1121,13 +1134,13 @@ const StoreProductsList = () => {
 
       {categoryDialog.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/45 p-4">
-          <div className="w-full max-w-2xl rounded-[28px] border border-gray-200 bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-2xl rounded-[28px] border border-border bg-card p-6 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-foreground">
                   {categoryDialog.mode === 'create' ? 'Ajouter une catégorie' : tp('Modifier la catégorie')}
                 </p>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-muted-foreground">
                   {categoryDialog.mode === 'create'
                     ? 'Créez la catégorie et sélectionnez directement les produits existants à y rattacher.'
                     : 'Renommez la catégorie et ajustez les produits rattachés depuis la liste ci-dessous.'}
@@ -1136,31 +1149,31 @@ const StoreProductsList = () => {
               <button
                 type="button"
                 onClick={closeCategoryDialog}
-                className="rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-background"
               >
                 {tp('Fermer')}
               </button>
             </div>
             <div className="mt-5 space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">{tp('Nom de la catégorie')}</label>
+                <label className="mb-2 block text-sm font-medium text-foreground">{tp('Nom de la catégorie')}</label>
                 <input
                   type="text"
                   value={categoryDialog.name}
                   onChange={(event) => setCategoryDialog((previous) => ({ ...previous, name: event.target.value }))}
                   placeholder={tp('Ex: Nouveautés')}
-                  className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-300 focus:bg-white focus:ring-4 focus:ring-primary-100"
+                  className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary-300 focus:bg-card focus:ring-4 focus:ring-primary-100"
                 />
               </div>
-              <div className="rounded-3xl border border-gray-200 bg-gray-50/70 p-4">
+              <div className="rounded-3xl border border-border bg-background/70 p-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{tp('Produits existants')}</p>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="text-sm font-semibold text-foreground">{tp('Produits existants')}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {tp('Sélectionnez les produits à rattacher à cette catégorie.')}
                     </p>
                   </div>
-                  <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-700 ring-1 ring-gray-200">
+                  <span className="inline-flex rounded-full bg-card px-3 py-1 text-xs font-medium text-foreground ring-1 ring-gray-200">
                     {(categoryDialog.selectedProductIds || []).length} sélectionné{(categoryDialog.selectedProductIds || []).length > 1 ? 's' : ''}
                   </span>
                 </div>
@@ -1170,12 +1183,12 @@ const StoreProductsList = () => {
                     value={categoryDialog.productSearch}
                     onChange={(event) => setCategoryDialog((previous) => ({ ...previous, productSearch: event.target.value }))}
                     placeholder={tp('Rechercher un produit existant...')}
-                    className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100"
+                    className="w-full rounded-2xl border border-border bg-card px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100"
                   />
                 </div>
                 <div className="mt-4 max-h-80 space-y-2 overflow-y-auto pr-1">
                   {categoryDialogProducts.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-4 py-5 text-center text-sm text-gray-500">
+                    <div className="rounded-2xl border border-dashed border-border bg-card px-4 py-5 text-center text-sm text-muted-foreground">
                       {tp('Aucun produit trouvé.')}
                     </div>
                   ) : categoryDialogProducts.map((product) => {
@@ -1186,27 +1199,27 @@ const StoreProductsList = () => {
                     return (
                       <label
                         key={product._id}
-                        className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition ${selected ? 'border-primary-200 bg-primary-50/70' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                        className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition ${selected ? 'border-primary-200 bg-primary-50/70' : 'border-border bg-card hover:border-gray-300'}`}
                       >
                         <input
                           type="checkbox"
                           checked={selected}
                           onChange={() => toggleCategoryProductSelection(product._id)}
-                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary-500"
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-sm font-medium text-gray-900">{product.name || tp('Produit sans nom')}</p>
+                            <p className="text-sm font-medium text-foreground">{product.name || tp('Produit sans nom')}</p>
                             {currentCategory ? (
-                              <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${isLinkedElsewhere ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>
+                              <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${isLinkedElsewhere ? 'bg-amber-100 text-amber-700' : 'bg-muted text-foreground'}`}>
                                 {isLinkedElsewhere ? `Actuel: ${currentCategory}` : currentCategory}
                               </span>
                             ) : (
-                              <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-600">{tp('Non classé')}</span>
+                              <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">{tp('Non classé')}</span>
                             )}
                           </div>
                           {product.slug && (
-                            <p className="mt-1 text-xs text-gray-500">/{product.slug}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">/{product.slug}</p>
                           )}
                         </div>
                       </label>
@@ -1218,7 +1231,7 @@ const StoreProductsList = () => {
                 <button
                   type="button"
                   onClick={closeCategoryDialog}
-                  className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                  className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-background"
                 >
                   {tp('Annuler')}
                 </button>
@@ -1237,32 +1250,32 @@ const StoreProductsList = () => {
       )}
 
       {viewMode === 'stock' && !loading && urgentStockProducts.length > 0 && (
-        <div className="overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)]">
-          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 sm:px-5">
+        <div className="overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)]">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-5">
             <div className="flex items-center gap-2">
-              <span className="rounded-xl bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700">{tp('Tous')}</span>
-              <button type="button" className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">{tp('Créer une nouvelle vue')}</button>
+              <span className="rounded-xl bg-muted px-3 py-1.5 text-sm font-medium text-foreground">{tp('Tous')}</span>
+              <button type="button" className="rounded-xl border border-border px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-background">{tp('Créer une nouvelle vue')}</button>
             </div>
             <button type="button" onClick={handleSubmitStockChanges} disabled={stockSaving} className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800 disabled:opacity-60">{stockSaving ? 'Enregistrement...' : tp('Enregistrer')}</button>
           </div>
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/70">
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+                <tr className="border-b border-border bg-background/70">
+                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                     <label className="inline-flex items-center gap-2">
-                      <input type="checkbox" checked={stockFilteredProducts.length > 0 && stockFilteredProducts.every((product) => selectedStockIds.includes(product._id))} onChange={toggleSelectAllStock} className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                      <input type="checkbox" checked={stockFilteredProducts.length > 0 && stockFilteredProducts.every((product) => selectedStockIds.includes(product._id))} onChange={toggleSelectAllStock} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary-500" />
                       <span>{tp('Sélectionner la totalité des stock')}</span>
                     </label>
                   </th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Image')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Produit')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">SKU</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Indisponible')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Réservé')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Disponible')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('En stock')}</th>
-                  <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Actions')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Image')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Produit')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">SKU</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Indisponible')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Réservé')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Disponible')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('En stock')}</th>
+                  <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -1270,46 +1283,46 @@ const StoreProductsList = () => {
                   const stockBadge = getStockBadge(product.stock || 0);
                   const draftStock = getDraftStockValue(product);
                   return (
-                    <tr key={product._id} className="transition hover:bg-gray-50/70">
+                    <tr key={product._id} className="transition hover:bg-background/70">
                       <td className="px-5 py-4">
-                        <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                        <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary-500" />
                       </td>
                       <td className="px-4 py-4">
                         {product.images?.[0]?.url ? (
-                          <img src={product.images[0].url} alt={product.name} className="h-12 w-12 rounded-2xl border border-gray-200 object-cover shadow-sm" loading="lazy" />
+                          <img src={product.images[0].url} alt={product.name} className="h-12 w-12 rounded-2xl border border-border object-cover shadow-sm" loading="lazy" />
                         ) : (
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100">
-                            <Image className="h-5 w-5 text-gray-400" />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+                            <Image className="h-5 w-5 text-muted-foreground" />
                           </div>
                         )}
                       </td>
                       <td className="px-4 py-4">
                         <div className="min-w-0">
-                          <p className="max-w-[260px] truncate text-sm font-semibold text-gray-900">{product.name}</p>
-                          <p className="mt-1 text-xs text-gray-500">{product.category || tp('Non classé')}</p>
+                          <p className="max-w-[260px] truncate text-sm font-semibold text-foreground">{product.name}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{product.category || tp('Non classé')}</p>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">{tp('Aucun SKU')}</td>
-                      <td className="px-4 py-4 text-sm text-gray-700">0</td>
-                      <td className="px-4 py-4 text-sm text-gray-700">0</td>
+                      <td className="px-4 py-4 text-sm text-muted-foreground">{tp('Aucun SKU')}</td>
+                      <td className="px-4 py-4 text-sm text-foreground">0</td>
+                      <td className="px-4 py-4 text-sm text-foreground">0</td>
                       <td className="px-4 py-4">
-                        <label className="block text-xs text-gray-500">{tp('Quantité Disponible')}</label>
+                        <label className="block text-xs text-muted-foreground">{tp('Quantité Disponible')}</label>
                         <input
                           type="number"
                           min="0"
                           value={draftStock}
                           onChange={(event) => handleStockDraftChange(product._id, event.target.value)}
-                          className="mt-2 w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100"
+                          className="mt-2 w-28 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100"
                         />
                       </td>
                       <td className="px-4 py-4">
-                        <label className="block text-xs text-gray-500">{tp('Quantité En stock')}</label>
+                        <label className="block text-xs text-muted-foreground">{tp('Quantité En stock')}</label>
                         <input
                           type="number"
                           min="0"
                           value={draftStock}
                           onChange={(event) => handleStockDraftChange(product._id, event.target.value)}
-                          className="mt-2 w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100"
+                          className="mt-2 w-28 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100"
                         />
                         <div className="mt-2">
                           <span className={`inline-flex rounded-full px-2 py-1 text-[11px] font-medium ring-1 ${stockBadge.className}`}>{stockBadge.label}</span>
@@ -1320,7 +1333,7 @@ const StoreProductsList = () => {
                           <button
                             type="button"
                             onClick={() => navigate(`${basePath}/products/${product._id}/edit`)}
-                            className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
+                            className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary"
                             title={tp('Modifier')}
                           >
                             <Edit className="h-4 w-4" />
@@ -1341,24 +1354,24 @@ const StoreProductsList = () => {
                 <div key={product._id} className="space-y-3 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{product.name}</p>
-                      <p className="mt-1 text-xs text-gray-500">{tp('Aucun SKU')}</p>
+                      <p className="text-sm font-semibold text-foreground">{product.name}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{tp('Aucun SKU')}</p>
                     </div>
-                    <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                    <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary-500" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-gray-500">{tp('Disponible')}</label>
-                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none" />
+                      <label className="block text-xs text-muted-foreground">{tp('Disponible')}</label>
+                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none" />
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-500">{tp('En stock')}</label>
-                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none" />
+                      <label className="block text-xs text-muted-foreground">{tp('En stock')}</label>
+                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none" />
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${stockBadge.className}`}>{stockBadge.label}</span>
-                    <button type="button" onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary-700">{tp('Modifier')}</button>
+                    <button type="button" onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary">{tp('Modifier')}</button>
                   </div>
                 </div>
               );
@@ -1376,47 +1389,47 @@ const StoreProductsList = () => {
       {/* Products Table / List */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <Loader2 className="w-7 h-7 animate-spin text-primary-600" />
+          <Loader2 className="w-7 h-7 animate-spin text-primary" />
         </div>
       ) : viewMode === 'categories' ? null : (viewMode === 'stock' ? stockFilteredProducts.length === 0 : filteredProducts.length === 0) ? (
         <div className="text-center py-16">
           <Package className="w-12 h-12 text-gray-300 mx-auto" />
-          <p className="text-gray-500 mt-3 text-sm">{tp('Aucun résultat pour cette vue')}</p>
+          <p className="text-muted-foreground mt-3 text-sm">{tp('Aucun résultat pour cette vue')}</p>
           <button
             onClick={() => navigate(`${basePath}/products/new`)}
-            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition"
+            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition"
           >
             <Plus className="w-4 h-4" />
             {tp('Créer le premier produit')}
           </button>
         </div>
       ) : viewMode === 'stock' ? (
-        <div className="overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)]">
-          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 sm:px-5">
+        <div className="overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)]">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-5">
             <div className="flex items-center gap-2">
-              <span className="rounded-xl bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700">{tp('Tous')}</span>
-              <button type="button" className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">{tp('Créer une nouvelle vue')}</button>
+              <span className="rounded-xl bg-muted px-3 py-1.5 text-sm font-medium text-foreground">{tp('Tous')}</span>
+              <button type="button" className="rounded-xl border border-border px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-background">{tp('Créer une nouvelle vue')}</button>
             </div>
             <button type="button" onClick={handleSubmitStockChanges} disabled={stockSaving} className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800 disabled:opacity-60">{stockSaving ? 'Enregistrement...' : tp('Enregistrer')}</button>
           </div>
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/70">
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+                <tr className="border-b border-border bg-background/70">
+                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                     <label className="inline-flex items-center gap-2">
-                      <input type="checkbox" checked={stockFilteredProducts.length > 0 && stockFilteredProducts.every((product) => selectedStockIds.includes(product._id))} onChange={toggleSelectAllStock} className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                      <input type="checkbox" checked={stockFilteredProducts.length > 0 && stockFilteredProducts.every((product) => selectedStockIds.includes(product._id))} onChange={toggleSelectAllStock} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary-500" />
                       <span>{tp('Sélectionner la totalité des stock')}</span>
                     </label>
                   </th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Image')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Produit')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">SKU</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Indisponible')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Réservé')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Disponible')}</th>
-                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('En stock')}</th>
-                  <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Actions')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Image')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Produit')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">SKU</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Indisponible')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Réservé')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Disponible')}</th>
+                  <th className="px-4 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('En stock')}</th>
+                  <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -1424,35 +1437,35 @@ const StoreProductsList = () => {
                   const stockBadge = getStockBadge(product.stock || 0);
                   const draftStock = getDraftStockValue(product);
                   return (
-                    <tr key={product._id} className="transition hover:bg-gray-50/70">
+                    <tr key={product._id} className="transition hover:bg-background/70">
                       <td className="px-5 py-4">
-                        <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                        <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary-500" />
                       </td>
                       <td className="px-4 py-4">
                         {product.images?.[0]?.url ? (
-                          <img src={product.images[0].url} alt={product.name} className="h-12 w-12 rounded-2xl border border-gray-200 object-cover shadow-sm" loading="lazy" />
+                          <img src={product.images[0].url} alt={product.name} className="h-12 w-12 rounded-2xl border border-border object-cover shadow-sm" loading="lazy" />
                         ) : (
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100">
-                            <Image className="h-5 w-5 text-gray-400" />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+                            <Image className="h-5 w-5 text-muted-foreground" />
                           </div>
                         )}
                       </td>
                       <td className="px-4 py-4">
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-gray-900 max-w-[260px]">{product.name}</p>
-                          <p className="mt-1 text-xs text-gray-500">{product.category || tp('Non classé')}</p>
+                          <p className="truncate text-sm font-semibold text-foreground max-w-[260px]">{product.name}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{product.category || tp('Non classé')}</p>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">{tp('Aucun SKU')}</td>
-                      <td className="px-4 py-4 text-sm text-gray-700">0</td>
-                      <td className="px-4 py-4 text-sm text-gray-700">0</td>
+                      <td className="px-4 py-4 text-sm text-muted-foreground">{tp('Aucun SKU')}</td>
+                      <td className="px-4 py-4 text-sm text-foreground">0</td>
+                      <td className="px-4 py-4 text-sm text-foreground">0</td>
                       <td className="px-4 py-4">
-                        <label className="block text-xs text-gray-500">{tp('Quantité Disponible')}</label>
-                        <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100" />
+                        <label className="block text-xs text-muted-foreground">{tp('Quantité Disponible')}</label>
+                        <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-28 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100" />
                       </td>
                       <td className="px-4 py-4">
-                        <label className="block text-xs text-gray-500">{tp('Quantité En stock')}</label>
-                        <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100" />
+                        <label className="block text-xs text-muted-foreground">{tp('Quantité En stock')}</label>
+                        <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-28 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100" />
                         <div className="mt-2 flex items-center gap-2">
                           <span className={`inline-flex rounded-full px-2 py-1 text-[11px] font-medium ring-1 ${stockBadge.className}`}>{stockBadge.label}</span>
                           {hasStockDraft(product) && <span className="text-xs font-medium text-amber-600">{tp('Modifié')}</span>}
@@ -1460,11 +1473,11 @@ const StoreProductsList = () => {
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          <button type="button" onClick={() => handleTogglePublish(product)} className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-50">{product.isPublished ? 'Masquer' : tp('Publier')}</button>
+                          <button type="button" onClick={() => handleTogglePublish(product)} className="rounded-xl border border-border px-3 py-2 text-xs font-medium text-foreground transition hover:bg-background">{product.isPublished ? 'Masquer' : tp('Publier')}</button>
                           <button
                             type="button"
                             onClick={() => navigate(`${basePath}/products/${product._id}/edit`)}
-                            className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
+                            className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary"
                             title={tp('Modifier')}
                           >
                             <Edit className="h-4 w-4" />
@@ -1485,35 +1498,35 @@ const StoreProductsList = () => {
                 <div key={product._id} className="space-y-4 p-4">
                   <div className="flex items-start gap-3">
                     {product.images?.[0]?.url ? (
-                      <img src={product.images[0].url} alt={product.name} className="h-14 w-14 rounded-2xl border border-gray-200 object-cover shadow-sm" loading="lazy" />
+                      <img src={product.images[0].url} alt={product.name} className="h-14 w-14 rounded-2xl border border-border object-cover shadow-sm" loading="lazy" />
                     ) : (
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
-                        <Image className="h-5 w-5 text-gray-400" />
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
+                        <Image className="h-5 w-5 text-muted-foreground" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-sm font-semibold text-gray-900">{product.name}</p>
-                      <p className="mt-1 text-xs text-gray-500">{tp('Aucun SKU')}</p>
+                      <p className="truncate text-sm font-semibold text-foreground">{product.name}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{tp('Aucun SKU')}</p>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${stockBadge.className}`}>{stockBadge.label}</span>
                         {hasStockDraft(product) && <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">{tp('Modifié')}</span>}
                       </div>
                     </div>
-                    <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                    <input type="checkbox" checked={selectedStockIds.includes(product._id)} onChange={() => toggleStockSelection(product._id)} className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary-500" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-gray-500">{tp('Disponible')}</label>
-                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none" />
+                      <label className="block text-xs text-muted-foreground">{tp('Disponible')}</label>
+                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none" />
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-500">{tp('En stock')}</label>
-                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none" />
+                      <label className="block text-xs text-muted-foreground">{tp('En stock')}</label>
+                      <input type="number" min="0" value={draftStock} onChange={(event) => handleStockDraftChange(product._id, event.target.value)} className="mt-2 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none" />
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <button type="button" onClick={() => handleTogglePublish(product)} className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-medium text-gray-700">{product.isPublished ? 'Masquer' : tp('Publier')}</button>
-                    <button type="button" onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary-700">{tp('Modifier')}</button>
+                    <button type="button" onClick={() => handleTogglePublish(product)} className="rounded-xl bg-muted px-3 py-2 text-xs font-medium text-foreground">{product.isPublished ? 'Masquer' : tp('Publier')}</button>
+                    <button type="button" onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary">{tp('Modifier')}</button>
                   </div>
                 </div>
               );
@@ -1521,18 +1534,18 @@ const StoreProductsList = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-[0_2px_14px_rgba(15,23,42,0.06)]">
+        <div className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-[0_2px_14px_rgba(15,23,42,0.06)]">
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/80">
-                  <th className="px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Produit')}</th>
-                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Prix')}</th>
-                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Stock')}</th>
-                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Catégorie')}</th>
-                  <th className="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Statut')}</th>
-                  <th className="px-5 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{tp('Actions')}</th>
+                <tr className="border-b border-border bg-background/80">
+                  <th className="px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Produit')}</th>
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Prix')}</th>
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Stock')}</th>
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Catégorie')}</th>
+                  <th className="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Statut')}</th>
+                  <th className="px-5 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{tp('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -1540,24 +1553,24 @@ const StoreProductsList = () => {
                   const stockBadge = getStockBadge(product.stock || 0);
                   const digitalReady = hasDigitalProduct(product);
                   return (
-                  <tr key={product._id} className="transition hover:bg-gray-50/70">
+                  <tr key={product._id} className="transition hover:bg-background/70">
                     <td className="px-5 py-2.5">
                       <div className="flex items-center gap-3">
                         {product.images?.[0]?.url ? (
                           <img
                             src={product.images[0].url}
                             alt={product.name}
-                            className="h-11 w-11 rounded-2xl border border-gray-200 object-cover shadow-sm"
+                            className="h-11 w-11 rounded-2xl border border-border object-cover shadow-sm"
                             loading="lazy"
                           />
                         ) : (
-                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gray-100">
-                            <Image className="h-5 w-5 text-gray-400" />
+                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-muted">
+                            <Image className="h-5 w-5 text-muted-foreground" />
                           </div>
                         )}
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-gray-900 max-w-[260px]">{product.name}</p>
-                          <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                          <p className="truncate text-sm font-semibold text-foreground max-w-[260px]">{product.name}</p>
+                          <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                             <span className="truncate max-w-[220px]">/{product.slug || 'sans-slug'}</span>
                             {product.pageBuilder?.enabled && (
                               <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700">
@@ -1574,23 +1587,23 @@ const StoreProductsList = () => {
                       </div>
                     </td>
                     <td className="px-4 py-2.5">
-                      <div className="text-sm font-semibold text-gray-900">{formatPrice(product.price, product.currency)}</div>
+                      <div className="text-sm font-semibold text-foreground">{formatPrice(product.price, product.currency)}</div>
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="flex flex-col items-start gap-1">
-                        <span className="text-sm font-semibold text-gray-900">{product.stock ?? 0}</span>
+                        <span className="text-sm font-semibold text-foreground">{product.stock ?? 0}</span>
                         <span className={`inline-flex rounded-full px-2 py-1 text-[11px] font-medium ring-1 ${stockBadge.className}`}>
                           {stockBadge.label}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-2.5 text-sm text-gray-500">
+                    <td className="px-4 py-2.5 text-sm text-muted-foreground">
                       {product.category ? (
-                        <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                        <span className="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
                           {product.category}
                         </span>
                       ) : (
-                        <span className="text-gray-400">{tp('Non classé')}</span>
+                        <span className="text-muted-foreground">{tp('Non classé')}</span>
                       )}
                     </td>
                     <td className="px-4 py-2.5 text-center">
@@ -1598,8 +1611,8 @@ const StoreProductsList = () => {
                         onClick={() => handleTogglePublish(product)}
                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-medium transition ${
                           product.isPublished
-                            ? 'bg-primary-50 text-primary-700 hover:bg-primary-100'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-primary-50 text-primary hover:bg-primary-100'
+                            : 'bg-muted text-muted-foreground hover:bg-gray-200'
                         }`}
                       >
                         {product.isPublished ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -1612,7 +1625,7 @@ const StoreProductsList = () => {
                         <button
                           onClick={() => handleViewProduct(product, 'local')}
                           disabled={!storeSubdomain || !product.slug}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-violet-100 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-40"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-violet-100 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-40"
                           title={tp('Voir la page produit (version locale)')}
                         >
                           <Laptop className="w-4 h-4" />
@@ -1621,7 +1634,7 @@ const StoreProductsList = () => {
                         <button
                           onClick={() => handleViewProduct(product, 'prod')}
                           disabled={!storeSubdomain || !product.slug}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-40"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-40"
                           title={tp('Voir la page produit (en ligne)')}
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -1633,7 +1646,7 @@ const StoreProductsList = () => {
                           className={`rounded-xl border p-2 transition disabled:opacity-60 ${
                             digitalReady
                               ? 'border-emerald-100 bg-emerald-50 text-emerald-600 hover:border-red-200 hover:bg-red-50 hover:text-red-500'
-                              : 'border-transparent text-gray-400 hover:border-emerald-100 hover:bg-emerald-50 hover:text-emerald-600'
+                              : 'border-transparent text-muted-foreground hover:border-emerald-100 hover:bg-emerald-50 hover:text-emerald-600'
                           }`}
                           title={digitalReady ? 'Désactiver le produit digital' : tp('Générer un produit digital')}
                         >
@@ -1649,14 +1662,14 @@ const StoreProductsList = () => {
                               || Boolean(product._pageData?.premium_page);
                             navigate(`${basePath}/products/${product._id}/${isPremium ? 'premium-builder' : 'builder'}`);
                           }}
-                          className={`rounded-xl border p-2 transition ${product.pageBuilder?.enabled || product.productPageConfig?.premiumPage ? 'border-indigo-100 bg-indigo-50 text-indigo-600 hover:bg-indigo-100' : 'border-transparent text-gray-400 hover:border-indigo-100 hover:bg-indigo-50 hover:text-indigo-600'}`}
+                          className={`rounded-xl border p-2 transition ${product.pageBuilder?.enabled || product.productPageConfig?.premiumPage ? 'border-indigo-100 bg-indigo-50 text-indigo-600 hover:bg-indigo-100' : 'border-transparent text-muted-foreground hover:border-indigo-100 hover:bg-indigo-50 hover:text-indigo-600'}`}
                           title={tp('Page Builder')}
                         >
                           <Layers className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDuplicate(product)}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-amber-100 hover:bg-amber-50 hover:text-amber-600"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-amber-100 hover:bg-amber-50 hover:text-amber-600"
                           title={tp('Dupliquer')}
                         >
                           <Copy className="w-4 h-4" />
@@ -1664,21 +1677,21 @@ const StoreProductsList = () => {
                         <button
                           type="button"
                           onClick={() => handleExportSingleProductCsv(product)}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-slate-100 hover:bg-slate-50 hover:text-slate-700"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-slate-100 hover:bg-slate-50 hover:text-slate-700"
                           title={tp('Exporter ce produit en CSV')}
                         >
                           <Download className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => navigate(`${basePath}/products/${product._id}/edit`)}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-primary-100 hover:bg-primary-50 hover:text-primary"
                           title={tp('Modifier')}
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(product._id)}
-                          className="rounded-xl border border-transparent p-2 text-gray-400 transition hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+                          className="rounded-xl border border-transparent p-2 text-muted-foreground transition hover:border-red-100 hover:bg-red-50 hover:text-red-600"
                           title={tp('Supprimer')}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1700,20 +1713,20 @@ const StoreProductsList = () => {
               <div key={product._id} className="space-y-2.5 p-3">
                 <div className="flex items-start gap-3">
                   {product.images?.[0]?.url ? (
-                    <img src={product.images[0].url} alt={product.name} className="h-11 w-11 rounded-2xl border border-gray-200 object-cover shadow-sm" loading="lazy" />
+                    <img src={product.images[0].url} alt={product.name} className="h-11 w-11 rounded-2xl border border-border object-cover shadow-sm" loading="lazy" />
                   ) : (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gray-100">
-                      <Image className="h-5 w-5 text-gray-400" />
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-muted">
+                      <Image className="h-5 w-5 text-muted-foreground" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="truncate text-sm font-semibold text-gray-900">{product.name}</p>
-                    <p className="mt-1 text-sm text-gray-500">{formatPrice(product.price, product.currency)}</p>
+                    <p className="truncate text-sm font-semibold text-foreground">{product.name}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{formatPrice(product.price, product.currency)}</p>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${stockBadge.className}`}>
                         Stock: {product.stock ?? 0}
                       </span>
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${product.isPublished ? 'bg-primary-50 text-primary-700' : 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${product.isPublished ? 'bg-primary-50 text-primary' : 'bg-muted text-muted-foreground'}`}>
                         {product.isPublished ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
                         {product.isPublished ? tp('Publié') : tp('Brouillon')}
                       </span>
@@ -1729,7 +1742,7 @@ const StoreProductsList = () => {
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => handleTogglePublish(product)}
-                    className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium ${product.isPublished ? 'bg-primary-50 text-primary-700' : 'bg-gray-100 text-gray-600'}`}
+                    className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium ${product.isPublished ? 'bg-primary-50 text-primary' : 'bg-muted text-muted-foreground'}`}
                   >
                     {product.isPublished ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                     {product.isPublished ? 'Dépublier' : tp('Publier')}
@@ -1759,19 +1772,19 @@ const StoreProductsList = () => {
                       || product._pageData?.pageStyle === 'premium'
                       || Boolean(product._pageData?.premium_page);
                     navigate(`${basePath}/products/${product._id}/${isPremium ? 'premium-builder' : 'builder'}`);
-                  }} className={`rounded-xl px-3 py-2 text-xs font-medium ${product.pageBuilder?.enabled || product.productPageConfig?.premiumPage ? 'bg-indigo-50 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>Builder</button>
+                  }} className={`rounded-xl px-3 py-2 text-xs font-medium ${product.pageBuilder?.enabled || product.productPageConfig?.premiumPage ? 'bg-indigo-50 text-indigo-700' : 'bg-muted text-muted-foreground'}`}>Builder</button>
                   <button
                     onClick={() => handleToggleDigitalProduct(product)}
                     disabled={digitalProductLoading === product._id}
-                    className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium disabled:opacity-60 ${digitalReady ? 'bg-emerald-50 text-emerald-700 hover:bg-red-50 hover:text-red-600' : 'bg-gray-100 text-gray-600'}`}
+                    className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium disabled:opacity-60 ${digitalReady ? 'bg-emerald-50 text-emerald-700 hover:bg-red-50 hover:text-red-600' : 'bg-muted text-muted-foreground'}`}
                     title={digitalReady ? 'Désactiver le produit digital' : tp('Générer un produit digital')}
                   >
                     {digitalProductLoading === product._id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
                     {digitalReady ? 'Désactiver digital' : tp('Produit digital')}
                   </button>
                   <button onClick={() => handleDuplicate(product)} className="rounded-xl bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">{tp('Copier')}</button>
-                  <button onClick={() => handleExportSingleProductCsv(product)} className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-medium text-gray-700">{tp('Exporter CSV')}</button>
-                  <button onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary-700">{tp('Modifier')}</button>
+                  <button onClick={() => handleExportSingleProductCsv(product)} className="rounded-xl bg-muted px-3 py-2 text-xs font-medium text-foreground">{tp('Exporter CSV')}</button>
+                  <button onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary">{tp('Modifier')}</button>
                   <button onClick={() => handleDelete(product._id)} className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{tp('Supprimer')}</button>
                 </div>
               </div>
@@ -1782,25 +1795,38 @@ const StoreProductsList = () => {
 
       {/* Pagination */}
       {pagination.pages > 1 && (
-        <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
-          <p className="text-sm text-gray-500">
+        <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
+          <p className="text-sm text-muted-foreground">
             Page {pagination.page} sur {pagination.pages}
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => fetchProducts(pagination.page - 1, search)}
               disabled={pagination.page <= 1}
-              className="rounded-xl border border-gray-200 p-2 text-gray-600 transition hover:bg-gray-50 disabled:opacity-40"
+              className="rounded-xl border border-border p-2 text-muted-foreground transition hover:bg-background disabled:opacity-40"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => fetchProducts(pagination.page + 1, search)}
               disabled={pagination.page >= pagination.pages}
-              className="rounded-xl border border-gray-200 p-2 text-gray-600 transition hover:bg-gray-50 disabled:opacity-40"
+              className="rounded-xl border border-border p-2 text-muted-foreground transition hover:bg-background disabled:opacity-40"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal — clonage d'une page produit concurrente */}
+      {cloneOpen && (
+        <div className="fixed inset-0 z-[80] flex items-start justify-center bg-black/50 p-4 overflow-y-auto" onClick={() => setCloneOpen(false)}>
+          <div className="w-full max-w-3xl my-6 rounded-2xl bg-background p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-bold text-foreground">{tp('Cloner une page produit concurrente')}</p>
+              <button onClick={() => setCloneOpen(false)} className="rounded-full p-1.5 text-muted-foreground hover:bg-gray-200 hover:text-foreground transition text-lg leading-none">✕</button>
+            </div>
+            <CloneStudio onCreated={() => { fetchProducts(1, ''); }} />
           </div>
         </div>
       )}

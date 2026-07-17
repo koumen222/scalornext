@@ -63,7 +63,7 @@ export default function UpgradeWall({ onDismiss, workspaceId, trialUsed = false 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-4xl bg-card rounded-3xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-br from-scalor-green-dark via-scalor-green to-scalor-green-light px-8 py-8 text-white">
           {onDismiss && (
@@ -75,7 +75,7 @@ export default function UpgradeWall({ onDismiss, workspaceId, trialUsed = false 
             </button>
           )}
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-white/20 rounded-xl">
+            <div className="p-2 bg-card/20 rounded-xl">
               <Zap className="w-6 h-6" />
             </div>
             <h2 className="text-2xl font-extrabold">{tp('Passez à Scalor')}</h2>
@@ -88,7 +88,7 @@ export default function UpgradeWall({ onDismiss, workspaceId, trialUsed = false 
             <button
               onClick={handleTrial}
               disabled={activatingTrial}
-              className="mt-5 inline-flex items-center gap-2 px-6 py-3 bg-white text-scalor-green-dark font-bold rounded-xl hover:bg-white/90 transition-all shadow-lg disabled:opacity-60"
+              className="mt-5 inline-flex items-center gap-2 px-6 py-3 bg-card text-scalor-green-dark font-bold rounded-xl hover:bg-card/90 transition-all shadow-lg disabled:opacity-60"
             >
               <Clock className="w-4 h-4" />
               {activatingTrial ? 'Activation...' : 'Essai gratuit 7 jours — Commencer maintenant'}
@@ -96,7 +96,7 @@ export default function UpgradeWall({ onDismiss, workspaceId, trialUsed = false 
             </button>
           )}
           {trialUsed && (
-            <div className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg text-sm text-white/80">
+            <div className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-card/10 rounded-lg text-sm text-white/80">
               <Clock className="w-4 h-4" />
               Essai gratuit terminé — Passez à un plan payant
             </div>

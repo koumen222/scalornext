@@ -29,10 +29,10 @@ const PAYMENT_STATUS = {
   pending: { label: 'Paiement en attente', color: 'bg-orange-100 text-orange-700', dot: 'bg-orange-400' },
   confirmed: { label: 'Paiement en attente', color: 'bg-orange-100 text-orange-700', dot: 'bg-orange-400' },
   processing: { label: 'En cours', color: 'bg-yellow-100 text-yellow-700', dot: 'bg-yellow-400' },
-  shipped: { label: 'Payée', color: 'bg-gray-100 text-gray-700', dot: 'bg-green-500' },
-  delivered: { label: 'Payée', color: 'bg-gray-100 text-gray-700', dot: 'bg-green-500' },
+  shipped: { label: 'Payée', color: 'bg-muted text-foreground', dot: 'bg-green-500' },
+  delivered: { label: 'Payée', color: 'bg-muted text-foreground', dot: 'bg-green-500' },
   cancelled: { label: 'Annulée', color: 'bg-red-100 text-red-700', dot: 'bg-red-400' },
-  paid: { label: 'Payée', color: 'bg-gray-100 text-gray-700', dot: 'bg-green-500' },
+  paid: { label: 'Payée', color: 'bg-muted text-foreground', dot: 'bg-green-500' },
 };
 
 const FULFILLMENT_STATUS = {
@@ -41,7 +41,7 @@ const FULFILLMENT_STATUS = {
   confirmed: { label: 'Non traité', color: 'bg-yellow-100 text-yellow-700', dot: 'bg-yellow-400' },
   processing: { label: 'En cours', color: 'bg-blue-100 text-blue-700', dot: 'bg-blue-400' },
   shipped: { label: 'Expédié', color: 'bg-purple-100 text-purple-700', dot: 'bg-purple-400' },
-  delivered: { label: 'Livré', color: 'bg-primary-100 text-primary-700', dot: 'bg-primary-500' },
+  delivered: { label: 'Livré', color: 'bg-primary-100 text-primary', dot: 'bg-primary' },
   cancelled: { label: 'Annulé', color: 'bg-red-100 text-red-700', dot: 'bg-red-400' },
 };
 
@@ -188,29 +188,29 @@ const StoreOrdersDashboard = () => {
   return (
     <div className="space-y-0">
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 bg-white">
-        <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <ShoppingCart className="w-5 h-5 text-gray-700" />
+      <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border bg-card">
+        <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
+          <ShoppingCart className="w-5 h-5 text-foreground" />
           {tp('Commandes')}
-          <span className="text-sm font-normal text-gray-400">({pagination.total})</span>
+          <span className="text-sm font-normal text-muted-foreground">({pagination.total})</span>
         </h1>
         <div className="flex items-center gap-2">
-          <button className="hidden sm:inline-flex px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition">{tp('Exporter')}</button>
+          <button className="hidden sm:inline-flex px-3 py-1.5 text-sm font-medium text-foreground border border-gray-300 rounded-lg hover:bg-background transition">{tp('Exporter')}</button>
           {selectedOrders.length > 0 && (
             <div className="relative">
               <button
                 onClick={() => setShowBulkMenu(!showBulkMenu)}
-                className="px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-1"
+                className="px-3 py-1.5 text-sm font-medium text-foreground border border-gray-300 rounded-lg hover:bg-background transition flex items-center gap-1"
               >
                 {selectedOrders.length} sélectionnée(s) <MoreHorizontal size={14} />
               </button>
               {showBulkMenu && (
-                <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1">
-                  <p className="px-3 py-1.5 text-xs text-gray-400 font-medium">{tp('Changer le statut')}</p>
+                <div className="absolute right-0 top-full mt-1 w-56 bg-card border border-border rounded-xl shadow-lg z-50 py-1">
+                  <p className="px-3 py-1.5 text-xs text-muted-foreground font-medium">{tp('Changer le statut')}</p>
                   {ALL_STATUSES.map(s => (
-                    <button key={s.value} onClick={() => handleBulkStatus(s.value)} className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{s.label}</button>
+                    <button key={s.value} onClick={() => handleBulkStatus(s.value)} className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-background">{s.label}</button>
                   ))}
-                  <div className="border-t border-gray-100 my-1" />
+                  <div className="border-t border-border my-1" />
                   <button onClick={handleBulkDelete} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
                     <Trash2 size={14} /> Supprimer ({selectedOrders.length})
                   </button>
@@ -227,7 +227,7 @@ const StoreOrdersDashboard = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="px-4 sm:px-6 py-3 border-b border-gray-200 bg-white">
+      <div className="px-4 sm:px-6 py-3 border-b border-border bg-card">
         <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide">
           <KpiMini label="Total" value={pagination.total} />
           <KpiMini label="Non conclues" value={abandonedOrders.length} />
@@ -239,16 +239,16 @@ const StoreOrdersDashboard = () => {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="flex items-center overflow-x-auto scrollbar-hide px-4 sm:px-6">
           {STATUS_OPTIONS.map((opt) => (
             <button key={opt.value} onClick={() => setStatusFilter(opt.value)}
               className={"px-3 sm:px-4 py-2.5 text-[13px] sm:text-sm font-medium border-b-2 transition whitespace-nowrap flex-shrink-0 " +
-                (statusFilter === opt.value ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')}>
+                (statusFilter === opt.value ? 'border-gray-900 text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300')}>
               {opt.label}
             </button>
           ))}
-          <button className="px-2 py-2.5 text-gray-400 hover:text-gray-600 flex-shrink-0"><Plus size={16} /></button>
+          <button className="px-2 py-2.5 text-muted-foreground hover:text-muted-foreground flex-shrink-0"><Plus size={16} /></button>
         </div>
       </div>
 
@@ -260,60 +260,60 @@ const StoreOrdersDashboard = () => {
       )}
 
       {/* Search */}
-      <div className="px-4 sm:px-6 py-3 bg-white flex items-center justify-between gap-3">
+      <div className="px-4 sm:px-6 py-3 bg-card flex items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={tp('Rechercher des commandes')}
-            className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 bg-gray-50" />
+            className="w-full pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 bg-background" />
         </div>
         <div className="flex items-center gap-1">
-          <button className="p-1.5 text-gray-400 hover:text-gray-600 rounded transition"><Filter size={16} /></button>
-          <button className="p-1.5 text-gray-400 hover:text-gray-600 rounded transition"><Columns3 size={16} /></button>
-          <button className="p-1.5 text-gray-400 hover:text-gray-600 rounded transition"><ArrowUpDown size={16} /></button>
+          <button className="p-1.5 text-muted-foreground hover:text-muted-foreground rounded transition"><Filter size={16} /></button>
+          <button className="p-1.5 text-muted-foreground hover:text-muted-foreground rounded transition"><Columns3 size={16} /></button>
+          <button className="p-1.5 text-muted-foreground hover:text-muted-foreground rounded transition"><ArrowUpDown size={16} /></button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white">
+      <div className="bg-card">
         {loading ? (
           <div className="px-4 sm:px-6">
             {[...Array(10)].map((_, i) => (
-              <div key={i} className="flex items-center gap-4 py-3 border-b border-gray-100">
+              <div key={i} className="flex items-center gap-4 py-3 border-b border-border">
                 <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
                 <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
                 <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
                 <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
-                <div className="h-4 w-20 bg-gray-100 rounded animate-pulse" />
+                <div className="h-4 w-20 bg-muted rounded animate-pulse" />
                 <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
                 <div className="flex-1" />
-                <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
+                <div className="h-4 w-24 bg-muted rounded animate-pulse" />
               </div>
             ))}
           </div>
         ) : orders.length === 0 ? (
           <div className="text-center py-16">
             <ShoppingCart className="w-12 h-12 text-gray-300 mx-auto" />
-            <p className="text-gray-500 mt-3 text-sm">{tp('Aucune commande')}</p>
+            <p className="text-muted-foreground mt-3 text-sm">{tp('Aucune commande')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 text-left">
+                <tr className="border-b border-border text-left">
                   <th className="pl-4 sm:pl-6 pr-2 py-2.5 w-8">
                     <input type="checkbox" checked={selectedOrders.length === orders.length && orders.length > 0} onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500" />
+                      className="w-4 h-4 rounded border-gray-300 text-foreground focus:ring-gray-500" />
                   </th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Commande')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Date ↓')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Client')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Canal')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Total')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Statut du paiement')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Statut du traitement')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Articles')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500">{tp('Livraison')}</th>
-                  <th className="px-2 py-2.5 text-xs font-medium text-gray-500 w-8"></th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Commande')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Date ↓')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Client')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Canal')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Total')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Statut du paiement')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Statut du traitement')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Articles')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground">{tp('Livraison')}</th>
+                  <th className="px-2 py-2.5 text-xs font-medium text-muted-foreground w-8"></th>
                 </tr>
               </thead>
               <tbody>
@@ -324,38 +324,38 @@ const StoreOrdersDashboard = () => {
                   const isSelected = selectedOrders.includes(order._id);
                   return (
                     <tr key={order._id} onClick={() => openOrder(order)}
-                      className={"border-b border-gray-100 hover:bg-gray-50 transition cursor-pointer " + (isSelected ? 'bg-blue-50' : '')}>
+                      className={"border-b border-border hover:bg-background transition cursor-pointer " + (isSelected ? 'bg-blue-50' : '')}>
                       <td className="pl-4 sm:pl-6 pr-2 py-2.5">
                         <input type="checkbox" checked={isSelected} onChange={(e) => { e.stopPropagation(); toggleSelect(order._id); }}
-                          className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500" />
+                          className="w-4 h-4 rounded border-gray-300 text-foreground focus:ring-gray-500" />
                       </td>
-                      <td className="px-2 py-2.5 font-medium text-gray-900 whitespace-nowrap">#{order.orderNumber || order._id?.slice(-4)}</td>
-                      <td className="px-2 py-2.5 text-gray-500 whitespace-nowrap">{formatDate(order.createdAt)}</td>
-                      <td className="px-2 py-2.5 text-gray-900 whitespace-nowrap">{order.customerName || '-'}</td>
-                      <td className="px-2 py-2.5 text-gray-500 whitespace-nowrap">
+                      <td className="px-2 py-2.5 font-medium text-foreground whitespace-nowrap">#{order.orderNumber || order._id?.slice(-4)}</td>
+                      <td className="px-2 py-2.5 text-muted-foreground whitespace-nowrap">{formatDate(order.createdAt)}</td>
+                      <td className="px-2 py-2.5 text-foreground whitespace-nowrap">{order.customerName || '-'}</td>
+                      <td className="px-2 py-2.5 text-muted-foreground whitespace-nowrap">
                         {order.status === 'abandoned' ? (
                           <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800">{tp('Relance')}</span>
                         ) : (
                           order.channel || order.source || ''
                         )}
                       </td>
-                      <td className="px-2 py-2.5 font-medium text-gray-900 whitespace-nowrap">{formatPrice(order.total, order.currency)}</td>
+                      <td className="px-2 py-2.5 font-medium text-foreground whitespace-nowrap">{formatPrice(order.total, order.currency)}</td>
                       <td className="px-2 py-2.5 whitespace-nowrap">
                         <StatusBadge {...payment} />
                       </td>
                       <td className="px-2 py-2.5 whitespace-nowrap">
                         <StatusBadge {...fulfillment} />
                       </td>
-                      <td className="px-2 py-2.5 text-gray-500 whitespace-nowrap">{items} article{items > 1 ? 's' : ''}</td>
+                      <td className="px-2 py-2.5 text-muted-foreground whitespace-nowrap">{items} article{items > 1 ? 's' : ''}</td>
                       <td className="px-2 py-2.5 whitespace-nowrap">
                         {order.status === 'abandoned' ? <StatusBadge label="À relancer" color="bg-amber-100 text-amber-800" dot="bg-amber-500" />
-                          : order.status === 'delivered' ? <StatusBadge label="Livré" color="bg-primary-100 text-primary-700" dot="bg-primary-500" />
+                          : order.status === 'delivered' ? <StatusBadge label="Livré" color="bg-primary-100 text-primary" dot="bg-primary" />
                           : order.status === 'shipped' ? <StatusBadge label="En transit" color="bg-purple-100 text-purple-700" dot="bg-purple-500" />
-                          : <span className="text-gray-400 text-xs">—</span>}
+                          : <span className="text-muted-foreground text-xs">—</span>}
                       </td>
                       <td className="px-2 py-2.5">
                         <button onClick={(e) => { e.stopPropagation(); handleDelete(order._id); }}
-                          className="p-1 text-gray-400 hover:text-red-500 rounded transition" title={tp('Supprimer')}>
+                          className="p-1 text-muted-foreground hover:text-red-500 rounded transition" title={tp('Supprimer')}>
                           <Trash2 size={14} />
                         </button>
                       </td>
@@ -370,18 +370,18 @@ const StoreOrdersDashboard = () => {
 
       {/* Pagination */}
       {pagination.pages > 0 && (
-        <div className="px-4 sm:px-6 py-3 bg-white border-t border-gray-200 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-3 bg-card border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button onClick={() => fetchOrders(pagination.page - 1, statusFilter, search)} disabled={pagination.page <= 1}
-              className="p-1.5 rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition">
+              className="p-1.5 rounded border border-gray-300 text-muted-foreground hover:bg-background disabled:opacity-30 transition">
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button onClick={() => fetchOrders(pagination.page + 1, statusFilter, search)} disabled={pagination.page >= pagination.pages}
-              className="p-1.5 rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition">
+              className="p-1.5 rounded border border-gray-300 text-muted-foreground hover:bg-background disabled:opacity-30 transition">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground">
             {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)}
           </span>
         </div>
@@ -390,47 +390,47 @@ const StoreOrdersDashboard = () => {
       {/* Order Detail Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setSelectedOrder(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div>
-                <h2 className="text-base font-bold text-gray-900">Commande #{selectedOrder.orderNumber || selectedOrder._id?.slice(-4)}</h2>
-                <p className="text-xs text-gray-500 mt-0.5">{formatDateLong(selectedOrder.createdAt)}</p>
+                <h2 className="text-base font-bold text-foreground">Commande #{selectedOrder.orderNumber || selectedOrder._id?.slice(-4)}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{formatDateLong(selectedOrder.createdAt)}</p>
               </div>
-              <button onClick={() => setSelectedOrder(null)} className="p-1.5 hover:bg-gray-100 rounded-lg transition"><X size={18} /></button>
+              <button onClick={() => setSelectedOrder(null)} className="p-1.5 hover:bg-muted rounded-lg transition"><X size={18} /></button>
             </div>
 
             <div className="px-5 py-4 space-y-5">
               {/* Status Change */}
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1.5 block">{tp('Statut de la commande')}</label>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{tp('Statut de la commande')}</label>
                 <div className="flex flex-wrap gap-1.5">
                   {ALL_STATUSES.map(s => (
                     <button key={s.value} onClick={() => handleStatusChange(selectedOrder._id, s.value)} disabled={updatingStatus}
                       className={"px-3 py-1.5 text-xs font-medium rounded-lg border transition " +
                         (selectedOrder.status === s.value
                           ? 'bg-gray-900 text-white border-gray-900'
-                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50')}>
+                          : 'bg-card text-muted-foreground border-border hover:bg-background')}>
                       {s.label}
                     </button>
                   ))}
                 </div>
-                {updatingStatus && <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400 mt-1.5" />}
+                {updatingStatus && <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground mt-1.5" />}
               </div>
 
               {/* Customer Info */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">{tp('Client')}</h3>
-                <p className="text-sm font-semibold text-gray-900">{selectedOrder.customerName || '-'}</p>
+              <div className="bg-background rounded-xl p-4 space-y-2">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{tp('Client')}</h3>
+                <p className="text-sm font-semibold text-foreground">{selectedOrder.customerName || '-'}</p>
                 {selectedOrder.phone && (
-                  <p className="text-sm text-gray-600 flex items-center gap-1.5">
+                  <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                     <Phone size={13} />
-                    <a href={'tel:' + selectedOrder.phone} className="text-primary-600 hover:underline">{selectedOrder.phone}</a>
+                    <a href={'tel:' + selectedOrder.phone} className="text-primary hover:underline">{selectedOrder.phone}</a>
                   </p>
                 )}
-                {selectedOrder.email && <p className="text-sm text-gray-600">{selectedOrder.email}</p>}
+                {selectedOrder.email && <p className="text-sm text-muted-foreground">{selectedOrder.email}</p>}
                 {(selectedOrder.city || selectedOrder.address) && (
-                  <p className="text-sm text-gray-600 flex items-center gap-1.5">
+                  <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                     <MapPin size={13} />
                     {[selectedOrder.address, selectedOrder.city, selectedOrder.country].filter(Boolean).join(', ')}
                   </p>
@@ -439,25 +439,25 @@ const StoreOrdersDashboard = () => {
 
               {/* Products */}
               <div>
-                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">{tp('Articles')}</h3>
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">{tp('Articles')}</h3>
                 <div className="space-y-2">
                   {selectedOrder.products?.map((p, i) => (
-                    <div key={i} className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+                    <div key={i} className="flex items-center gap-3 bg-background rounded-lg p-3">
                       {p.image && <img src={p.image} alt={p.name} className="w-10 h-10 rounded-lg object-cover" />}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{p.name}</p>
-                        <p className="text-xs text-gray-500">Qté: {p.quantity || 1} × {formatPrice(p.price, selectedOrder.currency)}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
+                        <p className="text-xs text-muted-foreground">Qté: {p.quantity || 1} × {formatPrice(p.price, selectedOrder.currency)}</p>
                       </div>
-                      <p className="text-sm font-bold text-gray-900">{formatPrice((p.price || 0) * (p.quantity || 1), selectedOrder.currency)}</p>
+                      <p className="text-sm font-bold text-foreground">{formatPrice((p.price || 0) * (p.quantity || 1), selectedOrder.currency)}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Total */}
-              <div className="flex items-center justify-between py-3 border-t border-gray-200">
-                <span className="text-sm font-medium text-gray-500">{tp('Total')}</span>
-                <span className="text-lg font-bold text-gray-900">{formatPrice(selectedOrder.total, selectedOrder.currency)}</span>
+              <div className="flex items-center justify-between py-3 border-t border-border">
+                <span className="text-sm font-medium text-muted-foreground">{tp('Total')}</span>
+                <span className="text-lg font-bold text-foreground">{formatPrice(selectedOrder.total, selectedOrder.currency)}</span>
               </div>
 
               {/* Notes */}
@@ -498,8 +498,8 @@ const StatusBadge = ({ label, color, dot }) => (
 
 const KpiMini = ({ label, value }) => (
   <div className="flex items-center gap-2 flex-shrink-0">
-    <span className="text-[12px] text-gray-500 whitespace-nowrap">{label}</span>
-    {value !== undefined && <span className="text-[13px] font-bold text-gray-900 tabular-nums">{value}</span>}
+    <span className="text-[12px] text-muted-foreground whitespace-nowrap">{label}</span>
+    {value !== undefined && <span className="text-[13px] font-bold text-foreground tabular-nums">{value}</span>}
   </div>
 );
 

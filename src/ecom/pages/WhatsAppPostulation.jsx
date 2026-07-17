@@ -83,8 +83,8 @@ const WhatsAppPostulation = () => {
             </svg>
           </div>
 
-          <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">{tp('Postulation WhatsApp Pro')}</h1>
-          <p className="text-gray-600 max-w-lg mx-auto">
+          <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-2">{tp('Postulation WhatsApp Pro')}</h1>
+          <p className="text-muted-foreground max-w-lg mx-auto">
             {tp('Utilisez votre propre numéro WhatsApp pour envoyer vos campagnes marketing.')}
             Plus de confiance, plus de réponses, plus de ventes !
           </p>
@@ -113,18 +113,18 @@ const WhatsAppPostulation = () => {
         )}
 
         {/* Formulaire */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-card rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Informations Entreprise */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">1</span>
                 {tp('Informations sur votre entreprise')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Nom de l'entreprise *
                   </label>
                   <input
@@ -138,7 +138,7 @@ const WhatsAppPostulation = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Type d'activité *
                   </label>
                   <select
@@ -162,14 +162,14 @@ const WhatsAppPostulation = () => {
 
             {/* Contact */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">2</span>
                 {tp('Coordonnées du responsable')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Nom complet *
                   </label>
                   <input
@@ -183,7 +183,7 @@ const WhatsAppPostulation = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Email professionnel *
                   </label>
                   <input
@@ -200,14 +200,14 @@ const WhatsAppPostulation = () => {
 
             {/* WhatsApp */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">3</span>
                 {tp('Configuration WhatsApp')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Numéro WhatsApp à configurer *
                   </label>
                   <input
@@ -222,7 +222,7 @@ const WhatsAppPostulation = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Messages mensuels estimés *
                   </label>
                   <select
@@ -244,13 +244,13 @@ const WhatsAppPostulation = () => {
 
             {/* Motivation */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold">4</span>
                 {tp('Pourquoi vouloir utiliser votre numéro ?')}
               </h3>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Expliquez vos besoins *
                 </label>
                 <textarea
@@ -266,7 +266,7 @@ const WhatsAppPostulation = () => {
             </div>
 
             {/* Terms */}
-            <div className="bg-gray-50 rounded-xl p-4 sm:p-5">
+            <div className="bg-background rounded-xl p-4 sm:p-5">
               <label className="flex items-start gap-3 cursor-pointer">
                 <div className="relative flex-shrink-0 mt-0.5">
                   <input
@@ -277,13 +277,13 @@ const WhatsAppPostulation = () => {
                     className="peer sr-only"
                     required
                   />
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-gray-300 rounded-lg bg-white peer-checked:bg-green-500 peer-checked:border-green-500 transition-all flex items-center justify-center">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-gray-300 rounded-lg bg-card peer-checked:bg-green-500 peer-checked:border-green-500 transition-all flex items-center justify-center">
                     <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                 </div>
-                <span className="text-sm text-gray-600 leading-relaxed">
+                <span className="text-sm text-muted-foreground leading-relaxed">
                   Je comprends que l'utilisation de mon numéro personnel pour l'envoi de campagnes marketing
                   nécessite une configuration technique par l'équipe et que je m'engage à respecter les
                   conditions d'utilisation et les réglementations en vigueur. <span className="text-red-500">*</span>
@@ -315,7 +315,7 @@ const WhatsAppPostulation = () => {
         </div>
 
         {/* Info */}
-        <div className="mt-8 text-center text-sm text-gray-600">
+        <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>{tp('⏰ Délai de traitement : 24-48h')}</p>
           <p className="mt-1">{tp('📞 Vous serez contacté par WhatsApp ou Email')}</p>
         </div>

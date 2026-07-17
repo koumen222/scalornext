@@ -73,16 +73,16 @@ export default function MyDeliveries() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-10">
+      <div className="bg-card border-b border-border px-4 pt-12 pb-0 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-gray-900">{tp('Mes livraisons')}</h1>
+          <h1 className="text-xl font-bold text-foreground">{tp('Mes livraisons')}</h1>
           <button
             onClick={loadOrders}
-            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center active:scale-95"
+            className="w-9 h-9 rounded-full bg-muted flex items-center justify-center active:scale-95"
           >
-            <RefreshCw size={18} className={`text-gray-500 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw size={18} className={`text-muted-foreground ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
 
@@ -95,7 +95,7 @@ export default function MyDeliveries() {
               className={`flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500'
+                  : 'border-transparent text-muted-foreground'
               }`}
             >
               {tab.label}
@@ -103,7 +103,7 @@ export default function MyDeliveries() {
                 className={`text-xs px-1.5 py-0.5 rounded-full ${
                   activeTab === tab.id
                     ? 'bg-indigo-100 text-indigo-600'
-                    : 'bg-gray-100 text-gray-500'
+                    : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {tab.count}
@@ -129,7 +129,7 @@ export default function MyDeliveries() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Truck size={48} className="text-gray-200 mb-3" />
-            <p className="text-gray-500 font-medium">{tp('Aucune livraison active')}</p>
+            <p className="text-muted-foreground font-medium">{tp('Aucune livraison active')}</p>
             <Link
               to="/ecom/livreur/available"
               className="mt-3 text-indigo-600 text-sm font-medium"
@@ -156,14 +156,14 @@ export default function MyDeliveries() {
 function ActiveDeliveryCard({ order, onClick }) {
   const config = STATUS_CONFIG[order.status] || {
     label: order.status,
-    color: 'bg-gray-100 text-gray-700 border-gray-200',
+    color: 'bg-muted text-foreground border-border',
     dot: 'bg-gray-400',
   };
 
   return (
     <button
       onClick={onClick}
-      className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-left active:scale-[0.99] transition-transform"
+      className="w-full bg-card rounded-2xl border shadow-sm p-4 text-left active:scale-[0.99] transition-transform"
     >
       <div className="flex items-start justify-between mb-3">
         <div>
@@ -173,30 +173,30 @@ function ActiveDeliveryCard({ order, onClick }) {
               {config.label}
             </span>
           </div>
-          <span className="text-xs font-mono text-gray-400">{order.orderId}</span>
+          <span className="text-xs font-mono text-muted-foreground">{order.orderId}</span>
         </div>
         <ChevronRight size={18} className="text-gray-300 mt-1" />
       </div>
 
-      <h3 className="font-semibold text-gray-900 mb-2">
+      <h3 className="font-semibold text-foreground mb-2">
         {order.clientName || order.clientPhone}
       </h3>
 
       <div className="space-y-1.5">
         {(order.address || order.city) && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin size={13} className="text-indigo-400 shrink-0" />
             <span className="truncate">{order.address || order.city}</span>
           </div>
         )}
         {order.clientPhone && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Phone size={13} className="text-indigo-400 shrink-0" />
             {order.clientPhone}
           </div>
         )}
         {order.product && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Package size={13} className="text-indigo-400 shrink-0" />
             <span className="truncate">{order.product}</span>
           </div>
@@ -204,9 +204,9 @@ function ActiveDeliveryCard({ order, onClick }) {
       </div>
 
       {config.next && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <p className="text-xs text-gray-400 font-medium">
-            {tp('Prochaine action :')} <span className="text-gray-600">{config.next}</span>
+        <div className="mt-3 pt-3 border-t border-border">
+          <p className="text-xs text-muted-foreground font-medium">
+            {tp('Prochaine action :')} <span className="text-muted-foreground">{config.next}</span>
           </p>
         </div>
       )}

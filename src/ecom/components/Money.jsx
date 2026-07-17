@@ -24,7 +24,7 @@ const Money = ({
   return (
     <span className={className}>
       {formatted}
-      <span className="text-gray-400 text-xs ml-1">
+      <span className="text-muted-foreground text-xs ml-1">
         ({fromCurrency} {amount})
       </span>
     </span>

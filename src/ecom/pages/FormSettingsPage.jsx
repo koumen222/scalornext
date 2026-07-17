@@ -45,11 +45,11 @@ const FormSettingsPage = () => {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <Settings className="w-5 h-5 text-primary-600" />
+        <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Settings className="w-5 h-5 text-primary" />
           {tp('Paramètres du formulaire')}
         </h1>
-        <p className="text-sm text-gray-500 mt-1">{tp('Configurez le comportement de votre boutique et du tunnel de commande.')}</p>
+        <p className="text-sm text-muted-foreground mt-1">{tp('Configurez le comportement de votre boutique et du tunnel de commande.')}</p>
       </div>
 
       {error && (
@@ -57,22 +57,22 @@ const FormSettingsPage = () => {
       )}
 
       {/* Mode panier */}
-      <div className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6">
+      <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3 min-w-0">
-            <div className="mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+            <div className="mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary">
               <ShoppingCart className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-[15px] font-semibold text-gray-900">{tp('Activer le panier (mode boutique)')}</h2>
-              <p className="text-[13px] text-gray-500 mt-0.5">
+              <h2 className="text-[15px] font-semibold text-foreground">{tp('Activer le panier (mode boutique)')}</h2>
+              <p className="text-[13px] text-muted-foreground mt-0.5">
                 {tp("Ajoute un bouton « Ajouter au panier » sur les pages produit et active le tunnel panier → checkout multi-produits. Le formulaire de commande directe reste disponible.")}
               </p>
               <div className="mt-2 inline-flex items-center gap-1.5 text-[12px] font-medium">
                 {cartEnabled
-                  ? <span className="inline-flex items-center gap-1 text-primary-600"><Check className="w-3.5 h-3.5" />{tp('Panier actif sur votre boutique')}</span>
-                  : <span className="text-gray-400">{tp('Panier désactivé — commande directe uniquement')}</span>}
-                {saving && <span className="text-gray-400">· {tp('enregistrement…')}</span>}
+                  ? <span className="inline-flex items-center gap-1 text-primary"><Check className="w-3.5 h-3.5" />{tp('Panier actif sur votre boutique')}</span>
+                  : <span className="text-muted-foreground">{tp('Panier désactivé — commande directe uniquement')}</span>}
+                {saving && <span className="text-muted-foreground">· {tp('enregistrement…')}</span>}
                 {saved && !saving && <span className="text-primary-500">· {tp('enregistré')}</span>}
               </div>
             </div>
@@ -84,9 +84,9 @@ const FormSettingsPage = () => {
             aria-checked={cartEnabled}
             disabled={loading || saving}
             onClick={toggleCart}
-            className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${cartEnabled ? 'bg-primary-600' : 'bg-gray-200'}`}
+            className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${cartEnabled ? 'bg-primary' : 'bg-gray-200'}`}
           >
-            <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${cartEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+            <span className={`inline-block h-5 w-5 transform rounded-full bg-card shadow transition-transform ${cartEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
           </button>
         </div>
       </div>

@@ -106,36 +106,36 @@ const LivreurAvailable = () => {
     <div className="p-3 sm:p-6 max-w-[900px] mx-auto space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('📦 Courses disponibles')}</h1>
-          <p className="text-sm text-gray-400 mt-0.5">{orders.length} course{orders.length !== 1 ? 's' : ''} en attente</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{tp('📦 Courses disponibles')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{orders.length} course{orders.length !== 1 ? 's' : ''} en attente</p>
         </div>
-        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">{tp('↻ Actualiser')}</button>
+        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-muted hover:bg-gray-200 rounded-lg transition text-muted-foreground">{tp('↻ Actualiser')}</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}<button onClick={() => setError('')} className="float-right font-bold">&times;</button></div>}
       {success && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
 
       {/* Recherche */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
+      <div className="bg-card rounded-2xl border shadow-sm p-3">
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder={tp('Rechercher par nom, téléphone, ville, produit…')}
-          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
+          className="w-full px-4 py-2.5 border border-border rounded-xl text-sm focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] outline-none transition"
         />
       </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center h-48 gap-3">
-          <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-          <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
+          <div className="w-8 h-8 rounded-full border-4 border-border border-t-amber-600 animate-spin" />
+          <p className="text-sm text-muted-foreground">{tp('Chargement…')}</p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4 text-2xl">📦</div>
-          <p className="text-gray-500 font-medium">{tp('Aucune course disponible')}</p>
-          <p className="text-xs text-gray-400 mt-1">{search ? 'Essayez un autre terme de recherche' : tp('Revenez dans quelques instants')}</p>
+        <div className="bg-card rounded-2xl border shadow-sm p-12 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-background flex items-center justify-center mx-auto mb-4 text-2xl">📦</div>
+          <p className="text-muted-foreground font-medium">{tp('Aucune course disponible')}</p>
+          <p className="text-xs text-muted-foreground mt-1">{search ? 'Essayez un autre terme de recherche' : tp('Revenez dans quelques instants')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -143,16 +143,16 @@ const LivreurAvailable = () => {
             const meta = getOfferMeta(order);
             const remaining = formatRemaining(meta.responseDeadline);
             return (
-            <div key={order._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition">
+            <div key={order._id} className="bg-card rounded-2xl border shadow-sm p-4 hover:shadow-md transition">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm font-semibold text-gray-900">{order.clientName || tp('Client')}</span>
-                    {order.orderId && <span className="text-xs font-mono text-gray-300 bg-gray-50 px-1.5 py-0.5 rounded">#{order.orderId}</span>}
+                    <span className="text-sm font-semibold text-foreground">{order.clientName || tp('Client')}</span>
+                    {order.orderId && <span className="text-xs font-mono text-gray-300 bg-background px-1.5 py-0.5 rounded">#{order.orderId}</span>}
                     {meta.isTargeted && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">{tp('Ciblée')}</span>}
                     {remaining && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">{remaining}</span>}
                   </div>
-                  <div className="space-y-1 text-xs text-gray-500">
+                  <div className="space-y-1 text-xs text-muted-foreground">
                     {order.clientPhone && <p>📞 {order.clientPhone}</p>}
                     {(order.city || order.address) && <p>📍 {order.city}{order.address ? `, ${order.address}` : ''}</p>}
                     {order.product && <p>📦 {order.product}{order.quantity > 1 ? ` × ${order.quantity}` : ''}</p>}

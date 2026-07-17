@@ -78,7 +78,7 @@ const PlanBadge = ({ plan }) => {
 
 const StatusBadge = ({ active }) => (
   <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full border ${
-    active ? 'text-primary-700 bg-primary-50 border-primary-200' : 'text-amber-700 bg-amber-50 border-amber-200'
+    active ? 'text-primary bg-primary-50 border-primary-200' : 'text-amber-700 bg-amber-50 border-amber-200'
   }`}>
     {active ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
     {active ? 'Actif' : tp('Inactif')}
@@ -86,7 +86,7 @@ const StatusBadge = ({ active }) => (
 );
 
 const KpiCard = ({ label, value, sub, icon: Icon, accent = '#059669', accentLight = '#d1fae5' }) => (
-  <div className="bg-white rounded-2xl border border-slate-100 p-5 flex flex-col gap-2 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+  <div className="bg-card rounded-2xl border border-slate-100 p-5 flex flex-col gap-2 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
     <div className="flex items-center justify-between">
       <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: accentLight }}>
         <Icon className="w-4 h-4" style={{ color: accent }} />
@@ -126,7 +126,7 @@ const WorkspaceCard = ({
     : 'Activer alerte renouvellement';
 
   return (
-    <div className={`bg-white rounded-2xl border overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 ${ws.isActive ? 'border-slate-200' : 'border-amber-200'}`}>
+    <div className={`bg-card rounded-2xl border overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 ${ws.isActive ? 'border-slate-200' : 'border-amber-200'}`}>
       {/* top stripe */}
       <div className={`h-1 ${ws.isActive ? 'bg-gradient-to-r from-primary-500 to-teal-400' : 'bg-gradient-to-r from-amber-400 to-red-400'}`} />
 
@@ -184,7 +184,7 @@ const WorkspaceCard = ({
           )}
           <button
             onClick={() => onCopy(ws.inviteCode)}
-            className="flex items-center gap-1.5 text-[11px] font-bold text-primary-600 bg-primary-50 hover:bg-primary-100 border border-primary-200 px-2.5 py-1 rounded-lg transition"
+            className="flex items-center gap-1.5 text-[11px] font-bold text-primary bg-primary-50 hover:bg-primary-100 border border-primary-200 px-2.5 py-1 rounded-lg transition"
           >
             <Copy className="w-3 h-3" />
             {ws.inviteCode}
@@ -198,7 +198,7 @@ const WorkspaceCard = ({
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-xl border transition-all ${
               ws.isActive
                 ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
-                : 'bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100'
+                : 'bg-primary-50 text-primary border-primary-200 hover:bg-primary-100'
             }`}
           >
             {ws.isActive ? <><PowerOff className="w-3.5 h-3.5" /> {tp('Désactiver')}</> : <><Power className="w-3.5 h-3.5" /> {tp('Réactiver')}</>}
@@ -237,7 +237,7 @@ const WorkspaceCard = ({
                 <select
                   value={selectedPlan}
                   onChange={(e) => onUpdatePlanDraft(ws._id, 'plan', e.target.value)}
-                  className="flex-1 text-xs font-bold border border-slate-200 rounded-lg px-2 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="flex-1 text-xs font-bold border border-slate-200 rounded-lg px-2 py-2 bg-card text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   {availablePlans.map(p => (
                     <option key={p.key} value={p.key}>{planLabel(p)}</option>
@@ -247,7 +247,7 @@ const WorkspaceCard = ({
                   value={String(selectedDuration)}
                   onChange={(e) => onUpdatePlanDraft(ws._id, 'durationMonths', Number(e.target.value))}
                   disabled={selectedPlan === 'free'}
-                  className="w-24 text-xs font-bold border border-slate-200 rounded-lg px-2 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-40"
+                  className="w-24 text-xs font-bold border border-slate-200 rounded-lg px-2 py-2 bg-card text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-40"
                 >
                   <option value="1">{tp('1 mois')}</option>
                   <option value="3">{tp('3 mois')}</option>
@@ -279,17 +279,17 @@ const WorkspaceCard = ({
                     <div>
                       <p className="text-[10px] text-violet-600 font-semibold mb-1">{tp('Pages gratuites')}</p>
                       <input type="number" min="0" value={freeGen} onChange={e => setFreeGen(e.target.value)}
-                        className="w-full text-xs border border-violet-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white" />
+                        className="w-full text-xs border border-violet-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-card" />
                     </div>
                     <div>
                       <p className="text-[10px] text-violet-600 font-semibold mb-1">{tp('Pages payées')}</p>
                       <input type="number" min="0" value={paidGen} onChange={e => setPaidGen(e.target.value)}
-                        className="w-full text-xs border border-violet-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white" />
+                        className="w-full text-xs border border-violet-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-card" />
                     </div>
                     <div>
                       <p className="text-[10px] text-pink-600 font-semibold mb-1">{tp('Images créatives')}</p>
                       <input type="number" min="0" value={imgCredits} onChange={e => setImgCredits(e.target.value)}
-                        className="w-full text-xs border border-pink-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white" />
+                        className="w-full text-xs border border-pink-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-card" />
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -301,14 +301,14 @@ const WorkspaceCard = ({
                         setPaidGen(String(ws.paidGenerationsRemaining||0));
                         setImgCredits(String(ws.creativeCreditsRemaining||0));
                       }}
-                      className="flex-1 py-1.5 bg-white border border-violet-200 text-violet-600 rounded-lg text-xs font-bold hover:bg-violet-50 transition">{tp('Annuler')}</button>
+                      className="flex-1 py-1.5 bg-card border border-violet-200 text-violet-600 rounded-lg text-xs font-bold hover:bg-violet-50 transition">{tp('Annuler')}</button>
                   </div>
                 </div>
               ) : (
                 <div>
                   <div className="flex justify-between text-xs mb-1.5">
                     <span className="text-violet-500 font-medium">{tp('Pages gratuites')}</span>
-                    <span className="font-bold text-primary-600">{ws.freeGenerationsRemaining || 0}</span>
+                    <span className="font-bold text-primary">{ws.freeGenerationsRemaining || 0}</span>
                   </div>
                   <div className="flex justify-between text-xs mb-1.5">
                     <span className="text-violet-500 font-medium">{tp('Pages payées')}</span>
@@ -488,7 +488,7 @@ const SuperAdminWorkspaces = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={tp('Rechercher par nom, slug ou email propriétaire…')}
-              className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm transition-all"
+              className="w-full pl-10 pr-10 py-2.5 bg-card border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm transition-all"
             />
             {searchTerm && (
               <button onClick={() => setSearchTerm('')}
@@ -499,7 +499,7 @@ const SuperAdminWorkspaces = () => {
           </div>
 
           {/* Filter tabs */}
-          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+          <div className="flex items-center gap-1 bg-card border border-slate-200 rounded-xl p-1 shadow-sm">
             {FILTER_TABS.map(tab => (
               <button key={tab.value} onClick={() => setFilterTab(tab.value)}
                 className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
@@ -525,21 +525,21 @@ const SuperAdminWorkspaces = () => {
             <span><strong className="text-slate-700">{filtered.length}</strong> espace{filtered.length !== 1 ? 's' : ''} affiché{filtered.length !== 1 ? 's' : ''}</span>
             {(searchTerm || filterTab !== 'all') && (
               <button onClick={() => { setSearchTerm(''); setFilterTab('all'); }}
-                className="text-primary-600 font-bold hover:underline ml-1">{tp('Réinitialiser')}</button>
+                className="text-primary font-bold hover:underline ml-1">{tp('Réinitialiser')}</button>
             )}
           </div>
         )}
 
         {/* ── Grid ── */}
         {filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-20 text-center shadow-sm">
+          <div className="bg-card rounded-2xl border border-slate-200 p-20 text-center shadow-sm">
             <Building2 className="w-12 h-12 text-slate-200 mx-auto mb-4" />
             <p className="text-base font-extrabold text-slate-400">
               {searchTerm ? `Aucun résultat pour "${searchTerm}"` : 'Aucun espace'}
             </p>
             {searchTerm && (
               <button onClick={() => setSearchTerm('')}
-                className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold hover:bg-primary-700 transition">
+                className="mt-4 px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary-700 transition">
                 {tp('Réinitialiser')}
               </button>
             )}

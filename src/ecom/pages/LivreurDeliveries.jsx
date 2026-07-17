@@ -74,14 +74,14 @@ const MiniMap = ({ startLat, startLng, destLat, destLng, currentLat, currentLng,
     <div className="relative">
       <div ref={containerRef} style={{ height: fullHeight ? '100%' : '220px', minHeight: fullHeight ? '200px' : undefined, borderRadius: '12px', overflow: 'hidden', background: '#e5e7eb' }} />
       {!ready && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-xl">
+        <div className="absolute inset-0 flex items-center justify-center bg-muted rounded-xl">
           <div className="w-6 h-6 border-2 border-gray-300 border-t-amber-500 rounded-full animate-spin" />
         </div>
       )}
       <div className="absolute bottom-2 left-2 flex gap-2 text-[10px]">
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#22c55e' }}>{tp('● Départ')}</span>
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#ef4444' }}>{tp('● Arrivée')}</span>
-        <span className="bg-white/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#3b82f6' }}>{tp('● Vous')}</span>
+        <span className="bg-card/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#22c55e' }}>{tp('● Départ')}</span>
+        <span className="bg-card/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#ef4444' }}>{tp('● Arrivée')}</span>
+        <span className="bg-card/90 px-2 py-0.5 rounded-full shadow font-medium" style={{ color: '#3b82f6' }}>{tp('● Vous')}</span>
       </div>
     </div>
   );
@@ -330,7 +330,7 @@ const LivreurDeliveries = () => {
         const pct = distKm > 0 ? Math.max(0, Math.min(100, Math.round(((distKm - remaining) / distKm) * 100))) : 0;
         const cost = Math.round(distKm * COST_PER_KM);
         return (
-          <div className="fixed inset-0 z-50 bg-white flex flex-col">
+          <div className="fixed inset-0 z-50 bg-card flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-indigo-600 to-indigo-800 flex-shrink-0">
               <div className="flex-1 min-w-0 mr-3">
@@ -351,21 +351,21 @@ const LivreurDeliveries = () => {
             {/* Stats panel */}
             <div className="flex-shrink-0 px-4 pb-4 space-y-3">
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-gray-50 rounded-xl p-3 text-center">
-                  <p className="text-xl font-black text-gray-800">{distKm.toFixed(1)}</p>
-                  <p className="text-[9px] text-gray-400 font-semibold uppercase">KM TOTAL</p>
+                <div className="bg-background rounded-xl p-3 text-center">
+                  <p className="text-xl font-black text-foreground">{distKm.toFixed(1)}</p>
+                  <p className="text-[9px] text-muted-foreground font-semibold uppercase">KM TOTAL</p>
                 </div>
                 <div className="bg-amber-50 rounded-xl p-3 text-center">
                   <p className="text-xl font-black text-amber-600">{remaining.toFixed(1)}</p>
                   <p className="text-[9px] text-amber-400 font-semibold uppercase">KM RESTANT</p>
                 </div>
                 <div className="bg-primary-50 rounded-xl p-3 text-center">
-                  <p className="text-xl font-black text-primary-600">{cost.toLocaleString('fr-FR')}</p>
+                  <p className="text-xl font-black text-primary">{cost.toLocaleString('fr-FR')}</p>
                   <p className="text-[9px] text-primary-400 font-semibold uppercase">{symbol}</p>
                 </div>
               </div>
               <div>
-                <div className="flex justify-between text-[10px] text-gray-500 mb-1">
+                <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
                   <span>{tp('Progression')}</span><span className="font-bold">{pct}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -409,11 +409,11 @@ const LivreurDeliveries = () => {
                   🗺️ Naviguer
                 </a>
                 {trackOrder?.clientPhone && (
-                  <a href={`tel:${trackOrder.clientPhone}`} className="px-4 py-3 bg-primary-50 text-primary-700 rounded-xl font-bold text-sm hover:bg-primary-100 transition flex items-center gap-1">
+                  <a href={`tel:${trackOrder.clientPhone}`} className="px-4 py-3 bg-primary-50 text-primary rounded-xl font-bold text-sm hover:bg-primary-100 transition flex items-center gap-1">
                     📞
                   </a>
                 )}
-                <button onClick={() => { setFullTrack(null); loadOrders(true); }} className="px-4 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition">
+                <button onClick={() => { setFullTrack(null); loadOrders(true); }} className="px-4 py-3 bg-muted text-muted-foreground rounded-xl font-bold text-sm hover:bg-gray-200 transition">
                   ← Retour
                 </button>
               </div>
@@ -425,20 +425,20 @@ const LivreurDeliveries = () => {
       {/* ── Delivery Confirmation Modal ── */}
       {deliveryModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm" onClick={e => { if (e.target === e.currentTarget) setDeliveryModal(null); }}>
-          <div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden">
             <div className="p-5 space-y-4">
               {/* Header */}
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">{tp('📋 Confirmer la livraison')}</h2>
-                <button onClick={() => setDeliveryModal(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200">✕</button>
+                <h2 className="text-lg font-bold text-foreground">{tp('📋 Confirmer la livraison')}</h2>
+                <button onClick={() => setDeliveryModal(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-gray-200">✕</button>
               </div>
 
               {/* Tabs */}
-              <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
-                <button onClick={() => setDeliveryTab('livré')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${deliveryTab === 'livré' ? 'bg-green-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+              <div className="flex gap-1 bg-muted rounded-xl p-1">
+                <button onClick={() => setDeliveryTab('livré')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${deliveryTab === 'livré' ? 'bg-green-600 text-white shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                   ✅ Livré
                 </button>
-                <button onClick={() => setDeliveryTab('non-livré')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${deliveryTab === 'non-livré' ? 'bg-red-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                <button onClick={() => setDeliveryTab('non-livré')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${deliveryTab === 'non-livré' ? 'bg-red-500 text-white shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                   ❌ Non livré
                 </button>
               </div>
@@ -447,13 +447,13 @@ const LivreurDeliveries = () => {
               {deliveryTab === 'livré' && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{tp('Précisions sur la course (optionnel)')}</label>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Précisions sur la course (optionnel)')}</label>
                     <textarea
                       rows={3}
                       placeholder={tp('Ex: Livré en main propre, client satisfait, code d\'entrée B12…')}
                       value={deliveryNote}
                       onChange={e => setDeliveryNote(e.target.value)}
-                      className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-400 resize-none"
+                      className="w-full px-4 py-3 text-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-400 resize-none"
                     />
                   </div>
                   <button
@@ -472,14 +472,14 @@ const LivreurDeliveries = () => {
               {deliveryTab === 'non-livré' && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{tp('Raison de non-livraison')}</label>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Raison de non-livraison')}</label>
                     <div className="grid grid-cols-2 gap-2">
                       {['Client absent', 'Mauvaise adresse', 'Colis refusé', 'Zone inaccessible', 'Client injoignable', 'Autre'].map(r => (
                         <button
                           key={r}
                           type="button"
                           onClick={() => setNonDeliveredReason(r === 'Autre' ? 'autre' : r)}
-                          className={`text-xs px-3 py-2.5 rounded-xl border font-medium transition text-left ${(r === 'Autre' ? 'autre' : r) === nonDeliveredReason ? 'bg-red-50 border-red-400 text-red-700' : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'}`}
+                          className={`text-xs px-3 py-2.5 rounded-xl border font-medium transition text-left ${(r === 'Autre' ? 'autre' : r) === nonDeliveredReason ? 'bg-red-50 border-red-400 text-red-700' : 'bg-background border-border text-foreground hover:bg-muted'}`}
                         >
                           {r}
                         </button>
@@ -491,7 +491,7 @@ const LivreurDeliveries = () => {
                         placeholder={tp('Précisez la raison…')}
                         value={nonDeliveredCustom}
                         onChange={e => setNonDeliveredCustom(e.target.value)}
-                        className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-400 resize-none mt-2"
+                        className="w-full px-4 py-3 text-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-400 resize-none mt-2"
                         autoFocus
                       />
                     )}
@@ -515,14 +515,14 @@ const LivreurDeliveries = () => {
       {/* Course Modal (address input) */}
       {courseModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm" onClick={(e) => { if (e.target !== e.currentTarget) return; if (courseModal.phase === 'input') closeCourseModal(); }}>
-          <div className={`bg-white w-full ${courseModal.phase === 'tracking' ? 'sm:max-w-lg' : 'sm:max-w-md'} rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden`}>
+          <div className={`bg-card w-full ${courseModal.phase === 'tracking' ? 'sm:max-w-lg' : 'sm:max-w-md'} rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden`}>
 
             {/* ── Phase 1 : Saisie destination ── */}
             {courseModal.phase === 'input' && (
               <div className="p-6 space-y-5">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-gray-900">{tp('🚀 Commencer la course')}</h2>
-                  <button onClick={closeCourseModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200">✕</button>
+                  <h2 className="text-lg font-bold text-foreground">{tp('🚀 Commencer la course')}</h2>
+                  <button onClick={closeCourseModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-gray-200">✕</button>
                 </div>
                 {/* GPS status */}
                 <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm ${courseGps ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>
@@ -535,7 +535,7 @@ const LivreurDeliveries = () => {
                 {courseGpsErr && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">{courseGpsErr}</p>}
                 {/* Destination */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{tp('Adresse de destination')}</label>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Adresse de destination')}</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -543,22 +543,22 @@ const LivreurDeliveries = () => {
                       value={courseAddr}
                       onChange={e => { setCourseAddr(e.target.value); fetchSuggestions(e.target.value); }}
                       onKeyDown={e => e.key === 'Enter' && courseGps && selectedDest && submitCourse()}
-                      className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400"
+                      className="w-full px-4 py-3 text-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400"
                       autoFocus
                       autoComplete="off"
                     />
                     {addrLoading && <div className="absolute right-3 top-3.5 w-4 h-4 border-2 border-gray-300 border-t-amber-500 rounded-full animate-spin" />}
                     {addrSuggestions.length > 0 && !selectedDest && (
-                      <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
+                      <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl overflow-hidden">
                         {addrSuggestions.map((s, i) => (
                           <button
                             key={i}
                             type="button"
                             onClick={() => { setCourseAddr(s.short); setSelectedDest(s); setAddrSuggestions([]); }}
-                            className="w-full text-left px-4 py-3 text-sm hover:bg-amber-50 border-b border-gray-100 last:border-0 flex items-start gap-2"
+                            className="w-full text-left px-4 py-3 text-sm hover:bg-amber-50 border-b border-border last:border-0 flex items-start gap-2"
                           >
                             <span className="text-amber-500 mt-0.5 flex-shrink-0">📍</span>
-                            <span className="text-gray-800 line-clamp-2">{s.short}</span>
+                            <span className="text-foreground line-clamp-2">{s.short}</span>
                           </button>
                         ))}
                       </div>
@@ -567,7 +567,7 @@ const LivreurDeliveries = () => {
                       <div className="mt-1.5 flex items-center gap-1.5 text-xs text-green-700 bg-green-50 rounded-lg px-3 py-1.5">
                         <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
                         <span className="truncate">{selectedDest.short || selectedDest.display}</span>
-                        <button type="button" onClick={() => { setSelectedDest(null); setCourseAddr(''); setTimeout(() => document.querySelector('input[autocomplete=off]')?.focus(), 50); }} className="ml-auto text-gray-400 hover:text-red-500 flex-shrink-0">✕</button>
+                        <button type="button" onClick={() => { setSelectedDest(null); setCourseAddr(''); setTimeout(() => document.querySelector('input[autocomplete=off]')?.focus(), 50); }} className="ml-auto text-muted-foreground hover:text-red-500 flex-shrink-0">✕</button>
                       </div>
                     )}
                   </div>
@@ -581,7 +581,7 @@ const LivreurDeliveries = () => {
                     <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{tp('Calcul en cours…')}</>
                   ) : !courseGps ? <>{tp('⏳ En attente du GPS')}</> : <>{tp('🚀 Lancer la course')}</>}
                 </button>
-                <p className="text-center text-[10px] text-gray-400">Coût calculé à {COST_PER_KM} {symbol} / km</p>
+                <p className="text-center text-[10px] text-muted-foreground">Coût calculé à {COST_PER_KM} {symbol} / km</p>
               </div>
             )}
           </div>
@@ -589,19 +589,19 @@ const LivreurDeliveries = () => {
       )}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('🚚 Mes livraisons')}</h1>
-          <p className="text-sm text-gray-400 mt-0.5">{orders.length} livraison{orders.length !== 1 ? 's' : ''} active{orders.length !== 1 ? 's' : ''}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{tp('🚚 Mes livraisons')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{orders.length} livraison{orders.length !== 1 ? 's' : ''} active{orders.length !== 1 ? 's' : ''}</p>
         </div>
-        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition text-gray-600">{tp('↻ Actualiser')}</button>
+        <button onClick={loadOrders} className="px-3 py-1.5 text-xs font-medium bg-muted hover:bg-gray-200 rounded-lg transition text-muted-foreground">{tp('↻ Actualiser')}</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}<button onClick={() => setError('')} className="float-right font-bold">&times;</button></div>}
       {success && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      <div className="flex gap-1 bg-muted rounded-xl p-1">
         {TABS.map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)} className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition ${tab === t.key ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+          <button key={t.key} onClick={() => setTab(t.key)} className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition ${tab === t.key ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
             {t.label} ({t.key === 'all' ? orders.length : orders.filter(o => o.status === t.key).length})
           </button>
         ))}
@@ -609,12 +609,12 @@ const LivreurDeliveries = () => {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center h-48 gap-3">
-          <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-          <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
+          <div className="w-8 h-8 rounded-full border-4 border-border border-t-amber-600 animate-spin" />
+          <p className="text-sm text-muted-foreground">{tp('Chargement…')}</p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
-          <p className="text-gray-500 font-medium">{tp('Aucune livraison active')}</p>
+        <div className="bg-card rounded-2xl border shadow-sm p-12 text-center">
+          <p className="text-muted-foreground font-medium">{tp('Aucune livraison active')}</p>
           <Link to="/ecom/livreur/available" className="text-xs text-[#0F6B4F] font-medium mt-2 inline-block">{tp('Accepter une course →')}</Link>
         </div>
       ) : (
@@ -622,9 +622,9 @@ const LivreurDeliveries = () => {
           {filtered.map(order => {
             const sm = STATUS_META[order.status] || { bg: '#f9fafb', text: '#374151' };
             return (
-              <div key={order._id} className={`bg-white rounded-2xl border shadow-sm p-4 hover:shadow-md transition ${order.deliveryStartedAt && order.deliveryEndLat ? 'border-indigo-200' : 'border-gray-100'}`}>
+              <div key={order._id} className={`bg-card rounded-2xl border shadow-sm p-4 hover:shadow-md transition ${order.deliveryStartedAt && order.deliveryEndLat ? 'border-indigo-200' : 'border-border'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-gray-900">{order.clientName || order.clientPhone || tp('Client')}</span>
+                  <span className="text-sm font-semibold text-foreground">{order.clientName || order.clientPhone || tp('Client')}</span>
                   <div className="flex items-center gap-2">
                     {order.deliveryStartedAt && order.deliveryEndLat && (
                       <span className="flex h-2 w-2 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"/><span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"/></span>
@@ -634,7 +634,7 @@ const LivreurDeliveries = () => {
                     </span>
                   </div>
                 </div>
-                <div className="space-y-1 text-xs text-gray-500 mb-3">
+                <div className="space-y-1 text-xs text-muted-foreground mb-3">
                   {order.clientPhone && <p>📞 {order.clientPhone}</p>}
                   {(order.city || order.address) && <p>📍 {order.city}{order.address ? `, ${order.address}` : ''}</p>}
                   {order.product && <p>📦 {order.product}{order.quantity > 1 ? ` × ${order.quantity}` : ''}</p>}
@@ -675,7 +675,7 @@ const LivreurDeliveries = () => {
                       {assigning[order._id] ? '…' : '✅ Livré'}
                     </button>
                   )}
-                  <Link to={`/ecom/livreur/delivery/${order._id}`} className="text-xs px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-lg font-medium hover:bg-gray-100 transition">
+                  <Link to={`/ecom/livreur/delivery/${order._id}`} className="text-xs px-3 py-1.5 bg-background text-muted-foreground border border-border rounded-lg font-medium hover:bg-muted transition">
                     {tp('Détails')}
                   </Link>
                   {order.clientPhone && (
@@ -699,16 +699,16 @@ const LivreurDeliveries = () => {
                         currentLat={liveGps?.lat} currentLng={liveGps?.lng}
                       />
                       <div className="grid grid-cols-3 gap-2">
-                        <div className="bg-gray-50 rounded-xl p-2.5 text-center">
-                          <p className="text-base font-black text-gray-800">{distKm.toFixed(1)}</p>
-                          <p className="text-[9px] text-gray-400 font-semibold uppercase">KM TOTAL</p>
+                        <div className="bg-background rounded-xl p-2.5 text-center">
+                          <p className="text-base font-black text-foreground">{distKm.toFixed(1)}</p>
+                          <p className="text-[9px] text-muted-foreground font-semibold uppercase">KM TOTAL</p>
                         </div>
                         <div className="bg-amber-50 rounded-xl p-2.5 text-center">
                           <p className="text-base font-black text-amber-600">{remaining.toFixed(1)}</p>
                           <p className="text-[9px] text-amber-400 font-semibold uppercase">KM RESTANT</p>
                         </div>
                         <div className="bg-primary-50 rounded-xl p-2.5 text-center">
-                          <p className="text-base font-black text-primary-600">{cost.toLocaleString('fr-FR')}</p>
+                          <p className="text-base font-black text-primary">{cost.toLocaleString('fr-FR')}</p>
                           <p className="text-[9px] text-primary-400 font-semibold uppercase">{symbol}</p>
                         </div>
                       </div>

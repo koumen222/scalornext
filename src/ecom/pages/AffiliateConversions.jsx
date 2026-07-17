@@ -63,7 +63,7 @@ export default function AffiliateConversions() {
         <div className="flex items-center justify-center h-[80vh]">
           <div className="flex flex-col items-center gap-3">
             <svg className="w-8 h-8 animate-spin text-[#0F6B4F]" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-            <p className="text-sm text-gray-500">{tp('Chargement...')}</p>
+            <p className="text-sm text-muted-foreground">{tp('Chargement...')}</p>
           </div>
         </div>
       </AffiliateLayout>
@@ -82,23 +82,23 @@ export default function AffiliateConversions() {
 
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-2xl font-bold text-gray-900">{pagination.total}</p>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">{tp('Total conversions')}</p>
+          <div className="bg-card border border-border rounded-xl p-4">
+            <p className="text-2xl font-bold text-foreground">{pagination.total}</p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">{tp('Total conversions')}</p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-2xl font-bold text-gray-900">{fmt(totals.sales)} <span className="text-sm font-medium text-gray-500">F</span></p>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">{tp('Ventes générées')}</p>
+          <div className="bg-card border border-border rounded-xl p-4">
+            <p className="text-2xl font-bold text-foreground">{fmt(totals.sales)} <span className="text-sm font-medium text-muted-foreground">F</span></p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">{tp('Ventes générées')}</p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <div className="bg-card border border-border rounded-xl p-4">
             <p className="text-2xl font-bold text-[#0F6B4F]">{fmt(totals.commissions)} <span className="text-sm font-medium text-[#0F6B4F]/60">F</span></p>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mt-0.5">{tp('Commissions')}</p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">{tp('Commissions')}</p>
           </div>
         </div>
 
         {/* Filter */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-medium text-gray-500">{tp('Filtrer :')}</span>
+          <span className="text-xs font-medium text-muted-foreground">{tp('Filtrer :')}</span>
           {['', 'pending', 'approved', 'paid', 'rejected'].map(s => (
             <button
               key={s}
@@ -106,7 +106,7 @@ export default function AffiliateConversions() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 statusFilter === s
                   ? 'bg-[#0F6B4F] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-muted text-muted-foreground hover:bg-gray-200'
               }`}
             >
               {s ? statusLabels[s] : tp('Toutes')}
@@ -115,54 +115,54 @@ export default function AffiliateConversions() {
         </div>
 
         {/* Table */}
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Commande')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Montant')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Commission')}</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statut')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Date')}</th>
+                <tr className="bg-background border-b border-border">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Commande')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Montant')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Commission')}</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Statut')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Date')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {conversions.map((c) => (
-                  <tr key={c._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm text-gray-900 font-medium">{c.orderNumber || c.orderId || '—'}</td>
-                    <td className="px-4 py-3 text-sm text-right text-gray-900">{fmt(c.orderAmount)} F</td>
+                  <tr key={c._id} className="hover:bg-background transition-colors">
+                    <td className="px-4 py-3 text-sm text-foreground font-medium">{c.orderNumber || c.orderId || '—'}</td>
+                    <td className="px-4 py-3 text-sm text-right text-foreground">{fmt(c.orderAmount)} F</td>
                     <td className="px-4 py-3 text-sm text-right font-bold text-[#0F6B4F]">{fmt(c.commissionAmount)} F</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[c.status] || 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[c.status] || 'bg-muted text-muted-foreground'}`}>
                         {statusLabels[c.status] || c.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
                   </tr>
                 ))}
                 {conversions.length === 0 && (
-                  <tr><td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">Aucune conversion{statusFilter ? ` avec le statut "${statusLabels[statusFilter]}"` : ''}.</td></tr>
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">Aucune conversion{statusFilter ? ` avec le statut "${statusLabels[statusFilter]}"` : ''}.</td></tr>
                 )}
               </tbody>
             </table>
           </div>
 
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500">Page {pagination.page} sur {pagination.pages} — {pagination.total} résultat{pagination.total > 1 ? 's' : ''}</p>
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+              <p className="text-xs text-muted-foreground">Page {pagination.page} sur {pagination.pages} — {pagination.total} résultat{pagination.total > 1 ? 's' : ''}</p>
               <div className="flex gap-1.5">
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-muted text-muted-foreground hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   ← Précédent
                 </button>
                 <button
                   onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
                   disabled={page >= pagination.pages}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-muted text-muted-foreground hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   Suivant →
                 </button>

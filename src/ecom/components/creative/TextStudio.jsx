@@ -137,10 +137,10 @@ const TextStudio = ({ importedProduct, onImport, onClearImport }) => {
             const Icon = t.icon; const active = contentType === t.id;
             return (
               <button key={t.id} onClick={() => setContentType(t.id)}
-                className={`text-left rounded-2xl border p-3.5 transition-all ${active ? `${A.bg} border-transparent ring-2 ${A.ring}` : 'bg-white border-gray-200 hover:border-gray-300'}`}>
-                <Icon size={18} className={active ? A.text : 'text-gray-400'} />
-                <div className={`text-[13px] font-semibold mt-2 ${active ? 'text-gray-900' : 'text-gray-700'}`}>{t.label}</div>
-                <div className="text-[11px] text-gray-400 leading-tight">{t.desc}</div>
+                className={`text-left rounded-2xl border p-3.5 transition-all ${active ? `${A.bg} border-transparent ring-2 ${A.ring}` : 'bg-card border-border hover:border-gray-300'}`}>
+                <Icon size={18} className={active ? A.text : 'text-muted-foreground'} />
+                <div className={`text-[13px] font-semibold mt-2 ${active ? 'text-foreground' : 'text-foreground'}`}>{t.label}</div>
+                <div className="text-[11px] text-muted-foreground leading-tight">{t.desc}</div>
               </button>
             );
           })}
@@ -158,18 +158,18 @@ const TextStudio = ({ importedProduct, onImport, onClearImport }) => {
             <div className="relative">
               <Link2 size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
               <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://…"
-                className="w-full h-11 pl-9 pr-3 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition" />
+                className="w-full h-11 pl-9 pr-3 rounded-xl bg-background border border-border text-sm outline-none focus:border-primary/40 focus:ring-4 focus:ring-primary/20 transition" />
             </div>
           </Field>
           <Field label={tp('Nom du produit')} hint={tp('optionnel')}>
             <input value={productName} onChange={e => setProductName(e.target.value)} placeholder={tp('ex. Huile de Batana 100% pure')}
-              className="w-full h-11 px-3.5 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition" />
+              className="w-full h-11 px-3.5 rounded-xl bg-background border border-border text-sm outline-none focus:border-primary/40 focus:ring-4 focus:ring-primary/20 transition" />
           </Field>
           <Field label={tp('Brief / description')} hint={tp('optionnel')}>
             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder={tp('Décrivez le produit, la cible, l\'offre…')}
-              className="w-full px-3.5 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition resize-none" />
+              className="w-full px-3.5 py-3 rounded-xl bg-background border border-border text-sm outline-none focus:border-primary/40 focus:ring-4 focus:ring-primary/20 transition resize-none" />
           </Field>
-          {!canGenerate && <p className="text-[12px] text-gray-400">{tp('Ajoutez au moins un lien, un nom ou une description pour continuer.')}</p>}
+          {!canGenerate && <p className="text-[12px] text-muted-foreground">{tp('Ajoutez au moins un lien, un nom ou une description pour continuer.')}</p>}
         </div>
       ),
     },
@@ -180,21 +180,21 @@ const TextStudio = ({ importedProduct, onImport, onClearImport }) => {
       content: (
         <div className="space-y-5 max-w-xl">
           <div>
-            <span className="text-[13px] font-semibold text-gray-700 block mb-2">{tp('Ton')}</span>
+            <span className="text-[13px] font-semibold text-foreground block mb-2">{tp('Ton')}</span>
             <div className="flex flex-wrap gap-1.5">
               {TONES.map(t => <ChoiceChip key={t.id} active={tone === t.id} onClick={() => setTone(t.id)} accent={A}>{t.label}</ChoiceChip>)}
             </div>
           </div>
           <div>
-            <span className="text-[13px] font-semibold text-gray-700 block mb-2">{tp('Langue')}</span>
-            <div className="inline-flex bg-gray-100 rounded-xl p-1">
+            <span className="text-[13px] font-semibold text-foreground block mb-2">{tp('Langue')}</span>
+            <div className="inline-flex bg-muted rounded-xl p-1">
               {LANGS.map(l => (
                 <button key={l.id} onClick={() => setLanguage(l.id)}
-                  className={`h-8 px-4 rounded-lg text-[12px] font-bold transition-all ${language === l.id ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400'}`}>{l.label}</button>
+                  className={`h-8 px-4 rounded-lg text-[12px] font-bold transition-all ${language === l.id ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground'}`}>{l.label}</button>
               ))}
             </div>
           </div>
-          <div className="rounded-xl bg-blue-50/60 border border-blue-100 px-3.5 py-2.5 text-[12px] text-blue-700">
+          <div className="rounded-xl bg-primary/10/60 border border-primary/20 px-3.5 py-2.5 text-[12px] text-primary">
             {activeType.count > 1
               ? tp('{n} variantes seront générées.').replace('{n}', String(activeType.count))
               : tp('1 contenu sera généré.')}
@@ -219,31 +219,31 @@ const TextStudio = ({ importedProduct, onImport, onClearImport }) => {
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-3xl border border-gray-100 p-5 animate-pulse">
-              <div className="h-3 bg-gray-100 rounded w-1/3 mb-3" />
-              <div className="space-y-2"><div className="h-2.5 bg-gray-100 rounded w-full" /><div className="h-2.5 bg-gray-100 rounded w-11/12" /><div className="h-2.5 bg-gray-100 rounded w-4/5" /></div>
+            <div key={i} className="bg-card rounded-3xl border border-border p-5 animate-pulse">
+              <div className="h-3 bg-muted rounded w-1/3 mb-3" />
+              <div className="space-y-2"><div className="h-2.5 bg-muted rounded w-full" /><div className="h-2.5 bg-muted rounded w-11/12" /><div className="h-2.5 bg-muted rounded w-4/5" /></div>
             </div>
           ))}
         </div>
       ) : items.length > 0 ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between px-1">
-            <p className="text-[13px] text-gray-400">{items.length} {tp('variante(s)')} · <span className="font-medium text-gray-600">{activeType.label}</span></p>
+            <p className="text-[13px] text-muted-foreground">{items.length} {tp('variante(s)')} · <span className="font-medium text-muted-foreground">{activeType.label}</span></p>
             <div className="flex items-center gap-2">
-              <button onClick={generate} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-blue-600 hover:text-blue-700"><RefreshCw size={13} /> {tp('Régénérer')}</button>
-              <button onClick={reset} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-[13px] font-medium hover:bg-gray-50"><RotateCcw size={13} /> {tp('Recommencer')}</button>
+              <button onClick={generate} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary hover:text-primary"><RefreshCw size={13} /> {tp('Régénérer')}</button>
+              <button onClick={reset} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-muted-foreground text-[13px] font-medium hover:bg-background"><RotateCcw size={13} /> {tp('Recommencer')}</button>
             </div>
           </div>
           {items.map((item, idx) => (
-            <div key={item.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-shadow">
+            <div key={item.id} className="bg-card rounded-3xl border border-border shadow-sm p-5 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-3">
-                <span className="inline-flex items-center gap-2 text-[12px] font-semibold text-gray-500">
-                  <span className="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] font-bold">{idx + 1}</span>
+                <span className="inline-flex items-center gap-2 text-[12px] font-semibold text-muted-foreground">
+                  <span className="w-5 h-5 rounded-md bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">{idx + 1}</span>
                   {item.title || activeType.label}
                 </span>
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => save(item)} disabled={savedIds.includes(item.id)}
-                    className="h-8 px-2.5 rounded-lg border border-gray-200 text-gray-500 text-[12px] font-medium inline-flex items-center gap-1.5 hover:bg-gray-50 disabled:text-primary-600 disabled:border-primary-100 disabled:bg-primary-50">
+                    className="h-8 px-2.5 rounded-lg border border-border text-muted-foreground text-[12px] font-medium inline-flex items-center gap-1.5 hover:bg-background disabled:text-primary disabled:border-primary-100 disabled:bg-primary-50">
                     <Bookmark size={13} className={savedIds.includes(item.id) ? 'fill-primary-600' : ''} />
                     {savedIds.includes(item.id) ? tp('Enregistré') : tp('Enregistrer')}
                   </button>
@@ -252,7 +252,7 @@ const TextStudio = ({ importedProduct, onImport, onClearImport }) => {
                   </button>
                 </div>
               </div>
-              <p className="text-[14px] leading-relaxed text-gray-700 whitespace-pre-wrap">{item.content}</p>
+              <p className="text-[14px] leading-relaxed text-foreground whitespace-pre-wrap">{item.content}</p>
             </div>
           ))}
         </div>

@@ -92,7 +92,7 @@ const AiTextPromptBox = ({ purpose, context = {}, onGenerated, maxWords = 45, la
                     type="button"
                     title={m.hint}
                     onClick={() => setMethodId(methodId === m.id ? '' : m.id)}
-                    className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${methodId === m.id ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-indigo-200 bg-white text-indigo-700 hover:bg-indigo-50'}`}
+                    className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${methodId === m.id ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-indigo-200 bg-card text-indigo-700 hover:bg-indigo-50'}`}
                   >
                     {m.label}
                   </button>
@@ -110,12 +110,12 @@ const AiTextPromptBox = ({ purpose, context = {}, onGenerated, maxWords = 45, la
               onChange={(e) => setInstruction(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); run(); } }}
               placeholder={tp('Consigne (optionnelle) : ton, angle, promo à mentionner…')}
-              className="flex-1 rounded-lg border border-indigo-200 bg-white px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="flex-1 rounded-lg border border-indigo-200 bg-card px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
             />
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg p-1 text-slate-400 transition hover:bg-white hover:text-slate-700"
+              className="rounded-lg p-1 text-slate-400 transition hover:bg-card hover:text-slate-700"
               title={tp('Fermer')}
             >
               <X className="h-3.5 w-3.5" />

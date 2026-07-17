@@ -68,24 +68,24 @@ export default function EmailAnalytics() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{tp('Email Analytics')}</h1>
-            <p className="text-sm text-gray-500">{tp('Evolution journaliere des campagnes email: envoi, ouverture, clic')}</p>
+            <h1 className="text-2xl font-bold text-foreground">{tp('Email Analytics')}</h1>
+            <p className="text-sm text-muted-foreground">{tp('Evolution journaliere des campagnes email: envoi, ouverture, clic')}</p>
           </div>
           <Link
             to="/ecom/marketing"
-            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border border-gray-200 rounded-lg bg-white hover:bg-gray-100"
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border border-border rounded-lg bg-card hover:bg-muted"
           >
             {tp('Retour marketing')}
           </Link>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 md:flex-row md:items-end">
+        <div className="bg-card border border-border rounded-xl p-4 flex flex-col gap-3 md:flex-row md:items-end">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Periode')}</label>
+            <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">{tp('Periode')}</label>
             <select
               value={days}
               onChange={(e) => {
@@ -103,7 +103,7 @@ export default function EmailAnalytics() {
           </div>
 
           <div className="md:min-w-[280px]">
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">{tp('Campagne')}</label>
+            <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">{tp('Campagne')}</label>
             <select
               value={campaignId}
               onChange={(e) => {
@@ -122,7 +122,7 @@ export default function EmailAnalytics() {
 
           <button
             onClick={() => loadAnalytics(days, campaignId)}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700"
+            className="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary-700"
           >
             {tp('Actualiser')}
           </button>
@@ -132,8 +132,8 @@ export default function EmailAnalytics() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
-            { label: 'Cibles', value: fmtNum(totals.targeted), color: 'text-gray-900' },
-            { label: 'Envoyes', value: fmtNum(totals.sent), color: 'text-primary-600' },
+            { label: 'Cibles', value: fmtNum(totals.targeted), color: 'text-foreground' },
+            { label: 'Envoyes', value: fmtNum(totals.sent), color: 'text-primary' },
             { label: 'Echecs', value: fmtNum(totals.failed), color: 'text-red-600' },
             { label: 'Ouverts', value: fmtNum(totals.opened), color: 'text-blue-600' },
             { label: 'Cliqueurs', value: fmtNum(totals.uniqueClicked), color: 'text-amber-600' },
@@ -141,18 +141,18 @@ export default function EmailAnalytics() {
             { label: 'Taux ouv.', value: `${totals.openRate || 0}%`, color: 'text-blue-700' },
             { label: 'Taux clic', value: `${totals.clickRate || 0}%`, color: 'text-amber-700' }
           ].map((item) => (
-            <div key={item.label} className="bg-white border border-gray-200 rounded-xl p-3">
-              <p className="text-[11px] uppercase tracking-wide text-gray-500">{item.label}</p>
+            <div key={item.label} className="bg-card border border-border rounded-xl p-3">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{item.label}</p>
               <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
             </div>
           ))}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <h2 className="text-sm font-semibold text-gray-800 mb-3">{tp('Evolution journaliere des volumes')}</h2>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <h2 className="text-sm font-semibold text-foreground mb-3">{tp('Evolution journaliere des volumes')}</h2>
           <div className="h-80">
             {loading ? (
-              <div className="h-full flex items-center justify-center text-sm text-gray-500">{tp('Chargement...')}</div>
+              <div className="h-full flex items-center justify-center text-sm text-muted-foreground">{tp('Chargement...')}</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
@@ -171,11 +171,11 @@ export default function EmailAnalytics() {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <h2 className="text-sm font-semibold text-gray-800 mb-3">{tp('Taux journaliers')}</h2>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <h2 className="text-sm font-semibold text-foreground mb-3">{tp('Taux journaliers')}</h2>
           <div className="h-72">
             {loading ? (
-              <div className="h-full flex items-center justify-center text-sm text-gray-500">{tp('Chargement...')}</div>
+              <div className="h-full flex items-center justify-center text-sm text-muted-foreground">{tp('Chargement...')}</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>

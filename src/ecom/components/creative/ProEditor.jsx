@@ -65,14 +65,66 @@ const mkScene = (p = {}) => ({
   volume: 1, fadeIn: 0, fadeOut: 0, showProduct: true, overlays: [], busy: '', ...p,
 });
 
-const VOICES = [
-  { id: '498c39373700473b9e5251cb2f2049bc', label: 'Dame africaine' },
-  { id: '13f7f6e260f94079b9d51c961fa6c9e2', label: 'Michelle' },
-  { id: '14b22748e04a48a58f92fbcde088ee50', label: 'Rita' },
-  { id: 'e3a12335ddd040209a99002ee76b682f', label: 'Sophie' },
-  { id: '4f2a0684dd0247dda68f339738c780e6', label: 'Le narrateur' },
-  { id: '', label: tp('Voix du modèle') },
-];
+// ── Galerie (thème sombre de l'éditeur) : choisir un clip ou une voix off
+//    déjà générés — mêmes données que la galerie du studio. ──
+function DarkGalleryPicker({ open, type, onPick, onClose }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!open) return undefined;
+    let alive = true;
+    setLoading(true);
+    creativeApi.gallery.list({ type, limit: 60 })
+      .then((res) => { if (alive) setItems(res?.data?.assets || res?.data?.items || res?.data?.data || []); })
+      .catch(() => { if (alive) setItems([]); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, [open, type]);
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+      <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-2xl bg-neutral-900 border border-white/10 shadow-2xl flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 h-12 border-b border-white/10">
+          <p className="text-[13px] font-bold text-white">{type === 'video' ? tp('Choisir un clip') : tp('Choisir une voix off')}</p>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-neutral-400 hover:bg-card/10"><X size={16} /></button>
+        </div>
+        <div className="p-4 overflow-y-auto">
+          {loading ? (
+            <div className="py-16 flex justify-center"><Loader2 className="animate-spin text-neutral-500" /></div>
+          ) : !items.length ? (
+            <p className="py-16 text-center text-[13px] text-neutral-500">{tp('Aucun contenu dans la galerie pour le moment.')}</p>
+          ) : type === 'video' ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {items.filter((it) => it.videoUrl).map((it) => (
+                <button key={it._id} onClick={() => onPick(it)}
+                  className="group text-left rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition">
+                  <div className="aspect-video bg-black flex items-center justify-center overflow-hidden">
+                    {it.thumbnailUrl || it.imageUrl
+                      ? <img src={it.thumbnailUrl || it.imageUrl} alt="" className="w-full h-full object-cover" />
+                      : <Film size={22} className="text-white/50" />}
+                  </div>
+                  <p className="px-2 py-1.5 text-[11px] font-medium text-neutral-300 truncate">{it.label || it.title || it.productName || tp('Clip')}</p>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {items.filter((it) => it.audioUrl).map((it) => (
+                <div key={it._id} className="flex items-center gap-3 rounded-xl border border-white/10 p-2.5">
+                  <audio src={it.audioUrl} controls className="h-8 flex-1" />
+                  <button onClick={() => onPick(it)} className="h-8 px-3 rounded-lg bg-primary text-white text-[12px] font-semibold hover:bg-primary">{tp('Choisir')}</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Voix off : catalogue unifié (voix Scalor priorisées + tout Fish Audio).
+import { VoiceSelect, VoicePreviewButton } from './voiceCatalog.jsx';
 
 export default function ProEditor({
   scenes, setScenes, format, subtitlesOn, setSubtitlesOn, captionMode, setCaptionMode,
@@ -93,6 +145,21 @@ export default function ProEditor({
   const [panelW, setPanelW] = useState(320);
   const [timelineH, setTimelineH] = useState(264);
   const [fullPreview, setFullPreview] = useState(false); // aperçu plein écran (Échap pour sortir)
+  // Taille réelle de la zone d'aperçu. Le cadre n'a que des enfants en position
+  // absolue (couches de transition superposées) : sans dimensions explicites il
+  // s'effondre à 0×0. On mesure donc la scène et on fixe le cadre en pixels.
+  const stageRef = useRef(null);
+  const [stageSize, setStageSize] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0]?.contentRect;
+      if (r) setStageSize({ w: r.width, h: r.height });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const startPanelResize = (e) => {
     e.preventDefault();
     const startX = e.clientX; const startW = panelW;
@@ -123,6 +190,8 @@ export default function ProEditor({
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
   const [presets, setPresets] = useState([]);
+  // Galerie (clips / voix) pour le plan sélectionné — comme au studio.
+  const [picker, setPicker] = useState({ open: false, type: 'video', sceneId: null });
   const [movingId, setMovingId] = useState(null);
   const [moveDx, setMoveDx] = useState(0);
 
@@ -148,6 +217,15 @@ export default function ProEditor({
   const activeScene = scenes[activeIndex];
   const selScene = scenes.find((s) => s.id === selId) || activeScene;
   const aspect = format === '9:16' ? '9 / 16' : format === '1:1' ? '1 / 1' : '16 / 9';
+  // Dimensions explicites du cadre d'aperçu : le plus grand rectangle au bon
+  // ratio qui tient dans la scène mesurée (letterbox). Repli CSS avant mesure.
+  const previewBox = useMemo(() => {
+    const [arW, arH] = format === '9:16' ? [9, 16] : format === '1:1' ? [1, 1] : [16, 9];
+    const { w: W, h: H } = stageSize;
+    if (!W || !H) return { aspectRatio: aspect, height: '100%', maxWidth: '100%' };
+    const s = Math.min(W / arW, H / arH);
+    return { width: Math.floor(arW * s), height: Math.floor(arH * s) };
+  }, [stageSize, format, aspect]);
   const trackW = Math.max(total * pxPerSec + 8, 320);
 
   const activeCaption = useMemo(() => {
@@ -314,6 +392,93 @@ export default function ProEditor({
       setScenes((prev) => [...prev, sc]); setSelId(sc.id); setGenPrompt('');
     } catch (e) { setErr(e?.response?.data?.message || e.message); } finally { setBusy(''); }
   };
+  // ── Contenu d'UN plan par IA : remplace le visuel du plan sélectionné.
+  //    Même contrat de prompt que le studio (generateVisualCore) : la phrase
+  //    prononcée est illustrée littéralement ; genMode 'image' = image IA éco. ──
+  const genSceneContent = async (id) => {
+    const sc = scenes.find((s) => s.id === id); if (!sc) return;
+    const asImage = sc.genMode === 'image';
+    const prompt = (sc.clipPrompt || '').trim();
+    const voice = String(sc.voiceText || sc.subtitleText || '').trim();
+    const useProduct = sc.showProduct !== false && !!productImage;
+    if (!useProduct && prompt.length < 8 && voice.length < 8) { setErr(tp('Décris le plan (ou écris son texte/sous-titre) pour générer par IA.')); return; }
+    patch(id, { busy: 'gen' }); setErr('');
+    try {
+      const { data } = await creativeApi.video.generateScene({
+        mode: 'scene', prompt, scenario: '',
+        ...(asImage ? { stage: 'character' } : {}),
+        voiceoverText: voice,
+        sourceUrl: useProduct ? productImage : null,
+        showProduct: useProduct,
+        subject, productContext,
+        durationSec: Math.max(3, Math.min(6, Math.round(durOf(sc)))),
+      });
+      if (asImage) {
+        const img = data?.startImage || '';
+        if (!data?.success || !img) throw new Error(data?.message || tp('Génération de l’image impossible'));
+        patch(id, { imageUrl: img, videoUrl: '', videoPoster: '', trimStart: 0, busy: '' });
+      } else {
+        const url = data?.videoUrl || '';
+        if (!data?.success || !url) throw new Error(data?.message || tp('Génération du clip impossible'));
+        const dur = await readDur(url, 'video');
+        patch(id, { videoUrl: url, imageUrl: '', trimStart: 0, busy: '', ...(dur ? { srcDuration: Math.round(dur * 10) / 10 } : {}) });
+      }
+    } catch (e) { setErr(e?.response?.data?.message || e.message); patch(id, { busy: '' }); }
+  };
+  // ── Remplacement du média du plan sélectionné : upload (clip/image) ──
+  const replaceUpload = async (id, file) => {
+    if (!file) return;
+    const sc = scenes.find((s) => s.id === id); if (!sc) return;
+    const isImage = String(file.type || '').startsWith('image');
+    patch(id, { busy: 'up' }); setErr('');
+    try {
+      const fd = new FormData(); fd.append('file', file);
+      const { data } = await creativeApi.media.upload(fd);
+      if (!data?.url) throw new Error(tp('Upload impossible'));
+      if (isImage) patch(id, { imageUrl: data.url, videoUrl: '', videoPoster: '', trimStart: 0, genMode: 'image', busy: '' });
+      else {
+        const dur = await readDur(data.url, 'video');
+        patch(id, {
+          videoUrl: data.url, imageUrl: '', trimStart: 0, genMode: 'video', busy: '',
+          ...(dur ? { srcDuration: Math.round(dur * 10) / 10 } : {}),
+          // Sans voix, le plan épouse le clip ; avec voix, la voix reste maîtresse.
+          ...(dur && !sc.audioUrl ? { durationSec: Math.round(dur * 10) / 10 } : {}),
+        });
+      }
+    } catch (e) { setErr(e?.response?.data?.message || e.message); patch(id, { busy: '' }); }
+  };
+  // ── Voix off du plan : upload d'un fichier audio ──
+  const uploadVoiceFile = async (id, file) => {
+    if (!file) return;
+    patch(id, { busy: 'voice' }); setErr('');
+    try {
+      const fd = new FormData(); fd.append('file', file);
+      const { data } = await creativeApi.media.upload(fd);
+      if (!data?.url) throw new Error(tp('Upload impossible'));
+      const dur = await readDur(data.url, 'audio');
+      patch(id, { audioUrl: data.url, busy: '', ...(dur ? { durationSec: Math.max(1.2, Math.round((dur + 0.1) * 10) / 10) } : {}) });
+    } catch (e) { setErr(e?.response?.data?.message || e.message); patch(id, { busy: '' }); }
+  };
+  // ── Choix depuis la galerie (clip ou voix) pour le plan visé ──
+  const handleGalleryPick = async (it) => {
+    const id = picker.sceneId; const type = picker.type;
+    setPicker({ open: false, type: 'video', sceneId: null });
+    if (!id || !it) return;
+    const sc = scenes.find((s) => s.id === id); if (!sc) return;
+    try {
+      if (type === 'video' && it.videoUrl) {
+        const dur = await readDur(it.videoUrl, 'video');
+        patch(id, {
+          videoUrl: it.videoUrl, imageUrl: '', videoPoster: it.thumbnailUrl || it.imageUrl || '', trimStart: 0, genMode: 'video',
+          ...(dur ? { srcDuration: Math.round(dur * 10) / 10 } : {}),
+          ...(dur && !sc.audioUrl ? { durationSec: Math.round(dur * 10) / 10 } : {}),
+        });
+      } else if (type === 'audio' && it.audioUrl) {
+        const dur = await readDur(it.audioUrl, 'audio');
+        patch(id, { audioUrl: it.audioUrl, ...(dur ? { durationSec: Math.max(1.2, Math.round((dur + 0.1) * 10) / 10) } : {}) });
+      }
+    } catch { /* le média reste inchangé */ }
+  };
   // ── Images superposées (logo, sticker…) sur le plan sélectionné ──
   const patchOverlay = (sceneId, k, p) => setScenes((prev) => prev.map((s) => (s.id === sceneId
     ? { ...s, overlays: (s.overlays || []).map((o, j) => (j === k ? { ...o, ...p } : o)) }
@@ -329,25 +494,48 @@ export default function ProEditor({
   };
 
   const genVoice = async (id) => {
-    const sc = scenes.find((s) => s.id === id); const text = (sc?.subtitleText || sc?.voiceText || '').trim();
-    if (text.length < 2) { setErr(tp('Écris un sous-titre / texte pour générer la voix.')); return; }
+    const sc = scenes.find((s) => s.id === id); const text = (sc?.voiceText || sc?.subtitleText || '').trim();
+    if (text.length < 2) { setErr(tp('Écris le texte de la voix off (ou un sous-titre) pour générer la voix.')); return; }
     patch(id, { busy: 'voice' }); setErr('');
     try {
       const { data } = await creativeApi.launch.voiceover({ text, referenceId: voiceRefId || undefined });
       if (!data?.success || !data.url) throw new Error(data?.message || tp('Voix impossible'));
       const dur = await readDur(data.url, 'audio');
-      // La durée planifiée du plan (rythme) reste le plancher ; la voix peut l'allonger.
-      patch(id, { audioUrl: data.url, busy: '', ...(dur ? { durationSec: Math.max(Number(sc?.durationSec) || 3, Math.round(dur * 10) / 10) } : {}) });
+      // La voix dicte le rythme : plan = phrase + courte finale (comme le rendu).
+      // Le sous-titre affiché reprend le texte dit s'il était vide (comme au studio).
+      patch(id, {
+        audioUrl: data.url, busy: '', subtitleText: sc?.subtitleText || text,
+        ...(dur ? { durationSec: Math.max(1.2, Math.round((dur + 0.1) * 10) / 10) } : {}),
+      });
     } catch (e) { setErr(e?.response?.data?.message || e.message); patch(id, { busy: '' }); }
   };
 
   const btn = 'inline-flex items-center justify-center gap-1.5 rounded-md text-[12px] font-semibold transition';
-  const iconBtn = 'h-8 w-8 rounded-md flex items-center justify-center text-neutral-300 hover:bg-white/10 transition';
+  const iconBtn = 'h-8 w-8 rounded-md flex items-center justify-center text-neutral-300 hover:bg-card/10 transition';
   const secTitle = 'text-[10.5px] font-bold uppercase tracking-wide text-neutral-500';
 
   return (
     <div className="fixed inset-0 z-[70] bg-neutral-950 text-neutral-200 flex flex-col">
-      <style>{`@keyframes pop{0%{transform:scale(.7);opacity:0}55%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}.pe-cap{animation:pop .26s ease-out}`}</style>
+      <style>{`
+@keyframes pe-pop{0%{transform:scale(.7);opacity:0}55%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+@keyframes pe-fade{0%{opacity:0}100%{opacity:1}}
+@keyframes pe-zoom{0%{transform:scale(.55);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes pe-bounce{0%{transform:scale(.6);opacity:0}45%{transform:scale(1.26)}70%{transform:scale(.92)}100%{transform:scale(1);opacity:1}}
+@keyframes pe-kb-zoomin{0%{transform:scale(1)}100%{transform:scale(1.18)}}
+@keyframes pe-kb-zoomout{0%{transform:scale(1.18)}100%{transform:scale(1.001)}}
+@keyframes pe-kb-panleft{0%{transform:scale(1.15) translateX(4%)}100%{transform:scale(1.15) translateX(-4%)}}
+@keyframes pe-kb-panright{0%{transform:scale(1.15) translateX(-4%)}100%{transform:scale(1.15) translateX(4%)}}
+@keyframes pe-punchin{0%{transform:scale(1)}100%{transform:scale(1.08)}}
+@keyframes pe-punchout{0%{transform:scale(1.08)}100%{transform:scale(1.001)}}
+@keyframes pe-tr-slideleft{0%{transform:translateX(100%)}100%{transform:translateX(0)}}
+@keyframes pe-tr-slideright{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}
+@keyframes pe-tr-slideup{0%{transform:translateY(100%)}100%{transform:translateY(0)}}
+@keyframes pe-tr-slidedown{0%{transform:translateY(-100%)}100%{transform:translateY(0)}}
+@keyframes pe-tr-fade{0%{opacity:0}100%{opacity:1}}
+@keyframes pe-tr-circle{0%{clip-path:circle(0% at 50% 50%)}100%{clip-path:circle(75% at 50% 50%)}}
+@keyframes pe-tr-wipe{0%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 0 0 0)}}
+@keyframes pe-flash{0%{opacity:.95}100%{opacity:0}}
+`}</style>
 
       {/* Barre supérieure */}
       <div className="h-12 shrink-0 border-b border-white/10 flex items-center justify-between px-3">
@@ -357,8 +545,8 @@ export default function ProEditor({
           <span className="text-[11px] text-neutral-500">{subject || tp('Montage')}</span>
         </div>
         <div className="flex items-center gap-2">
-          {resultUrl && <button onClick={onNewMontage} className={`${btn} h-8 px-3 border border-white/15 text-neutral-200 hover:bg-white/10`}>{tp('Nouveau')}</button>}
-          <button onClick={onExport} disabled={rendering} className={`${btn} h-8 px-4 bg-cyan-500 text-white hover:bg-cyan-400 disabled:opacity-50`}>
+          {resultUrl && <button onClick={onNewMontage} className={`${btn} h-8 px-3 border border-white/15 text-neutral-200 hover:bg-card/10`}>{tp('Nouveau')}</button>}
+          <button onClick={onExport} disabled={rendering} className={`${btn} h-8 px-4 bg-primary text-white hover:bg-primary disabled:opacity-50`}>
             {rendering ? <><Loader2 size={14} className="animate-spin" /> {progress}%</> : <><VideoIcon size={14} /> {tp('Exporter')}</>}
           </button>
         </div>
@@ -370,14 +558,41 @@ export default function ProEditor({
       <div className="flex-1 min-h-0 flex">
         {/* Aperçu */}
         <div className="flex-1 min-w-0 flex flex-col items-center justify-center p-4 bg-neutral-900">
-          <div className="pe-preview relative bg-black rounded-lg overflow-hidden shadow-2xl" style={{ aspectRatio: aspect, maxHeight: '100%', maxWidth: '100%' }}>
-            {activeScene?.videoUrl ? (
-              <video key={activeScene.id} ref={videoRef} src={activeScene.videoUrl} playsInline className="w-full h-full object-cover" />
-            ) : activeScene?.imageUrl ? (
-              <img src={activeScene.imageUrl} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full min-w-[220px] min-h-[300px] flex items-center justify-center text-neutral-600 text-[13px]">{tp('Aucun plan')}</div>
-            )}
+          <div ref={stageRef} className="flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden">
+          <div className="pe-preview relative bg-black rounded-lg overflow-hidden shadow-2xl" style={previewBox}>
+            {(() => {
+              // ── Aperçu FIDÈLE au rendu : transition d'entrée du plan (celle de
+              //    la jonction précédente), Ken Burns sur les images, punch-in
+              //    sur les vidéos — mêmes mouvements que le moteur ffmpeg. ──
+              if (!activeScene?.videoUrl && !activeScene?.imageUrl) {
+                return <div className="w-full h-full min-w-[220px] min-h-[300px] flex items-center justify-center text-neutral-600 text-[13px]">{tp('Aucun plan')}</div>;
+              }
+              const prev = activeIndex > 0 ? scenes[activeIndex - 1] : null;
+              const rawTr = prev ? (prev.transitionOut || transition || '') : '';
+              const tr = rawTr === 'none' || !prev ? ''
+                : /^slide(left|right|up|down)$/.test(rawTr) ? rawTr
+                  : /circle|radial/.test(rawTr) ? 'circle'
+                    : /^wipe|smoothleft|diagtl/.test(rawTr) ? 'wipe'
+                      : 'fade'; // fade, fadeblack, dissolve, pixelize, dynamic…
+              const isFlash = rawTr === 'fadewhite';
+              const dur = durOf(activeScene);
+              const mediaAnim = activeScene.videoUrl
+                ? `pe-punch${activeIndex % 2 === 0 ? 'in' : 'out'} ${dur}s linear both`
+                : `pe-kb-${activeScene.kenBurns || ['zoomin', 'panleft', 'zoomout', 'panright'][activeIndex % 4]} ${dur}s linear both`;
+              return (
+                <>
+                  <div key={activeScene.id} className="absolute inset-0 overflow-hidden"
+                    style={tr ? { animation: `pe-tr-${tr} 0.45s ease-out both` } : undefined}>
+                    {activeScene.videoUrl
+                      ? <video ref={videoRef} src={activeScene.videoUrl} poster={activeScene.videoPoster || undefined} preload="auto" playsInline
+                          onLoadedData={() => { if (!playing) syncMedia(false); }}
+                          className="w-full h-full object-cover" style={{ animation: mediaAnim, animationPlayState: playing ? 'running' : 'paused' }} />
+                      : <img src={activeScene.imageUrl} alt="" className="w-full h-full object-cover" style={{ animation: mediaAnim, animationPlayState: playing ? 'running' : 'paused' }} />}
+                  </div>
+                  {isFlash && <div key={`fl-${activeScene.id}`} className="absolute inset-0 bg-card pointer-events-none" style={{ animation: 'pe-flash 0.35s ease-out both' }} />}
+                </>
+              );
+            })()}
             {/* Images superposées : déplaçables (corps) et redimensionnables (poignée) */}
             {(activeScene?.overlays || []).map((o, k) => (
               <div key={`${activeScene.id}ov${k}`} className="absolute select-none touch-none" style={{ left: `${o.xPct}%`, top: `${o.yPct}%`, width: `${o.wPct}%`, ...(o.hPct ? { height: `${o.hPct}%` } : {}), transform: 'translate(-50%,-50%)' }}>
@@ -392,7 +607,7 @@ export default function ProEditor({
                     )
                     : <img src={o.url} alt="" draggable={false} className={`w-full pointer-events-none rounded ${o.hPct ? 'h-full object-fill' : 'h-auto'}`} />}
                 <div
-                  className="absolute inset-0 cursor-move rounded ring-1 ring-white/30 hover:ring-cyan-400"
+                  className="absolute inset-0 cursor-move rounded ring-1 ring-white/30 hover:ring-primary"
                   title={tp('Glisser pour déplacer l’image')}
                   onPointerDown={(e) => {
                     const container = e.currentTarget.closest('.pe-preview');
@@ -409,7 +624,7 @@ export default function ProEditor({
                   }}
                 />
                 <span
-                  className="absolute -right-2 -bottom-2 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow cursor-nwse-resize"
+                  className="absolute -right-2 -bottom-2 w-4 h-4 rounded-full bg-primary border-2 border-white shadow cursor-nwse-resize"
                   title={tp('Glisser pour redimensionner (horizontal et vertical)')}
                   onPointerDown={(e) => {
                     const container = e.currentTarget.closest('.pe-preview');
@@ -440,7 +655,7 @@ export default function ProEditor({
                 <span className="relative inline-block">
                   <span
                     key={activeCaption.key}
-                    className="pe-cap inline-block bg-black/35 font-extrabold text-center px-3 py-1 rounded-lg leading-tight cursor-grab active:cursor-grabbing select-none touch-none"
+                    className="inline-block bg-black/35 font-extrabold text-center px-3 py-1 rounded-lg leading-tight cursor-grab active:cursor-grabbing select-none touch-none"
                     title={tp('Glisse-moi pour positionner le sous-titre (façon CapCut)')}
                     onPointerDown={(e) => {
                       // Drag vertical libre : la position (% hauteur) est envoyée au rendu (\pos ASS).
@@ -457,11 +672,11 @@ export default function ProEditor({
                       window.addEventListener('pointermove', move);
                       window.addEventListener('pointerup', up);
                     }}
-                    style={{ whiteSpace: 'pre-line', color: captionColor(activeScene?.captionStyle || captionStyle).text, fontFamily: captionFontCss(captionFont), textTransform: captionCase === 'upper' ? 'uppercase' : 'none', fontSize: `calc(clamp(14px,3.2vh,30px) * ${Math.max(0.5, Math.min(2, Number(captionScale) || 1))})`, WebkitTextStroke: '1px rgba(0,0,0,.85)', textShadow: '0 2px 6px rgba(0,0,0,.7)' }}
+                    style={{ whiteSpace: 'pre-line', animation: `pe-${['pop', 'fade', 'zoom', 'bounce'].includes(captionAnim) ? captionAnim : 'fade'} .28s ease-out both`, color: captionColor(activeScene?.captionStyle || captionStyle).text, fontFamily: captionFontCss(captionFont), textTransform: captionCase === 'upper' ? 'uppercase' : 'none', fontSize: `calc(clamp(14px,3.2vh,30px) * ${Math.max(0.5, Math.min(2, Number(captionScale) || 1))})`, WebkitTextStroke: '1px rgba(0,0,0,.85)', textShadow: '0 2px 6px rgba(0,0,0,.7)' }}
                   >{activeCaption.text}</span>
                   {/* Poignée de redimensionnement graphique : glisser haut/bas = taille */}
                   <span
-                    className="absolute -right-2.5 -bottom-2.5 w-5 h-5 rounded-full bg-cyan-500 border-2 border-white shadow cursor-nwse-resize select-none touch-none flex items-center justify-center text-[9px] font-black text-white"
+                    className="absolute -right-2.5 -bottom-2.5 w-5 h-5 rounded-full bg-primary border-2 border-white shadow cursor-nwse-resize select-none touch-none flex items-center justify-center text-[9px] font-black text-white"
                     title={tp('Glisse pour ajuster la taille des sous-titres')}
                     onPointerDown={(e) => {
                       if (!setCaptionScale) return;
@@ -482,11 +697,12 @@ export default function ProEditor({
               </div>
             )}
           </div>
-          <div className="mt-3 flex items-center gap-3">
-            <button onClick={() => setPlaying((p) => !p)} className="h-9 w-9 rounded-full bg-white text-neutral-900 flex items-center justify-center hover:bg-neutral-200">{playing ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}</button>
+          </div>
+          <div className="mt-3 shrink-0 flex items-center gap-3">
+            <button onClick={() => setPlaying((p) => !p)} className="h-9 w-9 rounded-full bg-card text-neutral-900 flex items-center justify-center hover:bg-neutral-200">{playing ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}</button>
             <span className="text-[12px] font-mono text-neutral-400 tabular-nums">{fmtTime(currentTime)} / {fmtTime(total)}</span>
             <button onClick={() => setFullPreview((v) => !v)} title={fullPreview ? `${tp('Quitter le plein écran')} (Échap)` : tp('Aperçu plein écran')}
-              className="h-9 w-9 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20">
+              className="h-9 w-9 rounded-full bg-card/10 text-white flex items-center justify-center hover:bg-card/20">
               {fullPreview ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
             </button>
           </div>
@@ -494,57 +710,120 @@ export default function ProEditor({
 
         {/* Glissière : largeur du panneau */}
         {!fullPreview && <div onPointerDown={startPanelResize} title={tp('Glisser pour ajuster la largeur du panneau')}
-          className="w-1.5 shrink-0 cursor-col-resize bg-white/5 hover:bg-cyan-500/50 transition-colors touch-none" />}
+          className="w-1.5 shrink-0 cursor-col-resize bg-card/5 hover:bg-primary/50 transition-colors touch-none" />}
 
         {/* Panneau unique : Plan / Style */}
         <div className={`shrink-0 border-l border-white/10 flex-col ${fullPreview ? 'hidden' : 'flex'}`} style={{ width: panelW }}>
           <div className="h-10 shrink-0 flex p-1 gap-1 border-b border-white/10">
-            <button onClick={() => setTab('plan')} className={`${btn} h-8 flex-1 ${tab === 'plan' ? 'bg-cyan-500 text-white' : 'text-neutral-400 hover:bg-white/10'}`}><Film size={13} /> {tp('Plan')}</button>
-            <button onClick={() => setTab('style')} className={`${btn} h-8 flex-1 ${tab === 'style' ? 'bg-cyan-500 text-white' : 'text-neutral-400 hover:bg-white/10'}`}><Layers size={13} /> {tp('Style')}</button>
+            <button onClick={() => setTab('plan')} className={`${btn} h-8 flex-1 ${tab === 'plan' ? 'bg-primary text-white' : 'text-neutral-400 hover:bg-card/10'}`}><Film size={13} /> {tp('Plan')}</button>
+            <button onClick={() => setTab('style')} className={`${btn} h-8 flex-1 ${tab === 'style' ? 'bg-primary text-white' : 'text-neutral-400 hover:bg-card/10'}`}><Layers size={13} /> {tp('Style')}</button>
           </div>
           <div className="p-3 overflow-y-auto flex-1 space-y-4">
 
             {/* ── Onglet PLAN : tout ce qui concerne le plan sélectionné ── */}
             {tab === 'plan' && (!selScene ? <p className="text-[12px] text-neutral-500">{tp('Sélectionne un plan dans la timeline.')}</p> : (
               <>
+                {/* En-tête : numéro du plan + nature du visuel (comme au studio) */}
+                <div className="flex items-center justify-between">
+                  <p className="text-[12.5px] font-bold text-white">{tp('Scène')} {scenes.findIndex((s) => s.id === selScene.id) + 1}</p>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${selScene.imageUrl && !selScene.videoUrl ? 'bg-primary/15 text-primary' : 'bg-primary/15 text-primary'}`}>
+                    {selScene.imageUrl && !selScene.videoUrl ? tp('Image — animée au montage') : tp('Vidéo')}
+                  </span>
+                </div>
+
+                {/* Média du plan : galerie / upload / retirer */}
+                <div className="flex gap-1.5">
+                  <button onClick={() => setPicker({ open: true, type: 'video', sceneId: selScene.id })} disabled={!!selScene.busy} className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10 disabled:opacity-50`}><Film size={13} /> {tp('Galerie')}</button>
+                  <label className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10 cursor-pointer`}>
+                    {selScene.busy === 'up' ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />} {tp('Uploader')}
+                    <input type="file" accept="video/*,image/*" className="hidden" onChange={(e) => { replaceUpload(selScene.id, e.target.files?.[0]); e.target.value = ''; }} />
+                  </label>
+                  {(selScene.videoUrl || selScene.imageUrl) && (
+                    <button onClick={() => patch(selScene.id, { videoUrl: '', imageUrl: '', videoPoster: '', trimStart: 0 })} className={`${btn} h-8 px-2.5 bg-red-500/15 text-red-300 hover:bg-red-500/25`}>{tp('Retirer')}</button>
+                  )}
+                </div>
+
+                {/* Plan à générer (visuel exact) — mêmes réglages qu'au studio */}
+                <div className="space-y-1.5">
+                  <p className={secTitle}>{tp('Plan à générer (visuel exact)')}</p>
+                  <input
+                    value={selScene.clipPrompt || ''}
+                    onChange={(e) => patch(selScene.id, { clipPrompt: e.target.value })}
+                    placeholder={tp('Description (sinon : sa phrase est illustrée)')}
+                    className="w-full h-8 rounded-md bg-card/5 border border-white/10 px-2 text-[11px] outline-none focus:border-primary/30"
+                  />
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="inline-flex rounded-md overflow-hidden border border-white/10">
+                      <button onClick={() => patch(selScene.id, { genMode: 'video' })} className={`px-2 h-7 text-[10.5px] font-bold transition ${(selScene.genMode || 'video') === 'video' ? 'bg-primary text-white' : 'text-neutral-400 hover:bg-card/10'}`}>{tp('Vidéo')}</button>
+                      <button onClick={() => patch(selScene.id, { genMode: 'image' })} className={`px-2 h-7 text-[10.5px] font-bold transition ${selScene.genMode === 'image' ? 'bg-primary text-white' : 'text-neutral-400 hover:bg-card/10'}`}>{tp('Image éco')}</button>
+                    </div>
+                    <label className="flex items-center gap-1.5 text-[11px] text-neutral-300 cursor-pointer select-none">
+                      <input type="checkbox" checked={selScene.showProduct !== false} onChange={(e) => patch(selScene.id, { showProduct: e.target.checked })} className="accent-primary" />
+                      {tp('Produit visible')}
+                    </label>
+                  </div>
+                  <button onClick={() => genSceneContent(selScene.id)} disabled={!!selScene.busy}
+                    className={`${btn} h-8 w-full bg-primary/80 hover:bg-primary text-white disabled:opacity-50`}>
+                    {selScene.busy === 'gen' ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />} {tp('Générer ce plan')}
+                  </button>
+                </div>
+
+                {/* Voix off (texte) : générer / galerie / uploader */}
                 <div>
-                  <p className={`${secTitle} mb-1.5`}>{tp('Texte dit sur ce plan')}</p>
-                  <textarea value={selScene.subtitleText || ''} onChange={(e) => patch(selScene.id, { subtitleText: e.target.value })} rows={3} placeholder={tp('Sous-titre / voix off de ce plan…')} className="w-full rounded-md bg-white/5 border border-white/10 px-2 py-1.5 text-[12px] outline-none focus:border-cyan-500 resize-y" />
-                  {selScene.audioUrl
-                    ? <audio src={selScene.audioUrl} controls className="w-full h-8 mt-1.5" />
-                    : <button onClick={() => genVoice(selScene.id)} disabled={selScene.busy === 'voice'} className={`${btn} h-8 w-full mt-1.5 bg-white/5 hover:bg-white/10`}>{selScene.busy === 'voice' ? <Loader2 size={13} className="animate-spin" /> : <Mic size={13} />} {tp('Générer la voix off')}</button>}
+                  <p className={`${secTitle} mb-1.5`}>{tp('Voix off (texte)')}</p>
+                  <textarea value={selScene.voiceText || ''} onChange={(e) => patch(selScene.id, { voiceText: e.target.value })} rows={2} placeholder={tp('Texte dit sur ce plan…')} className="w-full rounded-md bg-card/5 border border-white/10 px-2 py-1.5 text-[12px] outline-none focus:border-primary/30 resize-y" />
+                  <div className="flex gap-1.5 mt-1.5">
+                    <button onClick={() => genVoice(selScene.id)} disabled={selScene.busy === 'voice'} className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10`}>{selScene.busy === 'voice' ? <Loader2 size={13} className="animate-spin" /> : <Mic size={13} />} {tp('Générer la voix')}</button>
+                    <button onClick={() => setPicker({ open: true, type: 'audio', sceneId: selScene.id })} className={`${btn} h-8 px-2.5 bg-card/5 hover:bg-card/10`}>{tp('Galerie')}</button>
+                    <label className={`${btn} h-8 px-2.5 bg-card/5 hover:bg-card/10 cursor-pointer`} title={tp('Uploader un fichier audio')}>
+                      <Upload size={13} />
+                      <input type="file" accept="audio/*" className="hidden" onChange={(e) => { uploadVoiceFile(selScene.id, e.target.files?.[0]); e.target.value = ''; }} />
+                    </label>
+                  </div>
+                  {selScene.audioUrl && (
+                    <div className="flex items-center gap-1.5 mt-1.5">
+                      <audio src={selScene.audioUrl} controls className="flex-1 h-8" />
+                      <button onClick={() => patch(selScene.id, { audioUrl: '' })} className="text-neutral-400 hover:text-red-400" title={tp('Retirer la voix')}><Trash2 size={14} /></button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Sous-titre affiché (peut différer du texte dit) */}
+                <div>
+                  <p className={`${secTitle} mb-1.5`}>{tp('Sous-titre affiché')}</p>
+                  <textarea value={selScene.subtitleText || ''} onChange={(e) => patch(selScene.id, { subtitleText: e.target.value })} rows={2} placeholder={tp('= texte de la voix off si vide')} className="w-full rounded-md bg-card/5 border border-white/10 px-2 py-1.5 text-[12px] outline-none focus:border-primary/30 resize-y" />
                 </div>
 
                 <div className="space-y-3">
                   <p className={secTitle}>{tp('Réglages du plan')}</p>
-                  <Row label={tp('Durée (s)')}>
-                    <input type="number" min={0.5} max={30} step={0.5} value={durOf(selScene)} onChange={(e) => patch(selScene.id, { durationSec: clamp(Number(e.target.value) || 1, 0.5, 30) })} className="w-20 h-8 rounded-md bg-white/5 border border-white/10 px-2 text-[12px] text-right outline-none focus:border-cyan-500" />
+                  <Row label={selScene.audioUrl ? `${tp('Durée (s)')} — ${tp('auto voix')}` : tp('Durée (s)')}>
+                    <input type="number" min={0.5} max={30} step={0.5} value={durOf(selScene)} onChange={(e) => patch(selScene.id, { durationSec: clamp(Number(e.target.value) || 1, 0.5, 30) })} className="w-20 h-8 rounded-md bg-card/5 border border-white/10 px-2 text-[12px] text-right outline-none focus:border-primary/30" />
                   </Row>
                   <Row label={`${tp('Volume')} ${Math.round((selScene.volume ?? 1) * 100)}%`}>
-                    <input type="range" min={0} max={2} step={0.1} value={selScene.volume ?? 1} onChange={(e) => patch(selScene.id, { volume: Number(e.target.value) })} className="w-28 accent-cyan-500" />
+                    <input type="range" min={0} max={2} step={0.1} value={selScene.volume ?? 1} onChange={(e) => patch(selScene.id, { volume: Number(e.target.value) })} className="w-28 accent-primary" />
                   </Row>
                   <Row label={`${tp('Fondus')} ${Number(selScene.fadeIn || 0).toFixed(1)} / ${Number(selScene.fadeOut || 0).toFixed(1)}s`}>
                     <div className="flex gap-1.5">
-                      <input type="range" min={0} max={2} step={0.1} value={selScene.fadeIn || 0} onChange={(e) => patch(selScene.id, { fadeIn: Number(e.target.value) })} className="w-12 accent-cyan-500" title={tp('Entrée')} />
-                      <input type="range" min={0} max={2} step={0.1} value={selScene.fadeOut || 0} onChange={(e) => patch(selScene.id, { fadeOut: Number(e.target.value) })} className="w-12 accent-cyan-500" title={tp('Sortie')} />
+                      <input type="range" min={0} max={2} step={0.1} value={selScene.fadeIn || 0} onChange={(e) => patch(selScene.id, { fadeIn: Number(e.target.value) })} className="w-12 accent-primary" title={tp('Entrée')} />
+                      <input type="range" min={0} max={2} step={0.1} value={selScene.fadeOut || 0} onChange={(e) => patch(selScene.id, { fadeOut: Number(e.target.value) })} className="w-12 accent-primary" title={tp('Sortie')} />
                     </div>
                   </Row>
                   <Row label={tp('Transition après')}>
-                    <select value={selScene.transitionOut || transition} onChange={(e) => patch(selScene.id, { transitionOut: e.target.value })} className="w-32 h-8 rounded-md bg-white/5 border border-white/10 px-2 text-[12px] outline-none focus:border-cyan-500">
+                    <select value={selScene.transitionOut || transition} onChange={(e) => patch(selScene.id, { transitionOut: e.target.value })} className="w-32 h-8 rounded-md bg-card/5 border border-white/10 px-2 text-[12px] outline-none focus:border-primary/30">
                       {TRANSITIONS.map((t) => <option key={t.id} value={t.id} className="bg-neutral-900">{t.label}</option>)}
                     </select>
                   </Row>
                   <Row label={tp('Style de sous-titre')}>
-                    <select value={selScene.captionStyle || ''} onChange={(e) => patch(selScene.id, { captionStyle: e.target.value || '' })} className="w-32 h-8 rounded-md bg-white/5 border border-white/10 px-2 text-[12px] outline-none focus:border-cyan-500">
+                    <select value={selScene.captionStyle || ''} onChange={(e) => patch(selScene.id, { captionStyle: e.target.value || '' })} className="w-32 h-8 rounded-md bg-card/5 border border-white/10 px-2 text-[12px] outline-none focus:border-primary/30">
                       <option value="" className="bg-neutral-900">{tp('Global')}</option>
                       {CAPTION_STYLES.map((cs) => <option key={cs.id} value={cs.id} className="bg-neutral-900">{cs.label}</option>)}
                     </select>
                   </Row>
                   <div className="flex gap-1.5">
-                    <button onClick={() => duplicate(selScene.id)} className={`${btn} h-8 flex-1 bg-white/5 hover:bg-white/10`}><Copy size={13} /> {tp('Dupliquer')}</button>
+                    <button onClick={() => duplicate(selScene.id)} className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10`}><Copy size={13} /> {tp('Dupliquer')}</button>
                     <button onClick={() => removeScene(selScene.id)} disabled={scenes.length <= 1} className={`${btn} h-8 flex-1 bg-red-500/15 text-red-300 hover:bg-red-500/25 disabled:opacity-40`}><Trash2 size={13} /> {tp('Supprimer')}</button>
                   </div>
-                  {selScene.videoUrl && <button onClick={() => patch(selScene.id, { trimStart: 0, durationSec: selScene.srcDuration || durOf(selScene) })} className={`${btn} h-8 w-full bg-white/5 hover:bg-white/10`}>{tp('Réinitialiser le rognage')}</button>}
+                  {selScene.videoUrl && <button onClick={() => patch(selScene.id, { trimStart: 0, durationSec: selScene.srcDuration || durOf(selScene) })} className={`${btn} h-8 w-full bg-card/5 hover:bg-card/10`}>{tp('Réinitialiser le rognage')}</button>}
                 </div>
 
                 <div className="space-y-1.5 pt-1 border-t border-white/10">
@@ -554,7 +833,7 @@ export default function ProEditor({
                       {o.shape === 'ring'
                         ? <span className="w-8 h-8 rounded-full border-[3px] border-red-500 shrink-0" />
                         : o.shape && accentShape(o.shape)
-                          ? <span className="w-8 h-8 rounded flex items-center justify-center text-[19px] font-bold shrink-0 bg-white/5" style={{ color: accentShape(o.shape).color }}>{accentShape(o.shape).ch}</span>
+                          ? <span className="w-8 h-8 rounded flex items-center justify-center text-[19px] font-bold shrink-0 bg-card/5" style={{ color: accentShape(o.shape).color }}>{accentShape(o.shape).ch}</span>
                           : <img src={o.url} alt="" className="w-8 h-8 rounded object-cover border border-white/10" />}
                       <span className="text-[11px] text-neutral-400 flex-1">{o.shape ? (accentShape(o.shape)?.label || tp('Accent')) : tp('Image')} · {Math.round(o.wPct)}% · x{Math.round(o.xPct)} y{Math.round(o.yPct)}</span>
                       <button onClick={() => patch(selScene.id, { overlays: (selScene.overlays || []).filter((_, j) => j !== k) })} className="text-neutral-400 hover:text-red-400"><Trash2 size={13} /></button>
@@ -562,7 +841,7 @@ export default function ProEditor({
                   ))}
                   {(selScene.overlays || []).length < 3 && (
                     <>
-                      <label className={`${btn} h-8 w-full bg-white/5 hover:bg-white/10 cursor-pointer`}>
+                      <label className={`${btn} h-8 w-full bg-card/5 hover:bg-card/10 cursor-pointer`}>
                         {busy === 'ov' ? <Loader2 size={13} className="animate-spin" /> : <ImageIcon size={13} />} {tp('Ajouter une image')}
                         <input type="file" accept="image/*" className="hidden" onChange={(e) => addOverlay(e.target.files?.[0])} />
                       </label>
@@ -570,7 +849,7 @@ export default function ProEditor({
                         {ACCENT_SHAPES.map((a) => (
                           <button key={a.id} title={a.label}
                             onClick={() => patch(selScene.id, { overlays: [...(selScene.overlays || []), { shape: a.id, xPct: 50, yPct: 50, wPct: a.id === 'ring' ? 30 : 22 }] })}
-                            className="h-8 rounded-md bg-white/5 hover:bg-white/15 text-[15px] font-bold flex items-center justify-center" style={{ color: a.color }}>
+                            className="h-8 rounded-md bg-card/5 hover:bg-card/15 text-[15px] font-bold flex items-center justify-center" style={{ color: a.color }}>
                             {a.ch}
                           </button>
                         ))}
@@ -583,12 +862,12 @@ export default function ProEditor({
                 <div className="space-y-1.5 pt-1 border-t border-white/10">
                   <p className={`${secTitle} pt-2`}>{tp('Ajouter un plan')}</p>
                   <div className="flex gap-1.5">
-                    <label className={`${btn} h-8 flex-1 bg-white/5 hover:bg-white/10 cursor-pointer`}><Upload size={13} /> {tp('Clip')}<input type="file" accept="video/*" className="hidden" onChange={(e) => addUpload(e.target.files?.[0], 'video')} /></label>
-                    <label className={`${btn} h-8 flex-1 bg-white/5 hover:bg-white/10 cursor-pointer`}><ImageIcon size={13} /> {tp('Image')}<input type="file" accept="image/*" className="hidden" onChange={(e) => addUpload(e.target.files?.[0], 'image')} /></label>
+                    <label className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10 cursor-pointer`}><Upload size={13} /> {tp('Clip')}<input type="file" accept="video/*" className="hidden" onChange={(e) => addUpload(e.target.files?.[0], 'video')} /></label>
+                    <label className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10 cursor-pointer`}><ImageIcon size={13} /> {tp('Image')}<input type="file" accept="image/*" className="hidden" onChange={(e) => addUpload(e.target.files?.[0], 'image')} /></label>
                   </div>
                   <div className="flex gap-1">
-                    <input value={genPrompt} onChange={(e) => setGenPrompt(e.target.value)} placeholder={tp('Plan à générer par IA…')} className="flex-1 h-8 rounded-md bg-white/5 border border-white/10 px-2 text-[11px] outline-none focus:border-cyan-500" />
-                    <button onClick={genClip} disabled={busy === 'gen'} className={`${btn} h-8 px-2.5 bg-cyan-500/80 hover:bg-cyan-400 text-white disabled:opacity-50`}>{busy === 'gen' ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />}</button>
+                    <input value={genPrompt} onChange={(e) => setGenPrompt(e.target.value)} placeholder={tp('Plan à générer par IA…')} className="flex-1 h-8 rounded-md bg-card/5 border border-white/10 px-2 text-[11px] outline-none focus:border-primary/30" />
+                    <button onClick={genClip} disabled={busy === 'gen'} className={`${btn} h-8 px-2.5 bg-primary/80 hover:bg-primary text-white disabled:opacity-50`}>{busy === 'gen' ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />}</button>
                   </div>
                 </div>
               </>
@@ -599,7 +878,7 @@ export default function ProEditor({
               <>
                 <div className="flex items-center justify-between">
                   <span className="text-[12px] font-semibold text-neutral-300">{tp('Sous-titres')}</span>
-                  <button onClick={() => setSubtitlesOn?.(!subtitlesOn)} className={`relative w-10 h-5 rounded-full transition ${subtitlesOn ? 'bg-cyan-500' : 'bg-neutral-600'}`}><span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${subtitlesOn ? 'translate-x-5' : ''}`} /></button>
+                  <button onClick={() => setSubtitlesOn?.(!subtitlesOn)} className={`relative w-10 h-5 rounded-full transition ${subtitlesOn ? 'bg-primary' : 'bg-neutral-600'}`}><span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-card transition-transform ${subtitlesOn ? 'translate-x-5' : ''}`} /></button>
                 </div>
                 {subtitlesOn && (
                   <>
@@ -608,7 +887,7 @@ export default function ProEditor({
                       <div className="flex flex-wrap gap-1.5">
                         {CAPTION_STYLES.map((cs) => (
                           <button key={cs.id} onClick={() => setCaptionStyle?.(cs.id)}
-                            className={`h-8 px-2 rounded-md border text-[11px] font-bold inline-flex items-center gap-1.5 ${captionStyle === cs.id ? 'border-cyan-500 bg-cyan-500/15' : 'border-white/10 hover:bg-white/5'}`}>
+                            className={`h-8 px-2 rounded-md border text-[11px] font-bold inline-flex items-center gap-1.5 ${captionStyle === cs.id ? 'border-primary/30 bg-primary/15' : 'border-white/10 hover:bg-card/5'}`}>
                             <span className="inline-flex items-center justify-center w-5 h-5 rounded" style={{ background: cs.bg === 'transparent' ? '#374151' : cs.bg, color: cs.text }}>A</span>
                             {cs.label}
                           </button>
@@ -616,23 +895,23 @@ export default function ProEditor({
                       </div>
                     </div>
                     <Row label={tp('Police')}>
-                      <select value={captionFont} onChange={(e) => setCaptionFont?.(e.target.value)} className="w-36 h-8 rounded-md bg-white/5 border border-white/10 px-2 text-[12px] outline-none focus:border-cyan-500">
+                      <select value={captionFont} onChange={(e) => setCaptionFont?.(e.target.value)} className="w-36 h-8 rounded-md bg-card/5 border border-white/10 px-2 text-[12px] outline-none focus:border-primary/30">
                         {CAPTION_FONTS.map((f) => <option key={f.id} value={f.id} className="bg-neutral-900">{f.label}</option>)}
                       </select>
                     </Row>
                     <Row label={tp('Casse')}>
                       <div className="inline-flex rounded-md border border-white/10 overflow-hidden">
-                        <button onClick={() => setCaptionCase?.('none')} className={`${btn} h-8 px-3 ${captionCase !== 'upper' ? 'bg-cyan-500 text-white' : 'text-neutral-400'}`}>Aa</button>
-                        <button onClick={() => setCaptionCase?.('upper')} className={`${btn} h-8 px-3 ${captionCase === 'upper' ? 'bg-cyan-500 text-white' : 'text-neutral-400'}`}>AA</button>
+                        <button onClick={() => setCaptionCase?.('none')} className={`${btn} h-8 px-3 ${captionCase !== 'upper' ? 'bg-primary text-white' : 'text-neutral-400'}`}>Aa</button>
+                        <button onClick={() => setCaptionCase?.('upper')} className={`${btn} h-8 px-3 ${captionCase === 'upper' ? 'bg-primary text-white' : 'text-neutral-400'}`}>AA</button>
                       </div>
                     </Row>
                     <Row label={`${tp('Taille')} ${Math.round((Number(captionScale) || 1) * 100)}%`}>
-                      <input type="range" min={0.5} max={2} step={0.05} value={Number(captionScale) || 1} onChange={(e) => setCaptionScale?.(Number(e.target.value))} className="w-28 accent-cyan-500" />
+                      <input type="range" min={0.5} max={2} step={0.05} value={Number(captionScale) || 1} onChange={(e) => setCaptionScale?.(Number(e.target.value))} className="w-28 accent-primary" />
                     </Row>
                     <Row label={tp('Lignes')}>
                       <div className="inline-flex rounded-md border border-white/10 overflow-hidden">
                         {[1, 2, 3].map((n) => (
-                          <button key={n} onClick={() => setCaptionMaxLines?.(n)} className={`${btn} h-8 w-9 ${captionMaxLines === n ? 'bg-cyan-500 text-white' : 'text-neutral-400'}`}>{n}</button>
+                          <button key={n} onClick={() => setCaptionMaxLines?.(n)} className={`${btn} h-8 w-9 ${captionMaxLines === n ? 'bg-primary text-white' : 'text-neutral-400'}`}>{n}</button>
                         ))}
                       </div>
                     </Row>
@@ -640,15 +919,15 @@ export default function ProEditor({
                       <div className="inline-flex rounded-md border border-white/10 overflow-hidden">
                         {CAPTION_POSITIONS.map((p) => (
                           <button key={p.id} onClick={() => { setCaptionPosition?.(p.id); setCaptionOffsetPct?.(null); }}
-                            className={`${btn} h-8 px-2.5 ${captionPosition === p.id && captionOffsetPct == null ? 'bg-cyan-500 text-white' : 'text-neutral-400'}`}>{p.label}</button>
+                            className={`${btn} h-8 px-2.5 ${captionPosition === p.id && captionOffsetPct == null ? 'bg-primary text-white' : 'text-neutral-400'}`}>{p.label}</button>
                         ))}
                       </div>
                     </Row>
-                    {captionOffsetPct != null && <p className="text-[11px] text-cyan-300">{tp('Position libre')} : {Math.round(captionOffsetPct)}% — <button className="underline" onClick={() => setCaptionOffsetPct?.(null)}>{tp('réinitialiser')}</button></p>}
+                    {captionOffsetPct != null && <p className="text-[11px] text-primary">{tp('Position libre')} : {Math.round(captionOffsetPct)}% — <button className="underline" onClick={() => setCaptionOffsetPct?.(null)}>{tp('réinitialiser')}</button></p>}
                     <Row label={tp('Rythme')}>
                       <div className="inline-flex rounded-md border border-white/10 overflow-hidden">
-                        <button onClick={() => setCaptionMode?.('dynamic')} className={`${btn} h-8 px-2.5 ${captionMode === 'dynamic' ? 'bg-cyan-500 text-white' : 'text-neutral-400'}`}><Sparkles size={12} /> {tp('Dynamique')}</button>
-                        <button onClick={() => setCaptionMode?.('block')} className={`${btn} h-8 px-2.5 ${captionMode === 'block' ? 'bg-cyan-500 text-white' : 'text-neutral-400'}`}>{tp('Bloc')}</button>
+                        <button onClick={() => setCaptionMode?.('dynamic')} className={`${btn} h-8 px-2.5 ${captionMode === 'dynamic' ? 'bg-primary text-white' : 'text-neutral-400'}`}><Sparkles size={12} /> {tp('Dynamique')}</button>
+                        <button onClick={() => setCaptionMode?.('block')} className={`${btn} h-8 px-2.5 ${captionMode === 'block' ? 'bg-primary text-white' : 'text-neutral-400'}`}>{tp('Bloc')}</button>
                       </div>
                     </Row>
                     <div>
@@ -656,7 +935,7 @@ export default function ProEditor({
                       <div className="flex flex-wrap gap-1.5">
                         {CAPTION_ANIMS.map((a) => (
                           <button key={a.id} onClick={() => setCaptionAnim?.(a.id)}
-                            className={`h-8 px-2.5 rounded-md border text-[11.5px] font-semibold ${captionAnim === a.id ? 'border-cyan-500 bg-cyan-500/20 text-white' : 'border-white/10 text-neutral-300 hover:bg-white/5'}`}>
+                            className={`h-8 px-2.5 rounded-md border text-[11.5px] font-semibold ${captionAnim === a.id ? 'border-primary/30 bg-primary/20 text-white' : 'border-white/10 text-neutral-300 hover:bg-card/5'}`}>
                             {a.label}
                           </button>
                         ))}
@@ -669,22 +948,24 @@ export default function ProEditor({
                   <p className={`${secTitle} pt-1`}>{tp('Musique de fond')}</p>
                   <div className="flex flex-wrap gap-1">
                     {presets.map((p) => (
-                      <button key={p.id} onClick={() => setMusicUrl?.(musicUrl === p.url ? '' : p.url)} className={`h-6 px-2 rounded text-[10.5px] font-semibold ${musicUrl === p.url ? 'bg-emerald-500 text-white' : 'bg-white/5 text-neutral-300 hover:bg-white/10'}`}>{p.label}</button>
+                      <button key={p.id} onClick={() => setMusicUrl?.(musicUrl === p.url ? '' : p.url)} className={`h-6 px-2 rounded text-[10.5px] font-semibold ${musicUrl === p.url ? 'bg-primary text-white' : 'bg-card/5 text-neutral-300 hover:bg-card/10'}`}>{p.label}</button>
                     ))}
                   </div>
-                  <label className={`${btn} h-8 w-full bg-white/5 hover:bg-white/10 cursor-pointer`}><Music size={13} /> {musicUrl ? tp('Remplacer par mon fichier') : tp('Uploader ma piste')}<input type="file" accept="audio/*" className="hidden" onChange={(e) => onAddMusic?.(e.target.files?.[0])} /></label>
+                  <label className={`${btn} h-8 w-full bg-card/5 hover:bg-card/10 cursor-pointer`}><Music size={13} /> {musicUrl ? tp('Remplacer par mon fichier') : tp('Uploader ma piste')}<input type="file" accept="audio/*" className="hidden" onChange={(e) => onAddMusic?.(e.target.files?.[0])} /></label>
                   {musicUrl && (
                     <Row label={`${tp('Volume musique')} ${Math.round((Number(musicVolume) ?? 0.5) * 100)}%`}>
-                      <input type="range" min={0} max={1.2} step={0.05} value={Number.isFinite(Number(musicVolume)) ? Number(musicVolume) : 0.5} onChange={(e) => setMusicVolume?.(Number(e.target.value))} className="w-28 accent-emerald-500" />
+                      <input type="range" min={0} max={1.2} step={0.05} value={Number.isFinite(Number(musicVolume)) ? Number(musicVolume) : 0.5} onChange={(e) => setMusicVolume?.(Number(e.target.value))} className="w-28 accent-primary" />
                     </Row>
                   )}
                 </div>
 
                 <div className="space-y-1.5 pt-2 border-t border-white/10">
                   <p className={`${secTitle} pt-1`}>{tp('Voix off (tous les plans)')}</p>
-                  <select value={voiceRefId} onChange={(e) => setVoiceRefId?.(e.target.value)} className="w-full h-8 rounded-md bg-white/5 border border-white/10 px-2 text-[12px] outline-none">
-                    {VOICES.map((v) => <option key={v.id || 'model'} value={v.id} className="bg-neutral-900">{v.label}</option>)}
-                  </select>
+                  <div className="flex items-center gap-1.5">
+                    <VoiceSelect value={voiceRefId} onChange={(v) => setVoiceRefId?.(v)} includeModelVoice dark
+                      className="flex-1 min-w-0 h-8 rounded-md bg-card/5 border border-white/10 px-2 text-[12px] outline-none" />
+                    <VoicePreviewButton voiceId={voiceRefId} dark />
+                  </div>
                   {narrationUrl && <p className="text-[11px] text-neutral-500">{tp('Une narration globale est active : elle prime sur les voix par plan au rendu.')}</p>}
                 </div>
               </>
@@ -695,7 +976,7 @@ export default function ProEditor({
 
       {/* Glissière : hauteur de la timeline */}
       {!fullPreview && <div onPointerDown={startTimelineResize} title={tp('Glisser pour ajuster la hauteur de la timeline')}
-        className="h-1.5 shrink-0 cursor-row-resize bg-white/5 hover:bg-cyan-500/50 transition-colors touch-none" />}
+        className="h-1.5 shrink-0 cursor-row-resize bg-card/5 hover:bg-primary/50 transition-colors touch-none" />}
 
       {/* Timeline — superpositions, vidéo, sous-titres, voix, musique */}
       <div className={`shrink-0 border-t border-white/10 flex-col bg-neutral-900 ${fullPreview ? 'hidden' : 'flex'}`} style={{ height: timelineH }}>
@@ -723,10 +1004,10 @@ export default function ProEditor({
                 return (
                   <div key={s.id} onClick={(e) => { e.stopPropagation(); setSelId(s.id); setTab('plan'); }}
                     title={tp('Images superposées de ce plan — gérer dans l’onglet Plan')}
-                    className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center gap-1 overflow-hidden cursor-pointer border ${selId === s.id ? 'border-amber-400 bg-amber-500/25' : 'border-amber-500/30 bg-amber-500/10'}`}
+                    className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center gap-1 overflow-hidden cursor-pointer border ${selId === s.id ? 'border-primary/40 bg-primary/25' : 'border-primary/30/30 bg-primary/10'}`}
                     style={{ left: starts[i] * pxPerSec, width: Math.max(10, durOf(s) * pxPerSec) }}>
                     <img src={ovs[0].url} alt="" className="h-3.5 w-3.5 rounded-[3px] object-cover shrink-0" />
-                    <span className="text-[10px] text-amber-100 truncate">{tp('Superposition')}{ovs.length > 1 ? ` ×${ovs.length}` : ''}</span>
+                    <span className="text-[10px] text-primary truncate">{tp('Superposition')}{ovs.length > 1 ? ` ×${ovs.length}` : ''}</span>
                   </div>
                 );
               })}
@@ -735,15 +1016,15 @@ export default function ProEditor({
             <div className="relative border-b border-white/10" style={{ height: 64 }} onClick={seekFromEvent}>
               {scenes.map((s, i) => (
                 <div key={s.id} onPointerDown={(e) => startMove(e, s, i)} onClick={(e) => { e.stopPropagation(); setSelId(s.id); setTab('plan'); }}
-                  className={`absolute top-1.5 bottom-1.5 rounded-md overflow-hidden border-2 ${selId === s.id ? 'border-cyan-500' : 'border-transparent'} ${movingId === s.id ? 'cursor-grabbing z-40 opacity-90 shadow-lg' : 'cursor-grab'}`}
+                  className={`absolute top-1.5 bottom-1.5 rounded-md overflow-hidden border-2 ${selId === s.id ? 'border-primary/30' : 'border-transparent'} ${movingId === s.id ? 'cursor-grabbing z-40 opacity-90 shadow-lg' : 'cursor-grab'}`}
                   style={{ left: starts[i] * pxPerSec, width: Math.max(10, durOf(s) * pxPerSec), transform: movingId === s.id ? `translateX(${moveDx}px)` : 'none' }}>
                   {s.videoPoster || s.imageUrl ? <img src={s.videoPoster || s.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" /> : <div className="absolute inset-0 bg-neutral-700" />}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center text-white/70">{s.videoUrl ? <Film size={14} /> : s.imageUrl ? <ImageIcon size={14} /> : <Mic size={14} />}</div>
                   <span className="absolute bottom-0.5 left-1 text-[9px] font-bold text-white/90">{durOf(s).toFixed(1)}s</span>
-                  {subtitlesOn && (s.subtitleText || s.voiceText) && <span className="absolute top-0.5 right-1 h-4 w-4 rounded bg-cyan-500/90 text-white flex items-center justify-center"><Type size={9} /></span>}
-                  <div onPointerDown={(e) => startTrim(e, s, 'l')} className="absolute left-0 top-0 bottom-0 w-2 bg-cyan-500/80 cursor-ew-resize hover:bg-cyan-400" />
-                  <div onPointerDown={(e) => startTrim(e, s, 'r')} className="absolute right-0 top-0 bottom-0 w-2 bg-cyan-500/80 cursor-ew-resize hover:bg-cyan-400" />
+                  {subtitlesOn && (s.subtitleText || s.voiceText) && <span className="absolute top-0.5 right-1 h-4 w-4 rounded bg-primary/90 text-white flex items-center justify-center"><Type size={9} /></span>}
+                  <div onPointerDown={(e) => startTrim(e, s, 'l')} className="absolute left-0 top-0 bottom-0 w-2 bg-primary/80 cursor-ew-resize hover:bg-primary" />
+                  <div onPointerDown={(e) => startTrim(e, s, 'r')} className="absolute right-0 top-0 bottom-0 w-2 bg-primary/80 cursor-ew-resize hover:bg-primary" />
                 </div>
               ))}
             </div>
@@ -754,9 +1035,9 @@ export default function ProEditor({
                 if (!txt) return null;
                 return (
                   <div key={s.id} onClick={(e) => { e.stopPropagation(); setSelId(s.id); setTab('plan'); }}
-                    className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center gap-1 overflow-hidden cursor-pointer border ${selId === s.id ? 'border-cyan-400 bg-cyan-500/25' : 'border-cyan-500/30 bg-cyan-500/10'}`}
+                    className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center gap-1 overflow-hidden cursor-pointer border ${selId === s.id ? 'border-primary/40 bg-primary/25' : 'border-primary/30/30 bg-primary/10'}`}
                     style={{ left: starts[i] * pxPerSec, width: Math.max(10, durOf(s) * pxPerSec) }}>
-                    <Type size={10} className="text-cyan-300 shrink-0" /><span className="text-[10px] text-cyan-100 truncate">{txt}</span>
+                    <Type size={10} className="text-primary shrink-0" /><span className="text-[10px] text-primary truncate">{txt}</span>
                   </div>
                 );
               })}
@@ -764,20 +1045,20 @@ export default function ProEditor({
             {/* Piste voix (sous la vidéo) : voix off par plan ou narration globale */}
             <div className="relative border-b border-white/10" style={{ height: 26 }} onClick={seekFromEvent}>
               {narrationUrl ? (
-                <div className="absolute top-1 bottom-1 left-0 rounded px-2 flex items-center gap-1.5 border border-violet-500/30 bg-violet-500/10" style={{ width: Math.max(40, total * pxPerSec) }}>
-                  <Mic size={10} className="text-violet-300 shrink-0" /><span className="text-[10px] text-violet-100 truncate">{tp('Narration (kit)')}</span>
+                <div className="absolute top-1 bottom-1 left-0 rounded px-2 flex items-center gap-1.5 border border-primary/30/30 bg-primary/10" style={{ width: Math.max(40, total * pxPerSec) }}>
+                  <Mic size={10} className="text-primary shrink-0" /><span className="text-[10px] text-primary truncate">{tp('Narration (kit)')}</span>
                 </div>
               ) : scenes.map((s, i) => (s.audioUrl ? (
                 <div key={s.id} onClick={(e) => { e.stopPropagation(); setSelId(s.id); setTab('plan'); }}
-                  className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center gap-1 overflow-hidden cursor-pointer border ${selId === s.id ? 'border-violet-400 bg-violet-500/25' : 'border-violet-500/30 bg-violet-500/10'}`}
+                  className={`absolute top-1 bottom-1 rounded px-1.5 flex items-center gap-1 overflow-hidden cursor-pointer border ${selId === s.id ? 'border-primary/40 bg-primary/25' : 'border-primary/30/30 bg-primary/10'}`}
                   style={{ left: starts[i] * pxPerSec, width: Math.max(10, durOf(s) * pxPerSec) }}>
-                  <Mic size={10} className="text-violet-300 shrink-0" /><span className="text-[10px] text-violet-100 truncate">{tp('Voix')}</span>
+                  <Mic size={10} className="text-primary shrink-0" /><span className="text-[10px] text-primary truncate">{tp('Voix')}</span>
                 </div>
               ) : null))}
             </div>
             {/* Piste musique */}
             <div className="relative" style={{ height: 28 }} onClick={seekFromEvent}>
-              {musicUrl && <div onClick={(e) => { e.stopPropagation(); setTab('style'); }} className="absolute top-1 bottom-1 left-0 rounded px-2 flex items-center gap-1.5 border border-emerald-500/30 bg-emerald-500/10 cursor-pointer" style={{ width: Math.max(40, total * pxPerSec) }}><Music size={11} className="text-emerald-300" /><span className="text-[10px] text-emerald-100 truncate">{tp('Musique de fond')}</span></div>}
+              {musicUrl && <div onClick={(e) => { e.stopPropagation(); setTab('style'); }} className="absolute top-1 bottom-1 left-0 rounded px-2 flex items-center gap-1.5 border border-primary/30/30 bg-primary/10 cursor-pointer" style={{ width: Math.max(40, total * pxPerSec) }}><Music size={11} className="text-primary" /><span className="text-[10px] text-primary truncate">{tp('Musique de fond')}</span></div>}
             </div>
             {/* Tête de lecture */}
             <div className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-30 pointer-events-none" style={{ left: currentTime * pxPerSec }}><div className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-red-500" /></div>
@@ -790,9 +1071,9 @@ export default function ProEditor({
         <div className="absolute inset-0 z-[80] bg-black/85 flex flex-col items-center justify-center p-6">
           <video src={resultUrl} controls autoPlay className="max-h-[70vh] rounded-xl bg-black" />
           <div className="mt-4 flex items-center gap-2">
-            <button onClick={() => onDownload?.(resultUrl)} className={`${btn} h-10 px-5 bg-cyan-500 text-white hover:bg-cyan-400`}><Download size={15} /> {tp('Télécharger')}</button>
-            <button onClick={() => onSave?.()} disabled={saved} className={`${btn} h-10 px-5 border border-white/20 text-white hover:bg-white/10 disabled:opacity-60`}>{saved ? tp('Enregistré') : <><Save size={15} /> {tp('Enregistrer')}</>}</button>
-            <button onClick={onNewMontage} className={`${btn} h-10 px-5 border border-white/20 text-white hover:bg-white/10`}>{tp('Continuer l\'édition')}</button>
+            <button onClick={() => onDownload?.(resultUrl)} className={`${btn} h-10 px-5 bg-primary text-white hover:bg-primary`}><Download size={15} /> {tp('Télécharger')}</button>
+            <button onClick={() => onSave?.()} disabled={saved} className={`${btn} h-10 px-5 border border-white/20 text-white hover:bg-card/10 disabled:opacity-60`}>{saved ? tp('Enregistré') : <><Save size={15} /> {tp('Enregistrer')}</>}</button>
+            <button onClick={onNewMontage} className={`${btn} h-10 px-5 border border-white/20 text-white hover:bg-card/10`}>{tp('Continuer l\'édition')}</button>
           </div>
         </div>
       )}
@@ -800,6 +1081,9 @@ export default function ProEditor({
       <audio ref={audioRef} className="hidden" />
       {narrationUrl && <audio ref={narrRef} src={narrationUrl} className="hidden" />}
       {musicUrl && <audio ref={musicRef} src={musicUrl} loop className="hidden" />}
+
+      {/* Galerie clips / voix (thème sombre) pour le plan visé */}
+      <DarkGalleryPicker open={picker.open} type={picker.type} onPick={handleGalleryPick} onClose={() => setPicker({ open: false, type: 'video', sceneId: null })} />
     </div>
   );
 }
