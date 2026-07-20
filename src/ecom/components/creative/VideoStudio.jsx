@@ -9,7 +9,6 @@ import { storeProductsApi } from '../../services/storeApi.js';
 import { tp } from '../../i18n/platform.js';
 import { ACCENTS, StudioHeader, Field, downloadFile, ImportProductBar, stripHtml, LoadingBar, featureCost, getInsufficientCredits } from './creativeShared.jsx';
 import Wizard from './Wizard.jsx';
-import AvatarStudio from './AvatarStudio.jsx';
 import SpotAssembler from './SpotAssembler.jsx';
 import { buildMontageScenes } from './launchToMontage.js';
 import { VoiceSelect, VoicePreviewButton, DEFAULT_VOICE_ID } from './voiceCatalog.jsx';
@@ -25,7 +24,6 @@ const A = ACCENTS.video;
 //            scéné complet → montage automatique (SpotAssembler)
 const FAMILIES = [
   { id: 'ugc',    label: tp('UGC'),            icon: MessageCircle, desc: tp('Créateur face caméra : témoignage, démo, unboxing') },
-  { id: 'avatar', label: tp('Avatar parlant'), icon: UserRound,     desc: tp('Un avatar tient ton produit et le vend en parlant') },
   { id: 'spot',   label: tp('Spot pub'),       icon: Megaphone,     desc: tp('Angle → hook → script scéné → montage automatique') },
 ];
 
@@ -1111,11 +1109,7 @@ const VideoStudio = ({ importedProduct, onImport, onClearImport, onSendToMontage
         })}
       </div>
 
-      {family === 'avatar' ? (
-        /* Système Avatar complet : création de l'avatar depuis le produit,
-           script produit, voix Fish, qualité Standard/Premium/Cinéma. */
-        <AvatarStudio importedProduct={importedProduct} onImport={onImport} onClearImport={onClearImport} />
-      ) : family === 'spot' ? (
+      {family === 'spot' ? (
         /* LE processus du Lancement, assemblé : page produit → angles → hooks
            → script scéné complet → montage (auto ou studio). */
         <SpotAssembler importedProduct={importedProduct} onImport={onImport} onClearImport={onClearImport}

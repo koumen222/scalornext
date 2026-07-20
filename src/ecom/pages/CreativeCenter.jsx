@@ -18,7 +18,6 @@ import LaunchesStudio from '../components/creative/LaunchesStudio.jsx';
 import BillingStudio from '../components/creative/BillingStudio.jsx';
 import LaunchStudio from '../components/creative/LaunchStudio.jsx';
 import ChatStudio from '../components/creative/ChatStudio.jsx';
-import AvatarStudio from '../components/creative/AvatarStudio.jsx';
 import ProductPicker from '../components/creative/ProductPicker.jsx';
 import { stashMontageDraft, stashLaunchResume } from '../components/creative/montageBridge.js';
 
@@ -31,7 +30,6 @@ const NAV = [
     { id: 'image', label: tp('Affiches'), icon: ImageIcon },
     { id: 'video', label: tp('Vidéo'),    icon: Video },
     { id: 'voice', label: tp('Voix'),     icon: Mic },
-    { id: 'avatar', label: tp('Avatar parlant'), icon: Speech, badge: 'NEW' },
     { id: 'montage', label: tp('Montage'), icon: Clapperboard },
     { id: 'translation', label: tp('Traduction'), icon: Languages },
   ] },
@@ -215,7 +213,6 @@ const CreativeCenter = ({ initialTab = 'overview' }) => {
             {tab === 'image' && <ImageStudio credits={credits} onCreditsChange={onCreditsChange} onNeedCredits={onNeedCredits} importedProduct={importedProduct} onImport={openPicker} onClearImport={clearImport} />}
             {tab === 'video' && <VideoStudio credits={credits} onCreditsChange={onCreditsChange} onNeedCredits={onNeedCredits} importedProduct={importedProduct} onImport={openPicker} onClearImport={clearImport} onSendToMontage={handleSendToMontage} />}
             {tab === 'voice' && <VoiceStudio credits={credits} onCreditsChange={onCreditsChange} onNeedCredits={onNeedCredits} importedProduct={importedProduct} onImport={openPicker} onClearImport={clearImport} />}
-            {tab === 'avatar' && <AvatarStudio importedProduct={importedProduct} onImport={openPicker} onClearImport={clearImport} credits={credits} onCreditsChange={onCreditsChange} onNeedCredits={onNeedCredits} />}
             {tab === 'montage' && <MontageStudio credits={credits} onCreditsChange={onCreditsChange} onNeedCredits={onNeedCredits} importedProduct={importedProduct} onImport={openPicker} onClearImport={clearImport} />}
             {tab === 'translation' && <TranslationStudio credits={credits} onCreditsChange={onCreditsChange} onNeedCredits={onNeedCredits} />}
             {tab === 'launches' && <LaunchesStudio onSendToMontage={handleSendToMontage} onNavigate={changeTab} onOpenInStudio={handleOpenLaunch} />}
