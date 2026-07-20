@@ -11,7 +11,7 @@ import { ACCENTS, StudioHeader, Field, downloadFile, ImportProductBar, stripHtml
 import Wizard from './Wizard.jsx';
 import SpotAssembler from './SpotAssembler.jsx';
 import { buildMontageScenes } from './launchToMontage.js';
-import { VoiceSelect, VoicePreviewButton, DEFAULT_VOICE_ID } from './voiceCatalog.jsx';
+import { DEFAULT_VOICE_ID } from './voiceCatalog.jsx';
 
 const A = ACCENTS.video;
 
@@ -82,7 +82,7 @@ const VideoStudio = ({ importedProduct, onImport, onClearImport, onSendToMontage
   //  · 'lipsync' — avec avatar : hook/CTA lip-syncés (OmniHuman), voix Fish partout
   //  · 'veo'     — SANS lip sync : chaque scène est un clip parlé ~10 s (Kling V3 Turbo) où le
   //                créateur PARLE en français (voix native), monté par ffmpeg
-  const [ugcTalk, setUgcTalk] = useState('lipsync');
+  const [ugcTalk] = useState('veo'); // lip sync (OmniHuman) retiré — le créateur parle nativement (moteur Grok/Kling/Veo)
   // Moteur des scènes parlées (mode sans lip sync) : clips de durées
   // différentes → le découpage du script s'adapte au moteur.
   //   grok  → Grok Imagine 1.5, 6 s (~15 mots/scène)
@@ -149,7 +149,6 @@ const VideoStudio = ({ importedProduct, onImport, onClearImport, onSendToMontage
       if (d.charDesc) setCharDesc(d.charDesc);
       if (d.charRefUrl) setCharRefUrl(d.charRefUrl);
       if (d.characterImage) setCharacterImage(d.characterImage);
-      if (d.ugcTalk) setUgcTalk(d.ugcTalk);
       if (d.ugcEngine) setUgcEngine(d.ugcEngine);
       if (d.ugcRes) setUgcRes(d.ugcRes);
       if (d.ugcSceneCount != null) setUgcSceneCount(d.ugcSceneCount);
@@ -944,32 +943,8 @@ const VideoStudio = ({ importedProduct, onImport, onClearImport, onSendToMontage
                     className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-[12.5px] leading-6 outline-none focus:border-primary/40 resize-y" />
                 </div>
               )}
-              {/* Mode de parole : avatar lip sync OU voix native Veo. */}
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground block mb-1.5">{tp('Parole du créateur')}</span>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    ['lipsync', tp('Avec avatar (lip sync)'), tp('Hook et CTA lip-syncés (OmniHuman), voix off Fish sur toute la vidéo.')],
-                    ['veo', tp('Sans lip sync (Veo parle)'), tp('Chaque scène : clip ~10 s où le créateur parle en FRANÇAIS (Kling V3 Turbo 720p), monté tel quel.')],
-                  ].map(([id, label, desc]) => (
-                    <button key={id} type="button" onClick={() => setUgcTalk(id)}
-                      className={`text-left rounded-xl border p-2.5 transition-all ${ugcTalk === id ? `${A.bg} border-transparent ring-2 ${A.ring}` : 'bg-card border-border hover:border-gray-300'}`}>
-                      <span className={`block text-[12px] font-semibold ${ugcTalk === id ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</span>
-                      <span className="block text-[10px] text-muted-foreground leading-snug mt-0.5">{desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {ugcTalk === 'lipsync' ? (
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground block mb-1.5">{tp('Voix off')}</span>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <VoiceSelect value={ugcVoiceId} onChange={setUgcVoiceId}
-                    className="h-9 max-w-[280px] rounded-xl border border-border px-2.5 text-[12.5px] outline-none focus:border-primary/40" />
-                  <VoicePreviewButton voiceId={ugcVoiceId} />
-                </div>
-              </div>
-              ) : (
+              {/* Voix native : le créateur parle ; moteur au choix (Grok Imagine par défaut). */}
+              {(
               /* Moteur des scènes parlées : le découpage du script s'adapte
                  (durée du clip × débit = mots par scène). */
               <div className="space-y-3">
