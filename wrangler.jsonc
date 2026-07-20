@@ -29,6 +29,15 @@
       "zone_name": "scalor.net"
     }
   ],
+  "vars": {
+    "NEXTJS_ENV": "production",
+    "NEXT_PUBLIC_APP_ENV": "production",
+    "NEXT_PUBLIC_API_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_BACKEND_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_API_BASE_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_STORE_API_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_SCALOR_API_URL": "https://api.scalor.net"
+  },
   "r2_buckets": [
     // Décommenter après avoir créé le bucket R2 (cache ISR durable) :
     // { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "scalor-next-cache" }
