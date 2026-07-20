@@ -4,7 +4,7 @@ import { Link, useLocation } from '@/lib/router-compat';
 import {
   BarChart3, Users, Building2, Activity, FileText,
   Clock, Bell, MessageSquare, Zap, Settings, RefreshCw,
-  CheckCircle2, AlertCircle, DollarSign, Layers, List, Store, TrendingUp,
+  CheckCircle2, AlertCircle, DollarSign, Layers, List, Store, TrendingUp, Sparkles,
 } from 'lucide-react';
 
 const NAV = [
@@ -15,6 +15,7 @@ const NAV = [
   { to: '/ecom/super-admin/analytics',             label: 'Analytics',    icon: Activity      },
   { to: '/ecom/super-admin/billing',               label: 'Billing',      icon: DollarSign    },
   { to: '/ecom/super-admin/product-page-history',  label: 'Pages IA',     icon: FileText      },
+  { to: '/ecom/super-admin/creative',              label: 'Creative',     icon: Sparkles      },
   { to: '/ecom/super-admin/activity',              get label() { return tp('Activité'); },     icon: Clock         },
   { to: '/ecom/super-admin/boutique-stats',        label: 'Stats Boutique', icon: Store       },
   { to: '/ecom/super-admin/push',                  label: 'Push',         icon: Bell          },

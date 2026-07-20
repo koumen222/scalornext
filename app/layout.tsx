@@ -54,10 +54,8 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f9fafb' },
-    { media: '(prefers-color-scheme: dark)', color: '#0F1115' },
-  ],
+  // Barre navigateur claire par défaut (l'app démarre en clair, quel que soit le système).
+  themeColor: '#f9fafb',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -67,12 +65,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     // Ne concerne que les attributs de cet élément, pas son contenu.
     <html lang="fr" suppressHydrationWarning>
       <body>
-        {/* Thème clair/sombre — appliqué AVANT le paint pour éviter le flash (FOUC).
-            Lit localStorage('theme'), sinon la préférence système. */}
+        {/* Thème clair/sombre — appliqué AVANT le paint (anti-flash).
+            DÉFAUT = clair (blanc), même si le système est en sombre.
+            Sombre UNIQUEMENT si l'utilisateur l'a explicitement choisi. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);}catch(e){}})();",
+              "(function(){try{document.documentElement.classList.toggle('dark',localStorage.getItem('theme')==='dark');}catch(e){}})();",
           }}
         />
         {/* Préconnexions + fonts — reprises d'index.html (React 19 hoiste ces balises dans <head>) */}
