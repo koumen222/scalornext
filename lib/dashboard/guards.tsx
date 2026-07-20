@@ -115,7 +115,15 @@ function decideRedirect(
 export function Protected({ requiredRole, requireRitaAgentAccess = false, children }: GuardProps) {
   const router = useRouter();
   const { user, isAuthenticated } = useEcomAuth();
-  const [status, setStatus] = useState<'checking' | 'ok'>('checking');
+  // Décision SYNCHRONE au 1er rendu : si l'utilisateur est déjà connu (token + user
+  // en cache) et autorisé, on rend directement le contenu — plus de splash quand on
+  // est connecté (le loader ne reste que pour un vrai boot non authentifié).
+  const [status, setStatus] = useState<'checking' | 'ok'>(() =>
+    (typeof window !== 'undefined'
+      && decideRedirect(user, isAuthenticated, requiredRole, requireRitaAgentAccess) === null)
+      ? 'ok'
+      : 'checking'
+  );
 
   useEffect(() => {
     const redirect = decideRedirect(user, isAuthenticated, requiredRole, requireRitaAgentAccess);
