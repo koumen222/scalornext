@@ -32,7 +32,7 @@ export const SkeletonText = ({ lines = 2, lastWidth = '60%', className = '' }) =
 
 // ── KPI card skeleton ──────────────────────────────────────────────────────────
 export const SkeletonKpi = () => (
-  <div className="bg-white rounded-2xl border border-slate-100 p-5 space-y-3">
+  <div className="bg-card rounded-2xl border border-slate-100 p-5 space-y-3">
     <div className="flex items-start justify-between">
       <Shimmer className="w-9 h-9 rounded-xl" />
       <Shimmer className="w-14 h-5 rounded-lg" />
@@ -47,7 +47,7 @@ export const SkeletonKpi = () => (
 
 // ── Generic card skeleton ──────────────────────────────────────────────────────
 export const SkeletonCard = ({ rows = 4, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-slate-100 p-5 ${className}`}>
+  <div className={`bg-card rounded-2xl border border-slate-100 p-5 ${className}`}>
     {/* Header */}
     <div className="flex items-center gap-2.5 mb-4">
       <Shimmer className="w-8 h-8 rounded-xl" />
@@ -73,7 +73,7 @@ export const SkeletonCard = ({ rows = 4, className = '' }) => (
 
 // ── Chart skeleton ─────────────────────────────────────────────────────────────
 export const SkeletonChart = ({ h = 180, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-slate-100 p-5 ${className}`}>
+  <div className={`bg-card rounded-2xl border border-slate-100 p-5 ${className}`}>
     {/* Header */}
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2.5">
@@ -116,7 +116,7 @@ export const SkeletonChart = ({ h = 180, className = '' }) => (
 
 // ── Table skeleton ─────────────────────────────────────────────────────────────
 export const SkeletonTable = ({ rows = 8, cols = 5, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-slate-100 overflow-hidden ${className}`}>
+  <div className={`bg-card rounded-2xl border border-slate-100 overflow-hidden ${className}`}>
     {/* Header */}
     <div className="px-5 pt-5 pb-3">
       <div className="flex items-center justify-between">
@@ -159,7 +159,7 @@ export const SkeletonGrid = ({ cols = 6, rows = 2, className = '' }) => (
   <div className={`grid gap-3 ${className}`}
     style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
     {Array.from({ length: cols * rows }).map((_, i) => (
-      <div key={i} className="bg-white rounded-xl border border-slate-100 p-3 space-y-2.5">
+      <div key={i} className="bg-card rounded-xl border border-slate-100 p-3 space-y-2.5">
         <Shimmer className="w-7 h-7 rounded-lg" />
         <Shimmer className="h-3 w-20 rounded" />
         <Shimmer className="h-2.5 w-12 rounded" />
@@ -172,7 +172,7 @@ export const SkeletonGrid = ({ cols = 6, rows = 2, className = '' }) => (
 export const PageListSkeleton = ({ kpiCount = 4, tableRows = 8 }) => (
   <div className="flex flex-col min-h-full bg-slate-50/50 animate-pulse">
     {/* Top bar */}
-    <div className="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
+    <div className="bg-card border-b border-slate-100 px-6 py-4 flex items-center justify-between">
       <div className="space-y-1.5">
         <Shimmer className="h-5 w-28 rounded" />
         <Shimmer className="h-3 w-20 rounded" />
@@ -186,7 +186,7 @@ export const PageListSkeleton = ({ kpiCount = 4, tableRows = 8 }) => (
     <div className={`px-6 pt-5 pb-4 grid gap-3`}
       style={{ gridTemplateColumns: `repeat(${kpiCount}, minmax(0, 1fr))` }}>
       {Array.from({ length: kpiCount }).map((_, i) => (
-        <div key={i} className="bg-white rounded-xl border border-slate-100 p-4 space-y-2">
+        <div key={i} className="bg-card rounded-xl border border-slate-100 p-4 space-y-2">
           <Shimmer className="h-3 w-20 rounded" />
           <Shimmer className="h-6 w-16 rounded" />
         </div>
@@ -197,7 +197,7 @@ export const PageListSkeleton = ({ kpiCount = 4, tableRows = 8 }) => (
       <Shimmer className="h-10 w-full rounded-xl" />
     </div>
     {/* Table */}
-    <div className="flex-1 mx-6 mb-6 bg-white rounded-xl border border-slate-100 overflow-hidden">
+    <div className="flex-1 mx-6 mb-6 bg-card rounded-xl border border-slate-100 overflow-hidden">
       <div className="flex gap-4 px-5 py-3 bg-slate-50 border-b border-slate-100">
         {[35, 20, 15, 15, 15].map((w, i) => (
           <Shimmer key={i} className="h-2.5 rounded" style={{ width: `${w}%` }} />
@@ -286,7 +286,7 @@ export const SectionError = ({ message = 'Erreur de chargement', onRetry }) => (
     {onRetry && (
       <button
         onClick={onRetry}
-        className="text-xs font-bold text-primary-600 hover:text-primary-700 underline transition-colors"
+        className="text-xs font-bold text-primary hover:text-primary underline transition-colors"
       >
         {tp('Réessayer')}
       </button>

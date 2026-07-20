@@ -5,21 +5,21 @@ import { tp } from '../../i18n/platform.js';
 
 const ColorField = ({ label, value, onChange }) => (
   <div>
-    <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{label}</label>
+    <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">{label}</label>
     <div className="flex items-center gap-2">
       <div className="relative">
         <input
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-9 h-9 rounded-xl border border-gray-200 cursor-pointer appearance-none bg-transparent p-0.5"
+          className="w-9 h-9 rounded-xl border border-border cursor-pointer appearance-none bg-transparent p-0.5"
         />
       </div>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-xs font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+        className="flex-1 px-3 py-2 rounded-xl border border-border text-xs font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
       />
     </div>
   </div>
@@ -34,8 +34,8 @@ const DesignSettings = ({ config, onChange }) => {
     <div className="space-y-5">
       {/* Colors */}
       <div>
-        <div className="text-xs font-bold text-gray-700 mb-3 flex items-center gap-2">
-          <Palette size={14} className="text-primary-600" />
+        <div className="text-xs font-bold text-foreground mb-3 flex items-center gap-2">
+          <Palette size={14} className="text-primary" />
           {tp('Couleurs')}
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -47,11 +47,11 @@ const DesignSettings = ({ config, onChange }) => {
       </div>
 
       {/* Typography */}
-      <div className="pt-4 border-t border-gray-100">
-        <div className="text-xs font-bold text-gray-700 mb-3">{tp('Typographie')}</div>
+      <div className="pt-4 border-t border-border">
+        <div className="text-xs font-bold text-foreground mb-3">{tp('Typographie')}</div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Taille de base')}</label>
+            <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">{tp('Taille de base')}</label>
             <div className="flex items-center gap-2">
               <input
                 type="range" min="12" max="18"
@@ -59,15 +59,15 @@ const DesignSettings = ({ config, onChange }) => {
                 onChange={(e) => update('fontBase', parseInt(e.target.value))}
                 className="flex-1 accent-primary-500"
               />
-              <span className="text-xs font-mono text-gray-500 w-8 text-right">{config.fontBase || 14}px</span>
+              <span className="text-xs font-mono text-muted-foreground w-8 text-right">{config.fontBase || 14}px</span>
             </div>
           </div>
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Épaisseur')}</label>
+            <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">{tp('Épaisseur')}</label>
             <select
               value={config.fontWeight || '600'}
               onChange={(e) => update('fontWeight', e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+              className="w-full px-3 py-2 rounded-xl border border-border text-xs focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
             >
               <option value="400">{tp('Normal')}</option>
               <option value="500">{tp('Medium')}</option>
@@ -80,10 +80,10 @@ const DesignSettings = ({ config, onChange }) => {
       </div>
 
       {/* Border radius */}
-      <div className="pt-4 border-t border-gray-100">
-        <div className="text-xs font-bold text-gray-700 mb-3">Bordure & Ombre</div>
+      <div className="pt-4 border-t border-border">
+        <div className="text-xs font-bold text-foreground mb-3">Bordure & Ombre</div>
         <div>
-          <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Rayon des coins')}</label>
+          <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">{tp('Rayon des coins')}</label>
           <div className="flex items-center gap-3">
             <input
               type="range" min="0" max="24"
@@ -96,7 +96,7 @@ const DesignSettings = ({ config, onChange }) => {
                 className="w-7 h-7 border-2 border-primary-300 bg-primary-50"
                 style={{ borderRadius: config.borderRadius }}
               />
-              <span className="text-xs font-mono text-gray-500 w-10 text-right">{config.borderRadius}</span>
+              <span className="text-xs font-mono text-muted-foreground w-10 text-right">{config.borderRadius}</span>
             </div>
           </div>
         </div>

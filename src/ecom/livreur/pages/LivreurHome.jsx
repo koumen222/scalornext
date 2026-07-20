@@ -104,7 +104,7 @@ export default function LivreurHome() {
   const greeting = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 px-4 pt-12 pb-6">
         <div className="flex items-center justify-between mb-4">
@@ -114,7 +114,7 @@ export default function LivreurHome() {
           </div>
           <button
             onClick={loadData}
-            className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white active:scale-95 transition-transform"
+            className="w-9 h-9 rounded-full bg-card/20 flex items-center justify-center text-white active:scale-95 transition-transform"
           >
             <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
           </button>
@@ -126,7 +126,7 @@ export default function LivreurHome() {
             icon={<Package size={18} />}
             label="Disponibles"
             value={stats?.available ?? '—'}
-            color="bg-white/10"
+            color="bg-card/10"
             textColor="text-white"
             onClick={() => navigate('/ecom/livreur/available')}
           />
@@ -134,7 +134,7 @@ export default function LivreurHome() {
             icon={<Truck size={18} />}
             label="En cours"
             value={stats?.inProgress ?? '—'}
-            color="bg-white/10"
+            color="bg-card/10"
             textColor="text-white"
             onClick={() => navigate('/ecom/livreur/deliveries')}
           />
@@ -142,7 +142,7 @@ export default function LivreurHome() {
             icon={<CheckCircle2 size={18} />}
             label="Ce mois"
             value={stats?.thisMonth?.delivered ?? '—'}
-            color="bg-white/10"
+            color="bg-card/10"
             textColor="text-white"
             onClick={() => navigate('/ecom/livreur/history')}
           />
@@ -178,7 +178,7 @@ export default function LivreurHome() {
                 {gpsRequesting ? '...' : tp('Activer')}
               </button>
             )}
-            <button onClick={dismissGpsBanner} className="p-1 text-gray-400 active:text-gray-600">
+            <button onClick={dismissGpsBanner} className="p-1 text-muted-foreground active:text-muted-foreground">
               <X size={14} />
             </button>
           </div>
@@ -199,13 +199,13 @@ export default function LivreurHome() {
         >
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-card/20 flex items-center justify-center">
                 <Bell size={26} className="text-white" />
               </div>
               {(stats?.available ?? 0) > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-                  <span className="relative inline-flex rounded-full h-5 w-5 bg-white items-center justify-center text-[10px] font-black text-amber-600">{stats.available}</span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-card opacity-75" />
+                  <span className="relative inline-flex rounded-full h-5 w-5 bg-card items-center justify-center text-[10px] font-black text-amber-600">{stats.available}</span>
                 </span>
               )}
             </div>
@@ -224,7 +224,7 @@ export default function LivreurHome() {
         {/* Livraisons récentes */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-gray-800 text-lg">{tp('Mes livraisons')}</h2>
+            <h2 className="font-semibold text-foreground text-lg">{tp('Mes livraisons')}</h2>
             <Link
               to="/ecom/livreur/deliveries"
               className="text-sm text-indigo-600 font-medium"
@@ -240,9 +240,9 @@ export default function LivreurHome() {
               ))}
             </div>
           ) : recentDeliveries.length === 0 ? (
-            <div className="bg-white rounded-xl p-6 text-center border border-dashed border-gray-200">
+            <div className="bg-card rounded-xl p-6 text-center border border-dashed border-border">
               <Truck size={32} className="text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">{tp('Aucune livraison en cours')}</p>
+              <p className="text-muted-foreground text-sm">{tp('Aucune livraison en cours')}</p>
               <Link
                 to="/ecom/livreur/available"
                 className="mt-3 inline-block text-indigo-600 text-sm font-medium"
@@ -262,24 +262,24 @@ export default function LivreurHome() {
         {/* Montant encaissé */}
         {stats && (
           <section>
-            <h2 className="font-semibold text-gray-800 text-lg mb-3">{tp('Montant encaissé')}</h2>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <h2 className="font-semibold text-foreground text-lg mb-3">{tp('Montant encaissé')}</h2>
+            <div className="bg-card rounded-2xl border shadow-sm p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">{tp('Ce mois')}</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-0.5">
+                  <p className="text-muted-foreground text-xs uppercase tracking-wide">{tp('Ce mois')}</p>
+                  <p className="text-2xl font-bold text-foreground mt-0.5">
                     {stats.thisMonth?.amount?.toLocaleString('fr-FR') || 0} FCFA
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">{tp('Total')}</p>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wide">{tp('Total')}</p>
                   <p className="text-lg font-semibold text-indigo-600 mt-0.5">
                     {stats.allTime?.amount?.toLocaleString('fr-FR') || 0} FCFA
                   </p>
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm">
-                <span className="text-gray-500">{stats.thisWeek?.delivered || 0} livraisons cette semaine</span>
+              <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{stats.thisWeek?.delivered || 0} livraisons cette semaine</span>
                 <Link to="/ecom/livreur/earnings" className="text-indigo-600 font-medium">
                   Détails →
                 </Link>
@@ -306,20 +306,20 @@ function StatCard({ icon, label, value, color, textColor, onClick }) {
 }
 
 function DeliveryCard({ order }) {
-  const st = statusLabel[order.status] || { label: order.status, color: 'bg-gray-100 text-gray-600' };
+  const st = statusLabel[order.status] || { label: order.status, color: 'bg-muted text-muted-foreground' };
   return (
     <Link
       to={`/ecom/livreur/delivery/${order._id}`}
-      className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-gray-100 shadow-sm active:scale-[0.99] transition-transform"
+      className="flex items-center gap-3 bg-card rounded-xl p-3.5 border border-border shadow-sm active:scale-[0.99] transition-transform"
     >
       <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
         <Truck size={18} className="text-indigo-500" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-gray-800 text-sm truncate">
+        <p className="font-medium text-foreground text-sm truncate">
           {order.clientName || order.clientPhone}
         </p>
-        <p className="text-gray-400 text-xs flex items-center gap-1 mt-0.5">
+        <p className="text-muted-foreground text-xs flex items-center gap-1 mt-0.5">
           <MapPin size={11} />
           <span className="truncate">{order.address || order.city || tp('Adresse non renseignée')}</span>
         </p>

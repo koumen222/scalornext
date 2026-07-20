@@ -259,8 +259,42 @@ const PHONE_LOCAL_LENGTH = {
   '+213': 9, '+33': 9, '+32': 9, '+41': 9, '+1': 10,
 };
 
+// Pays à longueur VARIABLE : plage acceptée {min, max}.
+// Gabon : ancien format 8 chiffres (06 XX XX XX) toujours actif sur WhatsApp,
+// nouveau plan 2020 à 9 chiffres (066 XX XX XX) — les deux coexistent.
+const PHONE_LOCAL_LENGTH_RANGE = {
+  '+241': { min: 8, max: 9 },
+};
+
+// Pays où le 0 initial FAIT PARTIE du numéro international (ne jamais le
+// retirer). Gabon : le compte WhatsApp est bien +241 0X XX XX XX.
+const KEEP_LEADING_ZERO_CODES = new Set(['+241']);
+
+/** Longueur max de saisie locale (pour maxLength/slice des inputs). */
 export function getPhoneLength(code) {
+  const range = PHONE_LOCAL_LENGTH_RANGE[code];
+  if (range) return range.max;
   return PHONE_LOCAL_LENGTH[code] || 15;
+}
+
+/** Plage de longueurs acceptées pour un indicatif → { min, max }. */
+export function getPhoneLengthRange(code) {
+  const range = PHONE_LOCAL_LENGTH_RANGE[code];
+  if (range) return range;
+  const n = PHONE_LOCAL_LENGTH[code];
+  return n ? { min: n, max: n } : { min: 5, max: 15 };
+}
+
+/** true si le nombre de chiffres saisis est valide pour cet indicatif. */
+export function isValidLocalPhoneLength(code, digitCount) {
+  const { min, max } = getPhoneLengthRange(code);
+  return digitCount >= min && digitCount <= max;
+}
+
+/** Texte pour les messages d'erreur : « 8 » ou « 8 ou 9 ». */
+export function phoneLengthHint(code) {
+  const { min, max } = getPhoneLengthRange(code);
+  return min === max ? String(min) : `${min} ou ${max}`;
 }
 
 export function buildFullPhone(phoneCode, rawPhone) {
@@ -271,6 +305,9 @@ export function buildFullPhone(phoneCode, rawPhone) {
   const codeDigits = String(phoneCode || '').replace('+', '');
   if (codeDigits && phone.startsWith(codeDigits)) return `+${phone}`;
 
-  const cleaned = phone.startsWith('0') ? phone.substring(1) : phone;
+  // Gabon & co : le 0 initial est significatif — on le conserve tel quel.
+  const cleaned = !KEEP_LEADING_ZERO_CODES.has(phoneCode) && phone.startsWith('0')
+    ? phone.substring(1)
+    : phone;
   return `${phoneCode || ''}${cleaned}`;
 }

@@ -36,7 +36,7 @@ const ROLE_LABELS = {
 };
 const ROLE_COLORS = {
   super_admin: 'bg-amber-100 text-amber-700',
-  ecom_admin: 'bg-primary-100 text-primary-700',
+  ecom_admin: 'bg-primary-100 text-primary',
   ecom_closeuse: 'bg-sky-100 text-sky-700',
   ecom_compta: 'bg-violet-100 text-violet-700',
   ecom_livreur: 'bg-orange-100 text-orange-700',
@@ -235,7 +235,7 @@ const SuperAdminActivity = () => {
             <p className="text-sm text-slate-500 mt-1">{pageError}</p>
           </div>
           <button onClick={() => load(true)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors">
+            className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors">
             {tp('Réessayer')}
           </button>
         </div>
@@ -246,13 +246,13 @@ const SuperAdminActivity = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-3">
             {[
               { label: 'Boutiques',      value: nFmt.format(kpis.total),                             sub: `${kpis.active} actives`,               icon: Store,       accent: 'text-slate-800'   },
-              { label: 'CA total',       value: fmtMoney(boutiqueTotals.totalRevenue || kpis.totalRevenue), sub: `Moy. ${fmtMoney(kpis.avgRevenue)}/boutique`, icon: TrendingUp,  accent: 'text-primary-700' },
+              { label: 'CA total',       value: fmtMoney(boutiqueTotals.totalRevenue || kpis.totalRevenue), sub: `Moy. ${fmtMoney(kpis.avgRevenue)}/boutique`, icon: TrendingUp,  accent: 'text-primary' },
               { label: 'Commandes',      value: nFmt.format(boutiqueTotals.totalOrders || kpis.totalOrders), sub: 'Total commandes',                 icon: ShoppingCart, accent: 'text-blue-700'   },
               { label: 'Produits',       value: nFmt.format(boutiqueTotals.totalProducts || 0),      sub: 'En boutique',                           icon: Package,     accent: 'text-violet-700'  },
               { label: 'Actives 7j',     value: nFmt.format(kpis.recentlyActive),                   sub: 'Commande < 7 jours',                    icon: BarChart2,   accent: 'text-amber-700'   },
               { label: 'Sans commandes', value: nFmt.format(kpis.noOrders),                         sub: `${Math.round((kpis.noOrders / Math.max(kpis.total, 1)) * 100)}% du parc`, icon: AlertTriangle, accent: 'text-red-600' },
             ].map(k => (
-              <div key={k.label} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <div key={k.label} className="bg-card border border-slate-200 rounded-2xl p-4 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{k.label}</p>
                   <k.icon className="w-3.5 h-3.5 text-slate-300" />
@@ -264,22 +264,22 @@ const SuperAdminActivity = () => {
           </div>
 
           {/* ── Tabs ── */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-card border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
             {/* tab bar */}
             <div className="flex border-b border-slate-100">
               {TABS.map(t => (
                 <button key={t.key} onClick={() => setTab(t.key)}
                   className={`flex items-center gap-1.5 px-4 py-3 text-xs font-semibold transition-all relative flex-shrink-0 ${
-                    tab === t.key ? 'text-primary-700' : 'text-slate-500 hover:text-slate-700'
+                    tab === t.key ? 'text-primary' : 'text-slate-500 hover:text-slate-700'
                   }`}>
                   <t.icon className="w-3.5 h-3.5" />
                   {t.label}
                   {t.count > 0 && (
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tab === t.key ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'}`}>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tab === t.key ? 'bg-primary-100 text-primary' : 'bg-slate-100 text-slate-500'}`}>
                       {t.count}
                     </span>
                   )}
-                  {tab === t.key && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 rounded-t" />}
+                  {tab === t.key && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />}
                 </button>
               ))}
             </div>
@@ -305,7 +305,7 @@ const SuperAdminActivity = () => {
                     ].map(s => (
                       <button key={s.key} onClick={() => toggleSort(s.key)}
                         className={`inline-flex items-center gap-0.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                          sortBy === s.key ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          sortBy === s.key ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}>
                         {s.label}<SortIcon k={s.key} />
                       </button>
@@ -326,13 +326,13 @@ const SuperAdminActivity = () => {
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             {/* left: name + meta */}
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-extrabold flex-shrink-0 ${store.isActive ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'}`}>
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-extrabold flex-shrink-0 ${store.isActive ? 'bg-primary-100 text-primary' : 'bg-slate-100 text-slate-500'}`}>
                                 {(store.name || '?').charAt(0).toUpperCase()}
                               </div>
                               <div className="min-w-0">
                                 <div className="flex flex-wrap items-center gap-1.5">
                                   <span className="text-sm font-bold text-slate-900 truncate max-w-[200px]">{store.name || '—'}</span>
-                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${store.isActive ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'}`}>
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${store.isActive ? 'bg-primary-100 text-primary' : 'bg-slate-100 text-slate-500'}`}>
                                     {store.isActive ? 'Active' : tp('Inactive')}
                                   </span>
                                   {store.isLegacyStore && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">{tp('Legacy')}</span>}
@@ -349,7 +349,7 @@ const SuperAdminActivity = () => {
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                               <div className="text-center min-w-[52px]">
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">CA</p>
-                                <p className="text-sm font-extrabold text-primary-700 tabular-nums">{fmtMoney(store.totalRevenue || 0)}</p>
+                                <p className="text-sm font-extrabold text-primary tabular-nums">{fmtMoney(store.totalRevenue || 0)}</p>
                               </div>
                               <div className="text-center min-w-[40px]">
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Cmdes')}</p>
@@ -372,7 +372,7 @@ const SuperAdminActivity = () => {
                               </div>
                               {store.url && (
                                 <a href={store.url} target="_blank" rel="noopener noreferrer"
-                                  className="text-[10px] font-semibold text-primary-600 hover:text-primary-800 flex-shrink-0">
+                                  className="text-[10px] font-semibold text-primary hover:text-primary-800 flex-shrink-0">
                                   Voir →
                                 </a>
                               )}
@@ -393,11 +393,11 @@ const SuperAdminActivity = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 divide-x divide-y divide-slate-100 border-b border-slate-100">
                   {[
                     { label: 'Total',            value: nFmt.format(userKpis.total),      icon: Users,      accent: 'text-slate-800'   },
-                    { label: 'Actifs',            value: nFmt.format(userKpis.active),     icon: UserCheck,  accent: 'text-primary-700' },
+                    { label: 'Actifs',            value: nFmt.format(userKpis.active),     icon: UserCheck,  accent: 'text-primary' },
                     { label: 'Inactifs',          value: nFmt.format(userKpis.inactive),   icon: UserX,      accent: 'text-red-600'     },
                     { label: 'Avec boutique',     value: nFmt.format(userKpis.withOrders), icon: Store,      accent: 'text-blue-700'    },
                     { label: 'Actifs cette sem.', value: nFmt.format(userKpis.recentCnx),  icon: BarChart2,  accent: 'text-amber-700'   },
-                    { get label() { return tp('CA généré'); },         value: fmtMoney(userKpis.totalRev),      icon: TrendingUp, accent: 'text-primary-700' },
+                    { get label() { return tp('CA généré'); },         value: fmtMoney(userKpis.totalRev),      icon: TrendingUp, accent: 'text-primary' },
                   ].map(k => (
                     <div key={k.label} className="px-4 py-3">
                       <div className="flex items-center justify-between mb-1">
@@ -448,7 +448,7 @@ const SuperAdminActivity = () => {
                     ].map(s => (
                       <button key={s.key} onClick={() => toggleUserSort(s.key)}
                         className={`inline-flex items-center gap-0.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                          userSort === s.key ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          userSort === s.key ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}>
                         {s.label}<UserSortIcon k={s.key} />
                       </button>
@@ -469,7 +469,7 @@ const SuperAdminActivity = () => {
                         <div key={user.userId} className="px-5 py-3.5 hover:bg-slate-50 transition-colors">
                           <div className="flex items-center gap-3">
                             {/* avatar */}
-                            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0 ${user.isActive ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'}`}>
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0 ${user.isActive ? 'bg-primary-100 text-primary' : 'bg-slate-100 text-slate-500'}`}>
                               {(user.email || '?').charAt(0).toUpperCase()}
                             </div>
                             {/* info */}
@@ -479,7 +479,7 @@ const SuperAdminActivity = () => {
                                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${ROLE_COLORS[user.role] || 'bg-slate-100 text-slate-600'}`}>
                                   {ROLE_LABELS[user.role] || user.role || '—'}
                                 </span>
-                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${user.isActive ? 'bg-primary-100 text-primary-700' : 'bg-red-100 text-red-600'}`}>
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${user.isActive ? 'bg-primary-100 text-primary' : 'bg-red-100 text-red-600'}`}>
                                   {user.isActive ? 'Actif' : tp('Inactif')}
                                 </span>
                               </div>
@@ -499,7 +499,7 @@ const SuperAdminActivity = () => {
                             <div className="hidden sm:flex items-center gap-5 flex-shrink-0">
                               <div className="text-right min-w-[80px]">
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('CA total')}</p>
-                                <p className="text-sm font-extrabold text-primary-700 tabular-nums">{fmtMoney(user.totalRevenue || 0)}</p>
+                                <p className="text-sm font-extrabold text-primary tabular-nums">{fmtMoney(user.totalRevenue || 0)}</p>
                               </div>
                               <div className="text-right min-w-[52px]">
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{tp('Cmdes')}</p>
@@ -520,9 +520,9 @@ const SuperAdminActivity = () => {
                             <div className="mt-2 ml-12 flex flex-wrap gap-1.5">
                               {user.stores.slice(0, 5).map(s => (
                                 <span key={s._id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] text-slate-600">
-                                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.isActive ? 'bg-primary-500' : 'bg-slate-300'}`} />
+                                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.isActive ? 'bg-primary' : 'bg-slate-300'}`} />
                                   <span className="font-semibold truncate max-w-[80px]">{s.name}</span>
-                                  {(s.totalRevenue || 0) > 0 && <span className="text-primary-700 font-bold">{fmtMoney(s.totalRevenue)}</span>}
+                                  {(s.totalRevenue || 0) > 0 && <span className="text-primary font-bold">{fmtMoney(s.totalRevenue)}</span>}
                                   {(s.totalOrders || 0) > 0 && <span className="text-slate-400">{nFmt.format(s.totalOrders)} cmd</span>}
                                 </span>
                               ))}
@@ -571,7 +571,7 @@ const SuperAdminActivity = () => {
                             </div>
                             <div className="flex flex-wrap items-center gap-1.5">
                               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700">{nFmt.format(product.unitsSold || 0)} vendus</span>
-                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-50 text-primary-700">{fmtMoney(product.revenue || 0, product.currency || 'XAF')}</span>
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-50 text-primary">{fmtMoney(product.revenue || 0, product.currency || 'XAF')}</span>
                               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">{nFmt.format(product.ordersCount || 0)} cmd</span>
                             </div>
                           </div>

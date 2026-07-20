@@ -22,21 +22,21 @@ const Toggle = ({ on, onChange }) => (
 const Badge = ({ children, color = 'gray' }) => {
   const cls = {
     green: 'bg-green-50 text-green-700 border-green-100',
-    gray: 'bg-gray-100 text-gray-600 border-gray-200',
+    gray: 'bg-muted text-muted-foreground border-border',
     red: 'bg-red-50 text-red-600 border-red-100',
-  }[color] || 'bg-gray-100 text-gray-600 border-gray-200';
+  }[color] || 'bg-muted text-muted-foreground border-border';
   return (
     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${cls}`}>{children}</span>
   );
 };
 
 const EmptyState = ({ icon: Icon, title, subtitle, cta, onCta }) => (
-  <div className="bg-white rounded-xl border border-dashed border-gray-300 px-6 py-16 text-center">
-    <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-      <Icon className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
+  <div className="bg-card rounded-xl border border-dashed border-gray-300 px-6 py-16 text-center">
+    <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center mx-auto mb-3">
+      <Icon className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
     </div>
-    <p className="text-sm font-semibold text-gray-800 mb-1">{title}</p>
-    <p className="text-xs text-gray-400 mb-5">{subtitle}</p>
+    <p className="text-sm font-semibold text-foreground mb-1">{title}</p>
+    <p className="text-xs text-muted-foreground mb-5">{subtitle}</p>
     {cta && (
       <button
         onClick={onCta}
@@ -50,22 +50,22 @@ const EmptyState = ({ icon: Icon, title, subtitle, cta, onCta }) => (
 
 const FormField = ({ label, hint, children }) => (
   <div>
-    <label className="block text-xs font-semibold text-gray-700 mb-1">{label}</label>
-    {hint && <p className="text-[10px] text-gray-400 mb-1.5">{hint}</p>}
+    <label className="block text-xs font-semibold text-foreground mb-1">{label}</label>
+    {hint && <p className="text-[10px] text-muted-foreground mb-1.5">{hint}</p>}
     {children}
   </div>
 );
 
 const Input = ({ ...props }) => (
   <input
-    className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-white placeholder:text-gray-400"
+    className="w-full h-10 px-3 rounded-xl border border-border text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-card placeholder:text-muted-foreground"
     {...props}
   />
 );
 
 const Textarea = ({ ...props }) => (
   <textarea
-    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-white placeholder:text-gray-400 resize-none"
+    className="w-full px-3 py-2.5 rounded-xl border border-border text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 transition-all bg-card placeholder:text-muted-foreground resize-none"
     rows={3}
     {...props}
   />
@@ -82,7 +82,7 @@ const DiscountTypeSelector = ({ value, onChange }) => (
         key={t.id}
         onClick={() => onChange(t.id)}
         className={`flex-1 h-9 rounded-xl text-xs font-medium border transition-all ${
-          value === t.id ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+          value === t.id ? 'bg-gray-900 text-white border-gray-900' : 'bg-card text-muted-foreground border-border hover:bg-background'
         }`}
       >
         {t.label}
@@ -147,22 +147,22 @@ const ProductMultiTargetSelector = ({ all, ids, onChange, products, loading, err
   };
   return (
     <div className="space-y-2">
-      <label className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 cursor-pointer hover:bg-gray-50 transition">
+      <label className="flex items-center gap-2 rounded-xl border border-border px-3 py-2 cursor-pointer hover:bg-background transition">
         <input type="checkbox" checked={!!all} onChange={toggleAll} className="w-4 h-4 rounded border-gray-300 text-green-600" />
-        <span className="text-sm font-medium text-gray-800">{tp('Tous les produits')}</span>
+        <span className="text-sm font-medium text-foreground">{tp('Tous les produits')}</span>
       </label>
       {!all && (
-        <div className="max-h-44 overflow-y-auto rounded-xl border border-gray-200 p-1">
+        <div className="max-h-44 overflow-y-auto rounded-xl border border-border p-1">
           {loading ? (
-            <p className="text-xs text-gray-400 px-2 py-2">{tp('Chargement des produits...')}</p>
+            <p className="text-xs text-muted-foreground px-2 py-2">{tp('Chargement des produits...')}</p>
           ) : products.length === 0 ? (
             <p className="text-[10px] text-red-500 px-2 py-2">{error || 'Aucun produit disponible. Créez un produit avant de configurer cette offre.'}</p>
           ) : products.map(product => {
             const pid = getProductId(product);
             return (
-              <label key={pid} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <label key={pid} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-background cursor-pointer">
                 <input type="checkbox" checked={selectedIds.includes(pid)} onChange={() => toggleOne(pid)} className="w-4 h-4 rounded border-gray-300 text-green-600" />
-                <span className="text-sm text-gray-700 truncate">{getProductName(product)}</span>
+                <span className="text-sm text-foreground truncate">{getProductName(product)}</span>
               </label>
             );
           })}
@@ -188,22 +188,22 @@ const SellProductsPicker = ({ ids, onChange, products, loading }) => {
   };
   return (
     <div className="space-y-1.5">
-      <div className="max-h-40 overflow-y-auto rounded-xl border border-gray-200 p-1">
+      <div className="max-h-40 overflow-y-auto rounded-xl border border-border p-1">
         {loading ? (
-          <p className="text-xs text-gray-400 px-2 py-2">Chargement des produits…</p>
+          <p className="text-xs text-muted-foreground px-2 py-2">Chargement des produits…</p>
         ) : products.length === 0 ? (
           <p className="text-[10px] text-red-500 px-2 py-2">Aucun produit disponible.</p>
         ) : products.map((product) => {
           const pid = getProductId(product);
           return (
-            <label key={pid} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <label key={pid} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-background cursor-pointer">
               <input type="checkbox" checked={selected.includes(pid)} onChange={() => toggle(pid)} className="w-4 h-4 rounded border-gray-300 text-green-600" />
-              <span className="text-sm text-gray-700 truncate">{getProductName(product)}</span>
+              <span className="text-sm text-foreground truncate">{getProductName(product)}</span>
             </label>
           );
         })}
       </div>
-      <p className="text-[10px] text-gray-400">{selected.length ? `${selected.length} produit(s) seront ajoutés à la commande` : 'Aucun produit — une ligne « offre » sera créée avec le prix ci-dessus.'}</p>
+      <p className="text-[10px] text-muted-foreground">{selected.length ? `${selected.length} produit(s) seront ajoutés à la commande` : 'Aucun produit — une ligne « offre » sera créée avec le prix ci-dessus.'}</p>
     </div>
   );
 };
@@ -214,19 +214,19 @@ const OFFER_SIZE_PX = { sm: 12, md: 13.5, lg: 16 };
 const withStyle = (st) => ({ ...OFFER_STYLE, ...(st || {}) });
 
 const SwatchField = ({ label, value, fallback, onChange }) => (
-  <div className="flex flex-col items-center gap-1 rounded-lg border border-gray-200 p-2">
-    <input type="color" value={value || fallback} onChange={(e) => onChange(e.target.value)} className="w-full h-8 rounded-md border border-gray-200 cursor-pointer p-0 bg-white" aria-label={label} />
-    <span className="text-[10px] font-medium text-gray-600">{label}</span>
+  <div className="flex flex-col items-center gap-1 rounded-lg border border-border p-2">
+    <input type="color" value={value || fallback} onChange={(e) => onChange(e.target.value)} className="w-full h-8 rounded-md border border-border cursor-pointer p-0 bg-card" aria-label={label} />
+    <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
     {value
-      ? <button type="button" onClick={() => onChange('')} className="text-[9px] text-gray-400 hover:text-gray-600 underline">réinit.</button>
+      ? <button type="button" onClick={() => onChange('')} className="text-[9px] text-muted-foreground hover:text-muted-foreground underline">réinit.</button>
       : <span className="text-[9px] text-gray-300">auto</span>}
   </div>
 );
 
 const SegControl = ({ options, value, onChange }) => (
-  <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
+  <div className="inline-flex rounded-lg border border-border overflow-hidden">
     {options.map((o) => (
-      <button key={o.value} type="button" onClick={() => onChange(o.value)} className={`px-2.5 py-1 text-xs transition-colors ${value === o.value ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>{o.label}</button>
+      <button key={o.value} type="button" onClick={() => onChange(o.value)} className={`px-2.5 py-1 text-xs transition-colors ${value === o.value ? 'bg-gray-900 text-white' : 'bg-card text-muted-foreground hover:bg-background'}`}>{o.label}</button>
     ))}
   </div>
 );
@@ -254,14 +254,14 @@ const ImageField = ({ value, onChange }) => {
     <div>
       {value ? (
         <div className="flex items-center gap-3">
-          <img src={value} alt="" className="w-14 h-14 rounded-lg object-cover border border-gray-200 shrink-0" />
+          <img src={value} alt="" className="w-14 h-14 rounded-lg object-cover border border-border shrink-0" />
           <div className="flex flex-col gap-1 items-start">
-            <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="text-xs text-gray-600 hover:text-gray-900 underline disabled:opacity-60">{busy ? 'Téléversement…' : 'Remplacer'}</button>
+            <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="text-xs text-muted-foreground hover:text-foreground underline disabled:opacity-60">{busy ? 'Téléversement…' : 'Remplacer'}</button>
             <button type="button" onClick={() => onChange('')} className="text-xs text-red-500 hover:text-red-600 underline">Retirer</button>
           </div>
         </div>
       ) : (
-        <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="w-full h-10 rounded-lg border border-dashed border-gray-300 text-xs text-gray-500 flex items-center justify-center gap-1.5 hover:bg-gray-50 disabled:opacity-60 transition-colors">
+        <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="w-full h-10 rounded-lg border border-dashed border-gray-300 text-xs text-muted-foreground flex items-center justify-center gap-1.5 hover:bg-background disabled:opacity-60 transition-colors">
           {busy ? 'Téléversement…' : <><ImageIcon size={14} /> Ajouter une image</>}
         </button>
       )}
@@ -275,15 +275,15 @@ const AppearanceControls = ({ value, onChange }) => {
   const upd = (patch) => onChange({ ...st, ...patch });
   const [open, setOpen] = useState(true);
   return (
-    <div className="rounded-xl border border-gray-200 overflow-hidden">
-      <button type="button" onClick={() => setOpen((o) => !o)} className="w-full flex items-center justify-between px-3.5 py-3 bg-gray-50 hover:bg-gray-100 transition-colors">
-        <span className="flex items-center gap-2 text-sm font-semibold text-gray-800"><Palette size={15} className="text-gray-500" /> Design de l'offre</span>
-        <ChevronDown size={16} className={`text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+    <div className="rounded-xl border border-border overflow-hidden">
+      <button type="button" onClick={() => setOpen((o) => !o)} className="w-full flex items-center justify-between px-3.5 py-3 bg-background hover:bg-muted transition-colors">
+        <span className="flex items-center gap-2 text-sm font-semibold text-foreground"><Palette size={15} className="text-muted-foreground" /> Design de l'offre</span>
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div className="p-3.5 space-y-4 border-t border-gray-100">
+        <div className="p-3.5 space-y-4 border-t border-border">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-2">Couleurs</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2">Couleurs</p>
             <div className="grid grid-cols-3 gap-2">
               <SwatchField label="Bouton" value={st.accentColor} fallback="#16a34a" onChange={(v) => upd({ accentColor: v })} />
               <SwatchField label="Fond" value={st.bgColor} fallback="#ffffff" onChange={(v) => upd({ bgColor: v })} />
@@ -291,22 +291,22 @@ const AppearanceControls = ({ value, onChange }) => {
             </div>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-2">Image</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2">Image</p>
             <ImageField value={st.image} onChange={(v) => upd({ image: v })} />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-2">Mise en forme</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2">Mise en forme</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-gray-600">Titre en gras</span>
+                <span className="text-xs text-muted-foreground">Titre en gras</span>
                 <Toggle on={st.bold} onChange={(v) => upd({ bold: v })} />
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-gray-600">Taille du texte</span>
+                <span className="text-xs text-muted-foreground">Taille du texte</span>
                 <SegControl options={[{ value: 'sm', label: 'Petit' }, { value: 'md', label: 'Normal' }, { value: 'lg', label: 'Grand' }]} value={st.size} onChange={(v) => upd({ size: v })} />
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-gray-600">Alignement</span>
+                <span className="text-xs text-muted-foreground">Alignement</span>
                 <SegControl options={[{ value: 'left', label: 'Gauche' }, { value: 'center', label: 'Centre' }]} value={st.align} onChange={(v) => upd({ align: v })} />
               </div>
             </div>
@@ -324,10 +324,10 @@ const AiBriefPanel = ({ loading, onSubmit, onCancel }) => {
   const upd = (patch) => setBrief((b) => ({ ...b, ...patch }));
   const Chips = ({ label, value, onChange, options }) => (
     <div>
-      <p className="text-xs font-medium text-gray-600 mb-1.5">{label}</p>
+      <p className="text-xs font-medium text-muted-foreground mb-1.5">{label}</p>
       <div className="flex flex-wrap gap-1.5">
         {options.map((o) => (
-          <button key={o.value} type="button" onClick={() => onChange(o.value)} className={`px-2.5 py-1 rounded-lg text-xs border transition-colors ${value === o.value ? 'border-indigo-400 bg-indigo-100 text-indigo-700 font-medium' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}>{o.label}</button>
+          <button key={o.value} type="button" onClick={() => onChange(o.value)} className={`px-2.5 py-1 rounded-lg text-xs border transition-colors ${value === o.value ? 'border-indigo-400 bg-indigo-100 text-indigo-700 font-medium' : 'border-border bg-card text-muted-foreground hover:bg-background'}`}>{o.label}</button>
         ))}
       </div>
     </div>
@@ -340,20 +340,20 @@ const AiBriefPanel = ({ loading, onSubmit, onCancel }) => {
       <Chips label="Objectif" value={brief.goal} onChange={(v) => upd({ goal: v })} options={[{ value: 'margin', label: 'Marge' }, { value: 'volume', label: 'Volume' }, { value: 'destock', label: 'Déstockage' }]} />
       <Chips label="Ton" value={brief.tone} onChange={(v) => upd({ tone: v })} options={[{ value: 'premium', label: 'Premium' }, { value: 'urgent', label: 'Urgent' }, { value: 'friendly', label: 'Amical' }]} />
       <div>
-        <p className="text-xs font-medium text-gray-600 mb-1.5">À mettre en avant</p>
+        <p className="text-xs font-medium text-muted-foreground mb-1.5">À mettre en avant</p>
         <div className="flex flex-wrap gap-1.5 mb-1.5">
           {['La remise', 'Le cadeau offert', 'Stock limité', 'Qualité premium', 'Un bénéfice précis'].map((h) => (
-            <button key={h} type="button" onClick={() => upd({ highlight: h })} className={`px-2.5 py-1 rounded-lg text-xs border transition-colors ${brief.highlight === h ? 'border-indigo-400 bg-indigo-100 text-indigo-700 font-medium' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}>{h}</button>
+            <button key={h} type="button" onClick={() => upd({ highlight: h })} className={`px-2.5 py-1 rounded-lg text-xs border transition-colors ${brief.highlight === h ? 'border-indigo-400 bg-indigo-100 text-indigo-700 font-medium' : 'border-border bg-card text-muted-foreground hover:bg-background'}`}>{h}</button>
           ))}
         </div>
         <Input value={brief.highlight} onChange={(e) => upd({ highlight: e.target.value })} placeholder="Ex: livraison offerte, résultats en 14 jours, 2 pour le prix d'1…" />
       </div>
       <div>
-        <p className="text-xs font-medium text-gray-600 mb-1.5">Précision (optionnel)</p>
+        <p className="text-xs font-medium text-muted-foreground mb-1.5">Précision (optionnel)</p>
         <Input value={brief.note} onChange={(e) => upd({ note: e.target.value })} placeholder="Ex: un pack de 2, un accessoire précis…" />
       </div>
       <div className="flex gap-2 pt-1">
-        <button type="button" onClick={onCancel} className="flex-1 h-9 rounded-lg bg-white border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">Annuler</button>
+        <button type="button" onClick={onCancel} className="flex-1 h-9 rounded-lg bg-card border border-border text-muted-foreground text-xs font-medium hover:bg-background transition-colors">Annuler</button>
         <button type="button" onClick={() => onSubmit(brief)} disabled={loading} className="flex-1 h-9 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 disabled:opacity-60 flex items-center justify-center gap-1.5 transition-colors">{loading ? 'Génération…' : <><Sparkles size={14} /> Générer l'offre</>}</button>
       </div>
     </div>
@@ -374,29 +374,29 @@ const UpsellPreview = ({ form }) => {
     : form.discountType === 'free' ? 'Offert' : '';
   return (
     <div className="space-y-2">
-      <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">Aperçu client</p>
-      <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm" style={{ backgroundColor: bg }}>
+      <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Aperçu client</p>
+      <div className="rounded-2xl border border-border overflow-hidden shadow-sm" style={{ backgroundColor: bg }}>
         <div className="px-4 py-2.5 text-center" style={{ backgroundColor: accent }}>
           <p className="text-[11px] font-semibold text-white uppercase tracking-wide">Offre unique — maintenant ou jamais</p>
         </div>
         <div className="p-4 space-y-3" style={{ textAlign: st.align }}>
           <div className="flex items-start gap-3 text-left">
             {st.image
-              ? <img src={st.image} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0 border border-gray-200" />
-              : <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-gray-300"><Package size={22} /></div>}
+              ? <img src={st.image} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0 border border-border" />
+              : <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center shrink-0 text-gray-300"><Package size={22} /></div>}
             <div className="min-w-0 flex-1">
               <p className="leading-tight" style={{ color: text, fontWeight: st.bold ? 700 : 500, fontSize: fs + 1 }}>{form.title || "Titre de votre offre"}</p>
-              {form.productName && <p className="text-xs text-gray-500 mt-0.5">{form.productName}</p>}
+              {form.productName && <p className="text-xs text-muted-foreground mt-0.5">{form.productName}</p>}
             </div>
             {badge && <span className="shrink-0 rounded-full text-[11px] font-bold px-2 py-1" style={{ backgroundColor: `${accent}1A`, color: accent }}>{badge}</span>}
           </div>
           {form.description && <p className="leading-relaxed" style={{ color: text, opacity: 0.78, fontSize: fs - 1 }}>{form.description}</p>}
           <div className="flex items-end gap-2" style={{ justifyContent: st.align === 'center' ? 'center' : 'flex-start' }}>
             <span className="font-bold" style={{ color: accent, fontSize: fs + 6 }}>{moneyFCFA(form.offerPrice) || '—'}</span>
-            {form.originalPrice && <span className="text-sm text-gray-400 line-through mb-0.5">{moneyFCFA(form.originalPrice)}</span>}
+            {form.originalPrice && <span className="text-sm text-muted-foreground line-through mb-0.5">{moneyFCFA(form.originalPrice)}</span>}
           </div>
           <button type="button" className="w-full h-10 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-1.5" style={{ backgroundColor: accent }}><Check size={15} /> Oui, ajouter à ma commande</button>
-          <p className="text-center text-xs text-gray-400 underline">Non merci, je passe cette offre</p>
+          <p className="text-center text-xs text-muted-foreground underline">Non merci, je passe cette offre</p>
         </div>
       </div>
     </div>
@@ -414,19 +414,19 @@ const ExitPreview = ({ form }) => {
     : 'Cadeau offert';
   return (
     <div className="space-y-2">
-      <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">Aperçu client</p>
-      <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm" style={{ backgroundColor: bg }}>
+      <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Aperçu client</p>
+      <div className="rounded-2xl border border-border overflow-hidden shadow-sm" style={{ backgroundColor: bg }}>
         <div className="relative px-4 py-6 text-center" style={{ backgroundColor: '#111827' }}>
-          <span className="absolute right-3 top-2 text-gray-500 text-lg leading-none">×</span>
+          <span className="absolute right-3 top-2 text-muted-foreground text-lg leading-none">×</span>
           <p className="leading-tight text-white" style={{ fontWeight: st.bold ? 700 : 500, fontSize: fs + 3 }}>{form.title || "Attendez ! Une dernière offre…"}</p>
         </div>
         <div className="p-4 space-y-3" style={{ textAlign: st.align === 'left' ? 'left' : 'center' }}>
           {st.image && <img src={st.image} alt="" className="w-full h-28 object-cover rounded-xl" />}
           {form.desc && <p className="leading-relaxed" style={{ color: text, opacity: 0.78, fontSize: fs - 1 }}>{form.desc}</p>}
           {val && <div className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 font-bold text-sm" style={{ backgroundColor: `${accent}14`, color: accent }}><Tag size={14} /> {val}</div>}
-          {form.couponCode && <div className="mx-auto w-fit rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-1.5 font-mono text-sm text-gray-700">{form.couponCode}</div>}
+          {form.couponCode && <div className="mx-auto w-fit rounded-lg border border-dashed border-gray-300 bg-background px-3 py-1.5 font-mono text-sm text-foreground">{form.couponCode}</div>}
           <button type="button" className="w-full h-10 rounded-xl text-white text-sm font-semibold" style={{ backgroundColor: accent }}>J'en profite</button>
-          <p className="text-[10px] text-gray-400">S'affiche après {form.triggerDelay || '3'}s d'inactivité</p>
+          <p className="text-[10px] text-muted-foreground">S'affiche après {form.triggerDelay || '3'}s d'inactivité</p>
         </div>
       </div>
     </div>
@@ -578,22 +578,22 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
     <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] gap-5 items-start">
       {/* Aperçu client — toujours à gauche */}
       <div className="order-first lg:sticky lg:top-0 self-start space-y-3">
-        <div className="rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-gray-200/70 p-3 sm:p-4 shadow-sm">
+        <div className="rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-border/70 p-3 sm:p-4 shadow-sm">
           <UpsellPreview form={form} />
         </div>
-        <p className="text-[11px] text-gray-400 leading-relaxed">{showModal ? "L'aperçu se met à jour pendant que vous éditez." : "Cliquez sur « Ajouter une offre » ou l'icône crayon pour éditer — l'aperçu s'affiche ici."}</p>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">{showModal ? "L'aperçu se met à jour pendant que vous éditez." : "Cliquez sur « Ajouter une offre » ou l'icône crayon pour éditer — l'aperçu s'affiche ici."}</p>
       </div>
 
       {/* Contenu — à droite */}
       <div className="space-y-5">
       {/* Info banner */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex gap-3">
+      <div className="bg-background border border-border rounded-xl p-4 flex gap-3">
         <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center shrink-0 mt-0.5">
-          <Zap size={14} className="text-gray-600" strokeWidth={1.75} />
+          <Zap size={14} className="text-muted-foreground" strokeWidth={1.75} />
         </div>
         <div>
-          <p className="text-xs font-semibold text-gray-800 mb-0.5">{tp('Comment ça marche')}</p>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-xs font-semibold text-foreground mb-0.5">{tp('Comment ça marche')}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Jusqu'à <strong>{tp('5 offres')}</strong> affichées en séquence. Le client accepte ou refuse — l'offre suivante apparaît. Glissez pour réordonner.
           </p>
         </div>
@@ -602,7 +602,7 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-gray-800">{offers.length} offre(s)</span>
+          <span className="text-sm font-semibold text-foreground">{offers.length} offre(s)</span>
           <Badge color="gray">{tp('Max 5 par produit')}</Badge>
         </div>
         <button
@@ -615,10 +615,10 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
 
       {/* Panneau d'édition inline OU liste */}
       {showModal ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
+        <div className="bg-card rounded-xl border p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-gray-900">{editing ? "Modifier l'offre" : tp('Nouvelle offre')}</p>
-            <button onClick={closeModal} className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"><X size={16} /></button>
+            <p className="text-sm font-semibold text-foreground">{editing ? "Modifier l'offre" : tp('Nouvelle offre')}</p>
+            <button onClick={closeModal} className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-muted-foreground hover:bg-muted transition-colors"><X size={16} /></button>
           </div>
           <FormField label="Titre de l'offre *">
             <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder={tp('Ex: Protection expédition')} />
@@ -669,13 +669,13 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
             </FormField>
           )}
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm font-medium text-gray-700">{tp('Activer cette offre')}</span>
+            <span className="text-sm font-medium text-foreground">{tp('Activer cette offre')}</span>
             <Toggle on={form.isActive} onChange={v => setForm(f => ({ ...f, isActive: v }))} />
           </div>
           <AppearanceControls value={form.style} onChange={(st) => setForm(f => ({ ...f, style: st }))} />
           {formError && <p className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{formError}</p>}
           <div className="flex gap-2 pt-2">
-            <button onClick={closeModal} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
+            <button onClick={closeModal} className="flex-1 h-11 bg-muted text-foreground rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
             <button onClick={save} disabled={saving} className="flex-1 h-11 bg-green-600 text-white rounded-2xl text-sm font-medium hover:bg-green-700 disabled:opacity-60 transition-colors">{saving ? 'Enregistrement...' : editing ? 'Enregistrer' : "Créer l'offre"}</button>
           </div>
         </div>
@@ -690,15 +690,15 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
       ) : (
         <div className="space-y-3">
           {offers.map((o, i) => (
-            <div key={o.id} className={`bg-white rounded-xl border border-gray-200 overflow-hidden ${!o.isActive ? 'opacity-60' : ''}`}>
+            <div key={o.id} className={`bg-card rounded-xl border overflow-hidden ${!o.isActive ? 'opacity-60' : ''}`}>
               <div className="flex items-center gap-3 p-4">
                 {/* Drag handle + order */}
                 <div className="flex flex-col items-center gap-1 shrink-0">
-                  <button onClick={() => move(o.id, -1)} disabled={i === 0} className="text-gray-300 hover:text-gray-500 disabled:opacity-0 transition-colors">
+                  <button onClick={() => move(o.id, -1)} disabled={i === 0} className="text-gray-300 hover:text-muted-foreground disabled:opacity-0 transition-colors">
                     <ChevronUp size={14} />
                   </button>
-                  <span className="text-[10px] font-bold text-gray-400 w-4 text-center">{i + 1}</span>
-                  <button onClick={() => move(o.id, 1)} disabled={i === offers.length - 1} className="text-gray-300 hover:text-gray-500 disabled:opacity-0 transition-colors">
+                  <span className="text-[10px] font-bold text-muted-foreground w-4 text-center">{i + 1}</span>
+                  <button onClick={() => move(o.id, 1)} disabled={i === offers.length - 1} className="text-gray-300 hover:text-muted-foreground disabled:opacity-0 transition-colors">
                     <ChevronDown size={14} />
                   </button>
                 </div>
@@ -711,26 +711,26 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{o.title}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{o.title}</p>
                     <Badge color={o.isActive ? 'green' : 'gray'}>{o.isActive ? 'Actif' : tp('Inactif')}</Badge>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1"><Package size={10} /> {o.targetAllProducts ? tp('Tous les produits') : `${(o.targetProductIds || []).length} produit(s)`}</span>
                     <span className="text-gray-300">·</span>
                     <span>{o.productName || '—'}</span>
                     <span className="text-gray-300">·</span>
                     <span className="font-medium text-green-700">{fmt(o.offerPrice)}</span>
-                    {o.originalPrice && <span className="line-through text-gray-400">{fmt(o.originalPrice)}</span>}
+                    {o.originalPrice && <span className="line-through text-muted-foreground">{fmt(o.originalPrice)}</span>}
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-1 shrink-0">
                   <Toggle on={o.isActive} onChange={() => toggle(o.id)} />
-                  <button onClick={() => openEdit(o)} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <button onClick={() => openEdit(o)} className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                     <Edit3 size={14} />
                   </button>
-                  <button onClick={() => remove(o.id)} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                  <button onClick={() => remove(o.id)} className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -738,7 +738,7 @@ const UpsellsTab = ({ products, loadingProducts, productError, saveProductUpsell
 
               {o.description && (
                 <div className="px-4 pb-3 border-t border-gray-50 pt-2">
-                  <p className="text-xs text-gray-500 line-clamp-1">{o.description}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-1">{o.description}</p>
                 </div>
               )}
             </div>
@@ -863,23 +863,23 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
     <div className="grid lg:grid-cols-[300px_minmax(0,1fr)] gap-5 items-start">
       {/* Aperçu client — toujours visible, à gauche */}
       <div className="order-first lg:sticky lg:top-0 self-start space-y-3">
-        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">Aperçu client</p>
-        <div className="rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-gray-200/70 p-3 sm:p-4 shadow-sm">
+        <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Aperçu client</p>
+        <div className="rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-border/70 p-3 sm:p-4 shadow-sm">
           {(bump.targetAllProducts || bump.targetProductIds?.length > 0) && (
-            <p className="mb-3 inline-flex items-center gap-1 rounded-lg bg-gray-100 px-2 py-1 text-[10px] font-semibold text-gray-600">
+            <p className="mb-3 inline-flex items-center gap-1 rounded-lg bg-muted px-2 py-1 text-[10px] font-semibold text-muted-foreground">
               <Package size={11} /> {bump.targetAllProducts ? tp('Tous les produits') : `${bump.targetProductIds.length} produit(s)`}
             </p>
           )}
-          <p className="text-[11px] text-gray-400 mb-2">Dans le formulaire de commande :</p>
+          <p className="text-[11px] text-muted-foreground mb-2">Dans le formulaire de commande :</p>
           <div className="border-2 rounded-xl p-4 transition-colors" style={{ borderColor: bump.isActive ? bumpAccent : '#e5e7eb', borderStyle: bump.isActive ? 'solid' : 'dashed', backgroundColor: bump.isActive ? (bumpStyle.bgColor || `${bumpAccent}0D`) : '#ffffff' }}>
             <div className="flex items-start gap-3">
               <div className="w-5 h-5 rounded border-2 flex items-center justify-center mt-0.5 shrink-0" style={{ borderColor: bumpAccent, backgroundColor: bumpAccent }}>
                 <Check size={11} className="text-white" strokeWidth={3} />
               </div>
-              {bumpStyle.image && <img src={bumpStyle.image} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0 border border-gray-200" />}
+              {bumpStyle.image && <img src={bumpStyle.image} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0 border border-border" />}
               <div className="min-w-0">
                 <p style={{ color: bumpText, fontWeight: bumpStyle.bold ? 700 : 500, fontSize: OFFER_SIZE_PX[bumpStyle.size] || 13.5 }}>{bump.title || 'Titre de votre option'} {bump.price ? <span style={{ color: bumpAccent, fontWeight: 700 }}>+{Number(bump.price).toLocaleString('fr-FR')} FCFA</span> : null}</p>
-                {bump.desc ? <p className="text-xs text-gray-500 mt-0.5">{bump.desc}</p> : <p className="text-xs text-gray-400 mt-0.5">Texte affiché à côté de la case…</p>}
+                {bump.desc ? <p className="text-xs text-muted-foreground mt-0.5">{bump.desc}</p> : <p className="text-xs text-muted-foreground mt-0.5">Texte affiché à côté de la case…</p>}
               </div>
             </div>
           </div>
@@ -890,49 +890,49 @@ const OrderBumpTab = ({ products, loadingProducts, productError, saveProductUpse
       {/* Formulaire — à droite */}
       <div className="space-y-5">
       {/* Info */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex gap-3">
+      <div className="bg-background border border-border rounded-xl p-4 flex gap-3">
         <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center shrink-0 mt-0.5">
-          <CheckSquare size={14} className="text-gray-600" strokeWidth={1.75} />
+          <CheckSquare size={14} className="text-muted-foreground" strokeWidth={1.75} />
         </div>
         <div>
-          <p className="text-xs font-semibold text-gray-800 mb-0.5">{tp('1-Tick Upsell')}</p>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-xs font-semibold text-foreground mb-0.5">{tp('1-Tick Upsell')}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Une case à cocher affichée dans le formulaire. Le client ajoute l'option d'un seul clic — idéal pour des petits suppléments à haute valeur perçue.
           </p>
         </div>
       </div>
 
       {/* Activation toggle */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between">
+      <div className="bg-card rounded-xl border p-4 flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-gray-900">{tp('Activer le Order Bump')}</p>
-          <p className="text-xs text-gray-400 mt-0.5">{tp('Afficher la case à cocher sur le formulaire de commande')}</p>
+          <p className="text-sm font-semibold text-foreground">{tp('Activer le Order Bump')}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{tp('Afficher la case à cocher sur le formulaire de commande')}</p>
         </div>
         <Toggle on={bump.isActive} onChange={v => setBump(b => ({ ...b, isActive: v }))} />
       </div>
 
       {/* Preset selector */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Type d\'offre')}</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Type d\'offre')}</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {BUMP_PRESETS.map(p => (
             <button
               key={p.id}
               onClick={() => selectPreset(p)}
               className={`text-left px-3 py-3 rounded-xl border-2 transition-all ${
-                bump.preset === p.id ? 'border-green-600 bg-green-50' : 'border-gray-100 hover:border-gray-200 bg-white'
+                bump.preset === p.id ? 'border-green-600 bg-green-50' : 'border-border hover:border-border bg-card'
               }`}
             >
-              <p className={`text-xs font-semibold leading-tight ${bump.preset === p.id ? 'text-green-800' : 'text-gray-700'}`}>{p.label}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 leading-tight">{p.desc}</p>
+              <p className={`text-xs font-semibold leading-tight ${bump.preset === p.id ? 'text-green-800' : 'text-foreground'}`}>{p.label}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{p.desc}</p>
             </button>
           ))}
         </div>
       </div>
 
       {/* Config */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Configuration')}</p>
+      <div className="bg-card rounded-xl border p-4 space-y-4">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Configuration')}</p>
         <div className="space-y-3">
           <FormField label="Produits concernés *" hint="La case Order Bump sera visible dans le checkout de chaque produit ciblé (ou de tous).">
             <ProductMultiTargetSelector
@@ -1115,22 +1115,22 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
     <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] gap-5 items-start">
       {/* Aperçu client — toujours à gauche */}
       <div className="order-first lg:sticky lg:top-0 self-start space-y-3">
-        <div className="rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-gray-200/70 p-3 sm:p-4 shadow-sm">
+        <div className="rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-border/70 p-3 sm:p-4 shadow-sm">
           <ExitPreview form={form} />
         </div>
-        <p className="text-[11px] text-gray-400 leading-relaxed">{showModal ? "L'aperçu se met à jour pendant que vous éditez." : "Cliquez sur « Ajouter une offre » ou l'icône crayon pour éditer — l'aperçu s'affiche ici."}</p>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">{showModal ? "L'aperçu se met à jour pendant que vous éditez." : "Cliquez sur « Ajouter une offre » ou l'icône crayon pour éditer — l'aperçu s'affiche ici."}</p>
       </div>
 
       {/* Contenu — à droite */}
       <div className="space-y-5">
       {/* Info */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex gap-3">
+      <div className="bg-background border border-border rounded-xl p-4 flex gap-3">
         <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center shrink-0 mt-0.5">
-          <AlertTriangle size={14} className="text-gray-600" strokeWidth={1.75} />
+          <AlertTriangle size={14} className="text-muted-foreground" strokeWidth={1.75} />
         </div>
         <div>
-          <p className="text-xs font-semibold text-gray-800 mb-0.5">{tp('Comment ça marche')}</p>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-xs font-semibold text-foreground mb-0.5">{tp('Comment ça marche')}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Un pop-up s'affiche quand le visiteur tente de fermer le formulaire. Récupérez des ventes perdues en proposant une remise de dernière chance.
           </p>
         </div>
@@ -1138,7 +1138,7 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-gray-800">{offers.length} offre{offers.length !== 1 ? 's' : ''}</span>
+        <span className="text-sm font-semibold text-foreground">{offers.length} offre{offers.length !== 1 ? 's' : ''}</span>
         <button
           onClick={openNew}
           className="h-9 px-3.5 bg-gray-900 text-white rounded-xl text-xs font-medium flex items-center gap-1.5 hover:bg-gray-800 transition-colors"
@@ -1149,10 +1149,10 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
 
       {/* Panneau d'édition inline OU liste */}
       {showModal ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
+        <div className="bg-card rounded-xl border p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-gray-900">{editing ? "Modifier l'offre" : tp('Nouvelle offre')}</p>
-            <button onClick={closeModal} className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"><X size={16} /></button>
+            <p className="text-sm font-semibold text-foreground">{editing ? "Modifier l'offre" : tp('Nouvelle offre')}</p>
+            <button onClick={closeModal} className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-muted-foreground hover:bg-muted transition-colors"><X size={16} /></button>
           </div>
           <FormField label="Titre du pop-up *">
             <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder={tp('Ex: Attendez ! Voici 10% de remise')} />
@@ -1189,10 +1189,10 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
             <Input value={form.couponCode} onChange={e => setForm(f => ({ ...f, couponCode: e.target.value.toUpperCase() }))} placeholder="PROMO10" />
           </FormField>
           <FormField label="Déclenchement" hint="Fermeture du formulaire, souris qui quitte la page (intention de sortie), ou les deux">
-            <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+            <div className="flex rounded-lg border border-border overflow-hidden">
               {[['both', 'Les deux'], ['close', 'Fermeture'], ['exit-intent', 'Intention de sortie']].map(([v, l]) => (
                 <button key={v} type="button" onClick={() => setForm(f => ({ ...f, trigger: v }))}
-                  className={`flex-1 px-2 py-2 text-xs transition-colors ${(form.trigger || 'both') === v ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                  className={`flex-1 px-2 py-2 text-xs transition-colors ${(form.trigger || 'both') === v ? 'bg-gray-900 text-white' : 'bg-card text-muted-foreground hover:bg-background'}`}>
                   {l}
                 </button>
               ))}
@@ -1202,13 +1202,13 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
             <Input type="number" value={form.triggerDelay} onChange={e => setForm(f => ({ ...f, triggerDelay: e.target.value }))} placeholder="3" min="0" max="30" />
           </FormField>
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm font-medium text-gray-700">{tp('Activer cette offre')}</span>
+            <span className="text-sm font-medium text-foreground">{tp('Activer cette offre')}</span>
             <Toggle on={form.isActive} onChange={v => setForm(f => ({ ...f, isActive: v }))} />
           </div>
           <AppearanceControls value={form.style} onChange={(st) => setForm(f => ({ ...f, style: st }))} />
           {formError && <p className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{formError}</p>}
           <div className="flex gap-2 pt-2">
-            <button onClick={closeModal} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
+            <button onClick={closeModal} className="flex-1 h-11 bg-muted text-foreground rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
             <button onClick={save} disabled={saving} className="flex-1 h-11 bg-green-600 text-white rounded-2xl text-sm font-medium hover:bg-green-700 disabled:opacity-60 transition-colors">{saving ? 'Enregistrement...' : editing ? 'Enregistrer' : "Créer l'offre"}</button>
           </div>
         </div>
@@ -1223,17 +1223,17 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
       ) : (
         <div className="space-y-3">
           {offers.map(o => (
-            <div key={o.id} className={`bg-white rounded-xl border border-gray-200 overflow-hidden ${!o.isActive ? 'opacity-60' : ''}`}>
+            <div key={o.id} className={`bg-card rounded-xl border overflow-hidden ${!o.isActive ? 'opacity-60' : ''}`}>
               <div className="flex items-center gap-3 p-4">
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shrink-0">
                   <AlertTriangle size={16} className="text-white" strokeWidth={1.75} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{o.title}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{o.title}</p>
                     <Badge color={o.isActive ? 'green' : 'gray'}>{o.isActive ? 'Actif' : tp('Inactif')}</Badge>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span className="font-medium text-green-700">{discountLabel(o)}</span>
                     <span className="text-gray-300">·</span>
                     <span className="inline-flex items-center gap-1"><Package size={10} /> {o.targetAllProducts ? tp('Tous les produits') : `${(o.targetProductIds || []).length} produit(s)`}</span>
@@ -1242,7 +1242,7 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
                         <span className="text-gray-300">·</span>
                         <span className="flex items-center gap-1">
                           <Tag size={10} strokeWidth={1.75} />
-                          <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{o.couponCode}</code>
+                          <code className="font-mono bg-muted px-1.5 py-0.5 rounded text-foreground">{o.couponCode}</code>
                         </span>
                       </>
                     )}
@@ -1252,17 +1252,17 @@ const ExitOffersTab = ({ products, loadingProducts, productError, saveProductUps
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <Toggle on={o.isActive} onChange={() => toggle(o.id)} />
-                  <button onClick={() => openEdit(o)} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                  <button onClick={() => openEdit(o)} className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                     <Edit3 size={14} />
                   </button>
-                  <button onClick={() => remove(o.id)} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                  <button onClick={() => remove(o.id)} className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors">
                     <Trash2 size={14} />
                   </button>
                 </div>
               </div>
               {o.desc && (
                 <div className="px-4 pb-3 border-t border-gray-50 pt-2">
-                  <p className="text-xs text-gray-500 line-clamp-1">{o.desc}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-1">{o.desc}</p>
                 </div>
               )}
             </div>
@@ -1327,12 +1327,12 @@ const FormUpsellsPage = () => {
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Upsells & Downsells</h1>
-        <p className="text-sm text-gray-400 mt-0.5">{tp('Augmentez la valeur de chaque commande avec des offres ciblées')}</p>
+        <h1 className="text-xl font-bold text-foreground">Upsells & Downsells</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">{tp('Augmentez la valeur de chaque commande avec des offres ciblées')}</p>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200 p-1.5 mb-6 flex gap-1">
+      <div className="bg-card rounded-xl border p-1.5 mb-6 flex gap-1">
         {TABS.map(tab => {
           const Icon = tab.icon;
           const active = activeTab === tab.id;
@@ -1341,11 +1341,11 @@ const FormUpsellsPage = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex flex-col sm:flex-row items-center sm:justify-center gap-1 sm:gap-2 px-2 py-2.5 rounded-lg transition-all text-center sm:text-left ${
-                active ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-50'
+                active ? 'bg-gray-900 text-white' : 'text-muted-foreground hover:bg-background'
               }`}
             >
-              <Icon size={14} strokeWidth={1.75} className={active ? 'text-white' : 'text-gray-400'} />
-              <span className={`text-xs font-semibold leading-tight ${active ? 'text-white' : 'text-gray-700'}`}>{tab.label}</span>
+              <Icon size={14} strokeWidth={1.75} className={active ? 'text-white' : 'text-muted-foreground'} />
+              <span className={`text-xs font-semibold leading-tight ${active ? 'text-white' : 'text-foreground'}`}>{tab.label}</span>
             </button>
           );
         })}

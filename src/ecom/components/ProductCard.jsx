@@ -13,7 +13,7 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
       pause: 'bg-orange-100 text-orange-800',
       stop: 'bg-red-100 text-red-800'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-muted text-foreground';
   };
 
   const getStockColor = (stock, threshold) => {
@@ -35,18 +35,18 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
   const margin = calculateMargin();
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+    <div className="bg-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">{product.name}</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-1">{product.name}</h3>
             <div className="flex items-center space-x-2">
               <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(product.status)}`}>
                 {product.status}
               </span>
               {!product.isActive && (
-                <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-medium">
+                <span className="px-2 py-1 bg-muted text-foreground rounded text-xs font-medium">
                   {tp('Inactif')}
                 </span>
               )}
@@ -57,11 +57,11 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
         {/* Informations principales */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <p className="text-sm text-gray-500">{tp('Prix de vente')}</p>
-            <p className="font-semibold text-gray-900">{fmt(product.sellingPrice)}</p>
+            <p className="text-sm text-muted-foreground">{tp('Prix de vente')}</p>
+            <p className="font-semibold text-foreground">{fmt(product.sellingPrice)}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">{tp('Stock')}</p>
+            <p className="text-sm text-muted-foreground">{tp('Stock')}</p>
             <p className={`font-semibold ${getStockColor(product.stock, product.reorderThreshold)}`}>
               {product.stock} unités
             </p>
@@ -69,22 +69,22 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
         </div>
 
         {/* Métriques financières */}
-        <div className="border-t border-gray-100 pt-4 mb-4">
+        <div className="border-t border-border pt-4 mb-4">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-500">{tp('Coût produit')}</p>
+              <p className="text-muted-foreground">{tp('Coût produit')}</p>
               <p className="font-medium">{fmt(product.productCost)}</p>
             </div>
             <div>
-              <p className="text-gray-500">{tp('Coût livraison')}</p>
+              <p className="text-muted-foreground">{tp('Coût livraison')}</p>
               <p className="font-medium">{fmt(product.deliveryCost)}</p>
             </div>
             <div>
-              <p className="text-gray-500">{tp('Coût pub moyen')}</p>
+              <p className="text-muted-foreground">{tp('Coût pub moyen')}</p>
               <p className="font-medium">{fmt(product.avgAdsCost)}</p>
             </div>
             <div>
-              <p className="text-gray-500">{tp('Marge/unité')}</p>
+              <p className="text-muted-foreground">{tp('Marge/unité')}</p>
               <p className={`font-medium ${margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {fmt(margin)}
               </p>
@@ -108,18 +108,18 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
 
         {/* Actions */}
         {showActions && (
-          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between pt-4 border-t border-border">
             <div className="flex space-x-2">
               <Link
                 to={`/products/${product._id}`}
-                className="px-3 py-1 bg-primary-100 text-primary-700 rounded text-sm font-medium hover:bg-primary-200 transition"
+                className="px-3 py-1 bg-primary-100 text-primary rounded text-sm font-medium hover:bg-primary-200 transition"
               >
                 {tp('Voir')}
               </Link>
               {onEdit && (
                 <button
                   onClick={() => onEdit(product)}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm font-medium hover:bg-gray-200 transition"
+                  className="px-3 py-1 bg-muted text-foreground rounded text-sm font-medium hover:bg-gray-200 transition"
                 >
                   {tp('Modifier')}
                 </button>
@@ -133,7 +133,7 @@ const ProductCard = ({ product, showActions = true, onEdit, onDelete }) => {
                 </button>
               )}
             </div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-muted-foreground">
               ID: {product._id.slice(-8)}
             </div>
           </div>

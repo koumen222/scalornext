@@ -12,12 +12,12 @@ import {
 // ── Shared color field ────────────────────────────────────────────────────────
 const ColorRow = ({ label, value, onChange }) => (
   <div>
-    <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{label}</label>
+    <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">{label}</label>
     <div className="flex items-center gap-2">
       <input type="color" value={value || '#ffffff'} onChange={e => onChange(e.target.value)}
-        className="w-9 h-9 rounded-xl border border-gray-200 cursor-pointer p-0.5" />
+        className="w-9 h-9 rounded-xl border border-border cursor-pointer p-0.5" />
       <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
-        className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-xs font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
+        className="flex-1 px-3 py-2 rounded-xl border border-border text-xs font-mono focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
     </div>
   </div>
 );
@@ -48,8 +48,8 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
       <ButtonAnimationStyles />
 
       {/* Live button preview */}
-      <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100 p-5">
-        <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3 text-center">
+      <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-border p-5">
+        <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-3 text-center">
           {tp('Aperçu du bouton')}
         </div>
         <div className="flex justify-center">
@@ -81,22 +81,22 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
       {/* Text */}
       <div className="space-y-3">
         <div>
-          <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Texte principal')}</label>
+          <label className="block text-xs font-semibold text-foreground mb-1.5">{tp('Texte principal')}</label>
           <input type="text" value={config.text} onChange={e => update('text', e.target.value)}
             placeholder={tp('Ex: Commander maintenant')}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
+            className="w-full px-3 py-2.5 rounded-xl border border-border text-sm font-medium focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Sous-titre')}</label>
+          <label className="block text-xs font-semibold text-foreground mb-1.5">{tp('Sous-titre')}</label>
           <input type="text" value={config.subtext} onChange={e => update('subtext', e.target.value)}
             placeholder={tp('Ex: Paiement à la livraison')}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
+            className="w-full px-3 py-2.5 rounded-xl border border-border text-sm text-muted-foreground focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200" />
         </div>
       </div>
 
       {/* Visual params — 3-col row */}
-      <div className="pt-4 border-t border-gray-100 space-y-4">
-        <div className="text-xs font-bold text-gray-700">{tp('Style visuel')}</div>
+      <div className="pt-4 border-t border-border space-y-4">
+        <div className="text-xs font-bold text-foreground">{tp('Style visuel')}</div>
 
         <div className="grid grid-cols-2 gap-3">
           <ColorRow label="Couleur du bouton" value={bgColor} onChange={v => update('bgColor', v)} />
@@ -105,30 +105,30 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
 
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+            <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
               {tp('Taille du texte')}
             </label>
             <div className="flex items-center gap-1.5">
               <input type="number" min="10" max="30"
                 value={fontSize}
                 onChange={e => update('fontSize', parseInt(e.target.value) || 16)}
-                className="w-14 px-2 py-2 rounded-xl border border-gray-200 text-center text-sm focus:outline-none focus:border-primary-400" />
-              <span className="text-xs text-gray-400">px</span>
+                className="w-14 px-2 py-2 rounded-xl border border-border text-center text-sm focus:outline-none focus:border-primary-400" />
+              <span className="text-xs text-muted-foreground">px</span>
             </div>
           </div>
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">{tp('Style')}</label>
+            <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">{tp('Style')}</label>
             <div className="flex gap-1">
               <button type="button"
-                className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${bold ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${bold ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
                 onClick={() => update('bold', !bold)}>B</button>
               <button type="button"
-                className={`px-3 py-2 rounded-lg border text-xs italic transition ${italic ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                className={`px-3 py-2 rounded-lg border text-xs italic transition ${italic ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
                 onClick={() => update('italic', !italic)}>I</button>
             </div>
           </div>
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+            <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
               Coins — {borderRadius}px
             </label>
             <input type="range" min="0" max="40" value={borderRadius}
@@ -140,7 +140,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
         <div className="grid grid-cols-2 gap-3">
           <ColorRow label="Couleur de la bordure" value={borderColor || '#ffffff'} onChange={v => update('borderColor', v)} />
           <div>
-            <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+            <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
               Épaisseur bordure — {borderWidth}px
             </label>
             <input type="range" min="0" max="6" value={borderWidth}
@@ -150,7 +150,7 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
         </div>
 
         <div>
-          <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+          <label className="block text-[10px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
             Ombre — {shadowVal}
           </label>
           <input type="range" min="0" max="30" value={shadowVal}
@@ -160,15 +160,15 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
       </div>
 
       {/* Icon selector */}
-      <div className="pt-4 border-t border-gray-100">
-        <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Icône')}</label>
+      <div className="pt-4 border-t border-border">
+        <label className="block text-xs font-semibold text-foreground mb-2">{tp('Icône')}</label>
         <div className="grid grid-cols-6 gap-1.5">
           {ICONS.map(({ id, label, Icon }) => (
             <button key={id} onClick={() => update('icon', id)} title={label}
               className={`flex flex-col items-center gap-1 p-2 rounded-xl border-2 transition-all ${
                 config.icon === id
-                  ? 'border-primary-400 bg-primary-50 text-primary-700'
-                  : 'border-transparent bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                  ? 'border-primary-400 bg-primary-50 text-primary'
+                  : 'border-transparent bg-background text-muted-foreground hover:bg-muted hover:text-muted-foreground'
               }`}>
               <Icon size={16} />
               <span className="text-[9px] font-medium leading-tight truncate w-full text-center">{label}</span>
@@ -178,15 +178,15 @@ const ButtonEditor = ({ config, designConfig, onChange }) => {
       </div>
 
       {/* Animation selector */}
-      <div className="pt-4 border-t border-gray-100">
-        <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Animation')}</label>
+      <div className="pt-4 border-t border-border">
+        <label className="block text-xs font-semibold text-foreground mb-2">{tp('Animation')}</label>
         <div className="grid grid-cols-3 gap-1.5">
           {ANIMATIONS.map(({ id, label }) => (
             <button key={id} onClick={() => update('animation', id)}
               className={`px-3 py-2.5 rounded-xl text-xs font-semibold border-2 transition-all ${
                 config.animation === id
-                  ? 'border-primary-400 bg-primary-50 text-primary-700'
-                  : 'border-transparent bg-gray-50 text-gray-500 hover:bg-gray-100'
+                  ? 'border-primary-400 bg-primary-50 text-primary'
+                  : 'border-transparent bg-background text-muted-foreground hover:bg-muted'
               }`}>
               {label}
             </button>

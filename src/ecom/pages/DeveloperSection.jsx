@@ -19,10 +19,10 @@ import {
 /* ─────────────────────────── tiny helpers ─────────────────────────── */
 const Badge = ({ color = 'gray', children }) => {
   const cls = {
-    green: 'bg-primary-100 text-primary-700',
+    green: 'bg-primary-100 text-primary',
     red:   'bg-red-100 text-red-700',
     yellow:'bg-yellow-100 text-yellow-700',
-    gray:  'bg-gray-100 text-gray-600',
+    gray:  'bg-muted text-muted-foreground',
     blue:  'bg-blue-100 text-blue-700',
   };
   return (
@@ -40,7 +40,7 @@ const statusColor = (s = '') => {
 };
 
 const Card = ({ children, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm ${className}`}>{children}</div>
+  <div className={`bg-card rounded-2xl border shadow-sm ${className}`}>{children}</div>
 );
 
 const Btn = ({ onClick, disabled, variant = 'primary', size = 'sm', children, type = 'button', className = '' }) => {
@@ -48,9 +48,9 @@ const Btn = ({ onClick, disabled, variant = 'primary', size = 'sm', children, ty
   const sizes = { sm: 'px-3.5 py-1.5 text-sm', md: 'px-5 py-2.5 text-sm', lg: 'px-6 py-3 text-base' };
   const variants = {
     primary: 'bg-[#0F6B4F] hover:bg-[#0d5c43] text-white',
-    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+    secondary: 'bg-muted hover:bg-gray-200 text-foreground',
     danger: 'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200',
-    outline: 'border border-gray-200 hover:bg-gray-50 text-gray-700',
+    outline: 'border border-border hover:bg-background text-foreground',
   };
   return (
     <button type={type} onClick={onClick} disabled={disabled}
@@ -62,9 +62,9 @@ const Btn = ({ onClick, disabled, variant = 'primary', size = 'sm', children, ty
 
 const Input = ({ label, ...props }) => (
   <div className="space-y-1">
-    {label && <label className="block text-xs font-medium text-gray-600">{label}</label>}
+    {label && <label className="block text-xs font-medium text-muted-foreground">{label}</label>}
     <input
-      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F]"
+      className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F]"
       {...props} />
   </div>
 );
@@ -86,7 +86,7 @@ const Alert = ({ type = 'error', msg, onClose }) => {
   if (!msg) return null;
   const cls = type === 'error'
     ? 'bg-red-50 border-red-200 text-red-700'
-    : 'bg-primary-50 border-primary-200 text-primary-700';
+    : 'bg-primary-50 border-primary-200 text-primary';
   return (
     <div className={`flex items-start justify-between gap-3 px-4 py-3 rounded-xl border text-sm ${cls}`}>
       <span>{msg}</span>
@@ -461,20 +461,20 @@ export default function DeveloperSection() {
     <div className="space-y-5 pb-10">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{tp('API Développeur')}</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-foreground">{tp('API Développeur')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           Gérez vos instances WhatsApp, clés API et intégrations via l'API Scalor v1.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-1.5 border-b border-gray-100 pb-1">
+      <div className="flex flex-wrap gap-1.5 border-b border-border pb-1">
         {TABS.map(tab => (
           <button key={tab.id} onClick={() => changeTab(tab.id)}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               activeTab === tab.id
                 ? 'bg-[#0F6B4F] text-white shadow-sm'
-                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}>
             {tab.label}
           </button>
@@ -487,7 +487,7 @@ export default function DeveloperSection() {
 
       {/* Auto-init loading / error state */}
       {scalorAuthLoading && (
-        <div className="flex items-center gap-3 text-sm text-gray-500 py-4">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground py-4">
           <div className="w-4 h-4 border-2 border-gray-300 border-t-[#0F6B4F] rounded-full animate-spin" />
           Initialisation de la session API…
         </div>
@@ -511,8 +511,8 @@ export default function DeveloperSection() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-semibold text-gray-900">{tp('Vos instances WhatsApp')}</h2>
-              <p className="text-xs text-gray-400 mt-0.5">{instances.length} instance{instances.length > 1 ? 's' : ''}</p>
+              <h2 className="font-semibold text-foreground">{tp('Vos instances WhatsApp')}</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">{instances.length} instance{instances.length > 1 ? 's' : ''}</p>
             </div>
             <div className="flex gap-2">
               <Btn variant="outline" onClick={loadInstances} disabled={dataLoading}>{tp('Rafraîchir')}</Btn>
@@ -523,7 +523,7 @@ export default function DeveloperSection() {
           {/* Create form */}
           {showCreateInst && (
             <Card className="p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">{tp('Créer une instance')}</h3>
+              <h3 className="font-semibold text-foreground mb-3">{tp('Créer une instance')}</h3>
               <form onSubmit={handleCreateInstance} className="flex flex-wrap gap-3 items-end">
                 <div className="flex-1 min-w-48">
                   <Input label="Nom de l'instance" placeholder={tp('Ex: Support Client')} required value={instForm.displayName}
@@ -541,7 +541,7 @@ export default function DeveloperSection() {
           {qrData && (
             <Card className="p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">{tp('Scanner le QR code')}</h3>
+                <h3 className="font-semibold text-foreground">{tp('Scanner le QR code')}</h3>
                 <div className="flex items-center gap-2">
                   <Btn variant="secondary" size="sm" onClick={() => handleGetQr(qrData.instanceId, true)}>{tp('Actualiser QR')}</Btn>
                   <Btn variant="secondary" size="sm" onClick={() => setQrData(null)}>{tp('Fermer')}</Btn>
@@ -550,7 +550,7 @@ export default function DeveloperSection() {
               {qrData.qr ? (
                 <img src={qrData.qr} alt="QR Code WhatsApp" className="w-48 h-48 mx-auto" />
               ) : (
-                <p className="text-sm text-gray-500 text-center">{tp('QR en attente de génération…')}</p>
+                <p className="text-sm text-muted-foreground text-center">{tp('QR en attente de génération…')}</p>
               )}
             </Card>
           )}
@@ -558,7 +558,7 @@ export default function DeveloperSection() {
           {/* Webhook edit */}
           {webhookEdit && (
             <Card className="p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">{tp('Configurer le webhook')}</h3>
+              <h3 className="font-semibold text-foreground mb-3">{tp('Configurer le webhook')}</h3>
               <form onSubmit={handleSetWebhook} className="flex flex-wrap gap-3 items-end">
                 <div className="flex-1 min-w-60">
                   <Input label="URL Webhook" type="url" placeholder="https://votre-serveur.com/webhook" required value={webhookEdit.url}
@@ -574,28 +574,28 @@ export default function DeveloperSection() {
           <Card>
             {instances.length === 0 ? (
               <div className="p-10 text-center">
-                <p className="text-gray-400 text-sm">{tp('Aucune instance — créez-en une pour commencer.')}</p>
+                <p className="text-muted-foreground text-sm">{tp('Aucune instance — créez-en une pour commencer.')}</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
                 {instances.map(inst => (
-                  <div key={inst._id || inst.instanceName} className="p-4 hover:bg-gray-50/50 transition-colors">
+                  <div key={inst._id || inst.instanceName} className="p-4 hover:bg-background/50 transition-colors">
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-gray-900 truncate">{inst.displayName || inst.instanceName}</p>
+                          <p className="font-medium text-foreground truncate">{inst.displayName || inst.instanceName}</p>
                           <Badge color={statusColor(inst.status)}>{inst.status || 'inconnu'}</Badge>
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-gray-400">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-muted-foreground">
                           <span className="font-mono">{inst.instanceName}</span>
                           {inst.phoneNumber && <span>Tel: {inst.phoneNumber}</span>}
                           {inst.webhookUrl && <span className="truncate max-w-48">Webhook: {inst.webhookUrl}</span>}
                           {inst.createdAt && <span>{new Date(inst.createdAt).toLocaleDateString('fr-FR')}</span>}
                         </div>
                         {(inst.messagesSentToday > 0 || inst.messagesSentThisMonth > 0) && (
-                          <div className="flex gap-3 mt-1.5 text-xs text-gray-400">
-                            <span>{tp('Aujourd\'hui:')} <strong className="text-gray-600">{inst.messagesSentToday || 0}</strong> {tp('msg')}</span>
-                            <span>{tp('Ce mois:')} <strong className="text-gray-600">{inst.messagesSentThisMonth || 0}</strong> {tp('msg')}</span>
+                          <div className="flex gap-3 mt-1.5 text-xs text-muted-foreground">
+                            <span>{tp('Aujourd\'hui:')} <strong className="text-muted-foreground">{inst.messagesSentToday || 0}</strong> {tp('msg')}</span>
+                            <span>{tp('Ce mois:')} <strong className="text-muted-foreground">{inst.messagesSentThisMonth || 0}</strong> {tp('msg')}</span>
                           </div>
                         )}
                       </div>
@@ -626,8 +626,8 @@ export default function DeveloperSection() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-semibold text-gray-900">{tp('Clés API')}</h2>
-              <p className="text-xs text-gray-400 mt-0.5">{apiKeys.length} clé{apiKeys.length > 1 ? 's' : ''} · max 5</p>
+              <h2 className="font-semibold text-foreground">{tp('Clés API')}</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">{apiKeys.length} clé{apiKeys.length > 1 ? 's' : ''} · max 5</p>
             </div>
             <div className="flex gap-2">
               <Btn variant="outline" onClick={loadApiKeys} disabled={dataLoading}>{tp('Rafraîchir')}</Btn>
@@ -639,11 +639,11 @@ export default function DeveloperSection() {
           {newRawKey && (
             <Card className="p-4 border-primary-200 bg-primary-50">
               <div className="flex items-start gap-3">
-                <span className="text-primary-600 text-lg mt-0.5">🔑</span>
+                <span className="text-primary text-lg mt-0.5">🔑</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-primary-700 mb-1.5">{tp('Votre nouvelle clé API (copiez-la maintenant, elle ne sera plus visible) :')}</p>
+                  <p className="text-xs font-semibold text-primary mb-1.5">{tp('Votre nouvelle clé API (copiez-la maintenant, elle ne sera plus visible) :')}</p>
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 font-mono text-sm break-all bg-white rounded-lg px-3 py-2 border border-primary-200 select-all">
+                    <code className="flex-1 font-mono text-sm break-all bg-card rounded-lg px-3 py-2 border border-primary-200 select-all">
                       {newRawKey}
                     </code>
                     <Btn variant="primary" size="sm"
@@ -663,16 +663,16 @@ export default function DeveloperSection() {
           {/* Create form */}
           {showCreateKey && (
             <Card className="p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">{tp('Créer une clé API')}</h3>
+              <h3 className="font-semibold text-foreground mb-3">{tp('Créer une clé API')}</h3>
               <form onSubmit={handleCreateKey} className="flex flex-wrap gap-3 items-end">
                 <div className="flex-1 min-w-40">
                   <Input label="Nom de la clé" placeholder={tp('Ex: Production, Test, Webhook')} required value={keyForm.name}
                     onChange={e => setKeyForm(f => ({ ...f, name: e.target.value }))} />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Type')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Type')}</label>
                   <select value={keyForm.type} onChange={e => setKeyForm(f => ({ ...f, type: e.target.value }))}
-                    className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20">
+                    className="px-3 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20">
                     <option value="live">{tp('Live')}</option>
                     <option value="test">{tp('Test')}</option>
                   </select>
@@ -689,22 +689,22 @@ export default function DeveloperSection() {
           <Card>
             {apiKeys.length === 0 ? (
               <div className="p-10 text-center">
-                <p className="text-gray-400 text-sm">{tp('Aucune clé API — créez-en une pour commencer.')}</p>
+                <p className="text-muted-foreground text-sm">{tp('Aucune clé API — créez-en une pour commencer.')}</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
                 {apiKeys.map(key => (
-                  <div key={key._id} className="p-4 hover:bg-gray-50/50 transition-colors">
+                  <div key={key._id} className="p-4 hover:bg-background/50 transition-colors">
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-gray-900">{key.name || tp('Clé sans nom')}</p>
+                          <p className="font-medium text-foreground">{key.name || tp('Clé sans nom')}</p>
                           <Badge color={key.isActive !== false ? 'green' : 'red'}>
                             {key.isActive !== false ? 'Active' : tp('Révoquée')}
                           </Badge>
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-gray-400">
-                          <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded">{key.keyPrefix}…</span>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-muted-foreground">
+                          <span className="font-mono bg-muted px-1.5 py-0.5 rounded">{key.keyPrefix}…</span>
                           {key.permissions?.length > 0 && (
                             <span>Permissions: {key.permissions.join(', ')}</span>
                           )}
@@ -743,12 +743,12 @@ export default function DeveloperSection() {
       {activeTab === 'logs' && scalorToken && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">{tp('Logs de messages')}</h2>
+            <h2 className="font-semibold text-foreground">{tp('Logs de messages')}</h2>
             <Btn variant="outline" onClick={loadLogs}>{tp('Rafraîchir')}</Btn>
           </div>
           <Card className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+              <thead className="bg-background text-xs text-muted-foreground uppercase tracking-wide">
                 <tr>
                   {['Date','Instance','Numéro','Type','Statut','Durée'].map(h => (
                     <th key={h} className="px-4 py-3 text-left font-medium">{h}</th>
@@ -757,14 +757,14 @@ export default function DeveloperSection() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {logs.length === 0 && (
-                  <tr><td colSpan={6} className="px-4 py-10 text-center text-gray-400">{tp('Aucun log')}</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">{tp('Aucun log')}</td></tr>
                 )}
                 {logs.map(log => (
-                  <tr key={log._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-600">
+                  <tr key={log._id} className="hover:bg-background">
+                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                       {new Date(log.createdAt).toLocaleString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-gray-500">{log.instanceId?.displayName || '-'}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{log.instanceId?.displayName || '-'}</td>
                     <td className="px-4 py-3 font-mono text-xs">{log.phoneNumber || log.recipientNumber || '-'}</td>
                     <td className="px-4 py-3"><Badge>{log.messageType}</Badge></td>
                     <td className="px-4 py-3">
@@ -772,7 +772,7 @@ export default function DeveloperSection() {
                         {log.status}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-gray-500">{log.processingTime ? `${log.processingTime}ms` : '-'}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{log.processingTime ? `${log.processingTime}ms` : '-'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -785,7 +785,7 @@ export default function DeveloperSection() {
       {activeTab === 'provider' && (
         <div className="space-y-5">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">{tp('Provider Console')}</h2>
+            <h2 className="font-semibold text-foreground">{tp('Provider Console')}</h2>
             {provToken && (
               <Btn variant="danger" size="sm" onClick={handleProvLogout}>{tp('Déconnexion provider')}</Btn>
             )}
@@ -798,13 +798,13 @@ export default function DeveloperSection() {
           {!provToken && (
             <Card className="p-6 max-w-lg">
               {provInitLoading ? (
-                <div className="flex items-center gap-3 text-sm text-gray-500">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <div className="w-4 h-4 border-2 border-gray-300 border-t-[#0F6B4F] rounded-full animate-spin" />
                   {tp('Initialisation automatique du Provider...')}
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600">{tp('Connexion automatique Provider indisponible.')}</p>
+                  <p className="text-sm text-muted-foreground">{tp('Connexion automatique Provider indisponible.')}</p>
                   <Btn variant="outline" onClick={() => {
                     setProvError('');
                     setProvInitLoading(true);
@@ -829,8 +829,8 @@ export default function DeveloperSection() {
               {/* Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Card className="p-4">
-                  <p className="text-xs text-gray-500 mb-1">{tp('Token')}</p>
-                  <p className="font-mono text-sm text-gray-800 break-all">
+                  <p className="text-xs text-muted-foreground mb-1">{tp('Token')}</p>
+                  <p className="font-mono text-sm text-foreground break-all">
                     {provToken.length > 24 ? `${provToken.slice(0,12)}…${provToken.slice(-8)}` : provToken}
                   </p>
                   <Btn variant="secondary" size="sm" className="mt-3"
@@ -844,22 +844,22 @@ export default function DeveloperSection() {
                   </Btn>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-xs text-gray-500 mb-1">{tp('Entreprise')}</p>
-                  <p className="font-semibold text-gray-900">{provProfile?.company || '-'}</p>
-                  <p className="text-sm text-gray-500">{provProfile?.email || '-'}</p>
+                  <p className="text-xs text-muted-foreground mb-1">{tp('Entreprise')}</p>
+                  <p className="font-semibold text-foreground">{provProfile?.company || '-'}</p>
+                  <p className="text-sm text-muted-foreground">{provProfile?.email || '-'}</p>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-xs text-gray-500 mb-1">{tp('Instances')}</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xs text-muted-foreground mb-1">{tp('Instances')}</p>
+                  <p className="text-2xl font-bold text-foreground">
                     {provInstances.length}
-                    <span className="text-sm font-normal text-gray-400"> / {provProfile?.limits?.instanceLimit ?? 10}</span>
+                    <span className="text-sm font-normal text-muted-foreground"> / {provProfile?.limits?.instanceLimit ?? 10}</span>
                   </p>
                 </Card>
               </div>
 
               {/* Create instance */}
               <Card className="p-5">
-                <h3 className="font-semibold text-gray-900 mb-4">{tp('Créer une instance')}</h3>
+                <h3 className="font-semibold text-foreground mb-4">{tp('Créer une instance')}</h3>
                 <form onSubmit={handleProvCreateInst} className="flex flex-wrap gap-3 items-end">
                   <div className="flex-1 min-w-40">
                     <Input label="Nom" required value={provInstForm.name}
@@ -870,10 +870,10 @@ export default function DeveloperSection() {
                       onChange={e => setProvInstForm(f => ({ ...f, subdomain: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'') }))} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Devise')}</label>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Devise')}</label>
                     <select value={provInstForm.currency}
                       onChange={e => setProvInstForm(f => ({ ...f, currency: e.target.value }))}
-                      className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20">
+                      className="px-3 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/20">
                       {['XAF','XOF','USD','EUR'].map(c => <option key={c}>{c}</option>)}
                     </select>
                   </div>
@@ -886,21 +886,21 @@ export default function DeveloperSection() {
               {/* Provider instances list */}
               <Card>
                 <div className="flex items-center justify-between p-4 border-b border-gray-50">
-                  <h3 className="font-semibold text-gray-900">{tp('Mes instances')}</h3>
+                  <h3 className="font-semibold text-foreground">{tp('Mes instances')}</h3>
                   <Btn variant="outline" size="sm" onClick={loadProviderDashboard} disabled={provLoading}>
                     {tp('Rafraîchir')}
                   </Btn>
                 </div>
                 <div className="divide-y divide-gray-50">
                   {provInstances.length === 0 && (
-                    <div className="p-10 text-center text-gray-400 text-sm">{tp('Aucune instance provider.')}</div>
+                    <div className="p-10 text-center text-muted-foreground text-sm">{tp('Aucune instance provider.')}</div>
                   )}
                   {provInstances.map(inst => (
                     <div key={String(inst.id)} className="p-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
-                          <p className="font-medium text-gray-900">{inst.name}</p>
-                          <p className="text-xs text-gray-400">slug: {inst.slug || '-'} · status: {inst.status || '-'}</p>
+                          <p className="font-medium text-foreground">{inst.name}</p>
+                          <p className="text-xs text-muted-foreground">slug: {inst.slug || '-'} · status: {inst.status || '-'}</p>
                           {inst.accessUrl && (
                             <a href={inst.accessUrl} target="_blank" rel="noreferrer"
                               className="text-xs text-[#0F6B4F] hover:underline mt-0.5 inline-block">
@@ -924,25 +924,25 @@ export default function DeveloperSection() {
       {/* ═══════════════ DOCS TAB ═══════════════ */}
       {activeTab === 'docs' && (
         <div className="space-y-5">
-          <h2 className="font-semibold text-gray-900">{tp('Référence API v1')}</h2>
+          <h2 className="font-semibold text-foreground">{tp('Référence API v1')}</h2>
 
           {/* Base URL & Auth */}
           <Card className="p-6 space-y-5 text-sm">
             <div>
-              <p className="font-semibold text-gray-700 mb-2">{tp('Base URL (API publique)')}</p>
-              <code className="block bg-gray-50 rounded-xl px-4 py-3 text-[#0F6B4F] font-mono">
+              <p className="font-semibold text-foreground mb-2">{tp('Base URL (API publique)')}</p>
+              <code className="block bg-background rounded-xl px-4 py-3 text-[#0F6B4F] font-mono">
                 {tp('https://api.scalor.net/api/v1')}
               </code>
             </div>
             <div>
-              <p className="font-semibold text-gray-700 mb-2">{tp('Authentification')}</p>
-              <p className="text-gray-500 mb-2">{tp('Chaque requête doit contenir votre clé API dans le header Authorization :')}</p>
-              <code className="block bg-gray-50 rounded-xl px-4 py-3 font-mono text-gray-700">
+              <p className="font-semibold text-foreground mb-2">{tp('Authentification')}</p>
+              <p className="text-muted-foreground mb-2">{tp('Chaque requête doit contenir votre clé API dans le header Authorization :')}</p>
+              <code className="block bg-background rounded-xl px-4 py-3 font-mono text-foreground">
                 Authorization: Bearer sk_live_xxxxxxxxxxxxxxxx
               </code>
             </div>
             <div>
-              <p className="font-semibold text-gray-700 mb-2">{tp('Exemple curl')}</p>
+              <p className="font-semibold text-foreground mb-2">{tp('Exemple curl')}</p>
               <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl -X POST https://api.scalor.net/api/v1/message/send \\
   -H "Authorization: Bearer sk_live_xxx" \\
@@ -954,7 +954,7 @@ export default function DeveloperSection() {
 
           {/* Pricing */}
           <Card className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">{tp('💰 Tarifs (FCFA / mois)')}</h3>
+            <h3 className="font-semibold text-foreground mb-4">{tp('💰 Tarifs (FCFA / mois)')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[
                 { plan: 'Starter', price: 'Gratuit', instances: '1', daily: '500', monthly: '10 000', rate: '30 req/min', highlight: false },
@@ -962,10 +962,10 @@ export default function DeveloperSection() {
                 { plan: 'Business', price: '25 000 FCFA', instances: '20', daily: '50 000', monthly: '500 000', rate: '300 req/min', highlight: true },
                 { plan: 'Enterprise', price: '50 000 FCFA', instances: 'Illimité', daily: 'Illimité', monthly: 'Illimité', rate: '600 req/min', highlight: false },
               ].map(p => (
-                <div key={p.plan} className={`rounded-xl border p-4 space-y-2 ${p.highlight ? 'border-[#0F6B4F] bg-primary-50/50 ring-1 ring-[#0F6B4F]/20' : 'border-gray-100'}`}>
-                  <p className="font-semibold text-gray-900">{p.plan}</p>
+                <div key={p.plan} className={`rounded-xl border p-4 space-y-2 ${p.highlight ? 'border-[#0F6B4F] bg-primary-50/50 ring-1 ring-[#0F6B4F]/20' : 'border-border'}`}>
+                  <p className="font-semibold text-foreground">{p.plan}</p>
                   <p className="text-lg font-bold text-[#0F6B4F]">{p.price}</p>
-                  <div className="text-xs text-gray-500 space-y-1">
+                  <div className="text-xs text-muted-foreground space-y-1">
                     <p>📱 {p.instances} instance{p.instances !== '1' ? 's' : ''}</p>
                     <p>📨 {p.daily} msg/jour</p>
                     <p>📊 {p.monthly} msg/mois</p>
@@ -978,23 +978,23 @@ export default function DeveloperSection() {
 
           {/* API Endpoints */}
           <Card className="p-6 space-y-4 text-sm">
-            <h3 className="font-semibold text-gray-900">{tp('Endpoints')}</h3>
+            <h3 className="font-semibold text-foreground">{tp('Endpoints')}</h3>
 
             {/* Account */}
             <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Compte')}</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Compte')}</p>
               {[
                 { method:'GET', path:'/account', desc:'Voir votre compte et usage courant.', body:null },
                 { method:'GET', path:'/usage', get desc() { return tp('Statistiques détaillées (30 derniers jours).'); }, body:null },
               ].map(({ method, path, desc, body }) => (
-                <div key={path} className="border border-gray-100 rounded-xl overflow-hidden mb-2">
-                  <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50">
+                <div key={path} className="border border-border rounded-xl overflow-hidden mb-2">
+                  <div className="flex items-center gap-3 px-4 py-2.5 bg-background">
                     <Badge color={method === 'GET' ? 'blue' : method === 'POST' ? 'green' : method === 'DELETE' ? 'red' : 'yellow'}>{method}</Badge>
-                    <code className="font-mono text-xs text-gray-700">{path}</code>
+                    <code className="font-mono text-xs text-foreground">{path}</code>
                   </div>
                   <div className="px-4 py-2.5">
-                    <p className="text-gray-600">{desc}</p>
-                    {body && <pre className="bg-gray-50 rounded-lg px-3 py-2 text-xs text-gray-600 overflow-x-auto mt-2">{body}</pre>}
+                    <p className="text-muted-foreground">{desc}</p>
+                    {body && <pre className="bg-background rounded-lg px-3 py-2 text-xs text-muted-foreground overflow-x-auto mt-2">{body}</pre>}
                   </div>
                 </div>
               ))}
@@ -1002,7 +1002,7 @@ export default function DeveloperSection() {
 
             {/* Instances */}
             <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Instances WhatsApp')}</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Instances WhatsApp')}</p>
               {[
                 { method:'POST', path:'/instance/create', get desc() { return tp('Créer une instance WhatsApp.'); }, body:'{ "name": "Support Client" }' },
                 { method:'GET',  path:'/instance', desc:'Lister toutes vos instances.', body:null },
@@ -1013,14 +1013,14 @@ export default function DeveloperSection() {
                 { method:'POST', path:'/instance/:id/restart', get desc() { return tp('Redémarrer une instance.'); }, body:null },
                 { method:'PUT',  path:'/instance/:id/webhook', get desc() { return tp('Configurer un webhook pour recevoir les événements.'); }, body:'{ "url": "https://votre-serveur.com/webhook", "events": ["messages.upsert", "connection.update"] }' },
               ].map(({ method, path, desc, body }) => (
-                <div key={method+path} className="border border-gray-100 rounded-xl overflow-hidden mb-2">
-                  <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50">
+                <div key={method+path} className="border border-border rounded-xl overflow-hidden mb-2">
+                  <div className="flex items-center gap-3 px-4 py-2.5 bg-background">
                     <Badge color={method === 'GET' ? 'blue' : method === 'POST' ? 'green' : method === 'DELETE' ? 'red' : 'yellow'}>{method}</Badge>
-                    <code className="font-mono text-xs text-gray-700">{path}</code>
+                    <code className="font-mono text-xs text-foreground">{path}</code>
                   </div>
                   <div className="px-4 py-2.5">
-                    <p className="text-gray-600">{desc}</p>
-                    {body && <pre className="bg-gray-50 rounded-lg px-3 py-2 text-xs text-gray-600 overflow-x-auto mt-2">{body}</pre>}
+                    <p className="text-muted-foreground">{desc}</p>
+                    {body && <pre className="bg-background rounded-lg px-3 py-2 text-xs text-muted-foreground overflow-x-auto mt-2">{body}</pre>}
                   </div>
                 </div>
               ))}
@@ -1028,7 +1028,7 @@ export default function DeveloperSection() {
 
             {/* Messages */}
             <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Messages')}</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Messages')}</p>
               {[
                 { method:'POST', path:'/message/send', get desc() { return tp('Envoyer un message (texte, image, audio, vidéo, document).'); }, body:'{ "instanceId": "...", "number": "237690000000", "text": "Bonjour !" }' },
                 { method:'POST', path:'/message/send', desc:'Envoyer une image.', body:'{ "instanceId": "...", "number": "237...", "mediaUrl": "https://...", "caption": "Voici le produit" }' },
@@ -1037,14 +1037,14 @@ export default function DeveloperSection() {
                 { method:'POST', path:'/message/check-number', get desc() { return tp('Vérifier si un numéro est sur WhatsApp.'); }, body:'{ "instanceId": "...", "numbers": ["237690000000"] }' },
                 { method:'GET',  path:'/message/logs', get desc() { return tp('Historique des messages (paginé).'); }, body:null },
               ].map(({ method, path, desc, body }, i) => (
-                <div key={path+i} className="border border-gray-100 rounded-xl overflow-hidden mb-2">
-                  <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50">
+                <div key={path+i} className="border border-border rounded-xl overflow-hidden mb-2">
+                  <div className="flex items-center gap-3 px-4 py-2.5 bg-background">
                     <Badge color={method === 'GET' ? 'blue' : 'green'}>{method}</Badge>
-                    <code className="font-mono text-xs text-gray-700">{path}</code>
+                    <code className="font-mono text-xs text-foreground">{path}</code>
                   </div>
                   <div className="px-4 py-2.5">
-                    <p className="text-gray-600">{desc}</p>
-                    {body && <pre className="bg-gray-50 rounded-lg px-3 py-2 text-xs text-gray-600 overflow-x-auto mt-2">{body}</pre>}
+                    <p className="text-muted-foreground">{desc}</p>
+                    {body && <pre className="bg-background rounded-lg px-3 py-2 text-xs text-muted-foreground overflow-x-auto mt-2">{body}</pre>}
                   </div>
                 </div>
               ))}
@@ -1053,14 +1053,14 @@ export default function DeveloperSection() {
 
           {/* Quick Start */}
           <Card className="p-6 space-y-4 text-sm">
-            <h3 className="font-semibold text-gray-900">{tp('🚀 Démarrage rapide')}</h3>
+            <h3 className="font-semibold text-foreground">{tp('🚀 Démarrage rapide')}</h3>
             <div className="space-y-3">
               <div>
-                <p className="font-medium text-gray-700 mb-1">{tp('1. Obtenez votre clé API')}</p>
-                <p className="text-gray-500">{tp('Allez dans l\'onglet "Clés API" et créez une clé. Copiez-la immédiatement.')}</p>
+                <p className="font-medium text-foreground mb-1">{tp('1. Obtenez votre clé API')}</p>
+                <p className="text-muted-foreground">{tp('Allez dans l\'onglet "Clés API" et créez une clé. Copiez-la immédiatement.')}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">{tp('2. Créez une instance')}</p>
+                <p className="font-medium text-foreground mb-1">{tp('2. Créez une instance')}</p>
                 <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl -X POST https://api.scalor.net/api/v1/instance/create \\
   -H "Authorization: Bearer sk_live_xxx" \\
@@ -1069,14 +1069,14 @@ export default function DeveloperSection() {
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">{tp('3. Scannez le QR code')}</p>
+                <p className="font-medium text-foreground mb-1">{tp('3. Scannez le QR code')}</p>
                 <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl https://api.scalor.net/api/v1/instance/INSTANCE_ID/qrcode \\
   -H "Authorization: Bearer sk_live_xxx"`}
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">{tp('4. Envoyez un message !')}</p>
+                <p className="font-medium text-foreground mb-1">{tp('4. Envoyez un message !')}</p>
                 <pre className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs overflow-x-auto">
 {`curl -X POST https://api.scalor.net/api/v1/message/send \\
   -H "Authorization: Bearer sk_live_xxx" \\
@@ -1089,11 +1089,11 @@ export default function DeveloperSection() {
 
           {/* Response format */}
           <Card className="p-6 space-y-4 text-sm">
-            <h3 className="font-semibold text-gray-900">{tp('Format des réponses')}</h3>
+            <h3 className="font-semibold text-foreground">{tp('Format des réponses')}</h3>
             <div className="space-y-3">
               <div>
-                <p className="font-medium text-gray-700 mb-1">{tp('✅ Succès')}</p>
-                <pre className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-600 overflow-x-auto">
+                <p className="font-medium text-foreground mb-1">{tp('✅ Succès')}</p>
+                <pre className="bg-background rounded-xl px-4 py-3 text-xs text-muted-foreground overflow-x-auto">
 {`{
   "success": true,
   "messageId": "BAE5F4...",
@@ -1104,8 +1104,8 @@ export default function DeveloperSection() {
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">{tp('❌ Erreur')}</p>
-                <pre className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-600 overflow-x-auto">
+                <p className="font-medium text-foreground mb-1">{tp('❌ Erreur')}</p>
+                <pre className="bg-background rounded-xl px-4 py-3 text-xs text-muted-foreground overflow-x-auto">
 {`{
   "error": "daily_limit_exceeded",
   "message": "Daily limit reached (5000). Resets at midnight.",
@@ -1115,11 +1115,11 @@ export default function DeveloperSection() {
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-gray-700 mb-1">{tp('🔒 Headers utiles')}</p>
-                <div className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-600 space-y-1">
-                  <p><code className="text-gray-800">{tp('X-RateLimit-Limit')}</code> {tp('— Nombre max de requêtes/min')}</p>
-                  <p><code className="text-gray-800">{tp('X-RateLimit-Remaining')}</code> {tp('— Requêtes restantes')}</p>
-                  <p><code className="text-gray-800">{tp('Retry-After')}</code> {tp('— Secondes avant de pouvoir réessayer (si 429)')}</p>
+                <p className="font-medium text-foreground mb-1">{tp('🔒 Headers utiles')}</p>
+                <div className="bg-background rounded-xl px-4 py-3 text-xs text-muted-foreground space-y-1">
+                  <p><code className="text-foreground">{tp('X-RateLimit-Limit')}</code> {tp('— Nombre max de requêtes/min')}</p>
+                  <p><code className="text-foreground">{tp('X-RateLimit-Remaining')}</code> {tp('— Requêtes restantes')}</p>
+                  <p><code className="text-foreground">{tp('Retry-After')}</code> {tp('— Secondes avant de pouvoir réessayer (si 429)')}</p>
                 </div>
               </div>
             </div>

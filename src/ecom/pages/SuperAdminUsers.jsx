@@ -44,7 +44,7 @@ const roleConfig = {
   },
   ecom_compta: {
     bg: 'bg-primary-50',
-    text: 'text-primary-700',
+    text: 'text-primary',
     ring: 'ring-primary-600/20',
     icon: Calculator,
   },
@@ -56,7 +56,7 @@ const roleConfig = {
   },
 };
 
-const planColors = { free: 'bg-slate-100 text-slate-500', pro: 'bg-primary-100 text-primary-700', ultra: 'bg-amber-100 text-amber-700' };
+const planColors = { free: 'bg-slate-100 text-slate-500', pro: 'bg-primary-100 text-primary', ultra: 'bg-amber-100 text-amber-700' };
 const planLabels = { free: 'Gratuit', pro: 'Pro', ultra: 'Ultra' };
 
 const fmtLastLogin = (d) => d
@@ -182,7 +182,7 @@ const SuperAdminUsers = () => {
             { label: 'Actifs', value: totalActive, icon: CheckCircle2, accent: '#2563eb', accentLight: '#dbeafe' },
             { get label() { return tp('Bloqués'); }, value: totalBlocked, icon: XCircle, accent: '#f59e0b', accentLight: '#fef3c7' },
           ].map(k => (
-            <div key={k.label} className="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-lg transition-all">
+            <div key={k.label} className="bg-card rounded-2xl border border-slate-100 p-4 hover:shadow-lg transition-all">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-2" style={{ backgroundColor: k.accentLight }}>
                 <k.icon className="w-4 h-4" style={{ color: k.accent }} />
               </div>
@@ -196,7 +196,7 @@ const SuperAdminUsers = () => {
         <UsersGrowthDashboard />
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-card rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="w-4 h-4 text-slate-500" />
             <h3 className="text-sm font-black text-slate-700 uppercase tracking-wider">{tp('Filtres')}</h3>
@@ -232,7 +232,7 @@ const SuperAdminUsers = () => {
                 <ChevronDown className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform ${wsOpen ? 'rotate-180' : ''}`} />
               </button>
               {wsOpen && (
-                <div className="absolute z-30 mt-1.5 w-[280px] bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden">
+                <div className="absolute z-30 mt-1.5 w-[280px] bg-card border border-slate-200 rounded-xl shadow-2xl overflow-hidden">
                   <div className="p-2 border-b border-slate-100">
                     <input
                       autoFocus
@@ -246,7 +246,7 @@ const SuperAdminUsers = () => {
                     <button
                       type="button"
                       onClick={() => { setFilterWorkspace(''); resetPage(); setWsOpen(false); }}
-                      className={`w-full text-left px-3.5 py-2 text-[13px] font-bold hover:bg-slate-50 transition-colors ${!filterWorkspace ? 'text-primary-700 bg-primary-50/60' : 'text-slate-700'}`}
+                      className={`w-full text-left px-3.5 py-2 text-[13px] font-bold hover:bg-slate-50 transition-colors ${!filterWorkspace ? 'text-primary bg-primary-50/60' : 'text-slate-700'}`}
                     >
                       {tp('Tous les espaces')}
                     </button>
@@ -255,7 +255,7 @@ const SuperAdminUsers = () => {
                         key={ws._id}
                         type="button"
                         onClick={() => { setFilterWorkspace(ws._id); resetPage(); setWsOpen(false); }}
-                        className={`w-full text-left px-3.5 py-2 text-[13px] font-medium hover:bg-slate-50 transition-colors truncate ${filterWorkspace === ws._id ? 'text-primary-700 bg-primary-50/60 font-bold' : 'text-slate-600'}`}
+                        className={`w-full text-left px-3.5 py-2 text-[13px] font-medium hover:bg-slate-50 transition-colors truncate ${filterWorkspace === ws._id ? 'text-primary bg-primary-50/60 font-bold' : 'text-slate-600'}`}
                       >
                         {ws.name || '—'}
                       </button>
@@ -281,13 +281,13 @@ const SuperAdminUsers = () => {
 
         {/* Users table */}
         {users.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-20 text-center shadow-sm">
+          <div className="bg-card rounded-2xl border border-slate-200 p-20 text-center shadow-sm">
             <UserX className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <p className="text-lg font-black text-slate-400">{tp('Aucun utilisateur trouvé')}</p>
             <p className="text-sm text-slate-400 mt-2">{tp('Essayez de modifier vos filtres')}</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-card rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             {/* Header desktop */}
             <div className="hidden lg:grid grid-cols-[minmax(0,1fr)_180px_150px_360px] items-center gap-3 px-4 py-2.5 border-b border-slate-100 bg-slate-50/60 text-[10px] font-black uppercase tracking-wider text-slate-400">
               <span>{tp('Utilisateur')}</span>
@@ -313,11 +313,11 @@ const SuperAdminUsers = () => {
                   <div className="flex items-center gap-3 min-w-0 cursor-pointer group" onClick={goDetail}>
                     <div className={`relative w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 ring-2 ring-inset ${u.isActive ? `${config.bg} ${config.text} ${config.ring}` : 'bg-amber-50 text-amber-600 ring-amber-200'}`}>
                       {u.email?.charAt(0).toUpperCase()}
-                      <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${u.isActive ? 'bg-primary-500' : 'bg-amber-500'} ring-2 ring-white`} />
+                      <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${u.isActive ? 'bg-primary' : 'bg-amber-500'} ring-2 ring-white`} />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <p className="text-[13px] font-black text-slate-900 truncate group-hover:text-primary-700 transition-colors">{u.email}</p>
+                        <p className="text-[13px] font-black text-slate-900 truncate group-hover:text-primary transition-colors">{u.email}</p>
                         {!u.isActive && (
                           <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-black flex-shrink-0">BLOQUÉ</span>
                         )}
@@ -383,7 +383,7 @@ const SuperAdminUsers = () => {
                       onClick={() => handleToggleUser(u._id)}
                       disabled={u._id === currentUser?.id}
                       title={u.isActive ? tp('Bloquer') : tp('Activer')}
-                      className={`p-2 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed ${u.isActive ? 'text-amber-600 bg-amber-50 hover:bg-amber-100' : 'text-primary-700 bg-primary-50 hover:bg-primary-100'}`}
+                      className={`p-2 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed ${u.isActive ? 'text-amber-600 bg-amber-50 hover:bg-amber-100' : 'text-primary bg-primary-50 hover:bg-primary-100'}`}
                     >
                       {u.isActive ? <XCircle className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                     </button>
@@ -424,7 +424,7 @@ const SuperAdminUsers = () => {
 
         {/* Pagination */}
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between bg-white rounded-2xl border border-slate-200 px-4 py-3 shadow-sm">
+          <div className="flex items-center justify-between bg-card rounded-2xl border border-slate-200 px-4 py-3 shadow-sm">
             <p className="text-xs font-semibold text-slate-500">
               {pagination.total} {tp('utilisateurs')} · {tp('page')} {page}/{pagination.pages}
             </p>

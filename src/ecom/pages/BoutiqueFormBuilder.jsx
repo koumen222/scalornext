@@ -80,7 +80,7 @@ const mergeWithDefaults = (stored, storeCountry = '') => {
   };
 };
 
-const inputCls = 'w-full px-3 py-2 rounded-lg border border-gray-200 text-[13px] outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200 transition-all bg-white';
+const inputCls = 'w-full px-3 py-2 rounded-lg border border-border text-[13px] outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200 transition-all bg-card';
 
 // ── Section card pour les champs du formulaire ────────────────────────────────
 const FIELD_TYPE_ICONS = {
@@ -134,10 +134,10 @@ const CtaButtonEditor = ({ field, onChange }) => {
 
   const ColorPicker = ({ label, value, onColorChange }) => (
     <div>
-      <div className="text-[11px] font-semibold text-gray-500 mb-1">{label}</div>
+      <div className="text-[11px] font-semibold text-muted-foreground mb-1">{label}</div>
       <div className="flex items-center gap-2">
         <input type="color" value={value} onChange={e => onColorChange(e.target.value)}
-          className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0 p-0.5" />
+          className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0 p-0.5" />
         <input className={inputCls + ' font-mono text-[11px]'} value={value} onChange={e => onColorChange(e.target.value)} />
       </div>
     </div>
@@ -149,7 +149,7 @@ const CtaButtonEditor = ({ field, onChange }) => {
 
       {/* Label */}
       <div>
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">Texte du bouton</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">Texte du bouton</div>
         <input className={inputCls + ' font-medium'} value={field.label || ''}
           onChange={e => update('label', e.target.value)}
           placeholder="ACHETER MAINTENANT - {total}" />
@@ -157,7 +157,7 @@ const CtaButtonEditor = ({ field, onChange }) => {
 
       {/* Subtext */}
       <div>
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">Sous-titre</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">Sous-titre</div>
         <input className={inputCls} value={field.subtext || ''}
           onChange={e => update('subtext', e.target.value)}
           placeholder="Ex: Il n'y a plus assez de pièces" />
@@ -165,12 +165,12 @@ const CtaButtonEditor = ({ field, onChange }) => {
 
       {/* Icon picker */}
       <div>
-        <div className="text-[11px] font-semibold text-gray-500 mb-1.5">Icône</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1.5">Icône</div>
         <div className="grid grid-cols-6 gap-1">
           {BUTTON_ICONS.map(({ id, label, Icon }) => (
             <button key={id} type="button" onClick={() => update('icon', id)} title={label}
               className={`flex flex-col items-center gap-0.5 p-1.5 rounded-lg border-2 transition-all ${
-                currentIcon === id ? 'border-primary-400 bg-primary-50 text-primary-700' : 'border-transparent bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                currentIcon === id ? 'border-primary-400 bg-primary-50 text-primary' : 'border-transparent bg-background text-muted-foreground hover:bg-muted hover:text-muted-foreground'
               }`}>
               <Icon size={13} />
               <span className="text-[8px] font-medium leading-tight truncate w-full text-center">{label}</span>
@@ -183,21 +183,21 @@ const CtaButtonEditor = ({ field, onChange }) => {
       <div className="grid grid-cols-3 gap-2">
         <ColorPicker label="Couleur du texte" value={textColor} onColorChange={v => update('textColor', v)} />
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Taille</div>
+          <div className="text-[11px] font-semibold text-muted-foreground mb-1">Taille</div>
           <div className="flex items-center gap-1">
             <input type="number" min="10" max="30" className={inputCls + ' text-center w-14'}
               value={fontSize} onChange={e => update('fontSize', parseInt(e.target.value) || 15)} />
-            <span className="text-[11px] text-gray-400">px</span>
+            <span className="text-[11px] text-muted-foreground">px</span>
           </div>
         </div>
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Style</div>
+          <div className="text-[11px] font-semibold text-muted-foreground mb-1">Style</div>
           <div className="flex gap-1">
             <button type="button"
-              className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${bold ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+              className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${bold ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
               onClick={() => update('bold', !bold)}>B</button>
             <button type="button"
-              className={`px-3 py-2 rounded-lg border text-xs italic transition ${italic ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+              className={`px-3 py-2 rounded-lg border text-xs italic transition ${italic ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
               onClick={() => update('italic', !italic)}>I</button>
           </div>
         </div>
@@ -207,7 +207,7 @@ const CtaButtonEditor = ({ field, onChange }) => {
       <div className="grid grid-cols-2 gap-2">
         <ColorPicker label="Couleur du bouton" value={bg} onColorChange={v => update('bgColor', v)} />
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Animation</div>
+          <div className="text-[11px] font-semibold text-muted-foreground mb-1">Animation</div>
           <select className={inputCls} value={animId} onChange={e => update('animation', e.target.value)}>
             {BUTTON_ANIMATIONS.map(a => <option key={a.id} value={a.id}>{a.label}</option>)}
           </select>
@@ -218,7 +218,7 @@ const CtaButtonEditor = ({ field, onChange }) => {
       <div className="grid grid-cols-2 gap-2">
         <ColorPicker label="Couleur de la bordure" value={borderColor} onColorChange={v => update('borderColor', v)} />
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Épaisseur bordure — {borderW}px</div>
+          <div className="text-[11px] font-semibold text-muted-foreground mb-1">Épaisseur bordure — {borderW}px</div>
           <input type="range" min="0" max="6" className="w-full mt-2 accent-primary-500"
             value={borderW} onChange={e => update('borderWidth', parseInt(e.target.value))} />
         </div>
@@ -227,12 +227,12 @@ const CtaButtonEditor = ({ field, onChange }) => {
       {/* Radius / shadow */}
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Coins arrondis — {radius}px</div>
+          <div className="text-[11px] font-semibold text-muted-foreground mb-1">Coins arrondis — {radius}px</div>
           <input type="range" min="0" max="40" className="w-full mt-2 accent-primary-500"
             value={radius} onChange={e => update('borderRadius', parseInt(e.target.value))} />
         </div>
         <div>
-          <div className="text-[11px] font-semibold text-gray-500 mb-1">Ombre — {shadowVal}</div>
+          <div className="text-[11px] font-semibold text-muted-foreground mb-1">Ombre — {shadowVal}</div>
           <input type="range" min="0" max="30" className="w-full mt-2 accent-primary-500"
             value={shadowVal} onChange={e => update('shadow', parseInt(e.target.value))} />
         </div>
@@ -265,9 +265,9 @@ const TestimonialAvatarCard = ({ t, ti, inputCls, onUpdateTestimonials, testimon
     }
   };
   return (
-    <div className="border border-gray-200 rounded-lg p-2.5 space-y-2 bg-gray-50">
+    <div className="border border-border rounded-lg p-2.5 space-y-2 bg-background">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold text-gray-500">#{ti + 1}</span>
+        <span className="text-[10px] font-bold text-muted-foreground">#{ti + 1}</span>
         <button type="button" onClick={() => {
           const arr = [...testimonials];
           arr.splice(ti, 1);
@@ -278,18 +278,18 @@ const TestimonialAvatarCard = ({ t, ti, inputCls, onUpdateTestimonials, testimon
       <div className="flex items-center gap-2">
         {t.image ? (
           <div className="relative group">
-            <img src={t.image} alt="" className="w-9 h-9 rounded-full object-cover border-2 border-gray-200" />
+            <img src={t.image} alt="" className="w-9 h-9 rounded-full object-cover border-2 border-border" />
             <button type="button" onClick={() => updateField('image', '')}
               className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
               <X className="w-2.5 h-2.5" />
             </button>
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
-            <Image className="w-3.5 h-3.5 text-gray-400" />
+          <div className="w-9 h-9 rounded-full bg-muted border-2 border-dashed border-gray-300 flex items-center justify-center">
+            <Image className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
         )}
-        <label className="flex items-center gap-1 px-2 py-1 text-[10px] bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition">
+        <label className="flex items-center gap-1 px-2 py-1 text-[10px] bg-muted hover:bg-gray-200 rounded-lg cursor-pointer transition">
           {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
           <span>{t.image ? 'Changer' : 'Photo'}</span>
           <input type="file" accept="image/*" className="hidden"
@@ -301,7 +301,7 @@ const TestimonialAvatarCard = ({ t, ti, inputCls, onUpdateTestimonials, testimon
       <textarea className={inputCls + ' text-[11px]'} rows={2} placeholder="Témoignage..." value={t.text || ''}
         onChange={e => updateField('text', e.target.value)} />
       <div className="flex items-center gap-1">
-        <span className="text-[10px] text-gray-400 mr-1">Note :</span>
+        <span className="text-[10px] text-muted-foreground mr-1">Note :</span>
         {[1,2,3,4,5].map(s => (
           <button key={s} type="button" onClick={() => updateField('rating', s)}>
             <Star size={14} className={s <= (t.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} />
@@ -326,7 +326,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
       onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; onDragOver(index); }}
       onDrop={e => { e.preventDefault(); onDrop(index); }}
       onDragEnd={onDragEnd}
-      className={`bg-white rounded-xl border-2 transition-all ${isDragOver ? 'border-primary-400 shadow-lg scale-[1.02]' : field.enabled ? 'border-gray-200' : 'border-gray-100 opacity-60'}`}
+      className={`bg-card rounded-xl border-2 transition-all ${isDragOver ? 'border-primary-400 shadow-lg scale-[1.02]' : field.enabled ? 'border-border' : 'border-border opacity-60'}`}
       style={{ opacity: isDragging ? 0.4 : 1, cursor: 'grab' }}
     >
       {/* Header row */}
@@ -338,43 +338,43 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
             <FieldIcon size={15} style={{ color: iconColor }} />
           </div>
         ) : (
-          <FallbackIcon size={16} className="text-gray-500 flex-shrink-0" />
+          <FallbackIcon size={16} className="text-muted-foreground flex-shrink-0" />
         )}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 truncate">{field.label}</p>
+          <p className="text-sm font-semibold text-foreground truncate">{field.label}</p>
         </div>
         <div className="flex items-center gap-0.5">
           {!isSpecial && (
             <button onClick={() => setExpanded(v => !v)}
-              className="p-1 rounded-lg hover:bg-gray-100 transition" title="Modifier">
-              <Settings2 className="w-3.5 h-3.5 text-gray-400" />
+              className="p-1 rounded-lg hover:bg-muted transition" title="Modifier">
+              <Settings2 className="w-3.5 h-3.5 text-muted-foreground" />
             </button>
           )}
           <button onClick={() => onToggle(index)}
-            className="p-1 rounded-lg hover:bg-gray-100 transition" title={field.enabled ? 'Masquer' : 'Afficher'}>
-            {field.enabled ? <Eye className="w-3.5 h-3.5 text-gray-500" /> : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
+            className="p-1 rounded-lg hover:bg-muted transition" title={field.enabled ? 'Masquer' : 'Afficher'}>
+            {field.enabled ? <Eye className="w-3.5 h-3.5 text-muted-foreground" /> : <EyeOff className="w-3.5 h-3.5 text-muted-foreground" />}
           </button>
           <button onClick={() => onRemove(index)}
             className="p-1 rounded-lg hover:bg-red-50 transition" title="Supprimer">
-            <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" />
+            <Trash2 className="w-3.5 h-3.5 text-muted-foreground hover:text-red-500" />
           </button>
         </div>
       </div>
 
       {/* Expanded editor */}
       {expanded && (
-        <div className="px-3 pb-3 border-t border-gray-100 pt-3 space-y-3">
+        <div className="px-3 pb-3 border-t border-border pt-3 space-y-3">
           {/* Label + placeholder (for input types) */}
           {!['divider', 'image'].includes(field.type) && (
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1">Libellé</label>
+              <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Libellé</label>
               <input className={inputCls} value={field.label || ''}
                 onChange={e => onChange(index, 'label', e.target.value)} placeholder="Nom du champ" />
             </div>
             {!['title', 'html', 'summary', 'urgency', 'call_schedule', 'trust_badge', 'guarantee', 'consent', 'divider'].includes(field.type) && (
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1">Placeholder</label>
+              <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Placeholder</label>
               <input className={inputCls} value={field.placeholder || ''}
                 onChange={e => onChange(index, 'placeholder', e.target.value)} placeholder="Texte indicatif" />
             </div>
@@ -387,7 +387,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {/* HTML content */}
           {field.type === 'html' && (
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1">Code HTML</label>
+              <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Code HTML</label>
               <textarea className={inputCls + ' font-mono text-[11px]'} rows={5}
                 value={field.htmlContent || ''}
                 onChange={e => onChange(index, 'htmlContent', e.target.value)}
@@ -398,12 +398,12 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {/* Image URL + Upload */}
           {field.type === 'image' && (
             <div className="space-y-2">
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1">Image</label>
+              <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Image</label>
               <div className="flex gap-2">
                 <input className={inputCls + ' flex-1'} value={field.imageUrl || ''}
                   onChange={e => onChange(index, 'imageUrl', e.target.value)}
                   placeholder="https://exemple.com/image.jpg" />
-                <label className="flex items-center gap-1 px-3 py-1.5 bg-primary-50 text-primary-700 text-[11px] font-semibold rounded-lg border border-primary-200 cursor-pointer hover:bg-primary-100 transition shrink-0">
+                <label className="flex items-center gap-1 px-3 py-1.5 bg-primary-50 text-primary text-[11px] font-semibold rounded-lg border border-primary-200 cursor-pointer hover:bg-primary-100 transition shrink-0">
                   {field._uploading ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />}
                   Upload
                   <input type="file" accept="image/*" className="hidden"
@@ -427,7 +427,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                 </label>
               </div>
               {field.imageUrl && (
-                <img src={field.imageUrl} alt="Aperçu" className="rounded-lg max-h-32 object-contain border border-gray-200" />
+                <img src={field.imageUrl} alt="Aperçu" className="rounded-lg max-h-32 object-contain border border-border" />
               )}
             </div>
           )}
@@ -435,7 +435,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {/* Options for select, radio, checkbox */}
           {['select', 'radio', 'checkbox'].includes(field.type) && (
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1">Options (une par ligne)</label>
+              <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Options (une par ligne)</label>
               <textarea className={inputCls + ' text-[11px]'} rows={4}
                 value={(field.options || []).join('\n')}
                 onChange={e => onChange(index, 'options', e.target.value.split('\n'))}
@@ -446,7 +446,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {/* Consent text */}
           {field.type === 'consent' && (
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte du consentement</label>
+              <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte du consentement</label>
               <input className={inputCls} value={field.label || ''}
                 onChange={e => onChange(index, 'label', e.target.value)}
                 placeholder="J'accepte les conditions générales" />
@@ -457,16 +457,16 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {['trust_badge', 'guarantee'].includes(field.type) && (
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte affiché</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte affiché</label>
                 <input className={inputCls} value={field.label || ''}
                   onChange={e => onChange(index, 'label', e.target.value)}
                   placeholder={field.type === 'trust_badge' ? 'Paiement sécurisé' : 'Satisfait ou remboursé'} />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Fond</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Fond</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.bgColor || (field.type === 'trust_badge' ? '#ecfdf5' : '#eff6ff')}
                       onChange={e => onChange(index, 'bgColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.bgColor || (field.type === 'trust_badge' ? '#ecfdf5' : '#eff6ff')}
@@ -474,9 +474,9 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.textColor || (field.type === 'trust_badge' ? '#15803d' : '#1d4ed8')}
                       onChange={e => onChange(index, 'textColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.textColor || (field.type === 'trust_badge' ? '#15803d' : '#1d4ed8')}
@@ -486,9 +486,9 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Bordure</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Bordure</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.borderColor || (field.type === 'trust_badge' ? '#bbf7d0' : '#bfdbfe')}
                       onChange={e => onChange(index, 'borderColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.borderColor || (field.type === 'trust_badge' ? '#bbf7d0' : '#bfdbfe')}
@@ -496,9 +496,9 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Icône</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Icône</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.iconColor || (field.type === 'trust_badge' ? '#16a34a' : '#2563eb')}
                       onChange={e => onChange(index, 'iconColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.iconColor || (field.type === 'trust_badge' ? '#16a34a' : '#2563eb')}
@@ -512,15 +512,15 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {field.type === 'title' && (
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte</label>
                 <input className={inputCls} value={field.label || ''}
                   onChange={e => onChange(index, 'label', e.target.value)}
                   placeholder="Veuillez remplir le formulaire" />
               </div>
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Couleur du texte</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Couleur du texte</label>
                 <div className="flex items-center gap-1.5">
-                  <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                  <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                     value={field.textColor || '#1f2937'}
                     onChange={e => onChange(index, 'textColor', e.target.value)} />
                   <input className={inputCls + ' text-[10px] flex-1'} value={field.textColor || '#1f2937'}
@@ -533,22 +533,22 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {field.type === 'summary' && (
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Titre du récapitulatif</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Titre du récapitulatif</label>
                 <input className={inputCls} value={field.label || ''}
                   onChange={e => onChange(index, 'label', e.target.value)}
                   placeholder="Récapitulatif de la commande" />
               </div>
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte secondaire</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte secondaire</label>
                 <input className={inputCls} value={field.summaryText || ''}
                   onChange={e => onChange(index, 'summaryText', e.target.value)}
                   placeholder="Vérifiez vos informations avant validation" />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Fond</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Fond</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.bgColor || '#f9fafb'}
                       onChange={e => onChange(index, 'bgColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.bgColor || '#f9fafb'}
@@ -556,9 +556,9 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Bordure</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Bordure</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.borderColor || '#e5e7eb'}
                       onChange={e => onChange(index, 'borderColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.borderColor || '#e5e7eb'}
@@ -572,22 +572,22 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {field.type === 'shipping' && (
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte principal</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte principal</label>
                 <input className={inputCls} value={field.label || ''}
                   onChange={e => onChange(index, 'label', e.target.value)}
                   placeholder="Paiement à la livraison" />
               </div>
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte secondaire</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte secondaire</label>
                 <input className={inputCls} value={field.shippingNote || ''}
                   onChange={e => onChange(index, 'shippingNote', e.target.value)}
                   placeholder="Vous payez à la réception" />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Couleur principale</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Couleur principale</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.textColor || '#059669'}
                       onChange={e => onChange(index, 'textColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.textColor || '#059669'}
@@ -595,9 +595,9 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Couleur secondaire</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Couleur secondaire</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.subtextColor || '#6b7280'}
                       onChange={e => onChange(index, 'subtextColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.subtextColor || '#6b7280'}
@@ -612,7 +612,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {field.type === 'urgency' && (
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte d'urgence</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte d'urgence</label>
                 <input className={inputCls} value={field.urgencyText || ''}
                   onChange={e => onChange(index, 'urgencyText', e.target.value)}
                   placeholder="Stock presque épuisé !" />
@@ -620,12 +620,12 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
 
               {/* Style */}
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Style</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Style</label>
                 <div className="flex gap-1.5">
                   {[{ v: 'banner', l: 'Bannière' }, { v: 'bar', l: 'Barre' }, { v: 'floating', l: 'Flottant' }].map(s => (
                     <button key={s.v} type="button"
                       onClick={() => onChange(index, 'urgencyStyle', s.v)}
-                      className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg border transition ${(field.urgencyStyle || 'banner') === s.v ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                      className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg border transition ${(field.urgencyStyle || 'banner') === s.v ? 'border-primary-500 bg-primary-50 text-primary' : 'border-border text-muted-foreground hover:border-gray-300'}`}>
                       {s.l}
                     </button>
                   ))}
@@ -635,9 +635,9 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
               {/* Colors */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Couleur de fond</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Couleur de fond</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.urgencyBgColor || '#ef4444'}
                       onChange={e => onChange(index, 'urgencyBgColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.urgencyBgColor || '#ef4444'}
@@ -645,9 +645,9 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Couleur du texte</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Couleur du texte</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                    <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                       value={field.urgencyTextColor || '#ffffff'}
                       onChange={e => onChange(index, 'urgencyTextColor', e.target.value)} />
                     <input className={inputCls + ' text-[10px] flex-1'} value={field.urgencyTextColor || '#ffffff'}
@@ -658,21 +658,21 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
 
               {/* Border radius */}
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Arrondi (px)</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Arrondi (px)</label>
                 <input type="range" min="0" max="24" className="w-full accent-primary-600"
                   value={parseInt(field.urgencyRadius || 12)}
                   onChange={e => onChange(index, 'urgencyRadius', e.target.value + 'px')} />
-                <span className="text-[10px] text-gray-400">{field.urgencyRadius || '12px'}</span>
+                <span className="text-[10px] text-muted-foreground">{field.urgencyRadius || '12px'}</span>
               </div>
 
               {/* Icon */}
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Icône</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Icône</label>
                 <div className="flex gap-1.5">
                   {[{ v: 'fire', l: '🔥' }, { v: 'warning', l: '⚠️' }, { v: 'clock', l: '⏰' }, { v: 'bolt', l: '⚡' }, { v: 'none', l: '❌' }].map(ic => (
                     <button key={ic.v} type="button"
                       onClick={() => onChange(index, 'urgencyIcon', ic.v)}
-                      className={`w-9 h-9 flex items-center justify-center rounded-lg border text-sm transition ${(field.urgencyIcon || 'fire') === ic.v ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      className={`w-9 h-9 flex items-center justify-center rounded-lg border text-sm transition ${(field.urgencyIcon || 'fire') === ic.v ? 'border-primary-500 bg-primary-50' : 'border-border hover:border-gray-300'}`}>
                       {ic.l}
                     </button>
                   ))}
@@ -681,7 +681,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
 
               {/* Animation */}
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Animation</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Animation</label>
                 <select className={inputCls + ' text-[11px]'}
                   value={field.urgencyAnimation || 'pulse'}
                   onChange={e => onChange(index, 'urgencyAnimation', e.target.value)}>
@@ -698,7 +698,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                   <input type="checkbox" className="rounded accent-primary-600 w-3.5 h-3.5"
                     checked={field.showCountdown !== false}
                     onChange={e => onChange(index, 'showCountdown', e.target.checked)} />
-                  <span className="text-[11px] text-gray-600 font-medium">Compte à rebours</span>
+                  <span className="text-[11px] text-muted-foreground font-medium">Compte à rebours</span>
                 </label>
                 {field.showCountdown !== false && (
                   <div className="grid grid-cols-4 gap-1.5">
@@ -709,7 +709,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                       { label: 'Sec', key: 'countdownSeconds', max: 59, def: 0 },
                     ].map(({ label, key, max, def }) => (
                       <div key={key}>
-                        <label className="block text-[9px] font-medium text-gray-400 mb-0.5 text-center">{label}</label>
+                        <label className="block text-[9px] font-medium text-muted-foreground mb-0.5 text-center">{label}</label>
                         <input type="number" min="0" max={max} className={inputCls + ' text-center text-[11px] font-mono'}
                           value={field[key] ?? def}
                           onChange={e => onChange(index, key, parseInt(e.target.value) || 0)} />
@@ -722,7 +722,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
               {/* Countdown label text */}
               {field.showCountdown !== false && (
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 mb-1">Texte du compteur</label>
+                  <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Texte du compteur</label>
                   <input className={inputCls} value={field.countdownText || ''}
                     onChange={e => onChange(index, 'countdownText', e.target.value)}
                     placeholder="Offre expire dans :" />
@@ -734,7 +734,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                 <input type="checkbox" className="rounded accent-primary-600 w-3.5 h-3.5"
                   checked={field.showProgressBar === true}
                   onChange={e => onChange(index, 'showProgressBar', e.target.checked)} />
-                <span className="text-[11px] text-gray-600 font-medium">Barre de progression</span>
+                <span className="text-[11px] text-muted-foreground font-medium">Barre de progression</span>
               </label>
             </div>
           )}
@@ -742,7 +742,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {/* Testimonials editor */}
           {field.type === 'testimonials' && (
             <div className="space-y-3">
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1">Témoignages</label>
+              <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Témoignages</label>
               {(field.testimonials || []).map((t, ti) => (
                 <TestimonialAvatarCard key={ti} t={t} ti={ti} inputCls={inputCls}
                   testimonials={field.testimonials || []} fieldIndex={index} onChange={onChange} />
@@ -750,7 +750,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
               <button type="button" onClick={() => {
                 const arr = [...(field.testimonials || []), { name: '', text: '', rating: 5, image: '' }];
                 onChange(index, 'testimonials', arr);
-              }} className="w-full py-1.5 border border-dashed border-gray-300 rounded-lg text-[11px] text-gray-400 hover:border-primary-400 hover:text-primary-600 transition flex items-center justify-center gap-1">
+              }} className="w-full py-1.5 border border-dashed border-gray-300 rounded-lg text-[11px] text-muted-foreground hover:border-primary-400 hover:text-primary transition flex items-center justify-center gap-1">
                 <Plus size={12} /> Ajouter un témoignage
               </button>
 
@@ -759,7 +759,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                 <input type="checkbox" className="rounded accent-primary-600 w-3.5 h-3.5"
                   checked={field.autoScroll !== false}
                   onChange={e => onChange(index, 'autoScroll', e.target.checked)} />
-                <span className="text-[11px] text-gray-600 font-medium">Défilement automatique</span>
+                <span className="text-[11px] text-muted-foreground font-medium">Défilement automatique</span>
               </label>
             </div>
           )}
@@ -768,22 +768,22 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {field.type === 'call_schedule' && (
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Question affichée</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Question affichée</label>
                 <input className={inputCls} value={field.question || field.label || ''}
                   onChange={e => onChange(index, 'question', e.target.value)}
                   placeholder="Quand vous appeler ?" />
               </div>
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Options horaires (une par ligne)</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Options horaires (une par ligne)</label>
                 <textarea className={inputCls + ' text-[11px]'} rows={4}
                   value={(field.scheduleOptions || ['Matin (8h-12h)', 'Après-midi (12h-17h)', 'Soir (17h-20h)']).join('\n')}
                   onChange={e => onChange(index, 'scheduleOptions', e.target.value.split('\n'))}
                   placeholder="Matin (8h-12h)&#10;Après-midi (12h-17h)&#10;Soir (17h-20h)" />
               </div>
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Couleur du texte</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Couleur du texte</label>
                 <div className="flex items-center gap-1.5">
-                  <input type="color" className="w-7 h-7 rounded border border-gray-200 cursor-pointer"
+                  <input type="color" className="w-7 h-7 rounded border border-border cursor-pointer"
                     value={field.textColor || '#1f2937'}
                     onChange={e => onChange(index, 'textColor', e.target.value)} />
                   <input className={inputCls + ' text-[10px] flex-1'} value={field.textColor || '#1f2937'}
@@ -800,19 +800,19 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
               <input type="checkbox" className="rounded accent-primary-600 w-3.5 h-3.5"
                 checked={field.showLabel !== false}
                 onChange={e => onChange(index, 'showLabel', e.target.checked)} />
-              <span className="text-[11px] text-gray-600 font-medium">Afficher le label</span>
+              <span className="text-[11px] text-muted-foreground font-medium">Afficher le label</span>
             </label>
             <label className="flex items-center gap-1.5 cursor-pointer select-none">
               <input type="checkbox" className="rounded accent-primary-600 w-3.5 h-3.5"
                 checked={field.showIcon !== false}
                 onChange={e => onChange(index, 'showIcon', e.target.checked)} />
-              <span className="text-[11px] text-gray-600 font-medium">Afficher l'icône</span>
+              <span className="text-[11px] text-muted-foreground font-medium">Afficher l'icône</span>
             </label>
             <label className="flex items-center gap-1.5 cursor-pointer select-none">
               <input type="checkbox" className="rounded accent-primary-600 w-3.5 h-3.5"
                 checked={!!field.required}
                 onChange={e => onChange(index, 'required', e.target.checked)} />
-              <span className="text-[11px] text-gray-600 font-medium">Obligatoire</span>
+              <span className="text-[11px] text-muted-foreground font-medium">Obligatoire</span>
             </label>
           </div>
           )}
@@ -825,13 +825,13 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                 <input type="radio" name={`city_mode_${index}`} className="accent-primary-600 w-3.5 h-3.5"
                   checked={field.cityAuto !== false}
                   onChange={() => onChange(index, 'cityAuto', true)} />
-                <span className="text-[11px] text-gray-700 font-medium">Auto (liste déroulante)</span>
+                <span className="text-[11px] text-foreground font-medium">Auto (liste déroulante)</span>
               </label>
               <label className="flex items-center gap-1.5 cursor-pointer select-none">
                 <input type="radio" name={`city_mode_${index}`} className="accent-primary-600 w-3.5 h-3.5"
                   checked={field.cityAuto === false}
                   onChange={() => onChange(index, 'cityAuto', false)} />
-                <span className="text-[11px] text-gray-700 font-medium">Manuel (saisie libre)</span>
+                <span className="text-[11px] text-foreground font-medium">Manuel (saisie libre)</span>
               </label>
             </div>
           )}
@@ -846,12 +846,12 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                     <input type="checkbox" className="accent-primary-600 w-3.5 h-3.5"
                       checked={!Array.isArray(field.cityAllowed) || field.cityAllowed.length === 0}
                       onChange={(e) => onChange(index, 'cityAllowed', e.target.checked ? [] : [...availableCities])} />
-                    <span className="text-[11px] text-gray-600 font-medium">Toutes</span>
+                    <span className="text-[11px] text-muted-foreground font-medium">Toutes</span>
                   </label>
                 )}
               </div>
               {availableCities.length === 0 ? (
-                <p className="text-[10px] text-gray-500 m-0">
+                <p className="text-[10px] text-muted-foreground m-0">
                   Aucune ville disponible — ajoutez des zones de livraison ou des pays au formulaire.
                 </p>
               ) : (
@@ -871,14 +871,14 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                             // Tout coché → [] (= toutes, y compris les futures villes)
                             onChange(index, 'cityAllowed', next.length >= availableCities.length ? [] : next);
                           }} />
-                        <span className="text-[11px] text-gray-700 truncate">{city}</span>
+                        <span className="text-[11px] text-foreground truncate">{city}</span>
                       </label>
                     );
                   })}
                 </div>
               )}
               {Array.isArray(field.cityAllowed) && field.cityAllowed.length > 0 && (
-                <p className="text-[10px] text-gray-400 m-0">
+                <p className="text-[10px] text-muted-foreground m-0">
                   {field.cityAllowed.length} ville{field.cityAllowed.length > 1 ? 's' : ''} sélectionnée{field.cityAllowed.length > 1 ? 's' : ''} — les autres ne seront pas proposées sur la boutique.
                 </p>
               )}
@@ -889,7 +889,7 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {field.showIcon !== false && !['divider', 'html', 'image', 'consent', 'trust_badge', 'guarantee', 'title', 'summary'].includes(field.type) && (
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Icône</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Icône</label>
                 <select className={inputCls} value={field.icon || 'none'}
                   onChange={e => onChange(index, 'icon', e.target.value)}>
                   {ICON_OPTIONS.map(opt => (
@@ -898,11 +898,11 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1">Couleur de l'icône</label>
+                <label className="block text-[10px] font-semibold text-muted-foreground mb-1">Couleur de l'icône</label>
                 <div className="flex items-center gap-2">
                   <input type="color" value={field.iconColor || shopColor || '#0F6B4F'}
                     onChange={e => onChange(index, 'iconColor', e.target.value)}
-                    className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                    className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                   <input className={inputCls + ' font-mono text-[11px]'} value={field.iconColor || shopColor || '#0F6B4F'}
                     onChange={e => onChange(index, 'iconColor', e.target.value)} />
                 </div>
@@ -913,11 +913,11 @@ const FieldCard = ({ field, index, total, onMove, onToggle, onChange, onRemove, 
           {/* Move buttons */}
           <div className="flex items-center gap-1 pt-1">
             <button onClick={() => onMove(index, -1)} disabled={index === 0}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium text-gray-500 hover:bg-gray-100 disabled:opacity-30 transition">
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium text-muted-foreground hover:bg-muted disabled:opacity-30 transition">
               <ChevronUp className="w-3 h-3" /> Monter
             </button>
             <button onClick={() => onMove(index, 1)} disabled={index === total - 1}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium text-gray-500 hover:bg-gray-100 disabled:opacity-30 transition">
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium text-muted-foreground hover:bg-muted disabled:opacity-30 transition">
               <ChevronDown className="w-3 h-3" /> Descendre
             </button>
           </div>
@@ -1022,10 +1022,10 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
               <ShoppingCart className="w-6 h-6" style={{ color: btnColor }} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] text-gray-400">Variante</p>
-              <p className="text-sm font-bold text-gray-900 underline">Nom du produit</p>
+              <p className="text-[11px] text-muted-foreground">Variante</p>
+              <p className="text-sm font-bold text-foreground underline">Nom du produit</p>
             </div>
-            <span className="text-sm font-bold text-gray-900">19.99FCFA</span>
+            <span className="text-sm font-bold text-foreground">19.99FCFA</span>
           </div>
         );
       case 'summary':
@@ -1065,8 +1065,8 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
               <div className="border h-12 flex items-center gap-1 px-2.5 flex-shrink-0"
                 style={{ borderColor, backgroundColor: fieldBg, borderRadius: fieldRadius, borderWidth: formBorderWidth }}>
                 <span className="text-sm">{firstCode.label.split(' ')[0]}</span>
-                <span className="text-xs font-bold text-gray-700">{firstCode.code}</span>
-                <ChevronDown size={12} className="text-gray-400" />
+                <span className="text-xs font-bold text-foreground">{firstCode.code}</span>
+                <ChevronDown size={12} className="text-muted-foreground" />
               </div>
               <div className="border h-12 flex-1 flex items-center gap-0 overflow-hidden"
                 style={{ borderColor, backgroundColor: fieldBg, borderRadius: fieldRadius, borderWidth: formBorderWidth }}>
@@ -1173,7 +1173,7 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
             {(uf.showCountdown !== false && urgency.countdown !== false) && (
               <div className="mt-1.5 flex items-center gap-2">
                 {uf.countdownText && <span className="text-xs opacity-90">{uf.countdownText}</span>}
-                <span className="inline-block font-mono font-bold text-sm bg-white/20 px-2.5 py-1 rounded">
+                <span className="inline-block font-mono font-bold text-sm bg-card/20 px-2.5 py-1 rounded">
                   {(() => {
                     const d = uf.countdownDays ?? 0;
                     const h = uf.countdownHours ?? 0;
@@ -1187,8 +1187,8 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
               </div>
             )}
             {uf.showProgressBar && (
-              <div className="mt-2 w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
-                <div className="h-full bg-white/70 rounded-full" style={{ width: '65%' }} />
+              <div className="mt-2 w-full h-1.5 bg-card/20 rounded-full overflow-hidden">
+                <div className="h-full bg-card/70 rounded-full" style={{ width: '65%' }} />
               </div>
             )}
           </div>
@@ -1238,15 +1238,15 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
         return field.imageUrl ? (
           <img key={i} src={field.imageUrl} alt={field.label || 'Image'} className="w-full rounded-xl object-contain max-h-48" />
         ) : (
-          <div key={i} className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-sm">
+          <div key={i} className="w-full h-32 rounded-xl border-2 border-dashed border-border flex items-center justify-center text-muted-foreground text-sm">
             <Image size={20} className="mr-2" /> Aucune image
           </div>
         );
       case 'divider':
-        return <hr key={i} className="border-t border-gray-200 my-1" />;
+        return <hr key={i} className="border-t border-border my-1" />;
       case 'html':
         return (
-          <div key={i} className="text-xs text-gray-600 prose prose-sm max-w-none"
+          <div key={i} className="text-xs text-muted-foreground prose prose-sm max-w-none"
             dangerouslySetInnerHTML={safeHtml(field.htmlContent || '<p>Contenu HTML</p>')} />
         );
       case 'trust_badge':
@@ -1276,14 +1276,14 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
             <div className="relative overflow-hidden">
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {testimonials.map((t, ti) => (
-                  <div key={ti} className="min-w-[200px] max-w-[220px] flex-shrink-0 bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-1.5">
+                  <div key={ti} className="min-w-[200px] max-w-[220px] flex-shrink-0 bg-background border border-border rounded-xl p-3 space-y-1.5">
                     <div className="flex gap-0.5">
                       {[1,2,3,4,5].map(s => (
                         <Star key={s} size={11} className={s <= (t.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} />
                       ))}
                     </div>
-                    <p className="text-[11px] text-gray-600 leading-relaxed">"{t.text}"</p>
-                    <p className="text-[10px] font-semibold text-gray-800">— {t.name}</p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">"{t.text}"</p>
+                    <p className="text-[10px] font-semibold text-foreground">— {t.name}</p>
                   </div>
                 ))}
               </div>
@@ -1375,14 +1375,14 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
         <span className="text-sm font-bold" style={{ color: formTextColor }}>
           {isEmbedded ? 'Formulaire intégré' : 'Aperçu en direct:'}
         </span>
-        <span className="text-gray-400 text-lg cursor-pointer">×</span>
+        <span className="text-muted-foreground text-lg cursor-pointer">×</span>
       </div>
 
       <div className="p-5 space-y-3" style={{ backgroundColor: formBgColor }}>
         {/* Offres quantité — avant les champs */}
         {showOffers && (
           <div>
-            <p className="text-xs font-semibold text-gray-500 mb-2">Choisissez votre offre</p>
+            <p className="text-xs font-semibold text-muted-foreground mb-2">Choisissez votre offre</p>
             <div className="space-y-1.5">
               {offersPreview.offers.map((offer, i) => (
                 <OfferPreviewCard
@@ -1402,7 +1402,7 @@ const FormPreview = ({ config, offersPreview = null, shopColor = '#0F6B4F' }) =>
         {/* Champs */}
         <div className="space-y-2.5">
           {fields.length === 0 ? (
-            <p className="text-sm text-gray-400 italic text-center py-2">Aucun champ activé</p>
+            <p className="text-sm text-muted-foreground italic text-center py-2">Aucun champ activé</p>
           ) : fields.map((field, i) => renderField(field, i))}
         </div>
       </div>
@@ -1632,15 +1632,15 @@ const BoutiqueFormBuilder = () => {
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-100 to-teal-100 flex items-center justify-center">
           <Loader2 size={28} className="animate-spin text-primary-500" />
         </div>
-        <span className="text-sm font-medium text-gray-500">Chargement…</span>
+        <span className="text-sm font-medium text-muted-foreground">Chargement…</span>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 fixed top-0 left-0 lg:left-[240px] right-0 z-30">
+      <div className="bg-card border-b border-border fixed top-0 left-0 lg:left-[240px] right-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
@@ -1648,24 +1648,24 @@ const BoutiqueFormBuilder = () => {
                 <ShoppingCart size={20} className="text-white" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">Créateur de formulaire</h1>
-                <p className="text-[11px] sm:text-xs text-gray-500 font-medium">Personnalise le formulaire de commande de ta boutique</p>
+                <h1 className="text-lg sm:text-xl font-extrabold text-foreground tracking-tight">Créateur de formulaire</h1>
+                <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">Personnalise le formulaire de commande de ta boutique</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               {storefrontUrl && (
                 <a href={storefrontUrl} target="_blank" rel="noopener noreferrer"
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-500 border border-gray-200 bg-white hover:bg-gray-50 transition">
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground border border-border bg-card hover:bg-background transition">
                   <Eye size={14} /> Voir la boutique
                 </a>
               )}
               <button onClick={() => { if (window.confirm('Réinitialiser tous les réglages du formulaire ?')) setConfig(deepClone(defaultConfig)); }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-500 border border-gray-200 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition">
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground border border-border bg-card hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition">
                 Réinitialiser
               </button>
               <button onClick={handleSave} disabled={saving}
                 className={`flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed ${
-                  saved ? 'bg-green-500 shadow-green-200' : 'bg-primary-600 hover:bg-primary-700 shadow-primary-200'
+                  saved ? 'bg-green-500 shadow-green-200' : 'bg-primary hover:bg-primary-700 shadow-primary-200'
                 }`}>
                 {saving ? <Loader2 size={15} className="animate-spin" /> : saved ? <Check size={15} /> : <Save size={15} />}
                 {saving ? 'Sauvegarde…' : saved ? 'Enregistré ✓' : 'Enregistrer'}
@@ -1677,8 +1677,8 @@ const BoutiqueFormBuilder = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-6 sm:pb-8">
         {/* Type de formulaire */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-3 mb-6">
-          <h2 className="text-xs font-bold text-gray-800 mb-2">Type de formulaire</h2>
+        <div className="bg-card rounded-2xl border p-3 mb-6">
+          <h2 className="text-xs font-bold text-foreground mb-2">Type de formulaire</h2>
           <div className="grid grid-cols-2 gap-2">
             {[
               { id: 'popup', label: 'Formulaire sous forme de pop-up' },
@@ -1687,42 +1687,42 @@ const BoutiqueFormBuilder = () => {
               const sel = (config.general?.formType || 'popup') === opt.id;
               return (
                 <button key={opt.id} onClick={() => update(c => ({ ...c, general: { ...c.general, formType: opt.id } }))}
-                  className={`text-left p-2.5 rounded-xl border-2 transition-all ${sel ? 'border-gray-800 bg-gray-800' : 'border-gray-200 hover:border-gray-300 bg-white'}`}>
-                  <div className={`flex items-center gap-1.5 mb-1.5 ${sel ? 'text-white' : 'text-gray-400'}`}>
+                  className={`text-left p-2.5 rounded-xl border-2 transition-all ${sel ? 'border-gray-800 bg-gray-800' : 'border-border hover:border-gray-300 bg-card'}`}>
+                  <div className={`flex items-center gap-1.5 mb-1.5 ${sel ? 'text-white' : 'text-muted-foreground'}`}>
                     {opt.id === 'popup' ? (
                       <>
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-muted'}`}>
                           <Settings2 size={14} />
                         </div>
                         <div className="flex gap-1">
-                          <div className={`w-5 h-5 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                          <div className={`w-5 h-5 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-muted'}`}>
                             <Layers size={9} />
                           </div>
-                          <div className={`w-5 h-5 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                          <div className={`w-5 h-5 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-muted'}`}>
                             <Settings2 size={9} />
                           </div>
                         </div>
                       </>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <div className={`w-6 h-6 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                        <div className={`w-6 h-6 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-muted'}`}>
                           <User size={11} />
                         </div>
-                        <div className={`w-6 h-6 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                        <div className={`w-6 h-6 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-muted'}`}>
                           <Layers size={11} />
                         </div>
-                        <div className={`w-6 h-6 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                        <div className={`w-6 h-6 rounded flex items-center justify-center ${sel ? 'bg-gray-700' : 'bg-muted'}`}>
                           <Settings2 size={11} />
                         </div>
                       </div>
                     )}
                   </div>
-                  <div className={`font-bold text-xs ${sel ? 'text-white' : 'text-gray-900'}`}>{opt.label}</div>
+                  <div className={`font-bold text-xs ${sel ? 'text-white' : 'text-foreground'}`}>{opt.label}</div>
                 </button>
               );
             })}
           </div>
-          <p className="text-[10px] text-gray-400 mt-2">
+          <p className="text-[10px] text-muted-foreground mt-2">
             {(config.general?.formType || 'popup') === 'popup'
               ? 'Le formulaire s\'ouvrira lorsque le client cliquera sur le bouton Acheter.'
               : 'Le formulaire est affiché directement dans la page produit.'}
@@ -1735,26 +1735,26 @@ const BoutiqueFormBuilder = () => {
 
             {/* ─── Bouton d'achat (popup uniquement) ─── */}
             {(config.general?.formType || 'popup') === 'popup' && (
-            <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+            <div className="bg-card rounded-2xl border p-5 space-y-4">
               <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setButtonSectionOpen(v => !v)}>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-800">Bouton d'achat</h3>
-                  <p className="text-[11px] text-gray-400">Le bouton qui ouvre le formulaire</p>
+                  <h3 className="text-sm font-bold text-foreground">Bouton d'achat</h3>
+                  <p className="text-[11px] text-muted-foreground">Le bouton qui ouvre le formulaire</p>
                 </div>
-                <span className="flex items-center gap-1 text-[11px] text-primary-600 font-semibold">
+                <span className="flex items-center gap-1 text-[11px] text-primary font-semibold">
                   {buttonSectionOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />} Aperçu
                 </span>
               </div>
               {buttonSectionOpen && (<>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Texte du bouton</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Texte du bouton</label>
                   <input className={inputCls} value={config.button?.text || ''}
                     onChange={e => update(c => ({ ...c, button: { ...c.button, text: e.target.value } }))}
                     placeholder="COMMANDER MAINTENANT" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Sous-titre du bouton</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Sous-titre du bouton</label>
                   <input className={inputCls} value={config.button?.subtext || ''}
                     onChange={e => update(c => ({ ...c, button: { ...c.button, subtext: e.target.value } }))}
                     placeholder="Il n'y a plus assez de pièces" />
@@ -1762,37 +1762,37 @@ const BoutiqueFormBuilder = () => {
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur du texte</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur du texte</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.buttonTextColor || '#ffffff'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, buttonTextColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.buttonTextColor || '#ffffff'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, buttonTextColor: e.target.value } }))} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Taille du texte</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Taille du texte</label>
                   <div className="flex items-center gap-2">
                     <input type="number" min="10" max="30" className={inputCls + ' text-center'}
                       value={parseInt(config.design?.buttonFontSize) || 16}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, buttonFontSize: `${e.target.value}px` } }))} />
-                    <span className="text-[11px] text-gray-400">px</span>
+                    <span className="text-[11px] text-muted-foreground">px</span>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Style</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Style</label>
                   <div className="flex gap-1">
-                    <button className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${config.design?.buttonBold ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                    <button className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${config.design?.buttonBold ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
                       onClick={() => update(c => ({ ...c, design: { ...c.design, buttonBold: !c.design?.buttonBold } }))}>B</button>
-                    <button className={`px-3 py-2 rounded-lg border text-xs italic transition ${config.design?.buttonItalic ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                    <button className={`px-3 py-2 rounded-lg border text-xs italic transition ${config.design?.buttonItalic ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
                       onClick={() => update(c => ({ ...c, design: { ...c.design, buttonItalic: !c.design?.buttonItalic } }))}>I</button>
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur du bouton</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur du bouton</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.formButtonColor || config.design?.ctaButtonColor || config.design?.buttonColor || '#0F6B4F'}
                       onChange={e => update(c => {
@@ -1800,7 +1800,7 @@ const BoutiqueFormBuilder = () => {
                         const fields = (c.form?.fields || []).map(f => f.type === 'cta_button' ? { ...f, bgColor: '', textColor: '', borderColor: '' } : f);
                         return { ...c, design: { ...c.design, formButtonColor: v, ctaButtonColor: v }, form: { ...c.form, fields } };
                       })}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.formButtonColor || config.design?.ctaButtonColor || config.design?.buttonColor || '#0F6B4F'}
                       onChange={e => update(c => {
                         const v = e.target.value;
@@ -1810,7 +1810,7 @@ const BoutiqueFormBuilder = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Animation</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Animation</label>
                   <select className={inputCls} value={config.button?.animation || 'none'}
                     onChange={e => update(c => ({ ...c, button: { ...c.button, animation: e.target.value } }))}>
                     {BUTTON_ANIMATIONS.map(a => (
@@ -1819,7 +1819,7 @@ const BoutiqueFormBuilder = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Icône du bouton</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Icône du bouton</label>
                   <select className={inputCls} value={config.button?.icon || 'cart'}
                     onChange={e => update(c => ({ ...c, button: { ...c.button, icon: e.target.value } }))}>
                     <option value="none">Aucune icône</option>
@@ -1831,17 +1831,17 @@ const BoutiqueFormBuilder = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur de la bordure</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur de la bordure</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.buttonBorderColor || '#1beca7'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, buttonBorderColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.buttonBorderColor || '#1beca7'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, buttonBorderColor: e.target.value } }))} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Largeur de la bordure</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Largeur de la bordure</label>
                   <input type="range" min="0" max="6" className="w-full mt-2"
                     value={parseInt(config.design?.buttonBorderWidth) || 0}
                     onChange={e => update(c => ({ ...c, design: { ...c.design, buttonBorderWidth: `${e.target.value}px` } }))} />
@@ -1849,13 +1849,13 @@ const BoutiqueFormBuilder = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Coins arrondis</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Coins arrondis</label>
                   <input type="range" min="0" max="40" className="w-full"
                     value={parseInt(config.design?.ctaBorderRadius) || 14}
                     onChange={e => update(c => ({ ...c, design: { ...c.design, ctaBorderRadius: `${e.target.value}px` } }))} />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Ombre</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Ombre</label>
                   <input type="range" min="0" max="30" className="w-full"
                     value={parseInt(config.design?.buttonShadow) || 0}
                     onChange={e => update(c => ({ ...c, design: { ...c.design, buttonShadow: `${e.target.value}` } }))} />
@@ -1866,32 +1866,32 @@ const BoutiqueFormBuilder = () => {
             )}
 
             {/* ─── Sélectionner les pays ─── */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-3">
+            <div className="bg-card rounded-2xl border p-5 space-y-3">
               <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setCountrySectionOpen(v => !v)}>
-                <h3 className="text-sm font-bold text-gray-800">Pays du formulaire (indicatif téléphone)</h3>
-                <span className="flex items-center gap-1 text-[11px] text-primary-600 font-semibold">
+                <h3 className="text-sm font-bold text-foreground">Pays du formulaire (indicatif téléphone)</h3>
+                <span className="flex items-center gap-1 text-[11px] text-primary font-semibold">
                   {countrySectionOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </span>
               </div>
               {countrySectionOpen && (<>
-              <p className="text-xs text-gray-500">Le premier pays sélectionné détermine l'indicatif par défaut du formulaire.</p>
+              <p className="text-xs text-muted-foreground">Le premier pays sélectionné détermine l'indicatif par défaut du formulaire.</p>
               {config.general?.countries?.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {config.general.countries.map((countryName, i) => {
                     const pc = COUNTRY_PHONE_OPTIONS.find(c => c.name === countryName);
                     return (
-                      <span key={i} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg border ${i === 0 ? 'bg-green-50 border-green-300 text-green-800' : 'bg-gray-100 border-gray-200 text-gray-700'}`}>
+                      <span key={i} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg border ${i === 0 ? 'bg-green-50 border-green-300 text-green-800' : 'bg-muted border-border text-foreground'}`}>
                         {pc ? `${pc.label.split(' ')[0]} ` : ''}{countryName}{pc ? ` (${pc.code})` : ''}
                         <button onClick={() => {
                           const next = config.general.countries.filter((_, idx) => idx !== i);
                           update(c => ({ ...c, general: { ...c.general, countries: next } }));
-                        }} className="text-gray-400 hover:text-red-500 ml-0.5">×</button>
+                        }} className="text-muted-foreground hover:text-red-500 ml-0.5">×</button>
                       </span>
                     );
                   })}
                 </div>
               )}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-48 overflow-y-auto border border-border rounded-xl p-2">
                 {COUNTRY_PHONE_OPTIONS.map(pc => {
                   const selected = (config.general?.countries || []).includes(pc.name);
                   return (
@@ -1902,7 +1902,7 @@ const BoutiqueFormBuilder = () => {
                         update(c => ({ ...c, general: { ...c.general, countries: next } }));
                       }}
                       className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-left ${
-                        selected ? 'bg-green-50 border border-green-400 text-green-800' : 'bg-gray-50 border border-transparent text-gray-600 hover:bg-gray-100'
+                        selected ? 'bg-green-50 border border-green-400 text-green-800' : 'bg-background border border-transparent text-muted-foreground hover:bg-muted'
                       }`}>
                       <span>{pc.label.split(' ')[0]}</span>
                       <span className="truncate">{pc.name}</span>
@@ -1915,14 +1915,14 @@ const BoutiqueFormBuilder = () => {
             </div>
 
             {/* ─── Formulaire (champs) ─── */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-3">
+            <div className="bg-card rounded-2xl border p-5 space-y-3">
               <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setFieldsSectionOpen(v => !v)}>
-                <h3 className="text-sm font-bold text-gray-800">Formulaire</h3>
+                <h3 className="text-sm font-bold text-foreground">Formulaire</h3>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-muted-foreground">
                     {config.form.fields.filter(f => f.enabled).length}/{config.form.fields.length} actifs
                   </span>
-                  <span className="flex items-center text-[11px] text-primary-600 font-semibold">
+                  <span className="flex items-center text-[11px] text-primary font-semibold">
                     {fieldsSectionOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </span>
                 </div>
@@ -1965,15 +1965,15 @@ const BoutiqueFormBuilder = () => {
               {/* Add field button + dropdown */}
               <div className="relative">
                 <button onClick={() => setAddFieldMenuOpen(v => !v)}
-                  className="w-full flex items-center justify-center gap-1.5 py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-400 hover:border-primary-400 hover:text-primary-600 transition">
+                  className="w-full flex items-center justify-center gap-1.5 py-2.5 border-2 border-dashed border-border rounded-xl text-sm text-muted-foreground hover:border-primary-400 hover:text-primary transition">
                   <Plus size={14} /> Ajouter un champ
                 </button>
                 {addFieldMenuOpen && (
-                  <div className="absolute left-0 right-0 bottom-full mb-1 bg-white rounded-xl border border-gray-200 shadow-lg z-50 max-h-80 overflow-hidden flex flex-col">
-                    <div className="flex border-b border-gray-200 shrink-0">
+                  <div className="absolute left-0 right-0 bottom-full mb-1 bg-card rounded-xl border shadow-lg z-50 max-h-80 overflow-hidden flex flex-col">
+                    <div className="flex border-b border-border shrink-0">
                       {['Entrées', 'Contenu', 'Conversion'].map(cat => (
                         <button key={cat} onClick={() => setAddFieldTab(cat)}
-                          className={`flex-1 py-2.5 text-xs font-semibold transition ${addFieldTab === cat ? 'text-primary-600 border-b-2 border-primary-500 bg-primary-50/50' : 'text-gray-400 hover:text-gray-600'}`}>
+                          className={`flex-1 py-2.5 text-xs font-semibold transition ${addFieldTab === cat ? 'text-primary border-b-2 border-primary-500 bg-primary-50/50' : 'text-muted-foreground hover:text-muted-foreground'}`}>
                           {cat}
                         </button>
                       ))}
@@ -1983,8 +1983,8 @@ const BoutiqueFormBuilder = () => {
                         <button key={ft.type + ft.defaults.name}
                           onClick={() => { addField(ft); setAddFieldMenuOpen(false); }}
                           className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-primary-50 transition text-sm">
-                          <ft.Icon size={16} className="text-gray-500" />
-                          <span className="font-medium text-gray-700">{ft.label}</span>
+                          <ft.Icon size={16} className="text-muted-foreground" />
+                          <span className="font-medium text-foreground">{ft.label}</span>
                         </button>
                       ))}
                     </div>
@@ -2003,12 +2003,12 @@ const BoutiqueFormBuilder = () => {
                 update(c => ({ ...c, form: { ...c.form, fields: next } }));
               };
               return (
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div className="bg-card rounded-2xl border overflow-hidden">
                   <div className="flex items-center justify-between px-5 py-3.5 cursor-pointer select-none"
                     onClick={() => setCtaButtonSectionOpen(v => !v)}>
                     <div className="flex items-center gap-2.5">
-                      <MousePointerClick size={15} className="text-primary-600" />
-                      <h3 className="text-sm font-bold text-gray-800">Bouton du formulaire</h3>
+                      <MousePointerClick size={15} className="text-primary" />
+                      <h3 className="text-sm font-bold text-foreground">Bouton du formulaire</h3>
                     </div>
                     <div className="flex items-center gap-3">
                       <button type="button"
@@ -2017,16 +2017,16 @@ const BoutiqueFormBuilder = () => {
                           const next = config.form.fields.map((f, i) => i === ctaIdx ? { ...f, enabled: !f.enabled } : f);
                           update(c => ({ ...c, form: { ...c.form, fields: next } }));
                         }}
-                        className={`relative inline-flex h-[22px] w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${ctaField.enabled ? 'bg-primary-500' : 'bg-gray-200'}`}>
-                        <span className={`inline-block h-[18px] w-[18px] rounded-full bg-white shadow-sm transition duration-200 ${ctaField.enabled ? 'translate-x-[18px]' : 'translate-x-0'}`} />
+                        className={`relative inline-flex h-[22px] w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${ctaField.enabled ? 'bg-primary' : 'bg-gray-200'}`}>
+                        <span className={`inline-block h-[18px] w-[18px] rounded-full bg-card shadow-sm transition duration-200 ${ctaField.enabled ? 'translate-x-[18px]' : 'translate-x-0'}`} />
                       </button>
-                      <span className="flex items-center text-[11px] text-primary-600 font-semibold">
+                      <span className="flex items-center text-[11px] text-primary font-semibold">
                         {ctaButtonSectionOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </span>
                     </div>
                   </div>
                   {ctaButtonSectionOpen && (
-                    <div className="border-t border-gray-100">
+                    <div className="border-t border-border">
                       <CtaButtonEditor field={{ ...ctaField, type: 'cta_button' }} onChange={updateCta} />
                     </div>
                   )}
@@ -2035,10 +2035,10 @@ const BoutiqueFormBuilder = () => {
             })()}
 
             {/* ─── Style de formulaire ─── */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+            <div className="bg-card rounded-2xl border p-5 space-y-4">
               <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setFormStyleSectionOpen(v => !v)}>
-                <h3 className="text-sm font-bold text-gray-800">Style de formulaire</h3>
-                <span className="flex items-center text-[11px] text-primary-600 font-semibold">
+                <h3 className="text-sm font-bold text-foreground">Style de formulaire</h3>
+                <span className="flex items-center text-[11px] text-primary font-semibold">
                   {formStyleSectionOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </span>
               </div>
@@ -2052,41 +2052,41 @@ const BoutiqueFormBuilder = () => {
               {formStyleSectionOpen && (<>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur du texte</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur du texte</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.formTextColor || '#1F2937'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, formTextColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.formTextColor || '#1F2937'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, formTextColor: e.target.value } }))} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Taille du texte</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Taille du texte</label>
                   <div className="flex items-center gap-2">
                     <input type="number" min="10" max="24" className={inputCls + ' text-center'}
                       value={parseInt(config.design?.fontSize) || 16}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fontSize: `${e.target.value}px` } }))} />
-                    <span className="text-[11px] text-gray-400">px</span>
+                    <span className="text-[11px] text-muted-foreground">px</span>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Style</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Style</label>
                   <div className="flex gap-1">
-                    <button className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${config.design?.formBold ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                    <button className={`px-3 py-2 rounded-lg border text-xs font-bold transition ${config.design?.formBold ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
                       onClick={() => update(c => ({ ...c, design: { ...c.design, formBold: !c.design?.formBold } }))}>B</button>
-                    <button className={`px-3 py-2 rounded-lg border text-xs italic transition ${config.design?.formItalic ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                    <button className={`px-3 py-2 rounded-lg border text-xs italic transition ${config.design?.formItalic ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
                       onClick={() => update(c => ({ ...c, design: { ...c.design, formItalic: !c.design?.formItalic } }))}>I</button>
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Alignement des étiquettes</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Alignement des étiquettes</label>
                   <div className="flex gap-1">
                     {['left', 'center', 'right'].map(a => (
                       <button key={a}
-                        className={`flex-1 px-2 py-2 rounded-lg border text-xs font-medium transition ${(config.design?.labelAlign || 'left') === a ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                        className={`flex-1 px-2 py-2 rounded-lg border text-xs font-medium transition ${(config.design?.labelAlign || 'left') === a ? 'bg-gray-900 text-white border-gray-900' : 'border-border text-muted-foreground hover:bg-background'}`}
                         onClick={() => update(c => ({ ...c, design: { ...c.design, labelAlign: a } }))}>
                         {a === 'left' ? '⫷' : a === 'center' ? '···' : '⫸'}
                       </button>
@@ -2096,19 +2096,19 @@ const BoutiqueFormBuilder = () => {
                 <div className="flex flex-col justify-end">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <div
-                      className={`relative w-9 h-5 rounded-full transition-colors ${config.design?.showFieldLabels !== false ? 'bg-primary-500' : 'bg-gray-300'}`}
+                      className={`relative w-9 h-5 rounded-full transition-colors ${config.design?.showFieldLabels !== false ? 'bg-primary' : 'bg-gray-300'}`}
                       onClick={() => update(c => ({ ...c, design: { ...c.design, showFieldLabels: c.design?.showFieldLabels === false } }))}>
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${config.design?.showFieldLabels !== false ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-transform ${config.design?.showFieldLabels !== false ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </div>
-                    <span className="text-[11px] font-semibold text-gray-600">Afficher les labels</span>
+                    <span className="text-[11px] font-semibold text-muted-foreground">Afficher les labels</span>
                   </label>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur de l'arrière plan</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur de l'arrière plan</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.formBgColor || '#ffffff'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, formBgColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.formBgColor || '#ffffff'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, formBgColor: e.target.value } }))} />
                   </div>
@@ -2116,17 +2116,17 @@ const BoutiqueFormBuilder = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur de la bordure</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur de la bordure</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.formBorderColor || '#e5e5e5'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, formBorderColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.formBorderColor || '#e5e5e5'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, formBorderColor: e.target.value } }))} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Largeur de la bordure</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Largeur de la bordure</label>
                   <input type="range" min="0" max="6" className="w-full mt-2"
                     value={parseInt(config.design?.formBorderWidth) || 1}
                     onChange={e => update(c => ({ ...c, design: { ...c.design, formBorderWidth: `${e.target.value}px` } }))} />
@@ -2134,20 +2134,20 @@ const BoutiqueFormBuilder = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Coins arrondis</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Coins arrondis</label>
                   <input type="range" min="0" max="30" className="w-full"
                     value={parseInt(config.design?.formBorderRadius) || 12}
                     onChange={e => update(c => ({ ...c, design: { ...c.design, formBorderRadius: `${e.target.value}px` } }))} />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Ombre</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Ombre</label>
                   <input type="range" min="0" max="30" className="w-full"
                     value={parseInt(config.design?.formShadow) || 0}
                     onChange={e => update(c => ({ ...c, design: { ...c.design, formShadow: `${e.target.value}` } }))} />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur du bouton</label>
+                <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur du bouton</label>
                 <div className="flex items-center gap-2">
                   <input type="color" value={config.design?.formButtonColor || config.design?.ctaButtonColor || config.design?.buttonColor || '#0F6B4F'}
                     onChange={e => update(c => {
@@ -2155,7 +2155,7 @@ const BoutiqueFormBuilder = () => {
                       const fields = (c.form?.fields || []).map(f => f.type === 'cta_button' ? { ...f, bgColor: '', textColor: '', borderColor: '' } : f);
                       return { ...c, design: { ...c.design, formButtonColor: v }, form: { ...c.form, fields } };
                     })}
-                    className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                    className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                   <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.formButtonColor || config.design?.ctaButtonColor || config.design?.buttonColor || '#0F6B4F'}
                     onChange={e => update(c => {
                       const v = e.target.value;
@@ -2165,26 +2165,26 @@ const BoutiqueFormBuilder = () => {
                 </div>
               </div>
 
-              <hr className="border-gray-100 my-2" />
-              <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Champs</h4>
+              <hr className="border-border my-2" />
+              <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Champs</h4>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur du texte</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur du texte</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.fieldTextColor || '#1F2937'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldTextColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.fieldTextColor || '#1F2937'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldTextColor: e.target.value } }))} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur de l'arrière plan</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur de l'arrière plan</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.fieldBgColor || '#ffffff'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldBgColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.fieldBgColor || '#ffffff'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldBgColor: e.target.value } }))} />
                   </div>
@@ -2192,21 +2192,21 @@ const BoutiqueFormBuilder = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Couleur de l'icône</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Couleur de l'icône</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.fieldIconColor || '#9b9b9b'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldIconColor: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.fieldIconColor || '#9b9b9b'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldIconColor: e.target.value } }))} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">Fond de l'icône</label>
+                  <label className="block text-[11px] font-semibold text-muted-foreground mb-1">Fond de l'icône</label>
                   <div className="flex items-center gap-2">
                     <input type="color" value={config.design?.fieldIconBg || '#eCe7e7'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldIconBg: e.target.value } }))}
-                      className="w-7 h-7 border border-gray-200 rounded-lg cursor-pointer flex-shrink-0" />
+                      className="w-7 h-7 border border-border rounded-lg cursor-pointer flex-shrink-0" />
                     <input className={inputCls + ' font-mono text-[11px]'} value={config.design?.fieldIconBg || '#eCe7e7'}
                       onChange={e => update(c => ({ ...c, design: { ...c.design, fieldIconBg: e.target.value } }))} />
                   </div>
@@ -2221,8 +2221,8 @@ const BoutiqueFormBuilder = () => {
           <div className="hidden lg:block">
             <div className="sticky top-[5rem]">
             <div className="flex items-center gap-2 mb-3">
-              <Eye size={14} className="text-gray-400" />
-              <span className="text-sm font-bold text-gray-600">Aperçu en direct:</span>
+              <Eye size={14} className="text-muted-foreground" />
+              <span className="text-sm font-bold text-muted-foreground">Aperçu en direct:</span>
             </div>
             <div>
               {/* Aperçu bouton CTA (popup uniquement) */}

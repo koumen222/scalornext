@@ -30,7 +30,7 @@ export const CAPTION_STYLES = [
   { id: 'duo_yellow', label: tp('Blanc + jaune'), text: '#FFE000', bg: 'transparent', ring: '#111827' },
   { id: 'cyan', label: tp('Cyan'), text: '#22D3EE', bg: 'transparent', ring: '#111827' },
   { id: 'pink', label: tp('Rose'), text: '#FF69B4', bg: 'transparent', ring: '#111827' },
-  { id: 'green', label: tp('Vert'), text: '#22C55E', bg: 'transparent', ring: '#111827' },
+  { id: 'green', label: tp('Vert'), text: '#0F6B4F', bg: 'transparent', ring: '#111827' },
   { id: 'boxed', label: tp('Blanc gras'), text: '#FFFFFF', bg: 'transparent', ring: '#111827' },
   { id: 'boxed_yellow', label: tp('Jaune gras'), text: '#FFE000', bg: 'transparent', ring: '#111827' },
   { id: 'neon', label: tp('Néon cyan'), text: '#67E8F9', bg: 'transparent', ring: '#0891B2' },
@@ -65,12 +65,12 @@ export const captionFontCss = (id) => (CAPTION_FONTS.find((f) => f.id === id) ||
 // pour pointer un détail, cœur sur l'émotion.
 export const ACCENT_SHAPES = [
   { id: 'ring', label: tp('Cercle'), ch: '◯', color: '#E12338' },
-  { id: 'arrow', label: tp('Flèche'), ch: '→', color: '#FFD84D' },
-  { id: 'check', label: tp('Coche'), ch: '✔', color: '#22C55E' },
+  { id: 'arrow', label: tp('Flèche'), ch: '→', color: '#0F6B4F' },
+  { id: 'check', label: tp('Coche'), ch: '✔', color: '#0F6B4F' },
   { id: 'cross', label: tp('Croix'), ch: '✘', color: '#EF4444' },
-  { id: 'star', label: tp('Étoile'), ch: '★', color: '#FFC93C' },
-  { id: 'warning', label: tp('Alerte'), ch: '⚠', color: '#FFA726' },
-  { id: 'heart', label: tp('Cœur'), ch: '♥', color: '#FF4D79' },
+  { id: 'star', label: tp('Étoile'), ch: '★', color: '#0F6B4F' },
+  { id: 'warning', label: tp('Alerte'), ch: '⚠', color: '#0F6B4F' },
+  { id: 'heart', label: tp('Cœur'), ch: '♥', color: '#0F6B4F' },
 ];
 export const accentShape = (id) => ACCENT_SHAPES.find((a) => a.id === id) || null;
 

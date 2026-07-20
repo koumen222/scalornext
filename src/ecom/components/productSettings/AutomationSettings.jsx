@@ -28,37 +28,37 @@ const AutomationSettings = ({ config, onChange }) => {
         />
 
         {wa.enabled && (
-          <div className="space-y-4 pt-3 border-t border-gray-100 mt-3">
+          <div className="space-y-4 pt-3 border-t border-border mt-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('WhatsApp Number')}</label>
+              <label className="block text-xs font-semibold text-foreground mb-1.5">{tp('WhatsApp Number')}</label>
               <input
                 type="tel"
                 value={wa.number}
                 onChange={(e) => updateWa('number', e.target.value)}
                 placeholder="+225 07 XX XX XX XX"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F6B4F] focus:ring-1 focus:ring-[#0F6B4F]/20"
+                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:border-[#0F6B4F] focus:ring-1 focus:ring-[#0F6B4F]/20"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">{tp('Message Template')}</label>
+              <label className="block text-xs font-semibold text-foreground mb-1.5">{tp('Message Template')}</label>
               <textarea
                 rows={4}
                 value={wa.message}
                 onChange={(e) => updateWa('message', e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F6B4F] focus:ring-1 focus:ring-[#0F6B4F]/20 resize-none"
+                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:border-[#0F6B4F] focus:ring-1 focus:ring-[#0F6B4F]/20 resize-none"
               />
               <div className="mt-2">
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <Info size={12} className="text-gray-400" />
-                  <span className="text-[11px] text-gray-400">{tp('Click to insert a variable')}</span>
+                  <Info size={12} className="text-muted-foreground" />
+                  <span className="text-[11px] text-muted-foreground">{tp('Click to insert a variable')}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {VARIABLES.map((v) => (
                     <button
                       key={v}
                       onClick={() => insertVariable(v)}
-                      className="px-2 py-1 rounded-lg bg-gray-100 text-xs font-mono text-gray-600 hover:bg-[#E6F2ED] hover:text-[#0F6B4F] transition-colors"
+                      className="px-2 py-1 rounded-lg bg-muted text-xs font-mono text-muted-foreground hover:bg-[#E6F2ED] hover:text-[#0F6B4F] transition-colors"
                     >
                       {v}
                     </button>

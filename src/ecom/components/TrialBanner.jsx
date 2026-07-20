@@ -70,14 +70,14 @@ const TrialBanner = ({ plan, trialEndsAt, onClose }) => {
         <div className="flex items-center gap-3">
           <a
             href="/ecom/billing"
-            className="px-4 py-2 bg-white text-primary-700 font-bold rounded-lg hover:bg-gray-100 transition-colors text-sm flex items-center gap-2"
+            className="px-4 py-2 bg-card text-primary font-bold rounded-lg hover:bg-muted transition-colors text-sm flex items-center gap-2"
           >
             <Zap className="w-4 h-4" />
             {tp('Passer à un plan payant')}
           </a>
           <button
             onClick={() => setHidden(true)}
-            className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-card/20 rounded-lg transition-colors"
             title={tp('Masquer')}
           >
             <X className="w-5 h-5" />

@@ -42,7 +42,7 @@ const SuperAdminShell = ({
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #f0f4f8 0%, #f8fafc 100%)' }}>
       {/* ── Light header ── */}
-      <div className="bg-white border-b border-slate-200 px-4 sm:px-6 pt-5 pb-0 shadow-sm">
+      <div className="bg-card border-b border-slate-200 px-4 sm:px-6 pt-5 pb-0 shadow-sm">
         <div style={{ maxWidth }} className="mx-auto">
 
           {/* Title row */}

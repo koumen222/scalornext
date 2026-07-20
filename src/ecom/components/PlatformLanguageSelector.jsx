@@ -38,30 +38,30 @@ const PlatformLanguageSelector = ({ compact = false }) => {
         onClick={() => setIsOpen(!isOpen)}
         title={t('Langue')}
         className={compact
-          ? 'flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm hover:border-primary-500 transition'
-          : 'flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:border-primary-500 transition'}
+          ? 'flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-lg text-sm hover:border-primary-500 transition'
+          : 'flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-lg text-sm hover:border-primary-500 transition'}
       >
         <span className="text-base leading-none">{current.flag}</span>
-        <span className="font-medium text-gray-700 uppercase">{current.value}</span>
-        <svg className={`w-4 h-4 text-gray-400 transition ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <span className="font-medium text-foreground uppercase">{current.value}</span>
+        <svg className={`w-4 h-4 text-muted-foreground transition ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 z-50 w-44 whitespace-nowrap rounded-xl border border-gray-200 bg-white py-1.5 shadow-xl" style={{ minWidth: '12rem' }}>
-          <p className="px-3 pb-1 pt-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-400">{t('Langue')}</p>
+        <div className="absolute right-0 top-full mt-1 z-50 w-44 whitespace-nowrap rounded-xl border border-border bg-card py-1.5 shadow-xl" style={{ minWidth: '12rem' }}>
+          <p className="px-3 pb-1 pt-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">{t('Langue')}</p>
           {PLATFORM_LANGUAGES.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => select(option.value)}
-              className={`flex w-full items-center gap-2.5 whitespace-nowrap px-3 py-2 text-left text-sm transition hover:bg-gray-50 ${option.value === lang ? 'font-semibold text-primary-700' : 'text-gray-700'}`}
+              className={`flex w-full items-center gap-2.5 whitespace-nowrap px-3 py-2 text-left text-sm transition hover:bg-background ${option.value === lang ? 'font-semibold text-primary' : 'text-foreground'}`}
             >
               <span className="text-base leading-none">{option.flag}</span>
               <span className="flex-1 whitespace-nowrap">{option.label}</span>
               {option.value === lang && (
-                <svg className="h-4 w-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M5 13l4 4L19 7" />
                 </svg>
               )}

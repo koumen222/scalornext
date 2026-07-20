@@ -35,7 +35,7 @@ export default function PaymentModalFrame({
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-lg bg-white shadow-[0_18px_60px_rgba(15,23,42,0.35)] ${maxWidthClassName}`}
+        className={`relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-lg bg-card shadow-[0_18px_60px_rgba(15,23,42,0.35)] ${maxWidthClassName}`}
         onClick={(event) => event.stopPropagation()}
       >
         {/* ── Header sombre ── */}
@@ -48,7 +48,7 @@ export default function PaymentModalFrame({
 
           <div className="relative flex items-start gap-3">
             {icon ? (
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/10 p-2.5 ring-1 ring-white/15">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-card/10 p-2.5 ring-1 ring-white/15">
                 {icon}
               </div>
             ) : null}
@@ -66,7 +66,7 @@ export default function PaymentModalFrame({
             <button
               type="button"
               onClick={onClose}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/60 transition hover:bg-white/10 hover:text-white"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/60 transition hover:bg-card/10 hover:text-white"
               aria-label={tp('Fermer')}
             >
               <X className="h-4 w-4" />
@@ -75,7 +75,7 @@ export default function PaymentModalFrame({
 
           {/* Carte récapitulative intégrée */}
           {summary ? (
-            <div className="relative mt-4 flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/[0.06] px-4 py-3">
+            <div className="relative mt-4 flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-card/[0.06] px-4 py-3">
               <div className="min-w-0">
                 {summary.label ? (
                   <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">{summary.label}</p>
@@ -106,8 +106,8 @@ export default function PaymentModalFrame({
 
         {/* ── Footer confiance ── */}
         {footerItems?.length ? (
-          <div className="shrink-0 border-t border-gray-100 bg-gray-50/60 px-5 py-3 sm:px-6">
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-gray-400">
+          <div className="shrink-0 border-t border-border bg-background/60 px-5 py-3 sm:px-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
               {footerItems.map((item, index) => {
                 const Icon = item.icon;
                 return (

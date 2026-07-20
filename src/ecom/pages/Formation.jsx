@@ -53,13 +53,13 @@ export default function Formation() {
   const toggle = (id) => setActiveId(prev => prev === id ? null : id);
 
   return (
-    <div className="bg-white min-h-full">
+    <div className="bg-card min-h-full">
 
       {/* HERO */}
       <div className="px-4 py-8" style={{ background: 'linear-gradient(160deg, #f0fdf4 0%, #dcfce7 50%, #f0fdf4 100%)' }}>
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="font-black text-gray-900" style={{ fontSize: 'clamp(22px, 5vw, 32px)', letterSpacing: '-0.5px', lineHeight: 1 }}>
+            <span className="font-black text-foreground" style={{ fontSize: 'clamp(22px, 5vw, 32px)', letterSpacing: '-0.5px', lineHeight: 1 }}>
               {tp('FORMATION')} <span style={{ color: '#16a34a' }}>OFFERTE</span>
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-white flex-shrink-0" style={{ background: '#0f4c2a' }}>
@@ -69,8 +69,8 @@ export default function Formation() {
               ~49 000 FCFA
             </span>
           </div>
-          <p className="text-sm font-semibold text-gray-600 whitespace-nowrap">
-            Incluse <span className="text-primary-600 font-bold">{tp('gratuitement')}</span> dans votre compte Scalor
+          <p className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
+            Incluse <span className="text-primary font-bold">{tp('gratuitement')}</span> dans votre compte Scalor
           </p>
         </div>
       </div>
@@ -79,13 +79,13 @@ export default function Formation() {
         <div className="border-b border-primary-100 bg-primary-50">
           <div className="max-w-2xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <p className="text-sm font-bold text-gray-900">{tp('Bienvenue sur Scalor')}</p>
-              <p className="text-xs text-gray-600 mt-0.5">{tp('Regardez la formation offerte, puis continuez la configuration de votre espace.')}</p>
+              <p className="text-sm font-bold text-foreground">{tp('Bienvenue sur Scalor')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{tp('Regardez la formation offerte, puis continuez la configuration de votre espace.')}</p>
             </div>
             <button
               type="button"
               onClick={() => navigate(onboardingNextPath)}
-              className="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 transition shadow-sm"
+              className="min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-700 transition shadow-sm"
             >
               {tp('Continuer vers mon espace')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
@@ -96,8 +96,8 @@ export default function Formation() {
 
       {/* PROGRAMME */}
       <div className="max-w-2xl mx-auto px-4 py-10">
-        <h2 className="text-xl font-black text-gray-900 mb-1">{tp('Programme — Module 7')}</h2>
-        <p className="text-sm text-gray-400 mb-8">{tp('17 chapitres · 6h+ de contenu · Accès à vie')}</p>
+        <h2 className="text-xl font-black text-foreground mb-1">{tp('Programme — Module 7')}</h2>
+        <p className="text-sm text-muted-foreground mb-8">{tp('17 chapitres · 6h+ de contenu · Accès à vie')}</p>
 
         <div className="space-y-2">
           {chapters.map((ch) => {
@@ -105,24 +105,24 @@ export default function Formation() {
             return (
               <div
                 key={ch.id}
-                className={`rounded-xl border overflow-hidden transition-all ${isOpen ? 'border-primary-400' : 'border-gray-100'
+                className={`rounded-xl border overflow-hidden transition-all ${isOpen ? 'border-primary-400' : 'border-border'
                   }`}
               >
                 {/* Ligne chapitre */}
                 <button
                   onClick={() => toggle(ch.id)}
-                  className={`w-full flex items-center gap-4 px-4 py-3 text-left transition cursor-pointer ${isOpen ? 'bg-primary-50' : 'bg-white hover:bg-primary-50/30'
+                  className={`w-full flex items-center gap-4 px-4 py-3 text-left transition cursor-pointer ${isOpen ? 'bg-primary-50' : 'bg-card hover:bg-primary-50/30'
                     }`}
                 >
-                  <span className={`w-8 flex items-center justify-center flex-shrink-0 ${isOpen ? 'text-primary-600' : 'text-primary-500'}`}>
+                  <span className={`w-8 flex items-center justify-center flex-shrink-0 ${isOpen ? 'text-primary' : 'text-primary-500'}`}>
                     {icons[ch.icon]}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs font-bold text-gray-400 mr-2">{ch.id}</span>
-                    <span className="text-sm font-semibold text-gray-800">{ch.title}</span>
+                    <span className="text-xs font-bold text-muted-foreground mr-2">{ch.id}</span>
+                    <span className="text-sm font-semibold text-foreground">{ch.title}</span>
                   </div>
-                  <span className="text-xs text-gray-400 flex-shrink-0">{ch.duration}</span>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-transform ${isOpen ? 'bg-primary-500 rotate-90' : 'bg-gray-100'}`}>
+                  <span className="text-xs text-muted-foreground flex-shrink-0">{ch.duration}</span>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-transform ${isOpen ? 'bg-primary rotate-90' : 'bg-muted'}`}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={isOpen ? '#fff' : '#9ca3af'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="5 3 19 12 5 21 5 3" />
                     </svg>

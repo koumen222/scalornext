@@ -180,7 +180,7 @@ function Badge({ children, tone = 'gray' }) {
     green: 'border-green-200 bg-green-50 text-green-700',
     orange: 'border-orange-200 bg-orange-50 text-orange-700',
     red: 'border-red-200 bg-red-50 text-red-700',
-    gray: 'border-gray-200 bg-gray-50 text-gray-600',
+    gray: 'border-border bg-background text-muted-foreground',
   };
   const dot = {
     green: 'bg-green-500',
@@ -201,15 +201,15 @@ function KpiCard({ title, value, detail, tone = 'gray', icon: Icon }) {
     green: 'bg-green-50 text-green-700',
     orange: 'bg-orange-50 text-orange-700',
     red: 'bg-red-50 text-red-700',
-    gray: 'bg-gray-100 text-gray-700',
+    gray: 'bg-muted text-foreground',
   };
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase text-gray-500">{title}</p>
-          <p className="mt-2 text-xl font-bold text-gray-900 tabular-nums">{value}</p>
-          {detail && <p className="mt-1 text-xs text-gray-500">{detail}</p>}
+          <p className="text-xs font-semibold uppercase text-muted-foreground">{title}</p>
+          <p className="mt-2 text-xl font-bold text-foreground tabular-nums">{value}</p>
+          {detail && <p className="mt-1 text-xs text-muted-foreground">{detail}</p>}
         </div>
         {Icon && (
           <span className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${toneClasses[tone] || toneClasses.gray}`}>
@@ -223,9 +223,9 @@ function KpiCard({ title, value, detail, tone = 'gray', icon: Icon }) {
 
 function Panel({ title, action, children }) {
   return (
-    <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
-      <div className="flex flex-col gap-3 border-b border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-sm font-bold text-gray-900">{title}</h2>
+    <section className="rounded-lg border border-border bg-card shadow-sm">
+      <div className="flex flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-sm font-bold text-foreground">{title}</h2>
         {action}
       </div>
       <div className="p-4">{children}</div>
@@ -236,7 +236,7 @@ function Panel({ title, action, children }) {
 function Input({ label, className = '', ...props }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-xs font-semibold text-gray-600">{label}</span>
+      <span className="mb-1 block text-xs font-semibold text-muted-foreground">{label}</span>
       <input
         {...props}
         className="min-h-[40px] w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-primary-600 focus:ring-2 focus:ring-primary-100"
@@ -248,10 +248,10 @@ function Input({ label, className = '', ...props }) {
 function Select({ label, className = '', children, ...props }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-xs font-semibold text-gray-600">{label}</span>
+      <span className="mb-1 block text-xs font-semibold text-muted-foreground">{label}</span>
       <select
         {...props}
-        className="min-h-[40px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-primary-600 focus:ring-2 focus:ring-primary-100"
+        className="min-h-[40px] w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm outline-none transition focus:border-primary-600 focus:ring-2 focus:ring-primary-100"
       >
         {children}
       </select>
@@ -261,7 +261,7 @@ function Select({ label, className = '', children, ...props }) {
 
 function TableShell({ children }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200">
+    <div className="overflow-hidden rounded-lg border border-border">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 text-sm">{children}</table>
       </div>
@@ -271,7 +271,7 @@ function TableShell({ children }) {
 
 function Th({ children, align = 'left' }) {
   return (
-    <th className={`whitespace-nowrap bg-gray-50 px-3 py-3 text-${align} text-[11px] font-bold uppercase text-gray-500`}>
+    <th className={`whitespace-nowrap bg-background px-3 py-3 text-${align} text-[11px] font-bold uppercase text-muted-foreground`}>
       {children}
     </th>
   );
@@ -284,7 +284,7 @@ function Td({ children, align = 'left', className = '' }) {
 function EmptyRow({ colSpan, label }) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-3 py-8 text-center text-sm text-gray-400">
+      <td colSpan={colSpan} className="px-3 py-8 text-center text-sm text-muted-foreground">
         {label}
       </td>
     </tr>
@@ -729,8 +729,8 @@ export default function ControlCenter() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-gray-500">
-          <Loader2 className="h-7 w-7 animate-spin text-primary-600" aria-hidden="true" />
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-7 w-7 animate-spin text-primary" aria-hidden="true" />
           <p className="text-sm font-semibold">{tp('Chargement des données Scalor…')}</p>
         </div>
       </div>
@@ -746,7 +746,7 @@ export default function ControlCenter() {
           <button
             type="button"
             onClick={() => loadData(false)}
-            className="mt-4 inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+            className="mt-4 inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
           >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
             {tp('Réessayer')}
@@ -757,27 +757,27 @@ export default function ControlCenter() {
   }
 
   return (
-    <div className="min-h-full bg-gray-50 px-3 py-4 sm:px-5 lg:px-6">
+    <div className="min-h-full bg-background px-3 py-4 sm:px-5 lg:px-6">
       <div className="mx-auto max-w-7xl space-y-5">
-        <header className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+        <header className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs font-bold uppercase text-primary-600">{tp('Pilotage COD — données Scalor en direct')}</p>
-            <h1 className="mt-1 text-2xl font-bold text-gray-900">{tp('Centre de contrôle')}</h1>
+            <p className="text-xs font-bold uppercase text-primary">{tp('Pilotage COD — données Scalor en direct')}</p>
+            <h1 className="mt-1 text-2xl font-bold text-foreground">{tp('Centre de contrôle')}</h1>
             {lastUpdated && (
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Mis à jour à {lastUpdated.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
               </p>
             )}
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex rounded-lg border border-gray-200 bg-white p-1">
+            <div className="flex rounded-lg border border-border bg-card p-1">
               {PERIODS.map((p) => (
                 <button
                   key={p.id}
                   type="button"
                   onClick={() => setPeriodDays(p.id)}
                   className={`min-h-[36px] rounded-md px-2.5 py-1.5 text-xs font-semibold transition ${
-                    periodDays === p.id ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                    periodDays === p.id ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted'
                   }`}
                 >
                   {p.label}
@@ -788,7 +788,7 @@ export default function ControlCenter() {
               type="button"
               onClick={() => loadData(true)}
               disabled={refreshing}
-              className="inline-flex min-h-[40px] items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-60"
+              className="inline-flex min-h-[40px] items-center gap-2 rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm font-semibold text-foreground transition hover:bg-background disabled:opacity-60"
             >
               <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} aria-hidden="true" />
               {tp('Actualiser')}
@@ -803,7 +803,7 @@ export default function ControlCenter() {
           </div>
         )}
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-1 shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-border bg-card p-1 shadow-sm">
           <div className="flex min-w-max gap-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -814,7 +814,7 @@ export default function ControlCenter() {
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
                   className={`inline-flex min-h-[40px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                    active ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    active ? 'bg-primary text-white' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
                   <Icon className="h-4 w-4" aria-hidden="true" />
@@ -853,8 +853,8 @@ export default function ControlCenter() {
                   ['Problème principal', derived.mainProblem, derived.mainProblem === 'Aucun blocage majeur' ? 'green' : 'orange'],
                   ['Décision recommandée', derived.recommendation, derived.productToCut ? 'red' : 'green'],
                 ].map(([label, value, tone]) => (
-                  <div key={label} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                    <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
+                  <div key={label} className="rounded-lg border border-border bg-background p-3">
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
                     <div className="mt-2">
                       <Badge tone={tone}>{value}</Badge>
                     </div>
@@ -885,18 +885,18 @@ export default function ControlCenter() {
                   <Th>{tp('Décision')}</Th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-gray-100 bg-card">
                 {derived.productRows.length === 0 && <EmptyRow colSpan={12} label="Aucun produit dans Scalor." />}
                 {derived.productRows.map((p) => (
-                  <tr key={p._id} className="hover:bg-gray-50">
-                    <Td className="font-semibold text-gray-900">{p.name}</Td>
+                  <tr key={p._id} className="hover:bg-background">
+                    <Td className="font-semibold text-foreground">{p.name}</Td>
                     <Td><Badge tone={p.status === 'winner' ? 'green' : p.status === 'stop' ? 'red' : p.status === 'pause' ? 'gray' : 'orange'}>{PRODUCT_STATUS_LABELS[p.status] || p.status}</Badge></Td>
                     <Td align="right" className="tabular-nums">{money(p.price)}</Td>
                     <Td align="right" className="tabular-nums">{money(p.cost)}</Td>
                     <Td align="right" className="tabular-nums">{money(p.delivery)}</Td>
                     <Td align="right" className="tabular-nums">{money(p.adsCost)}</Td>
                     <Td align="right" className="tabular-nums">{money(p.grossMargin)}</Td>
-                    <Td align="right" className={`tabular-nums font-semibold ${p.netProfit >= PROFIT_TARGET ? 'text-green-700' : p.netProfit < 0 ? 'text-red-600' : 'text-gray-700'}`}>{money(p.netProfit)}</Td>
+                    <Td align="right" className={`tabular-nums font-semibold ${p.netProfit >= PROFIT_TARGET ? 'text-green-700' : p.netProfit < 0 ? 'text-red-600' : 'text-foreground'}`}>{money(p.netProfit)}</Td>
                     <Td align="right" className="font-semibold tabular-nums">{p.stock}</Td>
                     <Td align="right" className="tabular-nums">{p.soldUnits}</Td>
                     <Td><Badge tone={p.rentability.tone}>{p.rentability.label}</Badge></Td>
@@ -905,7 +905,7 @@ export default function ControlCenter() {
                 ))}
               </tbody>
             </TableShell>
-            <p className="mt-3 text-xs text-gray-400">Vendus = commandes livrées sur « {periodLabel} ». Économies et stock proviennent de la fiche produit Scalor.</p>
+            <p className="mt-3 text-xs text-muted-foreground">Vendus = commandes livrées sur « {periodLabel} ». Économies et stock proviennent de la fiche produit Scalor.</p>
           </Panel>
         )}
 
@@ -924,16 +924,16 @@ export default function ControlCenter() {
                   <Th>{tp('Décision pub')}</Th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-gray-100 bg-card">
                 {derived.productRows.length === 0 && <EmptyRow colSpan={7} label="Aucun produit dans Scalor." />}
                 {derived.productRows.map((p) => {
                   const pubDecision =
                     p.stockTone === 'red' ? { get label() { return tp('Coupée'); }, tone: 'red' } : p.stockTone === 'orange' ? { get label() { return tp('Réduite'); }, tone: 'orange' } : { get label() { return tp('Autorisée'); }, tone: 'green' };
                   return (
-                    <tr key={p._id} className="hover:bg-gray-50">
-                      <Td className="font-semibold text-gray-900">{p.name}</Td>
+                    <tr key={p._id} className="hover:bg-background">
+                      <Td className="font-semibold text-foreground">{p.name}</Td>
                       <Td align="right" className="font-bold tabular-nums">{p.stock}</Td>
-                      <Td align="right" className="tabular-nums text-gray-500">{p.threshold}</Td>
+                      <Td align="right" className="tabular-nums text-muted-foreground">{p.threshold}</Td>
                       <Td align="right" className="tabular-nums">{money(p.stock * p.price)}</Td>
                       <Td align="right" className="tabular-nums">{p.soldUnits}</Td>
                       <Td><Badge tone={p.stockTone}>{p.stockLabel}</Badge></Td>
@@ -943,7 +943,7 @@ export default function ControlCenter() {
                 })}
               </tbody>
             </TableShell>
-            <p className="mt-3 text-xs text-gray-400">{tp('Règle : stock ≤ seuil → pub coupée · stock ≤ 2× seuil → pub réduite. Seuil par défaut 10 si non défini sur la fiche produit.')}</p>
+            <p className="mt-3 text-xs text-muted-foreground">{tp('Règle : stock ≤ seuil → pub coupée · stock ≤ 2× seuil → pub réduite. Seuil par défaut 10 si non défini sur la fiche produit.')}</p>
           </Panel>
         )}
 
@@ -963,16 +963,16 @@ export default function ControlCenter() {
                   <Th>{tp('Statut')}</Th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-gray-100 bg-card">
                 {scopedOrders.length === 0 && <EmptyRow colSpan={8} label="Aucune commande sur cette période." />}
                 {scopedOrders
                   .slice()
                   .sort((a, b) => new Date(orderDate(b)) - new Date(orderDate(a)))
                   .slice(0, 200)
                   .map((o) => (
-                    <tr key={o._id} className="hover:bg-gray-50">
+                    <tr key={o._id} className="hover:bg-background">
                       <Td>{dayKey(orderDate(o)) || '—'}</Td>
-                      <Td className="font-semibold text-gray-900">{o.clientName || '—'}</Td>
+                      <Td className="font-semibold text-foreground">{o.clientName || '—'}</Td>
                       <Td>{o.clientPhone || '—'}</Td>
                       <Td>{o.city || '—'}</Td>
                       <Td>{o.product || '—'}</Td>
@@ -983,7 +983,7 @@ export default function ControlCenter() {
                   ))}
               </tbody>
             </TableShell>
-            {scopedOrders.length > 200 && <p className="mt-3 text-xs text-gray-400">200 commandes les plus récentes affichées sur {scopedOrders.length}.</p>}
+            {scopedOrders.length > 200 && <p className="mt-3 text-xs text-muted-foreground">200 commandes les plus récentes affichées sur {scopedOrders.length}.</p>}
           </Panel>
         )}
 
@@ -1011,7 +1011,7 @@ export default function ControlCenter() {
                   {AD_DECISIONS.map((d) => <option key={d}>{d}</option>)}
                 </Select>
                 <div className="flex items-end">
-                  <button type="submit" className="inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-700">
+                  <button type="submit" className="inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary-700">
                     <Plus className="h-4 w-4" aria-hidden="true" />
                     {tp('Ajouter')}
                   </button>
@@ -1038,12 +1038,12 @@ export default function ControlCenter() {
                     <Th align="center">—</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
+                <tbody className="divide-y divide-gray-100 bg-card">
                   {adRows.length === 0 && <EmptyRow colSpan={12} label="Aucune dépense pub saisie." />}
                   {adRows.map((ad) => (
-                    <tr key={ad.id} className="hover:bg-gray-50">
+                    <tr key={ad.id} className="hover:bg-background">
                       <Td>{ad.date}</Td>
-                      <Td className="font-semibold text-gray-900">{ad.productName}</Td>
+                      <Td className="font-semibold text-foreground">{ad.productName}</Td>
                       <Td>{ad.city || tp('Toutes')}</Td>
                       <Td align="right" className="tabular-nums">{money(ad.budget)}</Td>
                       <Td align="right" className="tabular-nums">{ad.generated}</Td>
@@ -1054,7 +1054,7 @@ export default function ControlCenter() {
                       <Td align="right" className="tabular-nums">{ad.costPerDelivered == null ? '—' : money(ad.costPerDelivered)}</Td>
                       <Td><Badge tone={ad.tone}>{ad.suggestion}</Badge></Td>
                       <Td align="center">
-                        <button type="button" onClick={() => deleteAd(ad.id)} title={tp('Supprimer')} aria-label={tp('Supprimer la dépense pub')} className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600">
+                        <button type="button" onClick={() => deleteAd(ad.id)} title={tp('Supprimer')} aria-label={tp('Supprimer la dépense pub')} className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600">
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </button>
                       </Td>
@@ -1081,14 +1081,14 @@ export default function ControlCenter() {
                     <Th>{tp('Taux livraison')}</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
+                <tbody className="divide-y divide-gray-100 bg-card">
                   {derived.cityRows.length === 0 && <EmptyRow colSpan={6} label="Aucune commande sur cette période." />}
                   {derived.cityRows
                     .slice()
                     .sort((a, b) => b.delivered - a.delivered)
                     .map((c) => (
-                      <tr key={c.city} className="hover:bg-gray-50">
-                        <Td className="font-semibold text-gray-900">{c.city}</Td>
+                      <tr key={c.city} className="hover:bg-background">
+                        <Td className="font-semibold text-foreground">{c.city}</Td>
                         <Td align="right" className="tabular-nums">{c.confirmed}</Td>
                         <Td align="right" className="tabular-nums font-semibold">{c.delivered}</Td>
                         <Td align="right" className="tabular-nums">{c.returned}</Td>
@@ -1113,14 +1113,14 @@ export default function ControlCenter() {
                     <Th>{tp('Taux')}</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
+                <tbody className="divide-y divide-gray-100 bg-card">
                   {teamByRole.livreurs.length === 0 && <EmptyRow colSpan={7} label="Aucun livreur enregistré." />}
                   {teamByRole.livreurs.map((m) => {
                     const s = m.stats || {};
                     const rate = asNumber(s.deliveryRate);
                     return (
-                      <tr key={m._id} className="hover:bg-gray-50">
-                        <Td className="font-semibold text-gray-900">{m.name}</Td>
+                      <tr key={m._id} className="hover:bg-background">
+                        <Td className="font-semibold text-foreground">{m.name}</Td>
                         <Td align="right" className="tabular-nums">{asNumber(s.assigned)}</Td>
                         <Td align="right" className="tabular-nums font-semibold">{asNumber(s.delivered)}</Td>
                         <Td align="right" className="tabular-nums">{asNumber(s.returned)}</Td>
@@ -1148,13 +1148,13 @@ export default function ControlCenter() {
 
             <Panel title={tp('Dépenses par catégorie')}>
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                {Object.keys(derived.byCategory).length === 0 && <p className="text-sm text-gray-400">{tp('Aucune transaction sur cette période.')}</p>}
+                {Object.keys(derived.byCategory).length === 0 && <p className="text-sm text-muted-foreground">{tp('Aucune transaction sur cette période.')}</p>}
                 {Object.entries(derived.byCategory)
                   .sort((a, b) => b[1] - a[1])
                   .map(([cat, amount]) => (
-                    <div key={cat} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                      <p className="text-xs font-semibold uppercase text-gray-500">{CATEGORY_LABELS[cat] || cat}</p>
-                      <p className="mt-1 text-sm font-bold text-gray-900 tabular-nums">{money(amount)}</p>
+                    <div key={cat} className="rounded-lg border border-border bg-background p-3">
+                      <p className="text-xs font-semibold uppercase text-muted-foreground">{CATEGORY_LABELS[cat] || cat}</p>
+                      <p className="mt-1 text-sm font-bold text-foreground tabular-nums">{money(amount)}</p>
                     </div>
                   ))}
               </div>
@@ -1171,14 +1171,14 @@ export default function ControlCenter() {
                     <Th align="right">{tp('Montant')}</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
+                <tbody className="divide-y divide-gray-100 bg-card">
                   {scopedTransactions.length === 0 && <EmptyRow colSpan={5} label="Aucune transaction sur cette période." />}
                   {scopedTransactions
                     .slice()
                     .sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt))
                     .slice(0, 100)
                     .map((t) => (
-                      <tr key={t._id} className="hover:bg-gray-50">
+                      <tr key={t._id} className="hover:bg-background">
                         <Td>{dayKey(t.date || t.createdAt) || '—'}</Td>
                         <Td><Badge tone={t.type === 'income' ? 'green' : 'red'}>{t.type === 'income' ? 'Entrée' : tp('Dépense')}</Badge></Td>
                         <Td>{CATEGORY_LABELS[t.category] || t.category}</Td>
@@ -1208,14 +1208,14 @@ export default function ControlCenter() {
                     <Th>{tp('Taux confirmation')}</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
+                <tbody className="divide-y divide-gray-100 bg-card">
                   {teamByRole.closeuses.length === 0 && <EmptyRow colSpan={7} label="Aucune closeuse enregistrée." />}
                   {teamByRole.closeuses.map((m) => {
                     const s = m.stats || {};
                     const rate = asNumber(s.confirmationRate);
                     return (
-                      <tr key={m._id} className="hover:bg-gray-50">
-                        <Td className="font-semibold text-gray-900">{m.name}</Td>
+                      <tr key={m._id} className="hover:bg-background">
+                        <Td className="font-semibold text-foreground">{m.name}</Td>
                         <Td align="right" className="tabular-nums">{asNumber(s.totalProcessed)}</Td>
                         <Td align="right" className="tabular-nums font-semibold">{asNumber(s.confirmed)}</Td>
                         <Td align="right" className="tabular-nums">{asNumber(s.cancelled)}</Td>
@@ -1240,13 +1240,13 @@ export default function ControlCenter() {
                     <Th align="right">{tp('Solde net')}</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
+                <tbody className="divide-y divide-gray-100 bg-card">
                   {[...teamByRole.comptas, ...teamByRole.others].length === 0 && <EmptyRow colSpan={5} label="Aucun autre membre." />}
                   {[...teamByRole.comptas, ...teamByRole.others].map((m) => {
                     const s = m.stats || {};
                     return (
-                      <tr key={m._id} className="hover:bg-gray-50">
-                        <Td className="font-semibold text-gray-900">{m.name}</Td>
+                      <tr key={m._id} className="hover:bg-background">
+                        <Td className="font-semibold text-foreground">{m.name}</Td>
                         <Td><Badge tone="gray">{ROLE_LABELS[m.role] || m.role}</Badge></Td>
                         <Td align="right" className="tabular-nums">{s.totalIncome != null ? money(s.totalIncome) : '—'}</Td>
                         <Td align="right" className="tabular-nums">{s.totalExpense != null ? money(s.totalExpense) : '—'}</Td>
@@ -1282,9 +1282,9 @@ export default function ControlCenter() {
                   ['Ville prioritaire', derived.priorityCity],
                   ['Solde caisse', money(derived.cashAvailable)],
                 ].map(([label, value]) => (
-                  <div key={label} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                    <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
-                    <p className="mt-2 text-sm font-bold text-gray-900">{value}</p>
+                  <div key={label} className="rounded-lg border border-border bg-background p-3">
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
+                    <p className="mt-2 text-sm font-bold text-foreground">{value}</p>
                   </div>
                 ))}
               </div>
@@ -1306,11 +1306,11 @@ export default function ControlCenter() {
                   ['Coût pub par vente livrée prioritaire', Megaphone],
                   ['Stock sous le seuil = recommander', AlertTriangle],
                 ].map(([label, Icon]) => (
-                  <div key={label} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-700">
+                  <div key={label} className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary">
                       <Icon className="h-4 w-4" aria-hidden="true" />
                     </span>
-                    <span className="text-sm font-semibold text-gray-800">{label}</span>
+                    <span className="text-sm font-semibold text-foreground">{label}</span>
                   </div>
                 ))}
               </div>
@@ -1319,26 +1319,26 @@ export default function ControlCenter() {
         )}
 
         <footer className="grid gap-3 md:grid-cols-3">
-          <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-700 shadow-sm">
-            <div className="flex items-center gap-2 font-bold text-gray-900">
-              <MapPin className="h-4 w-4 text-primary-700" aria-hidden="true" />
+          <div className="rounded-lg border border-border bg-card p-3 text-sm text-foreground shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-foreground">
+              <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
               {tp('Données en direct')}
             </div>
-            <p className="mt-1 text-xs text-gray-500">{tp('Produits, commandes, finances et équipe proviennent de votre espace Scalor.')}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{tp('Produits, commandes, finances et équipe proviennent de votre espace Scalor.')}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-700 shadow-sm">
-            <div className="flex items-center gap-2 font-bold text-gray-900">
+          <div className="rounded-lg border border-border bg-card p-3 text-sm text-foreground shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-foreground">
               <TrendingDown className="h-4 w-4 text-red-600" aria-hidden="true" />
               {tp('Coupure rapide')}
             </div>
-            <p className="mt-1 text-xs text-gray-500">{tp('Les badges rouges signalent les produits, villes ou livreurs à arrêter.')}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{tp('Les badges rouges signalent les produits, villes ou livreurs à arrêter.')}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-700 shadow-sm">
-            <div className="flex items-center gap-2 font-bold text-gray-900">
+          <div className="rounded-lg border border-border bg-card p-3 text-sm text-foreground shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-foreground">
               <TrendingUp className="h-4 w-4 text-green-600" aria-hidden="true" />
               {tp('Objectif net')}
             </div>
-            <p className="mt-1 text-xs text-gray-500">Le seuil de rentabilité est fixé à {money(PROFIT_TARGET)} par vente.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Le seuil de rentabilité est fixé à {money(PROFIT_TARGET)} par vente.</p>
           </div>
         </footer>
       </div>

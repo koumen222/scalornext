@@ -27,7 +27,7 @@ export default function Wizard({ accent = ACCENTS.image, steps = [], finalLabel,
   const goBack = () => setStep(s => Math.max(0, s - 1));
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-card rounded-3xl border border-border shadow-sm overflow-hidden">
       {/* Progression */}
       <div className="px-5 sm:px-6 pt-5 pb-4 border-b border-gray-50">
         <div className="flex items-center gap-2">
@@ -36,12 +36,12 @@ export default function Wizard({ accent = ACCENTS.image, steps = [], finalLabel,
             return (
               <React.Fragment key={i}>
                 <div className="flex items-center gap-2 shrink-0">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold transition-colors ${done ? `${accent.solid} text-white` : active ? `${accent.bg} ${accent.text} ring-2 ${accent.ring}` : 'bg-gray-100 text-gray-400'}`}>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold transition-colors ${done ? `${accent.solid} text-white` : active ? `${accent.bg} ${accent.text} ring-2 ${accent.ring}` : 'bg-muted text-muted-foreground'}`}>
                     {done ? <Check size={13} /> : i + 1}
                   </div>
-                  <span className={`text-[12px] font-semibold hidden md:block ${active ? 'text-gray-900' : done ? 'text-gray-500' : 'text-gray-400'}`}>{s.title}</span>
+                  <span className={`text-[12px] font-semibold hidden md:block ${active ? 'text-foreground' : done ? 'text-muted-foreground' : 'text-muted-foreground'}`}>{s.title}</span>
                 </div>
-                {i < last && <div className={`h-[2px] flex-1 rounded-full ${done ? accent.solid : 'bg-gray-100'}`} />}
+                {i < last && <div className={`h-[2px] flex-1 rounded-full ${done ? accent.solid : 'bg-muted'}`} />}
               </React.Fragment>
             );
           })}
@@ -51,8 +51,8 @@ export default function Wizard({ accent = ACCENTS.image, steps = [], finalLabel,
       {/* Contenu de l'étape */}
       <div className="p-5 sm:p-6">
         <div className="mb-4">
-          <h3 className="text-[15px] font-bold text-gray-900">{cur.title}</h3>
-          {cur.subtitle && <p className="text-[13px] text-gray-400 mt-0.5">{cur.subtitle}</p>}
+          <h3 className="text-[15px] font-bold text-foreground">{cur.title}</h3>
+          {cur.subtitle && <p className="text-[13px] text-muted-foreground mt-0.5">{cur.subtitle}</p>}
         </div>
         <div className="min-h-[180px]">{cur.content}</div>
       </div>
@@ -60,11 +60,11 @@ export default function Wizard({ accent = ACCENTS.image, steps = [], finalLabel,
       {/* Navigation */}
       <div className="px-5 sm:px-6 py-4 border-t border-gray-50 flex items-center justify-between gap-3">
         <button onClick={goBack} disabled={step === 0 || loading}
-          className="h-10 px-4 rounded-xl border border-gray-200 text-gray-600 text-[13px] font-medium inline-flex items-center gap-1.5 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">
+          className="h-10 px-4 rounded-xl border border-border text-muted-foreground text-[13px] font-medium inline-flex items-center gap-1.5 hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed">
           <ChevronLeft size={15} /> {tp('Retour')}
         </button>
         <div className="flex items-center gap-3">
-          <span className="text-[12px] text-gray-400 font-medium">{step + 1}/{steps.length}</span>
+          <span className="text-[12px] text-muted-foreground font-medium">{step + 1}/{steps.length}</span>
           <button onClick={goNext} disabled={!canNext || loading}
             className={`h-10 px-5 rounded-xl text-white text-[13px] font-semibold inline-flex items-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed ${accent.solid}`}>
             {loading

@@ -7,29 +7,29 @@ import { tp } from '../i18n/platform.js';
 const STATUSES = [
   { value: 'test',   label: 'Test',   color: 'text-amber-600'   },
   { value: 'scale',  label: 'Scale',  color: 'text-orange-600'  },
-  { value: 'stable', label: 'Stable', color: 'text-primary-700' },
-  { value: 'winner', label: 'Winner', color: 'text-primary-700' },
-  { value: 'pause',  label: 'Pause',  color: 'text-gray-500'    },
+  { value: 'stable', label: 'Stable', color: 'text-primary' },
+  { value: 'winner', label: 'Winner', color: 'text-primary' },
+  { value: 'pause',  label: 'Pause',  color: 'text-muted-foreground'    },
   { value: 'stop',   label: 'Stop',   color: 'text-red-600'     },
 ];
 
 const Field = ({ label, hint, required, children }) => (
   <div>
     <div className="flex items-baseline justify-between mb-1.5">
-      <label className="text-[13px] font-semibold text-gray-700">
+      <label className="text-[13px] font-semibold text-foreground">
         {label}{required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
-      {hint && <span className="text-[11px] text-gray-400">{hint}</span>}
+      {hint && <span className="text-[11px] text-muted-foreground">{hint}</span>}
     </div>
     {children}
   </div>
 );
 
-const inputCls = 'w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white transition placeholder:text-gray-400';
+const inputCls = 'w-full px-3 py-2.5 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-card transition placeholder:text-muted-foreground';
 
 const Skeleton = () => (
-  <div className="flex flex-col min-h-full bg-[#f8f9fb] animate-pulse">
-    <div className="bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-3">
+  <div className="flex flex-col min-h-full bg-background animate-pulse">
+    <div className="bg-card border-b border-border px-6 py-4 flex items-center gap-3">
       <div className="h-4 w-4 bg-gray-200 rounded" />
       <div className="h-5 w-48 bg-gray-200 rounded" />
     </div>
@@ -38,7 +38,7 @@ const Skeleton = () => (
         {[...Array(5)].map((_, i) => (
           <div key={i}>
             <div className="h-3 w-28 bg-gray-200 rounded mb-2" />
-            <div className="h-10 bg-gray-100 rounded-lg" />
+            <div className="h-10 bg-muted rounded-lg" />
           </div>
         ))}
       </div>
@@ -46,7 +46,7 @@ const Skeleton = () => (
   </div>
 );
 
-export default function ProductForm() {
+export default function ProductForm({ embedded = false } = {}) {
   const navigate = useNavigate();
   const { id }   = useParams();
   const { fmt, symbol } = useMoney();
@@ -121,31 +121,33 @@ export default function ProductForm() {
   if (initialLoading) return <Skeleton />;
 
   return (
-    <div className="flex flex-col min-h-full bg-[#f8f9fb]">
+    <div className={embedded ? 'flex flex-col' : 'flex flex-col min-h-full bg-background'}>
 
-      {/* ── Topbar ─────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-3">
+      {/* ── Topbar — masquée en mode embarqué (le modal fournit son en-tête) ── */}
+      {!embedded && (
+      <div className="bg-card border-b border-border px-6 py-4 flex items-center gap-3">
         <Link
           to="/ecom/products"
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
         <div>
-          <h1 className="text-[17px] font-bold text-gray-900 tracking-tight leading-none">
+          <h1 className="text-[17px] font-bold text-foreground tracking-tight leading-none">
             {isEditing ? 'Modifier le produit' : tp('Nouveau produit')}
           </h1>
-          <p className="text-xs text-gray-400 mt-0.5 leading-none">
+          <p className="text-xs text-muted-foreground mt-0.5 leading-none">
             {isEditing ? 'Mettre à jour les informations' : tp('Remplissez les champs ci-dessous')}
           </p>
         </div>
       </div>
+      )}
 
       {/* ── Contenu centré ─────────────────────────────────────── */}
-      <div className="flex-1 flex items-start justify-center px-4 py-8">
-        <div className="w-full max-w-xl">
+      <div className={embedded ? 'px-6 pt-5 pb-0' : 'flex-1 flex items-start justify-center px-4 py-8'}>
+        <div className={embedded ? 'w-full' : 'w-full max-w-xl mx-auto'}>
 
           {error && (
             <div className="flex gap-2.5 items-start bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-5">
@@ -159,9 +161,9 @@ export default function ProductForm() {
           <form onSubmit={handleSubmit} className="space-y-5">
 
             {/* ── Bloc Informations ─────────────────────────── */}
-            <section className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+            <section className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50">
-                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">{tp('Informations')}</h2>
+                <h2 className="text-[13px] font-bold text-foreground uppercase tracking-wide">{tp('Informations')}</h2>
               </div>
               <div className="px-5 py-4 space-y-4">
                 <Field label="Nom du produit" required>
@@ -185,8 +187,8 @@ export default function ProductForm() {
                         onClick={() => setForm(p => ({ ...p, status: s.value }))}
                         className={`py-2 rounded-lg text-[12px] font-semibold border transition-all ${
                           form.status === s.value
-                            ? 'border-primary-500 bg-primary-50 text-primary-700 ring-2 ring-primary-200'
-                            : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100'
+                            ? 'border-primary-500 bg-primary-50 text-primary ring-2 ring-primary-200'
+                            : 'border-border bg-background text-muted-foreground hover:border-gray-300 hover:bg-muted'
                         }`}
                       >
                         {s.label}
@@ -201,11 +203,11 @@ export default function ProductForm() {
                     role="switch"
                     aria-checked={form.isActive}
                     onClick={() => setForm(p => ({ ...p, isActive: !p.isActive }))}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${form.isActive ? 'bg-primary-500' : 'bg-gray-300'}`}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${form.isActive ? 'bg-primary' : 'bg-gray-300'}`}
                   >
-                    <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform ${form.isActive ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+                    <span className={`inline-block h-3.5 w-3.5 rounded-full bg-card shadow transition-transform ${form.isActive ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
                   </button>
-                  <span className="text-sm text-gray-700 font-medium">
+                  <span className="text-sm text-foreground font-medium">
                     {form.isActive ? 'Produit actif' : tp('Produit inactif')}
                   </span>
                 </div>
@@ -213,9 +215,9 @@ export default function ProductForm() {
             </section>
 
             {/* ── Bloc Finances ─────────────────────────────── */}
-            <section className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+            <section className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50">
-                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">{tp('Finance')}</h2>
+                <h2 className="text-[13px] font-bold text-foreground uppercase tracking-wide">{tp('Finance')}</h2>
               </div>
               <div className="px-5 py-4 space-y-4">
                 <Field label="Coût du produit" required hint={`en ${symbol}`}>
@@ -249,7 +251,7 @@ export default function ProductForm() {
                       <button
                         type="button"
                         onClick={applySuggested}
-                        className="shrink-0 px-3 py-2.5 bg-primary-50 hover:bg-primary-100 border border-primary-200 text-primary-700 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap"
+                        className="shrink-0 px-3 py-2.5 bg-primary-50 hover:bg-primary-100 border border-primary-200 text-primary text-xs font-semibold rounded-lg transition-colors whitespace-nowrap"
                         title={tp('Appliquer le prix suggéré')}
                       >
                         {fmt(suggested)} →
@@ -257,7 +259,7 @@ export default function ProductForm() {
                     )}
                   </div>
                   {suggested && (
-                    <p className="mt-1.5 text-[11px] text-gray-400">
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
                       Prix conseillé basé sur le coût × {cost < 10000 ? '3' : '2,25'}
                     </p>
                   )}
@@ -269,17 +271,17 @@ export default function ProductForm() {
                     (benefit ?? 0) > 0 ? 'bg-primary-50 border border-primary-100' : 'bg-red-50 border border-red-100'
                   }`}>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-[11px] font-semibold uppercase tracking-wide ${(benefit ?? 0) > 0 ? 'text-primary-600' : 'text-red-500'}`}>
+                      <p className={`text-[11px] font-semibold uppercase tracking-wide ${(benefit ?? 0) > 0 ? 'text-primary' : 'text-red-500'}`}>
                         {tp('Bénéfice estimé')}
                       </p>
-                      <p className={`text-2xl font-bold tabular-nums leading-tight ${(benefit ?? 0) > 0 ? 'text-primary-700' : 'text-red-600'}`}>
+                      <p className={`text-2xl font-bold tabular-nums leading-tight ${(benefit ?? 0) > 0 ? 'text-primary' : 'text-red-600'}`}>
                         {benefit !== null ? `${(benefit > 0 ? '+' : '')}${fmt(benefit)}` : '—'}
                       </p>
                     </div>
                     {margin !== null && (
                       <div className="text-right shrink-0">
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{tp('Marge')}</p>
-                        <p className={`text-2xl font-bold tabular-nums ${(benefit ?? 0) > 0 ? 'text-primary-700' : 'text-red-600'}`}>
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{tp('Marge')}</p>
+                        <p className={`text-2xl font-bold tabular-nums ${(benefit ?? 0) > 0 ? 'text-primary' : 'text-red-600'}`}>
                           {margin}%
                         </p>
                       </div>
@@ -290,9 +292,9 @@ export default function ProductForm() {
             </section>
 
             {/* ── Bloc Stock ────────────────────────────────── */}
-            <section className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+            <section className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50">
-                <h2 className="text-[13px] font-bold text-gray-700 uppercase tracking-wide">{tp('Stock')}</h2>
+                <h2 className="text-[13px] font-bold text-foreground uppercase tracking-wide">{tp('Stock')}</h2>
               </div>
               <div className="px-5 py-4 grid grid-cols-2 gap-4">
                 <Field label="Quantité en stock" required>
@@ -322,19 +324,21 @@ export default function ProductForm() {
               </div>
             </section>
 
-            {/* ── Actions ───────────────────────────────────── */}
-            <div className="flex gap-3 pt-1">
+            {/* ── Actions — pied sticky en modal (façon Goals) ──────── */}
+            <div className={embedded
+              ? 'sticky bottom-0 z-10 -mx-6 mt-2 px-6 py-3.5 bg-background border-t border-border flex gap-3'
+              : 'flex gap-3 pt-1'}>
               <button
                 type="button"
                 onClick={() => navigate('/ecom/products')}
-                className="flex-1 py-2.5 text-sm font-semibold text-gray-600 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl transition-colors"
+                className="flex-1 py-2.5 text-sm font-semibold text-muted-foreground bg-card hover:bg-background border border-border rounded-lg transition-colors"
               >
                 {tp('Annuler')}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-sm shadow-primary-200 transition-all active:scale-95"
+                className="flex-1 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-sm shadow-primary-200 transition-all active:scale-95"
               >
                 {loading
                   ? (isEditing ? 'Enregistrement…' : 'Création…')

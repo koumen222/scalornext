@@ -6,11 +6,16 @@ const nextConfig: NextConfig = {
   // d'images IA peut durer 2-3 min — on aligne le timeout du proxy dessus.
   experimental: {
     proxyTimeout: 300_000,
+    // Par défaut le proxy dev ne bufferise que 10 Mo du corps → les uploads
+    // vidéo (traduction/doublage, jusqu'à 200 Mo côté backend multer) étaient
+    // tronqués. On relève la limite. (Next 15 : middlewareClientMaxBodySize ;
+    // renommé proxyClientMaxBodySize en Next 16.)
+    middlewareClientMaxBodySize: '250mb',
   },
   // NEXT_USE_WASM_SWC=1 : force le binding SWC WASM (utile en CI/sandbox où le
   // binaire natif n'est pas utilisable). Sans effet en usage normal.
   ...(process.env.NEXT_USE_WASM_SWC === '1'
-    ? { experimental: { cpus: 1, workerThreads: false, useWasmBinary: true, proxyTimeout: 300_000 } }
+    ? { experimental: { cpus: 1, workerThreads: false, useWasmBinary: true, proxyTimeout: 300_000, middlewareClientMaxBodySize: '250mb' } }
     : {}),
   // NEXT_SKIP_TYPECHECK=1 : saute le type-check pendant `next build` (sandbox CI
   // à fenêtre courte uniquement — `npx tsc --noEmit` est alors exécuté à part).

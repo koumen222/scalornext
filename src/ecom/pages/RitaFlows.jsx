@@ -62,9 +62,9 @@ function ConditionEditor({ cond, onChange }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs font-semibold text-gray-500 uppercase">SI</span>
+      <span className="text-xs font-semibold text-muted-foreground uppercase">SI</span>
       <select value={cond.type} onChange={e => onChange({ ...cond, type: e.target.value, value: null })}
-        className="text-sm border rounded-lg px-2 py-1.5 bg-white">
+        className="text-sm border rounded-lg px-2 py-1.5 bg-card">
         {CONDITION_TYPES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
       </select>
       {needsArray && (
@@ -83,7 +83,7 @@ function ConditionEditor({ cond, onChange }) {
           value={cond.value || ''} onChange={e => onChange({ ...cond, value: e.target.value })}
           className="text-sm border rounded-lg px-2 py-1.5 flex-1" />
       )}
-      {noValue && <span className="text-xs text-gray-400 italic">{tp('(pas de valeur requise)')}</span>}
+      {noValue && <span className="text-xs text-muted-foreground italic">{tp('(pas de valeur requise)')}</span>}
     </div>
   );
 }
@@ -97,9 +97,9 @@ function ActionEditor({ action, onChange, groups }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 pl-6 border-l-2 border-primary-200">
-      <span className="text-xs font-semibold text-primary-600 uppercase">ALORS</span>
+      <span className="text-xs font-semibold text-primary uppercase">ALORS</span>
       <select value={action.type} onChange={e => onChange({ ...action, type: e.target.value })}
-        className="text-sm border rounded-lg px-2 py-1.5 bg-white">
+        className="text-sm border rounded-lg px-2 py-1.5 bg-card">
         {ACTION_TYPES.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
       </select>
       {needsGroup && (
@@ -143,9 +143,9 @@ function RuleEditor({ rule, index, onChange, onRemove, groups }) {
   const removeAction = i => onChange({ ...rule, actions: rule.actions.filter((_, j) => j !== i) });
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+    <div className="bg-background border border-border rounded-xl p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-bold text-gray-700">Règle {index + 1}</span>
+        <span className="text-sm font-bold text-foreground">Règle {index + 1}</span>
         <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700">{tp('✕ Supprimer')}</button>
       </div>
       <ConditionEditor cond={rule.condition} onChange={updateCondition} />
@@ -155,7 +155,7 @@ function RuleEditor({ rule, index, onChange, onRemove, groups }) {
           {rule.actions.length > 1 && <button onClick={() => removeAction(i)} className="text-xs text-red-400 mt-2">✕</button>}
         </div>
       ))}
-      <button onClick={addAction} className="text-xs text-primary-600 font-medium hover:underline">{tp('+ Ajouter une action')}</button>
+      <button onClick={addAction} className="text-xs text-primary font-medium hover:underline">{tp('+ Ajouter une action')}</button>
     </div>
   );
 }
@@ -173,13 +173,13 @@ function FlowEditor({ flow, index, onChange, onRemove, groups }) {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm">
+    <div className="bg-card border border-border rounded-2xl p-5 space-y-4 shadow-sm">
       <div className="flex items-center gap-3">
         <input type="text" value={flow.name} onChange={e => update('name', e.target.value)}
           className="text-lg font-bold border-b border-transparent hover:border-gray-300 focus:border-primary-500 outline-none flex-1 bg-transparent" />
         <label className="flex items-center gap-1.5 text-sm">
           <input type="checkbox" checked={flow.enabled} onChange={e => update('enabled', e.target.checked)}
-            className="w-4 h-4 rounded text-primary-600" />
+            className="w-4 h-4 rounded text-primary" />
           {tp('Actif')}
         </label>
         <button onClick={onRemove} className="text-xs text-red-500 hover:text-red-700 font-medium">{tp('Supprimer')}</button>
@@ -187,13 +187,13 @@ function FlowEditor({ flow, index, onChange, onRemove, groups }) {
 
       {/* Triggers */}
       <div>
-        <span className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">{tp('Déclencheurs')}</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase block mb-1.5">{tp('Déclencheurs')}</span>
         <div className="flex flex-wrap gap-2">
           {TRIGGER_TYPES.map(t => (
             <button key={t.value} onClick={() => toggleTrigger(t.value)}
               className={`text-xs px-3 py-1.5 rounded-full border transition ${flow.triggers.includes(t.value)
-                ? 'bg-primary-50 border-primary-300 text-primary-700 font-semibold'
-                : 'bg-white border-gray-200 text-gray-500'}`}>
+                ? 'bg-primary-50 border-primary-300 text-primary font-semibold'
+                : 'bg-card border-border text-muted-foreground'}`}>
               {t.label}
             </button>
           ))}
@@ -202,11 +202,11 @@ function FlowEditor({ flow, index, onChange, onRemove, groups }) {
 
       {/* Rules */}
       <div className="space-y-3">
-        <span className="text-xs font-semibold text-gray-500 uppercase">{tp('Règles (évaluées dans l\'ordre)')}</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase">{tp('Règles (évaluées dans l\'ordre)')}</span>
         {flow.rules.map((rule, i) => (
           <RuleEditor key={i} rule={rule} index={i} onChange={r => updateRule(i, r)} onRemove={() => removeRule(i)} groups={groups} />
         ))}
-        <button onClick={addRule} className="text-sm text-primary-600 font-medium hover:underline">{tp('+ Ajouter une règle')}</button>
+        <button onClick={addRule} className="text-sm text-primary font-medium hover:underline">{tp('+ Ajouter une règle')}</button>
       </div>
     </div>
   );
@@ -221,10 +221,10 @@ function ScheduledPostRow({ post, index, onChange, onRemove, products }) {
   };
 
   return (
-    <div className="bg-gray-50 border rounded-xl p-3 space-y-2">
+    <div className="bg-background border rounded-xl p-3 space-y-2">
       <div className="flex items-center gap-2 justify-between">
         <select value={post.type} onChange={e => update('type', e.target.value)}
-          className="text-sm border rounded-lg px-2 py-1 bg-white">
+          className="text-sm border rounded-lg px-2 py-1 bg-card">
           <option value="text">{tp('📝 Texte')}</option>
           <option value="image">{tp('🖼️ Image (URL)')}</option>
           <option value="product">{tp('🛍️ Produit')}</option>
@@ -249,7 +249,7 @@ function ScheduledPostRow({ post, index, onChange, onRemove, products }) {
       )}
       {post.type === 'product' && (
         <select value={post.productName || ''} onChange={e => update('productName', e.target.value)}
-          className="w-full text-sm border rounded-lg px-2 py-1.5 bg-white">
+          className="w-full text-sm border rounded-lg px-2 py-1.5 bg-card">
           <option value="">{tp('— Choisir un produit —')}</option>
           {products.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
@@ -258,7 +258,7 @@ function ScheduledPostRow({ post, index, onChange, onRemove, products }) {
       <div className="flex flex-wrap gap-1">
         {DAYS.map(d => (
           <button key={d} onClick={() => toggleDay(d)}
-            className={`text-[11px] px-2 py-0.5 rounded-full border transition ${(post.days || []).includes(d) ? 'bg-primary-50 border-primary-300 text-primary-700 font-semibold' : 'bg-white border-gray-200 text-gray-400'}`}>
+            className={`text-[11px] px-2 py-0.5 rounded-full border transition ${(post.days || []).includes(d) ? 'bg-primary-50 border-primary-300 text-primary font-semibold' : 'bg-card border-border text-muted-foreground'}`}>
             {d.slice(0, 3)}
           </button>
         ))}
@@ -377,38 +377,38 @@ export default function RitaFlows() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">{tp('🔄 Rita Flows')}</h1>
-          <p className="text-sm text-gray-500 mt-1">{tp('Qualification automatique, groupes WhatsApp, animation')}</p>
+          <h1 className="text-2xl font-extrabold text-foreground">{tp('🔄 Rita Flows')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{tp('Qualification automatique, groupes WhatsApp, animation')}</p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 bg-gray-100 rounded-xl px-4 py-2">
+          <label className="flex items-center gap-2 bg-muted rounded-xl px-4 py-2">
             <input type="checkbox" checked={config.enabled} onChange={e => updateConfig('enabled', e.target.checked)}
-              className="w-4 h-4 rounded text-primary-600" />
+              className="w-4 h-4 rounded text-primary" />
             <span className="text-sm font-semibold">{config.enabled ? 'Activé' : tp('Désactivé')}</span>
           </label>
           <button onClick={save} disabled={saving}
-            className="px-5 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition">
+            className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition">
             {saving ? 'Enregistrement...' : '💾 Sauvegarder'}
           </button>
         </div>
       </div>
 
       {saveMsg && (
-        <div className={`text-sm px-4 py-2 rounded-xl ${saveMsg.ok ? 'bg-primary-50 text-primary-700' : 'bg-red-50 text-red-700'}`}>
+        <div className={`text-sm px-4 py-2 rounded-xl ${saveMsg.ok ? 'bg-primary-50 text-primary' : 'bg-red-50 text-red-700'}`}>
           {saveMsg.text}
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      <div className="flex gap-1 bg-muted rounded-xl p-1">
         {[
           { id: 'flows', label: '🔄 Flows', count: config.flows?.length || 0 },
           { id: 'groups', label: '👥 Groupes', count: config.groups?.length || 0 },
           { id: 'settings', get label() { return tp('⚙️ Paramètres'); } },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`flex-1 text-sm font-semibold py-2.5 rounded-lg transition ${tab === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            {t.label} {t.count !== undefined && <span className="ml-1 text-xs bg-gray-200 text-gray-600 rounded-full px-1.5 py-0.5">{t.count}</span>}
+            className={`flex-1 text-sm font-semibold py-2.5 rounded-lg transition ${tab === t.id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+            {t.label} {t.count !== undefined && <span className="ml-1 text-xs bg-gray-200 text-muted-foreground rounded-full px-1.5 py-0.5">{t.count}</span>}
           </button>
         ))}
       </div>
@@ -417,7 +417,7 @@ export default function RitaFlows() {
       {tab === 'flows' && (
         <div className="space-y-4">
           {!config.flows?.length && (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-muted-foreground">
               <p className="text-4xl mb-3">🔄</p>
               <p className="text-sm">{tp('Aucun flow configuré. Crée ton premier flow !')}</p>
             </div>
@@ -427,7 +427,7 @@ export default function RitaFlows() {
               onChange={f => updateFlow(i, f)} onRemove={() => removeFlow(i)} groups={whatsappGroups} />
           ))}
           <button onClick={addFlow}
-            className="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 text-sm font-semibold text-gray-500 hover:border-primary-400 hover:text-primary-600 transition">
+            className="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 text-sm font-semibold text-muted-foreground hover:border-primary-400 hover:text-primary transition">
             + Nouveau flow
           </button>
         </div>
@@ -437,43 +437,43 @@ export default function RitaFlows() {
       {tab === 'groups' && (
         <div className="space-y-4">
           {/* Créer un groupe */}
-          <div className="bg-white border rounded-2xl p-4 space-y-3">
-            <h3 className="text-sm font-bold text-gray-700">{tp('➕ Créer un nouveau groupe WhatsApp')}</h3>
+          <div className="bg-card border rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-foreground">{tp('➕ Créer un nouveau groupe WhatsApp')}</h3>
             <div className="flex gap-2">
               <input type="text" value={newGroupName} onChange={e => setNewGroupName(e.target.value)}
                 placeholder={tp('Nom du groupe (ex: 🛒 Clients VIP)')}
                 className="flex-1 text-sm border rounded-lg px-3 py-2" />
               <button onClick={createGroup} disabled={creatingGroup || !newGroupName.trim()}
-                className="px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition whitespace-nowrap">
+                className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition whitespace-nowrap">
                 {creatingGroup ? 'Création...' : tp('Créer')}
               </button>
             </div>
           </div>
 
           {/* Groupes existants sur l'appareil */}
-          <div className="bg-white border rounded-2xl p-4 space-y-3">
-            <h3 className="text-sm font-bold text-gray-700">📱 Groupes disponibles sur WhatsApp ({whatsappGroups.length})</h3>
+          <div className="bg-card border rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-foreground">📱 Groupes disponibles sur WhatsApp ({whatsappGroups.length})</h3>
             {whatsappGroups.length === 0 && (
-              <p className="text-xs text-gray-400">{tp('Aucun groupe trouvé sur l\'instance WhatsApp.')}</p>
+              <p className="text-xs text-muted-foreground">{tp('Aucun groupe trouvé sur l\'instance WhatsApp.')}</p>
             )}
             <div className="grid gap-2 max-h-60 overflow-y-auto">
               {whatsappGroups.map(g => (
-                <div key={g.id} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                <div key={g.id} className="flex items-center justify-between bg-background rounded-lg px-3 py-2">
                   <div>
                     <span className="text-sm font-medium">{g.name}</span>
-                    <span className="text-xs text-gray-400 ml-2">{g.participants} membres</span>
+                    <span className="text-xs text-muted-foreground ml-2">{g.participants} membres</span>
                   </div>
-                  <span className="text-[10px] text-gray-400 font-mono">{g.id?.slice(0, 20)}…</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">{g.id?.slice(0, 20)}…</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Groupes gérés avec animation */}
-          <div className="bg-white border rounded-2xl p-4 space-y-4">
-            <h3 className="text-sm font-bold text-gray-700">📢 Groupes gérés & Animation</h3>
+          <div className="bg-card border rounded-2xl p-4 space-y-4">
+            <h3 className="text-sm font-bold text-foreground">📢 Groupes gérés & Animation</h3>
             {!config.groups?.length && (
-              <p className="text-xs text-gray-400">{tp('Crée un groupe ou ajoute-le à tes flows pour le voir ici.')}</p>
+              <p className="text-xs text-muted-foreground">{tp('Crée un groupe ou ajoute-le à tes flows pour le voir ici.')}</p>
             )}
             {config.groups?.map((group, gi) => (
               <div key={gi} className="border rounded-xl p-4 space-y-3">
@@ -481,22 +481,22 @@ export default function RitaFlows() {
                   <div>
                     <h4 className="text-sm font-bold">{group.name || group.groupJid}</h4>
                     {group.inviteUrl && (
-                      <a href={group.inviteUrl} target="_blank" rel="noreferrer" className="text-xs text-primary-600 hover:underline">
+                      <a href={group.inviteUrl} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">
                         🔗 {group.inviteUrl}
                       </a>
                     )}
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">{group.role}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{group.role}</span>
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold text-gray-500 uppercase">{tp('Posts planifiés')}</span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase">{tp('Posts planifiés')}</span>
                   {(group.scheduledPosts || []).map((post, pi) => (
                     <ScheduledPostRow key={pi} post={post} index={pi} products={products}
                       onChange={p => updateScheduledPost(gi, pi, p)} onRemove={() => removeScheduledPost(gi, pi)} />
                   ))}
                   <button onClick={() => addScheduledPost(gi)}
-                    className="text-xs text-primary-600 font-medium hover:underline">
+                    className="text-xs text-primary font-medium hover:underline">
                     + Ajouter un post planifié
                   </button>
                 </div>
@@ -508,34 +508,34 @@ export default function RitaFlows() {
 
       {/* ═══ Settings Tab ═══ */}
       {tab === 'settings' && (
-        <div className="bg-white border rounded-2xl p-5 space-y-5">
-          <h3 className="text-sm font-bold text-gray-700">{tp('⚙️ Paramètres globaux')}</h3>
+        <div className="bg-card border rounded-2xl p-5 space-y-5">
+          <h3 className="text-sm font-bold text-foreground">{tp('⚙️ Paramètres globaux')}</h3>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">{tp('Inactivité par défaut (secondes)')}</label>
+              <label className="text-sm font-medium text-foreground">{tp('Inactivité par défaut (secondes)')}</label>
               <input type="number" value={config.settings?.defaultInactivitySeconds || 3600}
                 onChange={e => updateSettings('defaultInactivitySeconds', Number(e.target.value) || 3600)}
                 className="mt-1 w-full text-sm border rounded-lg px-3 py-2" />
-              <p className="text-xs text-gray-400 mt-1">{tp('Durée sans message avant de considérer le client comme inactif')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{tp('Durée sans message avant de considérer le client comme inactif')}</p>
             </div>
 
             <div className="flex items-center gap-3">
               <input type="checkbox" checked={config.settings?.autoCreateGroupPerProduct || false}
                 onChange={e => updateSettings('autoCreateGroupPerProduct', e.target.checked)}
-                className="w-4 h-4 rounded text-primary-600" />
+                className="w-4 h-4 rounded text-primary" />
               <div>
-                <span className="text-sm font-medium text-gray-700">{tp('Créer un groupe automatiquement par produit')}</span>
-                <p className="text-xs text-gray-400">{tp('Quand une commande est confirmée, Rita crée un groupe pour ce produit')}</p>
+                <span className="text-sm font-medium text-foreground">{tp('Créer un groupe automatiquement par produit')}</span>
+                <p className="text-xs text-muted-foreground">{tp('Quand une commande est confirmée, Rita crée un groupe pour ce produit')}</p>
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">{tp('Template nom de groupe')}</label>
+              <label className="text-sm font-medium text-foreground">{tp('Template nom de groupe')}</label>
               <input type="text" value={config.settings?.groupNameTemplate || '🛒 {productName} — Clients'}
                 onChange={e => updateSettings('groupNameTemplate', e.target.value)}
                 className="mt-1 w-full text-sm border rounded-lg px-3 py-2" />
-              <p className="text-xs text-gray-400 mt-1">Utilise {'{productName}'} pour insérer le nom du produit</p>
+              <p className="text-xs text-muted-foreground mt-1">Utilise {'{productName}'} pour insérer le nom du produit</p>
             </div>
           </div>
         </div>

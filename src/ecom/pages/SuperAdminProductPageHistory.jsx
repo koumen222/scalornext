@@ -58,7 +58,7 @@ function Badge({ bg, color, children }) {
 
 function KpiCard({ label, value, icon: Icon, color }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
+    <div className="bg-card rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
       <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
         style={{ background: color + '18' }}>
         <Icon size={22} style={{ color }} />
@@ -73,7 +73,7 @@ function KpiCard({ label, value, icon: Icon, color }) {
 
 function StatusMiniCard({ label, value, icon: Icon, color }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+    <div className="bg-card rounded-2xl shadow-sm border border-slate-200 p-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
         <Icon size={15} style={{ color }} />
@@ -142,14 +142,14 @@ const SuperAdminProductPageHistory = () => {
   ];
 
   const rangeActions = (
-    <div className="flex gap-1 bg-white/10 rounded-xl p-1">
+    <div className="flex gap-1 bg-card/10 rounded-xl p-1">
       {RANGES.map((range) => (
         <button
           key={range.value}
           onClick={() => setDays(range.value)}
           className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
             days === range.value
-              ? 'bg-white text-slate-900 shadow-sm'
+              ? 'bg-card text-slate-900 shadow-sm'
               : 'text-slate-300 hover:text-white'
           }`}
         >
@@ -194,7 +194,7 @@ const SuperAdminProductPageHistory = () => {
           {/* Users + Content type panels */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
             {/* Top users */}
-            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+            <div className="lg:col-span-2 bg-card rounded-2xl shadow-sm border border-slate-200 p-5">
               <h2 className="text-sm font-bold text-slate-900 mb-4">{tp('Top utilisateurs generateurs')}</h2>
               {generationUsers.length === 0 ? (
                 <p className="text-sm text-slate-400">{tp('Aucune donnee')}</p>
@@ -218,7 +218,7 @@ const SuperAdminProductPageHistory = () => {
                       <div className="text-xs text-slate-400">{user.email || tp('Email inconnu')} · {user.workspaceCount || 0} workspace{(user.workspaceCount || 0) > 1 ? 's' : ''}</div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="text-sm font-bold text-primary-700">{user.generationCount || 0}</div>
+                      <div className="text-sm font-bold text-primary">{user.generationCount || 0}</div>
                       <div className="text-xs text-slate-400">{user.creditsUsed || 0} credit{(user.creditsUsed || 0) > 1 ? 's' : ''}</div>
                     </div>
                   </button>
@@ -227,7 +227,7 @@ const SuperAdminProductPageHistory = () => {
             </div>
 
             {/* Content types */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+            <div className="bg-card rounded-2xl shadow-sm border border-slate-200 p-5">
               <h2 className="text-sm font-bold text-slate-900 mb-4">{tp('Types de contenu')}</h2>
               {generationContentTypes.length === 0 ? (
                 <p className="text-sm text-slate-400">{tp('Aucune donnee')}</p>
@@ -245,7 +245,7 @@ const SuperAdminProductPageHistory = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-4">
+          <div className="bg-card rounded-2xl shadow-sm border border-slate-200 p-4 mb-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="relative sm:col-span-1">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -289,7 +289,7 @@ const SuperAdminProductPageHistory = () => {
           {/* Generation history cards */}
           <div className="space-y-3">
             {filteredGenerationHistory.length === 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-10 text-center">
+              <div className="bg-card rounded-2xl shadow-sm border border-slate-200 p-10 text-center">
                 <FileText size={32} className="mx-auto mb-3 text-slate-300" />
                 <p className="text-sm text-slate-400 font-medium">{tp('Aucune generation ne correspond aux filtres.')}</p>
               </div>
@@ -302,7 +302,7 @@ const SuperAdminProductPageHistory = () => {
               const contentTypes = (item.generatedContentTypes || []).slice(0, 4);
 
               return (
-                <div key={item._id} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:bg-slate-50 transition-colors">
+                <div key={item._id} className="bg-card rounded-2xl shadow-sm border border-slate-200 p-5 hover:bg-slate-50 transition-colors">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div className="flex-1 min-w-0" style={{ minWidth: 260 }}>
                       {/* Title + badges */}

@@ -23,30 +23,30 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
   };
 
   return (
-    <div className="bg-white border rounded-xl p-4 space-y-3 shadow-sm">
+    <div className="bg-card border rounded-xl p-4 space-y-3 shadow-sm">
       <div className="flex items-center gap-3 flex-wrap">
         <select value={post.type} onChange={e => update('type', e.target.value)}
-          className="text-sm border rounded-lg px-3 py-1.5 bg-gray-50 font-medium">
+          className="text-sm border rounded-lg px-3 py-1.5 bg-background font-medium">
           <option value="text">{tp('📝 Texte')}</option>
           <option value="image">{tp('🖼️ Image (URL)')}</option>
           <option value="product">{tp('🛍️ Produit')}</option>
         </select>
 
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-gray-500">⏰</span>
+          <span className="text-xs text-muted-foreground">⏰</span>
           <input type="time" value={post.hour || '09:00'} onChange={e => update('hour', e.target.value)}
             className="text-sm border rounded-lg px-2 py-1.5" />
         </div>
 
         <label className="flex items-center gap-1.5 cursor-pointer ml-auto">
-          <div className={`relative w-9 h-5 rounded-full transition ${post.enabled !== false ? 'bg-primary-500' : 'bg-gray-300'}`}>
-            <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${post.enabled !== false ? 'translate-x-4' : 'translate-x-0.5'}`} />
+          <div className={`relative w-9 h-5 rounded-full transition ${post.enabled !== false ? 'bg-primary' : 'bg-gray-300'}`}>
+            <div className={`absolute top-0.5 w-4 h-4 bg-card rounded-full shadow transition-transform ${post.enabled !== false ? 'translate-x-4' : 'translate-x-0.5'}`} />
           </div>
           <input type="checkbox" checked={post.enabled !== false} onChange={e => update('enabled', e.target.checked)} className="sr-only" />
-          <span className="text-xs font-medium text-gray-600">{post.enabled !== false ? 'Actif' : tp('Pause')}</span>
+          <span className="text-xs font-medium text-muted-foreground">{post.enabled !== false ? 'Actif' : tp('Pause')}</span>
         </label>
 
-        <button onClick={onRemove} className="text-gray-400 hover:text-red-500 transition p-1" title={tp('Supprimer')}>
+        <button onClick={onRemove} className="text-muted-foreground hover:text-red-500 transition p-1" title={tp('Supprimer')}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
         </button>
       </div>
@@ -70,7 +70,7 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
       )}
       {post.type === 'product' && (
         <select value={post.productName || ''} onChange={e => update('productName', e.target.value)}
-          className="w-full text-sm border rounded-lg px-3 py-1.5 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400">
+          className="w-full text-sm border rounded-lg px-3 py-1.5 bg-background focus:ring-2 focus:ring-primary-200 focus:border-primary-400">
           <option value="">{tp('— Choisir un produit du catalogue —')}</option>
           {products.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
@@ -78,24 +78,24 @@ function ScheduledPostEditor({ post, onChange, onRemove, products }) {
 
       {/* Jours de la semaine */}
       <div>
-        <span className="text-xs font-medium text-gray-500 mb-1 block">{tp('Jours d\'envoi :')}</span>
+        <span className="text-xs font-medium text-muted-foreground mb-1 block">{tp('Jours d\'envoi :')}</span>
         <div className="flex flex-wrap gap-1.5">
           {DAYS.map(d => (
             <button key={d} onClick={() => toggleDay(d)}
-              className={`text-xs px-2.5 py-1 rounded-full border transition font-medium ${(post.days || []).includes(d) ? 'bg-primary-50 border-primary-400 text-primary-700' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'}`}>
+              className={`text-xs px-2.5 py-1 rounded-full border transition font-medium ${(post.days || []).includes(d) ? 'bg-primary-50 border-primary-400 text-primary' : 'bg-card border-border text-muted-foreground hover:border-gray-300'}`}>
               {d.charAt(0).toUpperCase() + d.slice(1, 3)}
             </button>
           ))}
           <button onClick={() => update('days', DAYS.slice())}
-            className="text-[10px] px-2 py-0.5 text-primary-600 hover:underline font-medium">{tp('Tous')}</button>
+            className="text-[10px] px-2 py-0.5 text-primary hover:underline font-medium">{tp('Tous')}</button>
           <button onClick={() => update('days', [])}
-            className="text-[10px] px-2 py-0.5 text-gray-400 hover:underline font-medium">{tp('Aucun')}</button>
+            className="text-[10px] px-2 py-0.5 text-muted-foreground hover:underline font-medium">{tp('Aucun')}</button>
         </div>
       </div>
 
       {/* Résumé */}
       {post.days?.length > 0 && (
-        <p className="text-[11px] text-gray-400 italic">
+        <p className="text-[11px] text-muted-foreground italic">
           📅 Envoi à {post.hour || '09:00'} — {post.days.length === 7 ? 'Tous les jours' : post.days.join(', ')}
         </p>
       )}
@@ -130,25 +130,25 @@ function ManagedGroupCard({ group, groupIndex, onUpdate, products, onCopyInvite,
   const activeCount = (group.scheduledPosts || []).filter(p => p.enabled !== false).length;
 
   return (
-    <div className="bg-white border rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-card border rounded-2xl shadow-sm overflow-hidden">
       {/* Header du groupe */}
-      <div className="px-5 py-4 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition"
+      <div className="px-5 py-4 flex items-center gap-3 cursor-pointer hover:bg-background transition"
         onClick={() => setExpanded(e => !e)}>
         <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-lg flex-shrink-0">
           {group.role === 'clients' ? '🛒' : group.role === 'prospects' ? '🎯' : group.role === 'vip' ? '⭐' : '👥'}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-bold text-gray-900 truncate">{group.name || group.groupJid}</h3>
+          <h3 className="text-sm font-bold text-foreground truncate">{group.name || group.groupJid}</h3>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${group.role === 'vip' ? 'bg-amber-50 text-amber-700' : group.role === 'clients' ? 'bg-primary-50 text-primary-700' : group.role === 'prospects' ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${group.role === 'vip' ? 'bg-amber-50 text-amber-700' : group.role === 'clients' ? 'bg-primary-50 text-primary' : group.role === 'prospects' ? 'bg-blue-50 text-blue-700' : 'bg-muted text-muted-foreground'}`}>
               {ROLES.find(r => r.value === group.role)?.label || group.role}
             </span>
-            <span className="text-[10px] text-gray-400">
+            <span className="text-[10px] text-muted-foreground">
               {postsCount} post{postsCount > 1 ? 's' : ''} • {activeCount} actif{activeCount > 1 ? 's' : ''}
             </span>
           </div>
         </div>
-        <svg className={`w-5 h-5 text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`w-5 h-5 text-muted-foreground transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </div>
@@ -158,18 +158,18 @@ function ManagedGroupCard({ group, groupIndex, onUpdate, products, onCopyInvite,
           {/* Actions rapides */}
           <div className="flex flex-wrap gap-2 pt-3">
             <select value={group.role} onChange={e => updateGroup('role', e.target.value)}
-              className="text-xs border rounded-lg px-2 py-1.5 bg-gray-50 font-medium">
+              className="text-xs border rounded-lg px-2 py-1.5 bg-background font-medium">
               {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
 
             {group.inviteUrl ? (
               <button onClick={() => onCopyInvite(group.inviteUrl)}
-                className="text-xs px-3 py-1.5 rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 transition font-medium">
+                className="text-xs px-3 py-1.5 rounded-lg border border-primary-200 text-primary hover:bg-primary-50 transition font-medium">
                 📋 Copier le lien d'invitation
               </button>
             ) : (
               <button onClick={() => onRefreshInvite(group.groupJid, groupIndex)}
-                className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition font-medium">
+                className="text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:bg-background transition font-medium">
                 🔗 Générer lien d'invitation
               </button>
             )}
@@ -183,28 +183,28 @@ function ManagedGroupCard({ group, groupIndex, onUpdate, products, onCopyInvite,
           {/* Invite URL */}
           {group.inviteUrl && (
             <div className="flex items-center gap-2 bg-primary-50 rounded-lg px-3 py-2">
-              <span className="text-xs text-primary-600 truncate flex-1">{group.inviteUrl}</span>
+              <span className="text-xs text-primary truncate flex-1">{group.inviteUrl}</span>
               <button onClick={() => onRefreshInvite(group.groupJid, groupIndex)}
-                className="text-[10px] text-primary-700 hover:underline font-medium whitespace-nowrap">{tp('🔄 Régénérer')}</button>
+                className="text-[10px] text-primary hover:underline font-medium whitespace-nowrap">{tp('🔄 Régénérer')}</button>
             </div>
           )}
 
           {/* Posts planifiés */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{tp('📢 Posts planifiés')}</h4>
+              <h4 className="text-xs font-bold text-foreground uppercase tracking-wide">{tp('📢 Posts planifiés')}</h4>
               <button onClick={addPost}
-                className="text-xs px-3 py-1 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition">
+                className="text-xs px-3 py-1 rounded-lg bg-primary text-white font-medium hover:bg-primary-700 transition">
                 + Ajouter
               </button>
             </div>
 
             {!postsCount && (
-              <div className="text-center py-6 bg-gray-50 rounded-xl">
+              <div className="text-center py-6 bg-background rounded-xl">
                 <p className="text-2xl mb-1">📭</p>
-                <p className="text-xs text-gray-400">{tp('Aucun post planifié. Rita peut animer ce groupe automatiquement !')}</p>
+                <p className="text-xs text-muted-foreground">{tp('Aucun post planifié. Rita peut animer ce groupe automatiquement !')}</p>
                 <button onClick={addPost}
-                  className="mt-2 text-xs text-primary-600 font-medium hover:underline">
+                  className="mt-2 text-xs text-primary font-medium hover:underline">
                   + Créer le premier post
                 </button>
               </div>
@@ -394,53 +394,53 @@ export default function RitaGroupAnimation() {
       {/* ─── Header ─── */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">{tp('📢 Animation des groupes')}</h1>
-          <p className="text-sm text-gray-500 mt-1">{tp('Rita anime automatiquement vos groupes WhatsApp avec du contenu planifié.')}</p>
+          <h1 className="text-2xl font-extrabold text-foreground">{tp('📢 Animation des groupes')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{tp('Rita anime automatiquement vos groupes WhatsApp avec du contenu planifié.')}</p>
         </div>
         <button onClick={save} disabled={saving}
-          className="px-5 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition shadow-sm">
+          className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition shadow-sm">
           {saving ? 'Enregistrement...' : '💾 Sauvegarder'}
         </button>
       </div>
 
       {/* ─── Messages flash ─── */}
       {(saveMsg || testMsg) && (
-        <div className={`text-sm px-4 py-2.5 rounded-xl ${(saveMsg || testMsg).ok ? 'bg-primary-50 text-primary-700' : 'bg-red-50 text-red-700'}`}>
+        <div className={`text-sm px-4 py-2.5 rounded-xl ${(saveMsg || testMsg).ok ? 'bg-primary-50 text-primary' : 'bg-red-50 text-red-700'}`}>
           {(saveMsg || testMsg).text}
         </div>
       )}
 
       {/* ─── Stats ─── */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white border rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-gray-900">{managedCount}</p>
-          <p className="text-xs text-gray-500">{tp('Groupes gérés')}</p>
+        <div className="bg-card border rounded-xl p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{managedCount}</p>
+          <p className="text-xs text-muted-foreground">{tp('Groupes gérés')}</p>
         </div>
-        <div className="bg-white border rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-primary-600">{activePosts}</p>
-          <p className="text-xs text-gray-500">{tp('Posts actifs')}</p>
+        <div className="bg-card border rounded-xl p-4 text-center">
+          <p className="text-2xl font-bold text-primary">{activePosts}</p>
+          <p className="text-xs text-muted-foreground">{tp('Posts actifs')}</p>
         </div>
-        <div className="bg-white border rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-gray-600">{totalPosts - activePosts}</p>
-          <p className="text-xs text-gray-500">{tp('Posts en pause')}</p>
+        <div className="bg-card border rounded-xl p-4 text-center">
+          <p className="text-2xl font-bold text-muted-foreground">{totalPosts - activePosts}</p>
+          <p className="text-xs text-muted-foreground">{tp('Posts en pause')}</p>
         </div>
       </div>
 
       {/* ─── Ajouter un groupe ─── */}
-      <div className="bg-white border rounded-2xl p-5 space-y-4">
-        <h2 className="text-sm font-bold text-gray-700">{tp('➕ Ajouter un groupe à animer')}</h2>
+      <div className="bg-card border rounded-2xl p-5 space-y-4">
+        <h2 className="text-sm font-bold text-foreground">{tp('➕ Ajouter un groupe à animer')}</h2>
 
         <div className="flex gap-3 flex-wrap">
           {/* Créer nouveau */}
           <div className="flex-1 min-w-[250px] space-y-2">
-            <span className="text-xs font-medium text-gray-500">{tp('Créer un nouveau groupe :')}</span>
+            <span className="text-xs font-medium text-muted-foreground">{tp('Créer un nouveau groupe :')}</span>
             <div className="flex gap-2">
               <input type="text" value={newGroupName} onChange={e => setNewGroupName(e.target.value)}
                 placeholder={tp('Ex: 🛒 Clients Premium')}
                 className="flex-1 text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-200 focus:border-primary-400"
                 onKeyDown={e => e.key === 'Enter' && createGroup()} />
               <button onClick={createGroup} disabled={creatingGroup || !newGroupName.trim()}
-                className="px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition whitespace-nowrap">
+                className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition whitespace-nowrap">
                 {creatingGroup ? '...' : tp('Créer')}
               </button>
             </div>
@@ -449,10 +449,10 @@ export default function RitaGroupAnimation() {
           {/* Ajouter existant */}
           {unmanagedGroups.length > 0 && (
             <div className="flex-1 min-w-[250px] space-y-2">
-              <span className="text-xs font-medium text-gray-500">Ajouter un groupe existant ({unmanagedGroups.length} disponibles) :</span>
+              <span className="text-xs font-medium text-muted-foreground">Ajouter un groupe existant ({unmanagedGroups.length} disponibles) :</span>
               <div className="flex gap-2">
                 <select value={selectedGroupToAdd} onChange={e => setSelectedGroupToAdd(e.target.value)}
-                  className="flex-1 text-sm border rounded-lg px-3 py-2 bg-gray-50">
+                  className="flex-1 text-sm border rounded-lg px-3 py-2 bg-background">
                   <option value="">{tp('— Choisir un groupe —')}</option>
                   {unmanagedGroups.map(g => (
                     <option key={g.id} value={g.id}>{g.name} ({g.participants} membres)</option>
@@ -470,10 +470,10 @@ export default function RitaGroupAnimation() {
 
       {/* ─── Groupes gérés ─── */}
       {!managedCount ? (
-        <div className="text-center py-16 bg-white border rounded-2xl">
+        <div className="text-center py-16 bg-card border rounded-2xl">
           <p className="text-5xl mb-3">📢</p>
-          <p className="text-lg font-bold text-gray-700">{tp('Aucun groupe à animer')}</p>
-          <p className="text-sm text-gray-400 mt-1">{tp('Créez un groupe ou ajoutez-en un existant pour que Rita l\'anime automatiquement.')}</p>
+          <p className="text-lg font-bold text-foreground">{tp('Aucun groupe à animer')}</p>
+          <p className="text-sm text-muted-foreground mt-1">{tp('Créez un groupe ou ajoutez-en un existant pour que Rita l\'anime automatiquement.')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -489,7 +489,7 @@ export default function RitaGroupAnimation() {
                 onSendTest={sendTest}
               />
               <button onClick={() => removeGroup(gi)}
-                className="absolute top-3 right-12 text-xs text-gray-400 hover:text-red-500 transition"
+                className="absolute top-3 right-12 text-xs text-muted-foreground hover:text-red-500 transition"
                 title={tp('Retirer ce groupe de l\'animation')}>
                 {tp('Retirer')}
               </button>

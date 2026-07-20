@@ -97,23 +97,23 @@ const ClientForm = () => {
   }
 
   const inputClass = "block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent text-sm";
-  const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+  const labelClass = "block text-sm font-medium text-foreground mb-1";
 
   return (
     <div className="p-3 sm:p-4 lg:p-6 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
             {isEdit ? 'Modifier le client' : tp('Nouveau client')}
           </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             {isEdit ? 'Modifiez les informations du client' : tp('Ajoutez un nouveau client ù  votre base')}
           </p>
         </div>
         <button
           onClick={() => navigate('/ecom/clients')}
-          className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition"
+          className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition"
         >
           {tp('Annuler')}
         </button>
@@ -125,8 +125,8 @@ const ClientForm = () => {
         )}
 
         {/* Identité */}
-        <div className="bg-white rounded-lg shadow p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-gray-900 mb-3">{tp('Identité')}</h2>
+        <div className="bg-card rounded-lg shadow p-4 sm:p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-3">{tp('Identité')}</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="firstName" className={labelClass}>{tp('Prénom *')}</label>
@@ -140,8 +140,8 @@ const ClientForm = () => {
         </div>
 
         {/* Contact */}
-        <div className="bg-white rounded-lg shadow p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-gray-900 mb-3">{tp('Contact')}</h2>
+        <div className="bg-card rounded-lg shadow p-4 sm:p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-3">{tp('Contact')}</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="phone" className={labelClass}>{tp('Téléphone')}</label>
@@ -163,8 +163,8 @@ const ClientForm = () => {
         </div>
 
         {/* Infos */}
-        <div className="bg-white rounded-lg shadow p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-gray-900 mb-3">{tp('Informations')}</h2>
+        <div className="bg-card rounded-lg shadow p-4 sm:p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-3">{tp('Informations')}</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="source" className={labelClass}>{tp('Source')}</label>
@@ -204,14 +204,14 @@ const ClientForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm font-medium disabled:opacity-50"
+            className="flex-1 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-700 transition text-sm font-medium disabled:opacity-50"
           >
             {loading ? (isEdit ? 'Modification...' : 'Création...') : (isEdit ? 'Enregistrer les modifications' : 'Créer le client')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/ecom/clients')}
-            className="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium"
+            className="px-6 py-2.5 bg-muted text-foreground rounded-lg hover:bg-gray-200 transition text-sm font-medium"
           >
             {tp('Annuler')}
           </button>

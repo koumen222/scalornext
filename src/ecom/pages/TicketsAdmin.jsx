@@ -31,10 +31,10 @@ const STATUS_COLORS = {
   en_review: 'bg-amber-100 text-amber-700',
   deploye: 'bg-green-100 text-green-700',
   escalade: 'bg-red-100 text-red-700',
-  ferme: 'bg-gray-200 text-gray-600',
+  ferme: 'bg-gray-200 text-muted-foreground',
 };
 const PRIORITY_COLORS = {
-  low: 'bg-gray-100 text-gray-600',
+  low: 'bg-muted text-muted-foreground',
   medium: 'bg-blue-100 text-blue-700',
   high: 'bg-orange-100 text-orange-700',
   critical: 'bg-red-100 text-red-700',
@@ -197,12 +197,12 @@ const TicketsAdmin = () => {
       {/* En-tête */}
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Tickets &amp; bugs</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5">Service client interne — analyse et résolution des bugs.</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Tickets &amp; bugs</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm mt-0.5">Service client interne — analyse et résolution des bugs.</p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button onClick={loadTickets} title="Rafraîchir" className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"><RefreshCw className="w-4 h-4" /></button>
-          <button onClick={() => { setForm(emptyForm); setShowCreate(true); }} className="flex items-center gap-1.5 px-3 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700">
+          <button onClick={loadTickets} title="Rafraîchir" className="p-2 rounded-lg border border-border text-muted-foreground hover:bg-background"><RefreshCw className="w-4 h-4" /></button>
+          <button onClick={() => { setForm(emptyForm); setShowCreate(true); }} className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-700">
             <Plus className="w-4 h-4" /><span className="hidden sm:inline">Nouveau</span> ticket
           </button>
         </div>
@@ -214,37 +214,37 @@ const TicketsAdmin = () => {
 
       {/* Filtres */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <select value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))} className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
+        <select value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))} className="px-3 py-2 border border-border rounded-lg text-sm">
           <option value="">Tous les statuts</option>
           {Object.keys(STATUS_LABELS).map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
         </select>
-        <select value={filters.category} onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))} className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
+        <select value={filters.category} onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))} className="px-3 py-2 border border-border rounded-lg text-sm">
           <option value="">Toutes catégories</option>
           {CATEGORIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>
-        <span className="text-xs text-gray-400 ml-auto">{tickets.length} ticket(s)</span>
+        <span className="text-xs text-muted-foreground ml-auto">{tickets.length} ticket(s)</span>
       </div>
 
       {/* Liste */}
       {loading ? (
         <div className="py-16 flex justify-center"><div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" /></div>
       ) : tickets.length === 0 ? (
-        <div className="py-16 text-center text-gray-400 text-sm">Aucun ticket pour ces filtres.</div>
+        <div className="py-16 text-center text-muted-foreground text-sm">Aucun ticket pour ces filtres.</div>
       ) : (
         <div className="space-y-2">
           {tickets.map((t) => (
-            <button key={t._id} onClick={() => openDetail(t._id)} className="w-full text-left bg-white border border-gray-200 rounded-xl p-3 sm:p-4 hover:border-primary-300 hover:shadow-sm transition">
+            <button key={t._id} onClick={() => openDetail(t._id)} className="w-full text-left bg-card border border-border rounded-xl p-3 sm:p-4 hover:border-primary-300 hover:shadow-sm transition">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-semibold text-gray-900 truncate">{t.title}</p>
+                  <p className="font-semibold text-foreground truncate">{t.title}</p>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                     <Badge className={STATUS_COLORS[t.status]}>{STATUS_LABELS[t.status] || t.status}</Badge>
-                    <Badge className="bg-gray-100 text-gray-600">{catLabel(t.category)}</Badge>
+                    <Badge className="bg-muted text-muted-foreground">{catLabel(t.category)}</Badge>
                     <Badge className={PRIORITY_COLORS[t.priority]}>{prioLabel(t.priority)}</Badge>
                     {t.claudeAnalysis?.riskLevel && <Badge className={RISK_COLORS[t.claudeAnalysis.riskLevel]}>Risque {t.claudeAnalysis.riskLevel}</Badge>}
                   </div>
                 </div>
-                <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">{fmtDate(t.createdAt)}</span>
+                <span className="text-xs text-muted-foreground flex-shrink-0 whitespace-nowrap">{fmtDate(t.createdAt)}</span>
               </div>
             </button>
           ))}
@@ -254,10 +254,10 @@ const TicketsAdmin = () => {
       {/* Détail (panneau latéral) */}
       {selected && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/40" onClick={() => setSelected(null)}>
-          <div className="w-full max-w-xl h-full bg-white shadow-2xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center justify-between">
-              <h2 className="font-bold text-gray-900 truncate pr-3">{selected.title || 'Ticket'}</h2>
-              <button onClick={() => setSelected(null)} className="p-2 rounded-full hover:bg-gray-100 text-gray-500 flex-shrink-0"><X className="w-5 h-5" /></button>
+          <div className="w-full max-w-xl h-full bg-card shadow-2xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-card border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between">
+              <h2 className="font-bold text-foreground truncate pr-3">{selected.title || 'Ticket'}</h2>
+              <button onClick={() => setSelected(null)} className="p-2 rounded-full hover:bg-muted text-muted-foreground flex-shrink-0"><X className="w-5 h-5" /></button>
             </div>
 
             {detailLoading ? (
@@ -267,38 +267,38 @@ const TicketsAdmin = () => {
                 {/* Badges */}
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Badge className={STATUS_COLORS[selected.status]}>{STATUS_LABELS[selected.status] || selected.status}</Badge>
-                  <Badge className="bg-gray-100 text-gray-600">{catLabel(selected.category)}</Badge>
+                  <Badge className="bg-muted text-muted-foreground">{catLabel(selected.category)}</Badge>
                   <Badge className={PRIORITY_COLORS[selected.priority]}>{prioLabel(selected.priority)}</Badge>
                   {analysis.riskLevel && <Badge className={RISK_COLORS[analysis.riskLevel]}>Risque {analysis.riskLevel}</Badge>}
                 </div>
 
                 {/* Description */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Description</p>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{selected.description}</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Description</p>
+                  <p className="text-sm text-foreground whitespace-pre-wrap">{selected.description}</p>
                 </div>
 
                 {/* Contexte client */}
                 {selected.context?.userSnapshot && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Client concerné</p>
-                    <p className="text-sm text-gray-800 font-medium">{selected.context.userSnapshot.name || '—'}</p>
-                    <p className="text-xs text-gray-500">{selected.context.userSnapshot.phone} · {selected.context.userSnapshot.email}</p>
-                    <p className="text-xs text-gray-500 mt-1">Commandes : {selected.context.userSnapshot.ordersCount ?? '—'} · Total : {selected.context.userSnapshot.totalSpent ?? '—'}</p>
+                  <div className="bg-background rounded-lg p-3">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Client concerné</p>
+                    <p className="text-sm text-foreground font-medium">{selected.context.userSnapshot.name || '—'}</p>
+                    <p className="text-xs text-muted-foreground">{selected.context.userSnapshot.phone} · {selected.context.userSnapshot.email}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Commandes : {selected.context.userSnapshot.ordersCount ?? '—'} · Total : {selected.context.userSnapshot.totalSpent ?? '—'}</p>
                   </div>
                 )}
 
                 {/* Analyse Claude */}
-                <div className="border border-gray-200 rounded-lg p-3">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Analyse Claude</p>
+                <div className="border border-border rounded-lg p-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Analyse Claude</p>
                   {(!analysis.status || analysis.status === 'skipped') ? (
-                    <p className="text-sm text-gray-500">Aucune analyse (catégorie hors bug technique).</p>
+                    <p className="text-sm text-muted-foreground">Aucune analyse (catégorie hors bug technique).</p>
                   ) : analysis.status === 'pending' ? (
                     <p className="text-sm text-amber-600">En attente d'un run Claude Code.</p>
                   ) : analysis.status === 'running' ? (
                     <p className="text-sm text-amber-600">Analyse en cours — run Claude Code en exécution…{analysis.runUrl && <> · <a href={analysis.runUrl} target="_blank" rel="noreferrer" className="text-indigo-600 underline">suivre le run</a></>}</p>
                   ) : (
-                    <div className="space-y-2 text-sm text-gray-700">
+                    <div className="space-y-2 text-sm text-foreground">
                       {analysis.status === 'failed' && analysis.error && (
                         <div className="flex items-start gap-1.5 text-red-600 bg-red-50 rounded-lg p-2">
                           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -307,11 +307,11 @@ const TicketsAdmin = () => {
                       )}
                       {analysis.diagnosis && (
                         <div>
-                          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Ce que Claude a fait / conclu</p>
-                          <p className="whitespace-pre-wrap break-words text-gray-700">{analysis.diagnosis}</p>
+                          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Ce que Claude a fait / conclu</p>
+                          <p className="whitespace-pre-wrap break-words text-foreground">{analysis.diagnosis}</p>
                         </div>
                       )}
-                      <div className="flex flex-wrap gap-3 text-xs text-gray-500">
+                      <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
                         {analysis.confidenceScore != null && <span>Confiance : {Math.round(analysis.confidenceScore * 100)}%</span>}
                         {analysis.recommendedAction && <span>Reco : {analysis.recommendedAction}</span>}
                         {analysis.analyzedAt && <span>Analysé : {fmtDate(analysis.analyzedAt)}</span>}
@@ -337,7 +337,7 @@ const TicketsAdmin = () => {
                 {/* Résolution automatique par Claude Code */}
                 {selected.category === 'bug_technique' && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Résolution automatique</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Résolution automatique</p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <button disabled={busy} onClick={dispatchToClaude} className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50">
                         {analysis.status === 'running' ? 'Relancer Claude Code' : 'Envoyer à Claude Code'}
@@ -350,13 +350,13 @@ const TicketsAdmin = () => {
 
                 {/* Actions statut */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Changer le statut</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Changer le statut</p>
                   {allowedTransitions.length === 0 ? (
-                    <p className="text-sm text-gray-400">Aucune transition disponible.</p>
+                    <p className="text-sm text-muted-foreground">Aucune transition disponible.</p>
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {allowedTransitions.map((s) => (
-                        <button key={s} disabled={busy} onClick={() => changeStatus(s)} className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                        <button key={s} disabled={busy} onClick={() => changeStatus(s)} className="px-3 py-1.5 rounded-lg border border-border text-sm text-foreground hover:bg-background disabled:opacity-50">
                           → {STATUS_LABELS[s]}
                         </button>
                       ))}
@@ -377,12 +377,12 @@ const TicketsAdmin = () => {
                 {/* Historique */}
                 {Array.isArray(selected.history) && selected.history.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Historique</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Historique</p>
                     <ul className="space-y-1.5">
                       {selected.history.slice().reverse().map((h, i) => (
-                        <li key={i} className="text-xs text-gray-500 flex gap-2">
-                          <span className="text-gray-400 whitespace-nowrap">{fmtDate(h.at)}</span>
-                          <span className="text-gray-700 font-medium">{h.action}</span>
+                        <li key={i} className="text-xs text-muted-foreground flex gap-2">
+                          <span className="text-muted-foreground whitespace-nowrap">{fmtDate(h.at)}</span>
+                          <span className="text-foreground font-medium">{h.action}</span>
                           {h.note && <span className="truncate">— {h.note}</span>}
                         </li>
                       ))}
@@ -398,46 +398,46 @@ const TicketsAdmin = () => {
       {/* Création */}
       {showCreate && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4" onClick={() => setShowCreate(false)}>
-          <form onSubmit={createTicket} onClick={(e) => e.stopPropagation()} className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-5 sm:p-6 space-y-3 max-h-[92vh] overflow-y-auto">
+          <form onSubmit={createTicket} onClick={(e) => e.stopPropagation()} className="bg-card rounded-2xl shadow-xl w-full max-w-lg p-5 sm:p-6 space-y-3 max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">Nouveau ticket</h2>
-              <button type="button" onClick={() => setShowCreate(false)} className="p-2 rounded-full hover:bg-gray-100 text-gray-500"><X className="w-5 h-5" /></button>
+              <h2 className="text-lg font-bold text-foreground">Nouveau ticket</h2>
+              <button type="button" onClick={() => setShowCreate(false)} className="p-2 rounded-full hover:bg-muted text-muted-foreground"><X className="w-5 h-5" /></button>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Titre *</label>
-              <input required value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Résumé court du problème" />
+              <label className="block text-xs font-semibold text-muted-foreground mb-1">Titre *</label>
+              <input required value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} className="w-full px-3 py-2 border border-border rounded-lg text-sm" placeholder="Résumé court du problème" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Description * (≥ 10 caractères)</label>
-              <textarea required rows={4} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none" placeholder="Étapes, comportement observé, contexte…" />
+              <label className="block text-xs font-semibold text-muted-foreground mb-1">Description * (≥ 10 caractères)</label>
+              <textarea required rows={4} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="w-full px-3 py-2 border border-border rounded-lg text-sm resize-none" placeholder="Étapes, comportement observé, contexte…" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Catégorie *</label>
-                <select value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Catégorie *</label>
+                <select value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} className="w-full px-3 py-2 border border-border rounded-lg text-sm">
                   {CATEGORIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Priorité</label>
-                <select value={form.priority} onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Priorité</label>
+                <select value={form.priority} onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))} className="w-full px-3 py-2 border border-border rounded-lg text-sm">
                   {PRIORITIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Tél. client (optionnel)</label>
-                <input value={form.customerPhone} onChange={(e) => setForm((f) => ({ ...f, customerPhone: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Pour enrichir le contexte" />
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Tél. client (optionnel)</label>
+                <input value={form.customerPhone} onChange={(e) => setForm((f) => ({ ...f, customerPhone: e.target.value }))} className="w-full px-3 py-2 border border-border rounded-lg text-sm" placeholder="Pour enrichir le contexte" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Email client (optionnel)</label>
-                <input value={form.customerEmail} onChange={(e) => setForm((f) => ({ ...f, customerEmail: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Pour enrichir le contexte" />
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Email client (optionnel)</label>
+                <input value={form.customerEmail} onChange={(e) => setForm((f) => ({ ...f, customerEmail: e.target.value }))} className="w-full px-3 py-2 border border-border rounded-lg text-sm" placeholder="Pour enrichir le contexte" />
               </div>
             </div>
             <div className="flex gap-3 pt-1">
-              <button type="button" onClick={() => setShowCreate(false)} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 text-sm">Annuler</button>
-              <button type="submit" disabled={submitting} className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-sm font-medium">{submitting ? 'Création…' : 'Créer le ticket'}</button>
+              <button type="button" onClick={() => setShowCreate(false)} className="flex-1 px-4 py-2 border border-border rounded-lg text-foreground hover:bg-background text-sm">Annuler</button>
+              <button type="submit" disabled={submitting} className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-sm font-medium">{submitting ? 'Création…' : 'Créer le ticket'}</button>
             </div>
           </form>
         </div>

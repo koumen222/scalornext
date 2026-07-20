@@ -109,11 +109,11 @@ const Toast = ({ toast, onDismiss }) => {
 // ── Section wrapper ───────────────────────────────────────────────────────────
 
 const SectionRow = ({ icon, label, open, onToggle, children }) => (
-  <div className="border-b border-gray-100 last:border-b-0">
+  <div className="border-b border-border last:border-b-0">
     <button type="button" onClick={onToggle}
-      className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition text-left">
-      <span className="flex items-center gap-2.5 text-sm font-medium text-gray-700">{icon}{label}</span>
-      {open ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+      className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-background transition text-left">
+      <span className="flex items-center gap-2.5 text-sm font-medium text-foreground">{icon}{label}</span>
+      {open ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
     </button>
     {open && <div className="px-5 pb-5 space-y-3">{children}</div>}
   </div>
@@ -121,18 +121,18 @@ const SectionRow = ({ icon, label, open, onToggle, children }) => (
 
 const Field = ({ label, hint, children }) => (
   <div>
-    <label className="block text-xs font-medium text-gray-500 mb-1.5">{label}</label>
+    <label className="block text-xs font-medium text-muted-foreground mb-1.5">{label}</label>
     {children}
-    {hint && <p className="text-[11px] text-gray-400 mt-1">{hint}</p>}
+    {hint && <p className="text-[11px] text-muted-foreground mt-1">{hint}</p>}
   </div>
 );
 
-const inputCls = "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition placeholder-gray-300";
+const inputCls = "w-full px-3 py-2.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition placeholder-gray-300";
 const textareaCls = `${inputCls} resize-none`;
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-const StoreProductForm = () => {
+const StoreProductForm = ({ embedded = false } = {}) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
@@ -618,7 +618,7 @@ const StoreProductForm = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-7 h-7 rounded-full border-[3px] border-gray-200 border-t-primary-600 animate-spin" />
+        <div className="w-7 h-7 rounded-full border-[3px] border-border border-t-primary-600 animate-spin" />
       </div>
     );
   }
@@ -632,7 +632,7 @@ const StoreProductForm = () => {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#f1f2f4]">
+    <div className={embedded ? 'bg-background' : 'min-h-screen bg-background'}>
       <style>{`
         @keyframes slide-in { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
         .animate-slide-in { animation: slide-in 0.2s ease; }
@@ -642,19 +642,19 @@ const StoreProductForm = () => {
       <Toast toast={toast} onDismiss={() => setToast(null)} />
 
       {/* ── Sticky header ───────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+      <div className="bg-card border-b border-border sticky top-0 z-30 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate(`${basePath}/products`)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition flex-shrink-0"
+            className="p-1.5 rounded-lg hover:bg-muted transition flex-shrink-0"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-muted-foreground" />
           </button>
 
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-gray-400 hidden sm:block">{tp('Produits boutique')}</p>
-            <h1 className="text-sm font-semibold text-gray-900 truncate leading-tight">
+            <p className="text-xs text-muted-foreground hidden sm:block">{tp('Produits boutique')}</p>
+            <h1 className="text-sm font-semibold text-foreground truncate leading-tight">
               {isEdit ? (form.name || 'Modifier le produit') : tp('Nouveau produit')}
             </h1>
           </div>
@@ -665,11 +665,11 @@ const StoreProductForm = () => {
             onClick={() => handleChange('isPublished', !form.isPublished)}
             className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
               form.isPublished
-                ? 'bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100'
-                : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'
+                ? 'bg-primary-50 text-primary border-primary-200 hover:bg-primary-100'
+                : 'bg-muted text-muted-foreground border-border hover:bg-gray-200'
             }`}
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${form.isPublished ? 'bg-primary-500' : 'bg-gray-400'}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${form.isPublished ? 'bg-primary' : 'bg-gray-400'}`} />
             {form.isPublished ? 'Actif' : tp('Brouillon')}
           </button>
 
@@ -690,7 +690,7 @@ const StoreProductForm = () => {
               type="submit"
               form="store-product-form"
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 disabled:opacity-60 transition shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary-700 disabled:opacity-60 transition shadow-sm"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               <span className="hidden sm:inline">{saving ? 'Enregistrement...' : tp('Enregistrer')}</span>
@@ -708,16 +708,16 @@ const StoreProductForm = () => {
             <div className="flex-1 min-w-0 space-y-5">
 
               {/* Titre & Description */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 space-y-4">
+              <div className="bg-card rounded-xl border shadow-sm p-5 space-y-4">
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => handleChange('name', e.target.value)}
                   placeholder={tp('Nom du produit')}
-                  className="w-full text-xl font-bold text-gray-900 placeholder-gray-300 border-0 outline-none focus:ring-0 p-0 bg-transparent"
+                  className="w-full text-xl font-bold text-foreground placeholder-gray-300 border-0 outline-none focus:ring-0 p-0 bg-transparent"
                   required
                 />
-                <div className="border-t border-gray-100 pt-4">
+                <div className="border-t border-border pt-4">
                   <RichTextEditor
                     ref={descEditorRef}
                     value={form.description}
@@ -806,19 +806,19 @@ const StoreProductForm = () => {
               </div>
 
               {/* ── Images ─────────────────────────────────────────────── */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">
-                  <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                    <Image className="w-4 h-4 text-gray-400" />
+              <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+                <div className="px-5 py-4 flex items-center justify-between border-b border-border">
+                  <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <Image className="w-4 h-4 text-muted-foreground" />
                     {tp('Images')}
                     {form.images.length > 0 && (
-                      <span className="text-xs text-gray-400 font-normal">
+                      <span className="text-xs text-muted-foreground font-normal">
                         {form.images.length} photo{form.images.length !== 1 ? 's' : ''}
                       </span>
                     )}
                   </h2>
                   {uploading && (
-                    <span className="flex items-center gap-1.5 text-xs text-primary-600 font-medium">
+                    <span className="flex items-center gap-1.5 text-xs text-primary font-medium">
                       <Loader2 className="w-3.5 h-3.5 animate-spin" /> Upload en cours...
                     </span>
                   )}
@@ -831,7 +831,7 @@ const StoreProductForm = () => {
                       className={`flex flex-col items-center justify-center w-full h-52 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
                         dragOver
                           ? 'border-primary-400 bg-primary-50 scale-[1.01]'
-                          : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
+                          : 'border-border hover:border-primary-300 hover:bg-background'
                       }`}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
@@ -841,18 +841,18 @@ const StoreProductForm = () => {
                         type="file" accept="image/*" multiple className="hidden"
                         onChange={(e) => addPhotos(e.target.files)} disabled={uploading}
                       />
-                      <div className={`flex flex-col items-center gap-3 pointer-events-none ${dragOver ? 'text-primary-600' : 'text-gray-400'}`}>
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition ${dragOver ? 'bg-primary-100' : 'bg-gray-100'}`}>
+                      <div className={`flex flex-col items-center gap-3 pointer-events-none ${dragOver ? 'text-primary' : 'text-muted-foreground'}`}>
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition ${dragOver ? 'bg-primary-100' : 'bg-muted'}`}>
                           <Upload className="w-6 h-6" />
                         </div>
                         <div className="text-center">
-                          <p className="text-sm font-semibold text-gray-700">
+                          <p className="text-sm font-semibold text-foreground">
                             {dragOver ? 'Déposez vos images ici' : tp('Glissez-déposez vos images')}
                           </p>
-                          <p className="text-xs text-gray-400 mt-0.5">{tp('ou cliquez pour parcourir · JPG, PNG, WebP · max 5 MB')}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{tp('ou cliquez pour parcourir · JPG, PNG, WebP · max 5 MB')}</p>
                         </div>
                         {!dragOver && (
-                          <span className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 shadow-sm">
+                          <span className="px-4 py-1.5 bg-card border border-border rounded-lg text-xs font-semibold text-muted-foreground shadow-sm">
                             {tp('Sélectionner des fichiers')}
                           </span>
                         )}
@@ -880,7 +880,7 @@ const StoreProductForm = () => {
                           />
                           {/* Main badge */}
                           {i === 0 && (
-                            <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-primary-600 text-white text-[9px] font-bold rounded-md leading-none">
+                            <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-primary text-white text-[9px] font-bold rounded-md leading-none">
                               {tp('PRINCIPALE')}
                             </span>
                           )}
@@ -888,19 +888,19 @@ const StoreProductForm = () => {
                           <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
                             {i !== 0 && (
                               <button type="button" onClick={() => handleSetHero(i)} title={tp('Définir comme principale')}
-                                className="p-1.5 bg-white/95 rounded-lg text-amber-600 hover:bg-white transition text-sm font-bold leading-none shadow-sm">
+                                className="p-1.5 bg-card/95 rounded-lg text-amber-600 hover:bg-card transition text-sm font-bold leading-none shadow-sm">
                                 ★
                               </button>
                             )}
                             {i > 0 && (
                               <button type="button" onClick={() => handleMoveImage(i, -1)} title={tp('Déplacer à gauche')}
-                                className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
+                                className="p-1.5 bg-card/95 rounded-lg text-foreground hover:bg-card transition shadow-sm">
                                 <ChevronUp className="w-3.5 h-3.5 -rotate-90" />
                               </button>
                             )}
                             {i < form.images.length - 1 && (
                               <button type="button" onClick={() => handleMoveImage(i, 1)} title={tp('Déplacer à droite')}
-                                className="p-1.5 bg-white/95 rounded-lg text-gray-700 hover:bg-white transition shadow-sm">
+                                className="p-1.5 bg-card/95 rounded-lg text-foreground hover:bg-card transition shadow-sm">
                                 <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
                               </button>
                             )}
@@ -912,7 +912,7 @@ const StoreProductForm = () => {
                         </div>
                       ))}
                       {/* Add more cell */}
-                      <label className="aspect-square rounded-xl border-2 border-dashed border-gray-200 hover:border-primary-300 hover:bg-primary-50 flex flex-col items-center justify-center cursor-pointer transition group">
+                      <label className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary-300 hover:bg-primary-50 flex flex-col items-center justify-center cursor-pointer transition group">
                         <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => addPhotos(e.target.files)} disabled={uploading} />
                         {uploading ? (
                           <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
@@ -934,10 +934,10 @@ const StoreProductForm = () => {
                       onChange={(e) => setImageUrlInput(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddImageUrl(); } }}
                       placeholder={tp('Ou collez une URL d\'image...')}
-                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-300"
+                      className="flex-1 px-3 py-2 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-300"
                     />
                     <button type="button" onClick={handleAddImageUrl} disabled={!imageUrlInput.trim()}
-                      className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition font-medium whitespace-nowrap">
+                      className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-muted-foreground hover:bg-muted disabled:opacity-40 transition font-medium whitespace-nowrap">
                       {tp('Ajouter')}
                     </button>
                   </div>
@@ -960,27 +960,27 @@ const StoreProductForm = () => {
               </div>
 
               {/* ── Prix & Stock ─────────────────────────────────────────── */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                <h2 className="text-sm font-semibold text-gray-900 mb-4">Prix & Stock</h2>
+              <div className="bg-card rounded-xl border shadow-sm p-5">
+                <h2 className="text-sm font-semibold text-foreground mb-4">Prix & Stock</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Prix *')}</label>
+                    <label className="block text-[11px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Prix *')}</label>
                     <div className="relative">
                       <input type="number" value={form.price} onChange={(e) => handleChange('price', e.target.value)}
                         placeholder="15000" min="0" step="any" required
-                        className="w-full px-3 py-2.5 pr-14 border border-gray-200 rounded-lg text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium pointer-events-none">
+                        className="w-full px-3 py-2.5 pr-14 border border-border rounded-lg text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium pointer-events-none">
                         {form.currency || tp('FCFA')}
                       </span>
                     </div>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Ancien prix')}</label>
+                    <label className="block text-[11px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Ancien prix')}</label>
                     <input type="number" value={form.compareAtPrice} onChange={(e) => handleChange('compareAtPrice', e.target.value)}
                       placeholder="20000" min="0" step="any" className={inputCls} />
                   </div>
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Stock')}</label>
+                    <label className="block text-[11px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Stock')}</label>
                     <input type="number" value={form.stock} onChange={(e) => handleChange('stock', e.target.value)}
                       min="0" className={inputCls} />
                   </div>
@@ -989,29 +989,29 @@ const StoreProductForm = () => {
               </div>
 
               {/* ── Organisation ─────────────────────────────────────────── */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                <h2 className="text-sm font-semibold text-gray-900 mb-4">{tp('Organisation')}</h2>
+              <div className="bg-card rounded-xl border shadow-sm p-5">
+                <h2 className="text-sm font-semibold text-foreground mb-4">{tp('Organisation')}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Catégorie')}</label>
+                    <label className="block text-[11px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Catégorie')}</label>
                     <input type="text" value={form.category} onChange={(e) => handleChange('category', e.target.value)}
                       placeholder={tp('Ex: Vêtements, Beauté…')} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">{tp('Tags')}</label>
+                    <label className="block text-[11px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wide">{tp('Tags')}</label>
                     <input type="text" value={form.tags} onChange={(e) => handleChange('tags', e.target.value)}
                       placeholder={tp('promo, nouveau, bestseller')} className={inputCls} />
-                    <p className="text-[11px] text-gray-400 mt-1">{tp('Séparez par des virgules')}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{tp('Séparez par des virgules')}</p>
                   </div>
                 </div>
               </div>
 
               {/* ── Sections page produit ────────────────────────────────── */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+              <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-border flex items-center gap-2">
                   <Layers className="w-4 h-4 text-violet-500" />
-                  <h2 className="text-sm font-semibold text-gray-900">{tp('Sections de la page produit')}</h2>
-                  <span className="ml-auto text-[11px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">{tp('Contenu marketing avancé')}</span>
+                  <h2 className="text-sm font-semibold text-foreground">{tp('Sections de la page produit')}</h2>
+                  <span className="ml-auto text-[11px] text-muted-foreground bg-background px-2 py-0.5 rounded-full border border-border">{tp('Contenu marketing avancé')}</span>
                 </div>
 
                 <SectionRow icon={<Type className="w-4 h-4 text-violet-500" />} label="Hero (Accroche)" open={openSections.hero} onToggle={() => toggleSection('hero')}>
@@ -1044,7 +1044,7 @@ const StoreProductForm = () => {
                 <SectionRow icon={<BarChart3 className="w-4 h-4 text-blue-500" />} label="Statistiques" open={openSections.stats} onToggle={() => toggleSection('stats')}>
                   {(getPageData('stats_bar', []) || []).map((stat, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <input type="text" value={stat.value || ''} onChange={(e) => { const arr = [...(getPageData('stats_bar', []))]; arr[i] = { ...arr[i], value: e.target.value }; setPageData('stats_bar', arr); }} placeholder="1000+" className="w-24 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                      <input type="text" value={stat.value || ''} onChange={(e) => { const arr = [...(getPageData('stats_bar', []))]; arr[i] = { ...arr[i], value: e.target.value }; setPageData('stats_bar', arr); }} placeholder="1000+" className="w-24 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                       <input type="text" value={stat.label || ''} onChange={(e) => { const arr = [...(getPageData('stats_bar', []))]; arr[i] = { ...arr[i], label: e.target.value }; setPageData('stats_bar', arr); }} placeholder={tp('Clients satisfaits')} className={`flex-1 ${inputCls}`} />
                       <button type="button" onClick={() => setPageData('stats_bar', getPageData('stats_bar', []).filter((_, j) => j !== i))} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 className="w-4 h-4" /></button>
                     </div>
@@ -1061,7 +1061,7 @@ const StoreProductForm = () => {
                 <SectionRow icon={<Zap className="w-4 h-4 text-orange-500" />} label="Blocs de conversion" open={openSections.conversion} onToggle={() => toggleSection('conversion')}>
                   {(getPageData('conversion_blocks', []) || []).map((block, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <input type="text" value={block.icon || ''} onChange={(e) => { const arr = [...(getPageData('conversion_blocks', []))]; arr[i] = { ...arr[i], icon: e.target.value }; setPageData('conversion_blocks', arr); }} placeholder="🚚" className="w-14 px-2 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                      <input type="text" value={block.icon || ''} onChange={(e) => { const arr = [...(getPageData('conversion_blocks', []))]; arr[i] = { ...arr[i], icon: e.target.value }; setPageData('conversion_blocks', arr); }} placeholder="🚚" className="w-14 px-2 py-2 border border-border rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary-500" />
                       <input type="text" value={block.text || ''} onChange={(e) => { const arr = [...(getPageData('conversion_blocks', []))]; arr[i] = { ...arr[i], text: e.target.value }; setPageData('conversion_blocks', arr); }} placeholder={tp('Livraison gratuite')} className={`flex-1 ${inputCls}`} />
                       <button type="button" onClick={() => setPageData('conversion_blocks', getPageData('conversion_blocks', []).filter((_, j) => j !== i))} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 className="w-4 h-4" /></button>
                     </div>
@@ -1083,7 +1083,7 @@ const StoreProductForm = () => {
                     <input type="text" value={getPageData('urgency_badge', '')} onChange={(e) => setPageData('urgency_badge', e.target.value)} placeholder={tp('🔥 Plus que 3 en stock !')} className={inputCls} />
                   </Field>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                    <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
                       <input type="checkbox" checked={getPageData('urgency_elements', {})?.stock_limited || false} onChange={(e) => setPageData('urgency_elements', { ...getPageData('urgency_elements', {}), stock_limited: e.target.checked })} className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500" />
                       {tp('Stock limité')}
                     </label>
@@ -1105,9 +1105,9 @@ const StoreProductForm = () => {
                   <>
                     <SectionRow icon={<ChevronDown className="w-4 h-4 text-teal-500" />} label="Barres dépliables (sous CTA)" open={openSections.heroAccordions} onToggle={() => toggleSection('heroAccordions')}>
                       {(form.productPageConfig?.premiumPage?.hero?.accordions || []).map((acc, i) => (
-                        <div key={i} className="p-3 bg-gray-50 border border-gray-200 rounded-lg space-y-2">
+                        <div key={i} className="p-3 bg-background border border-border rounded-lg space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-gray-500">#{i + 1}</span>
+                            <span className="text-xs font-bold text-muted-foreground">#{i + 1}</span>
                             <button type="button" onClick={() => {
                               const next = { ...form.productPageConfig };
                               const accordions = [...(next.premiumPage?.hero?.accordions || [])];
@@ -1149,9 +1149,9 @@ const StoreProductForm = () => {
                         }} />
                       </Field>
                       {(form.productPageConfig?.premiumPage?.faq?.items || []).map((item, i) => (
-                        <div key={i} className="p-3 bg-gray-50 border border-gray-200 rounded-lg space-y-2">
+                        <div key={i} className="p-3 bg-background border border-border rounded-lg space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-gray-500">Question {i + 1}</span>
+                            <span className="text-xs font-bold text-muted-foreground">Question {i + 1}</span>
                             <button type="button" onClick={() => {
                               const next = { ...form.productPageConfig };
                               const items = [...(next.premiumPage?.faq?.items || [])];
@@ -1189,7 +1189,7 @@ const StoreProductForm = () => {
 
               {/* ── Offres quantité ──────────────────────────────────────── */}
               {isEdit && (
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div className="bg-card rounded-xl border shadow-sm p-5">
                   <QuantityOffersManager productId={id} />
                 </div>
               )}
@@ -1202,8 +1202,8 @@ const StoreProductForm = () => {
               />
 
               {/* ── SEO ─────────────────────────────────────────────────── */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 space-y-4">
-                <h2 className="text-sm font-semibold text-gray-900">{tp('Référencement (SEO)')}</h2>
+              <div className="bg-card rounded-xl border shadow-sm p-5 space-y-4">
+                <h2 className="text-sm font-semibold text-foreground">{tp('Référencement (SEO)')}</h2>
                 <Field label="Titre SEO" hint={`${(form.seoTitle || form.name).length}/70 caractères`}>
                   <input type="text" value={form.seoTitle} onChange={(e) => handleChange('seoTitle', e.target.value)}
                     placeholder={form.name || tp('Titre pour les moteurs de recherche')} maxLength={70} className={inputCls} />
@@ -1217,7 +1217,7 @@ const StoreProductForm = () => {
               {/* Bottom save (mobile) */}
               <div className="lg:hidden pb-6">
                 <button type="submit" disabled={saving}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 disabled:opacity-60 transition shadow-md">
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-700 disabled:opacity-60 transition shadow-md">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? 'Enregistrement...' : tp('Enregistrer le produit')}
                 </button>
@@ -1228,35 +1228,35 @@ const StoreProductForm = () => {
             <div className="lg:w-72 xl:w-80 flex-shrink-0 space-y-4 lg:sticky lg:top-20">
 
               {/* Status + Save */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-3">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">{tp('Statut')}</h3>
+              <div className="bg-card rounded-xl border shadow-sm p-4 space-y-3">
+                <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">{tp('Statut')}</h3>
                 <button
                   type="button"
                   onClick={() => handleChange('isPublished', !form.isPublished)}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 transition ${
                     form.isPublished
                       ? 'border-primary-300 bg-primary-50 hover:bg-primary-100'
-                      : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
+                      : 'border-border bg-background hover:border-gray-300 hover:bg-muted'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${form.isPublished ? 'bg-primary-500' : 'bg-gray-300'}`} />
-                    <span className="text-sm font-semibold text-gray-800">{form.isPublished ? 'Actif' : tp('Brouillon')}</span>
+                    <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${form.isPublished ? 'bg-primary' : 'bg-gray-300'}`} />
+                    <span className="text-sm font-semibold text-foreground">{form.isPublished ? 'Actif' : tp('Brouillon')}</span>
                   </div>
                   <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
-                    form.isPublished ? 'bg-primary-100 text-primary-700' : 'bg-gray-200 text-gray-500'
+                    form.isPublished ? 'bg-primary-100 text-primary' : 'bg-gray-200 text-muted-foreground'
                   }`}>
                     {form.isPublished ? 'Visible' : tp('Masqué')}
                   </span>
                 </button>
-                <p className="text-[11px] text-gray-400 text-center">
+                <p className="text-[11px] text-muted-foreground text-center">
                   {form.isPublished ? 'Visible sur votre boutique' : tp('Cliquez pour rendre visible')}
                 </p>
                 <button
                   type="submit"
                   form="store-product-form"
                   disabled={saving}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 disabled:opacity-60 transition shadow-md"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-700 disabled:opacity-60 transition shadow-md"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? 'Enregistrement...' : tp('Enregistrer')}
@@ -1264,8 +1264,8 @@ const StoreProductForm = () => {
               </div>
 
               {/* Actions rapides */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-2">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">{tp('Actions rapides')}</h3>
+              <div className="bg-card rounded-xl border shadow-sm p-4 space-y-2">
+                <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide mb-3">{tp('Actions rapides')}</h3>
                 {isEdit && (
                   <button type="button" onClick={() => {
                     const isPremium = storeTemplate === 'magazine' || isPremiumPageData(form._pageData, form.productPageConfig);
@@ -1301,7 +1301,7 @@ const StoreProductForm = () => {
                         type="button"
                         onClick={openDigitalProductModal}
                         disabled={digitalProductLoading}
-                        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-emerald-200 bg-white text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition disabled:opacity-60"
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-emerald-200 bg-card text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition disabled:opacity-60"
                       >
                         {digitalProductLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
                         Régénérer
@@ -1311,7 +1311,7 @@ const StoreProductForm = () => {
                         type="button"
                         onClick={handleDisableDigitalProduct}
                         disabled={digitalProductLoading || saving}
-                        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-red-200 bg-white text-xs font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60"
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-red-200 bg-card text-xs font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60"
                       >
                         {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
                         Désactiver
@@ -1322,7 +1322,7 @@ const StoreProductForm = () => {
                       type="button"
                       onClick={openDigitalProductModal}
                       disabled={digitalProductLoading}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition disabled:opacity-60"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border bg-background text-sm font-semibold text-foreground hover:bg-muted transition disabled:opacity-60"
                     >
                       {digitalProductLoading ? <Loader2 className="w-4 h-4 flex-shrink-0 animate-spin" /> : <FileText className="w-4 h-4 flex-shrink-0" />}
                       Produit digital
@@ -1333,15 +1333,15 @@ const StoreProductForm = () => {
               </div>
 
               {/* Lier au catalogue */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">{tp('Catalogue')}</h3>
+              <div className="bg-card rounded-xl border shadow-sm p-4">
+                <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide mb-3">{tp('Catalogue')}</h3>
                 {linkedProduct ? (
                   <div className="flex items-center gap-2 p-3 bg-primary-50 border border-primary-200 rounded-xl">
-                    <Link className="w-3.5 h-3.5 text-primary-600 flex-shrink-0" />
+                    <Link className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-primary-800 truncate">{linkedProduct.name}</p>
                       {linkedProduct.sellingPrice && (
-                        <p className="text-[11px] text-primary-600">{linkedProduct.sellingPrice?.toLocaleString()} XAF</p>
+                        <p className="text-[11px] text-primary">{linkedProduct.sellingPrice?.toLocaleString()} XAF</p>
                       )}
                     </div>
                     <button type="button" onClick={handleUnlinkProduct} className="p-1 text-primary-400 hover:text-red-500 transition flex-shrink-0">
@@ -1350,21 +1350,21 @@ const StoreProductForm = () => {
                   </div>
                 ) : (
                   <button type="button" onClick={() => setShowPicker(true)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-400 hover:border-primary-300 hover:text-primary-600 hover:bg-primary-50 transition font-medium">
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border-2 border-dashed border-border rounded-xl text-sm text-muted-foreground hover:border-primary-300 hover:text-primary hover:bg-primary-50 transition font-medium">
                     <Search className="w-4 h-4" /> Lier au catalogue
                   </button>
                 )}
-                <p className="text-[11px] text-gray-400 mt-2 text-center leading-tight">
+                <p className="text-[11px] text-muted-foreground mt-2 text-center leading-tight">
                   {tp('Synchronise les commandes avec votre catalogue')}
                 </p>
               </div>
 
               {/* Export */}
               {isEdit && (
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                  <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">{tp('Export')}</h3>
+                <div className="bg-card rounded-xl border shadow-sm p-4">
+                  <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide mb-3">{tp('Export')}</h3>
                   <button type="button" onClick={handleExportProductCsv} disabled={csvBusy}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition disabled:opacity-50 font-medium">
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border text-sm text-muted-foreground hover:bg-background transition disabled:opacity-50 font-medium">
                     {csvBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                     Exporter en CSV
                   </button>
@@ -1445,20 +1445,20 @@ const StoreProductForm = () => {
       {/* AI Generation Modal */}
       {showAiModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">{tp('Générer avec l\'IA')}</h3>
-                  <p className="text-[11px] text-gray-400">{tp('Fiche produit complète en quelques secondes')}</p>
+                  <h3 className="text-sm font-bold text-foreground">{tp('Générer avec l\'IA')}</h3>
+                  <p className="text-[11px] text-muted-foreground">{tp('Fiche produit complète en quelques secondes')}</p>
                 </div>
               </div>
               <button type="button" onClick={() => { setShowAiModal(false); setAiGenerated(null); setAiError(''); }}
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-                <X className="w-5 h-5 text-gray-400" />
+                className="p-1.5 hover:bg-muted rounded-lg transition">
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
 
@@ -1469,7 +1469,7 @@ const StoreProductForm = () => {
                     className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border text-sm font-semibold transition ${
                       aiInputType === tab.id
                         ? 'bg-violet-600 border-violet-600 text-white shadow-sm'
-                        : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                        : 'border-border text-muted-foreground hover:bg-background'
                     }`}>
                     {tab.icon} {tab.label}
                   </button>
@@ -1478,17 +1478,17 @@ const StoreProductForm = () => {
 
               {aiInputType === 'description' ? (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-2">{tp('Décrivez votre produit')}</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-2">{tp('Décrivez votre produit')}</label>
                   <textarea autoFocus value={aiInput} onChange={(e) => setAiInput(e.target.value)}
                     placeholder={tp('Ex: Robe en wax africain 100% coton, taille 38-42, disponible en rouge/bleu/vert, produite artisanalement au Cameroun…')}
                     rows={5} className={textareaCls} />
                 </div>
               ) : (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-2">{tp('URL de la source produit')}</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-2">{tp('URL de la source produit')}</label>
                   <input autoFocus type="url" value={aiInput} onChange={(e) => setAiInput(e.target.value)}
                     placeholder="https://www.alibaba.com/product/..." className={inputCls} />
-                  <p className="text-[11px] text-gray-400 mt-1">{tp('Alibaba, Amazon, AliExpress, site fournisseur…')}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">{tp('Alibaba, Amazon, AliExpress, site fournisseur…')}</p>
                 </div>
               )}
 
@@ -1501,20 +1501,20 @@ const StoreProductForm = () => {
               {aiGenerated && (
                 <div className="border border-violet-200 bg-violet-50 rounded-xl p-4 space-y-3">
                   <p className="text-[11px] font-bold text-violet-600 uppercase tracking-wide">{tp('Prévisualisation')}</p>
-                  <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Nom')}</p><p className="text-sm font-bold text-gray-900">{aiGenerated.name}</p></div>
-                  {aiGenerated.category && <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Catégorie')}</p><p className="text-sm text-gray-700">{aiGenerated.category}</p></div>}
-                  {aiGenerated.suggestedPrice > 0 && <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Prix suggéré')}</p><p className="text-sm font-bold text-primary-700">{aiGenerated.suggestedPrice.toLocaleString()} XAF</p></div>}
-                  <div><p className="text-[11px] text-gray-400 mb-0.5">{tp('Description')}</p><p className="text-sm text-gray-600 line-clamp-3">{aiGenerated.description}</p></div>
+                  <div><p className="text-[11px] text-muted-foreground mb-0.5">{tp('Nom')}</p><p className="text-sm font-bold text-foreground">{aiGenerated.name}</p></div>
+                  {aiGenerated.category && <div><p className="text-[11px] text-muted-foreground mb-0.5">{tp('Catégorie')}</p><p className="text-sm text-foreground">{aiGenerated.category}</p></div>}
+                  {aiGenerated.suggestedPrice > 0 && <div><p className="text-[11px] text-muted-foreground mb-0.5">{tp('Prix suggéré')}</p><p className="text-sm font-bold text-primary">{aiGenerated.suggestedPrice.toLocaleString()} XAF</p></div>}
+                  <div><p className="text-[11px] text-muted-foreground mb-0.5">{tp('Description')}</p><p className="text-sm text-muted-foreground line-clamp-3">{aiGenerated.description}</p></div>
                   {aiGenerated.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {aiGenerated.tags.map((t, i) => <span key={i} className="px-2 py-0.5 bg-white border border-violet-200 text-violet-700 text-[11px] rounded-full font-medium">{t}</span>)}
+                      {aiGenerated.tags.map((t, i) => <span key={i} className="px-2 py-0.5 bg-card border border-violet-200 text-violet-700 text-[11px] rounded-full font-medium">{t}</span>)}
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            <div className="px-5 py-4 border-t border-gray-100 flex gap-3">
+            <div className="px-5 py-4 border-t border-border flex gap-3">
               {!aiGenerated ? (
                 <button type="button" onClick={handleAiGenerate} disabled={!aiInput.trim() || aiGenerating}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-bold rounded-xl hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 transition shadow-sm">
@@ -1523,11 +1523,11 @@ const StoreProductForm = () => {
               ) : (
                 <>
                   <button type="button" onClick={() => { setAiGenerated(null); setAiError(''); }}
-                    className="px-4 py-2.5 border border-gray-200 text-sm font-semibold text-gray-600 rounded-xl hover:bg-gray-50 transition">
+                    className="px-4 py-2.5 border border-border text-sm font-semibold text-muted-foreground rounded-xl hover:bg-background transition">
                     {tp('Regénérer')}
                   </button>
                   <button type="button" onClick={applyAiGenerated}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition shadow-sm">
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition shadow-sm">
                     <CheckCircle className="w-4 h-4" /> Appliquer
                   </button>
                 </>
@@ -1540,28 +1540,28 @@ const StoreProductForm = () => {
       {/* Product Picker Modal */}
       {showPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-gray-900">{tp('Choisir un produit du catalogue')}</h3>
-              <button type="button" onClick={() => setShowPicker(false)} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-                <X className="w-5 h-5 text-gray-400" />
+          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <h3 className="text-sm font-bold text-foreground">{tp('Choisir un produit du catalogue')}</h3>
+              <button type="button" onClick={() => setShowPicker(false)} className="p-1.5 hover:bg-muted rounded-lg transition">
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
-            <div className="p-3 border-b border-gray-100">
+            <div className="p-3 border-b border-border">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input type="text" autoFocus value={pickerSearch} onChange={(e) => setPickerSearch(e.target.value)}
                   placeholder={tp('Rechercher un produit…')}
-                  className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                  className="w-full pl-9 pr-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
               {pickerLoading ? (
                 <div className="flex justify-center py-10">
-                  <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-primary-600 animate-spin" />
+                  <div className="w-6 h-6 rounded-full border-2 border-border border-t-primary-600 animate-spin" />
                 </div>
               ) : pickerProducts.length === 0 ? (
-                <div className="py-10 text-center text-sm text-gray-400">
+                <div className="py-10 text-center text-sm text-muted-foreground">
                   {pickerSearch ? 'Aucun produit trouvé' : tp('Aucun produit dans le catalogue')}
                 </div>
               ) : (
@@ -1571,10 +1571,10 @@ const StoreProductForm = () => {
                       <button type="button" onClick={() => handlePickProduct(p)}
                         className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-primary-50 text-left transition group">
                         <div>
-                          <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-800">{p.name}</p>
-                          <p className="text-[11px] text-gray-400 mt-0.5">{p.status} · stock {p.stock}</p>
+                          <p className="text-sm font-semibold text-foreground group-hover:text-primary-800">{p.name}</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">{p.status} · stock {p.stock}</p>
                         </div>
-                        <span className="text-sm font-bold text-primary-700 ml-3 flex-shrink-0">
+                        <span className="text-sm font-bold text-primary ml-3 flex-shrink-0">
                           {p.sellingPrice?.toLocaleString()} XAF
                         </span>
                       </button>

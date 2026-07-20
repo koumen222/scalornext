@@ -127,7 +127,7 @@ const StoreCreationSuccess = () => {
     <div className="min-h-screen bg-[#f6f8f7] px-4 py-6 sm:px-6 lg:px-8">
       <ConfettiBurst />
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-6xl items-center">
-        <div className="w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.12)]">
+        <div className="w-full overflow-hidden rounded-lg border border-slate-200 bg-card shadow-[0_18px_60px_rgba(15,23,42,0.12)]">
           <div className="grid lg:grid-cols-[0.92fr_1.08fr]">
 
             {/* ── Panneau gauche : célébration ── */}
@@ -168,7 +168,7 @@ const StoreCreationSuccess = () => {
                 </div>
 
                 {/* Carte adresse */}
-                <div className="mt-9 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mt-9 rounded-lg border border-slate-200 bg-card p-5 shadow-sm">
                   <div className="flex items-center justify-between gap-4">
                     <div className="min-w-0">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">{tp('Votre adresse')}</p>
@@ -231,7 +231,7 @@ const StoreCreationSuccess = () => {
                 <button
                   type="button"
                   onClick={() => navigate('/ecom/boutique')}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-card px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   {tp('Tableau de bord')}

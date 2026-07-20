@@ -35,7 +35,7 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
 
   if (!productId) {
     return (
-      <div className="text-sm text-gray-400 italic py-4">
+      <div className="text-sm text-muted-foreground italic py-4">
         {tp('Enregistrez le produit pour gérer les offres de quantité.')}
       </div>
     );
@@ -47,8 +47,8 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="w-5 h-5 text-purple-600" />
-          <h3 className="text-sm font-bold text-gray-800">{tp('Offres de quantité')}</h3>
-          <span className="text-xs text-gray-400">({offers.length})</span>
+          <h3 className="text-sm font-bold text-foreground">{tp('Offres de quantité')}</h3>
+          <span className="text-xs text-muted-foreground">({offers.length})</span>
         </div>
         {!readOnly && (
           <Link
@@ -71,10 +71,10 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
       {/* Loading */}
       {loading ? (
         <div className="flex items-center justify-center py-6">
-          <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : offers.length === 0 ? (
-        <div className="text-sm text-gray-500 text-center py-6">
+        <div className="text-sm text-muted-foreground text-center py-6">
           {tp('Aucune offre configurée pour ce produit.')}
         </div>
       ) : (
@@ -83,18 +83,18 @@ const QuantityOffersManager = ({ productId, readOnly = false }) => {
           {offers.map(offer => (
             <div
               key={offer._id}
-              className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3"
+              className="flex items-center justify-between bg-card border border-border rounded-lg px-4 py-3"
             >
               <div className="flex flex-col gap-1">
-                <div className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <div className="text-sm font-bold text-foreground flex items-center gap-2">
                   {offer.name}
                   {!offer.isActive && (
-                    <span className="flex items-center gap-1 text-[10px] bg-gray-100 text-gray-500 font-bold px-2 py-0.5 rounded-full">
+                    <span className="flex items-center gap-1 text-[10px] bg-muted text-muted-foreground font-bold px-2 py-0.5 rounded-full">
                       <EyeOff className="w-3 h-3" /> Inactif
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-muted-foreground">
                   {offer.offers?.length || 0} palier(s) configuré(s)
                 </div>
               </div>

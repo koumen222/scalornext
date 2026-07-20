@@ -118,11 +118,11 @@ const TransactionForm = () => {
   if (initialLoading) return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
       <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-6" />
-      <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+      <div className="bg-card rounded-xl border p-6 space-y-4">
         {[...Array(6)].map((_, i) => (
           <div key={i}>
             <div className="h-3 w-24 bg-gray-200 rounded animate-pulse mb-2" />
-            <div className="h-10 w-full bg-gray-100 rounded-lg animate-pulse" />
+            <div className="h-10 w-full bg-muted rounded-lg animate-pulse" />
           </div>
         ))}
       </div>
@@ -134,7 +134,7 @@ const TransactionForm = () => {
   return (
     <div className="p-3 sm:p-4 lg:p-6 max-w-3xl mx-auto">
       <div className="mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground">
           {isEditing ? 'Modifier la transaction' : tp('Nouvelle transaction')}
         </h1>
       </div>
@@ -143,25 +143,25 @@ const TransactionForm = () => {
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-4">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-3 sm:p-6 space-y-4 sm:space-y-5">
+      <form onSubmit={handleSubmit} className="bg-card rounded-lg shadow p-3 sm:p-6 space-y-4 sm:space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Date *')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Date *')}</label>
             <input type="date" name="date" required value={formData.date} onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Type *')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Type *')}</label>
             <div className="flex gap-4 mt-1">
               <label className={`flex-1 text-center py-2 rounded-lg border-2 cursor-pointer transition ${
-                formData.type === 'expense' ? 'border-red-500 bg-red-50 text-red-700 font-semibold' : 'border-gray-200 text-gray-500'
+                formData.type === 'expense' ? 'border-red-500 bg-red-50 text-red-700 font-semibold' : 'border-border text-muted-foreground'
               }`}>
                 <input type="radio" name="type" value="expense" checked={formData.type === 'expense'} onChange={handleChange} className="sr-only" />
                 {tp('Dépense')}
               </label>
               <label className={`flex-1 text-center py-2 rounded-lg border-2 cursor-pointer transition ${
-                formData.type === 'income' ? 'border-green-500 bg-green-50 text-green-700 font-semibold' : 'border-gray-200 text-gray-500'
+                formData.type === 'income' ? 'border-green-500 bg-green-50 text-green-700 font-semibold' : 'border-border text-muted-foreground'
               }`}>
                 <input type="radio" name="type" value="income" checked={formData.type === 'income'} onChange={handleChange} className="sr-only" />
                 {tp('Entrée')}
@@ -170,7 +170,7 @@ const TransactionForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Catégorie *')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Catégorie *')}</label>
             <select name="category" required value={formData.category} onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent">
               <option value="">{tp('Sélectionner une catégorie')}</option>
@@ -181,14 +181,14 @@ const TransactionForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Montant (FCFA) *')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Montant (FCFA) *')}</label>
             <input type="number" name="amount" required min="0" step="0.01" value={formData.amount} onChange={handleChange}
               placeholder="0.00"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Produit lié (optionnel)')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Produit lié (optionnel)')}</label>
             <select name="productId" value={formData.productId} onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent">
               <option value="">{tp('Aucun')}</option>
@@ -199,7 +199,7 @@ const TransactionForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Référence (optionnel)')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Référence (optionnel)')}</label>
             <input type="text" name="reference" value={formData.reference} onChange={handleChange}
               placeholder={tp('N° facture, reçu...')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
@@ -207,7 +207,7 @@ const TransactionForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Description')}</label>
+          <label className="block text-sm font-medium text-foreground mb-1">{tp('Description')}</label>
           <textarea name="description" rows="3" value={formData.description} onChange={handleChange}
             placeholder={tp('Détails de la transaction...')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
@@ -215,7 +215,7 @@ const TransactionForm = () => {
 
         <div className="flex justify-end space-x-4 pt-2">
           <button type="button" onClick={() => navigate('/ecom/transactions')}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+            className="px-4 py-2 border border-gray-300 rounded-lg text-foreground hover:bg-background">
             {tp('Annuler')}
           </button>
           <button type="submit" disabled={loading}

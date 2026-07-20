@@ -218,11 +218,11 @@ const PERIOD_FILTERS = [
 
 const Inp = ({ value, onChange, placeholder, type = 'text', className = '' }) => (
   <input type={type} value={value} onChange={onChange} placeholder={placeholder}
-    className={`w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 placeholder:text-slate-400 bg-white transition-colors ${className}`} />
+    className={`w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 placeholder:text-slate-400 bg-card transition-colors ${className}`} />
 );
 
-const Section = ({ icon: Icon, title, accent = 'text-primary-600', children, actions }) => (
-  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+const Section = ({ icon: Icon, title, accent = 'text-primary', children, actions }) => (
+  <div className="bg-card rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
     <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 bg-slate-50/50">
       <div className="flex items-center gap-2.5">
         <Icon className={`w-4 h-4 ${accent}`} />
@@ -242,7 +242,7 @@ const Label = ({ children, required }) => (
 
 const Tag = ({ label, onClick }) => (
   <button type="button" onClick={onClick}
-    className="px-2.5 py-1 text-[10px] font-bold bg-primary-50 text-primary-700 border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors">
+    className="px-2.5 py-1 text-[10px] font-bold bg-primary-50 text-primary border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors">
     {`{${label}}`}
   </button>
 );
@@ -251,7 +251,7 @@ const Dlg = ({ open, onClose, title, children }) => {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <h2 className="text-sm font-bold text-slate-800">{title}</h2>
           <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400"><X className="w-4 h-4" /></button>
@@ -382,13 +382,13 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
             <div className="flex items-center gap-3">
               <button
                 onClick={onCancel}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-card/5 hover:bg-card/10 border border-white/10 rounded-xl transition-all"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Retour
               </button>
-              <div className="w-px h-5 bg-white/10" />
-              <div className="w-9 h-9 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
+              <div className="w-px h-5 bg-card/10" />
+              <div className="w-9 h-9 rounded-2xl bg-card/10 border border-white/20 flex items-center justify-center">
                 <Edit3 className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -399,7 +399,7 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowTpls(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-card/5 hover:bg-card/10 border border-white/10 rounded-xl transition-all"
               >
                 <FileText className="w-3.5 h-3.5" />
                 Templates
@@ -407,7 +407,7 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
               <button
                 onClick={save}
                 disabled={saving}
-                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-xl transition-all shadow-sm disabled:opacity-50"
+                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white bg-primary hover:bg-primary rounded-xl transition-all shadow-sm disabled:opacity-50"
               >
                 {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                 {saving ? 'Enregistrement…' : eid ? 'Mettre à jour' : 'Créer'}
@@ -479,7 +479,7 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
               <div className="inline-flex p-1 rounded-xl bg-slate-100">
                 {['html', 'text'].map(m => (
                   <button key={m} onClick={() => setContentMode(m)}
-                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${contentMode === m ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                    className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${contentMode === m ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
                     {m === 'html' ? 'HTML' : 'Texte brut'}
                   </button>
                 ))}
@@ -592,7 +592,7 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
                           type="checkbox" 
                           checked={(form.segmentFilter.roles || []).includes(r.value)} 
                           onChange={e => toggleRole(r.value, e.target.checked)} 
-                          className="text-primary-700"
+                          className="text-primary"
                         />
                         <RoleIcon className="w-3.5 h-3.5 text-slate-500" />
                         <span className="font-medium text-slate-700">{r.label}</span>
@@ -605,16 +605,16 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
           )}
           <div className="flex items-center justify-between p-3.5 bg-primary-50 rounded-xl border border-primary-200">
             <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-primary-700" />
+              <Target className="w-4 h-4 text-primary" />
               <span className="text-xs font-bold text-slate-700">Destinataires estimés</span>
             </div>
             {audLoad ? (
               <div className="flex items-center gap-2">
-                <Loader2 className="w-4 h-4 text-primary-600 animate-spin" />
+                <Loader2 className="w-4 h-4 text-primary animate-spin" />
                 <span className="text-xs text-slate-500">Calcul…</span>
               </div>
             ) : (
-              <span className="text-2xl font-black text-primary-700">{audCnt ?? '—'}</span>
+              <span className="text-2xl font-black text-primary">{audCnt ?? '—'}</span>
             )}
           </div>
         </Section>
@@ -633,18 +633,18 @@ export default function MarketingCompose({ editingId, onSaved, onCancel, flash }
             </button>
           </div>
           {testMsg && (
-            <p className={`text-xs font-semibold px-3 py-2 rounded-lg ${testMsg.startsWith('✅') ? 'bg-primary-50 text-primary-700' : 'bg-red-50 text-red-600'}`}>
+            <p className={`text-xs font-semibold px-3 py-2 rounded-lg ${testMsg.startsWith('✅') ? 'bg-primary-50 text-primary' : 'bg-red-50 text-red-600'}`}>
               {testMsg}
             </p>
           )}
         </Section>
 
         {/* Actions */}
-        <Section icon={Save} title="Actions" accent="text-primary-600">
+        <Section icon={Save} title="Actions" accent="text-primary">
           <button
             onClick={save}
             disabled={saving}
-            className="w-full inline-flex items-center justify-center gap-2 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-500 disabled:opacity-50 transition-all shadow-sm"
+            className="w-full inline-flex items-center justify-center gap-2 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary disabled:opacity-50 transition-all shadow-sm"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? 'Enregistrement…' : eid ? 'Mettre à jour' : 'Créer la campagne'}

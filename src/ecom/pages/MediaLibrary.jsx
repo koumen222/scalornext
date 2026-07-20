@@ -62,18 +62,18 @@ const EditImageModal = ({ item, onClose, onEdited }) => {
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/60 px-4" onClick={() => !loading && onClose()}>
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-          <h3 className="flex items-center gap-2 text-sm font-black text-gray-900">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-card shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <h3 className="flex items-center gap-2 text-sm font-black text-foreground">
             <Wand2 className="h-4 w-4 text-indigo-600" />
             {tp('Modifier cette image par IA')}
           </h3>
-          <button type="button" onClick={onClose} disabled={loading} className="rounded-full p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700">
+          <button type="button" onClick={onClose} disabled={loading} className="rounded-full p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className="space-y-3 p-4">
-          <div className="relative h-44 overflow-hidden rounded-xl bg-gray-100">
+          <div className="relative h-44 overflow-hidden rounded-xl bg-muted">
             <img src={item.url} alt="" className={`h-full w-full object-contain transition ${loading ? 'opacity-40' : ''}`} />
             {loading && (
               <div className="absolute inset-0 flex items-center justify-center gap-2 text-[12px] font-bold text-slate-700">
@@ -91,7 +91,7 @@ const EditImageModal = ({ item, onClose, onEdited }) => {
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
                 placeholder={tp('Décrivez la modification : « fond beige », « ajoute des fleurs autour », « éclaircis l\'image »…')}
-                className="w-full resize-y rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+                className="w-full resize-y rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus:border-indigo-400 focus:bg-card focus:ring-2 focus:ring-indigo-100"
               />
               {error && <p className="text-xs font-bold text-red-600">{error}</p>}
               <button
@@ -103,7 +103,7 @@ const EditImageModal = ({ item, onClose, onEdited }) => {
                 <Sparkles className="h-4 w-4" />
                 {tp('Modifier l\'image')}
               </button>
-              <p className="text-center text-[11px] text-gray-400">
+              <p className="text-center text-[11px] text-muted-foreground">
                 {tp('L\'original est conservé — la version modifiée s\'ajoute à la médiathèque.')}
               </p>
             </>
@@ -127,8 +127,8 @@ const MediaCard = ({ item, onDelete, onEdit }) => {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md">
-      <div className="relative aspect-square bg-gray-50">
+    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:shadow-md">
+      <div className="relative aspect-square bg-background">
         {item.type === 'video' ? (
           <video src={item.url} muted loop playsInline preload="metadata" className="h-full w-full object-cover" onMouseEnter={(e) => e.target.play().catch(() => {})} onMouseLeave={(e) => e.target.pause()} />
         ) : (
@@ -139,14 +139,14 @@ const MediaCard = ({ item, onDelete, onEdit }) => {
         </span>
         {/* Actions au survol */}
         <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 bg-gradient-to-t from-black/70 to-transparent p-2 opacity-0 transition group-hover:opacity-100">
-          <button type="button" onClick={copy} title={tp('Copier l\'URL')} className="rounded-lg bg-white/95 p-1.5 text-gray-700 shadow transition hover:bg-white">
+          <button type="button" onClick={copy} title={tp('Copier l\'URL')} className="rounded-lg bg-card/95 p-1.5 text-foreground shadow transition hover:bg-card">
             {copied ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
           </button>
-          <a href={item.url} target="_blank" rel="noopener noreferrer" title={tp('Ouvrir')} className="rounded-lg bg-white/95 p-1.5 text-gray-700 shadow transition hover:bg-white">
+          <a href={item.url} target="_blank" rel="noopener noreferrer" title={tp('Ouvrir')} className="rounded-lg bg-card/95 p-1.5 text-foreground shadow transition hover:bg-card">
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
           {item.type === 'image' && (
-            <button type="button" onClick={() => onEdit(item)} title={tp('Modifier par IA')} className="rounded-lg bg-white/95 p-1.5 text-indigo-600 shadow transition hover:bg-white">
+            <button type="button" onClick={() => onEdit(item)} title={tp('Modifier par IA')} className="rounded-lg bg-card/95 p-1.5 text-indigo-600 shadow transition hover:bg-card">
               <Wand2 className="h-3.5 w-3.5" />
             </button>
           )}
@@ -155,17 +155,17 @@ const MediaCard = ({ item, onDelete, onEdit }) => {
               {tp('Confirmer')}
             </button>
           ) : (
-            <button type="button" onClick={() => { setConfirming(true); setTimeout(() => setConfirming(false), 2500); }} title={tp('Retirer')} className="rounded-lg bg-white/95 p-1.5 text-red-500 shadow transition hover:bg-white">
+            <button type="button" onClick={() => { setConfirming(true); setTimeout(() => setConfirming(false), 2500); }} title={tp('Retirer')} className="rounded-lg bg-card/95 p-1.5 text-red-500 shadow transition hover:bg-card">
               <Trash2 className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
       </div>
       <div className="px-2.5 py-2">
-        <p className="truncate text-[11px] font-semibold text-gray-700" title={item.prompt}>
+        <p className="truncate text-[11px] font-semibold text-foreground" title={item.prompt}>
           {item.prompt || KIND_LABELS[item.kind] || tp('Génération IA')}
         </p>
-        <p className="text-[10px] text-gray-400">{KIND_LABELS[item.kind] || item.kind || 'IA'} · {tp('il y a')} {timeAgo(item.createdAt)}</p>
+        <p className="text-[10px] text-muted-foreground">{KIND_LABELS[item.kind] || item.kind || 'IA'} · {tp('il y a')} {timeAgo(item.createdAt)}</p>
       </div>
     </div>
   );
@@ -209,15 +209,15 @@ const MediaLibrary = () => {
     <div className="mx-auto max-w-6xl px-4 py-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-black text-gray-900">
-            <Images className="h-5 w-5 text-primary-600" />
+          <h1 className="flex items-center gap-2 text-xl font-black text-foreground">
+            <Images className="h-5 w-5 text-primary" />
             {tp('Médiathèque IA')}
           </h1>
-          <p className="mt-0.5 text-sm text-gray-500">
-            {tp('Tous vos visuels générés par IA — images, GIF et vidéos')} {total > 0 && <span className="font-bold text-gray-700">({total})</span>}
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            {tp('Tous vos visuels générés par IA — images, GIF et vidéos')} {total > 0 && <span className="font-bold text-foreground">({total})</span>}
           </p>
         </div>
-        <button type="button" onClick={() => load(1, type)} className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-600 transition hover:bg-gray-50">
+        <button type="button" onClick={() => load(1, type)} className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold text-muted-foreground transition hover:bg-background">
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
           {tp('Actualiser')}
         </button>
@@ -230,7 +230,7 @@ const MediaLibrary = () => {
             key={f.id}
             type="button"
             onClick={() => setType(f.id)}
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition ${type === f.id ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-primary-300'}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition ${type === f.id ? 'border-primary-600 bg-primary text-white' : 'border-border bg-card text-muted-foreground hover:border-primary-300'}`}
           >
             <f.icon className="h-3.5 w-3.5" />
             {tp(f.label)}
@@ -239,14 +239,14 @@ const MediaLibrary = () => {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-24 text-gray-400">
+        <div className="flex items-center justify-center py-24 text-muted-foreground">
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
       ) : items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 py-20 text-center">
+        <div className="rounded-2xl border border-dashed border-gray-300 bg-background py-20 text-center">
           <Images className="mx-auto h-10 w-10 text-gray-300" />
-          <p className="mt-3 text-sm font-bold text-gray-600">{tp('Aucun visuel généré pour le moment')}</p>
-          <p className="mx-auto mt-1 max-w-md text-xs text-gray-400">
+          <p className="mt-3 text-sm font-bold text-muted-foreground">{tp('Aucun visuel généré pour le moment')}</p>
+          <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">
             {tp('Générez des images ou des GIF depuis vos fiches produit et vos builders : ils apparaîtront automatiquement ici.')}
           </p>
         </div>
@@ -261,7 +261,7 @@ const MediaLibrary = () => {
                 type="button"
                 disabled={loadingMore}
                 onClick={() => load(page + 1, type)}
-                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-bold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-bold text-foreground shadow-sm transition hover:bg-background disabled:opacity-50"
               >
                 {loadingMore && <Loader2 className="h-4 w-4 animate-spin" />}
                 {tp('Charger plus')}

@@ -14,7 +14,7 @@ export const VideoPlayerModal = ({ video, onClose }) => (
     <div className="w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
       <div className="mb-3 flex items-center justify-between">
         <p className="text-sm font-bold text-white">{video.title}</p>
-        <button type="button" onClick={onClose} className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition">
+        <button type="button" onClick={onClose} className="rounded-full bg-card/10 p-2 text-white hover:bg-card/20 transition">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -40,14 +40,14 @@ const TutorialVideoCard = ({ video, onPlay }) => {
       disabled={!available}
       className={`group w-full rounded-lg border p-3 text-left transition-all ${
         available
-          ? 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] cursor-pointer'
+          ? 'border-slate-200 bg-card hover:border-emerald-300 hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] cursor-pointer'
           : 'border-slate-100 bg-slate-50/60 cursor-default'
       }`}
     >
       <div className={`relative mb-3 flex h-24 items-center justify-center rounded-lg ${available ? 'bg-slate-950' : 'bg-slate-100'}`}>
         <PlayCircle className={`h-9 w-9 transition-transform ${available ? 'text-white group-hover:scale-110' : 'text-slate-300'}`} />
         {!available && (
-          <span className="absolute bottom-2 right-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200">
+          <span className="absolute bottom-2 right-2 rounded-full bg-card px-2 py-0.5 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200">
             {tp('Bientôt disponible')}
           </span>
         )}
@@ -91,7 +91,7 @@ const TutorialVideosSection = () => {
                 disabled={!available}
                 onClick={() => available && setPlaying(v)}
                 className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition ${
-                  available ? 'border-slate-200 bg-white hover:border-emerald-300' : 'border-slate-100 bg-slate-50/60 cursor-default'
+                  available ? 'border-slate-200 bg-card hover:border-emerald-300' : 'border-slate-100 bg-slate-50/60 cursor-default'
                 }`}
               >
                 <PlayCircle className={`h-4 w-4 flex-shrink-0 ${available ? 'text-emerald-700' : 'text-slate-300'}`} />
@@ -100,7 +100,7 @@ const TutorialVideosSection = () => {
                   <p className="truncate text-[11px] text-slate-400">{v.desc}</p>
                 </div>
                 {!available && (
-                  <span className="flex-shrink-0 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200">
+                  <span className="flex-shrink-0 rounded-full bg-card px-2 py-0.5 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200">
                     {tp('Bientôt')}
                   </span>
                 )}

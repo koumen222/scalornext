@@ -6,6 +6,17 @@
 import type { ReactNode } from 'react';
 import { BoutiqueChrome } from '@/lib/dashboard/chrome';
 
-export default function BoutiqueChromeLayout({ children }: { children: ReactNode }) {
-  return <BoutiqueChrome>{children}</BoutiqueChrome>;
+export default function BoutiqueChromeLayout({
+  children,
+  modal,
+}: {
+  children: ReactNode;
+  modal: ReactNode;
+}) {
+  return (
+    <BoutiqueChrome>
+      {children}
+      {modal}
+    </BoutiqueChrome>
+  );
 }

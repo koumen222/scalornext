@@ -166,7 +166,7 @@ const AiGifPromptBox = ({ subject = '', context = '', referenceOptions = [], onG
       ) : (
         <>
           <div className="flex items-center justify-between">
-            <div className="flex gap-1 rounded-lg bg-white p-0.5 shadow-sm">
+            <div className="flex gap-1 rounded-lg bg-card p-0.5 shadow-sm">
               <button
                 type="button"
                 onClick={() => { setTab('scene'); setError(''); }}
@@ -182,7 +182,7 @@ const AiGifPromptBox = ({ subject = '', context = '', referenceOptions = [], onG
                 <ListOrdered className="h-3 w-3" /> {tp('Mode d\'emploi')}
               </button>
             </div>
-            <button type="button" onClick={() => setOpen(false)} className="rounded-lg p-1 text-slate-400 transition hover:bg-white hover:text-slate-700">
+            <button type="button" onClick={() => setOpen(false)} className="rounded-lg p-1 text-slate-400 transition hover:bg-card hover:text-slate-700">
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -196,14 +196,14 @@ const AiGifPromptBox = ({ subject = '', context = '', referenceOptions = [], onG
                     key={p.id}
                     type="button"
                     onClick={() => applyPreset(p)}
-                    className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${presetId === p.id ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-indigo-200 bg-white text-indigo-700 hover:bg-indigo-50'}`}
+                    className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${presetId === p.id ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-indigo-200 bg-card text-indigo-700 hover:bg-indigo-50'}`}
                   >
                     {p.label}
                   </button>
                 ))}
               </div>
               {activePreset && (
-                <p className="rounded-lg bg-white px-2.5 py-1.5 text-[10.5px] font-semibold leading-4 text-indigo-700">
+                <p className="rounded-lg bg-card px-2.5 py-1.5 text-[10.5px] font-semibold leading-4 text-indigo-700">
                   {tp('L\'IA analyse votre produit et met en scène :')} {activePreset.hint} — {tp('sans texte ni voix')}
                 </p>
               )}
@@ -214,7 +214,7 @@ const AiGifPromptBox = ({ subject = '', context = '', referenceOptions = [], onG
                 placeholder={presetId
                   ? tp('Précisions (optionnel) : type de personne, lieu, ambiance…')
                   : tp('Décrivez la situation : « une femme applique la crème et sourit devant le miroir »…')}
-                className="min-h-[46px] w-full resize-y rounded-lg border border-indigo-200 bg-white px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                className="min-h-[46px] w-full resize-y rounded-lg border border-indigo-200 bg-card px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               />
               <div className="flex items-center gap-1.5">
                 <span className="text-[10.5px] font-bold text-slate-500">{tp('Durée :')}</span>
@@ -223,7 +223,7 @@ const AiGifPromptBox = ({ subject = '', context = '', referenceOptions = [], onG
                     key={d}
                     type="button"
                     onClick={() => setDurationSec(d)}
-                    className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${durationSec === d ? 'border-indigo-500 bg-indigo-100 text-indigo-800' : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-300'}`}
+                    className={`rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${durationSec === d ? 'border-indigo-500 bg-indigo-100 text-indigo-800' : 'border-slate-200 bg-card text-slate-500 hover:border-indigo-300'}`}
                   >
                     {d} s
                   </button>
@@ -240,7 +240,7 @@ const AiGifPromptBox = ({ subject = '', context = '', referenceOptions = [], onG
                     value={s}
                     onChange={(e) => setStep(i, e.target.value)}
                     placeholder={i === 0 ? tp('Ex : Appliquer une noisette de crème sur le visage') : tp(`Étape ${i + 1}…`)}
-                    className="flex-1 rounded-lg border border-indigo-200 bg-white px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                    className="flex-1 rounded-lg border border-indigo-200 bg-card px-2.5 py-1.5 text-[12px] outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                   />
                   {steps.length > 2 && (
                     <button type="button" onClick={() => removeStep(i)} className="rounded p-1 text-slate-300 transition hover:text-red-500">
@@ -265,13 +265,13 @@ const AiGifPromptBox = ({ subject = '', context = '', referenceOptions = [], onG
                 key={o.url}
                 type="button"
                 onClick={() => setRefUrl(refUrl === o.url ? '' : o.url)}
-                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${refUrl === o.url ? 'border-indigo-500 bg-indigo-100 text-indigo-800' : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-300'}`}
+                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-bold transition ${refUrl === o.url ? 'border-indigo-500 bg-indigo-100 text-indigo-800' : 'border-slate-200 bg-card text-slate-500 hover:border-indigo-300'}`}
               >
                 <ImageIcon className="h-2.5 w-2.5" />
                 {o.label}
               </button>
             ))}
-            <label className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10.5px] font-bold text-slate-500 transition hover:border-indigo-300">
+            <label className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-slate-200 bg-card px-2 py-0.5 text-[10.5px] font-bold text-slate-500 transition hover:border-indigo-300">
               {refUploading ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Upload className="h-2.5 w-2.5" />}
               {tp('Uploader')}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => uploadReference(e.target.files?.[0])} />

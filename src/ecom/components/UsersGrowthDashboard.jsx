@@ -43,7 +43,7 @@ const Delta = ({ current, previous, label }) => {
 };
 
 const KpiCard = ({ icon: Icon, accent, accentLight, label, value, children }) => (
-  <div className="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-lg transition-all">
+  <div className="bg-card rounded-2xl border border-slate-100 p-4 hover:shadow-lg transition-all">
     <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-2" style={{ backgroundColor: accentLight }}>
       <Icon className="w-4 h-4" style={{ color: accent }} />
     </div>
@@ -54,7 +54,7 @@ const KpiCard = ({ icon: Icon, accent, accentLight, label, value, children }) =>
 );
 
 const ChartCard = ({ title, subtitle, children }) => (
-  <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+  <div className="bg-card rounded-2xl border border-slate-200 p-4 shadow-sm">
     <p className="text-sm font-black text-slate-700">{title}</p>
     {subtitle && <p className="text-[11px] text-slate-400 mb-2">{subtitle}</p>}
     <div className="h-[240px] mt-2">{children}</div>
@@ -112,19 +112,19 @@ const UsersGrowthDashboard = () => {
       {/* Header : titre + période + repli */}
       <div className="flex items-center justify-between gap-3 flex-wrap mb-1">
         <div className="flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-primary-600" />
+          <BarChart3 className="w-4 h-4 text-primary" />
           <h3 className="text-sm font-black text-slate-700 uppercase tracking-wider">{tp('Croissance des marchands')}</h3>
-          <span className="text-[10px] font-bold text-slate-400 bg-white border border-slate-200 rounded-full px-2 py-0.5">{tp('admins uniquement')}</span>
+          <span className="text-[10px] font-bold text-slate-400 bg-card border border-slate-200 rounded-full px-2 py-0.5">{tp('admins uniquement')}</span>
           {loading && <Loader2 className="w-3.5 h-3.5 text-slate-400 animate-spin" />}
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex rounded-xl bg-white border-2 border-slate-200 p-0.5">
+          <div className="flex rounded-xl bg-card border-2 border-slate-200 p-0.5">
             {PERIODS.map((p) => (
               <button
                 key={p.value}
                 type="button"
                 onClick={() => setDays(p.value)}
-                className={`px-3 py-1.5 text-xs font-bold rounded-[10px] transition-all ${days === p.value ? 'bg-primary-600 text-white shadow' : 'text-slate-500 hover:text-slate-800'}`}
+                className={`px-3 py-1.5 text-xs font-bold rounded-[10px] transition-all ${days === p.value ? 'bg-primary text-white shadow' : 'text-slate-500 hover:text-slate-800'}`}
               >
                 {p.label}
               </button>
@@ -133,7 +133,7 @@ const UsersGrowthDashboard = () => {
           <button
             type="button"
             onClick={toggleCollapsed}
-            className="p-2 rounded-xl bg-white border-2 border-slate-200 text-slate-500 hover:text-slate-800 transition-all"
+            className="p-2 rounded-xl bg-card border-2 border-slate-200 text-slate-500 hover:text-slate-800 transition-all"
             title={collapsed ? tp('Afficher le dashboard') : tp('Masquer le dashboard')}
           >
             {collapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
@@ -225,7 +225,7 @@ const UsersGrowthDashboard = () => {
 
           {/* Top utilisateurs par temps passé */}
           {topUsers.length > 0 && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm overflow-x-auto">
+            <div className="bg-card rounded-2xl border border-slate-200 p-4 shadow-sm overflow-x-auto">
               <p className="text-sm font-black text-slate-700">{tp('Temps passé par utilisateur')}</p>
               <p className="text-[11px] text-slate-400 mb-3">{tp('Top')} {topUsers.length} {tp('sur les')} {data.days} {tp('derniers jours (sessions analytics)')}</p>
               <table className="w-full text-left min-w-[560px]">

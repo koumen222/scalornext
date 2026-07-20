@@ -102,9 +102,9 @@ const ProductReportDetail = () => {
   if (loading) return (
     <div className="p-4 sm:p-6">
       <div className="h-8 w-52 bg-gray-200 rounded-lg animate-pulse mb-6" />
-      <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+      <div className="bg-card rounded-xl border p-6 space-y-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" />
+          <div key={i} className="h-4 bg-muted rounded animate-pulse" />
         ))}
       </div>
     </div>
@@ -140,17 +140,17 @@ const ProductReportDetail = () => {
         <div className="flex items-center gap-2 mb-2">
           <button
             onClick={() => navigate('/ecom/reports')}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-muted-foreground hover:text-foreground"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             {tp('Rapport détaillé :')} {product.name}
           </h1>
         </div>
-        <p className="text-sm text-gray-500 ml-7">
+        <p className="text-sm text-muted-foreground ml-7">
           {tp('Analyse complète des performances du produit')}
         </p>
       </div>
@@ -162,16 +162,16 @@ const ProductReportDetail = () => {
       )}
 
       {/* Filtre période */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6">
+      <div className="bg-card p-4 rounded-lg shadow mb-6">
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-2">{tp('Période d\'analyse')}</label>
+          <label className="block text-sm font-medium text-foreground mb-2">{tp('Période d\'analyse')}</label>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => {
                 setDateRangePreset('all');
                 setFilter({ dateStart: '', dateEnd: '' });
               }}
-              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'all' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'all' ? 'bg-primary text-white' : 'bg-muted text-foreground hover:bg-gray-200'}`}
             >
               {tp('Toute la période')}
             </button>
@@ -182,7 +182,7 @@ const ProductReportDetail = () => {
                 const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
                 setFilter({ dateStart: weekAgo.toISOString().split('T')[0], dateEnd: today.toISOString().split('T')[0] });
               }}
-              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'week' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'week' ? 'bg-primary text-white' : 'bg-muted text-foreground hover:bg-gray-200'}`}
             >
               7 derniers jours
             </button>
@@ -193,7 +193,7 @@ const ProductReportDetail = () => {
                 const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
                 setFilter({ dateStart: firstDay.toISOString().split('T')[0], dateEnd: today.toISOString().split('T')[0] });
               }}
-              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'month' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'month' ? 'bg-primary text-white' : 'bg-muted text-foreground hover:bg-gray-200'}`}
             >
               {tp('Ce mois')}
             </button>
@@ -201,7 +201,7 @@ const ProductReportDetail = () => {
               onClick={() => {
                 setDateRangePreset('custom');
               }}
-              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'custom' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`px-3 py-1.5 text-sm rounded-md ${dateRangePreset === 'custom' ? 'bg-primary text-white' : 'bg-muted text-foreground hover:bg-gray-200'}`}
             >
               {tp('Personnalisé')}
             </button>
@@ -209,7 +209,7 @@ const ProductReportDetail = () => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date début')}</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Date début')}</label>
             <input
               type="date"
               value={filter.dateStart}
@@ -221,7 +221,7 @@ const ProductReportDetail = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date fin')}</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Date fin')}</label>
             <input
               type="date"
               value={filter.dateEnd}
@@ -245,16 +245,16 @@ const ProductReportDetail = () => {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Commandes reçues')}</p>
-          <p className="text-2xl font-bold text-primary-600 mt-1">{stats.totalReceived || 0}</p>
+        <div className="bg-card rounded-lg shadow p-4">
+          <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Commandes reçues')}</p>
+          <p className="text-2xl font-bold text-primary mt-1">{stats.totalReceived || 0}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Commandes livrées')}</p>
+        <div className="bg-card rounded-lg shadow p-4">
+          <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Commandes livrées')}</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{stats.totalDelivered || 0}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Taux de livraison')}</p>
+        <div className="bg-card rounded-lg shadow p-4">
+          <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Taux de livraison')}</p>
           <div className="flex items-center gap-2 mt-1">
             <p className={`text-2xl font-bold ${deliveryRate >= 75 ? 'text-green-600' : deliveryRate >= 50 ? 'text-orange-600' : 'text-red-600'}`}>
               {deliveryRate}%
@@ -270,35 +270,35 @@ const ProductReportDetail = () => {
             ></div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">{tp('Quantité vendue')}</p>
-          <p className="text-2xl font-bold text-primary-700 mt-1">{stats.totalQuantity || 0}</p>
+        <div className="bg-card rounded-lg shadow p-4">
+          <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Quantité vendue')}</p>
+          <p className="text-2xl font-bold text-primary mt-1">{stats.totalQuantity || 0}</p>
         </div>
       </div>
 
       {/* KPIs Financiers - masqué pour closeuse */}
       {user?.role !== 'ecom_closeuse' && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Chiffre d\'affaires')}</p>
-            <p className="text-2xl font-bold text-primary-600 mt-1">{fmt(stats.totalRevenue)}</p>
+          <div className="bg-card rounded-lg shadow p-4">
+            <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Chiffre d\'affaires')}</p>
+            <p className="text-2xl font-bold text-primary mt-1">{fmt(stats.totalRevenue)}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Frais livraison')}</p>
+          <div className="bg-card rounded-lg shadow p-4">
+            <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Frais livraison')}</p>
             <p className="text-2xl font-bold text-yellow-600 mt-1">{fmt(stats.totalDeliveryCost)}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Dépenses pub')}</p>
+          <div className="bg-card rounded-lg shadow p-4">
+            <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Dépenses pub')}</p>
             <p className="text-2xl font-bold text-red-600 mt-1">{fmt(stats.totalAdSpend)}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">{tp('Bénéfice net')}</p>
+          <div className="bg-card rounded-lg shadow p-4">
+            <p className="text-xs font-medium text-muted-foreground uppercase">{tp('Bénéfice net')}</p>
             <p className={`text-2xl font-bold mt-1 ${(stats.totalProfit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {fmt(stats.totalProfit)}
             </p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-xs font-medium text-gray-500 uppercase">ROAS</p>
+          <div className="bg-card rounded-lg shadow p-4">
+            <p className="text-xs font-medium text-muted-foreground uppercase">ROAS</p>
             <p className={`text-2xl font-bold mt-1 ${roas >= 3 ? 'text-green-600' : roas >= 2 ? 'text-yellow-600' : 'text-red-600'}`}>
               {roas}
             </p>
@@ -308,17 +308,17 @@ const ProductReportDetail = () => {
 
       {/* Graphiques simples (texte pour l'instant - à remplacer par Chart.js) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Évolution des commandes')}</h3>
+        <div className="bg-card rounded-lg shadow p-4">
+          <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Évolution des commandes')}</h3>
           <div className="h-48 flex items-end justify-around gap-1">
             {chartData.map((item, idx) => {
               const height = maxOrders > 0 ? ((item.ordersReceived || 0) / maxOrders) * 100 : 0;
               return (
                 <div key={idx} className="flex-1 h-full flex flex-col items-center">
                   <div className="w-full flex-1 flex items-end">
-                    <div className="w-full bg-primary-600 rounded-t" style={{ height: `${Math.max(height, 2)}%` }}></div>
+                    <div className="w-full bg-primary rounded-t" style={{ height: `${Math.max(height, 2)}%` }}></div>
                   </div>
-                  <span className="text-xs text-gray-500 mt-1">{new Date(item.date).getDate()}</span>
+                  <span className="text-xs text-muted-foreground mt-1">{new Date(item.date).getDate()}</span>
                 </div>
               );
             })}
@@ -326,8 +326,8 @@ const ProductReportDetail = () => {
         </div>
         
         {user?.role !== 'ecom_closeuse' && (
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">{tp('Évolution du CA')}</h3>
+          <div className="bg-card rounded-lg shadow p-4">
+            <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Évolution du CA')}</h3>
             <div className="h-48 flex items-end justify-around gap-1">
               {chartData.map((item, idx) => {
                 const height = maxRevenue > 0 ? ((item.revenue || 0) / maxRevenue) * 100 : 0;
@@ -336,7 +336,7 @@ const ProductReportDetail = () => {
                     <div className="w-full flex-1 flex items-end">
                       <div className="w-full bg-green-500 rounded-t" style={{ height: `${Math.max(height, 2)}%` }}></div>
                     </div>
-                    <span className="text-xs text-gray-500 mt-1">{new Date(item.date).getDate()}</span>
+                    <span className="text-xs text-muted-foreground mt-1">{new Date(item.date).getDate()}</span>
                   </div>
                 );
               })}
@@ -346,31 +346,31 @@ const ProductReportDetail = () => {
       </div>
 
       {/* Tableau historique */}
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <div className="px-4 py-3 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">{tp('Historique détaillé')}</h3>
+      <div className="bg-card rounded-lg shadow overflow-x-auto">
+        <div className="px-4 py-3 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">{tp('Historique détaillé')}</h3>
         </div>
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-background">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Date')}</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Reçues')}</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Livrées')}</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Taux')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('Date')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('Reçues')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('Livrées')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('Taux')}</th>
               {user?.role !== 'ecom_closeuse' && (
                 <>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Pub')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Frais liv.')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('CA')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tp('Bénéfice')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('Pub')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('Frais liv.')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('CA')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tp('Bénéfice')}</th>
                 </>
               )}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-card divide-y divide-gray-200">
             {historicalData.length === 0 ? (
               <tr>
-                <td colSpan={user?.role === 'ecom_closeuse' ? 4 : 8} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={user?.role === 'ecom_closeuse' ? 4 : 8} className="px-6 py-8 text-center text-muted-foreground">
                   {tp('Aucune donnée disponible pour cette période')}
                 </td>
               </tr>
@@ -380,11 +380,11 @@ const ProductReportDetail = () => {
                   ? ((item.ordersDelivered / item.ordersReceived) * 100).toFixed(1) 
                   : 0;
                 return (
-                  <tr key={item._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={item._id} className="hover:bg-background">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
                       {new Date(item.date).toLocaleDateString('fr-FR')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary">
                       {item.ordersReceived || 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
@@ -399,13 +399,13 @@ const ProductReportDetail = () => {
                     </td>
                     {user?.role !== 'ecom_closeuse' && (
                       <>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                           {fmt(item.adSpend)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600">
                           {fmt(item.deliveryCost)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary-600">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary">
                           {fmt(item.revenue)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold">

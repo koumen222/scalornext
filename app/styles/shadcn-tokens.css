@@ -1,0 +1,166 @@
+/* =========================================================================
+   Tokens shadcn/ui — palette Scalor (vert #0F6B4F / cuivre #C56A2D / sable)
+   Fichier importé séparément dans app/layout.tsx (après tailwind-base.css).
+   Variables CSS pures (pas de @layer) → s'importe sans directive @tailwind.
+   Ajout non destructif. Contrastes vérifiés WCAG AA.
+   ========================================================================= */
+:root {
+  --background: 210 20% 98%;            /* #f9fafb */
+  --foreground: 220 17% 7%;             /* #0F1115 */
+
+  --card: 0 0% 100%;
+  --card-foreground: 220 17% 7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 17% 7%;
+
+  --primary: 162 75% 24%;              /* Scalor green #0F6B4F (= primary-500) */
+  --primary-foreground: 0 0% 100%;     /* blanc — contraste 6.49:1 AA */
+
+  --secondary: 33 20% 81%;             /* sand #D8CFC4 */
+  --secondary-foreground: 220 17% 12%;
+
+  --muted: 220 14% 96%;                /* gray-100 */
+  --muted-foreground: 220 9% 40%;
+
+  --accent: 33 23% 91%;                /* sand-light #EDE8E2 — survol subtil (menuAccent rhea) */
+  --accent-foreground: 220 17% 12%;
+
+  --destructive: 0 72% 45%;            /* rouge lisible (blanc = 5.9:1) */
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 13% 91%;               /* gray-200 */
+  --input: 220 13% 91%;
+  --ring: 162 75% 24%;                 /* vert Scalor */
+
+  --radius: 0.5rem;                    /* = rhea "default" */
+
+  /* Marque / sémantique (extras) */
+  --brand-copper: 24 63% 47%;          /* #C56A2D — accents & charts UNIQUEMENT (texte blanc = 3.84:1, sous AA) */
+  --brand-copper-foreground: 220 17% 7%;
+  --danger: 0 100% 23%;                /* #730000 */
+  --success: 142 71% 45%;              /* #22c55e */
+  --warning: 38 92% 50%;               /* #f59e0b */
+
+  /* Charts */
+  --chart-1: 162 75% 24%;              /* vert */
+  --chart-2: 24 63% 47%;               /* cuivre */
+  --chart-3: 160 74% 30%;              /* vert clair */
+  --chart-4: 33 19% 72%;               /* sand-dark */
+  --chart-5: 220 17% 25%;              /* graphite */
+
+  /* Sidebar (rhea) */
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 220 17% 7%;
+  --sidebar-primary: 162 75% 24%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 220 14% 96%;   /* gris neutre facon Minea */
+  --sidebar-accent-foreground: 220 17% 12%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 162 75% 24%;
+}
+
+.dark {
+  --background: 220 17% 7%;             /* #0F1115 */
+  --foreground: 210 20% 98%;
+
+  --card: 220 15% 10%;
+  --card-foreground: 210 20% 98%;
+  --popover: 220 15% 10%;
+  --popover-foreground: 210 20% 98%;
+
+  --primary: 160 74% 34%;              /* vert légèrement éclairci pour fond sombre */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 220 12% 18%;
+  --secondary-foreground: 210 20% 98%;
+
+  --muted: 220 12% 16%;
+  --muted-foreground: 220 10% 65%;
+
+  --accent: 220 12% 20%;
+  --accent-foreground: 210 20% 98%;
+
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 12% 20%;
+  --input: 220 12% 22%;
+  --ring: 160 74% 40%;
+
+  --brand-copper: 26 63% 54%;          /* copper-light pour le dark */
+  --brand-copper-foreground: 220 17% 7%;
+  --danger: 0 72% 45%;
+  --success: 142 71% 45%;
+  --warning: 38 92% 50%;
+
+  --chart-1: 160 74% 40%;
+  --chart-2: 26 63% 54%;
+  --chart-3: 162 60% 50%;
+  --chart-4: 33 19% 60%;
+  --chart-5: 210 20% 80%;
+
+  --sidebar: 220 15% 9%;
+  --sidebar-foreground: 210 20% 98%;
+  --sidebar-primary: 160 74% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 220 12% 18%;
+  --sidebar-accent-foreground: 210 20% 98%;
+  --sidebar-border: 220 12% 20%;
+  --sidebar-ring: 160 74% 40%;
+}
+
+/* OPTIONNEL — reset shadcn global. À mettre dans app/styles/tailwind-base.css
+   (qui a les @tailwind) et NON ici, car @apply/@layer exige les directives @tailwind.
+   Ne l'active que lors de la migration des écrans vers les tokens shadcn :
+
+   @layer base {
+     * { @apply border-border; }
+     body { @apply bg-background text-foreground; }
+   }
+*/
+
+/* =========================================================================
+   Zones sur-mesure exclues du mode sombre (ex. Creative Center / studio).
+   .scalor-force-light re-déclare les tokens en clair : même quand <html> est
+   en .dark, tout descendant de cette classe rend en clair (le sélecteur le
+   plus proche gagne pour les variables CSS). Aucun fichier de la zone touché.
+   ========================================================================= */
+.scalor-force-light {
+  --background: 210 20% 98%;
+  --foreground: 220 17% 7%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 17% 7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 17% 7%;
+  --primary: 162 75% 24%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 33 20% 81%;
+  --secondary-foreground: 220 17% 12%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 40%;
+  --accent: 33 23% 91%;
+  --accent-foreground: 220 17% 12%;
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 162 75% 24%;
+  --brand-copper: 24 63% 47%;
+  --brand-copper-foreground: 220 17% 7%;
+  --danger: 0 100% 23%;
+  --success: 142 71% 45%;
+  --warning: 38 92% 50%;
+  --chart-1: 162 75% 24%;
+  --chart-2: 24 63% 47%;
+  --chart-3: 160 74% 30%;
+  --chart-4: 33 19% 72%;
+  --chart-5: 220 17% 25%;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 220 17% 7%;
+  --sidebar-primary: 162 75% 24%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 220 14% 96%;
+  --sidebar-accent-foreground: 220 17% 12%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 162 75% 24%;
+}

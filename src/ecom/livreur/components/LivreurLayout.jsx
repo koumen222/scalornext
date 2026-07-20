@@ -23,14 +23,14 @@ export default function LivreurLayout({ children }) {
   const location = useLocation();
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-background">
       {/* Main content */}
       <main className="flex-1 overflow-y-auto pb-20">
         {children}
       </main>
 
       {/* Bottom navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 safe-area-inset-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-area-inset-bottom">
         <div className="flex items-center justify-around h-16 px-1">
           {navItems.map(({ to, label, icon: Icon, exact }) => {
             const isActive = exact
@@ -44,12 +44,12 @@ export default function LivreurLayout({ children }) {
               >
                 <Icon
                   size={22}
-                  className={isActive ? 'text-indigo-600' : 'text-gray-400'}
+                  className={isActive ? 'text-indigo-600' : 'text-muted-foreground'}
                   strokeWidth={isActive ? 2.5 : 1.8}
                 />
                 <span
                   className={`text-[10px] font-medium leading-none ${
-                    isActive ? 'text-indigo-600' : 'text-gray-400'
+                    isActive ? 'text-indigo-600' : 'text-muted-foreground'
                   }`}
                 >
                   {label}

@@ -100,50 +100,50 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
       {[1, 2, 3, 4, 5].map(s => (
         <Star
           key={s}
-          className={`w-3.5 h-3.5 ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-600'}`}
+          className={`w-3.5 h-3.5 ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`}
         />
       ))}
     </div>
   );
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-background transition-colors"
       >
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-amber-500" />
-          <h3 className="text-base font-semibold text-gray-900">{tp('Avis clients')}</h3>
+          <h3 className="text-base font-semibold text-foreground">{tp('Avis clients')}</h3>
           {existingTestimonials.length > 0 && (
-            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
               {existingTestimonials.length}
             </span>
           )}
         </div>
-        {expanded ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+        {expanded ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-gray-100">
+        <div className="px-5 pb-5 space-y-4 border-t border-border">
           {/* Existing testimonials */}
           {existingTestimonials.length > 0 && (
             <div className="space-y-2 pt-4">
-              <div className="text-sm font-medium text-gray-700">{tp('Avis existants')}</div>
+              <div className="text-sm font-medium text-foreground">{tp('Avis existants')}</div>
               {existingTestimonials.map((t, i) => (
-                <div key={i} className="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
+                <div key={i} className="flex items-start gap-3 bg-background rounded-lg p-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-gray-900">{t.name}</span>
+                      <span className="text-sm font-medium text-foreground">{t.name}</span>
                       {renderStars(t.rating)}
                       {t.verified && (
-                        <span className="text-[10px] text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded font-medium">{tp('Vérifié')}</span>
+                        <span className="text-[10px] text-primary bg-primary-50 px-1.5 py-0.5 rounded font-medium">{tp('Vérifié')}</span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 line-clamp-2">{t.text}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{t.text}</p>
                     {t.location && (
-                      <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
+                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <MapPin className="w-3 h-3" />
                         {t.location}
                       </div>
@@ -151,7 +151,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                   </div>
                   <button
                     onClick={() => handleRemoveExisting(i)}
-                    className="p-1 text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                    className="p-1 text-muted-foreground hover:text-red-500 transition-colors shrink-0"
                     title={tp('Supprimer')}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -163,14 +163,14 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
 
           {/* Generation config */}
           <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-4 space-y-3 mt-2">
-            <div className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+            <div className="text-sm font-medium text-foreground flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-amber-500" />
               {tp('Générer des avis IA')}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{tp('Pays')}</label>
+                <label className="block text-xs text-muted-foreground mb-1">{tp('Pays')}</label>
                 <input
                   type="text"
                   value={country}
@@ -180,11 +180,11 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{tp('Nombre d\'avis')}</label>
+                <label className="block text-xs text-muted-foreground mb-1">{tp('Nombre d\'avis')}</label>
                 <select
                   value={count}
                   onChange={e => setCount(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-card"
                 >
                   <option value={3}>{tp('3 avis')}</option>
                   <option value={4}>{tp('4 avis')}</option>
@@ -195,7 +195,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">{tp('Villes (séparées par des virgules)')}</label>
+              <label className="block text-xs text-muted-foreground mb-1">{tp('Villes (séparées par des virgules)')}</label>
               <input
                 type="text"
                 value={citiesInput}
@@ -206,7 +206,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">{tp('Prénoms (séparés par des virgules)')}</label>
+              <label className="block text-xs text-muted-foreground mb-1">{tp('Prénoms (séparés par des virgules)')}</label>
               <input
                 type="text"
                 value={namesInput}
@@ -245,7 +245,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
           {generatedReviews.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="text-sm font-medium text-gray-700">
+                <div className="text-sm font-medium text-foreground">
                   Avis générés — sélectionnez ceux à garder
                 </div>
                 <button
@@ -264,7 +264,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                   className={`flex items-start gap-3 rounded-lg p-3 cursor-pointer border transition-colors ${
                     selectedReviews.has(i)
                       ? 'bg-amber-50 border-amber-300'
-                      : 'bg-gray-50 border-gray-200 opacity-60'
+                      : 'bg-background border-border opacity-60'
                   }`}
                 >
                   <input
@@ -275,15 +275,15 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-gray-900">{review.name}</span>
+                      <span className="text-sm font-medium text-foreground">{review.name}</span>
                       {renderStars(review.rating)}
                       {review.verified && (
-                        <span className="text-[10px] text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded font-medium">{tp('Vérifié')}</span>
+                        <span className="text-[10px] text-primary bg-primary-50 px-1.5 py-0.5 rounded font-medium">{tp('Vérifié')}</span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600">{review.text}</p>
+                    <p className="text-sm text-muted-foreground">{review.text}</p>
                     {review.location && (
-                      <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
+                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <MapPin className="w-3 h-3" />
                         {review.location}
                       </div>
@@ -295,7 +295,7 @@ const ReviewGenerator = ({ productDescription = '', existingTestimonials = [], o
               <button
                 onClick={handleSaveSelected}
                 disabled={selectedReviews.size === 0}
-                className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Ajouter {selectedReviews.size} avis sélectionné{selectedReviews.size > 1 ? 's' : ''}

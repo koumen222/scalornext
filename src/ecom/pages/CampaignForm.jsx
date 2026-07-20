@@ -294,7 +294,7 @@ const CampaignForm = () => {
 
   if (fetchLoading) return <div className="flex items-center justify-center h-64"><IconSpinner /></div>;
 
-  const inp = "block w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white";
+  const inp = "block w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-card";
   const statusCount = (formData.targetFilters.orderStatus||[]).length;
   const cityCount = (formData.targetFilters.orderCity||[]).length;
   const productCount = (formData.targetFilters.orderProduct||[]).length;
@@ -303,17 +303,17 @@ const CampaignForm = () => {
   const activeStatusLabels = (formData.targetFilters.orderStatus||[]).map(s => STATUS_GROUPS.find(g => g.id===s)?.label||s);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Sticky header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
+      <div className="bg-card border-b border-border sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <button type="button" onClick={() => navigate("/ecom/campaigns")} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition flex-shrink-0">
+            <button type="button" onClick={() => navigate("/ecom/campaigns")} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition flex-shrink-0">
               <IconChevronLeft />
             </button>
             <div className="min-w-0">
-              <h1 className="text-sm font-bold text-gray-900 truncate">{isEdit ? "Modifier la campagne" : "Nouvelle campagne WhatsApp"}</h1>
-              {!isEdit && <p className="text-xs text-gray-400 hidden sm:block">Etape {step} sur 3</p>}
+              <h1 className="text-sm font-bold text-foreground truncate">{isEdit ? "Modifier la campagne" : "Nouvelle campagne WhatsApp"}</h1>
+              {!isEdit && <p className="text-xs text-muted-foreground hidden sm:block">Etape {step} sur 3</p>}
             </div>
           </div>
           {!isEdit && (
@@ -321,8 +321,8 @@ const CampaignForm = () => {
               {[{n:1,l:"Template"},{n:2,l:"Ciblage"},{n:3,l:"Message"}].map((s,i) => (
                 <React.Fragment key={s.n}>
                   <button type="button" onClick={() => setStep(s.n)}
-                    className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${step===s.n?"bg-primary-600 text-white":step>s.n?"bg-primary-50 text-primary-700 hover:bg-primary-100":"bg-gray-100 text-gray-400 hover:bg-gray-200"}`}>
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${step===s.n?"bg-white text-primary-600":step>s.n?"bg-primary-500 text-white":"bg-gray-300 text-white"}`}>
+                    className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${step===s.n?"bg-primary text-white":step>s.n?"bg-primary-50 text-primary hover:bg-primary-100":"bg-muted text-muted-foreground hover:bg-gray-200"}`}>
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${step===s.n?"bg-card text-primary":step>s.n?"bg-primary text-white":"bg-gray-300 text-white"}`}>
                       {step>s.n?<IconCheck/>:s.n}
                     </span>
                     {s.l}
@@ -330,7 +330,7 @@ const CampaignForm = () => {
                   {i<2&&<div className={`hidden sm:block w-5 h-px ${step>s.n?"bg-primary-400":"bg-gray-200"}`}/>}
                 </React.Fragment>
               ))}
-              <span className="sm:hidden text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded-lg">{step}/3</span>
+              <span className="sm:hidden text-xs font-medium text-primary bg-primary-50 px-2 py-1 rounded-lg">{step}/3</span>
             </div>
           )}
         </div>
@@ -342,16 +342,16 @@ const CampaignForm = () => {
         {/*  STEP 1 : TEMPLATE  */}
         {(!isEdit && step===1) && (
           <div className="space-y-5">
-            <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-              <label className="block text-sm font-semibold text-gray-900 mb-1.5">{tp('Nom de la campagne')} <span className="text-red-500">*</span></label>
+            <div className="bg-card rounded-xl border p-5 shadow-sm">
+              <label className="block text-sm font-semibold text-foreground mb-1.5">{tp('Nom de la campagne')} <span className="text-red-500">*</span></label>
               <input type="text" value={formData.name} onChange={e => setFormData(p=>({...p,name:e.target.value}))} className={inp} placeholder={tp('Ex : Relance injoignables  mars 2026')} />
-              <p className="text-xs text-gray-400 mt-1.5">{tp('Donnez un nom clair pour identifier cette campagne dans votre liste')}</p>
+              <p className="text-xs text-muted-foreground mt-1.5">{tp('Donnez un nom clair pour identifier cette campagne dans votre liste')}</p>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="px-5 pt-5 pb-3 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-900">{tp('Choisissez un template de message')}</h2>
-                <p className="text-xs text-gray-400 mt-0.5">{tp('Le template applique automatiquement le ciblage correspondant. Vous pourrez ajuster les filtres à l\'étape suivante.')}</p>
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              <div className="px-5 pt-5 pb-3 border-b border-border">
+                <h2 className="text-sm font-semibold text-foreground">{tp('Choisissez un template de message')}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{tp('Le template applique automatiquement le ciblage correspondant. Vous pourrez ajuster les filtres à l\'étape suivante.')}</p>
               </div>
               <div className="p-5">
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -359,15 +359,15 @@ const CampaignForm = () => {
                     const active = selectedTemplate===tpl.id;
                     return (
                       <button key={tpl.id} type="button" onClick={() => applyTemplate(tpl)}
-                        className={`p-3 rounded-lg border-2 text-left transition-all ${active?"border-primary-500 bg-primary-50":"border-gray-100 bg-gray-50 hover:border-gray-300 hover:bg-white"}`}>
+                        className={`p-3 rounded-lg border-2 text-left transition-all ${active?"border-primary-500 bg-primary-50":"border-border bg-background hover:border-gray-300 hover:bg-card"}`}>
                         <div className="flex items-start justify-between gap-1 mb-1.5">
-                          <p className="text-xs font-semibold text-gray-800 leading-snug">{tpl.label}</p>
-                          {active && <span className="flex-shrink-0 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center text-white"><IconCheck/></span>}
+                          <p className="text-xs font-semibold text-foreground leading-snug">{tpl.label}</p>
+                          {active && <span className="flex-shrink-0 w-4 h-4 bg-primary rounded-full flex items-center justify-center text-white"><IconCheck/></span>}
                         </div>
                         {tpl.orderStatus.length>0&&(
                           <div className="flex flex-wrap gap-1 mt-1">
                             {tpl.orderStatus.map(s=>(
-                              <span key={s} className="text-[9px] px-1.5 py-0.5 bg-primary-100 text-primary-700 rounded font-medium">{STATUS_GROUPS.find(g=>g.id===s)?.label||s}</span>
+                              <span key={s} className="text-[9px] px-1.5 py-0.5 bg-primary-100 text-primary rounded font-medium">{STATUS_GROUPS.find(g=>g.id===s)?.label||s}</span>
                             ))}
                           </div>
                         )}
@@ -379,14 +379,14 @@ const CampaignForm = () => {
                 {selectedTemplate && (() => {
                   const tpl = TEMPLATES.find(t=>t.id===selectedTemplate);
                   return tpl ? (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <div className="mt-4 p-4 bg-background rounded-xl border border-border">
                       <div className="flex items-start gap-4">
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-gray-700 mb-1">{tpl.name}</p>
-                          <p className="text-xs text-gray-500 whitespace-pre-wrap line-clamp-4 font-mono">{renderMsg(tpl.message)}</p>
+                          <p className="text-xs font-semibold text-foreground mb-1">{tpl.name}</p>
+                          <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-4 font-mono">{renderMsg(tpl.message)}</p>
                         </div>
                         <button type="button" onClick={() => setStep(2)}
-                          className="flex-shrink-0 px-4 py-2 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition">
+                          className="flex-shrink-0 px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition">
                           {tp('Continuer')}
                         </button>
                       </div>
@@ -397,9 +397,9 @@ const CampaignForm = () => {
             </div>
 
             <div className="flex justify-between items-center">
-              <button type="button" onClick={() => navigate("/ecom/campaigns")} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition">{tp('Annuler')}</button>
+              <button type="button" onClick={() => navigate("/ecom/campaigns")} className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition">{tp('Annuler')}</button>
               <button type="button" onClick={() => setStep(2)} disabled={!formData.name.trim()}
-                className="px-5 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                className="px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
                 {tp('Suivant  Ciblage')}
               </button>
             </div>
@@ -410,31 +410,31 @@ const CampaignForm = () => {
         {(isEdit||step===2) && (
           <div className="space-y-5">
             {isEdit && (
-              <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                <h2 className="text-sm font-semibold text-gray-900 mb-3">{tp('Informations')}</h2>
+              <div className="bg-card rounded-xl border p-5 shadow-sm">
+                <h2 className="text-sm font-semibold text-foreground mb-3">{tp('Informations')}</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Nom de la campagne')} <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Nom de la campagne')} <span className="text-red-500">*</span></label>
                     <input type="text" value={formData.name} onChange={e=>setFormData(p=>({...p,name:e.target.value}))} className={inp} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Programmer l\'envoi')}</label>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Programmer l\'envoi')}</label>
                     <input type="datetime-local" value={formData.scheduledAt} onChange={e=>setFormData(p=>({...p,scheduledAt:e.target.value}))} className={inp} />
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="px-5 pt-5 pb-3 border-b border-gray-100 flex items-center justify-between gap-3">
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              <div className="px-5 pt-5 pb-3 border-b border-border flex items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-gray-900">{tp('Ciblage des clients')}</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">{tp('Définissez quels clients recevront ce message')}</p>
+                  <h2 className="text-sm font-semibold text-foreground">{tp('Ciblage des clients')}</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tp('Définissez quels clients recevront ce message')}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {hasAnyFilter()&&<button type="button" onClick={resetFilters} className="text-xs text-red-500 hover:text-red-700 underline">{tp('Réinitialiser')}</button>}
                   <button type="button" onClick={handlePreview} disabled={previewLoading}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition disabled:opacity-50">
+                    className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition disabled:opacity-50">
                     {previewLoading?<><IconSpinner/>{tp('Calcul...')}</>:"Voir l'audience"}
                   </button>
                 </div>
@@ -444,20 +444,20 @@ const CampaignForm = () => {
                 {/* Applied from template notice */}
                 {!isEdit && selectedTemplate && statusCount>0 && (
                   <div className="flex items-start gap-2.5 p-3 bg-primary-50 border border-primary-200 rounded-lg">
-                    <svg className="w-4 h-4 text-primary-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <svg className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-primary-800">{tp('Filtre appliqué depuis le template')}</p>
-                      <p className="text-xs text-primary-600 mt-0.5">{tp('Statuts :')} <strong>{activeStatusLabels.join(", ")}</strong>{tp('. Vous pouvez modifier ou ajouter d\'autres statuts ci-dessous.')}</p>
+                      <p className="text-xs text-primary mt-0.5">{tp('Statuts :')} <strong>{activeStatusLabels.join(", ")}</strong>{tp('. Vous pouvez modifier ou ajouter d\'autres statuts ci-dessous.')}</p>
                     </div>
-                    <button type="button" onClick={() => setStep(1)} className="flex-shrink-0 text-[10px] text-primary-700 underline hover:text-primary-900">{tp('Changer')}</button>
+                    <button type="button" onClick={() => setStep(1)} className="flex-shrink-0 text-[10px] text-primary underline hover:text-primary-900">{tp('Changer')}</button>
                   </div>
                 )}
 
                 {/* Status groups */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold text-gray-700">{tp('Statut des commandes')}</p>
-                    {statusCount>0&&<span className="text-[10px] font-medium text-primary-700 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-200">{statusCount} sélectionné{statusCount>1?"s":""}</span>}
+                    <p className="text-xs font-semibold text-foreground">{tp('Statut des commandes')}</p>
+                    {statusCount>0&&<span className="text-[10px] font-medium text-primary bg-primary-50 px-2 py-0.5 rounded-full border border-primary-200">{statusCount} sélectionné{statusCount>1?"s":""}</span>}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {(availableStatuses.length > 0 ? availableStatuses : STATUS_GROUPS.map(s => s.id)).map((statusId) => {
@@ -468,32 +468,32 @@ const CampaignForm = () => {
                       return (
                         <button key={statusId} type="button" title={desc}
                           onClick={() => { toggleStatus(statusId); setTimeout(handlePreview, 300); }}
-                          className={`px-3 py-1.5 rounded-lg border-2 text-xs font-semibold transition-all ${sel?"border-primary-500 bg-primary-50 text-primary-800":"border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"}`}>
+                          className={`px-3 py-1.5 rounded-lg border-2 text-xs font-semibold transition-all ${sel?"border-primary-500 bg-primary-50 text-primary-800":"border-border bg-card text-muted-foreground hover:border-gray-300 hover:bg-background"}`}>
                           {sel&&<span className="mr-1 text-primary-500"></span>}{label}
                         </button>
                       );
                     })}
                   </div>
-                  <p className="text-[10px] text-gray-400 mt-1.5">{tp('Survolez un statut pour voir sa description. Vous pouvez en sélectionner plusieurs.')}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1.5">{tp('Survolez un statut pour voir sa description. Vous pouvez en sélectionner plusieurs.')}</p>
                 </div>
 
                 {/* Cities + Products */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-xs font-semibold text-gray-700">Villes {cityCount>0&&<span className="ml-1 text-[10px] font-medium text-primary-700 bg-primary-50 px-1.5 py-0.5 rounded-full border border-primary-200">{cityCount}</span>}</p>
-                      {filteredCities.length>0&&<button type="button" onClick={()=>{const all=cityCount===filteredCities.length;setFormData(p=>({...p,targetFilters:{...p.targetFilters,orderCity:all?[]:filteredCities}}));setTimeout(handlePreview,300);}} className="text-[10px] text-primary-600 hover:text-primary-800 font-medium">{cityCount===filteredCities.length&&filteredCities.length>0?"Désélectionner tout":"Tout sélectionner"}</button>}
+                      <p className="text-xs font-semibold text-foreground">Villes {cityCount>0&&<span className="ml-1 text-[10px] font-medium text-primary bg-primary-50 px-1.5 py-0.5 rounded-full border border-primary-200">{cityCount}</span>}</p>
+                      {filteredCities.length>0&&<button type="button" onClick={()=>{const all=cityCount===filteredCities.length;setFormData(p=>({...p,targetFilters:{...p.targetFilters,orderCity:all?[]:filteredCities}}));setTimeout(handlePreview,300);}} className="text-[10px] text-primary hover:text-primary-800 font-medium">{cityCount===filteredCities.length&&filteredCities.length>0?"Désélectionner tout":"Tout sélectionner"}</button>}
                     </div>
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <div className="px-3 py-2 bg-gray-50 border-b border-gray-100">
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <div className="px-3 py-2 bg-background border-b border-border">
                         <input type="text" value={citySearch} onChange={e=>setCitySearch(e.target.value)} placeholder={tp('Rechercher...')} className="w-full text-xs bg-transparent outline-none placeholder-gray-400" />
                       </div>
                       <div className="max-h-40 overflow-y-auto">
-                        {filteredCities.length===0&&<p className="text-xs text-gray-400 p-3 text-center">{tp('Aucune ville')}</p>}
+                        {filteredCities.length===0&&<p className="text-xs text-muted-foreground p-3 text-center">{tp('Aucune ville')}</p>}
                         {filteredCities.map(c=>{const sel=(formData.targetFilters.orderCity||[]).includes(c);return(
-                          <label key={c} className={`flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-gray-50 transition ${sel?"bg-primary-50":""}`}>
-                            <input type="checkbox" checked={sel} onChange={()=>{toggleArrayFilter("orderCity",c);setTimeout(handlePreview,300);}} className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 flex-shrink-0" />
-                            <span className={`text-xs truncate ${sel?"font-semibold text-primary-800":"text-gray-700"}`}>{c}</span>
+                          <label key={c} className={`flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-background transition ${sel?"bg-primary-50":""}`}>
+                            <input type="checkbox" checked={sel} onChange={()=>{toggleArrayFilter("orderCity",c);setTimeout(handlePreview,300);}} className="w-3.5 h-3.5 rounded border-gray-300 text-primary flex-shrink-0" />
+                            <span className={`text-xs truncate ${sel?"font-semibold text-primary-800":"text-foreground"}`}>{c}</span>
                           </label>
                         );})}
                       </div>
@@ -502,19 +502,19 @@ const CampaignForm = () => {
 
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-xs font-semibold text-gray-700">Produits {productCount>0&&<span className="ml-1 text-[10px] font-medium text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-full border border-purple-200">{productCount}</span>}</p>
+                      <p className="text-xs font-semibold text-foreground">Produits {productCount>0&&<span className="ml-1 text-[10px] font-medium text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-full border border-purple-200">{productCount}</span>}</p>
                       {filteredProducts.length>0&&<button type="button" onClick={()=>{const all=productCount===filteredProducts.length;setFormData(p=>({...p,targetFilters:{...p.targetFilters,orderProduct:all?[]:filteredProducts}}));setTimeout(handlePreview,300);}} className="text-[10px] text-purple-600 hover:text-purple-800 font-medium">{productCount===filteredProducts.length&&filteredProducts.length>0?"Désélectionner tout":"Tout sélectionner"}</button>}
                     </div>
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <div className="px-3 py-2 bg-gray-50 border-b border-gray-100">
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <div className="px-3 py-2 bg-background border-b border-border">
                         <input type="text" value={productSearch} onChange={e=>setProductSearch(e.target.value)} placeholder={tp('Rechercher...')} className="w-full text-xs bg-transparent outline-none placeholder-gray-400" />
                       </div>
                       <div className="max-h-40 overflow-y-auto">
-                        {filteredProducts.length===0&&<p className="text-xs text-gray-400 p-3 text-center">{tp('Aucun produit')}</p>}
+                        {filteredProducts.length===0&&<p className="text-xs text-muted-foreground p-3 text-center">{tp('Aucun produit')}</p>}
                         {filteredProducts.map(p=>{const sel=(formData.targetFilters.orderProduct||[]).includes(p);return(
-                          <label key={p} className={`flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-gray-50 transition ${sel?"bg-purple-50":""}`}>
+                          <label key={p} className={`flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-background transition ${sel?"bg-purple-50":""}`}>
                             <input type="checkbox" checked={sel} onChange={()=>{toggleArrayFilter("orderProduct",p);setTimeout(handlePreview,300);}} className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 flex-shrink-0" />
-                            <span className={`text-xs truncate ${sel?"font-semibold text-purple-800":"text-gray-700"}`} title={p}>{p}</span>
+                            <span className={`text-xs truncate ${sel?"font-semibold text-purple-800":"text-foreground"}`} title={p}>{p}</span>
                           </label>
                         );})}
                       </div>
@@ -524,45 +524,45 @@ const CampaignForm = () => {
 
                 {/* Date + price */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div><label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date début')}</label><input type="date" value={formData.targetFilters.orderDateFrom} onChange={e=>{updateFilter("orderDateFrom",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
-                  <div><label className="block text-xs font-medium text-gray-600 mb-1">{tp('Date fin')}</label><input type="date" value={formData.targetFilters.orderDateTo} onChange={e=>{updateFilter("orderDateTo",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
-                  <div><label className="block text-xs font-medium text-gray-600 mb-1">Prix min ({symbol})</label><input type="number" min="0" value={formData.targetFilters.orderMinPrice||""} placeholder="0" onChange={e=>updateFilter("orderMinPrice",parseInt(e.target.value)||0)} className={inp}/></div>
-                  <div><label className="block text-xs font-medium text-gray-600 mb-1">Prix max ({symbol})</label><input type="number" min="0" value={formData.targetFilters.orderMaxPrice||""} placeholder="0" onChange={e=>updateFilter("orderMaxPrice",parseInt(e.target.value)||0)} className={inp}/></div>
+                  <div><label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Date début')}</label><input type="date" value={formData.targetFilters.orderDateFrom} onChange={e=>{updateFilter("orderDateFrom",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
+                  <div><label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Date fin')}</label><input type="date" value={formData.targetFilters.orderDateTo} onChange={e=>{updateFilter("orderDateTo",e.target.value);setTimeout(handlePreview,300);}} className={inp}/></div>
+                  <div><label className="block text-xs font-medium text-muted-foreground mb-1">Prix min ({symbol})</label><input type="number" min="0" value={formData.targetFilters.orderMinPrice||""} placeholder="0" onChange={e=>updateFilter("orderMinPrice",parseInt(e.target.value)||0)} className={inp}/></div>
+                  <div><label className="block text-xs font-medium text-muted-foreground mb-1">Prix max ({symbol})</label><input type="number" min="0" value={formData.targetFilters.orderMaxPrice||""} placeholder="0" onChange={e=>updateFilter("orderMaxPrice",parseInt(e.target.value)||0)} className={inp}/></div>
                 </div>
 
                 {/* Audience result */}
                 {preview && (
-                  <div className={`rounded-xl border p-4 ${preview.empty?"bg-gray-50 border-gray-200":preview.count===0?"bg-red-50 border-red-200":"bg-primary-50 border-primary-200"}`}>
+                  <div className={`rounded-xl border p-4 ${preview.empty?"bg-background border-border":preview.count===0?"bg-red-50 border-red-200":"bg-primary-50 border-primary-200"}`}>
                     {preview.empty ? (
-                      <p className="text-sm text-gray-500 text-center">{tp('Sélectionnez au moins un filtre pour calculer l\'audience')}</p>
+                      <p className="text-sm text-muted-foreground text-center">{tp('Sélectionnez au moins un filtre pour calculer l\'audience')}</p>
                     ) : preview.count===0 ? (
                       <p className="text-sm text-red-600 text-center font-medium">{tp('Aucun client trouvé avec ces filtres')}</p>
                     ) : (
                       <>
                         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-xl font-bold text-primary-700">{preview.count}</span>
-                            <span className="text-sm text-primary-600 font-medium">client{preview.count>1?"s":""} correspondant{preview.count>1?"s":""}</span>
-                            <span className="text-xs text-primary-600 bg-white px-2 py-0.5 rounded-full border border-primary-200">{selectedClients.size} sélectionné{selectedClients.size>1?"s":""}</span>
+                            <span className="text-xl font-bold text-primary">{preview.count}</span>
+                            <span className="text-sm text-primary font-medium">client{preview.count>1?"s":""} correspondant{preview.count>1?"s":""}</span>
+                            <span className="text-xs text-primary bg-card px-2 py-0.5 rounded-full border border-primary-200">{selectedClients.size} sélectionné{selectedClients.size>1?"s":""}</span>
                           </div>
-                          <button type="button" onClick={()=>setSelectedClients(selectedClients.size===preview.clients.length?new Set():new Set(preview.clients.map(c=>c._id)))} className="text-xs text-primary-700 bg-white border border-primary-200 px-2.5 py-1 rounded-lg hover:bg-primary-50 transition font-medium">
+                          <button type="button" onClick={()=>setSelectedClients(selectedClients.size===preview.clients.length?new Set():new Set(preview.clients.map(c=>c._id)))} className="text-xs text-primary bg-card border border-primary-200 px-2.5 py-1 rounded-lg hover:bg-primary-50 transition font-medium">
                             {selectedClients.size===preview.clients.length?"Désélectionner tout":"Tout sélectionner"}
                           </button>
                         </div>
                         <div className="max-h-56 overflow-y-auto space-y-1">
                           {preview.clients.map(c => (
-                            <label key={c._id||c.phone} className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition text-xs ${selectedClients.has(c._id)?"bg-white border border-primary-200 shadow-sm":"bg-white/50 border border-transparent hover:bg-white"}`}>
-                              <input type="checkbox" checked={selectedClients.has(c._id)} onChange={()=>setSelectedClients(prev=>{const n=new Set(prev);n.has(c._id)?n.delete(c._id):n.add(c._id);return n;})} className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 flex-shrink-0" />
-                              <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold text-primary-700 flex-shrink-0">
+                            <label key={c._id||c.phone} className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition text-xs ${selectedClients.has(c._id)?"bg-card border border-primary-200 shadow-sm":"bg-card/50 border border-transparent hover:bg-card"}`}>
+                              <input type="checkbox" checked={selectedClients.has(c._id)} onChange={()=>setSelectedClients(prev=>{const n=new Set(prev);n.has(c._id)?n.delete(c._id):n.add(c._id);return n;})} className="w-3.5 h-3.5 rounded border-gray-300 text-primary flex-shrink-0" />
+                              <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
                                 {(c.firstName||c.clientName||"?")[0].toUpperCase()}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <span className="font-semibold text-gray-800">{c.firstName||c.clientName} {c.lastName||""}</span>
-                                {c.city&&<span className="text-gray-400 ml-1.5 text-[10px]"> {c.city}</span>}
-                                {c.status&&<span className="ml-1.5 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded font-medium">{c.status}</span>}
+                                <span className="font-semibold text-foreground">{c.firstName||c.clientName} {c.lastName||""}</span>
+                                {c.city&&<span className="text-muted-foreground ml-1.5 text-[10px]"> {c.city}</span>}
+                                {c.status&&<span className="ml-1.5 text-[10px] px-1.5 py-0.5 bg-muted text-muted-foreground rounded font-medium">{c.status}</span>}
                               </div>
-                              <span className="text-gray-400 font-mono text-[10px] flex-shrink-0">{c.phone}</span>
-                              <button type="button" onClick={e=>{e.preventDefault();handlePreviewSend(c);}} disabled={previewSending===c._id||!formData.messageTemplate.trim()} className="flex-shrink-0 px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition text-[10px] font-medium disabled:opacity-40">
+                              <span className="text-muted-foreground font-mono text-[10px] flex-shrink-0">{c.phone}</span>
+                              <button type="button" onClick={e=>{e.preventDefault();handlePreviewSend(c);}} disabled={previewSending===c._id||!formData.messageTemplate.trim()} className="flex-shrink-0 px-2 py-1 bg-muted text-muted-foreground rounded hover:bg-gray-200 transition text-[10px] font-medium disabled:opacity-40">
                                 {previewSending===c._id?"...":"Tester"}
                               </button>
                             </label>
@@ -576,8 +576,8 @@ const CampaignForm = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              {!isEdit&&<button type="button" onClick={()=>setStep(1)} className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition"><IconChevronLeft/>{tp('Retour')}</button>}
-              <button type="button" onClick={()=>setStep(3)} className="ml-auto px-5 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition">
+              {!isEdit&&<button type="button" onClick={()=>setStep(1)} className="flex items-center gap-1.5 px-4 py-2 bg-card border border-border text-muted-foreground rounded-lg text-sm font-medium hover:bg-background transition"><IconChevronLeft/>{tp('Retour')}</button>}
+              <button type="button" onClick={()=>setStep(3)} className="ml-auto px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition">
                 {tp('Suivant  Message')}
               </button>
             </div>
@@ -587,39 +587,39 @@ const CampaignForm = () => {
         {/*  STEP 3 : MESSAGE  */}
         {(isEdit||step===3) && (
           <div className="space-y-5">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="px-5 pt-4 pb-3 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-900">{tp('Message WhatsApp')}</h2>
-                <p className="text-xs text-gray-400 mt-0.5">{tp('Utilisez *texte* pour le gras et _texte_ pour l\'italique dans WhatsApp')}</p>
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              <div className="px-5 pt-4 pb-3 border-b border-border">
+                <h2 className="text-sm font-semibold text-foreground">{tp('Message WhatsApp')}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{tp('Utilisez *texte* pour le gras et _texte_ pour l\'italique dans WhatsApp')}</p>
               </div>
-              <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex flex-wrap gap-1.5">
+              <div className="px-5 py-3 bg-background border-b border-border flex flex-wrap gap-1.5">
                 {VARIABLES.map(v => (
                   <button key={v.var} type="button" onClick={()=>insertVariable(v.var)}
-                    className="px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-[11px] font-medium text-gray-700 hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700 transition flex items-center gap-1">
-                    {v.label}<code className="text-[10px] text-gray-400 ml-0.5">{v.var}</code>
+                    className="px-2.5 py-1 bg-card border border-border rounded-lg text-[11px] font-medium text-foreground hover:bg-primary-50 hover:border-primary-300 hover:text-primary transition flex items-center gap-1">
+                    {v.label}<code className="text-[10px] text-muted-foreground ml-0.5">{v.var}</code>
                   </button>
                 ))}
               </div>
               <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
                 <div className="p-5">
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Rédaction')}</label>
+                  <label className="block text-xs font-semibold text-foreground mb-2">{tp('Rédaction')}</label>
                   <textarea ref={textareaRef} rows={11} value={formData.messageTemplate}
                     onChange={e=>setFormData(p=>({...p,messageTemplate:e.target.value}))}
-                    className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-mono resize-none bg-gray-50"
+                    className="block w-full px-3 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-mono resize-none bg-background"
                     placeholder={"Bonjour {firstName},\n\nVotre message ici...\n\nCordialement,\nL'équipe Scalor"}
                   />
-                  <p className="text-[10px] text-gray-400 mt-1.5">{formData.messageTemplate.length} caractère{formData.messageTemplate.length>1?"s":""}{formData.messageTemplate.length>500&&"  message long"}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1.5">{formData.messageTemplate.length} caractère{formData.messageTemplate.length>1?"s":""}{formData.messageTemplate.length>500&&"  message long"}</p>
                 </div>
-                <div className="p-5 bg-gray-50">
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">{tp('Aperçu (client exemple : Aminata  Douala)')}</label>
+                <div className="p-5 bg-background">
+                  <label className="block text-xs font-semibold text-foreground mb-2">{tp('Aperçu (client exemple : Aminata  Douala)')}</label>
                   <div className="bg-[#ece5dd] rounded-xl p-3 min-h-[200px] flex flex-col justify-end">
                     {formData.messageTemplate ? (
-                      <div className="bg-white rounded-xl rounded-tl-sm px-3 py-2 shadow-sm max-w-[85%] self-end">
-                        <p className="text-xs text-gray-800 whitespace-pre-wrap leading-relaxed">{renderMsg(formData.messageTemplate)}</p>
-                        <p className="text-[9px] text-gray-400 text-right mt-1">12:34 </p>
+                      <div className="bg-card rounded-xl rounded-tl-sm px-3 py-2 shadow-sm max-w-[85%] self-end">
+                        <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">{renderMsg(formData.messageTemplate)}</p>
+                        <p className="text-[9px] text-muted-foreground text-right mt-1">12:34 </p>
                       </div>
                     ) : (
-                      <p className="text-xs text-gray-400 text-center py-8">{tp('L\'aperçu apparaîtra ici')}</p>
+                      <p className="text-xs text-muted-foreground text-center py-8">{tp('L\'aperçu apparaîtra ici')}</p>
                     )}
                   </div>
                 </div>
@@ -627,10 +627,10 @@ const CampaignForm = () => {
             </div>
 
             {/* Media Upload Section */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="px-5 pt-4 pb-3 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-900">{tp('Médias (optionnel)')}</h2>
-                <p className="text-xs text-gray-400 mt-0.5">{tp('Ajoutez une image, une vidéo ou un message vocal à votre campagne')}</p>
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              <div className="px-5 pt-4 pb-3 border-b border-border">
+                <h2 className="text-sm font-semibold text-foreground">{tp('Médias (optionnel)')}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{tp('Ajoutez une image, une vidéo ou un message vocal à votre campagne')}</p>
               </div>
               <div className="p-5">
                 <input
@@ -647,7 +647,7 @@ const CampaignForm = () => {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={mediaUploading}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition text-sm font-medium text-gray-600 hover:text-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition text-sm font-medium text-muted-foreground hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {mediaUploading ? (
                         <><IconSpinner /><span>{tp('Upload en cours...')}</span></>
@@ -664,7 +664,7 @@ const CampaignForm = () => {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={mediaUploading}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-sm font-medium text-gray-600 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-sm font-medium text-muted-foreground hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {mediaUploading ? (
                         <><IconSpinner /><span>{tp('Upload en cours...')}</span></>
@@ -681,7 +681,7 @@ const CampaignForm = () => {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={mediaUploading}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition text-sm font-medium text-gray-600 hover:text-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition text-sm font-medium text-muted-foreground hover:text-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {mediaUploading ? (
                         <><IconSpinner /><span>{tp('Upload en cours...')}</span></>
@@ -705,18 +705,18 @@ const CampaignForm = () => {
                       <div className="flex items-start gap-3 flex-1 min-w-0">
                         {formData.media.type === 'image' ? (
                           <>
-                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-white border border-primary-200 flex-shrink-0">
+                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-card border border-primary-200 flex-shrink-0">
                               <img src={formData.media.url} alt="Preview" className="w-full h-full object-cover" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-semibold text-primary-800">{tp('Image ajoutée')}</p>
-                              <p className="text-xs text-primary-600 truncate">{formData.media.fileName}</p>
+                              <p className="text-xs text-primary truncate">{formData.media.fileName}</p>
                               <p className="text-[10px] text-primary-500 mt-1">{tp('Le texte sera envoyé en premier, puis l\'image')}</p>
                             </div>
                           </>
                         ) : formData.media.type === 'video' ? (
                           <>
-                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-white border border-blue-200 flex-shrink-0">
+                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-card border border-blue-200 flex-shrink-0">
                               <video src={formData.media.url} className="w-full h-full object-cover" muted />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -743,7 +743,7 @@ const CampaignForm = () => {
                       <button
                         type="button"
                         onClick={handleRemoveMedia}
-                        className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="flex-shrink-0 p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition"
                         title={tp('Supprimer')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -753,20 +753,20 @@ const CampaignForm = () => {
                     </div>
                   </div>
                 )}
-                <p className="text-[10px] text-gray-400 mt-2">{tp('Images (JPG, PNG, WebP) • Vidéo (MP4, MOV, WebM, max 50 MB) • Audio (MP3, OGG, WAV, max 10 MB)')}</p>
+                <p className="text-[10px] text-muted-foreground mt-2">{tp('Images (JPG, PNG, WebP) • Vidéo (MP4, MOV, WebM, max 50 MB) • Audio (MP3, OGG, WAV, max 10 MB)')}</p>
               </div>
             </div>
 
             {!isEdit && (
-              <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3">{tp('Options')}</h3>
+              <div className="bg-card rounded-xl border p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Options')}</h3>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Programmer l\'envoi (facultatif)')}</label>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Programmer l\'envoi (facultatif)')}</label>
                     <input type="datetime-local" value={formData.scheduledAt} onChange={e=>setFormData(p=>({...p,scheduledAt:e.target.value}))} className={inp} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Tags (facultatif)')}</label>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Tags (facultatif)')}</label>
                     <input type="text" value={formData.tags} onChange={e=>setFormData(p=>({...p,tags:e.target.value}))} className={inp} placeholder={tp('relance, janvier...')} />
                   </div>
                 </div>
@@ -777,7 +777,7 @@ const CampaignForm = () => {
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div>
                   <p className="text-sm font-bold text-white mb-1">{isEdit?"Enregistrer les modifications":"Créer la campagne"}</p>
-                  <div className="flex flex-wrap gap-3 text-gray-400 text-xs">
+                  <div className="flex flex-wrap gap-3 text-muted-foreground text-xs">
                     <span>{formData.name||"(sans nom)"}</span>
                     <span></span>
                     <span>{selectedClients.size>0?`${selectedClients.size} client${selectedClients.size>1?"s":""}`:preview?.count?`${preview.count} clients`:"Audience non calculée"}</span>
@@ -788,7 +788,7 @@ const CampaignForm = () => {
                 <div className="flex items-center gap-3">
                   {!isEdit&&<button type="button" onClick={()=>setStep(2)} className="px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 transition flex items-center gap-1.5"><IconChevronLeft/>{tp('Retour')}</button>}
                   <button type="submit" disabled={loading||!formData.name.trim()||!formData.messageTemplate.trim()}
-                    className="px-6 py-2 bg-primary-500 text-white text-sm font-bold rounded-lg hover:bg-primary-400 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+                    className="px-6 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary-400 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
                     {loading?<><IconSpinner/>{tp('Enregistrement...')}</>:<>{isEdit?"Enregistrer":"Créer la campagne"}</>}
                   </button>
                 </div>

@@ -42,7 +42,7 @@ const ProductDetail = () => {
       pause: 'bg-orange-100 text-orange-800',
       stop: 'bg-red-100 text-red-800'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-muted text-foreground';
   };
 
   if (loading) return <CenteredSpinner message="Chargement…" />;
@@ -50,9 +50,9 @@ const ProductDetail = () => {
   return (
     <div className="p-4 sm:p-6">
       <div className="h-8 w-40 bg-gray-200 rounded-lg animate-pulse mb-6" />
-      <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+      <div className="bg-card rounded-xl border p-6 space-y-4">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" />
+          <div key={i} className="h-4 bg-muted rounded animate-pulse" />
         ))}
       </div>
     </div>
@@ -64,7 +64,7 @@ const ProductDetail = () => {
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
           {error || tp('Produit non trouvé')}
         </div>
-        <button onClick={() => navigate(-1)} className="mt-4 text-primary-600 hover:text-primary-800 text-sm font-medium">
+        <button onClick={() => navigate(-1)} className="mt-4 text-primary hover:text-primary-800 text-sm font-medium">
           ← Retour
         </button>
       </div>
@@ -80,13 +80,13 @@ const ProductDetail = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500">
+          <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{product.name}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{product.name}</h1>
             <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${getStatusColor(product.status)}`}>
               {product.status}
             </span>
@@ -94,7 +94,7 @@ const ProductDetail = () => {
         </div>
         {user?.role === 'ecom_admin' && (
           <Link to={`/ecom/products/${id}/edit`}
-            className="ecom-mobile-button px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium transition-colors">
+            className="ecom-mobile-button px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 text-sm font-medium transition-colors">
             {tp('Modifier')}
           </Link>
         )}
@@ -102,80 +102,80 @@ const ProductDetail = () => {
 
       {/* KPIs */}
       <div className="ecom-mobile-grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-        <div className="ecom-mobile-card bg-white rounded-lg shadow p-3 sm:p-4">
-          <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase">{tp('Prix de vente')}</p>
-          <p className="ecom-mobile-text text-lg sm:text-xl font-bold text-gray-900 mt-1">{fmt(product?.sellingPrice || 0)}</p>
+        <div className="ecom-mobile-card bg-card rounded-lg shadow p-3 sm:p-4">
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase">{tp('Prix de vente')}</p>
+          <p className="ecom-mobile-text text-lg sm:text-xl font-bold text-foreground mt-1">{fmt(product?.sellingPrice || 0)}</p>
         </div>
-        <div className="ecom-mobile-card bg-white rounded-lg shadow p-3 sm:p-4">
-          <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase">{tp('Coût total')}</p>
+        <div className="ecom-mobile-card bg-card rounded-lg shadow p-3 sm:p-4">
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase">{tp('Coût total')}</p>
           <p className="ecom-mobile-text text-lg sm:text-xl font-bold text-red-600 mt-1">{fmt(totalCost)}</p>
         </div>
-        <div className="ecom-mobile-card bg-white rounded-lg shadow p-3 sm:p-4">
-          <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase">{tp('Marge')}</p>
+        <div className="ecom-mobile-card bg-card rounded-lg shadow p-3 sm:p-4">
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase">{tp('Marge')}</p>
           <p className={`ecom-mobile-text text-lg sm:text-xl font-bold mt-1 ${margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             {fmt(margin)}
           </p>
-          <p className="text-[10px] text-gray-400">{marginPercent}%</p>
+          <p className="text-[10px] text-muted-foreground">{marginPercent}%</p>
         </div>
-        <div className="ecom-mobile-card bg-white rounded-lg shadow p-3 sm:p-4">
-          <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase">{tp('Stock')}</p>
+        <div className="ecom-mobile-card bg-card rounded-lg shadow p-3 sm:p-4">
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase">{tp('Stock')}</p>
           <p className={`ecom-mobile-text text-lg sm:text-xl font-bold mt-1 ${
             product.stock === 0 ? 'text-red-600' : product.stock <= product.reorderThreshold ? 'text-yellow-600' : 'text-green-600'
           }`}>
             {product.stock}
           </p>
-          <p className="text-[10px] text-gray-400">Seuil: {product.reorderThreshold}</p>
+          <p className="text-[10px] text-muted-foreground">Seuil: {product.reorderThreshold}</p>
         </div>
       </div>
 
       {/* Détails des coûts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">{tp('Détail des coûts')}</h3>
+        <div className="bg-card rounded-lg shadow p-4 sm:p-6">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground mb-3">{tp('Détail des coûts')}</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{tp('Coût produit')}</span>
+              <span className="text-sm text-muted-foreground">{tp('Coût produit')}</span>
               <span className="text-sm font-semibold">{fmt(product?.productCost || 0)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{tp('Frais de livraison')}</span>
+              <span className="text-sm text-muted-foreground">{tp('Frais de livraison')}</span>
               <span className="text-sm font-semibold">{fmt(product?.deliveryCost || 0)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{tp('Coût pub moyen')}</span>
+              <span className="text-sm text-muted-foreground">{tp('Coût pub moyen')}</span>
               <span className="text-sm font-semibold">{fmt(product?.avgAdsCost || 0)}</span>
             </div>
             <div className="border-t pt-2 flex justify-between items-center">
-              <span className="text-sm font-semibold text-gray-900">{tp('Total')}</span>
+              <span className="text-sm font-semibold text-foreground">{tp('Total')}</span>
               <span className="text-sm font-bold text-red-600">{fmt(totalCost)}</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">{tp('Informations')}</h3>
+        <div className="bg-card rounded-lg shadow p-4 sm:p-6">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground mb-3">{tp('Informations')}</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{tp('Statut')}</span>
+              <span className="text-sm text-muted-foreground">{tp('Statut')}</span>
               <span className={`px-2 py-0.5 rounded text-xs font-semibold ${getStatusColor(product.status)}`}>
                 {product.status}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{tp('Actif')}</span>
+              <span className="text-sm text-muted-foreground">{tp('Actif')}</span>
               <span className={`text-sm font-semibold ${product.isActive ? 'text-green-600' : 'text-red-600'}`}>
                 {product.isActive ? 'Oui' : tp('Non')}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{tp('Créé le')}</span>
-              <span className="text-sm text-gray-900">
+              <span className="text-sm text-muted-foreground">{tp('Créé le')}</span>
+              <span className="text-sm text-foreground">
                 {new Date(product.createdAt).toLocaleDateString('fr-FR')}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{tp('Mis à jour')}</span>
-              <span className="text-sm text-gray-900">
+              <span className="text-sm text-muted-foreground">{tp('Mis à jour')}</span>
+              <span className="text-sm text-foreground">
                 {new Date(product.updatedAt).toLocaleDateString('fr-FR')}
               </span>
             </div>
@@ -184,8 +184,8 @@ const ProductDetail = () => {
       </div>
 
       {/* Barre de rentabilité */}
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">{tp('Répartition du prix de vente')}</h3>
+      <div className="bg-card rounded-lg shadow p-4 sm:p-6">
+        <h3 className="text-sm sm:text-base font-semibold text-foreground mb-3">{tp('Répartition du prix de vente')}</h3>
         {product.sellingPrice > 0 && (
           <>
             <div className="flex h-6 rounded-full overflow-hidden bg-gray-200 mb-3">
@@ -193,16 +193,16 @@ const ProductDetail = () => {
                 title={`Produit: ${fmt(product?.productCost || 0)}`}></div>
               <div className="bg-yellow-400" style={{ width: `${(product?.deliveryCost || 0) / (product?.sellingPrice || 1) * 100}%` }}
                 title={`Livraison: ${fmt(product?.deliveryCost || 0)}`}></div>
-              <div className="bg-primary-500" style={{ width: `${(product?.avgAdsCost || 0) / (product?.sellingPrice || 1) * 100}%` }}
+              <div className="bg-primary" style={{ width: `${(product?.avgAdsCost || 0) / (product?.sellingPrice || 1) * 100}%` }}
                 title={`Pub: ${fmt(product?.avgAdsCost || 0)}`}></div>
               <div className={`${margin >= 0 ? 'bg-green-400' : 'bg-red-600'}`}
                 style={{ width: `${Math.max(0, margin / (product?.sellingPrice || 1) * 100)}%` }}
                 title={`Marge: ${fmt(margin)}`}></div>
             </div>
-            <div className="flex flex-wrap gap-3 text-xs text-gray-600">
+            <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
               <span className="flex items-center"><span className="w-2.5 h-2.5 bg-red-400 rounded-full mr-1.5"></span>{tp('Produit')}</span>
               <span className="flex items-center"><span className="w-2.5 h-2.5 bg-yellow-400 rounded-full mr-1.5"></span>{tp('Livraison')}</span>
-              <span className="flex items-center"><span className="w-2.5 h-2.5 bg-primary-500 rounded-full mr-1.5"></span>{tp('Pub')}</span>
+              <span className="flex items-center"><span className="w-2.5 h-2.5 bg-primary rounded-full mr-1.5"></span>{tp('Pub')}</span>
               <span className="flex items-center"><span className="w-2.5 h-2.5 bg-green-400 rounded-full mr-1.5"></span>{tp('Marge')}</span>
             </div>
           </>

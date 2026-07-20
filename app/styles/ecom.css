@@ -866,3 +866,8 @@ textarea {
     border: 1px solid var(--ecom-gray-300) !important;
   }
 }
+
+/* Masquer le widget de chat quand une modale plein écran est ouverte */
+body.modal-open .chat-widget-root {
+  display: none !important;
+}

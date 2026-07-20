@@ -61,18 +61,18 @@ export default function LivreurHistory() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-0 sticky top-0 z-10">
+      <div className="bg-card border-b border-border px-4 pt-12 pb-0 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-gray-900">{tp('Historique')}</h1>
+          <h1 className="text-xl font-bold text-foreground">{tp('Historique')}</h1>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">{total} livraison{total !== 1 ? 's' : ''}</span>
+            <span className="text-xs text-muted-foreground">{total} livraison{total !== 1 ? 's' : ''}</span>
             <button
               onClick={() => loadHistory(1, true)}
-              className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center active:scale-95"
+              className="w-9 h-9 rounded-full bg-muted flex items-center justify-center active:scale-95"
             >
-              <RefreshCw size={16} className={`text-gray-500 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw size={16} className={`text-muted-foreground ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function LivreurHistory() {
               className={`flex-shrink-0 px-3 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 statusFilter === tab.id
                   ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500'
+                  : 'border-transparent text-muted-foreground'
               }`}
             >
               {tab.label}
@@ -111,8 +111,8 @@ export default function LivreurHistory() {
         ) : orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <History size={48} className="text-gray-200 mb-3" />
-            <p className="text-gray-500 font-medium">{tp('Aucun historique')}</p>
-            <p className="text-gray-400 text-sm mt-1">{tp('Vos livraisons terminées apparaîtront ici')}</p>
+            <p className="text-muted-foreground font-medium">{tp('Aucun historique')}</p>
+            <p className="text-muted-foreground text-sm mt-1">{tp('Vos livraisons terminées apparaîtront ici')}</p>
           </div>
         ) : (
           <>
@@ -123,7 +123,7 @@ export default function LivreurHistory() {
               <button
                 onClick={() => loadHistory(page + 1)}
                 disabled={loading}
-                className="w-full py-3 mt-4 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium active:scale-95 disabled:opacity-60"
+                className="w-full py-3 mt-4 rounded-xl border border-border text-sm text-muted-foreground font-medium active:scale-95 disabled:opacity-60"
               >
                 {loading ? 'Chargement...' : tp('Charger plus')}
               </button>
@@ -149,7 +149,7 @@ function HistoryList({ orders }) {
     <div className="space-y-5">
       {Object.entries(groups).map(([date, items]) => (
         <div key={date}>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 px-1">
             {date}
           </p>
           <div className="space-y-2">
@@ -166,23 +166,23 @@ function HistoryList({ orders }) {
 function HistoryCard({ order }) {
   const config = STATUS_CONFIG[order.status] || {
     label: order.status,
-    color: 'bg-gray-100 text-gray-700',
+    color: 'bg-muted text-foreground',
     icon: '📦',
   };
 
   return (
     <Link
       to={`/ecom/livreur/delivery/${order._id}`}
-      className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-gray-100 shadow-sm active:scale-[0.99] transition-transform"
+      className="flex items-center gap-3 bg-card rounded-xl p-3.5 border border-border shadow-sm active:scale-[0.99] transition-transform"
     >
-      <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 text-xl">
+      <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center shrink-0 text-xl">
         {config.icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-gray-800 text-sm truncate">
+        <p className="font-medium text-foreground text-sm truncate">
           {order.clientName || order.clientPhone || tp('Client')}
         </p>
-        <div className="flex items-center gap-1.5 mt-0.5 text-gray-400 text-xs">
+        <div className="flex items-center gap-1.5 mt-0.5 text-muted-foreground text-xs">
           <MapPin size={11} />
           <span className="truncate">{order.city || order.address || '—'}</span>
         </div>

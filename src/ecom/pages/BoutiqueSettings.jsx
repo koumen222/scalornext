@@ -63,14 +63,14 @@ const fmt = (n, cur = 'FCFA') => `${new Intl.NumberFormat('fr-FR').format(n)} ${
 
 // ── Section wrapper ──────────────────────────────────────────────────────────
 const Section = ({ icon, title, desc, children }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+  <div className="bg-card rounded-2xl border p-6 shadow-sm">
     <div className="flex items-start gap-3 mb-5">
       <span className="w-9 h-9 rounded-xl bg-[#E6F2ED] flex items-center justify-center text-[#0F6B4F] flex-shrink-0">
         {icon}
       </span>
       <div>
-        <h2 className="text-sm font-bold text-gray-900">{title}</h2>
-        {desc && <p className="text-xs text-gray-500 mt-0.5">{desc}</p>}
+        <h2 className="text-sm font-bold text-foreground">{title}</h2>
+        {desc && <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>}
       </div>
     </div>
     {children}
@@ -80,9 +80,9 @@ const Section = ({ icon, title, desc, children }) => (
 // ── Label + Input helper ─────────────────────────────────────────────────────
 const Field = ({ label, hint, children }) => (
   <div>
-    <label className="block text-xs font-semibold text-gray-700 mb-1.5">{label}</label>
+    <label className="block text-xs font-semibold text-foreground mb-1.5">{label}</label>
     {children}
-    {hint && <p className="text-[11px] text-gray-400 mt-1">{hint}</p>}
+    {hint && <p className="text-[11px] text-muted-foreground mt-1">{hint}</p>}
   </div>
 );
 
@@ -113,7 +113,7 @@ const LogoUploader = ({ value, onChange }) => {
     <div className="flex items-center gap-5">
       <div
         onClick={() => ref.current?.click()}
-        className="w-20 h-20 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center cursor-pointer hover:border-[#4D9F82] transition overflow-hidden flex-shrink-0 bg-gray-50"
+        className="w-20 h-20 rounded-2xl border-2 border-dashed border-border flex items-center justify-center cursor-pointer hover:border-[#4D9F82] transition overflow-hidden flex-shrink-0 bg-background"
       >
         {uploading ? (
           <div className="w-5 h-5 border-2 border-[#0F6B4F] border-t-transparent rounded-full animate-spin" />
@@ -140,7 +140,7 @@ const LogoUploader = ({ value, onChange }) => {
             {tp('Supprimer')}
           </button>
         )}
-        <p className="text-[11px] text-gray-400">{tp('PNG, SVG ou WEBP recommandé')}</p>
+        <p className="text-[11px] text-muted-foreground">{tp('PNG, SVG ou WEBP recommandé')}</p>
       </div>
       <input ref={ref} type="file" accept="image/*" className="hidden" onChange={handleFile} />
     </div>
@@ -155,16 +155,16 @@ const ColorPicker = ({ label, value, onChange }) => (
         type="color"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-10 h-10 rounded-xl cursor-pointer border-2 border-gray-200 p-0.5 bg-white"
+        className="w-10 h-10 rounded-xl cursor-pointer border-2 border-border p-0.5 bg-card"
       />
     </div>
     <div className="flex-1 min-w-0">
-      <p className="text-xs font-semibold text-gray-700 mb-1">{label}</p>
+      <p className="text-xs font-semibold text-foreground mb-1">{label}</p>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="text-xs font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 w-24 focus:ring-1 focus:ring-[#0F6B4F] focus:border-[#0F6B4F] outline-none"
+        className="text-xs font-mono text-muted-foreground bg-background border border-border rounded-lg px-2 py-1 w-24 focus:ring-1 focus:ring-[#0F6B4F] focus:border-[#0F6B4F] outline-none"
       />
     </div>
   </div>
@@ -400,8 +400,8 @@ const BoutiqueSettings = () => {
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{tp('Ma Boutique')}</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{tp('Configurez votre boutique en ligne')}</p>
+          <h1 className="text-xl font-bold text-foreground">{tp('Ma Boutique')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{tp('Configurez votre boutique en ligne')}</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {previewUrl && (
@@ -409,7 +409,7 @@ const BoutiqueSettings = () => {
               href={previewUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-semibold text-foreground hover:border-gray-300 hover:bg-background transition"
             >
               <ExternalLink size={14} /> Voir la boutique
             </a>
@@ -417,11 +417,11 @@ const BoutiqueSettings = () => {
           {/* Auto-save status indicator */}
           <div className="flex items-center gap-2 px-3 py-2.5 h-[42px]">
             {autoSave === 'idle' && (
-              <span className="text-xs text-gray-400">{tp('Auto-sauvegarde activée')}</span>
+              <span className="text-xs text-muted-foreground">{tp('Auto-sauvegarde activée')}</span>
             )}
             {autoSave === 'saving' && (
-              <span className="flex items-center gap-1.5 text-xs text-gray-400">
-                <span className="w-3 h-3 rounded-full border-2 border-gray-200 border-t-[#0F6B4F] animate-spin inline-block flex-shrink-0" />
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="w-3 h-3 rounded-full border-2 border-border border-t-[#0F6B4F] animate-spin inline-block flex-shrink-0" />
                 {tp('Sauvegarde...')}
               </span>
             )}
@@ -443,15 +443,15 @@ const BoutiqueSettings = () => {
       </div>
 
       {/* ── Tabs ───────────────────────────────────────────────────────── */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      <div className="flex gap-1 bg-muted rounded-xl p-1">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition flex-1 justify-center ${
               activeTab === tab.id
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {tab.icon} {tab.label}
@@ -474,7 +474,7 @@ const BoutiqueSettings = () => {
                   value={form.storeName}
                   onChange={(e) => set('storeName', e.target.value)}
                   placeholder={tp('Ma Super Boutique')}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
                 />
               </Field>
 
@@ -484,7 +484,7 @@ const BoutiqueSettings = () => {
                   value={form.storeDescription}
                   onChange={(e) => set('storeDescription', e.target.value)}
                   placeholder={tp('Découvrez notre sélection de produits soigneusement choisis…')}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none resize-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none resize-none transition"
                 />
               </Field>
 
@@ -495,7 +495,7 @@ const BoutiqueSettings = () => {
                     value={form.storePhone}
                     onChange={(e) => set('storePhone', e.target.value)}
                     placeholder="+237 6XX XXX XXX"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
                   />
                 </Field>
                 <Field label="WhatsApp" hint="Activer le bouton 'Commander via WhatsApp'">
@@ -504,7 +504,7 @@ const BoutiqueSettings = () => {
                     value={form.storeWhatsApp}
                     onChange={(e) => set('storeWhatsApp', e.target.value)}
                     placeholder="237600000000"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
                   />
                 </Field>
               </div>
@@ -514,7 +514,7 @@ const BoutiqueSettings = () => {
                   <select
                     value={form.storeCountry}
                     onChange={(e) => set('storeCountry', e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-card"
                   >
                     {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -523,7 +523,7 @@ const BoutiqueSettings = () => {
                   <select
                     value={form.storeCurrency}
                     onChange={(e) => set('storeCurrency', e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-card"
                   >
                     {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
                   </select>
@@ -535,7 +535,7 @@ const BoutiqueSettings = () => {
                   <select
                     value={form.language}
                     onChange={(e) => set('language', e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition bg-card"
                   >
                     <option value="fr">{tp('Français')}</option>
                     <option value="en">{tp('English')}</option>
@@ -552,18 +552,18 @@ const BoutiqueSettings = () => {
                       onClick={() => set('isStoreEnabled', !form.isStoreEnabled)}
                       className={`relative w-11 h-6 rounded-full transition-colors ${form.isStoreEnabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
                     >
-                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.isStoreEnabled ? 'translate-x-5' : ''}`} />
+                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform ${form.isStoreEnabled ? 'translate-x-5' : ''}`} />
                     </button>
-                    <span className="text-sm text-gray-600">{form.isStoreEnabled ? 'En ligne' : tp('Hors ligne')}</span>
+                    <span className="text-sm text-muted-foreground">{form.isStoreEnabled ? 'En ligne' : tp('Hors ligne')}</span>
                   </div>
                 </Field>
               </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 space-y-4">
+              <div className="rounded-2xl border border-border bg-background/70 p-4 space-y-4">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{tp('Barre d\'annonce')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('Affichée en haut de la boutique, y compris sur les pages produit quand elle est activée.')}</p>
+                    <p className="text-sm font-semibold text-foreground">{tp('Barre d\'annonce')}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Affichée en haut de la boutique, y compris sur les pages produit quand elle est activée.')}</p>
                   </div>
                   <div className="flex items-center gap-3 mt-1">
                     <button
@@ -571,9 +571,9 @@ const BoutiqueSettings = () => {
                       onClick={() => set('announcementEnabled', !form.announcementEnabled)}
                       className={`relative w-11 h-6 rounded-full transition-colors ${form.announcementEnabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
                     >
-                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.announcementEnabled ? 'translate-x-5' : ''}`} />
+                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform ${form.announcementEnabled ? 'translate-x-5' : ''}`} />
                     </button>
-                    <span className="text-sm text-gray-600">{form.announcementEnabled ? 'Activée' : tp('Désactivée')}</span>
+                    <span className="text-sm text-muted-foreground">{form.announcementEnabled ? 'Activée' : tp('Désactivée')}</span>
                   </div>
                 </div>
 
@@ -583,7 +583,7 @@ const BoutiqueSettings = () => {
                     value={form.announcement}
                     onChange={(e) => set('announcement', e.target.value)}
                     placeholder={tp('Livraison rapide · Paiement à la livraison · Retours faciles')}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-foreground focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none transition"
                   />
                 </Field>
               </div>
@@ -625,13 +625,13 @@ const BoutiqueSettings = () => {
                   className={`p-4 rounded-2xl border-2 text-left transition-all ${
                     form.font === f.id
                       ? 'border-[#0F6B4F] bg-[#E6F2ED] shadow-sm'
-                      : 'border-gray-100 hover:border-gray-200 bg-white'
+                      : 'border-border hover:border-border bg-card'
                   }`}
                 >
-                  <p className="text-xl font-bold text-gray-900 leading-tight" style={{ fontFamily: FONT_FAMILIES[f.id] }}>
+                  <p className="text-xl font-bold text-foreground leading-tight" style={{ fontFamily: FONT_FAMILIES[f.id] }}>
                     {f.name}
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: FONT_FAMILIES[f.id] }}>
+                  <p className="text-xs text-muted-foreground mt-0.5" style={{ fontFamily: FONT_FAMILIES[f.id] }}>
                     {f.sample}
                   </p>
                   {form.font === f.id && (
@@ -659,7 +659,7 @@ const BoutiqueSettings = () => {
               </div>
               <button
                 onClick={() => navigate('/ecom/boutique/wizard')}
-                className="px-6 py-2.5 rounded-xl bg-white text-[#0F6B4F] font-bold text-sm hover:bg-gray-100 transition whitespace-nowrap flex-shrink-0"
+                className="px-6 py-2.5 rounded-xl bg-card text-[#0F6B4F] font-bold text-sm hover:bg-muted transition whitespace-nowrap flex-shrink-0"
               >
                 Ouvrir l'assistant
               </button>
@@ -672,8 +672,8 @@ const BoutiqueSettings = () => {
                 <Sparkles size={17} />
               </span>
               <div>
-                <h2 className="text-sm font-bold text-gray-900">{tp('Régénérer la homepage par IA')}</h2>
-                <p className="text-xs text-gray-500 mt-0.5">{tp('L\'IA recrée toute votre page d\'accueil en fonction de votre niche, audience et produits.')}</p>
+                <h2 className="text-sm font-bold text-foreground">{tp('Régénérer la homepage par IA')}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{tp('L\'IA recrée toute votre page d\'accueil en fonction de votre niche, audience et produits.')}</p>
               </div>
             </div>
             <button
@@ -730,7 +730,7 @@ const BoutiqueSettings = () => {
             ✕ Erreur — Sauvegarder maintenant
           </button>
         ) : (
-          <span className="text-xs text-gray-400 py-2.5">
+          <span className="text-xs text-muted-foreground py-2.5">
             {autoSave === 'saving' && 'Sauvegarde en cours...'}
             {autoSave === 'saved' && '✓ Toutes les modifications sont sauvegardées'}
             {autoSave === 'idle' && 'Les modifications sont sauvegardées automatiquement'}

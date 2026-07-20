@@ -71,7 +71,7 @@ function waLink(phone, msg) {
 
 const PLAN_META = {
   free:    { label: 'Gratuit', cls: 'bg-slate-100 text-slate-600' },
-  starter: { label: 'Scalor',  cls: 'bg-primary-50 text-primary-600' },
+  starter: { label: 'Scalor',  cls: 'bg-primary-50 text-primary' },
   pro:     { label: 'Scalor + IA', cls: 'bg-indigo-50 text-indigo-600' },
   ultra:   { label: 'IA Pro',  cls: 'bg-amber-50 text-amber-600' },
 };
@@ -94,7 +94,7 @@ function KpiCard({ icon: Icon, label, value, sub, accent = 'emerald', onClick, a
     <button
       type="button"
       onClick={onClick}
-      className={`text-left bg-white rounded-2xl border border-slate-100 p-4 shadow-sm shadow-slate-100/70 transition-all ${onClick ? 'hover:border-slate-200 cursor-pointer' : 'cursor-default'} ${active ? `ring-2 ${styles.ring}` : ''}`}
+      className={`text-left bg-card rounded-2xl border border-slate-100 p-4 shadow-sm shadow-slate-100/70 transition-all ${onClick ? 'hover:border-slate-200 cursor-pointer' : 'cursor-default'} ${active ? `ring-2 ${styles.ring}` : ''}`}
     >
       <div className="flex items-center gap-2 mb-2">
         <span className={`w-8 h-8 rounded-xl flex items-center justify-center ${styles.icon}`}><Icon className="w-4 h-4" /></span>
@@ -149,7 +149,7 @@ function SeriesAEligibility({ data, park, currency }) {
   const ladder = [81, 50, 35, 25];
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-100/70 overflow-hidden">
+    <div className="rounded-2xl border border-slate-100 bg-card shadow-sm shadow-slate-100/70 overflow-hidden">
       <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2">
         <Flag className="w-4 h-4 text-emerald-600" />
         <h2 className="text-sm font-semibold text-slate-700">{tp('Éligibilité Série A')}</h2>
@@ -171,7 +171,7 @@ function SeriesAEligibility({ data, park, currency }) {
               ? 'bg-rose-50 text-rose-500'
               : reached
                 ? (step === 25 ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-700')
-                : 'bg-white text-slate-500 ring-1 ring-slate-200';
+                : 'bg-card text-slate-500 ring-1 ring-slate-200';
             return (
               <React.Fragment key={step}>
                 <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${cls}`}>
@@ -320,7 +320,7 @@ const SuperAdminGrowth = () => {
 
           {/* ── Revenu par pays ── */}
           {(data?.gmv?.byCountry?.length > 0) && (
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm shadow-slate-100/70 overflow-hidden">
+            <div className="bg-card rounded-2xl border border-slate-100 shadow-sm shadow-slate-100/70 overflow-hidden">
               <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2"><Globe className="w-4 h-4 text-slate-400" />{tp('Revenu par pays')}</h2>
                 <span className="text-xs text-slate-400">GMV {fmtMoney(data.gmv.total)} {data.gmv.currency}</span>
@@ -344,7 +344,7 @@ const SuperAdminGrowth = () => {
           )}
 
           {/* ── MRR table ── */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm shadow-slate-100/70 overflow-hidden">
+          <div className="bg-card rounded-2xl border border-slate-100 shadow-sm shadow-slate-100/70 overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-slate-700">{tp('Tableau MRR')}</h2>
               <span className="text-xs text-slate-400">{mrr?.totalWorkspaces || 0} {tp('espaces')}</span>
@@ -390,7 +390,7 @@ const SuperAdminGrowth = () => {
                   {tp("Proposée aux espaces à relancer : notre équipe configure entièrement la boutique. Deux paliers selon le périmètre.")}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white ring-1 ring-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-card ring-1 ring-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
                     <Target className="w-3.5 h-3.5" /> {tp('Essentiel')} — 25 000 {currency}
                   </span>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 text-xs font-medium text-white shadow-sm shadow-emerald-200/60">
@@ -403,7 +403,7 @@ const SuperAdminGrowth = () => {
 
           {/* ── Segment tabs ── */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex gap-1 rounded-full bg-white ring-1 ring-slate-100 p-1">
+            <div className="flex gap-1 rounded-full bg-card ring-1 ring-slate-100 p-1">
               {segmentTabs.map((t) => (
                 <button
                   key={t.key}
@@ -414,7 +414,7 @@ const SuperAdminGrowth = () => {
                 >
                   <t.icon className="w-4 h-4" />
                   {t.label}
-                  <span className={`inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${segment === t.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>{t.count}</span>
+                  <span className={`inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${segment === t.key ? 'bg-card/20 text-white' : 'bg-slate-100 text-slate-500'}`}>{t.count}</span>
                 </button>
               ))}
             </div>
@@ -432,7 +432,7 @@ const SuperAdminGrowth = () => {
 
           {/* ── Daily relance objective (dormant only) ── */}
           {segment === 'dormant' && (
-            <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm shadow-slate-100/70">
+            <div className="rounded-2xl border border-slate-100 bg-card p-4 shadow-sm shadow-slate-100/70">
               <div className="flex items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                   <Target className="w-4 h-4 text-emerald-600" />
@@ -449,7 +449,7 @@ const SuperAdminGrowth = () => {
           {/* ── Segment list ── */}
           <div className="space-y-2">
             {filteredRows.length === 0 ? (
-              <div className="py-16 text-center text-sm text-slate-400 bg-white rounded-2xl border border-slate-100">
+              <div className="py-16 text-center text-sm text-slate-400 bg-card rounded-2xl border border-slate-100">
                 {tp('Aucun espace dans ce segment')}
               </div>
             ) : (
@@ -458,7 +458,7 @@ const SuperAdminGrowth = () => {
                 const msg = segment === 'dormant' ? relanceMsg(r) : offerMsg(r);
                 const wa = waLink(r.owner?.phone, msg);
                 return (
-                  <div key={r.id} className={`bg-white rounded-2xl border p-3.5 flex items-center gap-3 transition ${wasContacted ? 'border-emerald-100 bg-emerald-50/30' : 'border-slate-100 hover:border-slate-200'}`}>
+                  <div key={r.id} className={`bg-card rounded-2xl border p-3.5 flex items-center gap-3 transition ${wasContacted ? 'border-emerald-100 bg-emerald-50/30' : 'border-slate-100 hover:border-slate-200'}`}>
                     <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm font-semibold flex-shrink-0">
                       {(r.name || r.owner?.email || '?').charAt(0).toUpperCase()}
                     </div>

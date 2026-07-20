@@ -23,7 +23,7 @@ function PublicCheckoutModal({ plan, onClose }) {
   const planName = plan?.name || 'Scalor';
   const selectedCountry = PAYMENT_COUNTRY_CODES.find((item) => item.country === country) || PAYMENT_COUNTRY_CODES[0];
   const fullPhone = phoneLocal ? `${selectedCountry.code}${phoneLocal.replace(/^0+/, '')}` : '';
-  const inputClassName = 'w-full rounded-[18px] border border-[#D7E3DA] bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-[0_10px_30px_rgba(15,107,79,0.04)] outline-none transition placeholder:text-slate-300 focus:border-[#0F6B4F]/35 focus:ring-4 focus:ring-[#0F6B4F]/10';
+  const inputClassName = 'w-full rounded-[18px] border border-[#D7E3DA] bg-card px-4 py-3.5 text-[15px] text-slate-800 shadow-[0_10px_30px_rgba(15,107,79,0.04)] outline-none transition placeholder:text-slate-300 focus:border-[#0F6B4F]/35 focus:ring-4 focus:ring-[#0F6B4F]/10';
   const labelClassName = 'mb-2 block text-[11px] font-black uppercase tracking-[0.16em] text-[#6A776F]';
 
   async function handleSubmit(e) {
@@ -93,7 +93,7 @@ function PublicCheckoutModal({ plan, onClose }) {
       maxWidthClassName="max-w-md"
     >
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid gap-4 rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
+        <div className="grid gap-4 rounded-[24px] border border-[#E2EAE4] bg-card/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
           <div>
             <label className={labelClassName}>{tp('Nom complet')}</label>
             <input
@@ -133,7 +133,7 @@ function PublicCheckoutModal({ plan, onClose }) {
               />
             </div>
             {fullPhone ? (
-              <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary-700">
+              <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 {fullPhone}
               </p>
@@ -150,7 +150,7 @@ function PublicCheckoutModal({ plan, onClose }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-[18px] bg-primary-600 py-4 text-sm font-black text-white shadow-[0_20px_45px_rgba(15,107,79,0.18)] transition hover:bg-primary-700 disabled:opacity-60"
+          className="w-full rounded-[18px] bg-primary py-4 text-sm font-black text-white shadow-[0_20px_45px_rgba(15,107,79,0.18)] transition hover:bg-primary-700 disabled:opacity-60"
         >
           {loading ? 'Redirection…' : `Payer ${new Intl.NumberFormat('fr-FR').format(amount)} FCFA`}
         </button>
@@ -246,9 +246,9 @@ const Tarifs = () => {
 
   return (
     <>
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       {/* NAVBAR */}
-      <nav className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="w-full bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -260,19 +260,19 @@ const Tarifs = () => {
             <div className="hidden md:flex items-center gap-1">
               <button 
                 onClick={() => navigate('/ecom/why-scalor')}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
               >
                 {tp('Pourquoi choisir Scalor ?')}
               </button>
               <button 
                 onClick={() => navigate('/ecom')}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
               >
                 {tp('Fonctionnalités')}
               </button>
               <button 
                 onClick={() => navigate('/ecom/tarifs')}
-                className="px-4 py-2 text-sm font-medium text-gray-900 hover:text-primary-600 transition"
+                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition"
               >
                 {tp('Tarifs')}
               </button>
@@ -282,13 +282,13 @@ const Tarifs = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => navigate('/ecom/login')}
-                className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+                className="hidden sm:block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
               >
                 {tp('Connexion')}
               </button>
               <button 
                 onClick={() => navigate('/ecom/register')}
-                className="px-6 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition shadow-sm"
+                className="px-6 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-700 rounded-lg transition shadow-sm"
               >
                 {tp('Commencer')}
               </button>
@@ -300,34 +300,34 @@ const Tarifs = () => {
       {/* HERO SECTION */}
       <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-primary-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
-            Tarifs <span className="text-primary-600">{tp('simples')}</span> et transparents
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground mb-6">
+            Tarifs <span className="text-primary">{tp('simples')}</span> et transparents
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {tp('Commencez gratuitement et évoluez selon vos besoins.')} 
             Aucune carte bancaire requise pour démarrer.
           </p>
 
           {/* Toggle mensuel / annuel */}
           <div className="mt-8 flex flex-col items-center gap-5">
-            <div className="inline-flex items-center bg-gray-100 rounded-full p-1 gap-1">
+            <div className="inline-flex items-center bg-muted rounded-full p-1 gap-1">
               <button
                 onClick={() => setIsAnnual(false)}
-                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                 {tp('Mensuel')}
               </button>
               <button
                 onClick={() => setIsAnnual(true)}
-                className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                 {tp('Annuel')}
-                <span className="text-[10px] font-black bg-primary-500 text-white px-1.5 py-0.5 rounded-full">-25%</span>
+                <span className="text-[10px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full">-25%</span>
               </button>
             </div>
 
             {/* Promo code */}
             <form onSubmit={handleApplyPromo} className="relative w-full max-w-xs">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Gift className="w-4 h-4 text-gray-400" />
+                <Gift className="w-4 h-4 text-muted-foreground" />
               </div>
               <input
                 type="text"
@@ -335,7 +335,7 @@ const Tarifs = () => {
                 onChange={e => setPromoInput(e.target.value.toUpperCase())}
                 disabled={promoData !== null}
                 placeholder={tp('Code promo ?')}
-                className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
+                className="w-full pl-10 pr-24 py-2.5 bg-card border border-border rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition uppercase text-foreground disabled:opacity-75 disabled:bg-background"
               />
               {!promoData ? (
                 <button type="submit" disabled={promoLoading || !promoInput.trim()}
@@ -344,13 +344,13 @@ const Tarifs = () => {
                 </button>
               ) : (
                 <button type="button" onClick={() => { setPromoData(null); setPromoInput(''); setPromoError(''); }}
-                  className="absolute inset-y-1 right-1 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full text-xs font-bold transition">
+                  className="absolute inset-y-1 right-1 px-4 bg-gray-200 hover:bg-gray-300 text-foreground rounded-full text-xs font-bold transition">
                   {tp('Retirer')}
                 </button>
               )}
             </form>
             {promoError && <p className="text-red-500 text-[11px] font-bold">{promoError}</p>}
-            {promoData && <p className="text-primary-600 text-[11px] font-bold">✓ Code {promoData.code} appliqué</p>}
+            {promoData && <p className="text-primary text-[11px] font-bold">✓ Code {promoData.code} appliqué</p>}
           </div>
         </div>
       </section>
@@ -359,7 +359,7 @@ const Tarifs = () => {
       <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-10">
         <div className="max-w-screen-2xl mx-auto">
           {plansLoading && (
-            <div className="text-center text-gray-500 py-12">{tp('Chargement des offres…')}</div>
+            <div className="text-center text-muted-foreground py-12">{tp('Chargement des offres…')}</div>
           )}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
             {plans.map((plan, index) => (
@@ -368,14 +368,14 @@ const Tarifs = () => {
                 className={`relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200
                   ${plan.highlighted
                     ? 'bg-[#1a1a2e] shadow-2xl ring-2 ring-primary-500/40'
-                    : 'bg-white border border-gray-200 hover:border-primary-300 hover:shadow-lg'
+                    : 'bg-card border border-border hover:border-primary-300 hover:shadow-lg'
                   }`}
               >
                 {/* Promo banner */}
                 <div className={`text-center py-2.5 text-[11px] font-black tracking-wide
                   ${plan.highlighted
-                    ? 'bg-primary-500 text-white'
-                    : plan.isFree ? 'bg-gray-100 text-gray-400' : 'bg-primary-50 text-primary-700'
+                    ? 'bg-primary text-white'
+                    : plan.isFree ? 'bg-muted text-muted-foreground' : 'bg-primary-50 text-primary'
                   }`}>
                   {plan.isFree ? 'Gratuit pour toujours' : plan.highlighted ? '⭐ Le plus populaire' : '1 mois offert sur 12 mois'}
                 </div>
@@ -383,17 +383,17 @@ const Tarifs = () => {
                 <div className="p-7 flex-1 flex flex-col">
                   {/* Name + tagline */}
                   <div className="mb-1">
-                    <h3 className={`text-xl font-black ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
+                    <h3 className={`text-xl font-black ${plan.highlighted ? 'text-white' : 'text-foreground'}`}>
                       {plan.name}
                     </h3>
                   </div>
-                  <p className={`text-sm mb-6 ${plan.highlighted ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <p className={`text-sm mb-6 ${plan.highlighted ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                     {plan.description}
                   </p>
 
                   {/* Price */}
                   <div className="mb-1">
-                    <p className={`text-xs font-semibold mb-1 ${plan.highlighted ? 'text-gray-400' : 'text-gray-400'}`}>
+                    <p className={`text-xs font-semibold mb-1 ${plan.highlighted ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                       {tp('À partir de')}
                     </p>
                     {(() => {
@@ -406,24 +406,24 @@ const Tarifs = () => {
                                 {fmtFCFA(originalPerMonth)}
                               </span>
                             )}
-                            <span className={`text-5xl font-black leading-none ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
+                            <span className={`text-5xl font-black leading-none ${plan.highlighted ? 'text-white' : 'text-foreground'}`}>
                               {plan.isFree ? '0' : fmtFCFA(displayPerMonth)}
                             </span>
-                            <span className={`text-sm font-semibold mb-1 ${plan.highlighted ? 'text-gray-400' : 'text-gray-400'}`}>
+                            <span className={`text-sm font-semibold mb-1 ${plan.highlighted ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                               {plan.isFree ? 'FCFA' : tp('FCFA/mois')}
                             </span>
                           </div>
                           {promoApplied && (
-                            <p className={`text-xs font-bold mt-1.5 ${plan.highlighted ? 'text-white' : 'text-primary-600'}`}>
+                            <p className={`text-xs font-bold mt-1.5 ${plan.highlighted ? 'text-white' : 'text-primary'}`}>
                               ✨ Code {promoData.code} appliqué
                             </p>
                           )}
                           {isAnnual && !plan.isFree && !promoApplied && (
-                            <p className={`text-xs font-semibold mt-1.5 ${plan.highlighted ? 'text-primary-200' : 'text-primary-600'}`}>
+                            <p className={`text-xs font-semibold mt-1.5 ${plan.highlighted ? 'text-primary-200' : 'text-primary'}`}>
                               {fmtFCFA(displayTotal)} FCFA facturé annuellement
                             </p>
                           )}
-                          <p className={`text-xs mt-1.5 ${plan.highlighted ? 'text-gray-500' : 'text-gray-400'}`}>
+                          <p className={`text-xs mt-1.5 ${plan.highlighted ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                             {plan.isFree ? 'Sans carte bancaire' : isAnnual ? 'Facturation annuelle' : tp('Facturation mensuelle')}
                           </p>
                         </>
@@ -432,20 +432,20 @@ const Tarifs = () => {
                   </div>
 
                   {/* Divider */}
-                  <div className={`h-px my-5 ${plan.highlighted ? 'bg-white/10' : 'bg-gray-100'}`} />
+                  <div className={`h-px my-5 ${plan.highlighted ? 'bg-card/10' : 'bg-muted'}`} />
 
                   {/* Features */}
                   <div className="mb-1">
-                    <p className={`text-[11px] font-black uppercase tracking-widest mb-3 ${plan.highlighted ? 'text-gray-400' : 'text-gray-400'}`}>
+                    <p className={`text-[11px] font-black uppercase tracking-widest mb-3 ${plan.highlighted ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                       {tp('Fonctionnalités clés')}
                     </p>
                     <ul className="space-y-3 flex-1">
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-2.5">
-                          <svg className={`w-4 h-4 flex-shrink-0 mt-0.5 ${plan.highlighted ? 'text-primary-400' : 'text-primary-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className={`w-4 h-4 flex-shrink-0 mt-0.5 ${plan.highlighted ? 'text-primary-400' : 'text-primary'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
-                          <span className={`text-[13px] leading-snug ${plan.highlighted ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <span className={`text-[13px] leading-snug ${plan.highlighted ? 'text-gray-300' : 'text-muted-foreground'}`}>
                             {feature}
                           </span>
                         </li>
@@ -482,9 +482,9 @@ const Tarifs = () => {
                     }}
                     className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
                       ${plan.highlighted
-                        ? 'bg-primary-500 text-white hover:bg-primary-400'
+                        ? 'bg-primary text-white hover:bg-primary-400'
                         : plan.isFree
-                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-muted text-foreground hover:bg-gray-200'
                           : 'bg-gray-900 text-white hover:bg-gray-800'
                       }`}
                   >
@@ -498,9 +498,9 @@ const Tarifs = () => {
       </section>
 
       {/* FAQ SECTION */}
-      <section className="py-16 sm:py-20 px-4 bg-gray-50">
+      <section className="py-16 sm:py-20 px-4 bg-background">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-12 text-center">
+          <h2 className="text-3xl sm:text-4xl font-black text-foreground mb-12 text-center">
             {tp('Questions fréquentes')}
           </h2>
           
@@ -527,9 +527,9 @@ const Tarifs = () => {
                 a: 'Vous pouvez annuler à tout moment depuis les paramètres de votre compte. Aucune pénalité, aucune question posée.'
               }
             ].map((faq, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 border border-gray-200">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{faq.q}</h3>
-                <p className="text-gray-600 leading-relaxed">{faq.a}</p>
+              <div key={i} className="bg-card rounded-xl p-6 border border-border">
+                <h3 className="text-lg font-bold text-foreground mb-2">{faq.q}</h3>
+                <p className="text-muted-foreground leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -549,13 +549,13 @@ const Tarifs = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button 
               onClick={() => navigate('/ecom/register')}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-primary-700 hover:bg-primary-50 rounded-xl font-bold text-lg transition shadow-xl"
+              className="w-full sm:w-auto px-8 py-4 bg-card text-primary hover:bg-primary-50 rounded-xl font-bold text-lg transition shadow-xl"
             >
               {tp('Créer mon espace gratuit')}
             </button>
             <button 
               onClick={() => navigate('/ecom/login')}
-              className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white border-2 border-white/30 rounded-xl font-semibold text-lg transition backdrop-blur-sm"
+              className="w-full sm:w-auto px-8 py-4 bg-card/10 hover:bg-card/20 text-white border-2 border-white/30 rounded-xl font-semibold text-lg transition backdrop-blur-sm"
             >
               {tp('Se connecter')}
             </button>
@@ -564,24 +564,24 @@ const Tarifs = () => {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-gray-200 py-12 px-4 bg-gray-50">
+      <footer className="border-t border-border py-12 px-4 bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
             <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
             <div className="flex items-center gap-6">
-              <button onClick={() => navigate('/ecom/privacy')} className="text-sm text-gray-600 hover:text-gray-900 transition">
+              <button onClick={() => navigate('/ecom/privacy')} className="text-sm text-muted-foreground hover:text-foreground transition">
                 {tp('Confidentialité')}
               </button>
-              <button onClick={() => navigate('/ecom/terms')} className="text-sm text-gray-600 hover:text-gray-900 transition">
+              <button onClick={() => navigate('/ecom/terms')} className="text-sm text-muted-foreground hover:text-foreground transition">
                 {tp('Conditions')}
               </button>
-              <button onClick={() => navigate('/ecom')} className="text-sm text-gray-600 hover:text-gray-900 transition">
+              <button onClick={() => navigate('/ecom')} className="text-sm text-muted-foreground hover:text-foreground transition">
                 {tp('Accueil')}
               </button>
             </div>
           </div>
-          <div className="border-t border-gray-200 pt-8 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="border-t border-border pt-8 text-center">
+            <p className="text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} Scalor. Plateforme e-commerce pour l'Afrique.
             </p>
           </div>

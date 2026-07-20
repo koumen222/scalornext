@@ -13,11 +13,11 @@ const STATUS_LABELS = {
 const STATUS_META = {
   confirmed:   { dot: 'bg-blue-500',    pill: 'bg-blue-50 text-blue-700 border border-blue-100' },
   shipped:     { dot: 'bg-indigo-500',  pill: 'bg-indigo-50 text-indigo-700 border border-indigo-100' },
-  delivered:   { dot: 'bg-primary-500', pill: 'bg-primary-50 text-primary-700 border border-primary-100' },
+  delivered:   { dot: 'bg-primary', pill: 'bg-primary-50 text-primary border border-primary-100' },
   returned:    { dot: 'bg-orange-500',  pill: 'bg-orange-50 text-orange-700 border border-orange-100' },
   cancelled:   { dot: 'bg-red-400',     pill: 'bg-red-50 text-red-700 border border-red-100' },
   pending:     { dot: 'bg-yellow-400',  pill: 'bg-yellow-50 text-yellow-700 border border-yellow-100' },
-  unreachable: { dot: 'bg-gray-400',    pill: 'bg-gray-50 text-gray-600 border border-gray-200' },
+  unreachable: { dot: 'bg-gray-400',    pill: 'bg-background text-muted-foreground border border-border' },
   called:      { dot: 'bg-sky-400',     pill: 'bg-sky-50 text-sky-700 border border-sky-100' },
   postponed:   { dot: 'bg-violet-400',  pill: 'bg-violet-50 text-violet-700 border border-violet-100' },
 };
@@ -46,8 +46,8 @@ function timeAgo(date) {
 
 const Loader = () => (
   <div className="flex flex-col items-center justify-center h-64 gap-4">
-    <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-amber-600 animate-spin" />
-    <p className="text-sm text-gray-400 font-medium">{tp('Chargement…')}</p>
+    <div className="w-10 h-10 rounded-full border-4 border-border border-t-amber-600 animate-spin" />
+    <p className="text-sm text-muted-foreground font-medium">{tp('Chargement…')}</p>
   </div>
 );
 
@@ -75,13 +75,13 @@ const ReassignModal = ({ order, livreurs, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-gray-100">
+      <div className="bg-card rounded-2xl w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border">
           <div>
-            <h3 className="font-bold text-gray-900">{tp('Réassigner le livreur')}</h3>
-            <p className="text-xs text-gray-400 mt-0.5">{order.clientName} · #{order.orderId}</p>
+            <h3 className="font-bold text-foreground">{tp('Réassigner le livreur')}</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">{order.clientName} · #{order.orderId}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -90,9 +90,9 @@ const ReassignModal = ({ order, livreurs, onClose, onSave }) => {
           <div className="space-y-2">
             <button
               onClick={() => setSelected('')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-sm transition ${!selected ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-gray-200 hover:border-gray-300'}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-sm transition ${!selected ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-border hover:border-gray-300'}`}
             >
-              <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">—</div>
+              <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-xs">—</div>
               <span className="font-medium">{tp('Aucun livreur')}</span>
               {!selected && <svg className="w-4 h-4 ml-auto text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
             </button>
@@ -100,14 +100,14 @@ const ReassignModal = ({ order, livreurs, onClose, onSave }) => {
               <button
                 key={l._id}
                 onClick={() => setSelected(l._id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-sm transition ${selected === l._id ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-gray-200 hover:border-gray-300'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-sm transition ${selected === l._id ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-border hover:border-gray-300'}`}
               >
                 <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold">
                   {(l.name || l.email).charAt(0).toUpperCase()}
                 </div>
                 <div className="text-left">
-                  <div className="font-medium text-gray-900">{l.name || l.email}</div>
-                  {l.name && <div className="text-[11px] text-gray-400">{l.email}</div>}
+                  <div className="font-medium text-foreground">{l.name || l.email}</div>
+                  {l.name && <div className="text-[11px] text-muted-foreground">{l.email}</div>}
                 </div>
                 {selected === l._id && <svg className="w-4 h-4 ml-auto text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
               </button>
@@ -144,10 +144,10 @@ const StatusDropdown = ({ order, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/30" onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-xs shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-        <div className="px-4 py-3 border-b border-gray-100">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Changer le statut')}</p>
-          <p className="text-sm font-medium text-gray-800 mt-0.5">{order.clientName}</p>
+      <div className="bg-card rounded-2xl w-full max-w-xs shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="px-4 py-3 border-b border-border">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Changer le statut')}</p>
+          <p className="text-sm font-medium text-foreground mt-0.5">{order.clientName}</p>
         </div>
         {saving ? (
           <div className="flex justify-center py-6"><div className="w-6 h-6 border-2 border-amber-600 border-t-transparent rounded-full animate-spin" /></div>
@@ -160,7 +160,7 @@ const StatusDropdown = ({ order, onClose, onSave }) => {
                 <button
                   key={s}
                   onClick={() => handleSelect(s)}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-gray-50 ${active ? 'font-semibold text-amber-700 bg-amber-50' : 'text-gray-700'}`}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition hover:bg-background ${active ? 'font-semibold text-amber-700 bg-amber-50' : 'text-foreground'}`}
                 >
                   <span className={`w-2 h-2 rounded-full flex-shrink-0 ${m.dot}`} />
                   {STATUS_LABELS[s] || s}
@@ -210,17 +210,17 @@ const OrderRow = ({ order, navigate, livreurs, onStatusChange, onLivreurChange, 
 
   return (
     <>
-      <div className="bg-white border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all rounded-xl p-3 flex items-center gap-3 group">
+      <div className="bg-card border border-border hover:border-border hover:shadow-sm transition-all rounded-xl p-3 flex items-center gap-3 group">
         {/* Status dot */}
         <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${sm.dot}`} />
 
         {/* Main content - clickable to order detail */}
         <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/ecom/orders/${order._id}`)}>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-gray-900 truncate">{order.clientName || tp('Client')}</span>
+            <span className="text-sm font-semibold text-foreground truncate">{order.clientName || tp('Client')}</span>
             {order.orderId && <span className="text-[11px] text-gray-300 flex-shrink-0">#{order.orderId}</span>}
           </div>
-          <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 flex-wrap">
+          <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground flex-wrap">
             <span className="font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-md">{livreurName}</span>
             {order.city && <span>· {order.city}</span>}
             {order.product && <span className="truncate max-w-[100px]">· {order.product}</span>}
@@ -230,7 +230,7 @@ const OrderRow = ({ order, navigate, livreurs, onStatusChange, onLivreurChange, 
         {/* Right side: price + status + time + menu */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {total > 0 && (
-            <span className="hidden sm:block text-xs font-semibold text-gray-700">{fmt(total)}</span>
+            <span className="hidden sm:block text-xs font-semibold text-foreground">{fmt(total)}</span>
           )}
           <button
             onClick={(e) => { e.stopPropagation(); setShowStatusModal(true); }}
@@ -244,38 +244,38 @@ const OrderRow = ({ order, navigate, livreurs, onStatusChange, onLivreurChange, 
           <div className="relative" ref={menuRef}>
             <button
               onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
-              className="p-1 rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-500 transition"
+              className="p-1 rounded-lg hover:bg-muted text-gray-300 hover:text-muted-foreground transition"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
             </button>
             {menuOpen && (
-              <div className="absolute right-0 top-7 w-48 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 overflow-hidden">
+              <div className="absolute right-0 top-7 w-48 bg-card border border-border rounded-xl shadow-lg z-20 py-1 overflow-hidden">
                 <button
                   onClick={(e) => { e.stopPropagation(); setMenuOpen(false); navigate(`/ecom/orders/${order._id}`); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-background"
                 >
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                   {tp('Voir la commande')}
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setMenuOpen(false); setShowStatusModal(true); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-background"
                 >
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
+                  <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
                   {tp('Changer le statut')}
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setMenuOpen(false); setShowReassignModal(true); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-background"
                 >
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                  <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                   {tp('Réassigner livreur')}
                 </button>
                 {livreurId && (
                   <>
-                    <div className="my-1 border-t border-gray-100" />
+                    <div className="my-1 border-t border-border" />
                     <button
                       onClick={handleUnassign}
                       disabled={unassigning}
@@ -411,9 +411,9 @@ const LivreurManagement = () => {
   const totalAssigned = (stats.confirmed || 0) + (stats.shipped || 0) + (stats.delivered || 0) + (stats.returned || 0) + (stats.cancelled || 0);
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-gray-100 flex-shrink-0">
+      <div className="bg-card border-b border-border flex-shrink-0">
         <div className="px-4 sm:px-6 pt-4 pb-3">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white flex-shrink-0">
@@ -423,10 +423,10 @@ const LivreurManagement = () => {
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-base font-bold text-gray-900">{tp('Suivi des livraisons')}</h1>
-              <p className="text-xs text-gray-400">{pagination.total} commande{pagination.total !== 1 ? 's' : ''} · {stats.livreursActifs || 0} livreur{(stats.livreursActifs || 0) !== 1 ? 's' : ''} actifs</p>
+              <h1 className="text-base font-bold text-foreground">{tp('Suivi des livraisons')}</h1>
+              <p className="text-xs text-muted-foreground">{pagination.total} commande{pagination.total !== 1 ? 's' : ''} · {stats.livreursActifs || 0} livreur{(stats.livreursActifs || 0) !== 1 ? 's' : ''} actifs</p>
             </div>
-            <button onClick={() => loadData()} className="p-2 rounded-lg hover:bg-gray-100 transition text-gray-400">
+            <button onClick={() => loadData()} className="p-2 rounded-lg hover:bg-muted transition text-muted-foreground">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             </button>
           </div>
@@ -440,10 +440,10 @@ const LivreurManagement = () => {
               { get label() { return tp('Livrées'); }, value: stats.delivered || 0, dot: STATUS_META.delivered.dot },
               { label: 'Retours', value: (stats.returned || 0) + (stats.cancelled || 0), dot: STATUS_META.returned.dot },
             ].map(({ label, value, dot }) => (
-              <div key={label} className="flex items-center gap-1.5 bg-gray-50 rounded-lg px-3 py-1.5 flex-shrink-0 border border-gray-100">
+              <div key={label} className="flex items-center gap-1.5 bg-background rounded-lg px-3 py-1.5 flex-shrink-0 border border-border">
                 <span className={`w-2 h-2 rounded-full ${dot}`} />
-                <span className="text-xs font-bold text-gray-700">{value}</span>
-                <span className="text-[11px] text-gray-400">{label}</span>
+                <span className="text-xs font-bold text-foreground">{value}</span>
+                <span className="text-[11px] text-muted-foreground">{label}</span>
               </div>
             ))}
           </div>
@@ -457,11 +457,11 @@ const LivreurManagement = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${
                   tab === t.key
                     ? 'bg-amber-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-muted text-muted-foreground hover:bg-gray-200'
                 }`}
               >
                 {t.label}
-                {t.key && stats[t.key] ? <span className={`ml-1 text-[10px] ${tab === t.key ? 'text-amber-200' : 'text-gray-400'}`}>({stats[t.key]})</span> : null}
+                {t.key && stats[t.key] ? <span className={`ml-1 text-[10px] ${tab === t.key ? 'text-amber-200' : 'text-muted-foreground'}`}>({stats[t.key]})</span> : null}
               </button>
             ))}
           </div>
@@ -474,11 +474,11 @@ const LivreurManagement = () => {
                 placeholder={tp('Rechercher client, téléphone, ville, produit…')}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 text-sm bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-transparent"
+                className="w-full pl-8 pr-3 py-2 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-transparent"
               />
-              <svg className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               {search && (
-                <button onClick={() => setSearch('')} className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600">
+                <button onClick={() => setSearch('')} className="absolute right-2.5 top-2 text-muted-foreground hover:text-muted-foreground">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               )}
@@ -486,7 +486,7 @@ const LivreurManagement = () => {
             <select
               value={filterLivreur}
               onChange={e => setFilterLivreur(e.target.value)}
-              className="text-sm bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500/30 min-w-0 max-w-[150px] sm:max-w-[200px]"
+              className="text-sm bg-background border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500/30 min-w-0 max-w-[150px] sm:max-w-[200px]"
             >
               <option value="">{tp('Tous les livreurs')}</option>
               {livreurs.map(l => (
@@ -499,7 +499,7 @@ const LivreurManagement = () => {
 
       {/* ── Toast ──────────────────────────────────────────────────────────── */}
       {success && (
-        <div className="mx-4 sm:mx-6 mt-3 flex-shrink-0 bg-primary-50 border border-primary-100 text-primary-700 text-sm px-4 py-2.5 rounded-xl flex items-center gap-2">
+        <div className="mx-4 sm:mx-6 mt-3 flex-shrink-0 bg-primary-50 border border-primary-100 text-primary text-sm px-4 py-2.5 rounded-xl flex items-center gap-2">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           {success}
         </div>
@@ -515,8 +515,8 @@ const LivreurManagement = () => {
         ) : orders.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-4xl mb-3">🚚</div>
-            <p className="text-gray-500 font-medium">{tp('Aucune commande trouvée')}</p>
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-muted-foreground font-medium">{tp('Aucune commande trouvée')}</p>
+            <p className="text-muted-foreground text-sm mt-1">
               {search || tab || filterLivreur ? 'Modifiez vos filtres.' : 'Aucune commande n\'a encore été assignée à un livreur.'}
             </p>
           </div>
@@ -539,15 +539,15 @@ const LivreurManagement = () => {
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="px-4 py-2 text-xs font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition"
+                  className="px-4 py-2 text-xs font-medium bg-card border border-border rounded-xl hover:bg-background disabled:opacity-40 transition"
                 >
                   ← Précédent
                 </button>
-                <span className="text-xs text-gray-500 font-medium">{page} / {pagination.pages}</span>
+                <span className="text-xs text-muted-foreground font-medium">{page} / {pagination.pages}</span>
                 <button
                   onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
                   disabled={page >= pagination.pages}
-                  className="px-4 py-2 text-xs font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 transition"
+                  className="px-4 py-2 text-xs font-medium bg-card border border-border rounded-xl hover:bg-background disabled:opacity-40 transition"
                 >
                   Suivant →
                 </button>

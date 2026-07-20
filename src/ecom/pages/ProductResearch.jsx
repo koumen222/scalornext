@@ -244,7 +244,7 @@ const ProductResearch = () => {
       case 'Faible': return 'text-green-600';
       case 'Moyenne': return 'text-yellow-600';
       case 'Élevée': return 'text-red-600';
-      default: return 'text-gray-600';
+      default: return 'text-muted-foreground';
     }
   };
 
@@ -254,7 +254,7 @@ const ProductResearch = () => {
       case 'Élevée': return 'text-green-600';
       case 'Moyenne': return 'text-yellow-600';
       case 'Faible': return 'text-red-600';
-      default: return 'text-gray-600';
+      default: return 'text-muted-foreground';
     }
   };
 
@@ -280,11 +280,11 @@ const ProductResearch = () => {
   const renderProductCard = (product) => (
     <div
       key={product.id}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-card rounded-xl shadow-sm border border-border p-6 mb-4 hover:shadow-md transition-shadow cursor-pointer"
       onClick={() => setSelectedProduct(product)}
     >
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 flex-1 mr-4">{product.name}</h3>
+        <h3 className="text-lg font-semibold text-foreground flex-1 mr-4">{product.name}</h3>
         <div className={`px-3 py-1 rounded-full text-xs font-medium ${getOpportunityBg(product.opportunity)} ${getOpportunityColor(product.opportunity)}`}>
           {'★'.repeat(product.opportunity)} {'☆'.repeat(5 - product.opportunity)}
         </div>
@@ -292,15 +292,15 @@ const ProductResearch = () => {
       
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{tp('Achat')}</p>
+          <p className="text-xs text-muted-foreground mb-1">{tp('Achat')}</p>
           <p className="text-sm font-semibold text-red-600">{product.buyPrice.toLocaleString()} FCFA</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{tp('Vente')}</p>
+          <p className="text-xs text-muted-foreground mb-1">{tp('Vente')}</p>
           <p className="text-sm font-semibold text-green-600">{product.sellPrice.toLocaleString()} FCFA</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{tp('Marge')}</p>
+          <p className="text-xs text-muted-foreground mb-1">{tp('Marge')}</p>
           <p className={`text-sm font-semibold ${product.margin >= 40 ? 'text-green-600' : 'text-yellow-600'}`}>
             {product.margin}%
           </p>
@@ -309,37 +309,37 @@ const ProductResearch = () => {
       
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{tp('Demande')}</p>
+          <p className="text-xs text-muted-foreground mb-1">{tp('Demande')}</p>
           <p className={`text-sm font-medium ${getDemandColor(product.demand)}`}>{product.demand}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{tp('Compétition')}</p>
+          <p className="text-xs text-muted-foreground mb-1">{tp('Compétition')}</p>
           <p className={`text-sm font-medium ${getCompetitionColor(product.competition)}`}>{product.competition}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{tp('Ventes/mois')}</p>
-          <p className="text-sm font-medium text-gray-900">{product.monthlySales}</p>
+          <p className="text-xs text-muted-foreground mb-1">{tp('Ventes/mois')}</p>
+          <p className="text-sm font-medium text-foreground">{product.monthlySales}</p>
         </div>
       </div>
       
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-4 border-t border-border">
         <div className="flex items-center space-x-4">
           <div className="flex items-center">
             {renderStars(product.rating)}
-            <span className="ml-1 text-sm text-gray-600">({product.rating})</span>
+            <span className="ml-1 text-sm text-muted-foreground">({product.rating})</span>
           </div>
-          <div className="flex items-center text-sm text-gray-600">
+          <div className="flex items-center text-sm text-muted-foreground">
             <MessageSquare size={14} className="mr-1" />
             {product.reviews}
           </div>
-          <div className="flex items-center text-sm text-gray-600">
+          <div className="flex items-center text-sm text-muted-foreground">
             <Store size={14} className="mr-1" />
             {product.suppliers}
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-xs text-gray-500">{getTrendIcon(product.trend)}</span>
-          <span className="text-xs text-gray-500">{product.seasonality === 'oui' ? 'Saisonnier' : tp('Permanent')}</span>
+          <span className="text-xs text-muted-foreground">{getTrendIcon(product.trend)}</span>
+          <span className="text-xs text-muted-foreground">{product.seasonality === 'oui' ? 'Saisonnier' : tp('Permanent')}</span>
         </div>
       </div>
     </div>
@@ -355,18 +355,18 @@ const ProductResearch = () => {
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-card rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+          <div className="p-6 border-b border-border">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedProduct.name}</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-2">{selectedProduct.name}</h2>
                 <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getOpportunityBg(selectedProduct.opportunity)} ${getOpportunityColor(selectedProduct.opportunity)}`}>
                   {'★'.repeat(selectedProduct.opportunity)} {'☆'.repeat(5 - selectedProduct.opportunity)} Opportunité
                 </div>
               </div>
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-muted-foreground hover:text-muted-foreground"
               >
                 <X size={24} />
               </button>
@@ -376,45 +376,45 @@ const ProductResearch = () => {
           <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
             {/* Analyse Financière */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <DollarSign className="mr-2" size={20} />
                 {tp('Analyse Financière')}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Prix d\'achat')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Prix d\'achat')}</p>
                   <p className="text-lg font-semibold text-red-600">{selectedProduct.buyPrice.toLocaleString()} FCFA</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Prix de vente')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Prix de vente')}</p>
                   <p className="text-lg font-semibold text-green-600">{selectedProduct.sellPrice.toLocaleString()} FCFA</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Marge')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Marge')}</p>
                   <p className={`text-lg font-semibold ${selectedProduct.margin >= 40 ? 'text-green-600' : 'text-yellow-600'}`}>
                     {selectedProduct.margin}%
                   </p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Bénéfice/unité')}</p>
-                  <p className="text-lg font-semibold text-primary-600">
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Bénéfice/unité')}</p>
+                  <p className="text-lg font-semibold text-primary">
                     {(selectedProduct.sellPrice - selectedProduct.buyPrice).toLocaleString()} FCFA
                   </p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Revenu mensuel')}</p>
-                  <p className="text-lg font-semibold text-gray-900">{monthlyRevenue.toLocaleString()} FCFA</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Revenu mensuel')}</p>
+                  <p className="text-lg font-semibold text-foreground">{monthlyRevenue.toLocaleString()} FCFA</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Bénéfice mensuel')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Bénéfice mensuel')}</p>
                   <p className="text-lg font-semibold text-green-600">{monthlyProfit.toLocaleString()} FCFA</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Revenu annuel')}</p>
-                  <p className="text-lg font-semibold text-gray-900">{yearlyRevenue.toLocaleString()} FCFA</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Revenu annuel')}</p>
+                  <p className="text-lg font-semibold text-foreground">{yearlyRevenue.toLocaleString()} FCFA</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Bénéfice annuel')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Bénéfice annuel')}</p>
                   <p className="text-lg font-semibold text-green-600">{yearlyProfit.toLocaleString()} FCFA</p>
                 </div>
               </div>
@@ -422,58 +422,58 @@ const ProductResearch = () => {
             
             {/* Analyse Marché */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <TrendingUp className="mr-2" size={20} />
                 {tp('Analyse Marché')}
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Catégorie')}</p>
-                  <p className="text-base font-medium text-gray-900">{selectedProduct.category}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Catégorie')}</p>
+                  <p className="text-base font-medium text-foreground">{selectedProduct.category}</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Demande')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Demande')}</p>
                   <p className={`text-base font-medium ${getDemandColor(selectedProduct.demand)}`}>{selectedProduct.demand}</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Compétition')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Compétition')}</p>
                   <p className={`text-base font-medium ${getCompetitionColor(selectedProduct.competition)}`}>{selectedProduct.competition}</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Niche')}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Niche')}</p>
                   <p className={`text-base font-medium ${getOpportunityColor(selectedProduct.opportunity)}`}>{selectedProduct.niche}</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Ventes/mois')}</p>
-                  <p className="text-base font-medium text-gray-900">{selectedProduct.monthlySales}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Ventes/mois')}</p>
+                  <p className="text-base font-medium text-foreground">{selectedProduct.monthlySales}</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">{tp('Fournisseurs')}</p>
-                  <p className="text-base font-medium text-gray-900">{selectedProduct.suppliers}</p>
+                <div className="bg-background p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">{tp('Fournisseurs')}</p>
+                  <p className="text-base font-medium text-foreground">{selectedProduct.suppliers}</p>
                 </div>
               </div>
             </div>
             
             {/* Avis Clients */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <Star className="mr-2" size={20} />
                 {tp('Avis Clients')}
               </h3>
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-background p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
                     {renderStars(selectedProduct.rating)}
-                    <span className="ml-2 text-base font-medium text-gray-900">{selectedProduct.rating} / 5.0</span>
+                    <span className="ml-2 text-base font-medium text-foreground">{selectedProduct.rating} / 5.0</span>
                   </div>
-                  <span className="text-gray-600">({selectedProduct.reviews} avis)</span>
+                  <span className="text-muted-foreground">({selectedProduct.reviews} avis)</span>
                 </div>
               </div>
             </div>
             
             {/* Avantages */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <CheckCircle className="mr-2" size={20} />
                 {tp('Avantages')}
               </h3>
@@ -481,7 +481,7 @@ const ProductResearch = () => {
                 {selectedProduct.pros.map((pro, index) => (
                   <div key={index} className="flex items-center space-x-2">
                     <CheckCircle size={16} className="text-green-600" />
-                    <span className="text-gray-700">{pro}</span>
+                    <span className="text-foreground">{pro}</span>
                   </div>
                 ))}
               </div>
@@ -489,7 +489,7 @@ const ProductResearch = () => {
             
             {/* Inconvénients */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <AlertTriangle className="mr-2" size={20} />
                 {tp('Inconvénients')}
               </h3>
@@ -497,7 +497,7 @@ const ProductResearch = () => {
                 {selectedProduct.cons.map((con, index) => (
                   <div key={index} className="flex items-center space-x-2">
                     <AlertTriangle size={16} className="text-yellow-600" />
-                    <span className="text-gray-700">{con}</span>
+                    <span className="text-foreground">{con}</span>
                   </div>
                 ))}
               </div>
@@ -505,8 +505,8 @@ const ProductResearch = () => {
             
             {/* Description */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">{tp('Description')}</h3>
-              <p className="text-gray-700 leading-relaxed">{selectedProduct.description}</p>
+              <h3 className="text-lg font-semibold text-foreground mb-4">{tp('Description')}</h3>
+              <p className="text-foreground leading-relaxed">{selectedProduct.description}</p>
             </div>
           </div>
         </div>
@@ -515,24 +515,24 @@ const ProductResearch = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-card border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-foreground flex items-center">
             <Search className="mr-3" size={28} />
             {tp('Recherche Produits')}
           </h1>
-          <p className="text-gray-600 mt-1">{tp('Analysez les opportunités de marché')}</p>
+          <p className="text-muted-foreground mt-1">{tp('Analysez les opportunités de marché')}</p>
         </div>
       </div>
       
       {/* Search Section */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-card border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex gap-4 mb-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
               <input
                 type="text"
                 placeholder={tp('Rechercher un produit (ex: téléphone, ordinateur, écologique...)')}
@@ -545,11 +545,11 @@ const ProductResearch = () => {
             <button
               onClick={searchProducts}
               disabled={loading}
-              className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 flex items-center"
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 flex items-center"
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 bg-white/30 rounded animate-pulse mr-2"></div>
+                  <div className="w-4 h-4 bg-card/30 rounded animate-pulse mr-2"></div>
                   {tp('Recherche...')}
                 </>
               ) : (
@@ -561,7 +561,7 @@ const ProductResearch = () => {
             </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center"
+              className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-background flex items-center"
             >
               <Filter size={20} className="mr-2" />
               {tp('Filtres')}
@@ -570,9 +570,9 @@ const ProductResearch = () => {
           
           {/* Filters */}
           {showFilters && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-4 bg-background rounded-lg">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Catégorie')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Catégorie')}</label>
                 <select
                   value={filters.category}
                   onChange={(e) => setFilters({...filters, category: e.target.value})}
@@ -588,7 +588,7 @@ const ProductResearch = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Marge minimale (%)')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Marge minimale (%)')}</label>
                 <input
                   type="number"
                   value={filters.minMargin}
@@ -599,7 +599,7 @@ const ProductResearch = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Prix maximum (FCFA)')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Prix maximum (FCFA)')}</label>
                 <input
                   type="number"
                   value={filters.maxPrice}
@@ -609,7 +609,7 @@ const ProductResearch = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Compétition')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Compétition')}</label>
                 <select
                   value={filters.competition}
                   onChange={(e) => setFilters({...filters, competition: e.target.value})}
@@ -622,7 +622,7 @@ const ProductResearch = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Demande')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Demande')}</label>
                 <select
                   value={filters.demand}
                   onChange={(e) => setFilters({...filters, demand: e.target.value})}
@@ -640,7 +640,7 @@ const ProductResearch = () => {
           
           {/* Sort Options */}
           <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-700">{tp('Trier par:')}</span>
+            <span className="text-sm font-medium text-foreground">{tp('Trier par:')}</span>
             <div className="flex space-x-2">
               {[
                 { key: 'margin', label: 'Marge', icon: TrendingUp },
@@ -655,8 +655,8 @@ const ProductResearch = () => {
                   onClick={() => setSortBy(sort.key)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                     sortBy === sort.key
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-primary text-white'
+                      : 'bg-muted text-foreground hover:bg-gray-200'
                   }`}
                 >
                   {sort.label}
@@ -672,20 +672,20 @@ const ProductResearch = () => {
         {loading ? (
           <div className="space-y-2">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+              <div key={i} className="bg-card rounded-xl border p-4">
                 <div className="h-4 w-36 bg-gray-200 rounded animate-pulse mb-2" />
-                <div className="h-3 w-24 bg-gray-100 rounded animate-pulse" />
+                <div className="h-3 w-24 bg-muted rounded animate-pulse" />
               </div>
             ))}
           </div>
         ) : products.length > 0 ? (
           <div>
             <div className="mb-4 flex justify-between items-center">
-              <p className="text-gray-700">
+              <p className="text-foreground">
                 {products.length} produit{products.length > 1 ? 's' : ''} trouvé{products.length > 1 ? 's' : ''}
               </p>
-              <div className="text-sm text-gray-500">
-                {tp('Trié par:')} <span className="font-medium text-gray-700">
+              <div className="text-sm text-muted-foreground">
+                {tp('Trié par:')} <span className="font-medium text-foreground">
                   {sortBy === 'margin' ? 'Marge' : 
                    sortBy === 'revenue' ? 'Revenu' : 
                    sortBy === 'competition' ? 'Compétition' : 
@@ -700,11 +700,11 @@ const ProductResearch = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-12">
-            <Search size={48} className="text-gray-400 mb-4" />
-            <p className="text-gray-600 text-center">
+            <Search size={48} className="text-muted-foreground mb-4" />
+            <p className="text-muted-foreground text-center">
               {tp('Recherchez des produits pour analyser les opportunités de marché')}
             </p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               Essayez: "téléphone", "ordinateur", "écologique", "accessoires"...
             </p>
           </div>

@@ -59,14 +59,14 @@ const ReportDetail = () => {
       <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-6" />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+          <div key={i} className="bg-card rounded-xl border p-4">
             <div className="h-3 w-20 bg-gray-200 rounded animate-pulse mb-2" />
             <div className="h-6 w-16 bg-gray-200 rounded animate-pulse" />
           </div>
         ))}
       </div>
-      <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-3">
-        {[...Array(6)].map((_, i) => <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" />)}
+      <div className="bg-card rounded-xl border p-6 space-y-3">
+        {[...Array(6)].map((_, i) => <div key={i} className="h-4 bg-muted rounded animate-pulse" />)}
       </div>
     </div>
   );
@@ -86,15 +86,15 @@ const ReportDetail = () => {
       <div className="mb-4 sm:mb-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{tp('Détails du rapport')}</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-xl sm:text-3xl font-bold text-foreground">{tp('Détails du rapport')}</h1>
+            <p className="text-muted-foreground mt-2">
               Rapport du {formatDate(report.date)} pour {report.productId?.name || tp('Produit inconnu')}
             </p>
           </div>
           <div className="flex space-x-4">
             <button
               onClick={() => navigate(`/ecom/reports/${id}/edit`)}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700"
             >
               {tp('Modifier')}
             </button>
@@ -144,7 +144,7 @@ const ReportDetail = () => {
             )}
             <button
               onClick={() => navigate('/ecom/reports')}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-foreground hover:bg-background"
             >
               {tp('Retour')}
             </button>
@@ -161,56 +161,56 @@ const ReportDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Informations principales */}
         <div className="lg:col-span-2">
-          <div className="bg-white shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Informations principales')}</h2>
+          <div className="bg-card shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">{tp('Informations principales')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Date')}</label>
-                <p className="text-lg text-gray-900">{formatDate(report.date)}</p>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Date')}</label>
+                <p className="text-lg text-foreground">{formatDate(report.date)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Produit')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Produit')}</label>
                 {report.productId?._id ? (
-                  <Link to={`/ecom/reports/product/${report.productId._id}`} className="text-lg text-primary-600 hover:text-primary-800 hover:underline">{report.productId.name}</Link>
+                  <Link to={`/ecom/reports/product/${report.productId._id}`} className="text-lg text-primary hover:text-primary-800 hover:underline">{report.productId.name}</Link>
                 ) : (
-                  <p className="text-lg text-gray-900">N/A</p>
+                  <p className="text-lg text-foreground">N/A</p>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Rapporté par')}</label>
-                <p className="text-lg text-gray-900">{report.reportedBy?.email || tp('N/A')}</p>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Rapporté par')}</label>
+                <p className="text-lg text-foreground">{report.reportedBy?.email || tp('N/A')}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">WhatsApp</label>
-                <p className="text-lg text-gray-900">{report.whatsappNumber || tp('Non renseigné')}</p>
+                <label className="block text-sm font-medium text-muted-foreground">WhatsApp</label>
+                <p className="text-lg text-foreground">{report.whatsappNumber || tp('Non renseigné')}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Date de création')}</label>
-                <p className="text-lg text-gray-900">{formatDate(report.createdAt)}</p>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Date de création')}</label>
+                <p className="text-lg text-foreground">{formatDate(report.createdAt)}</p>
               </div>
             </div>
           </div>
 
           {/* Commandes */}
-          <div className="bg-white shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Commandes')}</h2>
+          <div className="bg-card shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">{tp('Commandes')}</h2>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Commandes reçues')}</label>
-                <p className="text-2xl font-bold text-primary-600">{report.ordersReceived || 0}</p>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Commandes reçues')}</label>
+                <p className="text-2xl font-bold text-primary">{report.ordersReceived || 0}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Commandes livrées')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Commandes livrées')}</label>
                 <p className="text-2xl font-bold text-green-600">{report.ordersDelivered || 0}</p>
               </div>
               {(report.ordersReturned || 0) > 0 && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500">{tp('Retours / Remboursements')}</label>
+                    <label className="block text-sm font-medium text-muted-foreground">{tp('Retours / Remboursements')}</label>
                     <p className="text-2xl font-bold text-red-600">-{report.ordersReturned}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500">{tp('Taux de retour')}</label>
+                    <label className="block text-sm font-medium text-muted-foreground">{tp('Taux de retour')}</label>
                     <p className="text-2xl font-bold text-red-600">
                       {report.ordersDelivered > 0 ? ((report.ordersReturned / report.ordersDelivered) * 100).toFixed(1) : 0}%
                     </p>
@@ -220,7 +220,7 @@ const ReportDetail = () => {
             </div>
             {report.ordersReceived > 0 && (
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-500">{tp('Taux de livraison')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Taux de livraison')}</label>
                 <div className="mt-1">
                   <div className="flex items-center">
                     <div className="flex-1 bg-gray-200 rounded-full h-2">
@@ -229,7 +229,7 @@ const ReportDetail = () => {
                         style={{ width: `${((report.ordersDelivered || 0) / report.ordersReceived * 100).toFixed(1)}%` }}
                       ></div>
                     </div>
-                    <span className="ml-3 text-sm font-medium text-gray-900">
+                    <span className="ml-3 text-sm font-medium text-foreground">
                       {((report.ordersDelivered || 0) / report.ordersReceived * 100).toFixed(1)}%
                     </span>
                   </div>
@@ -239,16 +239,16 @@ const ReportDetail = () => {
 
             {/* Livraisons par agence */}
             {report.deliveries && report.deliveries.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <label className="block text-sm font-medium text-gray-700 mb-3">{tp('Livraisons par agence')}</label>
+              <div className="mt-6 pt-6 border-t border-border">
+                <label className="block text-sm font-medium text-foreground mb-3">{tp('Livraisons par agence')}</label>
                 <div className="space-y-2">
                   {report.deliveries.map((delivery, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={idx} className="flex items-center justify-between p-3 bg-background rounded-lg">
                       <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                         </svg>
-                        <span className="font-medium text-gray-900">{delivery.agencyName}</span>
+                        <span className="font-medium text-foreground">{delivery.agencyName}</span>
                       </div>
                       <div className="flex items-center gap-4">
                         <span className="text-sm font-bold text-green-600">{delivery.ordersDelivered} commandes</span>
@@ -273,62 +273,62 @@ const ReportDetail = () => {
 
           {/* Notes */}
           {report.notes && (
-            <div className="bg-white shadow rounded-lg p-3 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Notes')}</h2>
-              <p className="text-gray-700 whitespace-pre-wrap">{report.notes}</p>
+            <div className="bg-card shadow rounded-lg p-3 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">{tp('Notes')}</h2>
+              <p className="text-foreground whitespace-pre-wrap">{report.notes}</p>
             </div>
           )}
         </div>
 
         {/* Métriques financières */}
         <div className="lg:col-span-1">
-          <div className="bg-white shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Métriques financières')}</h2>
+          <div className="bg-card shadow rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">{tp('Métriques financières')}</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Revenu total')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Revenu total')}</label>
                 <p className={`text-lg font-bold ${(report.metrics?.revenue || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(report.metrics?.revenue || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Dépenses publicitaires')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Dépenses publicitaires')}</label>
                 <p className="text-lg font-bold text-red-600">{fmt(report.adSpend || 0)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Coût produit total')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Coût produit total')}</label>
                 <p className="text-lg font-bold text-red-600">
                   {fmt(report.metrics?.productCostTotal || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Coût livraison total')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Coût livraison total')}</label>
                 <p className="text-lg font-bold text-red-600">
                   {fmt(report.metrics?.deliveryCostTotal || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Coût total')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Coût total')}</label>
                 <p className="text-lg font-bold text-red-600">
                   {fmt(report.metrics?.totalCost || 0)}
                 </p>
               </div>
-              <hr className="border-gray-200" />
+              <hr className="border-border" />
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Profit net')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Profit net')}</label>
                 <p className={`text-xl font-bold ${(report.metrics?.profit || 0) > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(report.metrics?.profit || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">{tp('Profit par commande')}</label>
+                <label className="block text-sm font-medium text-muted-foreground">{tp('Profit par commande')}</label>
                 <p className={`text-lg font-bold ${(report.metrics?.profitPerOrder || 0) > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(report.metrics?.profitPerOrder || 0)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">ROAS</label>
-                <p className="text-lg font-semibold text-primary-600">
+                <label className="block text-sm font-medium text-muted-foreground">ROAS</label>
+                <p className="text-lg font-semibold text-primary">
                   {report.metrics?.roas ? report.metrics.roas.toFixed(2) : tp('N/A')}
                 </p>
               </div>
@@ -337,30 +337,30 @@ const ReportDetail = () => {
 
           {/* Informations sur le produit */}
           {report.productId && (
-            <div className="bg-white shadow rounded-lg p-3 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Informations sur le produit')}</h2>
+            <div className="bg-card shadow rounded-lg p-3 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">{tp('Informations sur le produit')}</h2>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">{tp('Prix de vente')}</label>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <label className="block text-sm font-medium text-muted-foreground">{tp('Prix de vente')}</label>
+                  <p className="text-lg font-semibold text-foreground">
                     {fmt(report.productId.sellingPrice || 0)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">{tp('Coût du produit')}</label>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <label className="block text-sm font-medium text-muted-foreground">{tp('Coût du produit')}</label>
+                  <p className="text-lg font-semibold text-foreground">
                     {fmt(report.productId.productCost || 0)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">{tp('Coût de livraison')}</label>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <label className="block text-sm font-medium text-muted-foreground">{tp('Coût de livraison')}</label>
+                  <p className="text-lg font-semibold text-foreground">
                     {fmt(report.productId.deliveryCost || 0)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">{tp('Coût publicitaire moyen')}</label>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <label className="block text-sm font-medium text-muted-foreground">{tp('Coût publicitaire moyen')}</label>
+                  <p className="text-lg font-semibold text-foreground">
                     {fmt(report.productId.avgAdsCost || 0)}
                   </p>
                 </div>

@@ -179,7 +179,7 @@ function hydrateFromPageData(product) {
   };
 }
 
-const inputCls = 'w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition placeholder-gray-400';
+const inputCls = 'w-full px-3 py-2.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition placeholder-gray-400';
 const textareaCls = `${inputCls} resize-none`;
 
 // ─── Éditeur de la section « Code personnalisé » — un seul champ (HTML + CSS + JS) ──
@@ -212,7 +212,7 @@ function CustomCodeEditorPanel({ content = {}, onChange, onRemove }) {
 function Field({ label, children }) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-semibold text-gray-600">{label}</label>
+      <label className="block text-xs font-semibold text-muted-foreground">{label}</label>
       {children}
     </div>
   );
@@ -228,12 +228,12 @@ function RepeatableItems({ items, onChange, fields, addLabel }) {
   return (
     <div className="space-y-3">
       {items.map((item, i) => (
-        <div key={i} className="p-3 bg-gray-50 border border-gray-200 rounded-lg space-y-2">
+        <div key={i} className="p-3 bg-background border border-border rounded-lg space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-400">#{i + 1}</span>
+            <span className="text-xs font-bold text-muted-foreground">#{i + 1}</span>
             <div className="flex items-center gap-1">
-              <button type="button" onClick={() => moveUp(i)} disabled={i === 0} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 disabled:opacity-30"><ChevronUp className="w-3.5 h-3.5" /></button>
-              <button type="button" onClick={() => moveDown(i)} disabled={i >= items.length - 1} className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 disabled:opacity-30"><ChevronDown className="w-3.5 h-3.5" /></button>
+              <button type="button" onClick={() => moveUp(i)} disabled={i === 0} className="p-1 text-muted-foreground hover:text-muted-foreground rounded hover:bg-muted disabled:opacity-30"><ChevronUp className="w-3.5 h-3.5" /></button>
+              <button type="button" onClick={() => moveDown(i)} disabled={i >= items.length - 1} className="p-1 text-muted-foreground hover:text-muted-foreground rounded hover:bg-muted disabled:opacity-30"><ChevronDown className="w-3.5 h-3.5" /></button>
               <button type="button" onClick={() => remove(i)} className="p-1 text-red-400 hover:text-red-600 rounded hover:bg-red-50"><Trash2 className="w-3.5 h-3.5" /></button>
             </div>
           </div>
@@ -250,7 +250,7 @@ function RepeatableItems({ items, onChange, fields, addLabel }) {
           ))}
         </div>
       ))}
-      <button type="button" onClick={add} className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-xs font-semibold text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1.5">
+      <button type="button" onClick={add} className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-xs font-semibold text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1.5">
         <Plus className="w-3.5 h-3.5" />{addLabel}
       </button>
     </div>
@@ -292,7 +292,7 @@ function ImageField({ label, value, onChange, onUpload }) {
   const handleDrop = (e) => { e.preventDefault(); setDragOver(false); uploadFile(e.dataTransfer?.files?.[0]); };
   return (
     <div className="space-y-1.5">
-      {label && <label className="block text-xs font-semibold text-gray-600">{label}</label>}
+      {label && <label className="block text-xs font-semibold text-muted-foreground">{label}</label>}
       <div
         role="button"
         tabIndex={0}
@@ -300,9 +300,9 @@ function ImageField({ label, value, onChange, onUpload }) {
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        className={`flex items-center gap-3 p-2.5 rounded-xl border-2 border-dashed cursor-pointer transition ${dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'}`}
+        className={`flex items-center gap-3 p-2.5 rounded-xl border-2 border-dashed cursor-pointer transition ${dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-border hover:border-indigo-300 hover:bg-background'}`}
       >
-        <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
+        <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden flex items-center justify-center flex-shrink-0">
           {value
             ? mediaType === 'video'
               ? <video src={value} muted className="w-full h-full object-cover" />
@@ -310,8 +310,8 @@ function ImageField({ label, value, onChange, onUpload }) {
             : <ImageIcon className="w-5 h-5 text-gray-300" />}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-gray-700">{uploading ? 'Envoi...' : value ? "Remplacer l'image" : 'Ajouter une image'}</p>
-          <p className="text-[11px] text-gray-400 truncate">{uploading ? '' : 'Cliquer ou glisser-déposer un fichier'}</p>
+          <p className="text-xs font-semibold text-foreground">{uploading ? 'Envoi...' : value ? "Remplacer l'image" : 'Ajouter une image'}</p>
+          <p className="text-[11px] text-muted-foreground truncate">{uploading ? '' : 'Cliquer ou glisser-déposer un fichier'}</p>
         </div>
         {uploading && <Loader2 className="w-4 h-4 animate-spin text-indigo-500 flex-shrink-0" />}
         {value && !uploading && (
@@ -320,7 +320,7 @@ function ImageField({ label, value, onChange, onUpload }) {
         <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} onChange={handleFile} className="hidden" />
       </div>
       <div className="flex items-center gap-3">
-        <button type="button" onClick={() => setShowUrl((v) => !v)} className="text-[11px] font-medium text-gray-400 hover:text-indigo-600">{showUrl ? "Masquer l'URL" : 'Coller une URL à la place'}</button>
+        <button type="button" onClick={() => setShowUrl((v) => !v)} className="text-[11px] font-medium text-muted-foreground hover:text-indigo-600">{showUrl ? "Masquer l'URL" : 'Coller une URL à la place'}</button>
       </div>
       {showUrl && (
         <input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="https://... (image, GIF, vidéo)" className={inputCls} />
@@ -340,12 +340,12 @@ function StringListField({ label, items, onChange, placeholder, addLabel }) {
   const moveDown = (i) => { if (i >= list.length-1) return; const c = [...list]; [c[i],c[i+1]]=[c[i+1],c[i]]; onChange(c); };
   return (
     <div className="space-y-2">
-      {label && <label className="block text-xs font-semibold text-gray-600">{label}</label>}
+      {label && <label className="block text-xs font-semibold text-muted-foreground">{label}</label>}
       {list.map((item, i) => (
         <div key={i} className="flex items-center gap-1.5">
           <div className="flex flex-col gap-0.5 flex-shrink-0">
-            <button type="button" onClick={() => moveUp(i)} disabled={i === 0} className="p-0.5 text-gray-300 hover:text-gray-500 disabled:opacity-20"><ChevronUp className="w-3 h-3" /></button>
-            <button type="button" onClick={() => moveDown(i)} disabled={i >= list.length-1} className="p-0.5 text-gray-300 hover:text-gray-500 disabled:opacity-20"><ChevronDown className="w-3 h-3" /></button>
+            <button type="button" onClick={() => moveUp(i)} disabled={i === 0} className="p-0.5 text-gray-300 hover:text-muted-foreground disabled:opacity-20"><ChevronUp className="w-3 h-3" /></button>
+            <button type="button" onClick={() => moveDown(i)} disabled={i >= list.length-1} className="p-0.5 text-gray-300 hover:text-muted-foreground disabled:opacity-20"><ChevronDown className="w-3 h-3" /></button>
           </div>
           <input
             type="text"
@@ -357,7 +357,7 @@ function StringListField({ label, items, onChange, placeholder, addLabel }) {
           <button type="button" onClick={() => remove(i)} className="p-1.5 text-red-400 hover:text-red-600 rounded hover:bg-red-50 flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
         </div>
       ))}
-      <button type="button" onClick={add} className="w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-xs font-semibold text-gray-400 hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1.5">
+      <button type="button" onClick={add} className="w-full py-2 border-2 border-dashed border-border rounded-lg text-xs font-semibold text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1.5">
         <Plus className="w-3.5 h-3.5" />{addLabel || 'Ajouter'}
       </button>
     </div>
@@ -367,7 +367,7 @@ function StringListField({ label, items, onChange, placeholder, addLabel }) {
 function ImageListField({ label, urls, onChangeAt, onUpload }) {
   return (
     <div className="space-y-2">
-      {label && <p className="text-xs font-bold text-gray-500 uppercase tracking-wide pt-2">{label}</p>}
+      {label && <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide pt-2">{label}</p>}
       {urls.map((url, i) => (
         <ImageField key={i} label={`Image ${i + 1}`} value={url} onUpload={onUpload} onChange={(v) => onChangeAt(i, v)} />
       ))}
@@ -922,7 +922,7 @@ const PremiumPageBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
       </div>
     );
@@ -930,8 +930,8 @@ const PremiumPageBuilder = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-500">Produit introuvable</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">Produit introuvable</p>
       </div>
     );
   }
@@ -952,23 +952,23 @@ const PremiumPageBuilder = () => {
             </Field>
             <Field label="Couleur accent (boutons, checks)">
               <div className="flex items-center gap-2">
-                <input type="color" value={accent} onChange={(e) => { setDesign('ctaButtonColor', e.target.value); setDesign('buttonColor', e.target.value); }} className="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer" />
+                <input type="color" value={accent} onChange={(e) => { setDesign('ctaButtonColor', e.target.value); setDesign('buttonColor', e.target.value); }} className="w-10 h-10 rounded-lg border border-border p-0.5 cursor-pointer" />
                 <input type="text" value={accent} onChange={(e) => { setDesign('ctaButtonColor', e.target.value); setDesign('buttonColor', e.target.value); }} className={inputCls} />
               </div>
             </Field>
             <Field label="Couleur de fond">
               <div className="flex items-center gap-2">
-                <input type="color" value={design.backgroundColor || storeDesign.backgroundColor || '#F6FBFA'} onChange={(e) => setDesign('backgroundColor', e.target.value)} className="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer" />
+                <input type="color" value={design.backgroundColor || storeDesign.backgroundColor || '#F6FBFA'} onChange={(e) => setDesign('backgroundColor', e.target.value)} className="w-10 h-10 rounded-lg border border-border p-0.5 cursor-pointer" />
                 <input type="text" value={design.backgroundColor || storeDesign.backgroundColor || '#F6FBFA'} onChange={(e) => setDesign('backgroundColor', e.target.value)} className={inputCls} />
               </div>
             </Field>
             <Field label="Couleur du texte">
               <div className="flex items-center gap-2">
-                <input type="color" value={design.textColor || storeDesign.textColor || '#171717'} onChange={(e) => setDesign('textColor', e.target.value)} className="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer" />
+                <input type="color" value={design.textColor || storeDesign.textColor || '#171717'} onChange={(e) => setDesign('textColor', e.target.value)} className="w-10 h-10 rounded-lg border border-border p-0.5 cursor-pointer" />
                 <input type="text" value={design.textColor || storeDesign.textColor || '#171717'} onChange={(e) => setDesign('textColor', e.target.value)} className={inputCls} />
               </div>
             </Field>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide pt-2">Note / Avis</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide pt-2">Note / Avis</p>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Score"><input type="text" value={premium.rating?.score || ''} onChange={(e) => setPremiumNested('rating', 'score', e.target.value)} className={inputCls} placeholder="4,9/5" /></Field>
               <Field label="Nombre"><input type="text" value={premium.rating?.count || ''} onChange={(e) => setPremiumNested('rating', 'count', e.target.value)} className={inputCls} placeholder="+1 000" /></Field>
@@ -1004,10 +1004,10 @@ const PremiumPageBuilder = () => {
               onUpload={uploadOne}
               onChangeAt={(i, v) => setPremiumImageAt('heroGallery', i, v, 5, imgArrayOf('heroGallery', 5))}
             />
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide pt-2">Offre speciale</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide pt-2">Offre speciale</p>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={!!premium.hero?.showOffer} onChange={(e) => setPremiumNested('hero', 'showOffer', e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-indigo-600" />
-              <span className="text-sm text-gray-700 font-medium">Afficher la section offre</span>
+              <span className="text-sm text-foreground font-medium">Afficher la section offre</span>
             </label>
             {premium.hero?.showOffer && (
               <div className="space-y-3 pl-3 border-l-2 border-indigo-200">
@@ -1063,7 +1063,7 @@ const PremiumPageBuilder = () => {
               onUpload={uploadOne}
               onChangeAt={(i, v) => setPremiumImageAt('testimonials', i, v, 6, imgArrayOf('testimonials', 6))}
             />
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide pt-2">Bande de preuves (authority strip)</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide pt-2">Bande de preuves (authority strip)</p>
             <RepeatableItems
               items={premium.authorityStrip || []}
               onChange={(items) => setPremiumDirect('authorityStrip', items)}
@@ -1121,7 +1121,7 @@ const PremiumPageBuilder = () => {
             <ImageField label="Image de la section rituel" value={imgSingleOf('ritual')} onUpload={uploadOne} onChange={(v) => setPremiumImage('ritual', v)} />
             <Field label="Titre"><input type="text" value={premium.ritualSection?.headline || ''} onChange={(e) => setPremiumNested('ritualSection', 'headline', e.target.value)} className={inputCls} /></Field>
             <Field label="Sous-titre"><input type="text" value={premium.ritualSection?.subheadline || ''} onChange={(e) => setPremiumNested('ritualSection', 'subheadline', e.target.value)} className={inputCls} /></Field>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Etapes du rituel</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Etapes du rituel</p>
             <RepeatableItems
               items={premium.ritualSection?.steps || []}
               onChange={(items) => setPremiumNested('ritualSection', 'steps', items)}
@@ -1132,7 +1132,7 @@ const PremiumPageBuilder = () => {
                 { key: 'description', label: 'Detail', type: 'textarea', rows: 2 },
               ]}
             />
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide pt-2">Timeline des resultats</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide pt-2">Timeline des resultats</p>
             <RepeatableItems
               items={premium.ritualSection?.resultsTimeline || []}
               onChange={(items) => setPremiumNested('ritualSection', 'resultsTimeline', items)}
@@ -1149,7 +1149,7 @@ const PremiumPageBuilder = () => {
           <div className="space-y-4">
             <Field label="Titre section"><input type="text" value={premium.comparisonSection?.headline || ''} onChange={(e) => setPremiumNested('comparisonSection', 'headline', e.target.value)} className={inputCls} placeholder="Comparaison" /></Field>
             <Field label="Colonnes (separees par virgule)"><input type="text" value={(premium.comparisonSection?.columns || []).join(', ')} onChange={(e) => setPremiumNested('comparisonSection', 'columns', e.target.value.split(',').map(s => s.trim()).filter(Boolean))} className={inputCls} placeholder="Mon produit, Alternative 1, Alternative 2" /></Field>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Criteres</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Criteres</p>
             {(premium.comparisonSection?.rows || []).map((row, i) => (
               <div key={i} className="flex items-center gap-2">
                 <input type="text" value={row.label || ''} onChange={(e) => {
@@ -1200,11 +1200,11 @@ const PremiumPageBuilder = () => {
         const bump = upsells.bump || {};
         return (
           <div className="space-y-5">
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">1-Click Upsells (apres achat)</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">1-Click Upsells (apres achat)</p>
             {offers.map((offer, i) => (
-              <div key={i} className="p-3 bg-gray-50 border border-gray-200 rounded-lg space-y-2">
+              <div key={i} className="p-3 bg-background border border-border rounded-lg space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-400">Upsell #{i + 1}</span>
+                  <span className="text-xs font-bold text-muted-foreground">Upsell #{i + 1}</span>
                   <div className="flex items-center gap-2">
                     <label className="flex items-center gap-1 cursor-pointer text-xs">
                       <input type="checkbox" checked={offer.isActive !== false} onChange={(e) => {
@@ -1225,16 +1225,16 @@ const PremiumPageBuilder = () => {
                 <input type="text" value={offer.image || ''} onChange={(e) => { const next = [...offers]; next[i] = { ...next[i], image: e.target.value }; setUpsells('offers', next); }} placeholder="URL image (optionnel)" className={inputCls} />
               </div>
             ))}
-            <button type="button" onClick={() => setUpsells('offers', [...offers, { id: Date.now(), title: '', description: '', price: '', oldPrice: '', ctaText: 'Oui, j\'en profite !', isActive: true }])} className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-xs font-semibold text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1.5">
+            <button type="button" onClick={() => setUpsells('offers', [...offers, { id: Date.now(), title: '', description: '', price: '', oldPrice: '', ctaText: 'Oui, j\'en profite !', isActive: true }])} className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-xs font-semibold text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1.5">
               <Plus className="w-3.5 h-3.5" />Ajouter un upsell
             </button>
 
-            <div className="border-t border-gray-200 pt-4">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Order Bump (case a cocher au checkout)</p>
+            <div className="border-t border-border pt-4">
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3">Order Bump (case a cocher au checkout)</p>
               <div className="space-y-3">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={!!bump.isActive} onChange={(e) => setUpsells('bump', { ...bump, isActive: e.target.checked })} className="w-4 h-4 rounded border-gray-300 text-indigo-600" />
-                  <span className="text-sm text-gray-700 font-medium">Activer l'order bump</span>
+                  <span className="text-sm text-foreground font-medium">Activer l'order bump</span>
                 </label>
                 {bump.isActive && (
                   <div className="space-y-2 pl-3 border-l-2 border-indigo-200">
@@ -1292,12 +1292,12 @@ const PremiumPageBuilder = () => {
 
   return (
     <ImageGenContext.Provider value={imgGenValue}>
-    <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
+    <div className="flex flex-col h-screen bg-muted overflow-hidden">
 
       {/* Top bar */}
-      <header className="flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200 flex-shrink-0 z-30">
+      <header className="flex items-center justify-between h-14 px-4 bg-card border-b border-border flex-shrink-0 z-30">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition font-semibold">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 px-3 py-1.5 text-sm text-foreground hover:text-foreground hover:bg-muted rounded-lg transition font-semibold">
             <ArrowLeft className="w-4 h-4" />Retour
           </button>
           <div className="w-px h-5 bg-gray-200" />
@@ -1305,38 +1305,38 @@ const PremiumPageBuilder = () => {
             <div className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
               <Star className="w-3.5 h-3.5 text-white" />
             </div>
-            <h1 className="text-sm font-bold text-gray-900">Premium Builder</h1>
+            <h1 className="text-sm font-bold text-foreground">Premium Builder</h1>
           </div>
-          <span className="text-xs text-gray-500 truncate max-w-[180px] hidden sm:inline">{product.name}</span>
+          <span className="text-xs text-muted-foreground truncate max-w-[180px] hidden sm:inline">{product.name}</span>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Undo / Redo */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
-            <button onClick={undo} disabled={!canUndo} title="Annuler (Ctrl+Z)" className={`p-2 rounded-md transition ${canUndo ? 'text-gray-700 hover:bg-white hover:shadow' : 'text-gray-300 cursor-not-allowed'}`}>
+          <div className="flex items-center bg-muted rounded-lg p-0.5">
+            <button onClick={undo} disabled={!canUndo} title="Annuler (Ctrl+Z)" className={`p-2 rounded-md transition ${canUndo ? 'text-foreground hover:bg-card hover:shadow' : 'text-gray-300 cursor-not-allowed'}`}>
               <Undo2 className="w-4 h-4" />
             </button>
-            <button onClick={redo} disabled={!canRedo} title="Retablir (Ctrl+Shift+Z)" className={`p-2 rounded-md transition ${canRedo ? 'text-gray-700 hover:bg-white hover:shadow' : 'text-gray-300 cursor-not-allowed'}`}>
+            <button onClick={redo} disabled={!canRedo} title="Retablir (Ctrl+Shift+Z)" className={`p-2 rounded-md transition ${canRedo ? 'text-foreground hover:bg-card hover:shadow' : 'text-gray-300 cursor-not-allowed'}`}>
               <Redo2 className="w-4 h-4" />
             </button>
           </div>
           <div className="w-px h-5 bg-gray-200" />
           {/* Device toggle */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+          <div className="flex items-center bg-muted rounded-lg p-0.5">
             {[
               { id: 'desktop', icon: <Monitor className="w-3.5 h-3.5" /> },
               { id: 'mobile', icon: <Smartphone className="w-3.5 h-3.5" /> },
             ].map(({ id: did, icon }) => (
-              <button key={did} onClick={() => setDevice(did)} className={`p-2 rounded-md transition ${device === did ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>{icon}</button>
+              <button key={did} onClick={() => setDevice(did)} className={`p-2 rounded-md transition ${device === did ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>{icon}</button>
             ))}
           </div>
           <div className="w-px h-5 bg-gray-200" />
-          <span className={`hidden sm:flex items-center gap-1.5 text-xs font-semibold ${isDirty ? 'text-amber-600' : 'text-gray-400'}`} title={isDirty ? 'Modifications non enregistrées' : 'Tout est enregistré'}>
+          <span className={`hidden sm:flex items-center gap-1.5 text-xs font-semibold ${isDirty ? 'text-amber-600' : 'text-muted-foreground'}`} title={isDirty ? 'Modifications non enregistrées' : 'Tout est enregistré'}>
             <span className={`w-1.5 h-1.5 rounded-full ${isDirty ? 'bg-amber-500' : 'bg-green-500'}`} />
             {isDirty ? 'Non enregistré' : 'Enregistré'}
           </span>
           {previewUrl && (
-            <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition" title="Ouvrir dans un nouvel onglet">
+            <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition" title="Ouvrir dans un nouvel onglet">
               <ExternalLink className="w-4 h-4" />
             </a>
           )}
@@ -1351,7 +1351,7 @@ const PremiumPageBuilder = () => {
       <div className="flex flex-1 overflow-hidden">
 
         {/* Left: Shopify-style sidebar — liste des sections OU éditeur de la section active */}
-        <div ref={sidebarRef} style={{ width: sidebarWidth }} className="relative bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden">
+        <div ref={sidebarRef} style={{ width: sidebarWidth }} className="relative bg-card border-r border-border flex flex-col flex-shrink-0 overflow-hidden">
           {/* Poignée de redimensionnement — glisser pour élargir/réduire, double-clic = défaut */}
           <div
             onPointerDown={startSidebarResize}
@@ -1375,18 +1375,18 @@ const PremiumPageBuilder = () => {
               : !hiddenSections.includes(activeSection);
             return (
               <>
-                <div className="flex items-center gap-2 px-3 py-3 border-b border-gray-100 bg-gray-50 flex-shrink-0">
+                <div className="flex items-center gap-2 px-3 py-3 border-b border-border bg-background flex-shrink-0">
                   <button
                     onClick={() => setActiveSection(null)}
-                    className="flex items-center gap-1 text-[12px] text-gray-500 hover:text-gray-900 font-medium transition flex-shrink-0"
+                    className="flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground font-medium transition flex-shrink-0"
                   >
                     <ChevronLeft className="w-4 h-4" /> Sections
                   </button>
                   <span className="text-gray-300 text-sm">·</span>
-                  <div className="w-5 h-5 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-md flex items-center justify-center text-foreground flex-shrink-0">
                     {meta.icon}
                   </div>
-                  <span className="text-[12px] font-semibold text-gray-800 truncate">{meta.label}</span>
+                  <span className="text-[12px] font-semibold text-foreground truncate">{meta.label}</span>
                   <div className="ml-auto flex items-center gap-0.5 flex-shrink-0">
                     <button
                       type="button"
@@ -1403,7 +1403,7 @@ const PremiumPageBuilder = () => {
                         type="button"
                         title={isVisible ? 'Masquer cette section' : 'Afficher cette section'}
                         onClick={() => { if (aiSec) toggleAiSection(aiSec.id); else if (isCustom) toggleCustomCodeEnabled(); else toggleSectionVisibility(activeSection); }}
-                        className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-500 transition"
+                        className="p-1.5 rounded-lg hover:bg-gray-200 text-muted-foreground transition"
                       >
                         {isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>
@@ -1419,17 +1419,17 @@ const PremiumPageBuilder = () => {
             /* ── LISTE DES SECTIONS (ordre réel de la page) ── */
             <>
               {/* Paramètres du thème — hors sections, comme Shopify */}
-              <div className="p-3 border-b border-gray-100 flex-shrink-0">
+              <div className="p-3 border-b border-border flex-shrink-0">
                 <button
                   onClick={() => setActiveSection('design')}
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/40 transition text-left"
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border hover:border-indigo-300 hover:bg-indigo-50/40 transition text-left"
                 >
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-900 flex-shrink-0">
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center text-foreground flex-shrink-0">
                     <Palette className="w-3.5 h-3.5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-gray-900">Design & Couleurs</p>
-                    <p className="text-[10.5px] text-gray-400">Paramètres du thème</p>
+                    <p className="text-[13px] font-semibold text-foreground">Design & Couleurs</p>
+                    <p className="text-[10.5px] text-muted-foreground">Paramètres du thème</p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
                 </button>
@@ -1453,8 +1453,8 @@ const PremiumPageBuilder = () => {
                 return (
                   <>
                     <div className="flex items-center justify-between px-4 py-2.5 flex-shrink-0">
-                      <p className="text-xs font-bold text-gray-900 uppercase tracking-wider">Sections</p>
-                      <span className="text-[11px] text-gray-400">{pageRows.length} sections</span>
+                      <p className="text-xs font-bold text-foreground uppercase tracking-wider">Sections</p>
+                      <span className="text-[11px] text-muted-foreground">{pageRows.length} sections</span>
                     </div>
                     <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5">
                       {pageRows.map((s) => {
@@ -1476,16 +1476,16 @@ const PremiumPageBuilder = () => {
                             onDragOver={(isOrderable || isFlowAi) ? (e) => handleDragOver(e, s.id) : isAi ? (e) => handleAiDragOver(e, s.id) : undefined}
                             onDragEnd={(isOrderable || isFlowAi) ? handleDragEnd : isAi ? handleAiDragEnd : undefined}
                             onClick={() => setActiveSection(s.id)}
-                            className={`group flex items-center gap-1.5 px-2 py-2 rounded-lg cursor-pointer border border-transparent hover:bg-gray-50 hover:border-gray-200 transition ${isVisible ? '' : 'opacity-50'}`}
+                            className={`group flex items-center gap-1.5 px-2 py-2 rounded-lg cursor-pointer border border-transparent hover:bg-background hover:border-border transition ${isVisible ? '' : 'opacity-50'}`}
                           >
                             <GripVertical
                               className={`w-3.5 h-3.5 flex-shrink-0 ${(isOrderable || isAi) ? 'text-gray-300 opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing' : 'text-transparent'}`}
                               title={(isOrderable || isAi) ? 'Glisser pour réordonner' : undefined}
                             />
-                            <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                            <div className="w-6 h-6 rounded-md flex items-center justify-center text-foreground flex-shrink-0">
                               {s.icon}
                             </div>
-                            <span className="flex-1 text-[13px] font-semibold text-gray-800 truncate">{s.label}</span>
+                            <span className="flex-1 text-[13px] font-semibold text-foreground truncate">{s.label}</span>
                             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${filled ? 'bg-green-400' : 'bg-gray-300'}`} title={filled ? 'Contenu présent' : 'Section vide'} />
                             {(isOrderable || isCustom || isAi) && (
                               <button
@@ -1493,7 +1493,7 @@ const PremiumPageBuilder = () => {
                                 title={isVisible ? 'Masquer cette section' : 'Afficher cette section'}
                                 aria-label={isVisible ? `Masquer ${s.label}` : `Afficher ${s.label}`}
                                 onClick={(e) => { e.stopPropagation(); if (isAi) toggleAiSection(s.id); else if (isCustom) toggleCustomCodeEnabled(); else toggleSectionVisibility(s.id); }}
-                                className={`p-1 rounded-md hover:bg-gray-200 transition flex-shrink-0 ${isVisible ? 'text-gray-400 opacity-0 group-hover:opacity-100' : 'text-gray-500'}`}
+                                className={`p-1 rounded-md hover:bg-gray-200 transition flex-shrink-0 ${isVisible ? 'text-muted-foreground opacity-0 group-hover:opacity-100' : 'text-muted-foreground'}`}
                               >
                                 {isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                               </button>
@@ -1509,25 +1509,25 @@ const PremiumPageBuilder = () => {
 
               {/* Ajouter une section — style Shopify */}
               {showAddSection && (
-                <div className="border-t border-gray-100 p-2 space-y-1 bg-gray-50 flex-shrink-0 max-h-[46vh] overflow-y-auto">
+                <div className="border-t border-border p-2 space-y-1 bg-background flex-shrink-0 max-h-[46vh] overflow-y-auto">
                   {/* Section vierge (code libre) */}
                   <button
                     type="button"
                     onClick={() => addSectionFromTemplate(null)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition"
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-card border border-border hover:border-indigo-300 hover:bg-indigo-50/50 transition"
                   >
-                    <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                    <div className="w-6 h-6 rounded-md flex items-center justify-center text-foreground flex-shrink-0">
                       <Code className="w-3.5 h-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[12.5px] font-semibold text-gray-800">Section vierge</p>
-                      <p className="text-[10.5px] text-gray-400">Code libre, position haut ou bas</p>
+                      <p className="text-[12.5px] font-semibold text-foreground">Section vierge</p>
+                      <p className="text-[10.5px] text-muted-foreground">Code libre, position haut ou bas</p>
                     </div>
-                    <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                    <Plus className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                   </button>
 
                   {/* Bibliothèque de sections prédéfinies — prêtes à modifier */}
-                  <p className="px-1 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">Sections prédéfinies</p>
+                  <p className="px-1 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sections prédéfinies</p>
                   {SECTION_TEMPLATES.map((tpl) => {
                     const TplIcon = TEMPLATE_ICONS[tpl.icon] || Code;
                     return (
@@ -1535,16 +1535,16 @@ const PremiumPageBuilder = () => {
                         key={tpl.id}
                         type="button"
                         onClick={() => addSectionFromTemplate(tpl)}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition"
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-card border border-border hover:border-indigo-300 hover:bg-indigo-50/50 transition"
                       >
-                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-foreground flex-shrink-0">
                           <TplIcon className="w-3.5 h-3.5" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[12.5px] font-semibold text-gray-800">{tpl.label}</p>
-                          <p className="text-[10.5px] text-gray-400 truncate">{tpl.desc}{tpl.placement === 'top' ? ' · haut de page' : ''}</p>
+                          <p className="text-[12.5px] font-semibold text-foreground">{tpl.label}</p>
+                          <p className="text-[10.5px] text-muted-foreground truncate">{tpl.desc}{tpl.placement === 'top' ? ' · haut de page' : ''}</p>
                         </div>
-                        <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                        <Plus className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                       </button>
                     );
                   })}
@@ -1557,26 +1557,26 @@ const PremiumPageBuilder = () => {
                         type="button"
                         disabled={alreadyAdded}
                         onClick={t.id === 'customCode' ? addCustomCodeSection : undefined}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-card border border-border hover:border-indigo-300 hover:bg-indigo-50/50 transition disabled:opacity-40 disabled:cursor-not-allowed"
                       >
-                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-gray-900 flex-shrink-0">
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-foreground flex-shrink-0">
                           {t.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[12.5px] font-semibold text-gray-800">{t.label}</p>
-                          <p className="text-[10.5px] text-gray-400">{alreadyAdded ? 'Déjà ajoutée à la page' : t.desc}</p>
+                          <p className="text-[12.5px] font-semibold text-foreground">{t.label}</p>
+                          <p className="text-[10.5px] text-muted-foreground">{alreadyAdded ? 'Déjà ajoutée à la page' : t.desc}</p>
                         </div>
-                        <Plus className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                        <Plus className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                       </button>
                     );
                   })}
                 </div>
               )}
-              <div className="p-3 border-t border-gray-100 flex-shrink-0">
+              <div className="p-3 border-t border-border flex-shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowAddSection((v) => !v)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-gray-200 text-[12.5px] font-semibold text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-border text-[12.5px] font-semibold text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50 transition"
                 >
                   {showAddSection ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   {showAddSection ? 'Fermer' : 'Ajouter une section'}
@@ -1587,16 +1587,16 @@ const PremiumPageBuilder = () => {
         </div>
 
         {/* Right: live preview (inline component, no iframe) */}
-        <div className="flex-1 overflow-auto bg-gray-100 p-4">
-          <div className={`${device === 'mobile' ? 'w-[390px] mx-auto' : 'w-full'} h-full flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300`}>
+        <div className="flex-1 overflow-auto bg-muted p-4">
+          <div className={`${device === 'mobile' ? 'w-[390px] mx-auto' : 'w-full'} h-full flex flex-col bg-card rounded-2xl shadow-xl overflow-hidden transition-all duration-300`}>
             {/* Browser chrome */}
-            <div className="h-9 bg-gray-50 border-b border-gray-200 flex items-center px-3 gap-2 flex-shrink-0">
+            <div className="h-9 bg-background border-b border-border flex items-center px-3 gap-2 flex-shrink-0">
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                 <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
               </div>
-              <div className="flex-1 bg-white border border-gray-100 rounded px-2 py-0.5 text-[11px] text-gray-400 font-mono truncate">
+              <div className="flex-1 bg-card border border-border rounded px-2 py-0.5 text-[11px] text-muted-foreground font-mono truncate">
                 {previewUrl || 'Apercu'}
               </div>
               <span className="text-[10px] text-green-600 font-semibold bg-green-50 px-2 py-0.5 rounded-full flex-shrink-0">Live</span>

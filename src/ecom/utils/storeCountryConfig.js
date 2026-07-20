@@ -32,7 +32,7 @@ const COUNTRY_PHONE_PLACEHOLDERS = {
   'Cameroun': '6XX XXX XXX',
   "Cote d'Ivoire": '07 XX XX XX XX',
   'Senegal': '77 123 45 67',
-  'Gabon': '06 12 34 56',
+  'Gabon': '066 12 34 56',
   'Congo': '06 123 45 67',
   'RDC': '099 123 4567',
   'Nigeria': '0801 234 5678',

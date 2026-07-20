@@ -28,7 +28,7 @@ const statusConfig = {
   pending: { label: 'En attente', color: 'bg-amber-100 text-amber-700', icon: Clock3 },
   generating_text: { label: 'Texte en cours', color: 'bg-blue-100 text-blue-700', icon: Loader2, animate: true },
   generating_images: { label: 'Images en cours', color: 'bg-violet-100 text-violet-700', icon: Loader2, animate: true },
-  done: { label: 'Terminée', color: 'bg-primary-100 text-primary-700', icon: CheckCircle2 },
+  done: { label: 'Terminée', color: 'bg-primary-100 text-primary', icon: CheckCircle2 },
   error: { label: 'Échec partiel', color: 'bg-red-100 text-red-700', icon: XCircle },
 };
 
@@ -235,7 +235,7 @@ export default function ProductPageStudio() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
   }
@@ -244,12 +244,12 @@ export default function ProductPageStudio() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 border border-primary-100">
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary border border-primary-100">
             <Layers3 className="w-3.5 h-3.5" />
             {tp('Product Page Studio')}
           </div>
-          <h1 className="mt-3 text-3xl font-black text-gray-900">{tp('Studio de generation pages produits')}</h1>
-          <p className="mt-2 text-sm text-gray-500 max-w-3xl">
+          <h1 className="mt-3 text-3xl font-black text-foreground">{tp('Studio de generation pages produits')}</h1>
+          <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
             Suis toutes les generations, retrouve les echec partiels, reprends ce qui manque et ouvre directement les pages deja sauvegardees.
           </p>
         </div>
@@ -257,14 +257,14 @@ export default function ProductPageStudio() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => Promise.all([fetchTasks(), fetchCredits()])}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-sm font-semibold text-muted-foreground hover:bg-background transition"
           >
             <RefreshCw className="w-4 h-4" />
             {tp('Rafraichir')}
           </button>
           <button
             onClick={() => navigate('/ecom/boutique/products/generator', { state: { from: '/ecom/boutique/product-page-studio' } })}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition"
           >
             <Sparkles className="w-4 h-4" />
             {tp('Nouvelle generation')}
@@ -301,10 +301,10 @@ export default function ProductPageStudio() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
+        <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-primary-600" />
-            <h2 className="text-sm font-bold text-gray-900">{tp('Etat des credits')}</h2>
+            <Zap className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-bold text-foreground">{tp('Etat des credits')}</h2>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-3">
@@ -328,22 +328,22 @@ export default function ProductPageStudio() {
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5">
-              <Wand2 className="w-3.5 h-3.5 text-gray-600" />
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5">
+              <Wand2 className="w-3.5 h-3.5 text-muted-foreground" />
               {creditsInfo?.totalUsed ?? 0} génération(s) utilisée(s)
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-gray-600" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-muted-foreground" />
               {tasks.length} tâche(s) historisées
             </span>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
+        <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <h2 className="text-sm font-bold text-gray-900">{tp('Lecture rapide')}</h2>
+            <h2 className="text-sm font-bold text-foreground">{tp('Lecture rapide')}</h2>
           </div>
 
           <div className="space-y-3">
@@ -366,15 +366,15 @@ export default function ProductPageStudio() {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 space-y-4">
+      <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 space-y-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-lg font-black text-gray-900">{tp('Toutes les informations des générations')}</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <h2 className="text-lg font-black text-foreground">{tp('Toutes les informations des générations')}</h2>
+            <p className="text-sm text-muted-foreground mt-1">
               {tp('Filtre, ouvre, reprends ou supprime une génération sans quitter la vue studio.')}
             </p>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-muted-foreground">
             {filteredTasks.length} élément(s) affiché(s)
           </div>
         </div>
@@ -388,11 +388,11 @@ export default function ProductPageStudio() {
                 type="button"
                 onClick={() => setActiveFilter(filter.id)}
                 className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition ${
-                  active ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  active ? 'bg-gray-900 text-white' : 'bg-muted text-muted-foreground hover:bg-gray-200'
                 }`}
               >
                 <span>{filter.label}</span>
-                <span className={`rounded-full px-1.5 py-0.5 text-[11px] ${active ? 'bg-white/20 text-white' : 'bg-white text-gray-500'}`}>
+                <span className={`rounded-full px-1.5 py-0.5 text-[11px] ${active ? 'bg-card/20 text-white' : 'bg-card text-muted-foreground'}`}>
                   {filter.count}
                 </span>
               </button>
@@ -405,8 +405,8 @@ export default function ProductPageStudio() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50">
               <Sparkles className="w-7 h-7 text-primary-500" />
             </div>
-            <h3 className="text-base font-bold text-gray-900">{tp('Aucune donnée pour ce filtre')}</h3>
-            <p className="mt-1 text-sm text-gray-500">{tp('Change de filtre ou lance une nouvelle génération.')}</p>
+            <h3 className="text-base font-bold text-foreground">{tp('Aucune donnée pour ce filtre')}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{tp('Change de filtre ou lance une nouvelle génération.')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -450,18 +450,18 @@ export default function ProductPageStudio() {
 function DashboardCard({ label, value, hint, color, icon }) {
   const colorClass = {
     blue: 'bg-blue-50 text-blue-700 border-blue-100',
-    emerald: 'bg-primary-50 text-primary-700 border-primary-100',
+    emerald: 'bg-primary-50 text-primary border-primary-100',
     amber: 'bg-amber-50 text-amber-700 border-amber-100',
     slate: 'bg-slate-50 text-slate-700 border-slate-100',
-  }[color] || 'bg-gray-50 text-gray-700 border-gray-100';
+  }[color] || 'bg-background text-foreground border-border';
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-4">
+    <div className="bg-card border border-border rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">{label}</p>
-          <p className="mt-2 text-2xl font-black text-gray-900">{value}</p>
-          <p className="mt-1 text-xs text-gray-500">{hint}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-black text-foreground">{value}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
         </div>
         <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl border ${colorClass}`}>
           {icon}
@@ -476,11 +476,11 @@ function QuickLinkCard({ title, description, action, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="text-left bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-sm hover:border-gray-300 transition"
+      className="text-left bg-card border border-border rounded-2xl p-5 hover:shadow-sm hover:border-gray-300 transition"
     >
-      <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-      <p className="mt-2 text-sm text-gray-500">{description}</p>
-      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700">
+      <h2 className="text-lg font-bold text-foreground">{title}</h2>
+      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">
         {action}
         <ArrowRight className="w-4 h-4" />
       </span>
@@ -490,13 +490,13 @@ function QuickLinkCard({ title, description, action, onClick }) {
 
 function CreditBlock({ label, value, hint, tone }) {
   const tones = {
-    emerald: 'bg-primary-50 border-primary-100 text-primary-700',
+    emerald: 'bg-primary-50 border-primary-100 text-primary',
     blue: 'bg-blue-50 border-blue-100 text-blue-700',
     violet: 'bg-violet-50 border-violet-100 text-violet-700',
   };
 
   return (
-    <div className={`rounded-2xl border p-4 ${tones[tone] || 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+    <div className={`rounded-2xl border p-4 ${tones[tone] || 'bg-background border-border text-foreground'}`}>
       <p className="text-[11px] font-semibold uppercase tracking-wider opacity-80">{label}</p>
       <p className="mt-2 text-2xl font-black">{value}</p>
       <p className="mt-1 text-xs opacity-80">{hint}</p>
@@ -506,12 +506,12 @@ function CreditBlock({ label, value, hint, tone }) {
 
 function InsightRow({ label, value, hint }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
+    <div className="rounded-2xl border border-border bg-background px-4 py-3">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-gray-900">{label}</p>
-        <span className="text-lg font-black text-gray-900">{value}</span>
+        <p className="text-sm font-semibold text-foreground">{label}</p>
+        <span className="text-lg font-black text-foreground">{value}</span>
       </div>
-      <p className="mt-1 text-xs text-gray-500">{hint}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
     </div>
   );
 }
@@ -527,9 +527,9 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
   const thumbnail = getTaskThumbnail(task);
 
   return (
-    <div className="rounded-2xl border border-gray-200 p-4 hover:shadow-sm transition">
+    <div className="rounded-2xl border border-border p-4 hover:shadow-sm transition">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-        <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+        <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex items-center justify-center shrink-0">
           {thumbnail ? (
             <img src={thumbnail} alt="Apercu generation" className="w-full h-full object-cover" />
           ) : (
@@ -539,7 +539,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
 
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold text-gray-900 truncate max-w-full">
+            <h3 className="text-sm font-semibold text-foreground truncate max-w-full">
               {task.productName || task.product?.title || tp('Generation sans nom')}
             </h3>
             <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${config.color}`}>
@@ -556,13 +556,13 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
 
           {isActive && (
             <div>
-              <div className="mb-1 flex items-center justify-between text-[11px] text-gray-500">
+              <div className="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
                 <span>{task.currentStep || tp('En cours...')}</span>
                 <span>{task.progressPercent || 0}%</span>
               </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full rounded-full bg-primary-500 transition-all duration-500"
+                  className="h-full rounded-full bg-primary transition-all duration-500"
                   style={{ width: `${task.progressPercent || 0}%` }}
                 />
               </div>
@@ -576,14 +576,14 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
                 {task.errorMessage || tp('La génération s’est arrêtée avant la fin.')}
               </p>
               {hasSavedContent && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Le texte et les éléments déjà générés restent disponibles. Tu peux rouvrir le contenu ou relancer la suite.
                 </p>
               )}
             </div>
           )}
 
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-400">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
             <span>Créée le {formatTaskDate(task.createdAt)}</span>
             <span>Mise à jour {formatTaskDate(task.updatedAt || task.createdAt)}</span>
             <span>{task.currentStep || (isDone ? 'Prête' : isError ? 'Interrompue' : 'En cours')}</span>
@@ -594,7 +594,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
           {hasSavedContent && (
             <button
               onClick={() => onOpen(task._id)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-semibold rounded-xl transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2 border border-border text-muted-foreground hover:bg-background text-xs font-semibold rounded-xl transition"
               title={tp('Ouvrir le contenu généré')}
             >
               <Eye className="w-3.5 h-3.5" />
@@ -609,7 +609,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
               className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition disabled:opacity-60 ${
                 hasDigitalProduct
                   ? 'border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                  : 'border border-border text-muted-foreground hover:bg-background'
               }`}
               title={tp('Produit digital de ce produit')}
             >
@@ -625,7 +625,7 @@ function TaskDetailCard({ task, deleting, retrying, digitalProductLoading, onDel
           {isDone && (
             <button
               onClick={() => onOpen(task._id)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-xl transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-primary-700 text-white text-xs font-semibold rounded-xl transition"
               title={tp('Utiliser cette génération')}
             >
               <ArrowRight className="w-3.5 h-3.5" />

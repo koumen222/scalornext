@@ -5,7 +5,7 @@ import { publicStoreApi } from '../services/storeApi.js';
 import { PAYMENT_METHOD_META, resolveAvailablePaymentMethods, startScalorPayRedirect } from '../utils/storePaymentMethods.js';
 import defaultConfig from './productSettings/defaultConfig.js';
 import { createMetaEventId, injectPixelScripts, safeFirePixelEvent } from '../utils/pixelTracking';
-import { PHONE_CODES, buildFullPhone, findCountryPhoneOptionByName, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, getPhoneLength } from '../utils/phoneCodes.js';
+import { PHONE_CODES, buildFullPhone, findCountryPhoneOptionByName, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, getPhoneLength, isValidLocalPhoneLength, phoneLengthHint } from '../utils/phoneCodes.js';
 import {
   buildStorefrontOrderWhatsappMessage,
   getPopularCitiesForCountries,
@@ -337,8 +337,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
       }
       if (f.type === 'phone' && val) {
         const digits = val.replace(/[^0-9]/g, '');
-        const expected = getPhoneLength(phoneCode);
-        if (digits.length !== expected) { setError(t('error.phoneInvalid', { n: expected, code: phoneCode })); return; }
+        if (!isValidLocalPhoneLength(phoneCode, digits.length)) { setError(t('error.phoneInvalid', { n: phoneLengthHint(phoneCode), code: phoneCode })); return; }
       }
       if (f.type === 'email' && val) {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)) { setError(t('error.emailInvalid')); return; }

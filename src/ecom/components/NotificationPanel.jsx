@@ -54,31 +54,31 @@ const ICON_MAP = {
 const TYPE_COLORS = {
   course: 'bg-amber-50 text-amber-600',
   new_delivery: 'bg-amber-50 text-amber-600',
-  order_assigned_to_you: 'bg-primary-50 text-primary-700',
-  order_taken: 'bg-gray-50 text-gray-600',
-  order_new: 'bg-primary-50 text-primary-600',
-  order_confirmed: 'bg-primary-50 text-primary-600',
-  order_shipped: 'bg-primary-50 text-primary-700',
+  order_assigned_to_you: 'bg-primary-50 text-primary',
+  order_taken: 'bg-background text-muted-foreground',
+  order_new: 'bg-primary-50 text-primary',
+  order_confirmed: 'bg-primary-50 text-primary',
+  order_shipped: 'bg-primary-50 text-primary',
   order_delivered: 'bg-green-50 text-green-600',
   order_cancelled: 'bg-red-50 text-red-600',
   order_returned: 'bg-orange-50 text-orange-600',
-  order_status: 'bg-primary-50 text-primary-600',
+  order_status: 'bg-primary-50 text-primary',
   stock_low: 'bg-amber-50 text-amber-600',
   stock_out: 'bg-red-50 text-red-600',
-  stock_received: 'bg-primary-50 text-primary-600',
-  report_created: 'bg-primary-50 text-primary-700',
+  stock_received: 'bg-primary-50 text-primary',
+  report_created: 'bg-primary-50 text-primary',
   team_order_status_changed: 'bg-blue-50 text-blue-600',
-  team_order_created: 'bg-primary-50 text-primary-600',
+  team_order_created: 'bg-primary-50 text-primary',
   team_campaign_created: 'bg-purple-50 text-purple-600',
   team_campaign_sent: 'bg-purple-50 text-purple-700',
-  team_report_generated: 'bg-primary-50 text-primary-700',
-  user_joined: 'bg-primary-50 text-primary-700',
-  decision_created: 'bg-primary-50 text-primary-600',
+  team_report_generated: 'bg-primary-50 text-primary',
+  user_joined: 'bg-primary-50 text-primary',
+  decision_created: 'bg-primary-50 text-primary',
   goal_achieved: 'bg-green-50 text-green-600',
-  campaign_sent: 'bg-primary-50 text-primary-700',
+  campaign_sent: 'bg-primary-50 text-primary',
   import_completed: 'bg-teal-50 text-teal-600',
-  system: 'bg-gray-50 text-gray-600',
-  info: 'bg-gray-50 text-gray-600',
+  system: 'bg-background text-muted-foreground',
+  info: 'bg-background text-muted-foreground',
   new_message: 'bg-cyan-50 text-cyan-600',
   new_dm: 'bg-cyan-50 text-cyan-600'
 };
@@ -97,11 +97,11 @@ function renderDeliveryMetadata(metadata) {
   if (!items.length) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-2 mb-2 rounded-lg bg-gray-50 px-2.5 py-2">
+    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-2 mb-2 rounded-lg bg-background px-2.5 py-2">
       {items.map(([label, value]) => (
         <div key={label} className="min-w-0">
-          <p className="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">{label}</p>
-          <p className="text-[11px] text-gray-700 truncate">{value}</p>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{label}</p>
+          <p className="text-[11px] text-foreground truncate">{value}</p>
         </div>
       ))}
     </div>
@@ -207,14 +207,14 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
       <div
         ref={panelRef}
         onClick={(e) => e.stopPropagation()}
-        className="fixed top-14 left-0 right-0 lg:left-auto lg:right-6 lg:w-[420px] lg:mt-0 bg-white rounded-b-2xl lg:rounded-2xl shadow-2xl border-b lg:border border-gray-200 overflow-hidden z-[60] max-h-[calc(100vh-3.5rem)] lg:max-h-[500px]"
+        className="fixed top-14 left-0 right-0 lg:left-auto lg:right-6 lg:w-[420px] lg:mt-0 bg-card rounded-b-2xl lg:rounded-2xl shadow-2xl border-b lg:border border-border overflow-hidden z-[60] max-h-[calc(100vh-3.5rem)] lg:max-h-[500px]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div className="flex items-center gap-2.5">
-            <h3 className="text-base font-bold text-gray-900">{tp('Notifications')}</h3>
+            <h3 className="text-base font-bold text-foreground">{tp('Notifications')}</h3>
             {unreadCount > 0 && (
-              <span className="px-2 py-1 rounded-full bg-primary-600 text-white text-xs font-bold">
+              <span className="px-2 py-1 rounded-full bg-primary text-white text-xs font-bold">
                 {unreadCount}
               </span>
             )}
@@ -226,21 +226,21 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
                 e.stopPropagation();
                 if (onOpenModal) onOpenModal();
               }}
-              className="text-sm text-gray-600 font-semibold px-3 py-1.5 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
+              className="text-sm text-muted-foreground font-semibold px-3 py-1.5 rounded-lg hover:bg-background active:bg-muted transition-colors"
             >
               {tp('Voir tout')}
             </button>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="text-sm text-primary-600 font-semibold px-3 py-1.5 rounded-lg hover:bg-primary-50 active:bg-primary-100 transition-colors"
+                className="text-sm text-primary font-semibold px-3 py-1.5 rounded-lg hover:bg-primary-50 active:bg-primary-100 transition-colors"
               >
                 {tp('Tout lu')}
               </button>
             )}
             <button
               onClick={onClose}
-              className="lg:hidden p-2 rounded-full hover:bg-gray-100 text-gray-500 active:bg-gray-200 transition-colors"
+              className="lg:hidden p-2 rounded-full hover:bg-muted text-muted-foreground active:bg-gray-200 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
@@ -251,17 +251,17 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
         <div className="overflow-y-auto" style={{ maxHeight: 'min(450px, 65vh)' }}>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-6 h-6 border-3 border-gray-200 border-t-primary-600 rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-3 border-border border-t-primary-600 rounded-full animate-spin"></div>
             </div>
           ) : notifications.length === 0 ? (
             <div className="py-16 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
-              <p className="text-sm font-medium text-gray-500">{tp('Aucune notification')}</p>
-              <p className="text-xs text-gray-400 mt-1">{tp('Vous êtes ù  jour !')}</p>
+              <p className="text-sm font-medium text-muted-foreground">{tp('Aucune notification')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{tp('Vous êtes ù  jour !')}</p>
             </div>
           ) : (
             notifications.map((notif) => {
@@ -270,7 +270,7 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
 
               const content = (
                 <div
-                  className={`flex gap-3.5 px-5 py-4 transition-all hover:bg-gray-50 ${!notif.read ? 'bg-primary-50/30 border-l-2 border-primary-600' : ''
+                  className={`flex gap-3.5 px-5 py-4 transition-all hover:bg-background ${!notif.read ? 'bg-primary-50/30 border-l-2 border-primary-600' : ''
                     }`}
                 >
                   {/* Icon */}
@@ -281,22 +281,22 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className={`text-sm leading-snug ${!notif.read ? 'font-bold text-gray-900' : 'font-medium text-gray-700'}`}>
+                      <p className={`text-sm leading-snug ${!notif.read ? 'font-bold text-foreground' : 'font-medium text-foreground'}`}>
                         {notif.title}
                       </p>
                       {!notif.read && (
-                        <span className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1.5"></span>
+                        <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-1.5"></span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-2 mb-2">{notif.message}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-2">{notif.message}</p>
                     {notif.type === 'course' && renderDeliveryMetadata(notif.metadata)}
                     <div className="flex items-center justify-between">
-                      <p className="text-xs text-gray-400 font-medium">{timeAgo(notif.createdAt)}</p>
+                      <p className="text-xs text-muted-foreground font-medium">{timeAgo(notif.createdAt)}</p>
                       <div className="flex items-center gap-1">
                         {!notif.read && (
                           <button
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleMarkAsRead(notif._id); }}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-200 active:bg-gray-300 text-gray-500 transition-colors"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-200 active:bg-gray-300 text-muted-foreground transition-colors"
                             title={tp('Marquer comme lu')}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -306,7 +306,7 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
                         )}
                         <button
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(notif._id); }}
-                          className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 active:bg-red-100 text-gray-400 hover:text-red-600 transition-colors"
+                          className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 active:bg-red-100 text-muted-foreground hover:text-red-600 transition-colors"
                           title={tp('Supprimer')}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,12 +327,12 @@ export default function NotificationPanel({ isOpen, onClose, onMarkAllRead, onOp
                     if (!notif.read) handleMarkAsRead(notif._id);
                     onClose();
                   }}
-                  className="block border-b border-gray-100 last:border-0 active:bg-gray-100 transition-colors"
+                  className="block border-b border-border last:border-0 active:bg-muted transition-colors"
                 >
                   {content}
                 </Link>
               ) : (
-                <div key={notif._id} className="border-b border-gray-100 last:border-0">
+                <div key={notif._id} className="border-b border-border last:border-0">
                   {content}
                 </div>
               );

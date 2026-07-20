@@ -523,7 +523,7 @@ const ThemeCard = ({ theme, selected, onSelect }) => {
 
       {/* Name */}
       <div className="mt-1.5 px-0.5">
-        <span className={`block text-[11px] font-semibold leading-tight truncate ${selected ? 'text-primary-700' : 'text-gray-700'}`}>
+        <span className={`block text-[11px] font-semibold leading-tight truncate ${selected ? 'text-primary' : 'text-foreground'}`}>
           {theme.name}
         </span>
         {selected && (
@@ -558,11 +558,11 @@ const FormThemePicker = ({ config, onConfigChange }) => {
     <div className="space-y-2.5">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="text-xs font-bold text-gray-700">{tp('Modèles')}</div>
+        <div className="text-xs font-bold text-foreground">{tp('Modèles')}</div>
         <button
           type="button"
           onClick={() => handleSelect('classic')}
-          className="text-[10px] text-gray-400 hover:text-primary-600 transition-colors font-medium"
+          className="text-[10px] text-muted-foreground hover:text-primary transition-colors font-medium"
         >
           {tp('Restaurer par défaut')}
         </button>
@@ -578,7 +578,7 @@ const FormThemePicker = ({ config, onConfigChange }) => {
             className={`px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all ${
               activeCategory === cat
                 ? 'bg-gray-900 text-white'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                : 'bg-muted text-muted-foreground hover:bg-gray-200'
             }`}
           >
             {cat}
@@ -592,7 +592,7 @@ const FormThemePicker = ({ config, onConfigChange }) => {
         <button
           type="button"
           onClick={() => scroll(-1)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-800 transition-all -ml-3"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-card shadow-md border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all -ml-3"
           style={{ top: '45%' }}
         >
           <ChevronLeft size={12} />
@@ -623,14 +623,14 @@ const FormThemePicker = ({ config, onConfigChange }) => {
         <button
           type="button"
           onClick={() => scroll(1)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-800 transition-all -mr-3"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-card shadow-md border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all -mr-3"
           style={{ top: '45%' }}
         >
           <ChevronRight size={12} />
         </button>
       </div>
 
-      <p className="text-[10px] text-gray-400">
+      <p className="text-[10px] text-muted-foreground">
         Choisissez un modèle — les couleurs s'appliquent immédiatement. Ajustez ensuite via les pickers.
       </p>
     </div>

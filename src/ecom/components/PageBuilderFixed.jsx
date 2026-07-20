@@ -41,15 +41,15 @@ function DraggableBlock({ blockType, blockInfo }) {
   return (
     <div
       ref={drag}
-      className={`p-3 bg-white border border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:shadow-sm transition-all ${
+      className={`p-3 bg-card border border-border rounded-lg cursor-move hover:border-blue-300 hover:shadow-sm transition-all ${
         isDragging ? 'opacity-50' : ''
       }`}
     >
       <div className="flex items-center gap-2 mb-1">
         <span className="text-lg">{BLOCK_ICONS[blockType]}</span>
-        <span className="text-sm font-medium text-gray-900">{blockInfo.name}</span>
+        <span className="text-sm font-medium text-foreground">{blockInfo.name}</span>
       </div>
-      <p className="text-xs text-gray-500">{blockInfo.description}</p>
+      <p className="text-xs text-muted-foreground">{blockInfo.description}</p>
     </div>
   );
 }
@@ -79,20 +79,20 @@ function SectionItem({ section, index, moveSection, onToggleVisibility, onEdit, 
   return (
     <div
       ref={(node) => drag(drop(node))}
-      className={`group relative bg-white border border-gray-200 rounded-lg overflow-hidden ${
+      className={`group relative bg-card border border-border rounded-lg overflow-hidden ${
         isDragging ? 'opacity-50' : ''
-      } ${!section.visible ? 'opacity-60 bg-gray-50' : ''}`}
+      } ${!section.visible ? 'opacity-60 bg-background' : ''}`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-100">
+      <div className="flex items-center justify-between p-3 border-b border-border">
         <div className="flex items-center gap-2">
-          <GripVertical className="w-4 h-4 text-gray-400 cursor-move" />
+          <GripVertical className="w-4 h-4 text-muted-foreground cursor-move" />
           <span className="text-lg">{BLOCK_ICONS[section.type]}</span>
           <div>
-            <h4 className="text-sm font-medium text-gray-900">
+            <h4 className="text-sm font-medium text-foreground">
               {blockInfo?.name || section.type}
             </h4>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               {section.config?.title || 'Section sans titre'}
             </p>
           </div>
@@ -101,21 +101,21 @@ function SectionItem({ section, index, moveSection, onToggleVisibility, onEdit, 
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => onToggleVisibility(index)}
-            className="p-1.5 hover:bg-gray-100 rounded transition"
+            className="p-1.5 hover:bg-muted rounded transition"
             title={section.visible ? 'Masquer' : 'Afficher'}
           >
             {section.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
           </button>
           <button
             onClick={() => onEdit(index)}
-            className="p-1.5 hover:bg-gray-100 rounded transition"
+            className="p-1.5 hover:bg-muted rounded transition"
             title={tp('Modifier')}
           >
             <Edit3 className="w-4 h-4" />
           </button>
           <button
             onClick={() => onDuplicate(index)}
-            className="p-1.5 hover:bg-gray-100 rounded transition"
+            className="p-1.5 hover:bg-muted rounded transition"
             title={tp('Dupliquer')}
           >
             <Copy className="w-4 h-4" />
@@ -131,7 +131,7 @@ function SectionItem({ section, index, moveSection, onToggleVisibility, onEdit, 
       </div>
 
       {/* Preview content */}
-      <div className="p-4 bg-gray-50">
+      <div className="p-4 bg-background">
         <SectionPreview section={section} />
       </div>
     </div>
@@ -147,7 +147,7 @@ function SectionPreview({ section }) {
       return (
         <div className="text-center">
           <h3 className="text-lg font-bold mb-1">{config?.title || 'Titre Hero'}</h3>
-          <p className="text-sm text-gray-600 mb-2">{config?.subtitle || 'Sous-titre'}</p>
+          <p className="text-sm text-muted-foreground mb-2">{config?.subtitle || 'Sous-titre'}</p>
           <div className="inline-block px-3 py-1 bg-blue-500 text-white text-xs rounded">
             {config?.ctaText || 'Bouton CTA'}
           </div>
@@ -159,10 +159,10 @@ function SectionPreview({ section }) {
           <h4 className="font-medium mb-2">{config?.title || 'Nos Produits'}</h4>
           <div className="grid grid-cols-2 gap-2">
             {[1, 2].map(i => (
-              <div key={i} className="bg-white border border-gray-200 rounded p-2">
+              <div key={i} className="bg-card border border-border rounded p-2">
                 <div className="bg-gray-200 h-12 mb-1 rounded"></div>
                 <p className="text-xs font-medium">Produit {i}</p>
-                <p className="text-xs text-gray-500">{tp('Prix')}</p>
+                <p className="text-xs text-muted-foreground">{tp('Prix')}</p>
               </div>
             ))}
           </div>
@@ -172,7 +172,7 @@ function SectionPreview({ section }) {
       return (
         <div>
           <h4 className="font-medium mb-2">{config?.title || 'Titre de section'}</h4>
-          <p className="text-sm text-gray-600 line-clamp-3">
+          <p className="text-sm text-muted-foreground line-clamp-3">
             {config?.content || 'Contenu de la section texte. Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
           </p>
         </div>
@@ -181,11 +181,11 @@ function SectionPreview({ section }) {
       return (
         <div>
           <h4 className="font-medium mb-2">{config?.title || 'Témoignages'}</h4>
-          <div className="bg-white border border-gray-200 rounded p-2">
+          <div className="bg-card border border-border rounded p-2">
             <div className="flex items-center gap-1 mb-1">
               {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />)}
             </div>
-            <p className="text-xs text-gray-600">{tp('Excellent service !')}</p>
+            <p className="text-xs text-muted-foreground">{tp('Excellent service !')}</p>
             <p className="text-xs font-medium mt-1">{tp('Client satisfait')}</p>
           </div>
         </div>
@@ -195,9 +195,9 @@ function SectionPreview({ section }) {
         <div>
           <h4 className="font-medium mb-2">{config?.title || 'Questions fréquentes'}</h4>
           <div className="space-y-1">
-            <div className="bg-white border border-gray-200 rounded p-2">
+            <div className="bg-card border border-border rounded p-2">
               <p className="text-xs font-medium">{tp('Question exemple ?')}</p>
-              <p className="text-xs text-gray-500 mt-1">{tp('Réponse à la question...')}</p>
+              <p className="text-xs text-muted-foreground mt-1">{tp('Réponse à la question...')}</p>
             </div>
           </div>
         </div>
@@ -206,7 +206,7 @@ function SectionPreview({ section }) {
       return (
         <div>
           <h4 className="font-medium mb-2">{config?.title || 'Contact'}</h4>
-          <div className="flex items-center gap-2 text-xs text-gray-600">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Phone className="w-3 h-3" />
             <span>{config?.whatsapp || '+237 6XX XXX XXX'}</span>
           </div>
@@ -214,7 +214,7 @@ function SectionPreview({ section }) {
       );
     default:
       return (
-        <div className="text-center text-xs text-gray-500">
+        <div className="text-center text-xs text-muted-foreground">
           Aperçu de {type}
         </div>
       );
@@ -241,13 +241,13 @@ function DropZone({ onDrop, isEmpty = false }) {
       <div
         ref={drop}
         className={`h-64 border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-colors ${
-          isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50'
+          isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-background'
         }`}
       >
         <div className="text-center">
           <div className="text-4xl mb-3">🎨</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">{tp('Page vide')}</h3>
-          <p className="text-sm text-gray-500 mb-4">
+          <h3 className="text-lg font-medium text-foreground mb-2">{tp('Page vide')}</h3>
+          <p className="text-sm text-muted-foreground mb-4">
             Faites glisser des blocs depuis la sidebar pour commencer à construire votre page
           </p>
           {isActive && (
@@ -270,7 +270,7 @@ function DropZone({ onDrop, isEmpty = false }) {
       {isActive ? (
         <span className="text-sm font-medium text-blue-600">{tp('Relâchez pour ajouter')}</span>
       ) : (
-        <Plus className="w-4 h-4 text-gray-400" />
+        <Plus className="w-4 h-4 text-muted-foreground" />
       )}
     </div>
   );
@@ -289,12 +289,12 @@ function SectionEditModal({ section, onClose, onSave }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden">
+      <div className="bg-card rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="text-lg font-semibold">
             Modifier {BLOCK_TYPES[section.type]?.name || section.type}
           </h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+          <button onClick={onClose} className="p-1 hover:bg-muted rounded">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -385,7 +385,7 @@ function SectionEditModal({ section, onClose, onSave }) {
         <div className="flex justify-end gap-2 p-4 border-t">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+            className="px-4 py-2 text-muted-foreground hover:bg-muted rounded-lg transition"
           >
             Annuler
           </button>
@@ -480,10 +480,10 @@ const PageBuilder = ({ sections = [], onUpdateSections }) => {
     <DndProvider backend={HTML5Backend}>
       <div className="flex h-full">
         {/* Sidebar with blocks */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">{tp('Blocs disponibles')}</h2>
-            <p className="text-sm text-gray-500 mt-1">
+        <div className="w-80 bg-card border-r border-border flex flex-col overflow-hidden">
+          <div className="p-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">{tp('Blocs disponibles')}</h2>
+            <p className="text-sm text-muted-foreground mt-1">
               Faites glisser les blocs vers la page pour les ajouter
             </p>
           </div>
@@ -491,7 +491,7 @@ const PageBuilder = ({ sections = [], onUpdateSections }) => {
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {BLOCK_CATEGORIES.map((category) => (
               <div key={category.id}>
-                <h3 className="text-sm font-medium text-gray-900 mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                   <div 
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: category.color }}
@@ -513,7 +513,7 @@ const PageBuilder = ({ sections = [], onUpdateSections }) => {
         </div>
 
         {/* Canvas area */}
-        <div className="flex-1 bg-gray-50 overflow-y-auto">
+        <div className="flex-1 bg-background overflow-y-auto">
           <div className="p-6">
             <div className="max-w-2xl mx-auto space-y-4">
               {sections.length === 0 ? (

@@ -26,10 +26,10 @@ const Footer = ({ store, theme }) => {
               {store?.name || tp('Ma Boutique')}
             </h3>
             {store?.description && (
-              <p className="text-sm text-gray-600 mb-3">{store.description}</p>
+              <p className="text-sm text-muted-foreground mb-3">{store.description}</p>
             )}
             {store?.phone && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 <strong>{tp('Tél:')}</strong> {store.phone}
               </p>
             )}
@@ -82,7 +82,7 @@ const Footer = ({ store, theme }) => {
           </div>
         </div>
         
-        <div className="border-t pt-6 text-center text-sm text-gray-500">
+        <div className="border-t pt-6 text-center text-sm text-muted-foreground">
           <p>© {currentYear} {store?.name || tp('Ma Boutique')}. Tous droits réservés.</p>
           <p className="mt-2 text-xs">
             Propulsé par <a href="https://scalor.net" className="hover:underline" style={{ color: theme?.ctaColor || '#0F6B4F' }}>Scalor</a>

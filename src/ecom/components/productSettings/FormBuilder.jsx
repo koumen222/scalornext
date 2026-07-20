@@ -21,7 +21,7 @@ const FieldEditor = ({ field, onChange }) => {
 
       {/* Label / text preview */}
       <div>
-        <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+        <label className="block text-[11px] font-semibold text-muted-foreground mb-1">
           {isCta ? 'Texte du bouton' : tp('Label du champ')}
         </label>
         <input
@@ -29,27 +29,27 @@ const FieldEditor = ({ field, onChange }) => {
           value={field.label || ''}
           onChange={e => update('label', e.target.value)}
           placeholder={isCta ? 'ACHETER MAINTENANT - {total}' : field.name === 'address' ? 'Lieu de livraison' : tp('Label')}
-          className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] font-medium focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+          className="w-full px-3 py-2 rounded-xl border border-border text-[12px] font-medium focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
         />
       </div>
 
       {/* Placeholder */}
       {!isCta && (
         <div>
-          <label className="block text-[11px] font-semibold text-gray-500 mb-1">{tp('Placeholder')}</label>
+          <label className="block text-[11px] font-semibold text-muted-foreground mb-1">{tp('Placeholder')}</label>
           <input
             type="text"
             value={field.placeholder || ''}
             onChange={e => update('placeholder', e.target.value)}
             placeholder={tp('Ex: Votre quartier, rue...')}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] text-gray-500 focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
+            className="w-full px-3 py-2 rounded-xl border border-border text-[12px] text-muted-foreground focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200"
           />
         </div>
       )}
 
       {/* Icon picker */}
       <div>
-        <label className="block text-[11px] font-semibold text-gray-500 mb-1.5">{tp('Icône')}</label>
+        <label className="block text-[11px] font-semibold text-muted-foreground mb-1.5">{tp('Icône')}</label>
         <div className="grid grid-cols-6 gap-1">
           {ICONS.map(({ id, label, Icon }) => (
             <button
@@ -59,8 +59,8 @@ const FieldEditor = ({ field, onChange }) => {
               title={label}
               className={`flex flex-col items-center gap-0.5 p-1.5 rounded-lg border-2 transition-all ${
                 currentIcon === id
-                  ? 'border-primary-400 bg-primary-50 text-primary-700'
-                  : 'border-transparent bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                  ? 'border-primary-400 bg-primary-50 text-primary'
+                  : 'border-transparent bg-background text-muted-foreground hover:bg-muted hover:text-muted-foreground'
               }`}
             >
               <Icon size={13} />
@@ -74,7 +74,7 @@ const FieldEditor = ({ field, onChange }) => {
       {isCta && (
         <>
           <div>
-            <label className="block text-[11px] font-semibold text-gray-500 mb-1.5">{tp('Animation')}</label>
+            <label className="block text-[11px] font-semibold text-muted-foreground mb-1.5">{tp('Animation')}</label>
             <div className="grid grid-cols-3 gap-1">
               {ANIMATIONS.map(({ id, label }) => (
                 <button
@@ -83,8 +83,8 @@ const FieldEditor = ({ field, onChange }) => {
                   onClick={() => update('animation', id)}
                   className={`px-2 py-2 rounded-lg text-[11px] font-semibold border-2 transition-all ${
                     (field.animation || 'none') === id
-                      ? 'border-primary-400 bg-primary-50 text-primary-700'
-                      : 'border-transparent bg-gray-50 text-gray-500 hover:bg-gray-100'
+                      ? 'border-primary-400 bg-primary-50 text-primary'
+                      : 'border-transparent bg-background text-muted-foreground hover:bg-muted'
                   }`}
                 >
                   {label}
@@ -94,8 +94,8 @@ const FieldEditor = ({ field, onChange }) => {
           </div>
 
           {/* Live CTA button preview */}
-          <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100 p-3">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 text-center">
+          <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-border p-3">
+            <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 text-center">
               {tp('Aperçu du bouton')}
             </div>
             <div className="flex justify-center">
@@ -156,7 +156,7 @@ const FormBuilder = ({ config, onChange }) => {
                 className={`rounded-xl border transition-all ${
                   field.enabled
                     ? 'border-[#0F6B4F]/20 bg-[#F0FAF5]'
-                    : 'border-gray-100 bg-gray-50'
+                    : 'border-border bg-background'
                 }`}
               >
                 {/* Header row */}
@@ -164,10 +164,10 @@ const FormBuilder = ({ config, onChange }) => {
                   <GripVertical size={16} className="text-gray-300 shrink-0" />
 
                   <div className="flex-1 min-w-0">
-                    <span className={`text-sm font-medium ${field.enabled ? 'text-gray-800' : 'text-gray-400'}`}>
+                    <span className={`text-sm font-medium ${field.enabled ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {field.label}
                     </span>
-                    <span className="text-[11px] text-gray-400 ml-2 font-mono">{field.name}</span>
+                    <span className="text-[11px] text-muted-foreground ml-2 font-mono">{field.name}</span>
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
@@ -179,8 +179,8 @@ const FormBuilder = ({ config, onChange }) => {
                         title={tp('Personnaliser')}
                         className={`p-1.5 rounded-lg transition-colors ${
                           isExpanded
-                            ? 'bg-primary-100 text-primary-600'
-                            : 'hover:bg-white text-gray-400 hover:text-gray-600'
+                            ? 'bg-primary-100 text-primary'
+                            : 'hover:bg-card text-muted-foreground hover:text-muted-foreground'
                         }`}
                       >
                         {isExpanded ? <ChevronRight size={13} className="rotate-90" /> : <Settings2 size={13} />}
@@ -190,18 +190,18 @@ const FormBuilder = ({ config, onChange }) => {
                     <button
                       onClick={() => moveField(index, -1)}
                       disabled={index === 0}
-                      className="p-1 rounded-lg hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-1 rounded-lg hover:bg-card disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                       aria-label={tp('Move up')}
                     >
-                      <ChevronUp size={14} className="text-gray-500" />
+                      <ChevronUp size={14} className="text-muted-foreground" />
                     </button>
                     <button
                       onClick={() => moveField(index, 1)}
                       disabled={index === fields.length - 1}
-                      className="p-1 rounded-lg hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-1 rounded-lg hover:bg-card disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                       aria-label={tp('Move down')}
                     >
-                      <ChevronDown size={14} className="text-gray-500" />
+                      <ChevronDown size={14} className="text-muted-foreground" />
                     </button>
                   </div>
 
@@ -215,7 +215,7 @@ const FormBuilder = ({ config, onChange }) => {
                     }`}
                   >
                     <span
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-card shadow-sm ring-0 transition duration-200 ease-in-out ${
                         field.enabled ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
