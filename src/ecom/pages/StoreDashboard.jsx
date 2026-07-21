@@ -22,7 +22,6 @@ import { useStore } from '../contexts/StoreContext.jsx';
 import { usePlatformT, tp } from '../i18n/platform.js';
 
 const TODAY_AUTO_REFRESH_MS = 15000;
-const INITIAL_AUTO_REFRESH_DELAY_MS = 1200;
 
 const startOfDay = (date) => {
   const next = new Date(date);
@@ -274,17 +273,10 @@ export default function StoreDashboard() {
 
   useEffect(() => {
     if (!resolvedWorkspaceId) return;
+    // Un seul chargement au montage. Le 2e rechargement forcé (setTimeout) a été
+    // retiré : il doublait toutes les requêtes ~1,2 s après. La fraîcheur "aujourd'hui"
+    // reste assurée par le refresh sur focus/visibilité ci-dessous.
     loadDashboard(!dashboardData, { forceAllStores: true });
-
-    // Force a second sync shortly after mount to ensure latest numbers are shown
-    // even when initial render used cached or delayed upstream data.
-    const refreshId = window.setTimeout(() => {
-      loadDashboard(false, { forceAllStores: true });
-    }, INITIAL_AUTO_REFRESH_DELAY_MS);
-
-    return () => {
-      window.clearTimeout(refreshId);
-    };
   }, [period, dateRange, resolvedWorkspaceId, activeStore?._id]);
 
   useEffect(() => {
@@ -304,7 +296,9 @@ export default function StoreDashboard() {
   }, [isTodayActive, resolvedWorkspaceId, activeStore?._id, dateRange]);
 
   // Reconstruction des séries commandes/CA via l'endpoint existant /store-orders
-  // (tri createdAt desc, pagination limit 100, cap 5 pages) — aucun changement backend.
+  // (tri createdAt desc, pagination limit 100, cap 3 pages) — aucun changement backend.
+  // Le cap borne la cascade d'appels séquentiels ; le break anticipé (createdAt < start)
+  // s'arrête souvent dès la 1re page. Repli séries API si incomplet.
   useEffect(() => {
     if (!resolvedWorkspaceId) {
       setOrdersSeries(null);
@@ -342,7 +336,7 @@ export default function StoreDashboard() {
         let page = 1;
         let covered = false;
 
-        while (!covered && page <= 5) {
+        while (!covered && page <= 3) {
           const res = await ecomApi.get('/store-orders', { params: { page, limit: 100 } });
           const payload = res?.data?.data || res?.data || {};
           const list = Array.isArray(payload.orders) ? payload.orders : [];

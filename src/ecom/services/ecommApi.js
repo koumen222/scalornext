@@ -574,6 +574,9 @@ export const authApi = {
   // Vérifier un code OTP
   verifyOtp: (data) => ecomApi.post('/auth/verify-otp', data),
 
+  // Vérifier la disponibilité d'un sous-domaine (PUBLIC — onboarding boutique)
+  checkSubdomainPublic: (subdomain) => ecomApi.get(`/auth/check-subdomain/${encodeURIComponent(subdomain)}`),
+
   // Connexion / inscription via Google
   googleAuth: (data) => ecomApi.post('/auth/google', data),
 

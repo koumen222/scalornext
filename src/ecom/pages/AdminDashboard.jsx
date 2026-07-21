@@ -403,6 +403,17 @@ const AdminDashboard = () => {
       isCustomRange ? customEndDate : null
     );
 
+    // Lance TOUT en parallèle : les 5 requêtes secondaires (Phase 2) partent
+    // maintenant et se résolvent pendant qu'on rend déjà les KPIs — fin de la
+    // cascade Phase 1 → Phase 2 (temps total ≈ max au lieu de somme).
+    const phase2Promise = Promise.all([
+      ecomApi.get(`/reports/stats/products-ranking?startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: [] } })),
+      ecomApi.get('/stock-locations').catch(() => ({ data: { data: [] } })),
+      ecomApi.get('/decisions/dashboard/overview').catch(() => ({ data: { data: {} } })),
+      ecomApi.get(`/reports/dashboard/stats?period=${daysCount}&startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: {} } })),
+      ecomApi.get('/goals', { params: { periodType: 'monthly', year: new Date().getFullYear(), month: new Date().getMonth() + 1 } }).catch(() => ({ data: { data: [] } }))
+    ]);
+
     // ── PHASE 1 : KPIs financiers + graphique (priorité max) ──────────────────
     try {
       const [financialRes, prevFinancialRes, dailyRes] = await Promise.all([
@@ -448,15 +459,9 @@ const AdminDashboard = () => {
       }
     }
 
-    // ── PHASE 2 : reste en arrière-plan ───────────────────────────
+    // ── PHASE 2 : reste en arrière-plan (déjà en vol depuis le début de la fonction) ──
     try {
-      const [topProductsRes, stockLocationsRes, decisionsRes, dashStatsRes, goalsRes] = await Promise.all([
-        ecomApi.get(`/reports/stats/products-ranking?startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: [] } })),
-        ecomApi.get('/stock-locations').catch(() => ({ data: { data: [] } })),
-        ecomApi.get('/decisions/dashboard/overview').catch(() => ({ data: { data: {} } })),
-        ecomApi.get(`/reports/dashboard/stats?period=${daysCount}&startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: {} } })),
-        ecomApi.get('/goals', { params: { periodType: 'monthly', year: new Date().getFullYear(), month: new Date().getMonth() + 1 } }).catch(() => ({ data: { data: [] } }))
-      ]);
+      const [topProductsRes, stockLocationsRes, decisionsRes, dashStatsRes, goalsRes] = await phase2Promise;
 
       const topProducts = (topProductsRes.data?.data || [])
         .sort((a, b) => (b.ordersDelivered || 0) - (a.ordersDelivered || 0))
@@ -545,8 +550,12 @@ const AdminDashboard = () => {
   loadDashboardDataRef.current = loadDashboardData;
 
   useEffect(() => {
+    // Attendre la résolution des boutiques avant le 1er fetch : sinon on charge une
+    // fois avec activeStore=null (données jetées) puis une 2e fois quand il se résout.
+    // L'UI affiche déjà un loader tant que storesLoading est vrai (cf. plus bas).
+    if (storesLoading) return;
     loadDashboardDataRef.current();
-  }, [timeRange, customStartDate, customEndDate, activeStore?._id]);
+  }, [timeRange, customStartDate, customEndDate, activeStore?._id, storesLoading]);
 
   // Signaux d'activation (all-time) pour le guide "Premiers pas" — 1 seule fois par boutique
   useEffect(() => {

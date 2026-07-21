@@ -6,6 +6,7 @@ import { useStore } from '../contexts/StoreContext.jsx';
 import StoreSwitcher from './StoreSwitcher.jsx';
 import { usePlatformT, usePlatformLang } from '../i18n/platform.js';
 import StoreAssistantChat from './StoreAssistantChat.jsx';
+import OnboardingJourney from './OnboardingJourney.jsx';
 import PlatformLanguageSelector from './PlatformLanguageSelector.jsx';
 
 // ── Boutique Sidebar Navigation ──────────────────────────────────────────────
@@ -222,10 +223,11 @@ const BoutiqueLayoutInner = ({ children }) => {
           <div className="px-4 pt-4 pb-3 border-b border-border">
             <button
               onClick={() => navigate('/ecom/dashboard/admin')}
-              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-muted-foreground transition mb-3 group"
+              data-tour="back-to-scalor"
+              className="w-full flex items-center justify-center gap-2 mb-3 px-3 py-2.5 rounded-xl border border-primary/25 bg-primary/10 text-sm font-semibold text-primary hover:bg-primary/15 hover:border-primary/40 transition group"
             >
               <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 19l-7-7 7-7" />
               </svg>
               <span>{t('Retour à Scalor')}</span>
             </button>
@@ -258,6 +260,7 @@ const BoutiqueLayoutInner = ({ children }) => {
                   <div key={item.name}>
                     <button
                       onClick={() => setExpandedParent(expanded ? null : item.name)}
+                      data-tour={`nav-${item.name}`}
                       className={`w-full group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-colors duration-150 ${
                         parentActive
                           ? 'bg-sidebar-accent text-sidebar-foreground font-semibold'
@@ -345,10 +348,11 @@ const BoutiqueLayoutInner = ({ children }) => {
         {!location.pathname.includes('/form-builder') && <header className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-card border-b border-border">
           <div className="flex items-center justify-between h-14 px-4">
             <div className="flex items-center gap-3">
-              <button onClick={() => navigate('/ecom/dashboard/admin')} className="p-1.5 rounded-lg hover:bg-muted transition">
-                <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <button onClick={() => navigate('/ecom/dashboard/admin')} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-primary/25 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/15 transition">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 19l-7-7 7-7" />
                 </svg>
+                <span>{t('Scalor')}</span>
               </button>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: layoutAccentSoft }}>
@@ -392,6 +396,9 @@ const BoutiqueLayoutInner = ({ children }) => {
       {!location.pathname.includes('builder') && !location.pathname.includes('/form-builder') && !location.pathname.includes('/boutique/theme') && (
         <StoreAssistantChat storeName={storeName} />
       )}
+
+      {/* Visite guidée multi-pages (phase boutique) */}
+      <OnboardingJourney />
 
       {/* ── Mobile Bottom Tab Bar ──────────────────────────────────────────── */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border">

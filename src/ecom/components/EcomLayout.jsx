@@ -221,6 +221,8 @@ const EcomLayoutComponent = ({ children }) => {
       roles: ['ecom_admin'], highlight: true,
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5L13 3z" /></svg>
     },
+    // « Montage Auto » — entrée retirée du menu à la demande. La route
+    // /ecom/montage-auto reste fonctionnelle (accès par URL directe).
     {
       name: t('Commissions'), shortName: t('Commissions'), href: '/ecom/commissions', primary: true,
       roles: ['ecom_closeuse'],

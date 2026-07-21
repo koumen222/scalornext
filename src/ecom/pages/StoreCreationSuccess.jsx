@@ -4,6 +4,7 @@ import { Check, ExternalLink, LayoutDashboard, PackagePlus, Sparkles } from 'luc
 import { useStore } from '../contexts/StoreContext.jsx';
 import { storesApi } from '../services/storeApi.js';
 import TutorialVideosSection from '../components/TutorialVideosSection.jsx';
+import { startJourney } from '../components/OnboardingJourney.jsx';
 import { tp } from '../i18n/platform.js';
 
 /**
@@ -230,7 +231,12 @@ const StoreCreationSuccess = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate('/ecom/boutique')}
+                  onClick={() => {
+                    // Retour au dashboard CENTRAL + visite guidée complète :
+                    // accès boutique → actions de la boutique → options du tableau central.
+                    startJourney();
+                    navigate('/ecom/dashboard/admin');
+                  }}
                   className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-card px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                 >
                   <LayoutDashboard className="h-4 w-4" />

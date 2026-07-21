@@ -194,7 +194,30 @@ const media = {
     }),
 };
 
-const creativeApi = { credits, text, image, video, voice, gallery, launch, montage, lipsync, clone, translation, media, providers: CREATIVE_PROVIDERS };
+// ─── Montage automatique IA (outil Montage Auto, séparé du Creative Center) ──
+// start() rend { jobId } ; on interroge job(id) jusqu'à status 'done'
+// (outputs [{format,url,durationSec}] + srtUrl) ou 'error'.
+// Backend : POST /auto-montage/start, GET /auto-montage/jobs/:jobId.
+const autoMontage = {
+  /** Formats, styles de sous-titres, modes b-roll, coût crédits. */
+  options: () => ecomApi.get('/auto-montage/meta/options', { timeout: 15000 }),
 
-export { credits as creativeCreditsApi, text as creativeTextApi, image as creativeImageApi, video as creativeVideoApi, voice as creativeVoiceApi, gallery as creativeGalleryApi, launch as creativeLaunchApi, montage as creativeMontageApi, translation as creativeTranslationApi, media as creativeMediaApi };
+  /** @param {FormData} formData  video (+ music), formats, captionStyle, brollCount, brollMode, removeSilences → { jobId } */
+  start: (formData, config = {}) =>
+    ecomApi.post('/auto-montage/start', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 0,
+      ...config,
+    }),
+
+  // 404 accepté comme réponse normale du poll (job pas encore visible / expiré).
+  job: (jobId) => ecomApi.get(`/auto-montage/jobs/${jobId}`, {
+    timeout: 15000,
+    validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
+  }),
+};
+
+const creativeApi = { credits, text, image, video, voice, gallery, launch, montage, lipsync, clone, translation, media, autoMontage, providers: CREATIVE_PROVIDERS };
+
+export { credits as creativeCreditsApi, text as creativeTextApi, image as creativeImageApi, video as creativeVideoApi, voice as creativeVoiceApi, gallery as creativeGalleryApi, launch as creativeLaunchApi, montage as creativeMontageApi, translation as creativeTranslationApi, media as creativeMediaApi, autoMontage as autoMontageApi };
 export default creativeApi;

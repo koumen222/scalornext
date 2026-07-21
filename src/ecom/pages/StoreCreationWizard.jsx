@@ -4,7 +4,7 @@ import { useStore } from '../contexts/StoreContext.jsx';
 import {
   Check, ArrowRight, ArrowLeft, Loader2, Store, Palette, MapPin,
   Sparkles, MessageSquare, ChevronRight, ChevronDown, Zap,
-  Globe2, Upload, X, Wand2, RefreshCw
+  Globe2, Upload, X, Wand2, RefreshCw, Lock
 } from 'lucide-react';
 import { storeManageApi, storesApi } from '../services/storeApi.js';
 import { storeProductsApi } from '../services/storeApi.js';
@@ -618,6 +618,12 @@ const StoreCreationWizard = ({ onComplete }) => {
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
 
+  // ── Génération de logo IA ────────────────────────────────────────────────────
+  // Une seule génération offerte, pour tout le monde. Ensuite : plus de génération
+  // supplémentaire (aucune notion de plan ici).
+  const [logoGenCount, setLogoGenCount] = useState(0); // générations réussies cette session
+  const hasGeneratedLogoOnce = logoGenCount >= 1;
+
   useEffect(() => {
     if (!logoGenerating) {
       setLogoGenerationMessageIdx(0);
@@ -856,6 +862,8 @@ const StoreCreationWizard = ({ onComplete }) => {
   };
 
   const handleGenerateLogo = async () => {
+    // Une seule génération offerte : ensuite on bloque toute génération supplémentaire.
+    if (logoGenCount >= 1) return;
     if (!form.storeName.trim()) {
       setErrors((prev) => ({ ...prev, storeName: 'Donnez un nom à votre boutique avant de générer un logo' }));
       return;
@@ -880,9 +888,11 @@ const StoreCreationWizard = ({ onComplete }) => {
         setGenerationLogoUrl(logo.url);
         set('storeLogo', logo.url);
         setLogoPreview(logo.url);
+        setLogoGenCount((c) => c + 1);
       }
     } catch (error) {
-      setErrors((prev) => ({ ...prev, storeLogo: error.response?.data?.message || 'La generation du logo a echoue. Verifiez la connexion et reessayez.' }));
+      const msg = error?.response?.data?.message || '';
+      setErrors((prev) => ({ ...prev, storeLogo: msg || 'La génération du logo a échoué. Vérifiez la connexion et réessayez.' }));
     } finally {
       setLogoGenerating(false);
     }
@@ -952,6 +962,18 @@ const StoreCreationWizard = ({ onComplete }) => {
           // Set as active store in window so subsequent API calls target it
           window.__activeStoreId__ = newStore._id;
           switchStore(newStore);
+          // Onboarding « boutique d'abord » : la boutique existe désormais —
+          // refléter immédiatement la fin de l'onboarding dans la session
+          // locale (le backend a déjà levé le flag), sinon les guards
+          // renverraient ici en boucle avec un contexte périmé.
+          try {
+            const u = JSON.parse(localStorage.getItem('ecomUser') || 'null');
+            if (u) {
+              u.needsStoreSetup = false;
+              u.storeId = newStore._id;
+              localStorage.setItem('ecomUser', JSON.stringify(u));
+            }
+          } catch { /* localStorage indisponible */ }
         }
       }
 
@@ -996,8 +1018,8 @@ const StoreCreationWizard = ({ onComplete }) => {
       // Étape 4 : Génération IA de la page d'accueil
       if (!isEditMode || isResetMode) {
         setGenerationStep('homepage');
-        try {
-          await storeManageApi.generateHomepage({
+        {
+          const homepagePayload = {
             language: form.language,
             storeName: form.storeName,
             storeDescription: form.storeDescription,
@@ -1006,11 +1028,21 @@ const StoreCreationWizard = ({ onComplete }) => {
             city: form.city,
             country: form.country,
             storeWhatsApp: form.storeWhatsApp,
-          });
-        } catch {
-          // Silently continue -- the backend fallback sections are already saved,
-          // or the storefront will use its default layout.
-          console.warn('Homepage AI generation failed, storefront will use fallback');
+          };
+          // 2 tentatives : un blip réseau ne doit pas priver la boutique de sa
+          // page d'accueil IA. En dernier recours, les sections par défaut
+          // posées à la création de la boutique assurent un site complet.
+          try {
+            await storeManageApi.generateHomepage(homepagePayload);
+          } catch {
+            console.warn('Homepage AI generation failed, retrying once…');
+            await new Promise((r) => setTimeout(r, 2000));
+            try {
+              await storeManageApi.generateHomepage(homepagePayload);
+            } catch {
+              console.warn('Homepage AI generation failed twice — default sections (set at creation) remain.');
+            }
+          }
         }
         // Images are generated in parallel server-side during generateHomepage,
         // so by the time we reach here everything (text + images) is ready.
@@ -1037,6 +1069,17 @@ const StoreCreationWizard = ({ onComplete }) => {
       // simple retour au dashboard pour une édition de boutique existante.
       setGenerationStep('done');
       creationSucceeded = true;
+      // Onboarding « boutique d'abord » : quel que soit le mode de création
+      // (doc Store OU boutique legacy portée par le workspace), la boutique
+      // existe désormais — lever le flag dans la session locale pour que le
+      // retour au dashboard ne soit jamais bloqué par un état périmé.
+      try {
+        const u = JSON.parse(localStorage.getItem('ecomUser') || 'null');
+        if (u && u.needsStoreSetup) {
+          u.needsStoreSetup = false;
+          localStorage.setItem('ecomUser', JSON.stringify(u));
+        }
+      } catch { /* localStorage indisponible */ }
       const isPureEdit = isEditMode && !isResetMode && !isNewStoreMode;
       if (isPureEdit) {
         await refreshStores().catch(() => {});
@@ -1145,12 +1188,13 @@ const StoreCreationWizard = ({ onComplete }) => {
 
                   <button
                     type="button"
-                    onClick={() => navigate('/ecom/dashboard')}
+                    onClick={() => navigate('/ecom/dashboard/admin')}
                     className="inline-flex min-h-[46px] items-center justify-center rounded-lg border border-slate-200 bg-card px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                   >
                     {tp('Retour au dashboard')}
                   </button>
                 </div>
+
               </div>
 
               <aside className="border-t border-slate-200 bg-slate-50/70 p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
@@ -1625,15 +1669,29 @@ const StoreCreationWizard = ({ onComplete }) => {
                       <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{tp('Génération IA')}</p>
                       <p className="mt-0.5 text-sm font-semibold text-foreground">{tp('Créer le logo')}</p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleGenerateLogo}
-                      disabled={logoGenerating || !form.storeName.trim()}
-                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary-700 text-white text-sm font-semibold disabled:opacity-50"
-                    >
-                      {logoGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                      {logoGenerating ? 'En cours...' : generatedLogo?.url ? 'Regénérer' : tp('Générer')}
-                    </button>
+
+                    {/* Une seule génération offerte : le bouton disparaît ensuite. */}
+                    {!hasGeneratedLogoOnce && (
+                      <button
+                        type="button"
+                        onClick={handleGenerateLogo}
+                        disabled={logoGenerating || !form.storeName.trim()}
+                        className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary-700 text-white text-sm font-semibold disabled:opacity-50"
+                      >
+                        {logoGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                        {logoGenerating ? 'En cours...' : tp('Générer')}
+                      </button>
+                    )}
+
+                    {/* Génération unique utilisée : plus aucune génération possible. */}
+                    {hasGeneratedLogoOnce && !logoGenerating && (
+                      <div className="flex items-start gap-2 rounded-lg border border-border bg-background px-3 py-2.5">
+                        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                        <p className="text-[11px] leading-relaxed text-muted-foreground">
+                          {tp('Vous ne pouvez plus générer de logo supplémentaire.')}
+                        </p>
+                      </div>
+                    )}
 
                     {logoGenerating && (
                       <div className="rounded-lg bg-background px-3 py-3 flex items-center gap-2">
@@ -1645,7 +1703,7 @@ const StoreCreationWizard = ({ onComplete }) => {
                       </div>
                     )}
 
-                    {isGeneratedLogoOutdated && !logoGenerating && (
+                    {isGeneratedLogoOutdated && !logoGenerating && !hasGeneratedLogoOnce && (
                       <p className="text-[10px] text-amber-600 font-semibold">{tp('Direction modifiée -- regénérez.')}</p>
                     )}
 

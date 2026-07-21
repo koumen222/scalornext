@@ -201,7 +201,9 @@ function buildStoreProductCsvBlob(product) {
 export const storeManageApi = {
   // ─── Store Configuration ──────────────────────────────────────────────
   getStoreConfig: () => ecomApi.get('/store-manage/config'),
-  updateStoreConfig: (data) => ecomApi.put('/store-manage/config', data),
+  // `config` optionnel (ex. { headers: { 'X-Store-Id': id } }) pour cibler une
+  // boutique précise hors StoreContext (onboarding boutique).
+  updateStoreConfig: (data, config) => ecomApi.put('/store-manage/config', data, config),
   setSubdomain: (subdomain) => ecomApi.put('/store-manage/subdomain', { subdomain }),
   checkSubdomain: (subdomain) => ecomApi.get(`/store-manage/subdomain/check/${subdomain}`),
 
@@ -527,4 +529,21 @@ export const storesApi = {
   checkSubdomain: (subdomain, excludeStoreId) => ecomApi.get(`/stores/check-subdomain/${subdomain}${excludeStoreId ? `?excludeStoreId=${excludeStoreId}` : ''}`),
   setPrimary:     (id)            => ecomApi.post(`/stores/${id}/set-primary`),
   deleteStore:    (id)            => ecomApi.delete(`/stores/${id}`),
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MEDIA UPLOAD (authenticated) — utilisé par l'onboarding boutique pour le logo
+// (endpoint /media-upload accessible pendant l'onboarding, contrairement à
+// /builder-ai qui est réservé aux comptes ayant déjà une boutique)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const mediaApi = {
+  upload: (file, context) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    if (context) fd.append('context', context);
+    return ecomApi.post('/media-upload/upload', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 };

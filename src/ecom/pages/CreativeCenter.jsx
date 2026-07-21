@@ -105,8 +105,8 @@ const CreativeCenter = ({ initialTab = 'overview' }) => {
       <aside className="hidden lg:flex lg:flex-col lg:w-[240px] lg:fixed lg:inset-y-0 z-30 bg-card border-r border-border">
         {/* Header : retour + marque (style épuré Minea) */}
         <div className="px-4 pt-4 pb-2">
-          <Link to="/ecom/dashboard" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-muted-foreground transition mb-3 group">
-            <ChevronLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+          <Link to="/ecom/dashboard" className="w-full flex items-center justify-center gap-2 mb-3 px-3 py-2.5 rounded-xl border border-primary/25 bg-primary/10 text-sm font-semibold text-primary hover:bg-primary/15 hover:border-primary/40 transition group">
+            <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
             <span>{tp('Retour à Scalor')}</span>
           </Link>
           <div className="flex items-center gap-2.5">

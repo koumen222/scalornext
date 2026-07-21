@@ -305,9 +305,11 @@ export function buildFullPhone(phoneCode, rawPhone) {
   const codeDigits = String(phoneCode || '').replace('+', '');
   if (codeDigits && phone.startsWith(codeDigits)) return `+${phone}`;
 
-  // Gabon & co : le 0 initial est significatif — on le conserve tel quel.
-  const cleaned = !KEEP_LEADING_ZERO_CODES.has(phoneCode) && phone.startsWith('0')
-    ? phone.substring(1)
-    : phone;
+  // Gabon & co : le 0 initial est significatif — on le conserve tel quel,
+  // et on le RÉINTRODUIT s'il manque (numéro saisi sans le 0 → injoignable).
+  if (KEEP_LEADING_ZERO_CODES.has(phoneCode)) {
+    return `${phoneCode}${phone.startsWith('0') ? phone : `0${phone}`}`;
+  }
+  const cleaned = phone.startsWith('0') ? phone.substring(1) : phone;
   return `${phoneCode || ''}${cleaned}`;
 }
