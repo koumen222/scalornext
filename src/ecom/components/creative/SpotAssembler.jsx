@@ -37,7 +37,9 @@ function Stepper({ value, setValue, min = 1, max = 10, disabled }) {
 // speakerDesc (optionnel) : QUI prononce le script (flux UGC inversé — le
 // personnage est configuré AVANT) → le backend adapte ton et vocabulaire.
 const SpotAssembler = ({ importedProduct = null, onImport = null, onClearImport = null, accent = null, onSendToMontage = null, onUseScript = null, showImportBar = true, speakerDesc = '' }) => {
-  const [mode, setMode] = useState('auto');
+  // Spot (montage) : par défaut on PROPOSE les angles marketing (manual).
+  // UGC (onUseScript) : auto conservé — l'IA choisit le script, le créateur vient après.
+  const [mode, setMode] = useState(onUseScript ? 'auto' : 'manual');
   // Réglages — mêmes leviers que le Lancement + cible imposée (ou IA).
   const [angleCount, setAngleCount] = useState(3);
   const [tone, setTone] = useState('direct');
@@ -100,15 +102,16 @@ const SpotAssembler = ({ importedProduct = null, onImport = null, onClearImport 
       if (d.tone) setTone(d.tone);
       if (d.language) setLanguage(d.language);
       if (typeof d.audience === 'string') setAudience(d.audience);
-      if (d.mode) setMode(d.mode);
+      // Le mode (auto/manual) n'est PAS restauré : le flux spot doit toujours
+      // rouvrir en proposant les angles (défaut manual), pas repartir en auto.
     } catch { /* brouillon illisible */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftKey]);
   useEffect(() => {
     try {
-      localStorage.setItem(draftKey, JSON.stringify({ ts: Date.now(), angles, scriptsByAngle, angleCount, tone, language, audience, mode }));
+      localStorage.setItem(draftKey, JSON.stringify({ ts: Date.now(), angles, scriptsByAngle, angleCount, tone, language, audience }));
     } catch { /* stockage plein */ }
-  }, [draftKey, angles, scriptsByAngle, angleCount, tone, language, audience, mode]);
+  }, [draftKey, angles, scriptsByAngle, angleCount, tone, language, audience]);
 
   // Repart de ZÉRO (le contenu affiché est conservé jusqu'au clic).
   const newGeneration = () => {

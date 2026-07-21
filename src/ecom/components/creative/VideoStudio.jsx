@@ -948,18 +948,10 @@ const VideoStudio = ({ importedProduct, onImport, onClearImport, onSendToMontage
               /* Moteur des scènes parlées : le découpage du script s'adapte
                  (durée du clip × débit = mots par scène). */
               <div className="space-y-3">
-                <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground block mb-1.5">{tp('Moteur des scènes parlées')}</span>
-                  <div className="grid grid-cols-3 gap-2">
-                    {Object.entries(TALK_ENGINES).map(([id, eng]) => (
-                      <button key={id} type="button" onClick={() => setUgcEngine(id)}
-                        className={`text-left rounded-xl border p-2 transition-all ${ugcEngine === id ? `${A.bg} border-transparent ring-2 ${A.ring}` : 'bg-card border-border hover:border-gray-300'}`}>
-                        <span className={`block text-[11.5px] font-semibold ${ugcEngine === id ? 'text-foreground' : 'text-muted-foreground'}`}>{eng.label}</span>
-                        <span className="block text-[10px] text-muted-foreground mt-0.5">{eng.clipSec}s / {tp('scène')}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {/* Fournisseurs (moteurs) non exposés à l'utilisateur : le sélecteur
+                    « Moteur des scènes parlées » est masqué. Le moteur reste fixé à la
+                    valeur par défaut (ugcEngine = 'grok'), utilisée pour le découpage du
+                    script et transmis au backend, sans afficher les marques Grok/Kling/Veo. */}
                 {/* Résolution + nombre de scènes. */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
