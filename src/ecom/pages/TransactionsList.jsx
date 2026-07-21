@@ -14,22 +14,22 @@ const TransactionSkeleton = () => (
   <div className="space-y-3 py-2">
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+        <div key={i} className="bg-card rounded-xl border p-4">
           <div className="h-3 w-20 bg-gray-200 rounded animate-pulse mb-2" />
           <div className="h-6 w-16 bg-gray-200 rounded animate-pulse" />
         </div>
       ))}
     </div>
-    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+    <div className="bg-card rounded-xl border overflow-hidden">
       {[...Array(8)].map((_, i) => (
         <div key={i} className="flex items-center gap-4 px-4 py-3 border-b border-gray-50">
           <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse flex-shrink-0" />
           <div className="flex-1 space-y-1.5">
             <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
-            <div className="h-3 w-20 bg-gray-100 rounded animate-pulse" />
+            <div className="h-3 w-20 bg-muted rounded animate-pulse" />
           </div>
           <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
-          <div className="h-6 w-16 bg-gray-100 rounded-full animate-pulse" />
+          <div className="h-6 w-16 bg-muted rounded-full animate-pulse" />
         </div>
       ))}
     </div>
@@ -51,8 +51,8 @@ const NAV = [
   { id:'previsions', get label() { return tp('Prévisions'); }, ico:'M13 10V3L4 14h7v7l9-11h-7z' },
 ];
 const STATUS_LABELS = { pending:'En attente', confirmed:'Confirmée', shipped:'Expédiée', delivered:'Livrée', returned:'Retournée', no_answer:'Pas de réponse', cancelled:'Annulée' };
-const SEV_CFG = { critical:{bg:'bg-red-50 border-red-200',text:'text-red-700',badge:'bg-red-100 text-red-700'}, warning:{bg:'bg-orange-50 border-orange-200',text:'text-orange-700',badge:'bg-orange-100 text-orange-700'}, info:{bg:'bg-primary-50 border-primary-200',text:'text-primary-700',badge:'bg-primary-100 text-primary-700'}, success:{bg:'bg-primary-50 border-primary-200',text:'text-primary-700',badge:'bg-primary-100 text-primary-700'} };
-const PRIO_CFG = { 'URGENT':'bg-red-100 text-red-700 border-red-200', 'IMPORTANT':'bg-orange-100 text-orange-700 border-orange-200', 'MOYEN TERME':'bg-primary-100 text-primary-700 border-primary-200' };
+const SEV_CFG = { critical:{bg:'bg-red-50 border-red-200',text:'text-red-700',badge:'bg-red-100 text-red-700'}, warning:{bg:'bg-orange-50 border-orange-200',text:'text-orange-700',badge:'bg-orange-100 text-orange-700'}, info:{bg:'bg-primary-50 border-primary-200',text:'text-primary',badge:'bg-primary-100 text-primary'}, success:{bg:'bg-primary-50 border-primary-200',text:'text-primary',badge:'bg-primary-100 text-primary'} };
+const PRIO_CFG = { 'URGENT':'bg-red-100 text-red-700 border-red-200', 'IMPORTANT':'bg-orange-100 text-orange-700 border-orange-200', 'MOYEN TERME':'bg-primary-100 text-primary border-primary-200' };
 const PERIODS = [
   { id:'today', label:"Aujourd'hui" },
   { id:'week', label:'Cette semaine' },
@@ -92,16 +92,16 @@ const Ico = ({d, className='w-5 h-5', ...props}) => <svg className={className} f
 const NavIcon = ({d}) => <Ico d={d} className="w-[18px] h-[18px]" aria-hidden="true"/>;
 
 /* â”€â”€â”€ Shared Components â”€â”€â”€ */
-const Card = ({children, className=''}) => <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm ${className}`}>{children}</div>;
+const Card = ({children, className=''}) => <div className={`bg-card rounded-2xl border shadow-sm ${className}`}>{children}</div>;
 
-const Metric = ({label, value, mobileValue, sub, icon, color='text-gray-900', subColor, iconBg='bg-gray-100'}) => (
+const Metric = ({label, value, mobileValue, sub, icon, color='text-foreground', subColor, iconBg='bg-muted'}) => (
   <Card className="p-4 sm:p-5">
     <div className="flex items-start gap-3.5">
       <div className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
         <Ico d={icon} className="w-5 h-5 text-current opacity-70"/>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider leading-tight truncate whitespace-nowrap">{label}</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider leading-tight truncate whitespace-nowrap">{label}</p>
         {mobileValue ? (
           <>
             <p className={`text-[15px] font-bold mt-0.5 leading-tight whitespace-normal break-words tabular-nums sm:hidden ${color}`}>{mobileValue}</p>
@@ -110,7 +110,7 @@ const Metric = ({label, value, mobileValue, sub, icon, color='text-gray-900', su
         ) : (
           <p className={`text-[15px] sm:text-2xl font-bold mt-0.5 leading-tight whitespace-normal break-words tabular-nums ${color}`}>{value ?? '—'}</p>
         )}
-        {sub && <p className={`text-xs mt-0.5 font-medium ${subColor||'text-gray-400'}`}>{sub}</p>}
+        {sub && <p className={`text-xs mt-0.5 font-medium ${subColor||'text-muted-foreground'}`}>{sub}</p>}
       </div>
     </div>
   </Card>
@@ -118,28 +118,28 @@ const Metric = ({label, value, mobileValue, sub, icon, color='text-gray-900', su
 
 const SectionTitle = ({children, action}) => (
   <div className="flex items-center justify-between mb-4">
-    <h3 className="text-xs font-bold text-gray-800 uppercase tracking-widest">{children}</h3>
+    <h3 className="text-xs font-bold text-foreground uppercase tracking-widest">{children}</h3>
     {action}
   </div>
 );
 
 const EmptyState = ({icon, title, sub, action}) => (
   <div className="flex flex-col items-center justify-center py-12 text-center">
-    <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-3"><Ico d={icon} className="w-6 h-6 text-gray-400"/></div>
-    <p className="text-sm font-semibold text-gray-500 mb-1">{title}</p>
-    {sub && <p className="text-xs text-gray-400 mb-3 max-w-xs">{sub}</p>}
+    <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mb-3"><Ico d={icon} className="w-6 h-6 text-muted-foreground"/></div>
+    <p className="text-sm font-semibold text-muted-foreground mb-1">{title}</p>
+    {sub && <p className="text-xs text-muted-foreground mb-3 max-w-xs">{sub}</p>}
     {action}
   </div>
 );
 
 const Badge = ({children, variant='default'}) => {
   const cls = {
-    success:'bg-primary-50 text-primary-700 border-primary-200',
+    success:'bg-primary-50 text-primary border-primary-200',
     danger:'bg-red-50 text-red-700 border-red-200',
     warning:'bg-amber-50 text-amber-700 border-amber-200',
-    default:'bg-gray-50 text-gray-600 border-gray-200',
-    info:'bg-primary-50 text-primary-700 border-primary-200',
-  }[variant]||'bg-gray-50 text-gray-600 border-gray-200';
+    default:'bg-background text-muted-foreground border-border',
+    info:'bg-primary-50 text-primary border-primary-200',
+  }[variant]||'bg-background text-muted-foreground border-border';
   return <span className={`inline-flex items-center px-2 py-0.5 text-xs font-bold rounded-md border ${cls}`}>{children}</span>;
 };
 
@@ -169,8 +169,8 @@ const getMonthOptions = () => {
 const fmtDateShort = d => d ? new Date(d+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) : '';
 const fmtDateFull = d => d ? new Date(d+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}) : '';
 const arr = v => v > 0 ? '↑' : v < 0 ? '↓' : '→';
-const varColor = v => v > 5 ? 'text-primary-600' : v < -5 ? 'text-red-500' : 'text-gray-500';
-const varColorInv = v => v > 5 ? 'text-red-500' : v < -5 ? 'text-primary-600' : 'text-gray-500';
+const varColor = v => v > 5 ? 'text-primary' : v < -5 ? 'text-red-500' : 'text-muted-foreground';
+const varColorInv = v => v > 5 ? 'text-red-500' : v < -5 ? 'text-primary' : 'text-muted-foreground';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Main Component
@@ -345,25 +345,25 @@ const TransactionsList = () => {
   const handlePeriod = (id) => { setPeriod(id); setShowCustom(id === 'custom'); };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
 
       {/* ══════════════════════════════════════════════════════════
           SIDEBAR — desktop only
           ══════════════════════════════════════════════════════════ */}
-      <aside className="hidden lg:flex flex-col w-56 xl:w-60 bg-white border-r border-gray-100 sticky top-0 h-screen overflow-y-auto flex-shrink-0 z-30">
+      <aside className="hidden lg:flex flex-col w-56 xl:w-60 bg-card border-r border-border sticky top-0 h-screen overflow-y-auto flex-shrink-0 z-30">
 
         {/* Brand */}
-        <div className="px-4 py-4 border-b border-gray-100">
-          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Scalor</p>
-          <h1 className="text-sm font-black text-gray-900 leading-tight">{tp('Centre financier')}</h1>
-          <p className="text-xs text-gray-400 mt-0.5 capitalize leading-snug">
+        <div className="px-4 py-4 border-b border-border">
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Scalor</p>
+          <h1 className="text-sm font-black text-foreground leading-tight">{tp('Centre financier')}</h1>
+          <p className="text-xs text-muted-foreground mt-0.5 capitalize leading-snug">
             {now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}
           </p>
         </div>
 
         {/* Navigation */}
         <nav className="px-2 pt-3 pb-2 flex-shrink-0" role="tablist" aria-label={tp('Vues')}>
-          <p className="px-3 mb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Vues')}</p>
+          <p className="px-3 mb-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{tp('Vues')}</p>
           {NAV.map(n=>(
             <button key={n.id} onClick={()=>setTab(n.id)}
               role="tab"
@@ -371,7 +371,7 @@ const TransactionsList = () => {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all mb-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-scalor-green focus-visible:ring-offset-1 ${
                 tab===n.id
                   ? 'bg-scalor-green text-white'
-                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background'
               }`}>
               <Ico d={n.ico} className="w-4 h-4 flex-shrink-0" aria-hidden="true"/>
               <span>{n.label}</span>
@@ -380,28 +380,28 @@ const TransactionsList = () => {
         </nav>
 
         {/* Period selector */}
-        <div className="px-2 pt-2 pb-3 border-t border-gray-100 flex-shrink-0">
-          <p className="px-3 mb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Période')}</p>
+        <div className="px-2 pt-2 pb-3 border-t border-border flex-shrink-0">
+          <p className="px-3 mb-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{tp('Période')}</p>
           {PERIODS.filter(p=>p.id!=='custom').map(p=>(
             <button key={p.id} onClick={()=>handlePeriod(p.id)}
               className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-all mb-0.5 ${
                 period===p.id
                   ? 'bg-emerald-50 text-scalor-green'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                  : 'text-muted-foreground hover:bg-background hover:text-foreground'
               }`}>{p.label}</button>
           ))}
           <button onClick={()=>handlePeriod('custom')}
             className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-              period==='custom' ? 'bg-emerald-50 text-scalor-green' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+              period==='custom' ? 'bg-emerald-50 text-scalor-green' : 'text-muted-foreground hover:bg-background hover:text-foreground'
             }`}>
             <Ico d={I.cal} className="w-3 h-3" aria-hidden="true"/>Personnalisé
           </button>
           {showCustom && (
             <div className="mt-1.5 px-1 space-y-1.5">
               <input type="date" value={customDates.startDate} onChange={e=>setCustomDates(p=>({...p,startDate:e.target.value}))}
-                className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
+                className="w-full px-2.5 py-1.5 border border-border rounded-lg text-xs bg-background focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
               <input type="date" value={customDates.endDate} onChange={e=>setCustomDates(p=>({...p,endDate:e.target.value}))}
-                className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
+                className="w-full px-2.5 py-1.5 border border-border rounded-lg text-xs bg-background focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
               <button onClick={()=>loadTab()}
                 className="w-full px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition active:scale-95">
                 {tp('Appliquer')}
@@ -411,7 +411,7 @@ const TransactionsList = () => {
         </div>
 
         {/* CTA — bottom of sidebar */}
-        <div className="px-3 py-4 mt-auto border-t border-gray-100">
+        <div className="px-3 py-4 mt-auto border-t border-border">
           <Link to="/ecom/transactions/new"
             className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-scalor-green hover:bg-scalor-green-dark text-white rounded-xl text-sm font-semibold transition-all active:scale-95">
             <Ico d={I.plus} className="w-4 h-4" aria-hidden="true"/>Nouvelle transaction
@@ -432,17 +432,17 @@ const TransactionsList = () => {
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* ── Topbar ──────────────────────────────────────────── */}
-        <div className="bg-white border-b border-gray-100 px-4 sm:px-5 py-3 sticky top-0 z-20 flex items-center justify-between gap-3">
+        <div className="bg-card border-b border-border px-4 sm:px-5 py-3 sticky top-0 z-20 flex items-center justify-between gap-3">
 
           {/* Left: title (mobile) / breadcrumb (desktop) */}
           <div className="flex items-center gap-3 min-w-0">
             <div className="lg:hidden">
-              <h1 className="text-base font-black text-gray-900 tracking-tight">{tp('Centre financier')}</h1>
+              <h1 className="text-base font-black text-foreground tracking-tight">{tp('Centre financier')}</h1>
             </div>
             <div className="hidden lg:flex items-center gap-2.5">
-              <h2 className="text-sm font-bold text-gray-900">{NAV.find(n=>n.id===tab)?.label}</h2>
+              <h2 className="text-sm font-bold text-foreground">{NAV.find(n=>n.id===tab)?.label}</h2>
               {period !== 'custom' && (
-                <span className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-500">
+                <span className="flex items-center gap-1.5 px-2.5 py-1 bg-muted rounded-full text-xs font-semibold text-muted-foreground">
                   <Ico d={I.cal} className="w-3 h-3" aria-hidden="true"/>
                   {fmtDateShort(pStart)} — {fmtDateFull(pEnd)}
                 </span>
@@ -453,7 +453,7 @@ const TransactionsList = () => {
           {/* Right: period pill + CTA */}
           <div className="flex items-center gap-2">
             {period !== 'custom' && (
-              <span className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-xs font-semibold text-gray-500 lg:hidden">
+              <span className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-full text-xs font-semibold text-muted-foreground lg:hidden">
                 <Ico d={I.cal} className="w-3 h-3" aria-hidden="true"/>
                 {fmtDateShort(pStart)} — {fmtDateFull(pEnd)}
               </span>
@@ -475,17 +475,17 @@ const TransactionsList = () => {
         </div>
 
         {/* ── Mobile: period row + tab row ────────────────────── */}
-        <div className="lg:hidden bg-white border-b border-gray-100 px-4 py-2.5 space-y-2">
+        <div className="lg:hidden bg-card border-b border-border px-4 py-2.5 space-y-2">
           <div className="flex flex-wrap items-center gap-1">
             {PERIODS.filter(p=>p.id!=='custom').map(p=>(
               <button key={p.id} onClick={()=>handlePeriod(p.id)}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  period===p.id ? 'bg-scalor-green text-white' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-700'
+                  period===p.id ? 'bg-scalor-green text-white' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}>{p.label}</button>
             ))}
             <button onClick={()=>handlePeriod('custom')}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
-                period==='custom' ? 'bg-scalor-green text-white' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-700'
+                period==='custom' ? 'bg-scalor-green text-white' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}>
               <Ico d={I.cal} className="w-3 h-3" aria-hidden="true"/>Personnalisé
             </button>
@@ -493,9 +493,9 @@ const TransactionsList = () => {
           {showCustom && (
             <div className="flex flex-wrap items-center gap-2">
               <input type="date" value={customDates.startDate} onChange={e=>setCustomDates(p=>({...p,startDate:e.target.value}))}
-                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
+                className="px-2.5 py-1.5 border border-border rounded-lg text-xs bg-background focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
               <input type="date" value={customDates.endDate} onChange={e=>setCustomDates(p=>({...p,endDate:e.target.value}))}
-                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs bg-gray-50 focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
+                className="px-2.5 py-1.5 border border-border rounded-lg text-xs bg-background focus:ring-2 focus:ring-primary-400 focus:border-primary-400"/>
               <button onClick={()=>loadTab()} className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition">{tp('Appliquer')}</button>
             </div>
           )}
@@ -505,7 +505,7 @@ const TransactionsList = () => {
                 role="tab"
                 aria-selected={tab===n.id}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-scalor-green ${
-                  tab===n.id ? 'bg-scalor-green text-white' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-50'
+                  tab===n.id ? 'bg-scalor-green text-white' : 'text-muted-foreground hover:text-foreground hover:bg-background'
                 }`}>
                 <NavIcon d={n.ico}/>{n.label}
               </button>
@@ -557,28 +557,28 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Entrées')}</p>
-          <p className="text-xl font-semibold text-gray-900 tabular-nums">{fmtC(summary.totalIncome)}</p>
-          <p className="text-xs text-gray-400 tabular-nums mt-0.5">{summary.incomeCount||0} transactions</p>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <p className="text-xs font-medium text-muted-foreground mb-1">{tp('Entrées')}</p>
+          <p className="text-xl font-semibold text-foreground tabular-nums">{fmtC(summary.totalIncome)}</p>
+          <p className="text-xs text-muted-foreground tabular-nums mt-0.5">{summary.incomeCount||0} transactions</p>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Dépenses')}</p>
-          <p className="text-xl font-semibold text-gray-900 tabular-nums">{fmtC(summary.totalExpense)}</p>
-          <p className="text-xs text-gray-400 tabular-nums mt-0.5">{summary.expenseCount||0} transactions</p>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <p className="text-xs font-medium text-muted-foreground mb-1">{tp('Dépenses')}</p>
+          <p className="text-xl font-semibold text-foreground tabular-nums">{fmtC(summary.totalExpense)}</p>
+          <p className="text-xs text-muted-foreground tabular-nums mt-0.5">{summary.expenseCount||0} transactions</p>
         </div>
         <div className={`border rounded-lg p-4 ${bal>=0?'bg-emerald-50 border-emerald-200':'bg-red-50 border-red-200'}`}>
-          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Solde net')}</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">{tp('Solde net')}</p>
           <p className={`text-xl font-semibold tabular-nums ${bal>=0?'text-scalor-green':'text-red-600'}`}>{fmtC(bal)}</p>
           <p className={`text-xs mt-0.5 ${bal>=0?'text-scalor-green':'text-red-600'}`}>{bal>=0?'Excédent':'Déficit'}</p>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-xs font-medium text-gray-500 mb-1">{tp('Santé financière')}</p>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <p className="text-xs font-medium text-muted-foreground mb-1">{tp('Santé financière')}</p>
           <div className="flex items-baseline gap-1">
             <p className={`text-xl font-semibold tabular-nums ${scoreColor}`}>{score}</p>
-            <p className="text-xs text-gray-400">/100</p>
+            <p className="text-xs text-muted-foreground">/100</p>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2">
+          <div className="w-full bg-muted rounded-full h-1.5 mt-2">
             <div className="h-1.5 rounded-full transition-all" style={{width:`${score}%`,backgroundColor:scoreStroke}}/>
           </div>
         </div>
@@ -586,41 +586,41 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
 
       {/* Commandes + Avancement */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-900 mb-3">{tp('Commandes ce mois')}</p>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <p className="text-sm font-medium text-foreground mb-3">{tp('Commandes ce mois')}</p>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <p className="text-xs text-gray-400">{tp('Total')}</p>
-              <p className="text-lg font-semibold text-gray-900 tabular-nums">{orders.thisMonth||0}</p>
+              <p className="text-xs text-muted-foreground">{tp('Total')}</p>
+              <p className="text-lg font-semibold text-foreground tabular-nums">{orders.thisMonth||0}</p>
               {orders.growth!==undefined && <p className={`text-xs font-medium ${orders.growth>=0?'text-scalor-green':'text-red-600'}`}>{orders.growth>=0?'+':''}{orders.growth}%</p>}
             </div>
             <div>
-              <p className="text-xs text-gray-400">CA</p>
-              <p className="text-lg font-semibold text-gray-900 tabular-nums">{fmtC(orders.revenueThisMonth)}</p>
+              <p className="text-xs text-muted-foreground">CA</p>
+              <p className="text-lg font-semibold text-foreground tabular-nums">{fmtC(orders.revenueThisMonth)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-400">{tp('Livraison')}</p>
-              <p className="text-lg font-semibold text-gray-900 tabular-nums">{orders.deliveryRate||0}%</p>
+              <p className="text-xs text-muted-foreground">{tp('Livraison')}</p>
+              <p className="text-lg font-semibold text-foreground tabular-nums">{orders.deliveryRate||0}%</p>
             </div>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-900 mb-3">{tp('Avancement du mois')}</p>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <p className="text-sm font-medium text-foreground mb-3">{tp('Avancement du mois')}</p>
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <p className="text-xs text-gray-400">{tp('Dépenses / jour')}</p>
-              <p className="text-base font-semibold text-gray-900 tabular-nums">{fmtC(f.dailyExpenseRate)}</p>
+              <p className="text-xs text-muted-foreground">{tp('Dépenses / jour')}</p>
+              <p className="text-base font-semibold text-foreground tabular-nums">{fmtC(f.dailyExpenseRate)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-400">{tp('Entrées / jour')}</p>
-              <p className="text-base font-semibold text-gray-900 tabular-nums">{fmtC(f.dailyIncomeRate)}</p>
+              <p className="text-xs text-muted-foreground">{tp('Entrées / jour')}</p>
+              <p className="text-base font-semibold text-foreground tabular-nums">{fmtC(f.dailyIncomeRate)}</p>
             </div>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1">
             <span>{f.daysPassed||0} / {f.daysInMonth||30} jours</span>
             <span className="font-medium">{Math.round(f.daysInMonth>0?(f.daysPassed/f.daysInMonth*100):0)}%</span>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-1.5">
+          <div className="w-full bg-muted rounded-full h-1.5">
             <div className="h-1.5 rounded-full bg-gray-800 transition-all" style={{width:`${f.daysInMonth>0?(f.daysPassed/f.daysInMonth*100):0}%`}}/>
           </div>
         </div>
@@ -628,10 +628,10 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
 
       {/* Projections + Alertes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="bg-card border border-border rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-medium text-gray-900">{tp('Projections fin de mois')}</p>
-            <button onClick={()=>setTab('previsions')} className="text-xs text-gray-400 hover:text-gray-700 transition">{tp('Voir tout')}</button>
+            <p className="text-sm font-medium text-foreground">{tp('Projections fin de mois')}</p>
+            <button onClick={()=>setTab('previsions')} className="text-xs text-muted-foreground hover:text-foreground transition">{tp('Voir tout')}</button>
           </div>
           <div className="space-y-2">
             {[
@@ -639,26 +639,26 @@ const OverviewTab = ({ summary, budgets, forecast, fmt, fmtC, setTab, periodLabe
               {get label() { return tp('Entrées projetées'); }, value:fmtC(f.projectedIncome), color:'text-scalor-green'},
               {get label() { return tp('Solde projeté'); }, value:fmtC(f.projectedBalance), color:(f.projectedBalance||0)>=0?'text-scalor-green':'text-red-600'},
             ].map((p,idx)=>(
-              <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                <p className="text-sm text-gray-500">{p.label}</p>
+              <div key={idx} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <p className="text-sm text-muted-foreground">{p.label}</p>
                 <p className={`text-sm font-semibold tabular-nums ${p.color}`}>{p.value}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-900 mb-3">{tp('Alertes')}</p>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <p className="text-sm font-medium text-foreground mb-3">{tp('Alertes')}</p>
           {recs.length===0 ? (
-            <p className="text-sm text-gray-400">{tp('Aucune alerte')}</p>
+            <p className="text-sm text-muted-foreground">{tp('Aucune alerte')}</p>
           ) : (
             <div className="space-y-2">
               {recs.map((r,idx)=>{
                 const isWarning = r.type==='critical'||r.type==='warning';
                 return (
-                  <div key={idx} className={`p-3 rounded-lg border ${isWarning?'bg-amber-50 border-amber-200':'bg-gray-50 border-gray-200'}`}>
-                    <p className={`text-sm font-medium ${isWarning?'text-amber-800':'text-gray-700'}`}>{r.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{r.action}</p>
+                  <div key={idx} className={`p-3 rounded-lg border ${isWarning?'bg-amber-50 border-amber-200':'bg-background border-border'}`}>
+                    <p className={`text-sm font-medium ${isWarning?'text-amber-800':'text-foreground'}`}>{r.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{r.action}</p>
                   </div>
                 );
               })}
@@ -739,25 +739,25 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
   const showCashAlert = totalIncome > 0 && cashBalance < minCashRequired;
 
   return (
-  <div className="lg:border lg:border-gray-200 lg:bg-white space-y-3 lg:space-y-0">
+  <div className="lg:border lg:border-border lg:bg-card space-y-3 lg:space-y-0">
 
     {/* ── KPI row — desktop tableau / mobile cards ── */}
-    <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2 sm:gap-3 lg:gap-0 lg:grid-cols-3 lg:divide-x lg:divide-gray-200 lg:border-b lg:border-gray-200">
+    <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2 sm:gap-3 lg:gap-0 lg:grid-cols-3 lg:divide-x lg:divide-gray-200 lg:border-b lg:border-border">
       {[
-        {label:'Entrées', value:fmt(summary.totalIncome), compact:fmtCompact(summary.totalIncome), sub:`${summary.incomeCount||0} opérations`, ico:I.trend, color:'text-primary-600', icoBg:'bg-primary-50'},
+        {label:'Entrées', value:fmt(summary.totalIncome), compact:fmtCompact(summary.totalIncome), sub:`${summary.incomeCount||0} opérations`, ico:I.trend, color:'text-primary', icoBg:'bg-primary-50'},
         {label:'Dépenses', value:fmt(summary.totalExpense), compact:fmtCompact(summary.totalExpense), sub:`${summary.expenseCount||0} opérations`, ico:I.down, color:'text-red-500', icoBg:'bg-red-50'},
-        {label:'Solde net', value:fmt(balance), compact:fmtCompact(balance), sub:balance>=0?'Excédentaire':'Déficitaire', ico:I.wallet, color:balance>=0?'text-primary-600':'text-red-500', icoBg:balance>=0?'bg-primary-50':'bg-red-50'},
+        {label:'Solde net', value:fmt(balance), compact:fmtCompact(balance), sub:balance>=0?'Excédentaire':'Déficitaire', ico:I.wallet, color:balance>=0?'text-primary':'text-red-500', icoBg:balance>=0?'bg-primary-50':'bg-red-50'},
       ].map((k,i)=>(
-        <div key={i} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm lg:rounded-none lg:border-0 lg:shadow-none lg:p-5">
+        <div key={i} className="bg-card border border-border rounded-xl p-4 shadow-sm lg:rounded-none lg:border-0 lg:shadow-none lg:p-5">
           <div className="hidden lg:block mb-2">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{k.label}</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{k.label}</p>
           </div>
           <div className="flex items-start gap-3 lg:block">
             <div className={`w-9 h-9 rounded-xl ${k.icoBg} flex items-center justify-center flex-shrink-0 lg:hidden`}><Ico d={k.ico} className="w-[18px] h-[18px] text-current opacity-80" aria-hidden="true"/></div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider lg:hidden">{k.label}</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider lg:hidden">{k.label}</p>
               <p className={`text-xl lg:text-2xl font-black tabular-nums mt-0.5 lg:mt-0 leading-tight ${k.color}`}><span className="lg:hidden">{k.compact}</span><span className="hidden lg:inline">{k.value}</span></p>
-              <p className="text-xs text-gray-400 mt-0.5">{k.sub}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{k.sub}</p>
               <p className={`hidden lg:block text-xs tabular-nums mt-1 ${k.color} opacity-60`}>{k.value}</p>
             </div>
           </div>
@@ -782,17 +782,17 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
     )}
 
     {/* ── Filtres / toolbar ── */}
-    <div className="bg-white border border-gray-100 rounded-xl p-3 shadow-sm lg:rounded-none lg:border-x-0 lg:border-t-0 lg:border-b-gray-200 lg:shadow-none lg:bg-gray-50/50">
+    <div className="bg-card border border-border rounded-xl p-3 shadow-sm lg:rounded-none lg:border-x-0 lg:border-t-0 lg:border-b-gray-200 lg:shadow-none lg:bg-background/50">
       <div className="flex flex-wrap items-center gap-3">
-        <select value={filters.type} onChange={e=>setFilters(p=>({...p,type:e.target.value}))} className="px-3 py-2 border border-gray-200 rounded-lg text-xs font-medium bg-gray-50 focus:ring-2 focus:ring-gray-900/10">
+        <select value={filters.type} onChange={e=>setFilters(p=>({...p,type:e.target.value}))} className="px-3 py-2 border border-border rounded-lg text-xs font-medium bg-background focus:ring-2 focus:ring-gray-900/10">
           <option value="">{tp('Tous les types')}</option><option value="expense">{tp('Dépenses')}</option><option value="income">{tp('Entrées')}</option>
         </select>
-        <select value={filters.category} onChange={e=>setFilters(p=>({...p,category:e.target.value}))} className="px-3 py-2 border border-gray-200 rounded-lg text-xs font-medium bg-gray-50 focus:ring-2 focus:ring-gray-900/10">
+        <select value={filters.category} onChange={e=>setFilters(p=>({...p,category:e.target.value}))} className="px-3 py-2 border border-border rounded-lg text-xs font-medium bg-background focus:ring-2 focus:ring-gray-900/10">
           <option value="">{tp('Toutes catégories')}</option>
           {Object.entries(CAT).map(([k,v])=><option key={k} value={k}>{v}</option>)}
         </select>
         {(filters.type||filters.category) && (
-          <button onClick={()=>setFilters({type:'',category:''})} className="px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-500 hover:bg-gray-100 font-medium transition flex items-center gap-1">
+          <button onClick={()=>setFilters({type:'',category:''})} className="px-3 py-2 border border-border rounded-lg text-xs text-muted-foreground hover:bg-muted font-medium transition flex items-center gap-1">
             <Ico d={I.refresh} className="w-3 h-3"/>Réinitialiser
           </button>
         )}
@@ -801,20 +801,20 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
         <div className="relative ml-auto">
           <button 
             onClick={() => setShowExportMenu(!showExportMenu)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-gray-100 font-medium transition flex items-center gap-1.5"
+            className="px-3 py-2 border border-border rounded-lg text-xs text-muted-foreground hover:bg-muted font-medium transition flex items-center gap-1.5"
             disabled={transactions.length === 0}
           >
             <Ico d={I.box} className="w-3.5 h-3.5"/>Exporter
           </button>
           
           {showExportMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[140px]">
+            <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-10 min-w-[140px]">
               <button
                 onClick={() => {
                   exportToExcel(transactions, periodLabel);
                   setShowExportMenu(false);
                 }}
-                className="w-full px-3 py-2 text-xs text-left hover:bg-gray-50 transition flex items-center gap-2"
+                className="w-full px-3 py-2 text-xs text-left hover:bg-background transition flex items-center gap-2"
                 disabled={transactions.length === 0}
               >
                 <span className="w-3 h-3 bg-green-100 rounded"></span>
@@ -825,7 +825,7 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
                   exportToCSV(transactions, periodLabel);
                   setShowExportMenu(false);
                 }}
-                className="w-full px-3 py-2 text-xs text-left hover:bg-gray-50 transition flex items-center gap-2"
+                className="w-full px-3 py-2 text-xs text-left hover:bg-background transition flex items-center gap-2"
                 disabled={transactions.length === 0}
               >
                 <span className="w-3 h-3 bg-primary-100 rounded"></span>
@@ -835,28 +835,28 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
           )}
         </div>
         
-        <span className="text-xs text-gray-400 font-medium hidden sm:block">{transactions.length} résultat{transactions.length!==1?'s':''} — {periodLabel}</span>
+        <span className="text-xs text-muted-foreground font-medium hidden sm:block">{transactions.length} résultat{transactions.length!==1?'s':''} — {periodLabel}</span>
       </div>
     </div>
 
-    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm lg:rounded-none lg:border-0 lg:shadow-none">
+    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm lg:rounded-none lg:border-0 lg:shadow-none">
       <div className="sm:hidden divide-y divide-gray-50">
         {transactions.length===0 ? (
           <div className="px-6 py-12 text-center">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-3"><Ico d={I.wallet} className="w-5 h-5 text-gray-400"/></div>
-            <p className="text-sm text-gray-500 font-medium">{tp('Aucune transaction sur cette période')}</p>
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mx-auto mb-3"><Ico d={I.wallet} className="w-5 h-5 text-muted-foreground"/></div>
+            <p className="text-sm text-muted-foreground font-medium">{tp('Aucune transaction sur cette période')}</p>
           </div>
         ) : transactions.map(tx => (
           <div key={tx._id} className="px-3 py-2.5 grid grid-cols-[auto_1fr_auto] items-center gap-2">
-            <Link to={`/ecom/transactions/${tx._id}`} className="text-sm font-medium text-gray-800 hover:text-gray-900 whitespace-nowrap">
+            <Link to={`/ecom/transactions/${tx._id}`} className="text-sm font-medium text-foreground hover:text-foreground whitespace-nowrap">
               {new Date(tx.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}
             </Link>
-            <span className={`text-sm font-bold tabular-nums text-right justify-self-end ${tx.type==='income'?'text-primary-600':'text-red-500'}`}>
+            <span className={`text-sm font-bold tabular-nums text-right justify-self-end ${tx.type==='income'?'text-primary':'text-red-500'}`}>
               {tx.type==='income'?'+':'-'}{fmtCompact(tx.amount)}
             </span>
             <div className="flex items-center gap-1">
-              <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label={tp('Modifier')} className="p-1.5 rounded-lg hover:bg-gray-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-gray-400" aria-hidden="true"/></Link>
-              <button onClick={()=>handleDelete(tx._id)} aria-label={tp('Supprimer')} className="p-1.5 rounded-lg hover:bg-red-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" aria-hidden="true"/></button>
+              <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label={tp('Modifier')} className="p-1.5 rounded-lg hover:bg-muted transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true"/></Link>
+              <button onClick={()=>handleDelete(tx._id)} aria-label={tp('Supprimer')} className="p-1.5 rounded-lg hover:bg-red-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-muted-foreground hover:text-red-500" aria-hidden="true"/></button>
             </div>
           </div>
         ))}
@@ -864,32 +864,32 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
 
       <div className="hidden sm:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead><tr className="bg-gray-50">
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left border-b border-gray-200">{tp('Date')}</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden sm:table-cell border-b border-gray-200">{tp('Type')}</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden sm:table-cell border-b border-gray-200">{tp('Catégorie')}</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-left hidden md:table-cell border-b border-gray-200">{tp('Description')}</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-right border-b border-gray-200">{tp('Montant')}</th>
-            <th className="px-4 py-2.5 text-xs font-bold text-gray-500 uppercase tracking-widest text-center hidden lg:table-cell border-b border-gray-200">{tp('Soldé')}</th>
-            <th className="px-4 py-2.5 border-b border-gray-200"></th>
+          <thead><tr className="bg-background">
+            <th className="px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-left border-b border-border">{tp('Date')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-left hidden sm:table-cell border-b border-border">{tp('Type')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-left hidden sm:table-cell border-b border-border">{tp('Catégorie')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-left hidden md:table-cell border-b border-border">{tp('Description')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-right border-b border-border">{tp('Montant')}</th>
+            <th className="px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-center hidden lg:table-cell border-b border-border">{tp('Soldé')}</th>
+            <th className="px-4 py-2.5 border-b border-border"></th>
           </tr></thead>
           <tbody className="divide-y divide-gray-100">
             {transactions.length===0 ? (
               <tr><td colSpan="7" className="px-6 py-16 text-center">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-3"><Ico d={I.wallet} className="w-5 h-5 text-gray-400" aria-hidden="true"/></div>
-                <p className="text-sm text-gray-500 font-medium">{tp('Aucune transaction sur cette période')}</p>
+                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mx-auto mb-3"><Ico d={I.wallet} className="w-5 h-5 text-muted-foreground" aria-hidden="true"/></div>
+                <p className="text-sm text-muted-foreground font-medium">{tp('Aucune transaction sur cette période')}</p>
               </td></tr>
             ) : transactions.map((tx,idx)=>(
-              <tr key={tx._id} className={`hover:bg-blue-50/30 transition-colors ${idx%2===0?'bg-white':'bg-gray-50/40'}`}>
+              <tr key={tx._id} className={`hover:bg-blue-50/30 transition-colors ${idx%2===0?'bg-card':'bg-background/40'}`}>
                 <td className="px-4 py-2.5 whitespace-nowrap">
-                  <Link to={`/ecom/transactions/${tx._id}`} className="text-xs font-semibold text-gray-700 hover:text-gray-900 tabular-nums">{new Date(tx.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'2-digit'})}</Link>
+                  <Link to={`/ecom/transactions/${tx._id}`} className="text-xs font-semibold text-foreground hover:text-foreground tabular-nums">{new Date(tx.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'2-digit'})}</Link>
                 </td>
                 <td className="px-4 py-2.5 whitespace-nowrap hidden sm:table-cell">
                   <Badge variant={tx.type==='income'?'success':'danger'}>{tx.type==='income'?'Entrée': tp('Dépense')}</Badge>
                 </td>
-                <td className="px-4 py-2.5 text-xs text-gray-600 hidden sm:table-cell font-medium">{CAT[tx.category]||tx.category}</td>
-                <td className="px-4 py-2.5 text-xs text-gray-400 max-w-[200px] truncate hidden md:table-cell">{tx.description||'—'}</td>
-                <td className={`px-4 py-2.5 text-xs font-black text-right tabular-nums ${tx.type==='income'?'text-primary-600':'text-red-500'}`}>
+                <td className="px-4 py-2.5 text-xs text-muted-foreground hidden sm:table-cell font-medium">{CAT[tx.category]||tx.category}</td>
+                <td className="px-4 py-2.5 text-xs text-muted-foreground max-w-[200px] truncate hidden md:table-cell">{tx.description||'—'}</td>
+                <td className={`px-4 py-2.5 text-xs font-black text-right tabular-nums ${tx.type==='income'?'text-primary':'text-red-500'}`}>
                   <span className="sm:hidden">{tx.type==='income'?'+':'-'}{fmtCompact(tx.amount)}</span>
                   <span className="hidden sm:inline">{tx.type==='income'?'+':'-'}{fmt(tx.amount)}</span>
                 </td>
@@ -897,15 +897,15 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
                   {tx.type === 'income' ? (
                     <input type="checkbox" checked={tx.isPaid || false}
                       onChange={async (e) => { try { await ecomApi.put(`/transactions/${tx._id}`, { isPaid: e.target.checked }); } catch {} }}
-                      className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary-500 cursor-pointer"
                       aria-label={tx.isPaid ? 'Marquer comme non soldé' : tp('Marquer comme soldé')}
                     />
                   ) : <span className="text-gray-200">—</span>}
                 </td>
                 <td className="px-4 py-2.5 text-right whitespace-nowrap">
                   <div className="flex items-center justify-end gap-0.5">
-                    <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label={tp('Modifier')} className="p-1.5 rounded hover:bg-gray-200 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-gray-400" aria-hidden="true"/></Link>
-                    <button onClick={()=>handleDelete(tx._id)} aria-label={tp('Supprimer')} className="p-1.5 rounded hover:bg-red-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" aria-hidden="true"/></button>
+                    <Link to={`/ecom/transactions/${tx._id}/edit`} aria-label={tp('Modifier')} className="p-1.5 rounded hover:bg-gray-200 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95"><Ico d={I.edit} className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true"/></Link>
+                    <button onClick={()=>handleDelete(tx._id)} aria-label={tp('Supprimer')} className="p-1.5 rounded hover:bg-red-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"><Ico d={I.trash} className="w-3.5 h-3.5 text-muted-foreground hover:text-red-500" aria-hidden="true"/></button>
                   </div>
                 </td>
               </tr>
@@ -921,39 +921,39 @@ const TransactionsTab = ({ transactions, summary, balance, filters, setFilters, 
 /* ═══════════════════════════════════════════════════════════════════════════
    BudgetsTab
    ═══════════════════════════════════════════════════════════════════════════ */
-const budgetStatus = p => p>100?{badge:'Dépassé',variant:'danger',bar:'bg-red-500',dot:'bg-red-500'}:p>=70?{badge:'Attention',variant:'warning',bar:'bg-amber-400',dot:'bg-amber-400'}:{badge:'OK',variant:'success',bar:'bg-primary-500',dot:'bg-primary-500'};
+const budgetStatus = p => p>100?{badge:'Dépassé',variant:'danger',bar:'bg-red-500',dot:'bg-red-500'}:p>=70?{badge:'Attention',variant:'warning',bar:'bg-amber-400',dot:'bg-amber-400'}:{badge:'OK',variant:'success',bar:'bg-primary',dot:'bg-primary'};
 
 const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm, editingBudget, setEditingBudget, budgetForm, setBudgetForm, handleBudgetSubmit, handleDeleteBudget, products, fmt, fmtC, budgetMonth, setBudgetMonth, loadProducts, budgetError, setBudgetError, budgetSaving }) => {
   const monthOptions = getMonthOptions();
   const currentMonthLabel = monthOptions.find(m=>m.value===budgetMonth)?.label || budgetMonth;
-  const inputCls = "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition";
+  const inputCls = "w-full px-3 py-2.5 border border-border rounded-lg text-sm bg-card focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition";
 
   return (
     <div className="space-y-4">
       <Card className="p-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <Ico d={I.cal} className="w-4 h-4 text-gray-400"/>
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{tp('Période')}</span>
-          <select value={budgetMonth} onChange={e=>setBudgetMonth(e.target.value)} className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-semibold bg-gray-50 focus:ring-2 focus:ring-gray-900/10">
+          <Ico d={I.cal} className="w-4 h-4 text-muted-foreground"/>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{tp('Période')}</span>
+          <select value={budgetMonth} onChange={e=>setBudgetMonth(e.target.value)} className="px-3 py-1.5 border border-border rounded-lg text-xs font-semibold bg-background focus:ring-2 focus:ring-gray-900/10">
             {monthOptions.map(m=><option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
         </div>
-        <span className="text-xs text-gray-400 font-medium">{budgets.length} budget{budgets.length!==1?'s':''}</span>
+        <span className="text-xs text-muted-foreground font-medium">{budgets.length} budget{budgets.length!==1?'s':''}</span>
       </Card>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Metric label="Budget total" value={fmt(budgetSummary.totalBudget)} mobileValue={fmtC(budgetSummary.totalBudget)} icon={I.target} color="text-gray-900" iconBg="bg-gray-100"/>
+        <Metric label="Budget total" value={fmt(budgetSummary.totalBudget)} mobileValue={fmtC(budgetSummary.totalBudget)} icon={I.target} color="text-foreground" iconBg="bg-muted"/>
         <Metric label="Dépensé" value={fmt(budgetSummary.totalSpent)} mobileValue={fmtC(budgetSummary.totalSpent)} icon={I.down} color="text-red-500" iconBg="bg-red-50"/>
-        <Metric label="Restant" value={fmt(budgetSummary.totalRemaining)} mobileValue={fmtC(budgetSummary.totalRemaining)} icon={I.wallet} color={(budgetSummary.totalRemaining||0)>=0?'text-primary-600':'text-red-500'} iconBg={(budgetSummary.totalRemaining||0)>=0?'bg-primary-50':'bg-red-50'}/>
-        <Metric label="Dépassements" value={`${budgetSummary.exceededCount||0}`} sub="budget(s) en alerte" icon={(budgetSummary.exceededCount||0)>0?I.alert:I.check} color={(budgetSummary.exceededCount||0)>0?'text-red-500':'text-primary-600'} iconBg={(budgetSummary.exceededCount||0)>0?'bg-red-50':'bg-primary-50'}/>
+        <Metric label="Restant" value={fmt(budgetSummary.totalRemaining)} mobileValue={fmtC(budgetSummary.totalRemaining)} icon={I.wallet} color={(budgetSummary.totalRemaining||0)>=0?'text-primary':'text-red-500'} iconBg={(budgetSummary.totalRemaining||0)>=0?'bg-primary-50':'bg-red-50'}/>
+        <Metric label="Dépassements" value={`${budgetSummary.exceededCount||0}`} sub="budget(s) en alerte" icon={(budgetSummary.exceededCount||0)>0?I.alert:I.check} color={(budgetSummary.exceededCount||0)>0?'text-red-500':'text-primary'} iconBg={(budgetSummary.exceededCount||0)>0?'bg-red-50':'bg-primary-50'}/>
       </div>
 
       {showBudgetForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => { if (!budgetSaving) { setShowBudgetForm(false); setEditingBudget(null); setBudgetError(''); } }}>
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-card rounded-2xl shadow-xl max-w-lg w-full p-6" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-bold text-gray-900">{editingBudget?'Modifier le budget': tp('Nouveau budget')}</h3>
-              <button onClick={() => {setShowBudgetForm(false);setEditingBudget(null);setBudgetError('');}} aria-label={tp('Fermer')} className="text-gray-400 hover:text-gray-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 rounded-lg p-0.5 active:scale-95">
+              <h3 className="text-lg font-bold text-foreground">{editingBudget?'Modifier le budget': tp('Nouveau budget')}</h3>
+              <button onClick={() => {setShowBudgetForm(false);setEditingBudget(null);setBudgetError('');}} aria-label={tp('Fermer')} className="text-muted-foreground hover:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 rounded-lg p-0.5 active:scale-95">
                 <Ico d={I.close} className="w-5 h-5" aria-hidden="true"/>
               </button>
             </div>
@@ -966,31 +966,31 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Nom')}</label>
                 <input required value={budgetForm.name} onChange={e=>setBudgetForm(p=>({...p,name:e.target.value}))} placeholder={tp('Ex: Budget Pub')} className={inputCls}/>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Mois')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Mois')}</label>
                 <select required value={budgetForm.month||budgetMonth} onChange={e=>setBudgetForm(p=>({...p,month:e.target.value}))} className={inputCls}>
                   {monthOptions.map(m=><option key={m.value} value={m.value}>{m.label}</option>)}
                 </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Catégorie')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Catégorie')}</label>
                 <select required value={budgetForm.category} onChange={e=>setBudgetForm(p=>({...p,category:e.target.value}))} className={inputCls}>
                   {EXP_CATS.map(c=><option key={c} value={c}>{CAT[c]}</option>)}
                 </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Montant limite')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Montant limite')}</label>
                 <input required type="number" min="1" value={budgetForm.amount} onChange={e=>setBudgetForm(p=>({...p,amount:e.target.value}))} placeholder="150 000" className={inputCls}/>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Produit lié (optionnel)')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Produit lié (optionnel)')}</label>
                 <select value={budgetForm.productId||''} onChange={e=>setBudgetForm(p=>({...p,productId:e.target.value||null}))} className={inputCls}>
                   <option value="">{tp('— Toute la catégorie —')}</option>
                   {(products||[]).length===0 && <option disabled>{tp('Chargement des produits...')}</option>}
@@ -999,7 +999,7 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
               </div>
               
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={()=>{setShowBudgetForm(false);setEditingBudget(null);setBudgetError('');}} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium transition" disabled={budgetSaving}>
+                <button type="button" onClick={()=>{setShowBudgetForm(false);setEditingBudget(null);setBudgetError('');}} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-foreground hover:bg-background font-medium transition" disabled={budgetSaving}>
                   {tp('Annuler')}
                 </button>
                 <button type="submit" disabled={budgetSaving} className="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
@@ -1029,36 +1029,36 @@ const BudgetsTab = ({ budgets, budgetSummary, showBudgetForm, setShowBudgetForm,
                     <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${cfg.dot}`}/>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-gray-900">{b.name}</p>
+                        <p className="text-sm font-semibold text-foreground">{b.name}</p>
                         <Badge variant={cfg.variant}>{cfg.badge}</Badge>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                        <p className="text-xs text-gray-400 font-medium">{CAT[b.category]||b.category}</p>
+                        <p className="text-xs text-muted-foreground font-medium">{CAT[b.category]||b.category}</p>
                         {prodName && <Badge variant="info">{prodName}</Badge>}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <div className="text-right hidden sm:block">
-                      <p className="text-sm font-bold text-gray-900 tabular-nums">{fmt(b.totalSpent)} <span className="text-gray-400 font-normal text-xs">/ {fmt(b.amount)}</span></p>
-                      <p className="text-xs text-gray-400">{fmtC(Math.max(b.remaining,0))} restants — {b.transactionCount||0} tx</p>
+                      <p className="text-sm font-bold text-foreground tabular-nums">{fmt(b.totalSpent)} <span className="text-muted-foreground font-normal text-xs">/ {fmt(b.amount)}</span></p>
+                      <p className="text-xs text-muted-foreground">{fmtC(Math.max(b.remaining,0))} restants — {b.transactionCount||0} tx</p>
                     </div>
                     <div className="flex gap-0.5">
-                      <button onClick={()=>{setBudgetError('');setEditingBudget(b);setBudgetForm({name:b.name,category:b.category,amount:b.amount,productId:b.productId?._id||'',month:b.month||budgetMonth});setShowBudgetForm(true);loadProducts();}} aria-label={tp('Modifier le budget')} className="p-1.5 rounded-lg hover:bg-gray-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95">
-                        <Ico d={I.edit} className="w-4 h-4 text-gray-400" aria-hidden="true"/>
+                      <button onClick={()=>{setBudgetError('');setEditingBudget(b);setBudgetForm({name:b.name,category:b.category,amount:b.amount,productId:b.productId?._id||'',month:b.month||budgetMonth});setShowBudgetForm(true);loadProducts();}} aria-label={tp('Modifier le budget')} className="p-1.5 rounded-lg hover:bg-muted transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 active:scale-95">
+                        <Ico d={I.edit} className="w-4 h-4 text-muted-foreground" aria-hidden="true"/>
                       </button>
                       <button onClick={()=>handleDeleteBudget(b._id)} aria-label={tp('Supprimer le budget')} className="p-1.5 rounded-lg hover:bg-red-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95">
-                        <Ico d={I.trash} className="w-4 h-4 text-gray-400 hover:text-red-500" aria-hidden="true"/>
+                        <Ico d={I.trash} className="w-4 h-4 text-muted-foreground hover:text-red-500" aria-hidden="true"/>
                       </button>
                     </div>
                   </div>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2" role="progressbar" aria-valuenow={Math.min(b.percentage,100)} aria-valuemin={0} aria-valuemax={100} aria-label={b.name}>
+                <div className="w-full bg-muted rounded-full h-2" role="progressbar" aria-valuenow={Math.min(b.percentage,100)} aria-valuemin={0} aria-valuemax={100} aria-label={b.name}>
                   <div className={`h-2 rounded-full transition-all ${cfg.bar}`} style={{width:`${Math.min(b.percentage,100)}%`}}/>
                 </div>
                 <div className="flex justify-between mt-1.5">
-                  <p className="text-xs text-gray-400 font-medium">{b.percentage.toFixed(1)}% utilisé</p>
-                  <p className="text-xs text-gray-400 font-medium sm:hidden">{fmtC(b.totalSpent)} / {fmtC(b.amount)}</p>
+                  <p className="text-xs text-muted-foreground font-medium">{b.percentage.toFixed(1)}% utilisé</p>
+                  <p className="text-xs text-muted-foreground font-medium sm:hidden">{fmtC(b.totalSpent)} / {fmtC(b.amount)}</p>
                 </div>
               </Card>
             );
@@ -1085,7 +1085,7 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
   const monthLabels = [...new Set(months.map(m=>`${m._id.year}-${String(m._id.month).padStart(2,'0')}`))].sort();
   const lastBal = (a.lastMonth?.income||0)-(a.lastMonth?.expenses||0);
   const expColors = ['bg-red-500','bg-red-400','bg-orange-400','bg-amber-400','bg-yellow-400','bg-gray-400','bg-gray-300','bg-gray-200'];
-  const incColors = ['bg-primary-500','bg-primary-400','bg-teal-400','bg-teal-300','bg-cyan-400','bg-cyan-300'];
+  const incColors = ['bg-primary','bg-primary-400','bg-teal-400','bg-teal-300','bg-cyan-400','bg-cyan-300'];
 
   const getMonthData = (ml) => {
     const inc = months.find(m=>`${m._id.year}-${String(m._id.month).padStart(2,'0')}`===ml&&m._id.type==='income')?.total||0;
@@ -1097,10 +1097,10 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
     <div className="space-y-4">
       {/* KPI row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Metric label="Total entrées" value={fmt(a.totalIncome)} mobileValue={fmtC(a.totalIncome)} icon={I.trend} color="text-primary-600" iconBg="bg-primary-50"/>
+        <Metric label="Total entrées" value={fmt(a.totalIncome)} mobileValue={fmtC(a.totalIncome)} icon={I.trend} color="text-primary" iconBg="bg-primary-50"/>
         <Metric label="Total dépenses" value={fmt(a.totalExpenses)} mobileValue={fmtC(a.totalExpenses)} icon={I.down} color="text-red-500" iconBg="bg-red-50"/>
-        <Metric label="Solde global" value={fmt(a.balance)} mobileValue={fmtC(a.balance)} icon={I.wallet} color={(a.balance||0)>=0?'text-primary-600':'text-red-500'} iconBg={(a.balance||0)>=0?'bg-primary-50':'bg-red-50'}/>
-        <Metric label="Mois précédent" value={fmt(lastBal)} mobileValue={fmtC(lastBal)} sub={lastBal>=0?'Excédentaire': tp('Déficitaire')} icon={I.cal} color={lastBal>=0?'text-primary-600':'text-red-500'} iconBg="bg-gray-100"/>
+        <Metric label="Solde global" value={fmt(a.balance)} mobileValue={fmtC(a.balance)} icon={I.wallet} color={(a.balance||0)>=0?'text-primary':'text-red-500'} iconBg={(a.balance||0)>=0?'bg-primary-50':'bg-red-50'}/>
+        <Metric label="Mois précédent" value={fmt(lastBal)} mobileValue={fmtC(lastBal)} sub={lastBal>=0?'Excédentaire': tp('Déficitaire')} icon={I.cal} color={lastBal>=0?'text-primary':'text-red-500'} iconBg="bg-muted"/>
       </div>
 
 
@@ -1108,17 +1108,17 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-5">
           <SectionTitle>{tp('Dépenses par catégorie')}</SectionTitle>
-          {expenses.length===0 ? <p className="text-sm text-gray-400 py-6 text-center">{tp('Aucune dépense enregistrée')}</p> : (
+          {expenses.length===0 ? <p className="text-sm text-muted-foreground py-6 text-center">{tp('Aucune dépense enregistrée')}</p> : (
             <div className="space-y-3">
               {expenses.sort((x,y)=>y.total-x.total).map((c,idx)=>{
                 const pct = totalExp>0?(c.total/totalExp*100):0;
                 return (
                   <div key={idx}>
                     <div className="flex justify-between text-sm mb-1.5">
-                      <span className="text-gray-700 font-medium">{CAT[c._id.category]||c._id.category}</span>
-                      <span className="font-bold text-red-500 tabular-nums"><span className="sm:hidden">{fmtC(c.total)}</span><span className="hidden sm:inline">{fmt(c.total)}</span> <span className="text-gray-400 font-normal text-xs">({pct.toFixed(0)}%)</span></span>
+                      <span className="text-foreground font-medium">{CAT[c._id.category]||c._id.category}</span>
+                      <span className="font-bold text-red-500 tabular-nums"><span className="sm:hidden">{fmtC(c.total)}</span><span className="hidden sm:inline">{fmt(c.total)}</span> <span className="text-muted-foreground font-normal text-xs">({pct.toFixed(0)}%)</span></span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                    <div className="w-full bg-muted rounded-full h-1.5">
                       <div className={`h-1.5 rounded-full transition-all ${expColors[idx]||'bg-gray-300'}`} style={{width:`${pct}%`}}/>
                     </div>
                   </div>
@@ -1129,17 +1129,17 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
         </Card>
         <Card className="p-5">
           <SectionTitle>{tp('Entrées par catégorie')}</SectionTitle>
-          {income.length===0 ? <p className="text-sm text-gray-400 py-6 text-center">{tp('Aucune entrée enregistrée')}</p> : (
+          {income.length===0 ? <p className="text-sm text-muted-foreground py-6 text-center">{tp('Aucune entrée enregistrée')}</p> : (
             <div className="space-y-3">
               {income.sort((x,y)=>y.total-x.total).map((c,idx)=>{
                 const pct = totalInc>0?(c.total/totalInc*100):0;
                 return (
                   <div key={idx}>
                     <div className="flex justify-between text-sm mb-1.5">
-                      <span className="text-gray-700 font-medium">{CAT[c._id.category]||c._id.category}</span>
-                      <span className="font-bold text-primary-600 tabular-nums"><span className="sm:hidden">{fmtC(c.total)}</span><span className="hidden sm:inline">{fmt(c.total)}</span> <span className="text-gray-400 font-normal text-xs">({pct.toFixed(0)}%)</span></span>
+                      <span className="text-foreground font-medium">{CAT[c._id.category]||c._id.category}</span>
+                      <span className="font-bold text-primary tabular-nums"><span className="sm:hidden">{fmtC(c.total)}</span><span className="hidden sm:inline">{fmt(c.total)}</span> <span className="text-muted-foreground font-normal text-xs">({pct.toFixed(0)}%)</span></span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                    <div className="w-full bg-muted rounded-full h-1.5">
                       <div className={`h-1.5 rounded-full transition-all ${incColors[idx]||'bg-gray-300'}`} style={{width:`${pct}%`}}/>
                     </div>
                   </div>
@@ -1162,25 +1162,25 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
               const label=new Date(+y,+mo-1,1).toLocaleDateString('fr-FR',{month:'short'});
               return (
                 <div key={ml} className="flex items-center gap-3">
-                  <span className="text-xs text-gray-500 w-10 capitalize font-medium">{label}</span>
+                  <span className="text-xs text-muted-foreground w-10 capitalize font-medium">{label}</span>
                   <div className="flex-1 flex gap-0.5 h-3">
                     <div className="bg-primary-400 rounded-sm" style={{width:`${inc/maxVal*50}%`}} title={`Entrées: ${fmt(inc)}`}/>
                     <div className="bg-red-300 rounded-sm" style={{width:`${exp/maxVal*50}%`}} title={`Dépenses: ${fmt(exp)}`}/>
                   </div>
-                  <span className={`text-xs font-bold w-16 sm:w-24 text-right tabular-nums ${mBal>=0?'text-primary-600':'text-red-500'}`}>{mBal>=0?'+':''}<span className="sm:hidden">{fmtC(mBal)}</span><span className="hidden sm:inline">{fmt(mBal)}</span></span>
+                  <span className={`text-xs font-bold w-16 sm:w-24 text-right tabular-nums ${mBal>=0?'text-primary':'text-red-500'}`}>{mBal>=0?'+':''}<span className="sm:hidden">{fmtC(mBal)}</span><span className="hidden sm:inline">{fmt(mBal)}</span></span>
                 </div>
               );
             })}
-            <div className="flex gap-4 mt-1 text-xs text-gray-400 ml-14">
+            <div className="flex gap-4 mt-1 text-xs text-muted-foreground ml-14">
               <span className="flex items-center gap-1"><span className="w-2 h-2 bg-primary-400 rounded-sm"/>{tp('Entrées')}</span>
               <span className="flex items-center gap-1"><span className="w-2 h-2 bg-red-300 rounded-sm"/>{tp('Dépenses')}</span>
             </div>
           </div>
-          <div className="overflow-x-auto border-t border-gray-100 pt-4">
+          <div className="overflow-x-auto border-t border-border pt-4">
             <table className="min-w-full text-sm">
-              <thead><tr className="border-b border-gray-100">
+              <thead><tr className="border-b border-border">
                 {['Mois','Entrées','Dépenses','Solde'].map((h,idx)=>(
-                  <th key={idx} className={`py-2 text-xs text-gray-400 font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>
+                  <th key={idx} className={`py-2 text-xs text-muted-foreground font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>
                 ))}
               </tr></thead>
               <tbody className="divide-y divide-gray-50">
@@ -1189,11 +1189,11 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
                   const [y,mo]=ml.split('-');
                   const label=new Date(+y,+mo-1,1).toLocaleDateString('fr-FR',{month:'short',year:'numeric'});
                   return (
-                    <tr key={ml} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="py-2.5 text-gray-700 capitalize font-medium">{label}</td>
-                      <td className="py-2.5 text-right text-primary-600 font-semibold tabular-nums"><span className="sm:hidden">{fmtC(inc)}</span><span className="hidden sm:inline">{fmt(inc)}</span></td>
+                    <tr key={ml} className="hover:bg-background/50 transition-colors">
+                      <td className="py-2.5 text-foreground capitalize font-medium">{label}</td>
+                      <td className="py-2.5 text-right text-primary font-semibold tabular-nums"><span className="sm:hidden">{fmtC(inc)}</span><span className="hidden sm:inline">{fmt(inc)}</span></td>
                       <td className="py-2.5 text-right text-red-500 font-semibold tabular-nums"><span className="sm:hidden">{fmtC(exp)}</span><span className="hidden sm:inline">{fmt(exp)}</span></td>
-                      <td className={`py-2.5 text-right font-bold tabular-nums ${mBal>=0?'text-primary-600':'text-red-500'}`}><span className="sm:hidden">{fmtC(mBal)}</span><span className="hidden sm:inline">{fmt(mBal)}</span></td>
+                      <td className={`py-2.5 text-right font-bold tabular-nums ${mBal>=0?'text-primary':'text-red-500'}`}><span className="sm:hidden">{fmtC(mBal)}</span><span className="hidden sm:inline">{fmt(mBal)}</span></td>
                     </tr>
                   );
                 })}
@@ -1213,7 +1213,7 @@ const AnalyseTab = ({ accountingSummary, fmt, fmtC, periodLabel, pStart, pEnd })
 const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
   const f = forecast;
   const score = f.healthScore||0;
-  const scoreColor = score>=70?'text-primary-600':score>=40?'text-amber-600':'text-red-500';
+  const scoreColor = score>=70?'text-primary':score>=40?'text-amber-600':'text-red-500';
   const scoreStroke = score>=70?'#059669':score>=40?'#d97706':'#ef4444';
   const orders = f.orders||{};
   const recs = f.recommendations||[];
@@ -1227,9 +1227,9 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
     <div className="space-y-4">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Metric label="Dép. projetées" value={fmt(f.projectedExpense)} mobileValue={fmtC(f.projectedExpense)} sub={f.expenseVsAvg!==undefined?`${arr(f.expenseVsAvg)} ${Math.abs(f.expenseVsAvg)}% vs moy.`:null} icon={I.down} color="text-red-500" subColor={varColorInv(f.expenseVsAvg||0)} iconBg="bg-red-50"/>
-        <Metric label="Ent. projetées" value={fmt(f.projectedIncome)} mobileValue={fmtC(f.projectedIncome)} sub={f.incomeVsAvg!==undefined?`${arr(f.incomeVsAvg)} ${Math.abs(f.incomeVsAvg)}% vs moy.`:null} icon={I.trend} color="text-primary-600" subColor={varColor(f.incomeVsAvg||0)} iconBg="bg-primary-50"/>
-        <Metric label="Solde projeté" value={fmt(f.projectedBalance)} mobileValue={fmtC(f.projectedBalance)} sub={`Marge: ${f.projectedIncome>0?Math.round((f.projectedIncome-(f.projectedExpense||0))/f.projectedIncome*100):0}%`} icon={I.wallet} color={(f.projectedBalance||0)>=0?'text-primary-600':'text-red-500'} iconBg={(f.projectedBalance||0)>=0?'bg-primary-50':'bg-red-50'}/>
-        <Metric label="Jours restants" value={`${f.daysLeft||0}`} sub={`sur ${f.daysInMonth||30} jours`} icon={I.clock} color="text-gray-700" iconBg="bg-gray-100"/>
+        <Metric label="Ent. projetées" value={fmt(f.projectedIncome)} mobileValue={fmtC(f.projectedIncome)} sub={f.incomeVsAvg!==undefined?`${arr(f.incomeVsAvg)} ${Math.abs(f.incomeVsAvg)}% vs moy.`:null} icon={I.trend} color="text-primary" subColor={varColor(f.incomeVsAvg||0)} iconBg="bg-primary-50"/>
+        <Metric label="Solde projeté" value={fmt(f.projectedBalance)} mobileValue={fmtC(f.projectedBalance)} sub={`Marge: ${f.projectedIncome>0?Math.round((f.projectedIncome-(f.projectedExpense||0))/f.projectedIncome*100):0}%`} icon={I.wallet} color={(f.projectedBalance||0)>=0?'text-primary':'text-red-500'} iconBg={(f.projectedBalance||0)>=0?'bg-primary-50':'bg-red-50'}/>
+        <Metric label="Jours restants" value={`${f.daysLeft||0}`} sub={`sur ${f.daysInMonth||30} jours`} icon={I.clock} color="text-foreground" iconBg="bg-muted"/>
       </div>
 
       {/* Score + Rythme */}
@@ -1246,14 +1246,14 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
             </div>
             <div className="min-w-0">
               <p className={`text-base font-bold ${scoreColor}`}>{f.healthLabel||'—'}</p>
-              <div className="mt-2 space-y-1 text-xs text-gray-400">
-                <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium"><span>{tp('Moy. dép. 3m')}</span><span className="text-gray-700 font-semibold tabular-nums">{fmtC(f.avg3mExpense)}</span></div>
-                <div className="flex justify-between gap-4"><span>{tp('Moy. ent. 3m')}</span><span className="text-gray-700 font-semibold tabular-nums">{fmtC(f.avg3mIncome)}</span></div>
+              <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                <div className="flex justify-between text-xs text-muted-foreground mb-1.5 font-medium"><span>{tp('Moy. dép. 3m')}</span><span className="text-foreground font-semibold tabular-nums">{fmtC(f.avg3mExpense)}</span></div>
+                <div className="flex justify-between gap-4"><span>{tp('Moy. ent. 3m')}</span><span className="text-foreground font-semibold tabular-nums">{fmtC(f.avg3mIncome)}</span></div>
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium"><span>{tp('Avancement')}</span><span>{f.daysPassed||0}/{f.daysInMonth||30}j</span></div>
+          <div className="bg-background rounded-lg p-3">
+            <div className="flex justify-between text-xs text-muted-foreground mb-1.5 font-medium"><span>{tp('Avancement')}</span><span>{f.daysPassed||0}/{f.daysInMonth||30}j</span></div>
             <div className="w-full bg-gray-200 rounded-full h-1.5"><div className="h-1.5 rounded-full bg-gray-900 transition-all" style={{width:`${f.daysInMonth>0?(f.daysPassed/f.daysInMonth*100):0}%`}}/></div>
           </div>
         </Card>
@@ -1261,22 +1261,22 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
         <Card className="p-5">
           <SectionTitle>{tp('Rythme')}</SectionTitle>
           <div className="space-y-2 mb-4">
-            <div className="flex justify-between items-center text-sm bg-red-50 rounded-lg px-3 py-2"><span className="text-gray-600 font-medium">{tp('Dépenses / jour')}</span><span className="font-bold text-red-500 tabular-nums">{fmtC(f.dailyExpenseRate||0)}</span></div>
-            <div className="flex justify-between items-center text-sm bg-primary-50 rounded-lg px-3 py-2"><span className="text-gray-600 font-medium">{tp('Entrées / jour')}</span><span className="font-bold text-primary-600 tabular-nums">{fmtC(f.dailyIncomeRate||0)}</span></div>
+            <div className="flex justify-between items-center text-sm bg-red-50 rounded-lg px-3 py-2"><span className="text-muted-foreground font-medium">{tp('Dépenses / jour')}</span><span className="font-bold text-red-500 tabular-nums">{fmtC(f.dailyExpenseRate||0)}</span></div>
+            <div className="flex justify-between items-center text-sm bg-primary-50 rounded-lg px-3 py-2"><span className="text-muted-foreground font-medium">{tp('Entrées / jour')}</span><span className="font-bold text-primary tabular-nums">{fmtC(f.dailyIncomeRate||0)}</span></div>
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <div className="text-center bg-gray-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-gray-900">{orders.thisMonth||0}</p>
-              <p className="text-xs text-gray-400 font-medium">{tp('Commandes')}</p>
+            <div className="text-center bg-background rounded-lg p-3">
+              <p className="text-xl font-bold text-foreground">{orders.thisMonth||0}</p>
+              <p className="text-xs text-muted-foreground font-medium">{tp('Commandes')}</p>
               {orders.growth!==undefined && <p className={`text-xs font-bold ${varColor(orders.growth)}`}>{arr(orders.growth)} {Math.abs(orders.growth)}%</p>}
             </div>
-            <div className="text-center bg-gray-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-primary-600 tabular-nums truncate">{fmtC(orders.revenueThisMonth)}</p>
-              <p className="text-xs text-gray-400 font-medium">CA</p>
+            <div className="text-center bg-background rounded-lg p-3">
+              <p className="text-xl font-bold text-primary tabular-nums truncate">{fmtC(orders.revenueThisMonth)}</p>
+              <p className="text-xs text-muted-foreground font-medium">CA</p>
             </div>
-            <div className="text-center bg-gray-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-gray-900">{orders.deliveryRate||0}%</p>
-              <p className="text-xs text-gray-400 font-medium">{tp('Livraison')}</p>
+            <div className="text-center bg-background rounded-lg p-3">
+              <p className="text-xl font-bold text-foreground">{orders.deliveryRate||0}%</p>
+              <p className="text-xs text-muted-foreground font-medium">{tp('Livraison')}</p>
             </div>
           </div>
         </Card>
@@ -1295,8 +1295,8 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
                     <Ico d={r.type==='critical'?I.alert:r.type==='warning'?I.alert:r.type==='success'?I.check:I.ai} className={`w-4 h-4 flex-shrink-0 mt-0.5 ${cfg.text}`}/>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1"><p className={`text-xs font-bold ${cfg.text}`}>{r.title}</p><Badge variant={r.type==='critical'?'danger':r.type==='warning'?'warning':r.type==='success'?'success':'info'}>{r.type}</Badge></div>
-                      <p className="text-xs text-gray-600 mb-1">{r.detail}</p>
-                      <p className="text-xs font-bold text-gray-700">{r.action}</p>
+                      <p className="text-xs text-muted-foreground mb-1">{r.detail}</p>
+                      <p className="text-xs font-bold text-foreground">{r.action}</p>
                     </div>
                   </div>
                 </div>
@@ -1313,16 +1313,16 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
             <SectionTitle>{tp('Dépenses par catégorie')}</SectionTitle>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
-                <thead><tr className="border-b border-gray-100">
-                  {['Catégorie','Ce mois','Variation','Projeté'].map((h,idx)=><th key={idx} className={`py-2 text-xs text-gray-400 font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>)}
+                <thead><tr className="border-b border-border">
+                  {['Catégorie','Ce mois','Variation','Projeté'].map((h,idx)=><th key={idx} className={`py-2 text-xs text-muted-foreground font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>)}
                 </tr></thead>
                 <tbody className="divide-y divide-gray-50">
                   {cats.map((c,idx)=>(
-                    <tr key={idx} className="hover:bg-gray-50/50">
-                      <td className="py-2.5 text-gray-700 font-medium text-xs">{CAT[c.category]||c.category}</td>
+                    <tr key={idx} className="hover:bg-background/50">
+                      <td className="py-2.5 text-foreground font-medium text-xs">{CAT[c.category]||c.category}</td>
                       <td className="py-2.5 text-right text-red-500 font-semibold text-xs tabular-nums">{fmtC(c.currentSpent)}</td>
                       <td className={`py-2.5 text-right font-bold text-xs ${varColorInv(c.variation)}`}>{arr(c.variation)} {Math.abs(c.variation)}%</td>
-                      <td className="py-2.5 text-right text-gray-700 font-medium text-xs tabular-nums">{fmtC(c.projected)}</td>
+                      <td className="py-2.5 text-right text-foreground font-medium text-xs tabular-nums">{fmtC(c.projected)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1336,20 +1336,20 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
             <SectionTitle>{tp('Top produits')}</SectionTitle>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
-                <thead><tr className="border-b border-gray-100">
-                  {['Produit','Cmd','CA','Livr.','Profit'].map((h,idx)=><th key={idx} className={`py-2 text-xs text-gray-400 font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>)}
+                <thead><tr className="border-b border-border">
+                  {['Produit','Cmd','CA','Livr.','Profit'].map((h,idx)=><th key={idx} className={`py-2 text-xs text-muted-foreground font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>)}
                 </tr></thead>
                 <tbody className="divide-y divide-gray-50">
                   {prods.slice(0,8).map((p,idx)=>(
-                    <tr key={idx} className="hover:bg-gray-50/50">
+                    <tr key={idx} className="hover:bg-background/50">
                       <td className="py-2.5">
-                        <span className="text-xs text-gray-700 font-medium">{p.name}</span>
+                        <span className="text-xs text-foreground font-medium">{p.name}</span>
                         {p.status && <Badge variant={p.status==='winner'?'warning':p.status==='test'?'info':'default'}>{p.status}</Badge>}
                       </td>
-                      <td className="py-2.5 text-right text-xs text-gray-700 font-semibold tabular-nums">{p.orders}</td>
-                      <td className="py-2.5 text-right text-xs text-primary-600 font-semibold tabular-nums">{fmtC(p.revenue)}</td>
-                      <td className="py-2.5 text-right text-xs text-gray-500">{p.deliveryRate}%</td>
-                      <td className={`py-2.5 text-right text-xs font-bold tabular-nums ${p.estimatedProfit>=0?'text-primary-600':'text-red-500'}`}>{fmtC(p.estimatedProfit)}</td>
+                      <td className="py-2.5 text-right text-xs text-foreground font-semibold tabular-nums">{p.orders}</td>
+                      <td className="py-2.5 text-right text-xs text-primary font-semibold tabular-nums">{fmtC(p.revenue)}</td>
+                      <td className="py-2.5 text-right text-xs text-muted-foreground">{p.deliveryRate}%</td>
+                      <td className={`py-2.5 text-right text-xs font-bold tabular-nums ${p.estimatedProfit>=0?'text-primary':'text-red-500'}`}>{fmtC(p.estimatedProfit)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1393,7 +1393,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
                 const mx=Math.max(...weekly.map(wk=>Math.max(wk.expenses,wk.income)),1);
                 return (
                   <div key={idx}>
-                    <div className="flex justify-between text-xs text-gray-400 mb-1 font-medium"><span>Sem. {w.week}</span><span className={`font-bold ${w.balance>=0?'text-primary-600':'text-red-500'}`}>{w.balance>=0?'+':''}{fmtC(w.balance)}</span></div>
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1 font-medium"><span>Sem. {w.week}</span><span className={`font-bold ${w.balance>=0?'text-primary':'text-red-500'}`}>{w.balance>=0?'+':''}{fmtC(w.balance)}</span></div>
                     <div className="flex gap-0.5 h-3">
                       <div className="bg-red-300 rounded-sm" style={{width:`${w.expenses/mx*50}%`}}/>
                       <div className="bg-primary-400 rounded-sm" style={{width:`${w.income/mx*50}%`}}/>
@@ -1401,7 +1401,7 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
                   </div>
                 );
               })}
-              <div className="flex gap-4 mt-1 text-xs text-gray-400">
+              <div className="flex gap-4 mt-1 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 bg-red-300 rounded-sm"/>{tp('Dépenses')}</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 bg-primary-400 rounded-sm"/>{tp('Entrées')}</span>
               </div>
@@ -1414,8 +1414,8 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
             <SectionTitle>{tp('Tendance mensuelle')}</SectionTitle>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
-                <thead><tr className="border-b border-gray-100">
-                  {['Mois','Entrées','Dépenses','Marge'].map((h,idx)=><th key={idx} className={`py-2 text-xs text-gray-400 font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>)}
+                <thead><tr className="border-b border-border">
+                  {['Mois','Entrées','Dépenses','Marge'].map((h,idx)=><th key={idx} className={`py-2 text-xs text-muted-foreground font-bold uppercase ${idx>0?'text-right':'text-left'}`}>{h}</th>)}
                 </tr></thead>
                 <tbody className="divide-y divide-gray-50">
                   {monthly.map((m,idx)=>{
@@ -1423,11 +1423,11 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
                     const label=new Date(+y,+mo-1,1).toLocaleDateString('fr-FR',{month:'short',year:'numeric'});
                     const mBal=m.income-m.expenses;
                     return (
-                      <tr key={idx} className="hover:bg-gray-50/50">
-                        <td className="py-2.5 text-gray-700 capitalize font-medium text-xs">{label}</td>
-                        <td className="py-2.5 text-right text-primary-600 font-semibold text-xs tabular-nums">{fmtC(m.income)}</td>
+                      <tr key={idx} className="hover:bg-background/50">
+                        <td className="py-2.5 text-foreground capitalize font-medium text-xs">{label}</td>
+                        <td className="py-2.5 text-right text-primary font-semibold text-xs tabular-nums">{fmtC(m.income)}</td>
                         <td className="py-2.5 text-right text-red-500 font-semibold text-xs tabular-nums">{fmtC(m.expenses)}</td>
-                        <td className={`py-2.5 text-right font-bold text-xs ${mBal>=0?'text-primary-600':'text-red-500'}`}>{m.margin}%</td>
+                        <td className={`py-2.5 text-right font-bold text-xs ${mBal>=0?'text-primary':'text-red-500'}`}>{m.margin}%</td>
                       </tr>
                     );
                   })}
@@ -1444,10 +1444,10 @@ const PrevisionsTab = ({ forecast, fmt, fmtC }) => {
           <SectionTitle>{tp('Répartition des commandes')}</SectionTitle>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {(orders.byStatus||[]).map((s,idx)=>(
-              <div key={idx} className="text-center p-3 bg-gray-50 rounded-lg">
-                <p className="text-xl font-bold text-gray-900">{s.count}</p>
-                <p className="text-xs text-gray-500 font-medium">{STATUS_LABELS[s.status]||s.status}</p>
-                <p className="text-xs text-gray-400 tabular-nums">{fmtC(s.revenue)}</p>
+              <div key={idx} className="text-center p-3 bg-background rounded-lg">
+                <p className="text-xl font-bold text-foreground">{s.count}</p>
+                <p className="text-xs text-muted-foreground font-medium">{STATUS_LABELS[s.status]||s.status}</p>
+                <p className="text-xs text-muted-foreground tabular-nums">{fmtC(s.revenue)}</p>
               </div>
             ))}
           </div>

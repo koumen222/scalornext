@@ -235,18 +235,18 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
   };
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-gray-200 p-6 space-y-4">
+    <div className="bg-card rounded-2xl border-2 border-border p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-[14px] font-bold text-gray-900 flex items-center gap-2">
+          <h3 className="text-[14px] font-bold text-foreground flex items-center gap-2">
             <Upload className="w-5 h-5" />
             {tp('Importer des produits (CSV)')}
           </h3>
-          <p className="text-[12px] text-gray-400 mt-1">{tp('Importez plusieurs produits à la fois')}</p>
+          <p className="text-[12px] text-muted-foreground mt-1">{tp('Importez plusieurs produits à la fois')}</p>
         </div>
         <button
           onClick={downloadTemplate}
-          className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 text-[12px] font-semibold"
+          className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-background flex items-center gap-2 text-[12px] font-semibold"
         >
           <Download className="w-4 h-4" />
           {tp('Modèle')}
@@ -283,21 +283,21 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
           htmlFor="file-upload-local"
           className="cursor-pointer flex flex-col items-center"
         >
-          <FileText className="w-8 h-8 text-gray-400 mb-2" />
-          <span className="text-[12px] text-gray-600 mb-1">
+          <FileText className="w-8 h-8 text-muted-foreground mb-2" />
+          <span className="text-[12px] text-muted-foreground mb-1">
             {tp('Cliquez pour sélectionner un fichier CSV')}
           </span>
-          <span className="text-[11px] text-gray-500">
+          <span className="text-[11px] text-muted-foreground">
             {tp('Formats: .csv, .xlsx, .xls')}
           </span>
         </label>
       </div>
 
       {file && (
-        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-background rounded-lg">
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-gray-600" />
-            <span className="text-[12px] text-gray-700">{file.name}</span>
+            <FileText className="w-4 h-4 text-muted-foreground" />
+            <span className="text-[12px] text-foreground">{file.name}</span>
           </div>
           <button
             onClick={() => {
@@ -315,13 +315,13 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
 
       {showPreview && preview.length > 0 && (
         <div className="mt-3">
-          <h4 className="text-[12px] font-semibold text-gray-900 mb-2">{tp('Aperçu (5 premières lignes):')}</h4>
-          <div className="overflow-x-auto border border-gray-200 rounded-lg">
+          <h4 className="text-[12px] font-semibold text-foreground mb-2">{tp('Aperçu (5 premières lignes):')}</h4>
+          <div className="overflow-x-auto border border-border rounded-lg">
             <table className="min-w-full text-[11px]">
-              <thead className="bg-gray-50">
+              <thead className="bg-background">
                 <tr>
                   {Object.keys(preview[0]).map(header => (
-                    <th key={header} className="px-2 py-1 text-left font-medium text-gray-600 border-r">
+                    <th key={header} className="px-2 py-1 text-left font-medium text-muted-foreground border-r">
                       {header}
                     </th>
                   ))}
@@ -329,9 +329,9 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {preview.map((row, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-background">
                     {Object.values(row).map((value, cellIndex) => (
-                      <td key={cellIndex} className="px-2 py-1 text-gray-700 truncate max-w-xs border-r">
+                      <td key={cellIndex} className="px-2 py-1 text-foreground truncate max-w-xs border-r">
                         {value || '-'}
                       </td>
                     ))}
@@ -347,7 +347,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
         {onClose && (
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-[12px] font-semibold transition-colors"
+            className="flex-1 px-4 py-2 border border-gray-300 text-foreground rounded-lg hover:bg-background text-[12px] font-semibold transition-colors"
           >
             {tp('Annuler')}
           </button>
@@ -356,7 +356,7 @@ Produit 3	8000	Électronique	Description du produit 3	Non	https://example.com/im
           <button
             onClick={processImport}
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-[12px] font-semibold flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-[12px] font-semibold flex items-center justify-center gap-2 transition-colors"
           >
             {loading ? (
               <>

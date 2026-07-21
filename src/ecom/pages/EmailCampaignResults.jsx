@@ -67,24 +67,24 @@ export default function EmailCampaignResults() {
   }, [data?.campaign?.status, page, id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{tp('Statistiques détaillées campagne')}</h1>
-            <p className="text-sm text-gray-500">{tp('Journal SMTP, ouvertures et clics par destinataire')}</p>
+            <h1 className="text-2xl font-bold text-foreground">{tp('Statistiques détaillées campagne')}</h1>
+            <p className="text-sm text-muted-foreground">{tp('Journal SMTP, ouvertures et clics par destinataire')}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => load(page, { silent: true })}
               disabled={refreshing}
-              className="inline-flex min-h-11 items-center gap-2 px-3 py-2 text-sm font-medium border border-gray-200 rounded-lg bg-white hover:bg-gray-100 disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 px-3 py-2 text-sm font-medium border border-border rounded-lg bg-card hover:bg-muted disabled:opacity-60"
             >
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
               {tp('Actualiser')}
             </button>
-            <Link to="/ecom/marketing" className="inline-flex min-h-11 items-center gap-2 px-3 py-2 text-sm font-medium border border-gray-200 rounded-lg bg-white hover:bg-gray-100">
+            <Link to="/ecom/marketing" className="inline-flex min-h-11 items-center gap-2 px-3 py-2 text-sm font-medium border border-border rounded-lg bg-card hover:bg-muted">
               <ArrowLeft className="w-4 h-4" />
               {tp('Retour marketing')}
             </Link>
@@ -94,16 +94,16 @@ export default function EmailCampaignResults() {
         {error && <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>}
 
         {loading ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-sm text-gray-500">{tp('Chargement...')}</div>
+          <div className="bg-card rounded-xl border p-8 text-center text-sm text-muted-foreground">{tp('Chargement...')}</div>
         ) : !data ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-sm text-gray-500">{tp('Aucune donnée')}</div>
+          <div className="bg-card rounded-xl border p-8 text-center text-sm text-muted-foreground">{tp('Aucune donnée')}</div>
         ) : (
           <>
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="bg-card rounded-xl border p-4">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{data.campaign?.name}</h3>
-                  <p className="text-sm text-gray-600">Dernière fin d'envoi : {data.campaign?.sentAt ? fmtDate(data.campaign.sentAt) : tp('Pas encore terminée')}</p>
+                  <h3 className="font-semibold text-foreground">{data.campaign?.name}</h3>
+                  <p className="text-sm text-muted-foreground">Dernière fin d'envoi : {data.campaign?.sentAt ? fmtDate(data.campaign.sentAt) : tp('Pas encore terminée')}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <StatusPill status={campaignStatusForPill(data.campaign?.status)} />
@@ -113,11 +113,11 @@ export default function EmailCampaignResults() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-blue-600">{data.summary?.total || 0}</p><p className="text-xs text-gray-500">{tp('Total destinataires')}</p></div>
-              <div className="bg-amber-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-amber-600">{data.summary?.pending || 0}</p><p className="text-xs text-gray-500">{tp('En attente')}</p></div>
-              <div className="bg-green-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-green-600">{data.summary?.sent || 0}</p><p className="text-xs text-gray-500">{tp('Envoyés')}</p></div>
-              <div className="bg-red-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-red-600">{data.summary?.failed || 0}</p><p className="text-xs text-gray-500">{tp('Échecs')}</p></div>
-              <div className="bg-purple-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-purple-600">{data.summary?.opened || 0}</p><p className="text-xs text-gray-500">{tp('Ouvertures')}</p><p className="text-xs text-purple-500 font-medium">{data.summary?.openRate || 0}%</p></div>
+              <div className="bg-blue-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-blue-600">{data.summary?.total || 0}</p><p className="text-xs text-muted-foreground">{tp('Total destinataires')}</p></div>
+              <div className="bg-amber-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-amber-600">{data.summary?.pending || 0}</p><p className="text-xs text-muted-foreground">{tp('En attente')}</p></div>
+              <div className="bg-green-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-green-600">{data.summary?.sent || 0}</p><p className="text-xs text-muted-foreground">{tp('Envoyés')}</p></div>
+              <div className="bg-red-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-red-600">{data.summary?.failed || 0}</p><p className="text-xs text-muted-foreground">{tp('Échecs')}</p></div>
+              <div className="bg-purple-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-purple-600">{data.summary?.opened || 0}</p><p className="text-xs text-muted-foreground">{tp('Ouvertures')}</p><p className="text-xs text-purple-500 font-medium">{data.summary?.openRate || 0}%</p></div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -126,28 +126,28 @@ export default function EmailCampaignResults() {
             </div>
 
             {data.topLinks?.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">{tp('Top liens cliqués')}</h4>
+              <div className="bg-card border border-border rounded-lg p-4">
+                <h4 className="text-sm font-medium text-foreground mb-3">{tp('Top liens cliqués')}</h4>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {data.topLinks.map((link, idx) => (
                     <div key={`${link.url}-${idx}`} className="flex items-center justify-between gap-3 text-xs">
-                      <p className="text-gray-700 truncate">{link.url}</p>
-                      <p className="text-gray-500 whitespace-nowrap">{link.clicks} clics • {link.uniqueRecipients} pers.</p>
+                      <p className="text-foreground truncate">{link.url}</p>
+                      <p className="text-muted-foreground whitespace-nowrap">{link.clicks} clics • {link.uniqueRecipients} pers.</p>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="bg-card border border-border rounded-lg p-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                <h4 className="text-sm font-medium text-gray-700">Journal par destinataire ({data.pagination?.total || data.recipients?.length || 0})</h4>
-                <p className="text-xs text-gray-500">{tp('“Accepté SMTP” signifie que Postfix a pris le mail en charge.')}</p>
+                <h4 className="text-sm font-medium text-foreground">Journal par destinataire ({data.pagination?.total || data.recipients?.length || 0})</h4>
+                <p className="text-xs text-muted-foreground">{tp('“Accepté SMTP” signifie que Postfix a pris le mail en charge.')}</p>
               </div>
-              <div className="max-h-[620px] overflow-auto border border-gray-200 rounded-lg">
+              <div className="max-h-[620px] overflow-auto border border-border rounded-lg">
                 <table className="w-full min-w-[1040px] text-xs">
                   <thead>
-                    <tr className="bg-gray-50 border-b">
+                    <tr className="bg-background border-b">
                       <th className="px-3 py-2 text-left">{tp('Destinataire')}</th>
                       <th className="px-3 py-2 text-center">{tp('Statut')}</th>
                       <th className="px-3 py-2 text-left">{tp('SMTP / Postfix')}</th>
@@ -159,15 +159,15 @@ export default function EmailCampaignResults() {
                   <tbody className="divide-y divide-gray-100">
                     {(data.recipients || []).length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-3 py-8 text-center text-gray-500">
+                        <td colSpan={6} className="px-3 py-8 text-center text-muted-foreground">
                           {tp('Aucun log pour cette campagne.')}
                         </td>
                       </tr>
                     ) : (data.recipients || []).map((r, i) => (
-                      <tr key={`${r.email}-${r.recipientToken || i}`} className="hover:bg-gray-50">
+                      <tr key={`${r.email}-${r.recipientToken || i}`} className="hover:bg-background">
                         <td className="px-3 py-2 align-top">
-                          <p className="text-gray-900 font-medium">{r.email}</p>
-                          {r.name && <p className="text-gray-500 text-xs">{r.name}</p>}
+                          <p className="text-foreground font-medium">{r.email}</p>
+                          {r.name && <p className="text-muted-foreground text-xs">{r.name}</p>}
                         </td>
                         <td className="px-3 py-2 text-center align-top">
                           <StatusPill status={r.status} />
@@ -179,14 +179,14 @@ export default function EmailCampaignResults() {
                                 <MailCheck className="w-3.5 h-3.5" />
                                 Queue <code className="font-mono text-[11px] bg-green-50 px-1.5 py-0.5 rounded">{r.smtpQueueId}</code>
                               </div>
-                              <p className="max-w-[360px] truncate text-gray-500" title={r.smtpResponse || ''}>{r.smtpResponse || tp('Accepté par le SMTP')}</p>
-                              {r.smtpAccepted?.length > 0 && <p className="text-[11px] text-gray-400">Accepté : {r.smtpAccepted.join(', ')}</p>}
+                              <p className="max-w-[360px] truncate text-muted-foreground" title={r.smtpResponse || ''}>{r.smtpResponse || tp('Accepté par le SMTP')}</p>
+                              {r.smtpAccepted?.length > 0 && <p className="text-[11px] text-muted-foreground">Accepté : {r.smtpAccepted.join(', ')}</p>}
                             </div>
                           ) : (
-                            <p className="text-gray-400">{r.status === 'pending' ? 'En attente de réponse SMTP' : tp('Aucune queue SMTP')}</p>
+                            <p className="text-muted-foreground">{r.status === 'pending' ? 'En attente de réponse SMTP' : tp('Aucune queue SMTP')}</p>
                           )}
                         </td>
-                        <td className="px-3 py-2 align-top text-gray-600">
+                        <td className="px-3 py-2 align-top text-muted-foreground">
                           <p>Début : {fmtDate(r.attemptedAt)}</p>
                           <p>Fin : {fmtDate(r.sentAt)}</p>
                         </td>
@@ -194,13 +194,13 @@ export default function EmailCampaignResults() {
                           <div className="space-y-1">
                             {r.opened ? (
                               <p className="text-green-600 font-medium">Ouvert ({r.openCount || 1})</p>
-                            ) : <p className="text-gray-400">{tp('Non ouvert')}</p>}
+                            ) : <p className="text-muted-foreground">{tp('Non ouvert')}</p>}
                             {r.uniqueClicks > 0 ? (
                               <p className="text-orange-600 font-medium">{r.uniqueClicks} clic(s){r.totalClicks > r.uniqueClicks ? ` / ${r.totalClicks}` : ''}</p>
-                            ) : <p className="text-gray-400">{tp('0 clic')}</p>}
+                            ) : <p className="text-muted-foreground">{tp('0 clic')}</p>}
                           </div>
                         </td>
-                        <td className="px-3 py-2 align-top text-gray-500 max-w-[260px]">
+                        <td className="px-3 py-2 align-top text-muted-foreground max-w-[260px]">
                           <p className="truncate" title={r.error || ''}>{r.error || '—'}</p>
                           {r.smtpRejected?.length > 0 && <p className="text-[11px] text-red-500 truncate" title={r.smtpRejected.join(', ')}>Rejeté : {r.smtpRejected.join(', ')}</p>}
                         </td>
@@ -212,10 +212,10 @@ export default function EmailCampaignResults() {
 
               {data.pagination?.pages > 1 && (
                 <div className="flex items-center justify-between mt-3">
-                  <p className="text-xs text-gray-500">Page {data.pagination.page}/{data.pagination.pages}</p>
+                  <p className="text-xs text-muted-foreground">Page {data.pagination.page}/{data.pagination.pages}</p>
                   <div className="flex gap-2">
-                    <button onClick={() => load(page - 1)} disabled={page <= 1} className="px-3 py-1 text-xs border rounded-lg disabled:opacity-40 hover:bg-gray-50">{tp('← Préc.')}</button>
-                    <button onClick={() => load(page + 1)} disabled={page >= data.pagination.pages} className="px-3 py-1 text-xs border rounded-lg disabled:opacity-40 hover:bg-gray-50">{tp('Suiv. →')}</button>
+                    <button onClick={() => load(page - 1)} disabled={page <= 1} className="px-3 py-1 text-xs border rounded-lg disabled:opacity-40 hover:bg-background">{tp('← Préc.')}</button>
+                    <button onClick={() => load(page + 1)} disabled={page >= data.pagination.pages} className="px-3 py-1 text-xs border rounded-lg disabled:opacity-40 hover:bg-background">{tp('Suiv. →')}</button>
                   </div>
                 </div>
               )}

@@ -5,6 +5,8 @@ import axios from 'axios';
 // ═══════════════════════════════════════════════
 
 const SCALOR_API_BASE = process.env.NEXT_PUBLIC_SCALOR_API_URL
+  || process.env.NEXT_PUBLIC_BACKEND_URL
+  || process.env.NEXT_PUBLIC_API_URL
   || ((process.env.NODE_ENV === 'production') ? 'https://api.scalor.net' : '')
   || '';
 

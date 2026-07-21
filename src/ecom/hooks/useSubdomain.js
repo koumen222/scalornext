@@ -141,8 +141,9 @@ export function resetSubdomainCache() {
  */
 export async function resolveCustomDomain(hostname) {
   const API_BASE = process.env.NEXT_PUBLIC_STORE_API_URL
-    || ((process.env.NODE_ENV === 'production') ? 'https://api.scalor.net' : null)
     || process.env.NEXT_PUBLIC_BACKEND_URL
+    || process.env.NEXT_PUBLIC_API_URL
+    || ((process.env.NODE_ENV === 'production') ? 'https://api.scalor.net' : null)
     || 'https://api.scalor.net';
 
   const res = await fetch(`${API_BASE}/api/store/resolve-domain/${encodeURIComponent(hostname)}`);

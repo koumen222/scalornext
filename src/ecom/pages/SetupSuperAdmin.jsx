@@ -92,7 +92,7 @@ const SetupSuperAdmin = () => {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">{tp('Accès verrouillé')}</h1>
-          <p className="text-gray-400 mb-8">{tp('Le compte Super Administrateur a déjà été créé. Cette page n\'est plus accessible.')}</p>
+          <p className="text-muted-foreground mb-8">{tp('Le compte Super Administrateur a déjà été créé. Cette page n\'est plus accessible.')}</p>
           <button
             onClick={() => navigate('/ecom/login')}
             className="px-6 py-2.5 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition text-sm font-medium"
@@ -114,7 +114,7 @@ const SetupSuperAdmin = () => {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-white">{tp('Configuration initiale')}</h1>
-          <p className="mt-2 text-gray-400 text-sm">{tp('Créez le compte Super Administrateur')}</p>
+          <p className="mt-2 text-muted-foreground text-sm">{tp('Créez le compte Super Administrateur')}</p>
         </div>
 
         {/* Warning */}
@@ -218,7 +218,7 @@ const SetupSuperAdmin = () => {
               'Activer / désactiver des comptes et des espaces',
               'Accès complet à toutes les fonctionnalités'
             ].map((text, i) => (
-              <li key={i} className="flex items-center gap-2 text-xs text-gray-400">
+              <li key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
                 <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
@@ -231,7 +231,7 @@ const SetupSuperAdmin = () => {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate('/ecom/login')}
-            className="text-sm text-gray-500 hover:text-gray-300 transition"
+            className="text-sm text-muted-foreground hover:text-gray-300 transition"
           >
             {tp('Retour à la connexion')}
           </button>

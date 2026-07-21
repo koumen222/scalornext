@@ -9,12 +9,12 @@ import { tp } from '../i18n/platform.js';
 const SL = { pending: 'En attente', confirmed: 'Confirmé', shipped: 'Expédié', delivered: 'Livré', returned: 'Retour', cancelled: 'Annulé', unreachable: 'Injoignable', called: 'Appelé', postponed: 'Reporté', reported: 'Reporté' };
 const SC = {
   pending: 'bg-yellow-50 text-yellow-700 border-yellow-100',
-  confirmed: 'bg-primary-50 text-primary-700 border-primary-100',
+  confirmed: 'bg-primary-50 text-primary border-primary-100',
   shipped: 'bg-primary-50 text-primary-800 border-primary-100',
   delivered: 'bg-green-50 text-green-700 border-green-100',
   returned: 'bg-orange-50 text-orange-700 border-orange-100',
   cancelled: 'bg-red-50 text-red-700 border-red-100',
-  unreachable: 'bg-gray-100 text-gray-700 border-gray-200',
+  unreachable: 'bg-muted text-foreground border-border',
   called: 'bg-blue-50 text-blue-700 border-blue-100',
   postponed: 'bg-purple-50 text-purple-700 border-purple-100',
   reported: 'bg-purple-50 text-purple-700 border-purple-100'
@@ -488,9 +488,9 @@ const OrderDetail = () => {
   if (loading) return (
     <div className="p-4 sm:p-6">
       <div className="h-8 w-44 bg-gray-200 rounded-lg animate-pulse mb-6" />
-      <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+      <div className="bg-card rounded-xl border p-6 space-y-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" />
+          <div key={i} className="h-4 bg-muted rounded animate-pulse" />
         ))}
       </div>
     </div>
@@ -517,7 +517,7 @@ const OrderDetail = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-5 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-background p-3 sm:p-5 max-w-4xl mx-auto">
 
       {success && (
         <div className="mb-4 px-4 py-3 bg-green-50 text-green-800 rounded-xl text-sm border border-green-100 flex items-center gap-2">
@@ -528,33 +528,33 @@ const OrderDetail = () => {
 
       {/* ── Header ── */}
       <div className="flex items-center gap-3 mb-5">
-        <button onClick={goBackToOrders} aria-label={tp('Retour')} className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors cursor-pointer">
+        <button onClick={goBackToOrders} aria-label={tp('Retour')} className="w-9 h-9 flex items-center justify-center rounded-xl bg-card border border-border text-muted-foreground hover:bg-background transition-colors cursor-pointer">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="text-xl font-bold text-gray-900">#{order.orderId || tp('Commande')}</h1>
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border ${SC[order.status] || 'bg-gray-50 text-gray-600 border-gray-200'}`}>{SL[order.status] || order.status}</span>
+            <h1 className="text-xl font-bold text-foreground">#{order.orderId || tp('Commande')}</h1>
+            <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border ${SC[order.status] || 'bg-background text-muted-foreground border-border'}`}>{SL[order.status] || order.status}</span>
           </div>
-          <p className="text-xs text-gray-400 mt-0.5">{fmtDateTime(order.createdAt)}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{fmtDateTime(order.createdAt)}</p>
         </div>
         {/* Overflow menu */}
         <div className="relative" ref={optionsMenuRef}>
-          <button onClick={() => setShowOptionsMenu(!showOptionsMenu)} aria-label={tp('Plus d\'options')} className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors cursor-pointer">
+          <button onClick={() => setShowOptionsMenu(!showOptionsMenu)} aria-label={tp('Plus d\'options')} className="w-9 h-9 flex items-center justify-center rounded-xl bg-card border border-border text-muted-foreground hover:bg-background transition-colors cursor-pointer">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/></svg>
           </button>
           {showOptionsMenu && (
-            <div className="absolute right-0 mt-1.5 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
-              <button onClick={() => { setShowOptionsMenu(false); handleCopyOrder(); }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 cursor-pointer">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <div className="absolute right-0 mt-1.5 w-48 bg-card rounded-xl shadow-lg border border-border py-1 z-50">
+              <button onClick={() => { setShowOptionsMenu(false); handleCopyOrder(); }} className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-background flex items-center gap-3 cursor-pointer">
+                <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 {tp('Copier la commande')}
               </button>
-              <button onClick={() => { setShowOptionsMenu(false); handlePrint(); }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 cursor-pointer">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <button onClick={() => { setShowOptionsMenu(false); handlePrint(); }} className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-background flex items-center gap-3 cursor-pointer">
+                <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                 {tp('Imprimer facture')}
               </button>
               {isAdmin && <>
-                <div className="my-1 mx-3 border-t border-gray-100"/>
+                <div className="my-1 mx-3 border-t border-border"/>
                 <button onClick={() => { setShowOptionsMenu(false); handleDelete(); }} disabled={deleting} className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 flex items-center gap-3 disabled:opacity-50 cursor-pointer">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                   {deleting ? 'Suppression...' : tp('Supprimer')}
@@ -574,32 +574,32 @@ const OrderDetail = () => {
 
         {(isAdmin || user?.role === 'super_admin') && (
           order.assignedLivreur ? (
-            <span className="h-10 px-4 bg-gray-100 text-gray-600 rounded-xl text-sm font-medium flex items-center gap-2">
+            <span className="h-10 px-4 bg-muted text-muted-foreground rounded-xl text-sm font-medium flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               {tp('Livreur assigné')}
             </span>
           ) : (
             <div className="relative" ref={livreurMenuRef}>
-              <button onClick={() => setShowLivreurMenu(!showLivreurMenu)} className="h-10 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors cursor-pointer">
+              <button onClick={() => setShowLivreurMenu(!showLivreurMenu)} className="h-10 px-4 bg-card border border-border text-foreground rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-background transition-colors cursor-pointer">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 <span>{tp('Livreur')}</span>
-                <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/></svg>
               </button>
               {showLivreurMenu && (
-                <div className="absolute left-0 mt-1.5 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
+                <div className="absolute left-0 mt-1.5 w-52 bg-card rounded-xl shadow-lg border border-border py-1 z-50">
                   {(order.status === 'pending' || order.status === 'confirmed') && (
-                    <button onClick={() => { setShowLivreurMenu(false); openDeliveryModal(); }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 cursor-pointer">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <button onClick={() => { setShowLivreurMenu(false); openDeliveryModal(); }} className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-background flex items-center gap-3 cursor-pointer">
+                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                       {tp('Livreur spécifique')}
                     </button>
                   )}
-                  <button onClick={() => { setShowLivreurMenu(false); handleTogglePool(); }} disabled={sendingToPool} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 disabled:opacity-50 cursor-pointer">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <button onClick={() => { setShowLivreurMenu(false); handleTogglePool(); }} disabled={sendingToPool} className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-background flex items-center gap-3 disabled:opacity-50 cursor-pointer">
+                    <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     {sendingToPool ? '...' : order.readyForDelivery ? 'Retirer du pool' : tp('Tous les livreurs')}
                   </button>
-                  <div className="my-1 mx-3 border-t border-gray-100"/>
-                  <button onClick={() => { setShowLivreurMenu(false); openGroupModal(); }} disabled={sendingToGroup} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 disabled:opacity-50 cursor-pointer">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <div className="my-1 mx-3 border-t border-border"/>
+                  <button onClick={() => { setShowLivreurMenu(false); openGroupModal(); }} disabled={sendingToGroup} className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-background flex items-center gap-3 disabled:opacity-50 cursor-pointer">
+                    <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     {sendingToGroup ? '...' : tp('Envoyer au groupe')}
                   </button>
                 </div>
@@ -626,7 +626,7 @@ const OrderDetail = () => {
         )}
 
         {isAdmin && !editing && (
-          <button onClick={() => setEditing(true)} className="h-10 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors cursor-pointer">
+          <button onClick={() => setEditing(true)} className="h-10 px-4 bg-card border border-border text-foreground rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-background transition-colors cursor-pointer">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
             <span>{tp('Modifier')}</span>
           </button>
@@ -634,13 +634,13 @@ const OrderDetail = () => {
       </div>
 
       {/* ── Statut ── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+      <div className="bg-card rounded-xl border p-4 mb-4">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Statut')}</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Statut')}</p>
           {(order.tags || []).length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {order.tags.map(tag => (
-                <span key={tag} className="text-xs font-medium px-2 py-0.5 rounded-md bg-gray-100 text-gray-600">{tag}</span>
+                <span key={tag} className="text-xs font-medium px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{tag}</span>
               ))}
             </div>
           )}
@@ -648,12 +648,12 @@ const OrderDetail = () => {
         <div className="flex flex-wrap gap-2">
           {Object.entries(SL).map(([key, label]) => (
             <button key={key} onClick={() => handleStatusChange(key)} disabled={order.status === key}
-              className={`h-9 px-3.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${order.status === key ? `${SC[key]} shadow-sm` : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}>
+              className={`h-9 px-3.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${order.status === key ? `${SC[key]} shadow-sm` : 'bg-background text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
               {label}
             </button>
           ))}
           <button onClick={() => { const c = prompt('Statut personnalisé :'); if (c?.trim()) handleStatusChange(c.trim()); }}
-            className="h-9 px-3.5 rounded-lg text-sm font-medium text-gray-400 border border-dashed border-gray-300 hover:border-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">
+            className="h-9 px-3.5 rounded-lg text-sm font-medium text-muted-foreground border border-dashed border-gray-300 hover:border-gray-400 hover:text-muted-foreground hover:bg-background transition-colors cursor-pointer">
             + Personnalisé
           </button>
         </div>
@@ -666,8 +666,8 @@ const OrderDetail = () => {
         <div className="lg:col-span-3 space-y-4">
 
           {/* Client */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">{tp('Client')}</p>
+          <div className="bg-card rounded-xl border p-5">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">{tp('Client')}</p>
 
             {editing ? (
               <div className="grid sm:grid-cols-2 gap-3">
@@ -683,40 +683,40 @@ const OrderDetail = () => {
                   { label: 'Heure de livraison', key: 'deliveryTime', placeholder: 'Ex: Disponible maintenant' },
                 ].map(({ label, key, type = 'text', placeholder }) => (
                   <div key={key}>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">{label}</label>
                     <input type={type} value={editData[key] ?? ''} placeholder={placeholder}
                       onChange={e => setEditData(p => ({ ...p, [key]: type === 'number' ? (parseFloat(e.target.value) || (key === 'quantity' ? 1 : 0)) : e.target.value }))}
-                      className="w-full h-10 px-3 bg-gray-50 rounded-lg text-sm border-0 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:bg-white transition-all placeholder:text-gray-300" />
+                      className="w-full h-10 px-3 bg-background rounded-lg text-sm border-0 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:bg-card transition-all placeholder:text-gray-300" />
                   </div>
                 ))}
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-medium text-gray-500 mb-1">{tp('Notes')}</label>
-                  <textarea value={editData.notes || ''} onChange={e => setEditData(p => ({ ...p, notes: e.target.value }))} rows={2} className="w-full px-3 py-2.5 bg-gray-50 rounded-lg text-sm border-0 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:bg-white transition-all resize-none" />
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Notes')}</label>
+                  <textarea value={editData.notes || ''} onChange={e => setEditData(p => ({ ...p, notes: e.target.value }))} rows={2} className="w-full px-3 py-2.5 bg-background rounded-lg text-sm border-0 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:bg-card transition-all resize-none" />
                 </div>
                 <div className="sm:col-span-2 flex gap-2 pt-1">
                   <button onClick={handleSave} disabled={saving} className="h-10 px-5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors cursor-pointer">{saving ? 'Sauvegarde...' : tp('Sauvegarder')}</button>
-                  <button onClick={() => { setEditing(false); setEditData(order); }} className="h-10 px-5 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer">{tp('Annuler')}</button>
+                  <button onClick={() => { setEditing(false); setEditData(order); }} className="h-10 px-5 bg-muted text-muted-foreground rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer">{tp('Annuler')}</button>
                 </div>
               </div>
             ) : (
               <div className="space-y-3">
                 {/* Avatar row */}
-                <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+                <div className="flex items-center gap-3 pb-4 border-b border-border">
                   <div className="w-11 h-11 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-base">{(order.clientName || '?')[0].toUpperCase()}</span>
                   </div>
                   <div>
-                    <p className="text-base font-semibold text-gray-900">{order.clientName || '—'}</p>
-                    <p className="text-sm text-gray-400">{order.city || '—'}</p>
+                    <p className="text-base font-semibold text-foreground">{order.clientName || '—'}</p>
+                    <p className="text-sm text-muted-foreground">{order.city || '—'}</p>
                   </div>
                 </div>
 
                 {/* Info rows — icônes grises uniformes w-5 h-5 */}
                 {(() => { const phone = getEffectivePhone(order); return phone ? (
                   <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                     <div className="flex items-center gap-2">
-                      <a href={`tel:${cleanPhone(phone)}`} className="text-sm font-medium text-gray-900 hover:text-green-600 transition-colors">{cleanPhone(phone)}</a>
+                      <a href={`tel:${cleanPhone(phone)}`} className="text-sm font-medium text-foreground hover:text-green-600 transition-colors">{cleanPhone(phone)}</a>
                       <a href={`https://wa.me/${cleanPhone(phone).replace(/\D/g, '')}?text=${encodeURIComponent(`Bonjour${order.clientName ? ' ' + order.clientName : ''}, nous avons essayé de vous contacter concernant votre commande de *${getDisplayProduct(order)}*.\n\nMerci de nous recontacter dès que possible afin de finaliser votre livraison.\n\nCordialement,\n${workspace?.name || 'Notre équipe'}`)}`}
                         target="_blank" rel="noopener noreferrer"
                         className="h-6 px-2 bg-green-50 text-green-700 rounded-md text-xs font-medium hover:bg-green-100 transition-colors flex items-center gap-1">
@@ -729,19 +729,19 @@ const OrderDetail = () => {
 
                 {order.clientEmail && (
                   <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    <a href={`mailto:${order.clientEmail}`} className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors truncate">{order.clientEmail}</a>
+                    <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <a href={`mailto:${order.clientEmail}`} className="text-sm font-medium text-foreground hover:text-muted-foreground transition-colors truncate">{order.clientEmail}</a>
                   </div>
                 )}
 
                 {order.address && (
                   <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <svg className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{order.address}</p>
+                      <p className="text-sm font-medium text-foreground">{order.address}</p>
                       {order.city && (
                         <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${order.address}, ${order.city}`)}`} target="_blank" rel="noopener noreferrer"
-                          className="text-xs text-gray-400 hover:text-gray-600 transition-colors mt-0.5 inline-block">
+                          className="text-xs text-muted-foreground hover:text-muted-foreground transition-colors mt-0.5 inline-block">
                           Voir sur Maps →
                         </a>
                       )}
@@ -750,21 +750,21 @@ const OrderDetail = () => {
                 )}
 
                 <div className="flex items-center gap-3">
-                  <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                  <p className="text-sm font-medium text-gray-900">{fmtDate(order.date)}</p>
+                  <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  <p className="text-sm font-medium text-foreground">{fmtDate(order.date)}</p>
                 </div>
 
                 {order.deliveryLocation && (
                   <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                    <p className="text-sm font-medium text-gray-900">{order.deliveryLocation}</p>
+                    <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                    <p className="text-sm font-medium text-foreground">{order.deliveryLocation}</p>
                   </div>
                 )}
 
                 {order.deliveryTime && (
                   <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <p className={`text-sm font-medium ${(order.status === 'postponed' || order.status === 'reported') ? 'text-yellow-700' : 'text-gray-900'}`}>{order.deliveryTime}</p>
+                    <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <p className={`text-sm font-medium ${(order.status === 'postponed' || order.status === 'reported') ? 'text-yellow-700' : 'text-foreground'}`}>{order.deliveryTime}</p>
                   </div>
                 )}
               </div>
@@ -773,13 +773,13 @@ const OrderDetail = () => {
 
           {/* Données source */}
           {rawEntries.length > 0 && !editing && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Données source')}</p>
+            <div className="bg-card rounded-xl border p-5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">{tp('Données source')}</p>
               <div className="divide-y divide-gray-50">
                 {rawEntries.map(([key, val]) => (
                   <div key={key} className="flex justify-between py-2 gap-4">
-                    <span className="text-sm text-gray-400 shrink-0">{key}</span>
-                    <span className="text-sm text-gray-800 font-medium text-right truncate" title={typeof val === 'object' ? JSON.stringify(val) : val}>{typeof val === 'object' ? JSON.stringify(val) : val}</span>
+                    <span className="text-sm text-muted-foreground shrink-0">{key}</span>
+                    <span className="text-sm text-foreground font-medium text-right truncate" title={typeof val === 'object' ? JSON.stringify(val) : val}>{typeof val === 'object' ? JSON.stringify(val) : val}</span>
                   </div>
                 ))}
               </div>
@@ -788,9 +788,9 @@ const OrderDetail = () => {
 
           {/* Notes */}
           {order.notes && !editing && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Notes')}</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{order.notes}</p>
+            <div className="bg-card rounded-xl border p-5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Notes')}</p>
+              <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{order.notes}</p>
             </div>
           )}
         </div>
@@ -799,42 +799,42 @@ const OrderDetail = () => {
         <div className="lg:col-span-2 space-y-4">
 
           {/* Résumé commande */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Résumé')}</p>
-            <p className="text-sm font-medium text-gray-800 mb-4 leading-snug">{getDisplayProduct(order)}</p>
+          <div className="bg-card rounded-xl border p-5">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">{tp('Résumé')}</p>
+            <p className="text-sm font-medium text-foreground mb-4 leading-snug">{getDisplayProduct(order)}</p>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-400">{tp('Prix unitaire')}</span>
-                <span className="font-medium text-gray-800">{fmtOrder(order.price, order.currency)}</span>
+                <span className="text-muted-foreground">{tp('Prix unitaire')}</span>
+                <span className="font-medium text-foreground">{fmtOrder(order.price, order.currency)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">{tp('Quantité')}</span>
-                <span className="font-medium text-gray-800">×{order.quantity || 1}</span>
+                <span className="text-muted-foreground">{tp('Quantité')}</span>
+                <span className="font-medium text-foreground">×{order.quantity || 1}</span>
               </div>
-              <div className="border-t border-gray-100 pt-2 flex justify-between">
-                <span className="font-semibold text-gray-900">{tp('Total')}</span>
-                <span className="font-bold text-gray-900">{fmtOrder((order.price || 0) * (order.quantity || 1), order.currency)}</span>
+              <div className="border-t border-border pt-2 flex justify-between">
+                <span className="font-semibold text-foreground">{tp('Total')}</span>
+                <span className="font-bold text-foreground">{fmtOrder((order.price || 0) * (order.quantity || 1), order.currency)}</span>
               </div>
             </div>
           </div>
 
           {/* Historique */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">{tp('Historique')}</p>
+          <div className="bg-card rounded-xl border p-5">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">{tp('Historique')}</p>
             <div className="space-y-3 pl-1">
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 rounded-full bg-gray-300 mt-1.5 flex-shrink-0 ring-2 ring-white ring-offset-1"></div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800">{tp('Commande créée')}</p>
-                  <p className="text-xs text-gray-400">{fmtDateTime(order.createdAt)}</p>
+                  <p className="text-sm font-medium text-foreground">{tp('Commande créée')}</p>
+                  <p className="text-xs text-muted-foreground">{fmtDateTime(order.createdAt)}</p>
                 </div>
               </div>
               {order.updatedAt !== order.createdAt && (
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-gray-500 mt-1.5 flex-shrink-0 ring-2 ring-white ring-offset-1"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{tp('Dernière modification')}</p>
-                    <p className="text-xs text-gray-400">{fmtDateTime(order.updatedAt)}</p>
+                    <p className="text-sm font-medium text-foreground">{tp('Dernière modification')}</p>
+                    <p className="text-xs text-muted-foreground">{fmtDateTime(order.updatedAt)}</p>
                   </div>
                 </div>
               )}
@@ -842,8 +842,8 @@ const OrderDetail = () => {
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0 ring-2 ring-white ring-offset-1"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{tp('Import Google Sheets')}</p>
-                    <p className="text-xs text-gray-400">Ligne {order.sheetRowId?.replace('row_', '')}</p>
+                    <p className="text-sm font-medium text-foreground">{tp('Import Google Sheets')}</p>
+                    <p className="text-xs text-muted-foreground">Ligne {order.sheetRowId?.replace('row_', '')}</p>
                   </div>
                 </div>
               )}
@@ -851,32 +851,32 @@ const OrderDetail = () => {
           </div>
 
           {/* Actions */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{tp('Actions')}</p>
+          <div className="bg-card rounded-xl border p-5">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">{tp('Actions')}</p>
             <div className="space-y-2">
-              <button onClick={handleCopyOrder} className={`w-full h-10 rounded-lg text-sm font-medium flex items-center gap-2.5 px-3 transition-colors cursor-pointer ${copiedOrder ? 'bg-green-50 text-green-700' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}>
+              <button onClick={handleCopyOrder} className={`w-full h-10 rounded-lg text-sm font-medium flex items-center gap-2.5 px-3 transition-colors cursor-pointer ${copiedOrder ? 'bg-green-50 text-green-700' : 'bg-background text-foreground hover:bg-muted'}`}>
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 {copiedOrder ? 'Copié !' : tp('Copier la commande')}
               </button>
-              <button onClick={handlePrint} className="w-full h-10 rounded-lg bg-gray-50 text-gray-700 text-sm font-medium flex items-center gap-2.5 px-3 hover:bg-gray-100 transition-colors cursor-pointer">
+              <button onClick={handlePrint} className="w-full h-10 rounded-lg bg-background text-foreground text-sm font-medium flex items-center gap-2.5 px-3 hover:bg-muted transition-colors cursor-pointer">
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                 {tp('Imprimer la facture')}
               </button>
               {(isAdmin || user?.role === 'super_admin') && (
                 order.assignedLivreur ? (
-                  <div className="w-full h-10 rounded-lg bg-gray-50 text-gray-500 text-sm font-medium flex items-center gap-2.5 px-3">
+                  <div className="w-full h-10 rounded-lg bg-background text-muted-foreground text-sm font-medium flex items-center gap-2.5 px-3">
                     <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     {tp('Livreur assigné')}
                   </div>
                 ) : (
                   <>
                     {(order.status === 'pending' || order.status === 'confirmed') && (
-                      <button onClick={openDeliveryModal} className="w-full h-10 rounded-lg bg-gray-50 text-gray-700 text-sm font-medium flex items-center gap-2.5 px-3 hover:bg-gray-100 transition-colors cursor-pointer">
+                      <button onClick={openDeliveryModal} className="w-full h-10 rounded-lg bg-background text-foreground text-sm font-medium flex items-center gap-2.5 px-3 hover:bg-muted transition-colors cursor-pointer">
                         <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         {tp('Livreur spécifique')}
                       </button>
                     )}
-                    <button onClick={handleTogglePool} disabled={sendingToPool} className="w-full h-10 rounded-lg bg-gray-50 text-gray-700 text-sm font-medium flex items-center gap-2.5 px-3 hover:bg-gray-100 transition-colors disabled:opacity-50 cursor-pointer">
+                    <button onClick={handleTogglePool} disabled={sendingToPool} className="w-full h-10 rounded-lg bg-background text-foreground text-sm font-medium flex items-center gap-2.5 px-3 hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer">
                       <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                       {sendingToPool ? '...' : order.readyForDelivery ? 'Retirer du pool' : tp('Tous les livreurs')}
                     </button>
@@ -905,22 +905,22 @@ const OrderDetail = () => {
       {/* Group Picker Modal */}
       {showGroupModal && (
         <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50" onClick={() => setShowGroupModal(false)}>
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl max-w-sm w-full p-5 pb-8 sm:pb-5" onClick={e => e.stopPropagation()}>
+          <div className="bg-card rounded-t-3xl sm:rounded-2xl shadow-xl max-w-sm w-full p-5 pb-8 sm:pb-5" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 sm:hidden"/>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </div>
               <div>
-                <h3 className="text-sm font-bold text-gray-900">{tp('Envoyer au groupe WhatsApp')}</h3>
-                <p className="text-xs text-gray-400">{tp('Sélectionnez les groupes destinataires')}</p>
+                <h3 className="text-sm font-bold text-foreground">{tp('Envoyer au groupe WhatsApp')}</h3>
+                <p className="text-xs text-muted-foreground">{tp('Sélectionnez les groupes destinataires')}</p>
               </div>
             </div>
             {loadingGroups ? (
               <div className="py-8 flex justify-center"><div className="w-6 h-6 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"/></div>
             ) : deliveryGroups.length === 0 ? (
               <div className="py-4 text-center">
-                <p className="text-sm text-gray-500 mb-4">{tp('Aucun groupe de livraison configuré.')}</p>
+                <p className="text-sm text-muted-foreground mb-4">{tp('Aucun groupe de livraison configuré.')}</p>
                 <button
                   onClick={() => { setShowGroupModal(false); navigate('/ecom/settings?tab=delivery_groups'); }}
                   className="inline-flex items-center gap-2 h-10 px-4 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition"
@@ -932,7 +932,7 @@ const OrderDetail = () => {
             ) : (
               <div className="space-y-2 mb-5">
                 {deliveryGroups.map((g, i) => (
-                  <label key={i} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedGroups.includes(i) ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+                  <label key={i} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedGroups.includes(i) ? 'border-gray-900 bg-background' : 'border-border hover:bg-background'}`}>
                     <input
                       type="checkbox"
                       checked={selectedGroups.includes(i)}
@@ -940,8 +940,8 @@ const OrderDetail = () => {
                       className="w-4 h-4 accent-gray-900"
                     />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{g.label || tp('Groupe sans nom')}</p>
-                      <p className="text-xs font-mono text-gray-400 truncate">{g.phoneNumber}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{g.label || tp('Groupe sans nom')}</p>
+                      <p className="text-xs font-mono text-muted-foreground truncate">{g.phoneNumber}</p>
                     </div>
                   </label>
                 ))}
@@ -958,7 +958,7 @@ const OrderDetail = () => {
                   {sendingToGroup ? 'Envoi...' : `Envoyer (${selectedGroups.length})`}
                 </button>
               )}
-              <button onClick={() => setShowGroupModal(false)} className="h-11 px-5 bg-gray-100 text-gray-700 rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
+              <button onClick={() => setShowGroupModal(false)} className="h-11 px-5 bg-muted text-foreground rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
             </div>
           </div>
         </div>
@@ -967,16 +967,16 @@ const OrderDetail = () => {
       {/* Delivery Modal */}
       {showDeliveryModal && (
         <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50" onClick={() => setShowDeliveryModal(false)}>
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl max-w-lg w-full max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white px-5 pt-4 pb-3 border-b border-gray-100 z-10">
+          <div className="bg-card rounded-t-3xl sm:rounded-2xl shadow-xl max-w-lg w-full max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-card px-5 pt-4 pb-3 border-b border-border z-10">
               <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4 sm:hidden"/>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">{tp('Envoyer au livreur')}</h3>
-                  <p className="text-xs text-gray-400">{tp('Le livreur recevra une proposition dans l\'application')}</p>
+                  <h3 className="text-sm font-bold text-foreground">{tp('Envoyer au livreur')}</h3>
+                  <p className="text-xs text-muted-foreground">{tp('Le livreur recevra une proposition dans l\'application')}</p>
                 </div>
               </div>
             </div>
@@ -984,12 +984,12 @@ const OrderDetail = () => {
             <div className="px-5 pt-4 pb-5 space-y-4">
               {/* Livreur */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{tp('Assigner un livreur')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tp('Assigner un livreur')}</label>
                 {livreurs.length > 0 ? (
                   <select
                     value={selectedLivreur}
                     onChange={e => setSelectedLivreur(e.target.value)}
-                    className="w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white cursor-pointer"
+                    className="w-full h-10 px-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-card cursor-pointer"
                   >
                     <option value="">{tp('-- Choisir un livreur --')}</option>
                     {livreurs.map(l => (
@@ -999,51 +999,51 @@ const OrderDetail = () => {
                     ))}
                   </select>
                 ) : (
-                  <p className="text-xs text-gray-400 italic py-2">{tp('Aucun livreur dans l\'équipe. Ajoutez-en un dans Gestion Équipe.')}</p>
+                  <p className="text-xs text-muted-foreground italic py-2">{tp('Aucun livreur dans l\'équipe. Ajoutez-en un dans Gestion Équipe.')}</p>
                 )}
               </div>
 
               {/* Infos livraison */}
               <div className="grid sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{tp('Lieu de livraison')}</label>
-                  <input type="text" value={editData.deliveryLocation || ''} onChange={e => setEditData(p => ({ ...p, deliveryLocation: e.target.value }))} placeholder={tp('Ex: Neptune Mbalgong')} className="w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tp('Lieu de livraison')}</label>
+                  <input type="text" value={editData.deliveryLocation || ''} onChange={e => setEditData(p => ({ ...p, deliveryLocation: e.target.value }))} placeholder={tp('Ex: Neptune Mbalgong')} className="w-full h-10 px-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{tp('Heure de livraison')}</label>
-                  <input type="text" value={editData.deliveryTime || ''} onChange={e => setEditData(p => ({ ...p, deliveryTime: e.target.value }))} placeholder={tp('Ex: Disponible maintenant')} className="w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tp('Heure de livraison')}</label>
+                  <input type="text" value={editData.deliveryTime || ''} onChange={e => setEditData(p => ({ ...p, deliveryTime: e.target.value }))} placeholder={tp('Ex: Disponible maintenant')} className="w-full h-10 px-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{tp('Jour de livraison')}</label>
-                  <input type="text" value={editData.deliveryDay || ''} onChange={e => setEditData(p => ({ ...p, deliveryDay: e.target.value }))} placeholder={`Ex: aujourd'hui lundi`} className="w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tp('Jour de livraison')}</label>
+                  <input type="text" value={editData.deliveryDay || ''} onChange={e => setEditData(p => ({ ...p, deliveryDay: e.target.value }))} placeholder={`Ex: aujourd'hui lundi`} className="w-full h-10 px-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{tp('Quantité')}</label>
-                    <input type="number" min="1" value={editData.quantity ?? order?.quantity ?? 1} onChange={e => setEditData(p => ({ ...p, quantity: parseInt(e.target.value) || 1 }))} className="w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+                    <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tp('Quantité')}</label>
+                    <input type="number" min="1" value={editData.quantity ?? order?.quantity ?? 1} onChange={e => setEditData(p => ({ ...p, quantity: parseInt(e.target.value) || 1 }))} className="w-full h-10 px-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{tp('Prix unitaire')}</label>
-                    <input type="number" min="0" value={editData.price ?? order?.price ?? 0} onChange={e => setEditData(p => ({ ...p, price: parseFloat(e.target.value) || 0 }))} className="w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+                    <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tp('Prix unitaire')}</label>
+                    <input type="number" min="0" value={editData.price ?? order?.price ?? 0} onChange={e => setEditData(p => ({ ...p, price: parseFloat(e.target.value) || 0 }))} className="w-full h-10 px-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
                   </div>
                 </div>
               </div>
 
               {/* Instructions */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{tp('Instructions supplémentaires')}</label>
-                <textarea value={deliveryNote} onChange={e => setDeliveryNote(e.target.value)} rows={2} placeholder={tp('Ex: Appeler avant livraison, fragile...')} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none" />
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tp('Instructions supplémentaires')}</label>
+                <textarea value={deliveryNote} onChange={e => setDeliveryNote(e.target.value)} rows={2} placeholder={tp('Ex: Appeler avant livraison, fragile...')} className="w-full px-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none" />
               </div>
 
               {/* Message */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">{tp('Message pour le livreur')}</label>
-                  <button onClick={handleCopyMessage} className={`text-xs font-medium h-6 px-2.5 rounded-lg transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide">{tp('Message pour le livreur')}</label>
+                  <button onClick={handleCopyMessage} className={`text-xs font-medium h-6 px-2.5 rounded-lg transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground hover:bg-gray-200'}`}>
                     {copied ? 'Copié !' : tp('Copier')}
                   </button>
                 </div>
-                <textarea value={deliveryMessage} onChange={e => setDeliveryMessage(e.target.value)} rows={10} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-gray-50 resize-none" />
+                <textarea value={deliveryMessage} onChange={e => setDeliveryMessage(e.target.value)} rows={10} className="w-full px-3 py-2.5 border border-border rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-background resize-none" />
               </div>
 
               {/* Actions */}
@@ -1056,11 +1056,11 @@ const OrderDetail = () => {
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                   App + WhatsApp
                 </button>
-                <button onClick={handleSendToGroup} disabled={sendingToGroup} className="w-full sm:flex-1 h-11 bg-gray-100 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-200 disabled:opacity-40 flex items-center justify-center gap-2 transition-colors">
-                  {sendingToGroup ? <div className="w-4 h-4 border-2 border-gray-700 border-t-transparent rounded-full animate-spin"/> : <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>}
+                <button onClick={handleSendToGroup} disabled={sendingToGroup} className="w-full sm:flex-1 h-11 bg-muted text-foreground rounded-2xl text-sm font-semibold hover:bg-gray-200 disabled:opacity-40 flex items-center justify-center gap-2 transition-colors">
+                  {sendingToGroup ? <div className="w-4 h-4 border-2 border-gray-700 border-t-transparent rounded-full animate-spin"/> : <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>}
                   Groupe
                 </button>
-                <button onClick={() => setShowDeliveryModal(false)} className="w-full sm:w-auto h-11 px-5 bg-gray-100 text-gray-700 rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
+                <button onClick={() => setShowDeliveryModal(false)} className="w-full sm:w-auto h-11 px-5 bg-muted text-foreground rounded-2xl text-sm font-medium hover:bg-gray-200 transition-colors">{tp('Annuler')}</button>
               </div>
             </div>
           </div>
@@ -1149,7 +1149,7 @@ const OrderDetail = () => {
       {/* Modal relance WhatsApp */}
       {showCustomWhatsAppModal && (
         <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50" onClick={() => setShowCustomWhatsAppModal(false)}>
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="bg-card rounded-t-3xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mt-3 mb-1 sm:hidden"/>
 
             <div className="px-5 pt-4 pb-7 sm:pb-5">
@@ -1160,18 +1160,18 @@ const OrderDetail = () => {
                     <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900">{tp('Relance client')}</h3>
-                    <p className="text-xs text-gray-400">{order.clientName || tp('Client')} · #{order.orderId || order._id?.slice(-6)}</p>
+                    <h3 className="text-sm font-bold text-foreground">{tp('Relance client')}</h3>
+                    <p className="text-xs text-muted-foreground">{order.clientName || tp('Client')} · #{order.orderId || order._id?.slice(-6)}</p>
                   </div>
                 </div>
-                <button onClick={() => setShowCustomWhatsAppModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors">
+                <button onClick={() => setShowCustomWhatsAppModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground transition-colors">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               </div>
 
               {/* Phone input */}
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{tp('Numéro WhatsApp')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Numéro WhatsApp')}</label>
                 <input
                   type="tel"
                   inputMode="numeric"
@@ -1179,15 +1179,15 @@ const OrderDetail = () => {
                   value={customPhoneNumber}
                   onChange={(e) => setCustomPhoneNumber(e.target.value)}
                   placeholder="237612345678"
-                  className="w-full h-11 px-4 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all placeholder:text-gray-300"
+                  className="w-full h-11 px-4 bg-background border border-border rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-card transition-all placeholder:text-gray-300"
                 />
-                <p className="text-[11px] text-gray-400 mt-1.5 ml-0.5">{tp('Indicatif pays + numéro, sans + ni espaces')}</p>
+                <p className="text-[11px] text-muted-foreground mt-1.5 ml-0.5">{tp('Indicatif pays + numéro, sans + ni espaces')}</p>
               </div>
 
               {/* Aperçu message */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-5 border border-gray-100">
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Message envoyé')}</p>
-                <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line">
+              <div className="bg-background rounded-xl p-4 mb-5 border border-border">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Message envoyé')}</p>
+                <p className="text-xs text-foreground leading-relaxed whitespace-pre-line">
                   {`Bonjour${order.clientName ? ' ' + order.clientName : ''}, nous avons essayé de vous contacter concernant votre commande de *${getDisplayProduct(order)}*.\n\nMerci de nous recontacter dès que possible afin de finaliser votre livraison.\n\nCordialement,\n${workspace?.name || 'Notre équipe'}`}
                 </p>
               </div>
@@ -1197,7 +1197,7 @@ const OrderDetail = () => {
                 <button
                   type="button"
                   onClick={() => setShowCustomWhatsAppModal(false)}
-                  className="flex-1 h-12 bg-gray-100 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
+                  className="flex-1 h-12 bg-muted text-foreground rounded-2xl text-sm font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
                 >
                   {tp('Annuler')}
                 </button>

@@ -134,7 +134,7 @@ const ThemeCard = ({ theme, selected, onSelect }) => {
       className={`text-left rounded-2xl border-2 transition-all duration-200 overflow-hidden ${
         selected
           ? 'border-primary-500 shadow-lg shadow-primary-100 scale-[1.02]'
-          : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+          : 'border-border hover:border-gray-300 hover:shadow-md'
       }`}
       style={{ background: '#fff' }}
     >
@@ -198,16 +198,16 @@ const ThemeCard = ({ theme, selected, onSelect }) => {
       <div style={{ padding: '10px 12px', background: '#fff' }}>
         <div className="flex items-center gap-2 mb-1">
           <span style={{ fontSize: 16 }}>{theme.emoji}</span>
-          <span className={`text-[13px] font-bold ${selected ? 'text-primary-700' : 'text-gray-800'}`}>
+          <span className={`text-[13px] font-bold ${selected ? 'text-primary' : 'text-foreground'}`}>
             {theme.name}
           </span>
           {selected && (
-            <span className="ml-auto text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
+            <span className="ml-auto text-[10px] font-bold text-primary bg-primary-50 px-2 py-0.5 rounded-full">
               {tp('Actif')}
             </span>
           )}
         </div>
-        <p className="text-[10px] text-gray-500 leading-snug m-0">{theme.desc}</p>
+        <p className="text-[10px] text-muted-foreground leading-snug m-0">{theme.desc}</p>
       </div>
     </button>
   );
@@ -250,8 +250,8 @@ const ThemeSelector = ({ config, onChange }) => {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xs font-bold text-gray-700 mb-1">{tp('Choisis un thème pour ta page produit')}</div>
-        <p className="text-[10px] text-gray-400 mb-3">
+        <div className="text-xs font-bold text-foreground mb-1">{tp('Choisis un thème pour ta page produit')}</div>
+        <p className="text-[10px] text-muted-foreground mb-3">
           Le thème détermine les couleurs, le fond et l'ambiance de ta page produit. Tu peux ajuster les détails dans "Design & Styles".
         </p>
       </div>
@@ -276,7 +276,7 @@ const ThemeSelector = ({ config, onChange }) => {
             <span className="text-2xl">{current.emoji}</span>
             <div>
               <div className="text-[13px] font-bold text-primary-800">{current.name}</div>
-              <div className="text-[10px] text-primary-600">{current.desc}</div>
+              <div className="text-[10px] text-primary">{current.desc}</div>
             </div>
           </div>
         );

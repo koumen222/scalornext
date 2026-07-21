@@ -4,6 +4,7 @@ import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
 import { getContextualError } from '../utils/errorMessages';
 import { tp } from '../i18n/platform.js';
+import { AlertTriangle, Boxes, CircleDollarSign, Plus, Search, SlidersHorizontal, TrendingUp } from 'lucide-react';
 
 /* ─── Helpers ────────────────────────────────────────────────────────────── */
 
@@ -30,9 +31,12 @@ const STATUS_FILTERS = [
 ];
 
 const calcBenefit = (p) => {
-  if (p.sellingPrice == null) return null;
+  if (p.sellingPrice == null || p.productCost == null || Number(p.productCost) <= 0) return null;
   return p.sellingPrice - (p.productCost ?? 0) - (p.deliveryCost ?? 0) - (p.avgAdsCost ?? 0);
 };
+
+const hasIncompleteCosts = (p) => p.sellingPrice == null || p.productCost == null || Number(p.productCost) <= 0;
+const normalizedName = (name = '') => name.trim().toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ');
 
 const calcMarginPct = (p) => {
   const b = calcBenefit(p);
@@ -64,7 +68,7 @@ const MarginBar = ({ pct }) => {
   const color = pct >= 40 ? 'bg-scalor-green' : pct >= 20 ? 'bg-amber-400' : 'bg-red-400';
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${clamped}%` }} />
       </div>
       <span className={`text-xs font-semibold tabular-nums ${pct >= 40 ? 'text-scalor-green' : pct >= 20 ? 'text-amber-600' : 'text-red-500'}`}>
@@ -82,7 +86,7 @@ const ProductAvatar = ({ product, size = 'md' }) => {
 
   if (img && !imgError) {
     return (
-      <div className={`${sizeClass} rounded-xl overflow-hidden shrink-0 bg-gray-100`}>
+      <div className={`${sizeClass} rounded-xl overflow-hidden shrink-0 bg-muted`}>
         <img src={img} alt={product.name} className="w-full h-full object-cover" onError={() => setImgError(true)} />
       </div>
     );
@@ -109,7 +113,7 @@ const RowMenu = ({ product, onDelete }) => {
     <div className="relative">
       <button
         onClick={() => setOpen(o => !o)}
-        className={`w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 border border-gray-200 ${T}`}
+        className={`w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted border border-border ${T}`}
         aria-label={tp('Actions')}
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -119,13 +123,13 @@ const RowMenu = ({ product, onDelete }) => {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-9 z-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden min-w-[150px]">
+          <div className="absolute right-0 top-9 z-20 bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[150px]">
             <Link
               to={`/ecom/products/${product._id}/edit`}
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 ${T}`}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-background ${T}`}
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
               {tp('Modifier')}
@@ -133,15 +137,15 @@ const RowMenu = ({ product, onDelete }) => {
             <Link
               to={`/ecom/products/${product._id}`}
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 ${T}`}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-background ${T}`}
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               {tp('Voir détails')}
             </Link>
-            <div className="border-t border-gray-100" />
+            <div className="border-t border-border" />
             <button
               onClick={() => { setOpen(false); onDelete(product._id); }}
               className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 ${T}`}
@@ -168,16 +172,13 @@ export default function ProductsList() {
   const [search, setSearch]       = useState('');
   const [statusFilter, setStatus] = useState('');
   const [activeFilter, setActive] = useState('');
+  const [businessFilter, setBusinessFilter] = useState('');
   const [sort, setSort]           = useState({ key: null, dir: 'desc' });
 
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const p = new URLSearchParams();
-      if (search)              p.append('search',   search);
-      if (statusFilter)        p.append('status',   statusFilter);
-      if (activeFilter !== '') p.append('isActive', activeFilter);
-      const res = await ecomApi.get(p.toString() ? `/products?${p}` : '/products');
+      const res = await ecomApi.get('/products?limit=500');
       setProducts(Array.isArray(res.data?.data) ? res.data.data : []);
     } catch (err) {
       setError(getContextualError(err, 'load_products'));
@@ -185,7 +186,7 @@ export default function ProductsList() {
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter, activeFilter]);
+  }, []);
 
   useEffect(() => { load(); }, [load]);
 
@@ -207,9 +208,31 @@ export default function ProductsList() {
     );
   };
 
+  const duplicateNames = useMemo(() => {
+    const counts = products.reduce((map, product) => {
+      const key = normalizedName(product.name);
+      if (key) map.set(key, (map.get(key) || 0) + 1);
+      return map;
+    }, new Map());
+    return new Set([...counts].filter(([, count]) => count > 1).map(([name]) => name));
+  }, [products]);
+
+  const filtered = useMemo(() => products.filter(product => {
+    const query = search.trim().toLocaleLowerCase('fr');
+    if (query && !`${product.name || ''} ${product.status || ''}`.toLocaleLowerCase('fr').includes(query)) return false;
+    if (statusFilter && !([statusFilter, statusFilter === 'scale' ? 'scal' : ''].includes(product.status))) return false;
+    if (activeFilter !== '' && product.isActive !== (activeFilter === 'true')) return false;
+    const benefit = calcBenefit(product);
+    if (businessFilter === 'profitable' && !(benefit > 0)) return false;
+    if (businessFilter === 'loss' && !(benefit !== null && benefit <= 0)) return false;
+    if (businessFilter === 'incomplete' && !hasIncompleteCosts(product)) return false;
+    if (businessFilter === 'duplicates' && !duplicateNames.has(normalizedName(product.name))) return false;
+    return true;
+  }), [products, search, statusFilter, activeFilter, businessFilter, duplicateNames]);
+
   const sorted = useMemo(() => {
-    if (!sort.key) return products;
-    return [...products].sort((a, b) => {
+    if (!sort.key) return filtered;
+    return [...filtered].sort((a, b) => {
       let av, bv;
       if (sort.key === 'name')    { av = a.name ?? ''; bv = b.name ?? ''; }
       if (sort.key === 'price')   { av = a.sellingPrice ?? 0; bv = b.sellingPrice ?? 0; }
@@ -218,102 +241,87 @@ export default function ProductsList() {
       if (typeof av === 'string') return sort.dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
       return sort.dir === 'asc' ? av - bv : bv - av;
     });
-  }, [products, sort]);
+  }, [filtered, sort]);
 
-  const stats = useMemo(() => ({
-    total:   products.length,
-    active:  products.filter(p => p.isActive).length,
-    profits: products.filter(p => (calcBenefit(p) ?? 0) > 0).length,
-    ben:     products.reduce((s, p) => s + (calcBenefit(p) ?? 0), 0),
-  }), [products]);
+  const stats = useMemo(() => {
+    const evaluated = products.filter(product => calcBenefit(product) !== null);
+    const profits = evaluated.filter(product => calcBenefit(product) > 0).length;
+    return {
+      total: products.length,
+      active: products.filter(product => product.isActive).length,
+      profits,
+      losses: evaluated.length - profits,
+      incomplete: products.filter(hasIncompleteCosts).length,
+      duplicates: products.filter(product => duplicateNames.has(normalizedName(product.name))).length,
+      ben: evaluated.reduce((sum, product) => sum + calcBenefit(product), 0),
+      evaluated: evaluated.length,
+    };
+  }, [products, duplicateNames]);
 
-  const hasFilters = search || statusFilter || activeFilter;
+  const hasFilters = search || statusFilter || activeFilter || businessFilter;
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-7 h-7 rounded-full border-[3px] border-gray-200 border-t-scalor-green animate-spin" />
+      <div className="w-7 h-7 rounded-full border-[3px] border-border border-t-scalor-green animate-spin" />
     </div>
   );
 
   return (
-    <div className="flex flex-col min-h-full bg-gray-50">
+    <div className="min-h-full bg-slate-50/60">
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between gap-4 sticky top-0 z-10">
+      <div className="border-b border-slate-200/80 bg-card px-4 py-5 sm:px-6">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">{tp('Produits')}</h1>
-          <p className="text-sm text-gray-500">{stats.total} produit{stats.total !== 1 ? 's' : ''} · {stats.active} actif{stats.active !== 1 ? 's' : ''}</p>
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900">{tp('Produits')}</h1>
+          <p className="mt-1 text-[12px] text-slate-500">Pilotez vos prix, vos coûts et le cycle de vie du catalogue.</p>
         </div>
         <Link
           to="/ecom/products/new"
-          className={`inline-flex items-center gap-2 bg-scalor-green hover:bg-scalor-green-dark text-white text-sm font-medium px-4 py-2 rounded-lg ${T}`}
+          className={`inline-flex min-h-10 items-center gap-2 rounded-xl bg-scalor-green px-4 text-[12px] font-semibold text-white shadow-sm hover:bg-scalor-green-dark ${T}`}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
+          <Plus className="h-4 w-4" />
           {tp('Nouveau produit')}
         </Link>
+        </div>
       </div>
 
       <div className="flex-1 px-4 sm:px-6 py-6 space-y-4 max-w-7xl w-full mx-auto">
 
         {/* KPIs */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Total')}</p>
-            <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Actifs')}</p>
-            <p className="text-2xl font-semibold text-gray-900">{stats.active}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{stats.total - stats.active} inactif{stats.total - stats.active !== 1 ? 's' : ''}</p>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Rentables')}</p>
-            <p className="text-2xl font-semibold text-gray-900">{stats.profits}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{stats.total - stats.profits} déficitaire{stats.total - stats.profits !== 1 ? 's' : ''}</p>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="text-xs font-medium text-gray-500 mb-1">{tp('Bénéfice estimé')}</p>
-            <p className={`text-2xl font-semibold ${stats.ben >= 0 ? 'text-gray-900' : 'text-red-600'}`}>{fmt(stats.ben)}</p>
-          </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[
+            { label: 'Catalogue', value: stats.total, detail: `${stats.active} actifs · ${stats.total - stats.active} inactifs`, icon: Boxes, tone: 'slate' },
+            { label: 'Rentabilité connue', value: `${stats.profits}/${stats.evaluated}`, detail: `${stats.losses} à perte`, icon: TrendingUp, tone: 'emerald' },
+            { label: 'À corriger', value: stats.incomplete, detail: 'prix ou coût manquant', icon: AlertTriangle, tone: stats.incomplete ? 'amber' : 'emerald' },
+            { label: 'Bénéfice potentiel', value: fmt(stats.ben), detail: `sur ${stats.evaluated} produits évalués`, icon: CircleDollarSign, tone: 'violet' },
+          ].map(card => { const Icon = card.icon; const tones = { slate: 'bg-slate-100 text-slate-600', emerald: 'bg-emerald-50 text-emerald-700', amber: 'bg-amber-50 text-amber-700', violet: 'bg-violet-50 text-violet-700' }; return (
+            <div key={card.label} className="rounded-2xl border border-slate-200/80 bg-card p-4 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+              <div className="flex items-start justify-between gap-3"><p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{card.label}</p><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${tones[card.tone]}`}><Icon className="h-4 w-4" /></span></div>
+              <p className="mt-2 truncate text-xl font-semibold tracking-tight text-slate-900">{card.value}</p>
+              <p className="mt-1 text-[10px] text-slate-400">{card.detail}</p>
+            </div>
+          ); })}
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative flex-1 min-w-[180px]">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-            </svg>
+        <div className="rounded-2xl border border-slate-200/80 bg-card p-3 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+          <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center">
+          <div className="relative min-w-[220px] flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={tp('Rechercher...')}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-scalor-green focus:border-scalor-green transition"
+              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-[12px] text-slate-800 outline-none transition focus:border-emerald-300 focus:bg-card focus:ring-4 focus:ring-emerald-50"
             />
-          </div>
-
-          <div className="flex items-center gap-1 flex-wrap">
-            {STATUS_FILTERS.map(f => (
-              <button
-                key={f.value}
-                onClick={() => setStatus(f.value)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium ${T} ${
-                  statusFilter === f.value
-                    ? 'bg-scalor-green text-white'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
           </div>
 
           <select
             value={activeFilter}
             onChange={e => setActive(e.target.value)}
-            className="px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-scalor-green transition"
+            className="h-10 rounded-xl border border-slate-200 bg-card px-3 text-[11px] font-medium text-slate-600 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-50"
           >
             <option value="">{tp('Tous')}</option>
             <option value="true">{tp('Actifs')}</option>
@@ -322,15 +330,21 @@ export default function ProductsList() {
 
           {hasFilters && (
             <button
-              onClick={() => { setSearch(''); setStatus(''); setActive(''); }}
-              className={`px-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-800 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg ${T}`}
+              onClick={() => { setSearch(''); setStatus(''); setActive(''); setBusinessFilter(''); }}
+              className={`h-10 rounded-xl border border-slate-200 bg-card px-3 text-[11px] font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 ${T}`}
             >
               {tp('Effacer filtres')}
             </button>
           )}
-          {hasFilters && (
-            <span className="ml-auto text-xs text-gray-400">{products.length} résultat{products.length !== 1 ? 's' : ''}</span>
-          )}
+          <span className="ml-auto whitespace-nowrap px-1 text-[10px] font-medium text-slate-400">{sorted.length} résultat{sorted.length !== 1 ? 's' : ''}</span>
+          </div>
+
+          <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-3">
+            <SlidersHorizontal className="mr-1 h-3.5 w-3.5 text-slate-400" />
+            {STATUS_FILTERS.map(filter => <button key={filter.value} onClick={() => setStatus(filter.value)} className={`rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition ${statusFilter === filter.value ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'}`}>{filter.label}</button>)}
+            <span className="mx-1 h-4 w-px bg-slate-200" />
+            {[{ value: 'profitable', label: 'Rentables' }, { value: 'loss', label: 'À perte' }, { value: 'incomplete', label: `À corriger ${stats.incomplete ? `(${stats.incomplete})` : ''}` }, { value: 'duplicates', label: `Doublons ${stats.duplicates ? `(${stats.duplicates})` : ''}` }].map(filter => <button key={filter.value} onClick={() => setBusinessFilter(current => current === filter.value ? '' : filter.value)} className={`rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition ${businessFilter === filter.value ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500 hover:bg-slate-100'}`}>{filter.label}</button>)}
+          </div>
         </div>
 
         {error && (
@@ -341,11 +355,11 @@ export default function ProductsList() {
 
         {/* Empty state */}
         {sorted.length === 0 && (
-          <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center">
-            <p className="text-sm font-medium text-gray-900">
+          <div className="bg-card border border-dashed border-gray-300 rounded-xl p-12 text-center">
+            <p className="text-sm font-medium text-foreground">
               {hasFilters ? 'Aucun produit pour ces critères' : tp('Aucun produit')}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {hasFilters ? 'Essayez de modifier vos filtres' : tp('Créez votre premier produit pour commencer')}
             </p>
             {!hasFilters && (
@@ -365,7 +379,7 @@ export default function ProductsList() {
         {sorted.length > 0 && (
           <>
             {/* Mobile cards */}
-            <div className="sm:hidden divide-y divide-gray-100 border border-gray-200 rounded-xl overflow-hidden bg-white">
+            <div className="sm:hidden divide-y divide-gray-100 border border-border rounded-xl overflow-hidden bg-card">
               {sorted.map(product => {
                 const benefit    = calcBenefit(product);
                 const profitable = benefit !== null && benefit > 0;
@@ -378,13 +392,15 @@ export default function ProductsList() {
                         <div className="min-w-0">
                           <Link
                             to={`/ecom/products/${product._id}`}
-                            className={`font-semibold text-gray-900 text-sm truncate block hover:text-scalor-green ${T}`}
+                            className={`font-semibold text-foreground text-sm truncate block hover:text-scalor-green ${T}`}
                           >
                             {product.name}
                           </Link>
                           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             <StatusChip status={product.status} />
-                            <span className={`text-xs font-medium ${product.isActive ? 'text-scalor-green' : 'text-gray-400'}`}>
+                            {duplicateNames.has(normalizedName(product.name)) && <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-semibold text-blue-600">Doublon</span>}
+                            {hasIncompleteCosts(product) && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-semibold text-amber-700">Coût à compléter</span>}
+                            <span className={`text-xs font-medium ${product.isActive ? 'text-scalor-green' : 'text-muted-foreground'}`}>
                               {product.isActive ? 'Actif' : tp('Inactif')}
                             </span>
                           </div>
@@ -394,13 +410,13 @@ export default function ProductsList() {
                     </div>
                     <div className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1">
                       <div>
-                        <p className="text-xs text-gray-400">{tp('Prix')}</p>
-                        <p className="text-sm font-semibold tabular-nums text-gray-900">
+                        <p className="text-xs text-muted-foreground">{tp('Prix')}</p>
+                        <p className="text-sm font-semibold tabular-nums text-foreground">
                           {product.sellingPrice != null ? fmt(product.sellingPrice) : '—'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">{tp('Bénéfice')}</p>
+                        <p className="text-xs text-muted-foreground">{tp('Bénéfice')}</p>
                         <p className={`text-sm font-semibold tabular-nums ${benefit === null ? 'text-gray-300' : profitable ? 'text-scalor-green' : 'text-red-600'}`}>
                           {benefit === null ? '—' : `${profitable ? '+' : ''}${fmt(benefit)}`}
                         </p>
@@ -413,8 +429,8 @@ export default function ProductsList() {
             </div>
 
             {/* Desktop table */}
-            <div className="hidden sm:block overflow-x-auto border border-gray-200 rounded-xl">
-              <table className="w-full table-fixed divide-y divide-gray-200 text-sm">
+            <div className="hidden overflow-x-auto rounded-2xl border border-slate-200/80 bg-card shadow-[0_1px_3px_rgba(15,23,42,0.03)] sm:block">
+              <table className="w-full table-fixed divide-y divide-slate-100 text-sm">
                 <colgroup>
                   <col className="w-[260px]" />
                   <col className="w-[110px]" />
@@ -425,63 +441,67 @@ export default function ProductsList() {
                   <col className="w-[60px]" />
                 </colgroup>
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
+                  <tr className="border-b border-slate-200 bg-slate-50/70">
                     <th className="px-4 py-3 text-left">
-                      <button onClick={() => toggleSort('name')} className={`inline-flex items-center text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('name')} className={`inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Produit <SortIcon active={sort.key === 'name'} dir={sort.dir} />
                       </button>
                     </th>
                     <th className="px-4 py-3 text-right">
-                      <button onClick={() => toggleSort('price')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('price')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Prix <SortIcon active={sort.key === 'price'} dir={sort.dir} />
                       </button>
                     </th>
                     <th className="px-4 py-3 text-right">
-                      <span className="text-xs font-medium text-gray-500">{tp('Coût')}</span>
+                      <span className="text-xs font-medium text-muted-foreground">Coût total</span>
                     </th>
                     <th className="px-4 py-3 text-right">
-                      <button onClick={() => toggleSort('benefit')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('benefit')} className={`inline-flex items-center justify-end w-full text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Bénéfice <SortIcon active={sort.key === 'benefit'} dir={sort.dir} />
                       </button>
                     </th>
                     <th className="px-4 py-3">
-                      <button onClick={() => toggleSort('margin')} className={`inline-flex items-center text-xs font-medium text-gray-500 hover:text-gray-700 ${T}`}>
+                      <button onClick={() => toggleSort('margin')} className={`inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground ${T}`}>
                         Marge <SortIcon active={sort.key === 'margin'} dir={sort.dir} />
                       </button>
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500">{tp('État')}</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">{tp('État')}</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.map((product, idx) => {
+                  {sorted.map((product) => {
                     const benefit    = calcBenefit(product);
-                    const cost       = product.productCost ?? 0;
+                    const cost       = (product.productCost ?? 0) + (product.deliveryCost ?? 0) + (product.avgAdsCost ?? 0);
                     const profitable = benefit !== null && benefit > 0;
                     const suggest    = calcSuggestedPrice(product);
                     const margin     = calcMarginPct(product);
 
                     return (
-                      <tr key={product._id} className={`hover:bg-primary-50/30 ${T} ${idx % 2 === 1 ? 'bg-gray-50/40' : 'bg-white'}`}>
+                      <tr key={product._id} className={`border-b border-slate-100 bg-card hover:bg-emerald-50/20 ${T}`}>
                         <td className="px-4 py-3 align-top">
                           <div className="flex items-center gap-3">
                             <ProductAvatar product={product} size="md" />
                             <div className="min-w-0">
                               <Link
                                 to={`/ecom/products/${product._id}`}
-                                className={`font-medium text-gray-900 hover:text-scalor-green ${T} block truncate`}
+                                className={`font-medium text-foreground hover:text-scalor-green ${T} block truncate`}
                               >
                                 {product.name}
                               </Link>
                               <div className="mt-0.5">
-                                <StatusChip status={product.status} />
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  <StatusChip status={product.status} />
+                                  {duplicateNames.has(normalizedName(product.name)) && <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-semibold text-blue-600">Doublon</span>}
+                                  {hasIncompleteCosts(product) && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-semibold text-amber-700">À compléter</span>}
+                                </div>
                               </div>
                             </div>
                           </div>
                         </td>
 
                         <td className="px-4 py-3 align-top text-right">
-                          <span className="font-semibold text-gray-900 tabular-nums">
+                          <span className="font-semibold text-foreground tabular-nums">
                             {product.sellingPrice != null ? fmt(product.sellingPrice) : '—'}
                           </span>
                           {suggest && !product.sellingPrice && (
@@ -495,7 +515,7 @@ export default function ProductsList() {
                         </td>
 
                         <td className="px-4 py-3 align-top text-right">
-                          <span className="text-gray-500 tabular-nums">{fmt(cost)}</span>
+                          {hasIncompleteCosts(product) ? <span className="text-[10px] font-medium text-amber-600">Coût à renseigner</span> : <span className="tabular-nums text-slate-500">{fmt(cost)}</span>}
                         </td>
 
                         <td className="px-4 py-3 align-top text-right">
@@ -519,7 +539,7 @@ export default function ProductsList() {
                               {tp('Actif')}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
                               <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
                               {tp('Inactif')}
                             </span>
@@ -534,7 +554,7 @@ export default function ProductsList() {
                   })}
                 </tbody>
               </table>
-              <div className="px-4 py-2.5 border-t border-gray-100 text-xs text-gray-400 bg-white">
+              <div className="px-4 py-2.5 border-t border-border text-xs text-muted-foreground bg-card">
                 {sorted.length} produit{sorted.length !== 1 ? 's' : ''}{hasFilters ? ' (filtré)' : ''}
               </div>
             </div>

@@ -48,9 +48,9 @@ const DecisionsList = () => {
       <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-6" />
       <div className="space-y-2">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+          <div key={i} className="bg-card rounded-xl border p-4">
             <div className="h-4 w-36 bg-gray-200 rounded animate-pulse mb-2" />
-            <div className="h-3 w-24 bg-gray-100 rounded animate-pulse" />
+            <div className="h-3 w-24 bg-muted rounded animate-pulse" />
           </div>
         ))}
       </div>
@@ -60,10 +60,10 @@ const DecisionsList = () => {
   return (
     <div className="p-3 sm:p-4 lg:p-6">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{tp('Décisions')}</h1>
+        <h1 className="text-xl sm:text-3xl font-bold text-foreground">{tp('Décisions')}</h1>
         <Link
           to="/ecom/decisions/new"
-          className="bg-primary-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-primary-700 text-sm"
+          className="bg-primary text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-primary-700 text-sm"
         >
           + Décision
         </Link>
@@ -75,37 +75,37 @@ const DecisionsList = () => {
         </div>
       )}
 
-      <div className="bg-white shadow rounded-lg overflow-x-auto">
+      <div className="bg-card shadow rounded-lg overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-background">
             <tr>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {tp('Date')}
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {tp('Produit')}
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {tp('Type')}
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
                 {tp('Priorité')}
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {tp('Statut')}
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">
                 {tp('Assigné à')}
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {tp('Actions')}
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-card divide-y divide-gray-200">
             {decisions.length === 0 ? (
               <tr>
-                <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
+                <td colSpan="7" className="px-6 py-4 text-center text-muted-foreground">
                   {tp('Aucune décision trouvée')}
                 </td>
               </tr>
@@ -113,15 +113,15 @@ const DecisionsList = () => {
               decisions.map((decision) => (
                 <tr key={decision._id}>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                    <div className="text-xs sm:text-sm text-gray-900">
+                    <div className="text-xs sm:text-sm text-foreground">
                       {new Date(decision.createdAt).toLocaleDateString('fr-FR')}
                     </div>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                     {decision.productId?._id ? (
-                      <Link to={`/products/${decision.productId._id}`} className="text-xs sm:text-sm text-primary-600 hover:text-primary-800 hover:underline">{decision.productId.name}</Link>
+                      <Link to={`/products/${decision.productId._id}`} className="text-xs sm:text-sm text-primary hover:text-primary-800 hover:underline">{decision.productId.name}</Link>
                     ) : (
-                      <span className="text-xs sm:text-sm text-gray-900">N/A</span>
+                      <span className="text-xs sm:text-sm text-foreground">N/A</span>
                     )}
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -142,7 +142,7 @@ const DecisionsList = () => {
                         ? 'bg-red-100 text-red-800'
                         : decision.priority === 'medium'
                         ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
+                        : 'bg-muted text-foreground'
                     }`}>
                       {decision.priority === 'high' ? 'Haute' : 
                        decision.priority === 'medium' ? 'Moyenne' : tp('Basse')}
@@ -161,14 +161,14 @@ const DecisionsList = () => {
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden md:table-cell">
-                    <div className="text-xs sm:text-sm text-gray-900">
+                    <div className="text-xs sm:text-sm text-foreground">
                       {decision.assignedTo?.name || tp('Non assigné')}
                     </div>
                   </td>
                   <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
                     <Link
                       to={`/decisions/${decision._id}`}
-                      className="text-primary-700 hover:text-primary-900 mr-4"
+                      className="text-primary hover:text-primary-900 mr-4"
                     >
                       {tp('Voir')}
                     </Link>

@@ -63,7 +63,7 @@ const EDITABLE_SECTIONS = {
 };
 
 // ── Inline content editor for a section ───────────────────────────────────────
-const inputCls = "w-full px-3 py-2 rounded-lg border border-gray-200 text-[13px] outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200 transition-all bg-white";
+const inputCls = "w-full px-3 py-2 rounded-lg border border-border text-[13px] outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200 transition-all bg-card";
 
 const EMPTY_TESTIMONIAL = { name: '', location: '', rating: 5, text: '', verified: true, date: '', image: '' };
 
@@ -85,27 +85,27 @@ const BlocksTestimonialCard = ({ t, i, updateT, removeT }) => {
     }
   };
   return (
-    <div className="rounded-lg border border-gray-100 p-2.5 bg-gray-50/50 space-y-1.5">
+    <div className="rounded-lg border border-border p-2.5 bg-background/50 space-y-1.5">
       <div className="flex items-center justify-between mb-0.5">
-        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Avis #{i + 1}</span>
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Avis #{i + 1}</span>
         <button onClick={() => removeT(i)} className="p-0.5 text-gray-300 hover:text-red-400 transition-colors"><Trash2 size={12} /></button>
       </div>
       {/* Avatar upload */}
       <div className="flex items-center gap-2">
         {t.image ? (
           <div className="relative group">
-            <img src={t.image} alt="" className="w-9 h-9 rounded-full object-cover border-2 border-gray-200" />
+            <img src={t.image} alt="" className="w-9 h-9 rounded-full object-cover border-2 border-border" />
             <button type="button" onClick={() => updateT(i, 'image', '')}
               className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
               <X className="w-2.5 h-2.5" />
             </button>
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
-            <Image className="w-3.5 h-3.5 text-gray-400" />
+          <div className="w-9 h-9 rounded-full bg-muted border-2 border-dashed border-gray-300 flex items-center justify-center">
+            <Image className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
         )}
-        <label className="flex items-center gap-1 px-2 py-1 text-[10px] bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition">
+        <label className="flex items-center gap-1 px-2 py-1 text-[10px] bg-muted hover:bg-gray-200 rounded-lg cursor-pointer transition">
           {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
           <span>{t.image ? 'Changer' : tp('Photo')}</span>
           <input type="file" accept="image/*" className="hidden"
@@ -158,7 +158,7 @@ const SectionContentEditor = ({ section, onChange }) => {
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [galleryUploadError, setGalleryUploadError] = useState('');
   if (!schema) return (
-    <div className="text-[11px] text-gray-400 italic py-1">{tp('Contenu généré automatiquement par l\'IA')}</div>
+    <div className="text-[11px] text-muted-foreground italic py-1">{tp('Contenu généré automatiquement par l\'IA')}</div>
   );
 
   const content = section.content || {};
@@ -174,7 +174,7 @@ const SectionContentEditor = ({ section, onChange }) => {
     };
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Statistiques (3 max)')}</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Statistiques (3 max)')}</div>
         {stats.slice(0, 3).map((st, i) => (
           <div key={i} className="flex gap-2">
             <input className={inputCls + " w-20 shrink-0"} value={st.value} onChange={e => updateStat(i, 'value', e.target.value)}
@@ -183,7 +183,7 @@ const SectionContentEditor = ({ section, onChange }) => {
               placeholder={tp('Clients satisfaits')} />
           </div>
         ))}
-        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
+        <div className="text-[10px] text-muted-foreground">{tp('Laissez vide pour utiliser les données IA')}</div>
       </div>
     );
   }
@@ -196,7 +196,7 @@ const SectionContentEditor = ({ section, onChange }) => {
     const removeItem = (i) => update('items', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-1.5">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || tp('Éléments')}</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">{schema.label || tp('Éléments')}</div>
         {items.map((item, i) => (
           <div key={i} className="flex gap-1.5 items-center">
             <input className={inputCls + " flex-1"} value={item} onChange={e => updateItem(i, e.target.value)}
@@ -206,10 +206,10 @@ const SectionContentEditor = ({ section, onChange }) => {
             )}
           </div>
         ))}
-        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1">
+        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary mt-1">
           <Plus size={12} /> Ajouter
         </button>
-        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
+        <div className="text-[10px] text-muted-foreground">{tp('Laissez vide pour utiliser les données IA')}</div>
       </div>
     );
   }
@@ -222,9 +222,9 @@ const SectionContentEditor = ({ section, onChange }) => {
     const removeFaq = (i) => update('faqItems', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Questions fréquentes')}</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Questions fréquentes')}</div>
         {items.map((item, i) => (
-          <div key={i} className="rounded-lg border border-gray-100 p-2 bg-gray-50/50 space-y-1.5">
+          <div key={i} className="rounded-lg border border-border p-2 bg-background/50 space-y-1.5">
             <div className="flex gap-1.5 items-center">
               <input className={inputCls + " flex-1"} value={item.question} onChange={e => updateFaq(i, 'question', e.target.value)}
                 placeholder={tp('Question…')} />
@@ -236,10 +236,10 @@ const SectionContentEditor = ({ section, onChange }) => {
               placeholder={tp('Réponse…')} />
           </div>
         ))}
-        <button onClick={addFaq} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1">
+        <button onClick={addFaq} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary mt-1">
           <Plus size={12} /> Ajouter une question
         </button>
-        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA / produit')}</div>
+        <div className="text-[10px] text-muted-foreground">{tp('Laissez vide pour utiliser les données IA / produit')}</div>
       </div>
     );
   }
@@ -253,18 +253,18 @@ const SectionContentEditor = ({ section, onChange }) => {
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] font-semibold text-gray-500">{tp('Témoignages clients')}</span>
-          <span className="text-[10px] text-gray-400">{items.length} ajouté{items.length !== 1 ? 's' : ''}</span>
+          <span className="text-[11px] font-semibold text-muted-foreground">{tp('Témoignages clients')}</span>
+          <span className="text-[10px] text-muted-foreground">{items.length} ajouté{items.length !== 1 ? 's' : ''}</span>
         </div>
         {items.length === 0 && (
-          <div className="text-[11px] text-gray-400 italic py-1 text-center">
+          <div className="text-[11px] text-muted-foreground italic py-1 text-center">
             Aucun témoignage — les données IA / produit seront utilisées
           </div>
         )}
         {items.map((t, i) => (
           <BlocksTestimonialCard key={i} t={t} i={i} updateT={updateT} removeT={removeT} />
         ))}
-        <button onClick={addT} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1">
+        <button onClick={addT} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary mt-1">
           <Plus size={12} /> Ajouter un témoignage
         </button>
       </div>
@@ -325,21 +325,21 @@ const SectionContentEditor = ({ section, onChange }) => {
       <div className="space-y-3">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" checked={gallery.showHeader !== false} onChange={e => update('showHeader', e.target.checked)} className="w-4 h-4 accent-primary-500" />
-          <span className="text-[12px] text-gray-600">{tp('Afficher le titre de la section')}</span>
+          <span className="text-[12px] text-muted-foreground">{tp('Afficher le titre de la section')}</span>
         </label>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Titre')}</div>
+            <div className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Titre')}</div>
             <input className={inputCls} value={gallery.title || ''} onChange={e => update('title', e.target.value)} placeholder={tp('Photos du produit')} />
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Sous-titre')}</div>
+            <div className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Sous-titre')}</div>
             <input className={inputCls} value={gallery.subtitle || ''} onChange={e => update('subtitle', e.target.value)} placeholder={tp('Faites défiler les visuels...')} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Hauteur image principale')}</div>
+            <div className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Hauteur image principale')}</div>
             <select className={inputCls} value={mainImageHeight} onChange={e => update('mainImageHeight', Number.parseInt(e.target.value, 10))}>
               {MAIN_IMAGE_HEIGHT_OPTIONS.map((size) => (
                 <option key={size} value={size}>{size}px</option>
@@ -347,7 +347,7 @@ const SectionContentEditor = ({ section, onChange }) => {
             </select>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Taille miniatures')}</div>
+            <div className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Taille miniatures')}</div>
             <select className={inputCls} value={thumbnailSize} onChange={e => update('thumbnailSize', Number.parseInt(e.target.value, 10))}>
               {THUMBNAIL_SIZE_OPTIONS.map((size) => (
                 <option key={size} value={size}>{size}px</option>
@@ -357,13 +357,13 @@ const SectionContentEditor = ({ section, onChange }) => {
         </div>
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" checked={gallery.useProductImages !== false} onChange={e => update('useProductImages', e.target.checked)} className="w-4 h-4 accent-primary-500" />
-          <span className="text-[12px] text-gray-600">{tp('Utiliser aussi les photos natives du produit')}</span>
+          <span className="text-[12px] text-muted-foreground">{tp('Utiliser aussi les photos natives du produit')}</span>
         </label>
-        <div className="space-y-2 rounded-xl border border-gray-200 bg-gray-50/60 p-3">
+        <div className="space-y-2 rounded-xl border border-border bg-background/60 p-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-gray-700">{tp('Photos personnalisées')}</span>
+            <span className="text-[11px] font-semibold text-foreground">{tp('Photos personnalisées')}</span>
             <div className="flex items-center gap-2">
-              <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-primary-200 bg-primary-50 text-[11px] font-semibold text-primary-700 cursor-pointer hover:bg-primary-100 transition">
+              <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-primary-200 bg-primary-50 text-[11px] font-semibold text-primary cursor-pointer hover:bg-primary-100 transition">
                 {galleryUploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
                 Uploader
                 <input
@@ -378,7 +378,7 @@ const SectionContentEditor = ({ section, onChange }) => {
                   }}
                 />
               </label>
-              <button onClick={addImage} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700">
+              <button onClick={addImage} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary">
                 <Plus size={12} /> Ajouter
               </button>
             </div>
@@ -391,17 +391,17 @@ const SectionContentEditor = ({ section, onChange }) => {
             </div>
           )}
           {images.length === 0 && (
-            <div className="text-[10px] text-gray-400">{tp('Uploadez vos images ou collez une URL. Si l\'option ci-dessus est activée, elles seront ajoutées au carrousel; sinon elles remplaceront les photos produit.')}</div>
+            <div className="text-[10px] text-muted-foreground">{tp('Uploadez vos images ou collez une URL. Si l\'option ci-dessus est activée, elles seront ajoutées au carrousel; sinon elles remplaceront les photos produit.')}</div>
           )}
           {images.map((image, index) => (
-            <div key={index} className="rounded-lg border border-gray-200 bg-white p-2 space-y-2">
+            <div key={index} className="rounded-lg border border-border bg-card p-2 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Photo #{index + 1}</span>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Photo #{index + 1}</span>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => moveImage(index, -1)} disabled={index === 0} className="p-1 text-gray-300 hover:text-gray-500 disabled:opacity-25">
+                  <button onClick={() => moveImage(index, -1)} disabled={index === 0} className="p-1 text-gray-300 hover:text-muted-foreground disabled:opacity-25">
                     <ChevronUp size={12} />
                   </button>
-                  <button onClick={() => moveImage(index, 1)} disabled={index === images.length - 1} className="p-1 text-gray-300 hover:text-gray-500 disabled:opacity-25">
+                  <button onClick={() => moveImage(index, 1)} disabled={index === images.length - 1} className="p-1 text-gray-300 hover:text-muted-foreground disabled:opacity-25">
                     <ChevronDown size={12} />
                   </button>
                   <button onClick={() => removeImage(index)} className="p-1 text-gray-300 hover:text-red-400">
@@ -410,10 +410,10 @@ const SectionContentEditor = ({ section, onChange }) => {
                 </div>
               </div>
               {image.url && (
-                <img src={image.url} alt={image.alt || `Photo ${index + 1}`} className="w-full h-28 rounded-lg border border-gray-200 object-cover bg-gray-50" />
+                <img src={image.url} alt={image.alt || `Photo ${index + 1}`} className="w-full h-28 rounded-lg border border-border object-cover bg-background" />
               )}
               <input className={inputCls} value={image.url || ''} onChange={e => updateImage(index, 'url', e.target.value)} placeholder="https://..." />
-              <label className="flex items-center justify-center gap-1 w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-[11px] font-medium text-gray-600 cursor-pointer hover:bg-gray-100 transition">
+              <label className="flex items-center justify-center gap-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-[11px] font-medium text-muted-foreground cursor-pointer hover:bg-muted transition">
                 {galleryUploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
                 Remplacer par upload
                 <input
@@ -431,7 +431,7 @@ const SectionContentEditor = ({ section, onChange }) => {
             </div>
           ))}
         </div>
-        <div className="text-[10px] text-gray-400">Les tailles sont limitées aux formats supportés pour garder une mise en page propre. Si aucune photo personnalisée n'est renseignée, la galerie affiche les images du produit.</div>
+        <div className="text-[10px] text-muted-foreground">Les tailles sont limitées aux formats supportés pour garder une mise en page propre. Si aucune photo personnalisée n'est renseignée, la galerie affiche les images du produit.</div>
       </div>
     );
   }
@@ -445,7 +445,7 @@ const SectionContentEditor = ({ section, onChange }) => {
     const removeItem = (i) => update('items', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || tp('Éléments')}</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">{schema.label || tp('Éléments')}</div>
         {items.map((item, i) => (
           <div key={i} className="flex gap-1.5 items-center">
             <input className={inputCls + " w-12 text-center shrink-0"} value={item.icon || ''} onChange={e => updateItem(i, 'icon', e.target.value)} placeholder={schema.iconPlaceholder || '🚚'} />
@@ -453,8 +453,8 @@ const SectionContentEditor = ({ section, onChange }) => {
             {items.length > 1 && <button onClick={() => removeItem(i)} className="p-1 text-gray-300 hover:text-red-400 transition-colors shrink-0"><Trash2 size={12} /></button>}
           </div>
         ))}
-        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1"><Plus size={12} /> {tp('Ajouter')}</button>
-        <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
+        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary mt-1"><Plus size={12} /> {tp('Ajouter')}</button>
+        <div className="text-[10px] text-muted-foreground">{tp('Laissez vide pour utiliser les données IA')}</div>
       </div>
     );
   }
@@ -466,14 +466,14 @@ const SectionContentEditor = ({ section, onChange }) => {
           return (
             <label key={field.key} className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={!!content[field.key]} onChange={e => update(field.key, e.target.checked)} className="w-4 h-4 accent-primary-500" />
-              <span className="text-[12px] text-gray-600">{field.label}</span>
+              <span className="text-[12px] text-muted-foreground">{field.label}</span>
             </label>
           );
         }
         if (field.type === 'number') {
           return (
             <div key={field.key}>
-              <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+              <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
               <input type="number" min="0" className={inputCls + " w-28"} value={content[field.key] || ''} onChange={e => update(field.key, parseInt(e.target.value) || 0)} placeholder={field.placeholder} />
             </div>
           );
@@ -485,7 +485,7 @@ const SectionContentEditor = ({ section, onChange }) => {
           const removeItem = (i) => update(field.key, items.filter((_, idx) => idx !== i));
           return (
             <div key={field.key}>
-              <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+              <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
               {items.map((item, i) => (
                 <div key={i} className="flex gap-1.5 items-center mb-1">
                   <input className={inputCls + " flex-1"} value={item} onChange={e => updateItem(i, e.target.value)}
@@ -495,7 +495,7 @@ const SectionContentEditor = ({ section, onChange }) => {
                   )}
                 </div>
               ))}
-              <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700">
+              <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary">
                 <Plus size={12} /> Ajouter
               </button>
             </div>
@@ -504,7 +504,7 @@ const SectionContentEditor = ({ section, onChange }) => {
         if (field.type === 'textarea') {
           return (
             <div key={field.key}>
-              <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+              <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
               <textarea className={inputCls + " resize-none"} rows={3} value={content[field.key] || ''}
                 onChange={e => update(field.key, e.target.value)} placeholder={field.placeholder} />
             </div>
@@ -512,13 +512,13 @@ const SectionContentEditor = ({ section, onChange }) => {
         }
         return (
           <div key={field.key}>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+            <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
             <input className={inputCls} value={content[field.key] || ''}
               onChange={e => update(field.key, e.target.value)} placeholder={field.placeholder} />
           </div>
         );
       })}
-      <div className="text-[10px] text-gray-400">{tp('Laissez vide pour utiliser les données IA')}</div>
+      <div className="text-[10px] text-muted-foreground">{tp('Laissez vide pour utiliser les données IA')}</div>
     </div>
   );
 };
@@ -547,7 +547,7 @@ const SortableBlock = ({ section, index, onToggle, isExpanded, onExpand, onConte
       } ${
         section.enabled
           ? 'border-primary-200/60 bg-primary-50/40 hover:bg-primary-50/70'
-          : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50'
+          : 'border-border bg-background/50 hover:bg-background'
       }`}
     >
       <div className="group flex items-center gap-3 px-3.5 py-2.5">
@@ -555,14 +555,14 @@ const SortableBlock = ({ section, index, onToggle, isExpanded, onExpand, onConte
         <button
           {...attributes}
           {...listeners}
-          className="p-1 -ml-1 rounded-lg cursor-grab active:cursor-grabbing hover:bg-white/70 transition-colors touch-none"
+          className="p-1 -ml-1 rounded-lg cursor-grab active:cursor-grabbing hover:bg-card/70 transition-colors touch-none"
           tabIndex={-1}
         >
-          <GripVertical size={14} className="text-gray-300 group-hover:text-gray-400" />
+          <GripVertical size={14} className="text-gray-300 group-hover:text-muted-foreground" />
         </button>
 
         {/* Position */}
-        <span className="w-5 h-5 rounded-md bg-white text-gray-400 text-[10px] font-bold flex items-center justify-center shrink-0 border border-gray-100 shadow-sm">
+        <span className="w-5 h-5 rounded-md bg-card text-muted-foreground text-[10px] font-bold flex items-center justify-center shrink-0 border border-border shadow-sm">
           {index + 1}
         </span>
 
@@ -575,11 +575,11 @@ const SortableBlock = ({ section, index, onToggle, isExpanded, onExpand, onConte
           className={`flex-1 min-w-0 text-left ${hasEditor && section.enabled ? 'cursor-pointer' : 'cursor-default'}`}
         >
           <span className={`text-[13px] font-semibold leading-tight block ${
-            section.enabled ? 'text-gray-800' : 'text-gray-400'
+            section.enabled ? 'text-foreground' : 'text-muted-foreground'
           }`}>
             {section.label}
           </span>
-          <span className="text-[10px] text-gray-400 leading-tight block mt-0.5 truncate">
+          <span className="text-[10px] text-muted-foreground leading-tight block mt-0.5 truncate">
             {meta.desc}
           </span>
         </button>
@@ -595,10 +595,10 @@ const SortableBlock = ({ section, index, onToggle, isExpanded, onExpand, onConte
         <button
           onClick={() => onToggle(section.id)}
           className={`relative inline-flex h-[22px] w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-            section.enabled ? 'bg-primary-500' : 'bg-gray-200'
+            section.enabled ? 'bg-primary' : 'bg-gray-200'
           }`}
         >
-          <span className={`inline-block h-[18px] w-[18px] rounded-full bg-white shadow-sm transition duration-200 ${
+          <span className={`inline-block h-[18px] w-[18px] rounded-full bg-card shadow-sm transition duration-200 ${
             section.enabled ? 'translate-x-[18px]' : 'translate-x-0'
           }`} />
         </button>
@@ -606,7 +606,7 @@ const SortableBlock = ({ section, index, onToggle, isExpanded, onExpand, onConte
 
       {/* Expanded content editor */}
       {isExpanded && section.enabled && (
-        <div className="px-4 pb-3 pt-1 border-t border-gray-100/60">
+        <div className="px-4 pb-3 pt-1 border-t border-border/60">
           <SectionContentEditor section={section} onChange={onContentChange} />
         </div>
       )}
@@ -649,20 +649,20 @@ const BlocksEditor = ({ sections, onChange }) => {
     <div>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-gray-500">
+          <span className="text-xs font-medium text-muted-foreground">
             {enabledCount}/{sections.length} sections actives
           </span>
         </div>
         <div className="flex gap-1.5">
           <button
             onClick={() => onChange(sections.map(s => ({ ...s, enabled: true })))}
-            className="text-[10px] font-medium text-primary-600 hover:text-primary-700 px-2 py-1 rounded-lg hover:bg-primary-50 transition-colors"
+            className="text-[10px] font-medium text-primary hover:text-primary px-2 py-1 rounded-lg hover:bg-primary-50 transition-colors"
           >
             <Eye size={11} className="inline mr-1" />Tout activer
           </button>
           <button
             onClick={() => onChange(sections.map(s => ({ ...s, enabled: false })))}
-            className="text-[10px] font-medium text-gray-400 hover:text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors"
+            className="text-[10px] font-medium text-muted-foreground hover:text-muted-foreground px-2 py-1 rounded-lg hover:bg-background transition-colors"
           >
             <EyeOff size={11} className="inline mr-1" />Tout masquer
           </button>

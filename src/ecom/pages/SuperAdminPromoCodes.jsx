@@ -189,10 +189,10 @@ const SuperAdminPromoCodes = () => {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Tag className="text-purple-600" /> Codes promo
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {tp('Créez et gérez les codes promo applicables aux abonnements.')}
           </p>
         </div>
@@ -206,25 +206,25 @@ const SuperAdminPromoCodes = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase">{tp('Codes')}</p>
-          <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+        <div className="bg-card rounded-lg shadow p-4">
+          <p className="text-xs text-muted-foreground uppercase">{tp('Codes')}</p>
+          <p className="text-2xl font-bold text-foreground">{stats.total}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase">{tp('Actifs')}</p>
+        <div className="bg-card rounded-lg shadow p-4">
+          <p className="text-xs text-muted-foreground uppercase">{tp('Actifs')}</p>
           <p className="text-2xl font-bold text-green-600">{stats.active}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase">{tp('Utilisations totales')}</p>
+        <div className="bg-card rounded-lg shadow p-4">
+          <p className="text-xs text-muted-foreground uppercase">{tp('Utilisations totales')}</p>
           <p className="text-2xl font-bold text-purple-600">{stats.used}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4 mb-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-card rounded-lg shadow p-4 mb-4 flex flex-wrap gap-3 items-center">
         <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-[260px]">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
             <input
               type="text"
               value={search}
@@ -233,7 +233,7 @@ const SuperAdminPromoCodes = () => {
               className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
-          <button type="submit" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm">
+          <button type="submit" className="px-4 py-2 bg-muted hover:bg-gray-200 rounded-lg text-sm">
             {tp('Rechercher')}
           </button>
         </form>
@@ -261,17 +261,17 @@ const SuperAdminPromoCodes = () => {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-card rounded-lg shadow overflow-hidden">
         {loading ? (
           <div className="p-12 flex justify-center">
             <Loader2 className="animate-spin text-purple-600" size={28} />
           </div>
         ) : codes.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">{tp('Aucun code promo')}</div>
+          <div className="p-12 text-center text-muted-foreground">{tp('Aucun code promo')}</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-gray-600 text-xs uppercase">
+              <thead className="bg-background text-muted-foreground text-xs uppercase">
                 <tr>
                   <th className="px-4 py-3 text-left">{tp('Code')}</th>
                   <th className="px-4 py-3 text-left">{tp('Réduction')}</th>
@@ -285,10 +285,10 @@ const SuperAdminPromoCodes = () => {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {codes.map(c => (
-                  <tr key={c._id} className="hover:bg-gray-50">
+                  <tr key={c._id} className="hover:bg-background">
                     <td className="px-4 py-3">
                       <p className="font-mono font-bold text-purple-700">{c.code}</p>
-                      {c.description && <p className="text-xs text-gray-500 mt-0.5">{c.description}</p>}
+                      {c.description && <p className="text-xs text-muted-foreground mt-0.5">{c.description}</p>}
                     </td>
                     <td className="px-4 py-3">
                       {c.discountType === 'percentage'
@@ -318,7 +318,7 @@ const SuperAdminPromoCodes = () => {
                         className={`px-2 py-1 rounded text-xs font-medium ${
                           c.isActive
                             ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-600'
+                            : 'bg-muted text-muted-foreground'
                         }`}
                       >
                         {c.isActive ? 'Actif' : tp('Désactivé')}
@@ -352,12 +352,12 @@ const SuperAdminPromoCodes = () => {
       {/* Modal create/edit */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-card rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b">
               <h2 className="text-lg font-bold">
                 {editingId ? 'Modifier le code' : tp('Nouveau code promo')}
               </h2>
-              <button onClick={closeForm} className="p-1 hover:bg-gray-100 rounded">
+              <button onClick={closeForm} className="p-1 hover:bg-muted rounded">
                 <X size={20} />
               </button>
             </div>
@@ -365,7 +365,7 @@ const SuperAdminPromoCodes = () => {
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     {tp('Code')} <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -374,13 +374,13 @@ const SuperAdminPromoCodes = () => {
                     disabled={!!editingId}
                     value={form.code}
                     onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono uppercase disabled:bg-gray-50"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono uppercase disabled:bg-background"
                     placeholder="WELCOME10"
                   />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Description')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{tp('Description')}</label>
                   <input
                     type="text"
                     value={form.description}
@@ -391,7 +391,7 @@ const SuperAdminPromoCodes = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     {tp('Type de réduction')} <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -405,7 +405,7 @@ const SuperAdminPromoCodes = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     {tp('Valeur')} <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -422,7 +422,7 @@ const SuperAdminPromoCodes = () => {
 
               {/* Plans applicables */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Plans applicables (vide = tous)
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -434,7 +434,7 @@ const SuperAdminPromoCodes = () => {
                       className={`px-3 py-1.5 rounded-lg text-sm border ${
                         form.applicablePlans.includes(p.key)
                           ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                          : 'bg-card text-foreground border-gray-300 hover:bg-background'
                       }`}
                     >
                       {p.label}
@@ -445,7 +445,7 @@ const SuperAdminPromoCodes = () => {
 
               {/* Durées applicables */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Durées applicables en mois (vide = toutes)
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -457,7 +457,7 @@ const SuperAdminPromoCodes = () => {
                       className={`px-3 py-1.5 rounded-lg text-sm border ${
                         form.applicableDurations.includes(d)
                           ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                          : 'bg-card text-foreground border-gray-300 hover:bg-background'
                       }`}
                     >
                       {d} mois
@@ -469,8 +469,8 @@ const SuperAdminPromoCodes = () => {
               {/* Limites */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Utilisations max <span className="text-xs text-gray-400">{tp('(global)')}</span>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Utilisations max <span className="text-xs text-muted-foreground">{tp('(global)')}</span>
                   </label>
                   <input
                     type="number"
@@ -482,7 +482,7 @@ const SuperAdminPromoCodes = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     {tp('Max / workspace')}
                   </label>
                   <input
@@ -495,7 +495,7 @@ const SuperAdminPromoCodes = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     {tp('Montant min FCFA')}
                   </label>
                   <input
@@ -512,7 +512,7 @@ const SuperAdminPromoCodes = () => {
               {/* Validité */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Valide à partir du')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{tp('Valide à partir du')}</label>
                   <input
                     type="date"
                     value={form.validFrom}
@@ -521,7 +521,7 @@ const SuperAdminPromoCodes = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Valide jusqu\'au')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{tp('Valide jusqu\'au')}</label>
                   <input
                     type="date"
                     value={form.validUntil}
@@ -545,7 +545,7 @@ const SuperAdminPromoCodes = () => {
                 <button
                   type="button"
                   onClick={closeForm}
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                  className="px-4 py-2 text-foreground hover:bg-muted rounded-lg"
                 >
                   {tp('Annuler')}
                 </button>

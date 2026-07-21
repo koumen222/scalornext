@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Sparkles, Send, Loader2, X, Lock } from 'lucide-react';
+import { Sparkles, Send, X, Lock } from 'lucide-react';
 import { storeProductsApi } from '../services/storeApi';
 import ecomApi from '../services/ecommApi.js';
-import { useEcomAuth } from '../hooks/useEcomAuth.jsx';
+import AiMessageText from './AiMessageText.jsx';
 import { useNavigate } from '@/lib/router-compat';
 import { tp } from '../i18n/platform.js';
 
@@ -12,18 +12,20 @@ import { tp } from '../i18n/platform.js';
  *  - context: object passed to the backend (sections, productPageConfig, theme, productName, etc.)
  *  - onPatch: function called with { pageConfigPatch, themePatch, sectionsPatch } when AI responds
  *  - welcomeMessage: optional custom welcome string
+ *  - variant: 'floating' (popup flottante, défaut) | 'docked' (panneau ancré à droite, style Shopify Sidekick).
+ *    En 'docked', le composant doit être rendu DANS le conteneur flex du builder (après l'aperçu) :
+ *    ouvert, il occupe une colonne de 400px ; fermé, seul le bouton flottant (fixed) reste visible.
  */
-export default function BuilderAiChat({ mode = 'product', context = {}, onPatch, welcomeMessage }) {
+export default function BuilderAiChat({ mode = 'product', context = {}, onPatch, welcomeMessage, variant = 'floating', dockBarOffset = 0 }) {
   const defaultWelcome = mode === 'storepage'
     ? 'Salut ! Je suis ton assistant IA pour la page boutique.\n\nExemples :\n- "Ajoute une section hero avec fond vert"\n- "Change le titre du hero en Nos Meilleures Ventes"\n- "Ajoute une section témoignages"\n- "Cache la section FAQ"'
-    : 'Salut ! Je suis ton assistant IA pour la page produit.\n\nExemples :\n- "Mets le bouton en orange"\n- "Ajoute 10 avantages dans le hero"\n- "Change l\'image hero"\n- "Cache la section FAQ"\n- "Ajoute un timer de 15 minutes"';
+    : mode === 'theme'
+      ? 'Salut ! Je suis ton assistant IA pour le thème de tes pages produit.\n\nExemples :\n- "Passe les boutons en orange vif"\n- "Donne un look luxe : or, fond crème, police élégante"\n- "Boutons en capsule avec dégradé"\n- "Active le compte à rebours et le stock limité"\n- "Palette plus contrastée pour mobile"'
+      : 'Salut ! Je suis ton assistant IA pour la page produit.\n\nExemples :\n- "Mets le bouton en orange"\n- "Ajoute 10 avantages dans le hero"\n- "Change l\'image hero"\n- "Cache la section FAQ"\n- "Ajoute un timer de 15 minutes"';
 
-  const { workspace } = useEcomAuth();
   const navigate = useNavigate();
-  const isProPlan = ['pro', 'ultra'].includes(workspace?.plan);
 
   const [open, setOpen] = useState(false);
-  const [model, setModel] = useState('claude-sonnet');
   const [messages, setMessages] = useState([{ role: 'assistant', content: welcomeMessage || defaultWelcome }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,9 +38,68 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
   const inputRef = useRef(null);
   const endRef = useRef(null);
   const fileRef = useRef(null);
+  const panelRef = useRef(null);
+
+  // Largeur du panneau ancré — redimensionnable en glissant le bord gauche
+  const [dockWidth, setDockWidth] = useState(() => {
+    if (typeof window === 'undefined') return 400;
+    const saved = Number(window.localStorage.getItem('builderAiDockWidth'));
+    return saved >= 300 && saved <= 800 ? saved : 400;
+  });
+
+  const startResize = useCallback((e) => {
+    e.preventDefault();
+    const rect = panelRef.current?.getBoundingClientRect();
+    const rightEdge = rect ? rect.right : window.innerWidth;
+    const onMove = (ev) => {
+      const max = Math.min(720, Math.round(window.innerWidth * 0.6));
+      setDockWidth(Math.min(max, Math.max(300, Math.round(rightEdge - ev.clientX))));
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.body.style.removeProperty('cursor');
+      document.body.style.removeProperty('user-select');
+      setDockWidth((w) => {
+        try { window.localStorage.setItem('builderAiDockWidth', String(w)); } catch { /* ignore */ }
+        return w;
+      });
+    };
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, []);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
   useEffect(() => { if (open && inputRef.current) inputRef.current.focus(); }, [open]);
+
+  // Auto-agrandissement du champ de saisie selon le texte (jusqu'à 160px)
+  const autoGrow = useCallback(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, []);
+  useEffect(() => { autoGrow(); }, [input, transcribing, open, autoGrow]);
+
+  // « Modifier avec l'IA » depuis les éditeurs de section : ouvre le chat
+  // et pré-remplit l'instruction (event global window 'builder-ai:prefill')
+  useEffect(() => {
+    const handler = (e) => {
+      const text = e?.detail?.text || '';
+      setOpen(true);
+      if (text) setInput(text);
+      setTimeout(() => {
+        inputRef.current?.focus();
+        // caret en fin de texte
+        const el = inputRef.current;
+        if (el) el.setSelectionRange(el.value.length, el.value.length);
+      }, 120);
+    };
+    window.addEventListener('builder-ai:prefill', handler);
+    return () => window.removeEventListener('builder-ai:prefill', handler);
+  }, []);
 
   const handleFileAdd = useCallback(async (files) => {
     const toAdd = [];
@@ -130,14 +191,22 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
     try {
       const { data } = await ecomApi.post('/builder-ai/chat', {
         message: fullMessage,
-        model,
         history: messages.slice(-6),
         // pass context fields depending on mode
-        ...(mode === 'storepage' ? { sections: context.sections } : {
-          productPageConfig: context.productPageConfig,
-          theme: context.theme,
-          productName: context.productName,
-        }),
+        ...(mode === 'storepage'
+          ? { sections: context.sections }
+          : mode === 'theme'
+            ? {
+                themeDesign: context.themeDesign,
+                themeTemplate: context.themeTemplate,
+                sectionColors: context.sectionColors,
+                storeName: context.storeName,
+              }
+            : {
+                productPageConfig: context.productPageConfig,
+                theme: context.theme,
+                productName: context.productName,
+              }),
       }, { timeout: 180000 });
 
       if (data.success) {
@@ -145,10 +214,15 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
           pageConfigPatch: data.pageConfigPatch || null,
           themePatch: data.themePatch || null,
           sectionsPatch: data.sectionsPatch || null,
+          designPatch: data.designPatch || null,
+          sectionColorsPatch: data.sectionColorsPatch || null,
+          themeTemplate: data.themeTemplate || null,
         });
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: (data.reply || 'Fait !') + (data.sectionsPatch ? '\n\n✅ Sections mises à jour.' : ''),
+          content: (data.reply || 'Fait !')
+            + (data.sectionsPatch ? '\n\n✅ Sections mises à jour.' : '')
+            + (data.designPatch || data.sectionColorsPatch ? '\n\n✅ Thème mis à jour — pensez à Enregistrer.' : ''),
         }]);
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: data.message || 'Erreur.' }]);
@@ -165,16 +239,49 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
     } finally {
       setLoading(false);
     }
-  }, [input, loading, messages, model, medias, mode, context, onPatch]);
+  }, [input, loading, messages, medias, mode, context, onPatch]);
 
-  const isGpt = model === 'gpt-5.4';
-  const accentBtn = isGpt ? 'bg-[#10a37f] hover:bg-[#0d8c6d]' : 'bg-[#C96442] hover:bg-[#b05538]';
+  const accentBtn = 'bg-primary hover:bg-primary-700';
 
   if (!open) {
+    // Mode ancré (builders) : barre de chat flottante centrée en bas —
+    // on tape directement dedans, Entrée ouvre le panneau et envoie.
+    if (variant === 'docked') {
+      const submitFromBar = () => {
+        if (input.trim()) {
+          setOpen(true);
+          send();
+        } else {
+          setOpen(true);
+        }
+      };
+      return (
+        <div className="fixed bottom-5 -translate-x-1/2 z-[9999] w-[min(620px,92vw)]" style={{ left: `calc(50% + ${Math.round(dockBarOffset / 2)}px)` }}>
+          <div className="flex items-center gap-2 rounded-full border border-border bg-card shadow-2xl pl-4 pr-1.5 py-1.5 focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/20 transition">
+            <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); submitFromBar(); } }}
+              placeholder={tp('Décris ce que tu veux créer ou modifier…')}
+              className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground min-w-0"
+            />
+            <button
+              type="button"
+              onClick={submitFromBar}
+              title={input.trim() ? tp('Envoyer') : tp('Ouvrir l\'assistant')}
+              className="flex-shrink-0 rounded-full bg-gradient-to-r from-primary to-primary-700 p-2.5 text-white hover:opacity-90 transition"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      );
+    }
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-white shadow-2xl transition-all hover:scale-105 hover:shadow-purple-500/30"
+        className="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-700 px-4 py-3 text-white shadow-2xl transition-all hover:scale-105 hover:shadow-primary-700/30"
       >
         <Sparkles className="h-5 w-5" />
         <span className="text-sm font-semibold hidden sm:inline">{tp('Assistant IA')}</span>
@@ -183,43 +290,34 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-hidden">
+    <div
+      ref={panelRef}
+      style={variant === 'docked' ? { width: dockWidth } : undefined}
+      className={variant === 'docked'
+        ? 'relative flex flex-col h-full bg-card border-l border-border flex-shrink-0 overflow-hidden'
+        : 'fixed bottom-6 right-6 z-[9999] flex flex-col w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden'}>
 
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex-shrink-0">
+      {/* Poignée de redimensionnement — glisser pour élargir/réduire, double-clic = largeur par défaut */}
+      {variant === 'docked' && (
+        <div
+          onPointerDown={startResize}
+          onDoubleClick={() => setDockWidth(400)}
+          title="Glisser pour redimensionner"
+          className="absolute left-0 top-0 bottom-0 w-1.5 z-20 cursor-col-resize hover:bg-primary/60 active:bg-primary/70 transition-colors"
+        />
+      )}
+
+      {/* Header — blanc minimal en mode ancré (style Sidekick), dégradé en flottant */}
+      <div className={`flex items-center justify-between px-4 py-3 flex-shrink-0 ${variant === 'docked'
+        ? 'bg-card border-b border-border text-foreground'
+        : 'bg-gradient-to-r from-primary to-primary-700 text-white'}`}>
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4" />
+          <Sparkles className={`h-4 w-4 ${variant === 'docked' ? 'text-primary' : ''}`} />
           <span className="text-sm font-bold">{tp('Assistant Builder IA')}</span>
         </div>
-        <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-white/20 transition">
+        <button onClick={() => setOpen(false)} className={`rounded-full p-1 transition ${variant === 'docked' ? 'text-muted-foreground hover:bg-muted hover:text-foreground' : 'hover:bg-card/20'}`}>
           <X className="h-4 w-4" />
         </button>
-      </div>
-
-      {/* Model selector */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-100 flex-shrink-0">
-        {isGpt ? (
-          <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 text-[#10a37f]" fill="currentColor">
-            <path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0L4.4 14.069a4.504 4.504 0 0 1-2.059-6.173zm16.597 3.855-5.843-3.372 2.02-1.168a.076.076 0 0 1 .072 0l4.42 2.556a4.494 4.494 0 0 1-.676 8.105v-5.678a.795.795 0 0 0-.393-.443zm2.01-3.023-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.419-2.549a4.494 4.494 0 0 1 6.68 4.66zm-12.64 4.135-2.02-1.164a.08.08 0 0 1-.038-.057v-5.57a4.494 4.494 0 0 1 7.375-3.453l-.142.08L8.704 9.93a.795.795 0 0 0-.393.681zm1.097-2.365 2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5Z"/>
-          </svg>
-        ) : (
-          <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 text-[#C96442]" fill="currentColor">
-            <path d="M13.827 3.52h3.603L24 20.48h-3.603l-6.57-16.96zm-7.258 0H10.172L16.744 20.48H13.14L11.705 16.4H5.719l-1.435 4.08H.68L6.57 3.52zm4.132 9.959L8.719 7.582l-1.917 5.897h3.899z"/>
-          </svg>
-        )}
-        <select
-          value={model}
-          onChange={e => setModel(e.target.value)}
-          className="flex-1 text-xs font-semibold text-gray-700 bg-transparent outline-none cursor-pointer"
-        >
-          <optgroup label="— Claude (Anthropic)">
-            <option value="claude-sonnet">Claude Sonnet — rapide {isProPlan ? '' : '(PRO)'}</option>
-            <option value="claude-opus">Claude Opus — plus puissant {isProPlan ? '' : '(PRO)'}</option>
-          </optgroup>
-          <optgroup label="— OpenAI">
-            <option value="gpt-5.4">GPT-5.4 {isProPlan ? '' : '(PRO)'}</option>
-          </optgroup>
-        </select>
       </div>
 
       {/* Messages */}
@@ -229,7 +327,7 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
             {msg.medias?.length > 0 && (
               <div className="flex flex-wrap gap-1.5 max-w-[85%]">
                 {msg.medias.map((m, mi) => (
-                  <div key={mi} className="relative rounded-xl overflow-hidden border border-white/20 bg-indigo-500">
+                  <div key={mi} className="relative rounded-xl overflow-hidden border border-white/20 bg-primary">
                     {m.type === 'image' && <img src={m.localUrl} alt={m.name} className="w-20 h-20 object-cover" />}
                     {m.type === 'audio' && (
                       <div className="flex items-center gap-1.5 px-2.5 py-2 text-white text-[10px]">
@@ -250,15 +348,15 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
                 ))}
               </div>
             )}
-            <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap ${
-              msg.role === 'user' ? 'bg-indigo-600 text-white rounded-br-md' : 'bg-gray-100 text-gray-800 rounded-bl-md'
+            <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] ${
+              msg.role === 'user' ? 'bg-primary text-white rounded-br-md whitespace-pre-wrap leading-relaxed' : 'bg-muted text-foreground rounded-bl-md'
             }`}>
-              {msg.content}
+              {msg.role === 'assistant' ? <AiMessageText content={msg.content} /> : msg.content}
               {msg.isProError && (
                 <div className="mt-3">
                   <button 
                     onClick={() => navigate('/ecom/billing')}
-                    className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition"
+                    className="flex items-center gap-1.5 text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary/15 px-3 py-1.5 rounded-lg transition"
                   >
                     <Lock className="w-3 h-3" />
                     {tp('Découvrir les plans')}
@@ -270,10 +368,19 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />
-              <span className="text-xs text-gray-400">{tp('Génération en cours...')}</span>
-            </div>
+            <span className="text-sm text-muted-foreground px-1 py-1 select-none">
+              {tp('Réflexion')}
+              <span className="rai-dot">.</span>
+              <span className="rai-dot" style={{ animationDelay: '0.2s' }}>.</span>
+              <span className="rai-dot" style={{ animationDelay: '0.4s' }}>.</span>
+              <span className="rai-dot" style={{ animationDelay: '0.6s' }}>.</span>
+              <span className="rai-dot" style={{ animationDelay: '0.8s' }}>.</span>
+              <span className="rai-dot" style={{ animationDelay: '1s' }}>.</span>
+            </span>
+            <style>{`
+              .rai-dot { opacity: 0.15; animation: rai-dot-fade 1.4s ease-in-out infinite; }
+              @keyframes rai-dot-fade { 0%, 100% { opacity: 0.15; } 40% { opacity: 1; } }
+            `}</style>
           </div>
         )}
         <div ref={endRef} />
@@ -281,14 +388,14 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
 
       {/* Médias en attente */}
       {medias.length > 0 && (
-        <div className="px-3 py-2 border-t border-gray-100 bg-gray-50 flex-shrink-0">
+        <div className="px-3 py-2 border-t border-border bg-background flex-shrink-0">
           <div className="flex flex-wrap gap-2">
             {medias.map((m, i) => (
-              <div key={i} className="relative group rounded-xl overflow-hidden border border-gray-200 bg-white flex-shrink-0">
+              <div key={i} className="relative group rounded-xl overflow-hidden border border-border bg-card flex-shrink-0">
                 {m.type === 'image' ? (
                   <img src={m.localUrl} alt={m.name} className="w-14 h-14 object-cover" />
                 ) : (
-                  <div className="w-14 h-14 flex flex-col items-center justify-center bg-indigo-50 text-indigo-600">
+                  <div className="w-14 h-14 flex flex-col items-center justify-center bg-primary/10 text-primary">
                     {m.type === 'audio'
                       ? <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-1 13V8l6 4-6 4z"/></svg>
                       : <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>
@@ -310,12 +417,12 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-gray-400 mt-1.5">{tp('Cliquez sur "où ?" pour indiquer l\'emplacement de chaque média')}</p>
+          <p className="text-[10px] text-muted-foreground mt-1.5">{tp('Cliquez sur "où ?" pour indiquer l\'emplacement de chaque média')}</p>
         </div>
       )}
 
       {/* Input */}
-      <div className="border-t border-gray-100 px-3 py-3 flex-shrink-0">
+      <div className="border-t border-border px-3 py-3 flex-shrink-0">
         <input
           ref={fileRef}
           type="file"
@@ -324,11 +431,11 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
           className="hidden"
           onChange={e => { handleFileAdd(e.target.files); e.target.value = ''; }}
         />
-        <div className={`flex items-end gap-2 rounded-xl border bg-gray-50 px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-100 transition ${recording ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus-within:border-indigo-400'}`}>
+        <div className={`flex items-end gap-2 rounded-xl border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-primary/20 transition ${recording ? 'border-red-400 ring-2 ring-red-100' : 'border-border focus-within:border-primary/40'}`}>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex-shrink-0 mb-0.5 text-gray-400 hover:text-indigo-500 transition"
+            className="flex-shrink-0 mb-0.5 text-muted-foreground hover:text-primary transition"
             title={tp('Joindre image, audio ou vidéo')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -347,14 +454,14 @@ export default function BuilderAiChat({ mode = 'product', context = {}, onPatch,
             }}
             placeholder={recording ? '🔴 Enregistrement vocal...' : tp('Décris ce que tu veux créer ou modifier...')}
             rows={1}
-            style={{ maxHeight: 80 }}
-            className="flex-1 resize-none bg-transparent text-sm text-gray-800 placeholder:text-gray-400 outline-none overflow-y-auto"
+            style={{ maxHeight: 160 }}
+            className="flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none overflow-y-auto"
           />
           <button
             type="button"
             onClick={toggleRecording}
             disabled={transcribing}
-            className={`flex-shrink-0 mb-0.5 rounded-lg p-1.5 transition disabled:opacity-40 ${recording ? 'bg-red-500 text-white animate-pulse' : 'text-gray-400 hover:text-red-500'}`}
+            className={`flex-shrink-0 mb-0.5 rounded-lg p-1.5 transition disabled:opacity-40 ${recording ? 'bg-red-500 text-white animate-pulse' : 'text-muted-foreground hover:text-red-500'}`}
             title={recording ? 'Arrêter et transcrire' : tp('Note vocale')}
           >
             <svg className="w-4 h-4" fill={recording ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>

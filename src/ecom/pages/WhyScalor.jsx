@@ -59,9 +59,9 @@ const WhyScalor = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       {/* NAVBAR */}
-      <nav className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="w-full bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -73,19 +73,19 @@ const WhyScalor = () => {
             <div className="hidden md:flex items-center gap-1">
               <button 
                 onClick={() => navigate('/ecom/why-scalor')}
-                className="px-4 py-2 text-sm font-medium text-gray-900 hover:text-primary-600 transition"
+                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition"
               >
                 {tp('Pourquoi choisir Scalor ?')}
               </button>
               <button 
                 onClick={() => navigate('/ecom')}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
               >
                 {tp('Fonctionnalités')}
               </button>
               <button 
                 onClick={() => navigate('/ecom')}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
               >
                 {tp('Tarifs')}
               </button>
@@ -95,13 +95,13 @@ const WhyScalor = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => navigate('/ecom/login')}
-                className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+                className="hidden sm:block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
               >
                 {tp('Connexion')}
               </button>
               <button 
                 onClick={() => navigate('/ecom/register')}
-                className="px-6 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition shadow-sm"
+                className="px-6 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-700 rounded-lg transition shadow-sm"
               >
                 {tp('Commencer')}
               </button>
@@ -113,10 +113,10 @@ const WhyScalor = () => {
       {/* HERO SECTION */}
       <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-primary-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
-            {tp('Pourquoi choisir')} <span className="text-primary-600">Scalor</span> ?
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground mb-6">
+            {tp('Pourquoi choisir')} <span className="text-primary">Scalor</span> ?
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {tp('La plateforme tout-en-un conçue spécialement pour le e-commerce COD en Afrique.')} 
             Découvrez pourquoi des centaines d'e-commerçants nous font confiance.
           </p>
@@ -135,21 +135,21 @@ const WhyScalor = () => {
                 {/* Icon & Title Column */}
                 <div className="flex-1">
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-600">
+                    <div className="flex-shrink-0 w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center text-primary">
                       {advantage.icon}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                      <h3 className="text-2xl font-bold text-foreground mb-3">
                         {advantage.title}
                       </h3>
-                      <p className="text-gray-600 leading-relaxed mb-4">
+                      <p className="text-muted-foreground leading-relaxed mb-4">
                         {advantage.description}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {advantage.tags.map((tag, i) => (
                           <span 
                             key={i}
-                            className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg"
+                            className="px-3 py-1.5 bg-muted text-foreground text-sm font-medium rounded-lg"
                           >
                             {tag}
                           </span>
@@ -165,7 +165,7 @@ const WhyScalor = () => {
                 {/* Visual Placeholder */}
                 <div className="flex-1 flex items-center justify-center">
                   <div className="w-full h-48 bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl flex items-center justify-center">
-                    <div className="text-primary-600 opacity-20">
+                    <div className="text-primary opacity-20">
                       {advantage.icon}
                     </div>
                   </div>
@@ -189,13 +189,13 @@ const WhyScalor = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button 
               onClick={() => navigate('/ecom/register')}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-primary-700 hover:bg-primary-50 rounded-xl font-bold text-lg transition shadow-xl"
+              className="w-full sm:w-auto px-8 py-4 bg-card text-primary hover:bg-primary-50 rounded-xl font-bold text-lg transition shadow-xl"
             >
               {tp('Créer mon espace gratuit')}
             </button>
             <button 
               onClick={() => navigate('/ecom/login')}
-              className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white border-2 border-white/30 rounded-xl font-semibold text-lg transition backdrop-blur-sm"
+              className="w-full sm:w-auto px-8 py-4 bg-card/10 hover:bg-card/20 text-white border-2 border-white/30 rounded-xl font-semibold text-lg transition backdrop-blur-sm"
             >
               {tp('Se connecter')}
             </button>
@@ -204,24 +204,24 @@ const WhyScalor = () => {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-gray-200 py-12 px-4 bg-gray-50">
+      <footer className="border-t border-border py-12 px-4 bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
             <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
             <div className="flex items-center gap-6">
-              <button onClick={() => navigate('/ecom/privacy')} className="text-sm text-gray-600 hover:text-gray-900 transition">
+              <button onClick={() => navigate('/ecom/privacy')} className="text-sm text-muted-foreground hover:text-foreground transition">
                 {tp('Confidentialité')}
               </button>
-              <button onClick={() => navigate('/ecom/terms')} className="text-sm text-gray-600 hover:text-gray-900 transition">
+              <button onClick={() => navigate('/ecom/terms')} className="text-sm text-muted-foreground hover:text-foreground transition">
                 {tp('Conditions')}
               </button>
-              <button onClick={() => navigate('/ecom')} className="text-sm text-gray-600 hover:text-gray-900 transition">
+              <button onClick={() => navigate('/ecom')} className="text-sm text-muted-foreground hover:text-foreground transition">
                 {tp('Accueil')}
               </button>
             </div>
           </div>
-          <div className="border-t border-gray-200 pt-8 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="border-t border-border pt-8 text-center">
+            <p className="text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} Scalor. Plateforme e-commerce pour l'Afrique.
             </p>
           </div>

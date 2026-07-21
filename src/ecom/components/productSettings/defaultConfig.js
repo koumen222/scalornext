@@ -45,6 +45,7 @@ const defaultConfig = {
       { id: 'stickyOrderBar',    label: 'Barre de commande fixe',    enabled: true  },
       { id: 'upsell',            label: 'Upsell',                    enabled: true  },
       { id: 'orderBump',         label: 'Order Bump',                enabled: true  },
+      { id: 'customCode',        label: 'Code personnalisé',         enabled: false },
     ],
   },
   conversion: {

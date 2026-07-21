@@ -42,38 +42,38 @@ const OfferEditModal = ({ offer, index, currency, globalDesign, onSave, onClose 
     setLocal(next);
   };
 
-  const inputCls = "w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-400 focus:bg-white transition outline-none";
+  const inputCls = "w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:ring-2 focus:ring-purple-400 focus:bg-card transition outline-none";
 
   const primaryColor = globalDesign?.colors?.primary || '#be123c';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-gray-900">Éditer le palier {index + 1}</h3>
-          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-            <X className="w-5 h-5 text-gray-500" />
+          <h3 className="font-bold text-foreground">Éditer le palier {index + 1}</h3>
+          <button onClick={onClose} className="p-1.5 hover:bg-muted rounded-lg transition">
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Quantité</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1">Quantité</label>
             <input type="number" min="1" className={inputCls} value={local.quantity}
               onChange={e => upd('quantity', e.target.value)} placeholder="1" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Prix ({currency})</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1">Prix ({currency})</label>
             <input type="number" min="0" className={inputCls} value={local.price}
               onChange={e => upd('price', e.target.value)} placeholder="13000" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Prix barré (optionnel)</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1">Prix barré (optionnel)</label>
             <input type="number" min="0" className={inputCls} value={local.compare_price}
               onChange={e => upd('compare_price', e.target.value)} placeholder="20000" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Badge populaire (opt)</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1">Badge populaire (opt)</label>
             <input type="text" className={inputCls} value={local.label}
               onChange={e => upd('label', e.target.value)} placeholder="Le plus populaire" />
           </div>
@@ -87,37 +87,37 @@ const OfferEditModal = ({ offer, index, currency, globalDesign, onSave, onClose 
         )}
 
         {/* ── Design par palier ── */}
-        <div className="border-t border-gray-100 pt-4">
+        <div className="border-t border-border pt-4">
           <div className="flex items-center gap-2 mb-3">
             <Palette className="w-4 h-4 text-purple-600" />
-            <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">Design de ce palier</span>
+            <span className="text-xs font-bold text-foreground uppercase tracking-wide">Design de ce palier</span>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-[11px] font-medium text-gray-500 mb-1.5">Fond</label>
+              <label className="block text-[11px] font-medium text-muted-foreground mb-1.5">Fond</label>
               <div className="flex items-center gap-2">
-                <input type="color" className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200"
+                <input type="color" className="w-8 h-8 rounded-lg cursor-pointer border border-border"
                   value={local.bg_color || '#ffffff'}
                   onChange={e => upd('bg_color', e.target.value)} />
-                <span className="text-[11px] text-gray-500 font-mono">{(local.bg_color || '#ffffff').toUpperCase()}</span>
+                <span className="text-[11px] text-muted-foreground font-mono">{(local.bg_color || '#ffffff').toUpperCase()}</span>
               </div>
             </div>
             <div>
-              <label className="block text-[11px] font-medium text-gray-500 mb-1.5">Bordure</label>
+              <label className="block text-[11px] font-medium text-muted-foreground mb-1.5">Bordure</label>
               <div className="flex items-center gap-2">
-                <input type="color" className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200"
+                <input type="color" className="w-8 h-8 rounded-lg cursor-pointer border border-border"
                   value={local.border_color || primaryColor}
                   onChange={e => upd('border_color', e.target.value)} />
-                <span className="text-[11px] text-gray-500 font-mono">{(local.border_color || primaryColor).toUpperCase()}</span>
+                <span className="text-[11px] text-muted-foreground font-mono">{(local.border_color || primaryColor).toUpperCase()}</span>
               </div>
             </div>
             <div>
-              <label className="block text-[11px] font-medium text-gray-500 mb-1.5">Badge</label>
+              <label className="block text-[11px] font-medium text-muted-foreground mb-1.5">Badge</label>
               <div className="flex items-center gap-2">
-                <input type="color" className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200"
+                <input type="color" className="w-8 h-8 rounded-lg cursor-pointer border border-border"
                   value={local.badge_color || primaryColor}
                   onChange={e => upd('badge_color', e.target.value)} />
-                <span className="text-[11px] text-gray-500 font-mono">{(local.badge_color || primaryColor).toUpperCase()}</span>
+                <span className="text-[11px] text-muted-foreground font-mono">{(local.badge_color || primaryColor).toUpperCase()}</span>
               </div>
             </div>
           </div>
@@ -128,7 +128,7 @@ const OfferEditModal = ({ offer, index, currency, globalDesign, onSave, onClose 
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground font-medium hover:bg-background transition">
             Annuler
           </button>
           <button onClick={() => onSave(local)} className="flex-1 py-2.5 rounded-xl bg-gray-900 text-white font-bold hover:bg-gray-800 transition">
@@ -150,15 +150,15 @@ const ProductSelectorModal = ({ products = [], loadingProducts = false, fetchErr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]">
-        <div className="flex items-center justify-between p-5 border-b border-gray-100">
-          <h3 className="font-bold text-gray-900">Choisir un produit</h3>
-          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-            <X className="w-5 h-5 text-gray-500" />
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]">
+        <div className="flex items-center justify-between p-5 border-b border-border">
+          <h3 className="font-bold text-foreground">Choisir un produit</h3>
+          <button onClick={onClose} className="p-1.5 hover:bg-muted rounded-lg transition">
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
-        <div className="p-4 border-b border-gray-100">
-          <input className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-purple-400"
+        <div className="p-4 border-b border-border">
+          <input className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm outline-none focus:ring-2 focus:ring-purple-400"
             placeholder="Rechercher un produit..." value={search} onChange={e => setSearch(e.target.value)} autoFocus />
         </div>
         <div className="overflow-y-auto flex-1">
@@ -169,18 +169,18 @@ const ProductSelectorModal = ({ products = [], loadingProducts = false, fetchErr
           ) : fetchError ? (
             <div className="text-center py-10 text-red-500 text-sm">{fetchError}</div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-10 text-gray-400 text-sm">Aucun produit trouvé</div>
+            <div className="text-center py-10 text-muted-foreground text-sm">Aucun produit trouvé</div>
           ) : filtered.map(p => (
             <button key={p._id} onClick={() => onSelect(p)}
-              className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 transition text-left">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">
+              className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-background transition text-left">
+              <div className="w-10 h-10 rounded-lg bg-muted flex-shrink-0 overflow-hidden border border-border">
                 {p.images?.[0]?.url
                   ? <img src={p.images[0].url} alt={p.name} className="w-full h-full object-cover" />
                   : <Package className="w-5 h-5 text-gray-300 m-auto mt-2.5" />}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 text-sm truncate">{p.name}</div>
-                {p.sku && <div className="text-[11px] text-gray-400">{p.sku}</div>}
+                <div className="font-medium text-foreground text-sm truncate">{p.name}</div>
+                {p.sku && <div className="text-[11px] text-muted-foreground">{p.sku}</div>}
               </div>
             </button>
           ))}
@@ -301,39 +301,39 @@ const CodPreview = ({ offers, design, selectedProduct, currency }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 text-center">
+      <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 text-center">
         Aperçu en direct
       </div>
       {/* Phone frame */}
-      <div className="flex-1 bg-white rounded-2xl border border-gray-300 shadow-lg overflow-hidden flex flex-col text-left"
+      <div className="flex-1 bg-card rounded-2xl border border-gray-300 shadow-lg overflow-hidden flex flex-col text-left"
         style={{ minHeight: 0 }}>
 
         {/* Modal header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white flex-shrink-0">
-          <span className="text-[12px] font-bold text-gray-800 leading-tight">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card flex-shrink-0">
+          <span className="text-[12px] font-bold text-foreground leading-tight">
             Veuillez remplir le formulaire pour commander
           </span>
-          <X className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 ml-2" />
+          <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0 ml-2" />
         </div>
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto">
 
           {/* Product recap */}
-          <div className="flex items-center gap-3 px-4 py-2.5 border-b border-gray-100 bg-gray-50">
+          <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border bg-background">
             {selectedProduct?.images?.[0]?.url ? (
               <img src={selectedProduct.images[0].url} alt=""
-                className="w-10 h-10 rounded-lg object-cover border border-gray-200 flex-shrink-0" />
+                className="w-10 h-10 rounded-lg object-cover border border-border flex-shrink-0" />
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex-shrink-0 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-muted border border-border flex-shrink-0 flex items-center justify-center">
                 <Package className="w-4 h-4 text-gray-300" />
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <div className="text-[12px] font-bold text-gray-900 truncate">
+              <div className="text-[12px] font-bold text-foreground truncate">
                 {selectedProduct?.name || 'Nom du produit'}
               </div>
-              <div className="text-[10px] text-gray-500">Qté: {selectedOffer.quantity || 1}</div>
+              <div className="text-[10px] text-muted-foreground">Qté: {selectedOffer.quantity || 1}</div>
             </div>
             <span className="text-[13px] font-black flex-shrink-0" style={{ color: primary }}>
               {selectedPrice > 0 ? fmt(selectedPrice) : '—'}
@@ -342,7 +342,7 @@ const CodPreview = ({ offers, design, selectedProduct, currency }) => {
 
           {/* Offers area */}
           <div className="px-3 py-3">
-            <div className="text-[11px] font-bold text-gray-500 mb-2">{sectionLabel}</div>
+            <div className="text-[11px] font-bold text-muted-foreground mb-2">{sectionLabel}</div>
 
             {/* ── Grille (colonnes) ── */}
             {displayType === 'grid' ? (
@@ -461,15 +461,15 @@ const CodPreview = ({ offers, design, selectedProduct, currency }) => {
           </div>
 
           {/* Form fields mockup */}
-          <div className="px-3 pb-3 pt-2 space-y-1.5 border-t border-gray-100">
+          <div className="px-3 pb-3 pt-2 space-y-1.5 border-t border-border">
             {[
               { label: 'NOM *', ph: 'Nom' },
               { label: 'Téléphone *', ph: 'Téléphone' },
               { label: 'Ville *', ph: 'Ville' },
             ].map(({ label, ph }) => (
               <div key={label}>
-                <div className="text-[9px] font-semibold text-gray-500 mb-0.5">{label}</div>
-                <div className="px-2.5 py-1.5 border border-gray-200 rounded-lg bg-gray-50 text-[11px] text-gray-400">
+                <div className="text-[9px] font-semibold text-muted-foreground mb-0.5">{label}</div>
+                <div className="px-2.5 py-1.5 border border-border rounded-lg bg-background text-[11px] text-muted-foreground">
                   {ph}
                 </div>
               </div>
@@ -478,7 +478,7 @@ const CodPreview = ({ offers, design, selectedProduct, currency }) => {
         </div>
 
         {/* CTA button */}
-        <div className="px-3 pb-3 pt-2 border-t border-gray-100 bg-white flex-shrink-0">
+        <div className="px-3 pb-3 pt-2 border-t border-border bg-card flex-shrink-0">
           <button className="w-full py-2.5 rounded-xl text-white text-[12px] font-black flex items-center justify-center gap-2 shadow-sm"
             style={{ backgroundColor: primary }}>
             <Check className="w-3.5 h-3.5" />
@@ -492,16 +492,16 @@ const CodPreview = ({ offers, design, selectedProduct, currency }) => {
 
 // ── Reusable design sub-components ───────────────────────────────────────────
 const D = {
-  inputCls: "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-purple-400",
+  inputCls: "w-full px-3 py-2 bg-background border border-border rounded-lg text-sm outline-none focus:ring-2 focus:ring-purple-400",
 
   Section({ label, icon: Icon, children }) {
     return (
-      <div className="rounded-xl border border-gray-100 overflow-hidden">
-        <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-100">
+      <div className="rounded-xl border border-border overflow-hidden">
+        <div className="flex items-center gap-2 px-3 py-2 bg-background border-b border-border">
           {Icon && <Icon className="w-3.5 h-3.5 text-purple-500" />}
-          <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">{label}</span>
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">{label}</span>
         </div>
-        <div className="p-3 space-y-3 bg-white">{children}</div>
+        <div className="p-3 space-y-3 bg-card">{children}</div>
       </div>
     );
   },
@@ -509,7 +509,7 @@ const D = {
   Row({ label, children }) {
     return (
       <div className="flex items-center justify-between gap-3">
-        <label className="text-xs text-gray-600 flex-shrink-0 w-32">{label}</label>
+        <label className="text-xs text-muted-foreground flex-shrink-0 w-32">{label}</label>
         <div className="flex-1 min-w-0">{children}</div>
       </div>
     );
@@ -519,12 +519,12 @@ const D = {
     const safe = value && value.startsWith('#') ? value : '#000000';
     return (
       <div className="flex items-center justify-between gap-2">
-        <label className="text-xs text-gray-600 flex-shrink-0">{label}</label>
+        <label className="text-xs text-muted-foreground flex-shrink-0">{label}</label>
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <input type="color" value={safe} onChange={e => onChange(e.target.value)}
-            className="w-7 h-7 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+            className="w-7 h-7 rounded-lg cursor-pointer border border-border p-0.5" />
           <input type="text" value={value} onChange={e => onChange(e.target.value)}
-            className="w-24 px-2 py-1 rounded-lg border border-gray-200 text-[11px] font-mono outline-none focus:border-purple-400" />
+            className="w-24 px-2 py-1 rounded-lg border border-border text-[11px] font-mono outline-none focus:border-purple-400" />
         </div>
       </div>
     );
@@ -533,12 +533,12 @@ const D = {
   GradientRow({ label, value, onChange }) {
     return (
       <div>
-        <label className="block text-xs text-gray-600 mb-1">{label}</label>
+        <label className="block text-xs text-muted-foreground mb-1">{label}</label>
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg border border-gray-200 flex-shrink-0"
+          <div className="w-7 h-7 rounded-lg border border-border flex-shrink-0"
             style={{ background: value || '#be123c' }} />
           <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
-            className="flex-1 px-2 py-1.5 rounded-lg border border-gray-200 text-[11px] font-mono outline-none focus:border-purple-400"
+            className="flex-1 px-2 py-1.5 rounded-lg border border-border text-[11px] font-mono outline-none focus:border-purple-400"
             placeholder="ex: linear-gradient(270deg, #E67E22 0%, #D35400 100%)" />
         </div>
       </div>
@@ -548,12 +548,12 @@ const D = {
   SliderRow({ label, value, onChange, min = 0, max = 32, unit = 'px' }) {
     return (
       <div className="flex items-center justify-between gap-3">
-        <label className="text-xs text-gray-600 flex-shrink-0">{label}</label>
+        <label className="text-xs text-muted-foreground flex-shrink-0">{label}</label>
         <div className="flex items-center gap-2 flex-1">
           <input type="range" min={min} max={max} value={value}
             onChange={e => onChange(Number(e.target.value))}
             className="flex-1 h-1.5 accent-purple-500" />
-          <span className="text-[11px] font-mono text-gray-500 w-10 text-right">{value}{unit}</span>
+          <span className="text-[11px] font-mono text-muted-foreground w-10 text-right">{value}{unit}</span>
         </div>
       </div>
     );
@@ -567,7 +567,7 @@ const D = {
             className={`flex-1 py-1.5 text-[11px] font-semibold rounded-lg transition ${
               value === o.value
                 ? 'bg-purple-600 text-white'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                : 'bg-muted text-muted-foreground hover:bg-gray-200'
             }`}>
             {o.label}
           </button>
@@ -734,15 +734,15 @@ const DesignSection = ({ design, setDesign, offers }) => {
     setDesign(d => ({ ...d, ...fields, _themeId: id }));
   };
 
-  const inputCls = "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-purple-400";
+  const inputCls = "w-full px-3 py-2 bg-background border border-border rounded-lg text-sm outline-none focus:ring-2 focus:ring-purple-400";
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-5">
+    <div className="bg-card rounded-xl border p-4 space-y-5">
 
       {/* Header */}
       <div className="flex items-center gap-2">
         <Palette className="w-4 h-4 text-purple-600" />
-        <span className="font-semibold text-gray-800 text-sm">Conception</span>
+        <span className="font-semibold text-foreground text-sm">Conception</span>
         {design._themeId && (
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
             {THEMES.find(t => t.id === design._themeId)?.name || ''}
@@ -752,7 +752,7 @@ const DesignSection = ({ design, setDesign, offers }) => {
 
       {/* ── Type d'affichage ── */}
       <div>
-        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Type d'affichage</p>
+        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Type d'affichage</p>
         <div className="grid grid-cols-3 gap-1.5">
           {[
             { val: 'radio',     label: 'Radio',         icon: '☰' },
@@ -764,7 +764,7 @@ const DesignSection = ({ design, setDesign, offers }) => {
               className={`py-2 px-1 rounded-xl border text-center transition-colors ${
                 (design.display_type || 'radio') === val
                   ? 'border-rose-400 bg-rose-50 text-rose-700'
-                  : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                  : 'border-border text-muted-foreground hover:border-gray-300'
               }`}
             >
               <div className="text-base leading-none mb-0.5">{icon}</div>
@@ -776,14 +776,14 @@ const DesignSection = ({ design, setDesign, offers }) => {
 
       {/* ── Thèmes prédéfinis ── */}
       <div>
-        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Thème</p>
+        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Thème</p>
         <div className="grid grid-cols-3 gap-2">
           {THEMES.map(theme => {
             const isActive = design._themeId === theme.id;
             return (
               <button key={theme.id} onClick={() => applyTheme(theme)}
                 className={`relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition ${
-                  isActive ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300 bg-white'
+                  isActive ? 'border-purple-500 bg-purple-50' : 'border-border hover:border-gray-300 bg-card'
                 }`}>
                 <div className="flex gap-1">
                   {theme.preview.map((c, i) => (
@@ -791,7 +791,7 @@ const DesignSection = ({ design, setDesign, offers }) => {
                       style={{ background: c }} />
                   ))}
                 </div>
-                <span className="text-[10px] font-semibold text-gray-600 text-center leading-tight">{theme.name}</span>
+                <span className="text-[10px] font-semibold text-muted-foreground text-center leading-tight">{theme.name}</span>
                 {isActive && (
                   <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center">
                     <Check className="w-2.5 h-2.5 text-white" />
@@ -805,33 +805,33 @@ const DesignSection = ({ design, setDesign, offers }) => {
 
       {/* ── Ajustements fins ── */}
       <div>
-        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Ajustements</p>
+        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Ajustements</p>
         <div className="space-y-2.5">
 
           {/* Carte sélectionnée */}
-          <div className="rounded-lg border border-gray-100 p-3 space-y-2">
-            <p className="text-[11px] font-semibold text-gray-500">Carte sélectionnée</p>
+          <div className="rounded-lg border border-border p-3 space-y-2">
+            <p className="text-[11px] font-semibold text-muted-foreground">Carte sélectionnée</p>
             <D.ColorRow label="Fond" value={design.sel_bg || '#FFF3E0'} onChange={v => upd('sel_bg', v)} />
             <D.ColorRow label="Bordure" value={design.sel_border || '#E65100'} onChange={v => upd('sel_border', v)} />
           </div>
 
           {/* Carte non-sélectionnée */}
-          <div className="rounded-lg border border-gray-100 p-3 space-y-2">
-            <p className="text-[11px] font-semibold text-gray-500">Carte non-sélectionnée</p>
+          <div className="rounded-lg border border-border p-3 space-y-2">
+            <p className="text-[11px] font-semibold text-muted-foreground">Carte non-sélectionnée</p>
             <D.ColorRow label="Fond" value={design.unsel_bg || '#FFFFFF'} onChange={v => upd('unsel_bg', v)} />
             <D.ColorRow label="Bordure" value={design.unsel_border || '#BDBDBD'} onChange={v => upd('unsel_border', v)} />
           </div>
 
           {/* Badge & prix */}
-          <div className="rounded-lg border border-gray-100 p-3 space-y-2">
-            <p className="text-[11px] font-semibold text-gray-500">Badge & prix</p>
+          <div className="rounded-lg border border-border p-3 space-y-2">
+            <p className="text-[11px] font-semibold text-muted-foreground">Badge & prix</p>
             <D.ColorRow label="Couleur badge" value={design.sel_border || '#E65100'} onChange={v => { upd('badge_gradient', v); upd('label_gradient', v); upd('sel_border', v); upd('radio_color', v); upd('price_text_color', v); }} />
             <D.ColorRow label="Couleur prix" value={design.price_text_color || design.sel_border || '#E65100'} onChange={v => upd('price_text_color', v)} />
           </div>
 
           {/* Typographie */}
-          <div className="rounded-lg border border-gray-100 p-3 space-y-2">
-            <p className="text-[11px] font-semibold text-gray-500">Taille du texte</p>
+          <div className="rounded-lg border border-border p-3 space-y-2">
+            <p className="text-[11px] font-semibold text-muted-foreground">Taille du texte</p>
             <D.SliderRow label="Titre (qté)" value={design.title_font_size ?? 14} onChange={v => upd('title_font_size', v)} min={10} max={24} unit="px" />
             <D.SliderRow label="Prix" value={design.price_font_size ?? 15} onChange={v => upd('price_font_size', v)} min={10} max={28} unit="px" />
             <D.SliderRow label="Badge" value={design.badge_font_size ?? 11} onChange={v => upd('badge_font_size', v)} min={8} max={20} unit="px" />
@@ -845,11 +845,11 @@ const DesignSection = ({ design, setDesign, offers }) => {
 
       {/* ── Disposition ── */}
       <div>
-        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Disposition</p>
+        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Disposition</p>
         <div className="space-y-2">
 
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Offre mise en avant</label>
+            <label className="block text-xs text-muted-foreground mb-1">Offre mise en avant</label>
             <select value={design.highlight_offer ?? ''} onChange={e => upd('highlight_offer', e.target.value === '' ? null : Number(e.target.value))} className={inputCls}>
               <option value="">— Aucune —</option>
               {offers.map((off, idx) => (
@@ -858,7 +858,7 @@ const DesignSection = ({ design, setDesign, offers }) => {
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Titre de la section</label>
+            <label className="block text-xs text-muted-foreground mb-1">Titre de la section</label>
             <input type="text" value={design.offerSectionLabel || ''} placeholder="Choisissez votre offre"
               onChange={e => upd('offerSectionLabel', e.target.value)} className={inputCls} />
           </div>
@@ -1139,12 +1139,12 @@ const FormQuantityOffersWizard = () => {
     <div className="flex flex-col h-[calc(100vh-56px)] overflow-hidden">
 
       {/* ── Top bar: back + title + toggle + save ──────────────────────── */}
-      <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 z-10">
+      <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-card border-b border-border z-10">
         <button onClick={() => navigate('/ecom/boutique/form-builder/quantity-offers')}
-          className="p-2 rounded-lg hover:bg-gray-100 transition text-gray-600">
+          className="p-2 rounded-lg hover:bg-muted transition text-muted-foreground">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-base font-bold text-gray-900 flex-1 truncate">
+        <h1 className="text-base font-bold text-foreground flex-1 truncate">
           {id && id !== 'new' ? 'Modifier l\'offre' : 'Nouvelle offre'}
         </h1>
         <label className="relative inline-flex items-center cursor-pointer gap-2 flex-shrink-0">
@@ -1152,9 +1152,9 @@ const FormQuantityOffersWizard = () => {
           <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer
             peer-checked:after:translate-x-full peer-checked:after:border-white
             after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-            after:bg-white after:border-gray-300 after:border after:rounded-full
+            after:bg-card after:border-gray-300 after:border after:rounded-full
             after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
-          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${isActive ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'}`}>
             {isActive ? 'Active' : 'Inactive'}
           </span>
         </label>
@@ -1169,7 +1169,7 @@ const FormQuantityOffersWizard = () => {
 
       {/* ── Notifications ──────────────────────────────────────────────── */}
       {(error || saveSuccess) && (
-        <div className="flex-shrink-0 px-4 py-2 bg-white border-b border-gray-100">
+        <div className="flex-shrink-0 px-4 py-2 bg-card border-b border-border">
           {error && (
             <div ref={errorRef} className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-start gap-2">
               <span className="flex-shrink-0 mt-0.5">⚠️</span>
@@ -1189,13 +1189,13 @@ const FormQuantityOffersWizard = () => {
       <div className="flex-1 flex overflow-hidden min-h-0">
 
         {/* Col 1 — Paramètres (nom + produit + offres) */}
-        <div className="w-[300px] xl:w-[320px] flex-shrink-0 overflow-y-auto bg-gray-50 border-r border-gray-200 p-4 space-y-4">
+        <div className="w-[300px] xl:w-[320px] flex-shrink-0 overflow-y-auto bg-background border-r border-border p-4 space-y-4">
 
           {/* Nom */}
-          <div className="bg-white rounded-xl border border-gray-200 px-4 py-3">
-            <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Nom</label>
+          <div className="bg-card rounded-xl border px-4 py-3">
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">Nom</label>
             <input
-              className="w-full text-sm text-gray-900 bg-transparent outline-none placeholder-gray-300"
+              className="w-full text-sm text-foreground bg-transparent outline-none placeholder-gray-300"
               placeholder="Nouvelle offre"
               value={name}
               onChange={e => setName(e.target.value)}
@@ -1203,8 +1203,8 @@ const FormQuantityOffersWizard = () => {
           </div>
 
           {/* Product selector */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          <div className="bg-card rounded-xl border p-4">
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               Produit ({selectedProduct ? '1 sélectionné' : '0 sélectionné'})
             </div>
             <button
@@ -1214,17 +1214,17 @@ const FormQuantityOffersWizard = () => {
               Changer le produit
             </button>
             {selectedProduct ? (
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">
+              <div className="flex items-center gap-3 p-3 bg-background rounded-xl border border-border">
+                <div className="w-10 h-10 rounded-lg bg-muted flex-shrink-0 overflow-hidden border border-border">
                   {selectedProduct.images?.[0]?.url
                     ? <img src={selectedProduct.images[0].url} alt="" className="w-full h-full object-cover" />
                     : <Package className="w-5 h-5 text-gray-300 m-auto mt-2.5" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-gray-900 truncate">{selectedProduct.name}</div>
-                  <div className="text-[11px] text-gray-400 mt-0.5">{selectedProduct.sku || selectedProduct._id || selectedProductId}</div>
+                  <div className="text-sm font-semibold text-foreground truncate">{selectedProduct.name}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{selectedProduct.sku || selectedProduct._id || selectedProductId}</div>
                 </div>
-                <button onClick={() => { setSelectedProduct(null); setSelectedProductId(''); }} className="p-1.5 hover:bg-gray-200 rounded-lg transition text-gray-400">
+                <button onClick={() => { setSelectedProduct(null); setSelectedProductId(''); }} className="p-1.5 hover:bg-gray-200 rounded-lg transition text-muted-foreground">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -1242,15 +1242,15 @@ const FormQuantityOffersWizard = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-xl text-sm text-gray-400">
+              <div className="flex items-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-xl text-sm text-muted-foreground">
                 <Package className="w-4 h-4" /> Aucun produit sélectionné
               </div>
             )}
           </div>
 
           {/* Offers list */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Paliers</span>
+          <div className="bg-card rounded-xl border p-4 space-y-3">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Paliers</span>
 
             {offers.map((off, idx) => {
               const label = `${off.quantity} ${Number(off.quantity) > 1 ? 'Unités' : 'unité'}`;
@@ -1261,22 +1261,22 @@ const FormQuantityOffersWizard = () => {
                   onDragStart={() => drag.onDragStart(idx)}
                   onDragEnter={() => drag.onDragEnter(idx)}
                   onDragEnd={drag.onDragEnd}
-                  className="flex items-center gap-2 px-3 py-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition group"
+                  className="flex items-center gap-2 px-3 py-3 border border-border rounded-xl bg-background hover:bg-muted transition group"
                 >
                   <GripVertical className="w-4 h-4 text-gray-300 cursor-grab flex-shrink-0" />
                   {hasCustomDesign && (
                     <div className="w-3 h-3 rounded-full flex-shrink-0 border border-white shadow-sm"
                       style={{ backgroundColor: off.border_color || off.badge_color || off.bg_color }} title="Design personnalisé" />
                   )}
-                  <span className="flex-1 text-sm font-medium text-gray-800 truncate">{label}</span>
+                  <span className="flex-1 text-sm font-medium text-foreground truncate">{label}</span>
                   {off.price && (
-                    <span className="text-[11px] text-gray-500">
+                    <span className="text-[11px] text-muted-foreground">
                       {Number(off.price).toLocaleString()}
                     </span>
                   )}
                   <button
                     onClick={() => setEditingOfferIdx(idx)}
-                    className="p-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition"
+                    className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-gray-200 rounded-lg transition"
                     title="Éditer"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
@@ -1294,7 +1294,7 @@ const FormQuantityOffersWizard = () => {
 
             <button
               onClick={addOffer}
-              className="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-gray-300 rounded-xl text-sm text-gray-500 hover:border-purple-400 hover:text-purple-600 transition font-medium"
+              className="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-gray-300 rounded-xl text-sm text-muted-foreground hover:border-purple-400 hover:text-purple-600 transition font-medium"
             >
               <Plus className="w-4 h-4" /> Ajouter un palier
             </button>
@@ -1302,12 +1302,12 @@ const FormQuantityOffersWizard = () => {
         </div>
 
         {/* Col 2 — Conception (always visible, scrollable) */}
-        <div className="flex-1 overflow-y-auto bg-white border-r border-gray-200 p-4">
+        <div className="flex-1 overflow-y-auto bg-card border-r border-border p-4">
           <DesignSection design={design} setDesign={setDesign} offers={offers} />
         </div>
 
         {/* Col 3 — Aperçu live */}
-        <div className="w-[380px] xl:w-[420px] flex-shrink-0 flex flex-col bg-gray-100">
+        <div className="w-[380px] xl:w-[420px] flex-shrink-0 flex flex-col bg-muted">
           <div className="flex-1 p-5 min-h-0 flex flex-col">
             <CodPreview offers={offers} design={design} selectedProduct={selectedProduct} currency={currency} />
           </div>
@@ -1315,7 +1315,7 @@ const FormQuantityOffersWizard = () => {
       </div>
 
       {/* ── Save button — mobile fixed bottom bar ───────────────────────── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 px-4 py-3 shadow-lg">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-card border-t border-border px-4 py-3 shadow-lg">
         <button onClick={handleSave} disabled={saving || saveSuccess}
           className={`w-full flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-xl transition active:scale-95 ${
             saveSuccess ? 'bg-green-600 text-white' : 'bg-gray-900 hover:bg-gray-800 text-white'

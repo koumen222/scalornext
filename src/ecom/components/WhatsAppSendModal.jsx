@@ -5,7 +5,9 @@ import {
   AlertCircle, Loader2, Settings, RotateCcw, Eye
 } from 'lucide-react';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'https://api.scalor.net';
 
 const WhatsAppSendModal = ({ 
   onClose, 
@@ -118,24 +120,24 @@ const WhatsAppSendModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-primary-600 flex items-center justify-center shadow-sm">
               <Send className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="font-bold text-gray-900">{tp('Envoyer WhatsApp')}</h2>
-              <p className="text-sm text-gray-500">{tp('Message marketing personnalisé')}</p>
+              <h2 className="font-bold text-foreground">{tp('Envoyer WhatsApp')}</h2>
+              <p className="text-sm text-muted-foreground">{tp('Message marketing personnalisé')}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 transition"
+            className="p-2 rounded-lg hover:bg-muted transition"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -181,7 +183,7 @@ const WhatsAppSendModal = ({
 
           {/* Numéro de téléphone */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               <Smartphone className="w-4 h-4 inline mr-1" />
               {tp('Numéro du destinataire')}
             </label>
@@ -192,7 +194,7 @@ const WhatsAppSendModal = ({
               placeholder="237123456789"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Format international sans + (ex: 237123456789)
             </p>
           </div>
@@ -200,7 +202,7 @@ const WhatsAppSendModal = ({
           {/* Message */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold text-gray-700">
+              <label className="text-sm font-semibold text-foreground">
                 <MessageCircle className="w-4 h-4 inline mr-1" />
                 {tp('Message WhatsApp')}
               </label>
@@ -214,7 +216,7 @@ const WhatsAppSendModal = ({
                 </button>
                 <button
                   onClick={copyMessage}
-                  className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                  className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
                 >
                   <Copy className="w-3 h-3" />
                   {tp('Copier')}
@@ -223,7 +225,7 @@ const WhatsAppSendModal = ({
             </div>
             
             {previewMode ? (
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl min-h-[120px] text-sm text-gray-800 whitespace-pre-wrap">
+              <div className="p-4 bg-background border border-border rounded-xl min-h-[120px] text-sm text-foreground whitespace-pre-wrap">
                 {previewMessage || tp('Aperçu du message...')}
               </div>
             ) : (
@@ -267,7 +269,7 @@ const WhatsAppSendModal = ({
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition"
+              className="flex-1 py-3 px-4 border border-gray-300 text-foreground rounded-xl hover:bg-background transition"
             >
               {tp('Annuler')}
             </button>
@@ -286,7 +288,7 @@ const WhatsAppSendModal = ({
           </div>
 
           {/* Info */}
-          <div className="text-xs text-gray-500 text-center">
+          <div className="text-xs text-muted-foreground text-center">
             {tp('Le message sera envoyé depuis votre numéro WhatsApp configuré')}
           </div>
         </div>

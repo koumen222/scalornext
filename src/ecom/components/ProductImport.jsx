@@ -345,15 +345,15 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-card rounded-lg shadow-sm border border-border p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+        <h3 className="text-lg font-semibold text-foreground flex items-center">
           <Upload className="mr-2" size={20} />
           {tp('Importer des produits (CSV/Excel)')}
         </h3>
         <button
           onClick={downloadTemplate}
-          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-background flex items-center gap-2"
         >
           <Download className="w-4 h-4" />
           {tp('Télécharger le modèle')}
@@ -391,21 +391,21 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
             htmlFor="file-upload"
             className="cursor-pointer flex flex-col items-center"
           >
-            <FileText className="w-12 h-12 text-gray-400 mb-3" />
-            <span className="text-sm text-gray-600 mb-2">
+            <FileText className="w-12 h-12 text-muted-foreground mb-3" />
+            <span className="text-sm text-muted-foreground mb-2">
               {tp('Cliquez pour sélectionner un fichier CSV ou Excel')}
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground">
               {tp('Formats supportés: .csv, .xlsx, .xls')}
             </span>
           </label>
         </div>
 
         {file && (
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-background rounded-lg">
             <div className="flex items-center">
-              <FileText className="w-5 h-5 text-gray-600 mr-2" />
-              <span className="text-sm text-gray-700">{file.name}</span>
+              <FileText className="w-5 h-5 text-muted-foreground mr-2" />
+              <span className="text-sm text-foreground">{file.name}</span>
             </div>
             <button
               onClick={() => {
@@ -423,23 +423,23 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
 
         {showPreview && preview.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-2">{tp('Aperçu (5 premières lignes):')}</h4>
+            <h4 className="text-sm font-medium text-foreground mb-2">{tp('Aperçu (5 premières lignes):')}</h4>
             <div className="overflow-x-auto">
               <table className="min-w-full text-xs">
-                <thead className="bg-gray-50">
+                <thead className="bg-background">
                   <tr>
                     {Object.keys(preview[0]).map(header => (
-                      <th key={header} className="px-2 py-1 text-left font-medium text-gray-500">
+                      <th key={header} className="px-2 py-1 text-left font-medium text-muted-foreground">
                         {header}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-card divide-y divide-gray-200">
                   {preview.map((row, index) => (
                     <tr key={index}>
                       {Object.values(row).map((value, cellIndex) => (
-                        <td key={cellIndex} className="px-2 py-1 text-gray-900 truncate max-w-xs">
+                        <td key={cellIndex} className="px-2 py-1 text-foreground truncate max-w-xs">
                           {value || '-'}
                         </td>
                       ))}
@@ -456,7 +456,7 @@ Patch anti douleurs	https://app.minea.com/posts/364525732348961?tab=ad_analysis	
             <button
               onClick={processImport}
               disabled={loading}
-              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 flex items-center"
+              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 flex items-center"
             >
               {loading ? (
                 <>

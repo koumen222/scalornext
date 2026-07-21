@@ -19,10 +19,10 @@ const ErrorBanner = ({ message, detail, onDismiss, className = '' }) => {
   };
 
   return (
-    <div className={`flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3.5 ${className}`}>
+    <div className={`flex items-start gap-3 rounded-2xl bg-red-50/70 px-4 py-3.5 ring-1 ring-red-100/70 backdrop-blur-sm ${className}`}>
       {/* Icône */}
-      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-        <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full bg-red-100/70 flex items-center justify-center ring-1 ring-white/60">
+        <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
             d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
         </svg>
@@ -30,7 +30,7 @@ const ErrorBanner = ({ message, detail, onDismiss, className = '' }) => {
 
       {/* Contenu */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-red-800 leading-snug">{message}</p>
+        <p className="text-sm font-semibold text-red-500/90 leading-snug">{message}</p>
         {detail && (
           <p className="mt-0.5 text-[11px] text-red-400 font-mono truncate">{detail}</p>
         )}

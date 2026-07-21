@@ -8,12 +8,12 @@ import { tp } from '../i18n/platform.js';
 const WORKFLOW_CFG = {
   ai: { label: 'IA', bg: 'bg-sky-50', text: 'text-sky-700', dot: 'bg-sky-500' },
   pending_admin: { label: 'En attente', bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
-  resolved: { label: 'Résolu', bg: 'bg-primary-50', text: 'text-primary-700', dot: 'bg-primary-500' },
+  resolved: { label: 'Résolu', bg: 'bg-primary-50', text: 'text-primary', dot: 'bg-primary' },
 };
 
 const PRIORITY_CFG = {
   low: { label: 'Bas', bg: 'bg-slate-100', text: 'text-slate-600' },
-  normal: { label: 'Normal', bg: 'bg-gray-100', text: 'text-gray-700' },
+  normal: { label: 'Normal', bg: 'bg-muted', text: 'text-foreground' },
   high: { label: 'Haute', bg: 'bg-orange-50', text: 'text-orange-700' },
   urgent: { label: 'Urgente', bg: 'bg-red-50', text: 'text-red-700' },
 };
@@ -30,7 +30,7 @@ const CATEGORY_CFG = {
   billing:  { label: 'Facturation',   color: 'bg-purple-100 text-purple-700' },
   feature:  { label: 'Fonctionnalité', color: 'bg-teal-100 text-teal-700' },
   account:  { label: 'Compte',        color: 'bg-orange-100 text-orange-700' },
-  other:    { label: 'Autre',         color: 'bg-gray-100 text-gray-600' },
+  other:    { label: 'Autre',         color: 'bg-muted text-muted-foreground' },
 };
 
 const fmtTime = (d) => {
@@ -316,7 +316,7 @@ const SuperAdminSupport = () => {
   }, [unreadTotal]);
 
   return (
-    <div className="flex h-[calc(100vh-60px)] bg-gray-50 overflow-hidden">
+    <div className="flex h-[calc(100vh-60px)] bg-background overflow-hidden">
 
       {/* ── Toast ───────────────────────────────────────────── */}
       {toast && (
@@ -334,22 +334,22 @@ const SuperAdminSupport = () => {
       {/* ── New Message Modal ──────────────────────────────── */}
       {showNewMsg && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+          <div className="bg-card rounded-2xl shadow-xl w-full max-w-lg">
             <div className="flex items-center justify-between px-6 py-4 border-b">
-              <h2 className="text-lg font-bold text-gray-900">{tp('Envoyer un message')}</h2>
-              <button onClick={() => setShowNewMsg(false)} className="p-1 text-gray-400 hover:text-gray-600">
+              <h2 className="text-lg font-bold text-foreground">{tp('Envoyer un message')}</h2>
+              <button onClick={() => setShowNewMsg(false)} className="p-1 text-muted-foreground hover:text-muted-foreground">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <form onSubmit={sendNewMessage} className="p-6 space-y-4">
               {/* Mode toggle */}
-              <div className="flex bg-gray-100 rounded-lg p-1">
+              <div className="flex bg-muted rounded-lg p-1">
                 <button type="button" onClick={() => setNewMsgMode('user')}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${newMsgMode === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
+                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${newMsgMode === 'user' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}>
                   {tp('Un utilisateur')}
                 </button>
                 <button type="button" onClick={() => setNewMsgMode('broadcast')}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${newMsgMode === 'broadcast' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
+                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${newMsgMode === 'broadcast' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}>
                   {tp('Tous les utilisateurs')}
                 </button>
               </div>
@@ -357,7 +357,7 @@ const SuperAdminSupport = () => {
               {/* User search (only in user mode) */}
               {newMsgMode === 'user' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Utilisateur')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">{tp('Utilisateur')}</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -371,20 +371,20 @@ const SuperAdminSupport = () => {
                     )}
                   </div>
                   {userResults.length > 0 && !newMsgUserId && (
-                    <div className="mt-1 max-h-40 overflow-y-auto border border-gray-200 rounded-lg bg-white shadow-sm">
+                    <div className="mt-1 max-h-40 overflow-y-auto border border-border rounded-lg bg-card shadow-sm">
                       {userResults.map(u => (
                         <button
                           key={u._id}
                           type="button"
                           onClick={() => { setNewMsgUserId(u._id); setUserSearch(u.name || u.email); setUserResults([]); }}
-                          className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 last:border-0"
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-background flex items-center gap-2 border-b border-gray-50 last:border-0"
                         >
-                          <div className="w-7 h-7 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold">
+                          <div className="w-7 h-7 rounded-full bg-primary-100 text-primary flex items-center justify-center text-xs font-bold">
                             {(u.name || u.email || '?').charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">{u.name || tp('Sans nom')}</p>
-                            <p className="text-xs text-gray-500">{u.email}</p>
+                            <p className="font-medium text-foreground">{u.name || tp('Sans nom')}</p>
+                            <p className="text-xs text-muted-foreground">{u.email}</p>
                           </div>
                         </button>
                       ))}
@@ -392,8 +392,8 @@ const SuperAdminSupport = () => {
                   )}
                   {newMsgUserId && (
                     <div className="mt-1 flex items-center gap-2 px-3 py-1.5 bg-primary-50 rounded-lg text-sm">
-                      <span className="text-primary-700 font-medium flex-1">{userSearch}</span>
-                      <button type="button" onClick={() => { setNewMsgUserId(''); setUserSearch(''); }} className="text-gray-400 hover:text-gray-600">
+                      <span className="text-primary font-medium flex-1">{userSearch}</span>
+                      <button type="button" onClick={() => { setNewMsgUserId(''); setUserSearch(''); }} className="text-muted-foreground hover:text-muted-foreground">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     </div>
@@ -409,7 +409,7 @@ const SuperAdminSupport = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Sujet')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Sujet')}</label>
                 <input
                   type="text"
                   value={newMsgSubject}
@@ -421,7 +421,7 @@ const SuperAdminSupport = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Message *')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Message *')}</label>
                 <textarea
                   value={newMsgText}
                   onChange={e => setNewMsgText(e.target.value)}
@@ -431,17 +431,17 @@ const SuperAdminSupport = () => {
                   maxLength={2000}
                   required
                 />
-                <p className="text-xs text-gray-400 mt-1">{newMsgText.length}/2000</p>
+                <p className="text-xs text-muted-foreground mt-1">{newMsgText.length}/2000</p>
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setShowNewMsg(false)} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
+                <button type="button" onClick={() => setShowNewMsg(false)} className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground">
                   {tp('Annuler')}
                 </button>
                 <button
                   type="submit"
                   disabled={newMsgSending || !newMsgText.trim() || (newMsgMode === 'user' && !newMsgUserId)}
-                  className="px-5 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 rounded-lg transition-colors"
+                  className="px-5 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-700 disabled:opacity-50 rounded-lg transition-colors"
                 >
                   {newMsgSending ? 'Envoi...' : newMsgMode === 'broadcast' ? 'Envoyer à tous' : tp('Envoyer')}
                 </button>
@@ -450,9 +450,9 @@ const SuperAdminSupport = () => {
           </div>
         </div>
       )}
-      <div className="w-full sm:w-80 lg:w-96 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col overflow-hidden">
+      <div className="w-full sm:w-80 lg:w-96 flex-shrink-0 bg-card border-r border-border flex flex-col overflow-hidden">
 
-        <div className="px-4 py-4 border-b border-gray-100">
+        <div className="px-4 py-4 border-b border-border">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-teal-600 flex items-center justify-center shadow-sm">
@@ -461,8 +461,8 @@ const SuperAdminSupport = () => {
                 </svg>
               </div>
               <div>
-                <h1 className="text-sm font-extrabold text-gray-900">{tp('Support')}</h1>
-                <p className="text-[11px] text-gray-400">{conversations.length} conversations · {isConnected ? 'temps reel actif' : 'reconnexion...'}</p>
+                <h1 className="text-sm font-extrabold text-foreground">{tp('Support')}</h1>
+                <p className="text-[11px] text-muted-foreground">{conversations.length} conversations · {isConnected ? 'temps reel actif' : 'reconnexion...'}</p>
               </div>
             </div>
             {unreadTotal > 0 && (
@@ -473,7 +473,7 @@ const SuperAdminSupport = () => {
           {/* New message button */}
           <button
             onClick={() => setShowNewMsg(true)}
-            className="w-full mb-3 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
+            className="w-full mb-3 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-700 rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
             {tp('Nouveau message')}
@@ -481,12 +481,12 @@ const SuperAdminSupport = () => {
 
           {/* Search */}
           <div className="relative">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="M21 21l-4.35-4.35"/></svg>
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="M21 21l-4.35-4.35"/></svg>
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={tp('Rechercher…')}
-              className="w-full pl-8 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-primary-400 focus:bg-white transition"
+              className="w-full pl-8 pr-3 py-2 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary-400 focus:bg-card transition"
             />
           </div>
 
@@ -495,7 +495,7 @@ const SuperAdminSupport = () => {
               <button
                 key={value}
                 onClick={() => setFilterWorkflow(value)}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${filterWorkflow === value ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${filterWorkflow === value ? 'bg-primary text-white' : 'bg-muted text-muted-foreground hover:bg-gray-200'}`}
               >
                 {value === 'all' ? 'Tous' : WORKFLOW_CFG[value]?.label}
               </button>
@@ -506,7 +506,7 @@ const SuperAdminSupport = () => {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-primary-400"
+              className="px-3 py-2 text-xs bg-background border border-border rounded-lg outline-none focus:border-primary-400"
             >
               <option value="all">{tp('Toutes priorités')}</option>
               {Object.entries(PRIORITY_CFG).map(([value, cfg]) => (
@@ -517,7 +517,7 @@ const SuperAdminSupport = () => {
             <select
               value={filterWorkspace}
               onChange={(e) => setFilterWorkspace(e.target.value)}
-              className="px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-primary-400"
+              className="px-3 py-2 text-xs bg-background border border-border rounded-lg outline-none focus:border-primary-400"
             >
               <option value="all">{tp('Tous workspaces')}</option>
               {workspaceOptions.map((workspace) => (
@@ -530,13 +530,13 @@ const SuperAdminSupport = () => {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-40 gap-3">
-              <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-primary-600 animate-spin" />
-              <p className="text-xs text-gray-400">{tp('Chargement…')}</p>
+              <div className="w-8 h-8 rounded-full border-2 border-border border-t-primary-600 animate-spin" />
+              <p className="text-xs text-muted-foreground">{tp('Chargement…')}</p>
             </div>
           ) : conversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-40 gap-2 px-6 text-center">
               <svg className="w-10 h-10 text-gray-200" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-              <p className="text-sm text-gray-400">{tp('Aucune conversation')}</p>
+              <p className="text-sm text-muted-foreground">{tp('Aucune conversation')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
@@ -553,28 +553,28 @@ const SuperAdminSupport = () => {
                   <button
                     key={conv.sessionId}
                     onClick={() => selectConv(conv)}
-                    className={`w-full text-left px-4 py-3.5 transition-colors hover:bg-gray-50 ${isActive ? 'bg-primary-50 border-l-2 border-primary-500' : ''}`}
+                    className={`w-full text-left px-4 py-3.5 transition-colors hover:bg-background ${isActive ? 'bg-primary-50 border-l-2 border-primary-500' : ''}`}
                   >
                     <div className="flex items-start gap-3">
                       {/* Avatar */}
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5 ${isAuthUser ? 'bg-indigo-600 text-white' : isActive ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5 ${isAuthUser ? 'bg-indigo-600 text-white' : isActive ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
                         {displayName.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1 mb-0.5">
-                          <span className="text-[13px] font-semibold text-gray-900 truncate flex items-center gap-1.5">
+                          <span className="text-[13px] font-semibold text-foreground truncate flex items-center gap-1.5">
                             {displayName}
                             {isAuthUser && (
                               <span className="px-1 py-0.5 bg-indigo-100 text-indigo-600 text-[9px] font-bold rounded">USER</span>
                             )}
                           </span>
-                          <span className="text-[10px] text-gray-400 whitespace-nowrap flex-shrink-0">{fmtTime(conv.lastMessageAt)}</span>
+                          <span className="text-[10px] text-muted-foreground whitespace-nowrap flex-shrink-0">{fmtTime(conv.lastMessageAt)}</span>
                         </div>
-                        <p className="text-[11px] font-medium text-gray-500 truncate mb-0.5">{getWorkspaceLabel(conv)}</p>
+                        <p className="text-[11px] font-medium text-muted-foreground truncate mb-0.5">{getWorkspaceLabel(conv)}</p>
                         {conv.subject && (
-                          <p className="text-[12px] font-medium text-gray-700 truncate leading-tight mb-0.5">{conv.subject}</p>
+                          <p className="text-[12px] font-medium text-foreground truncate leading-tight mb-0.5">{conv.subject}</p>
                         )}
-                        <p className="text-[12px] text-gray-500 truncate leading-tight">
+                        <p className="text-[12px] text-muted-foreground truncate leading-tight">
                           {lastMsg?.text || tp('Aucun message')}
                         </p>
                         <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
@@ -611,34 +611,34 @@ const SuperAdminSupport = () => {
               </svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-700 mb-1">{tp('Sélectionnez une conversation')}</h2>
-              <p className="text-sm text-gray-400 max-w-xs">{tp('Cliquez sur une conversation à gauche pour voir les messages et répondre.')}</p>
+              <h2 className="text-base font-bold text-foreground mb-1">{tp('Sélectionnez une conversation')}</h2>
+              <p className="text-sm text-muted-foreground max-w-xs">{tp('Cliquez sur une conversation à gauche pour voir les messages et répondre.')}</p>
             </div>
           </div>
         ) : detailLoading && !detail ? (
           <div className="flex flex-col items-center justify-center h-full gap-3">
-            <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-primary-600 animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-border border-t-primary-600 animate-spin" />
           </div>
         ) : detail ? (
           <>
-            <div className="flex items-center justify-between px-5 py-3.5 bg-white border-b border-gray-100">
+            <div className="flex items-center justify-between px-5 py-3.5 bg-card border-b border-border">
               <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm ${detail.userId ? 'bg-indigo-600' : 'bg-primary-600'}`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm ${detail.userId ? 'bg-indigo-600' : 'bg-primary'}`}>
                   {getDisplayName(detail).charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-bold text-gray-900">
+                    <p className="text-sm font-bold text-foreground">
                       {detail.userName || detail.visitorName || tp('Visiteur anonyme')}
                     </p>
                     {detail.userId && (
                       <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-600 text-[10px] font-bold rounded">{tp('Utilisateur')}</span>
                     )}
                   </div>
-                  <p className="text-[11px] text-gray-400">
+                  <p className="text-[11px] text-muted-foreground">
                     {(detail.userEmail || detail.visitorEmail) && <>{detail.userEmail || detail.visitorEmail} · </>}
-                    <span className="font-medium text-gray-600">{getWorkspaceLabel(detail)}</span> · {' '}
-                    {detail.subject && <><span className="font-medium text-gray-600">{detail.subject}</span> · </>}
+                    <span className="font-medium text-muted-foreground">{getWorkspaceLabel(detail)}</span> · {' '}
+                    {detail.subject && <><span className="font-medium text-muted-foreground">{detail.subject}</span> · </>}
                     {detail.category && CATEGORY_CFG[detail.category] && (
                       <span className={`inline-block px-1.5 py-0 rounded text-[10px] font-semibold ${CATEGORY_CFG[detail.category].color} mr-1`}>
                         {CATEGORY_CFG[detail.category].label}
@@ -652,7 +652,7 @@ const SuperAdminSupport = () => {
                 <select
                   value={detail.workflowStatus || 'pending_admin'}
                   onChange={e => changeWorkflowStatus(detail.sessionId, e.target.value)}
-                  className="text-xs font-semibold border border-gray-200 rounded-lg px-2 py-1.5 bg-white outline-none focus:border-primary-400 cursor-pointer"
+                  className="text-xs font-semibold border border-border rounded-lg px-2 py-1.5 bg-card outline-none focus:border-primary-400 cursor-pointer"
                 >
                   <option value="pending_admin">{tp('En attente')}</option>
                   <option value="ai">IA</option>
@@ -661,7 +661,7 @@ const SuperAdminSupport = () => {
               </div>
             </div>
 
-            <div className="px-5 py-3 bg-white border-b border-gray-100 flex flex-wrap items-center gap-2 text-[11px]">
+            <div className="px-5 py-3 bg-card border-b border-border flex flex-wrap items-center gap-2 text-[11px]">
               <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-semibold ${(WORKFLOW_CFG[detail.workflowStatus] || WORKFLOW_CFG.pending_admin).bg} ${(WORKFLOW_CFG[detail.workflowStatus] || WORKFLOW_CFG.pending_admin).text}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${(WORKFLOW_CFG[detail.workflowStatus] || WORKFLOW_CFG.pending_admin).dot}`} />
                 {(WORKFLOW_CFG[detail.workflowStatus] || WORKFLOW_CFG.pending_admin).label}
@@ -695,24 +695,24 @@ const SuperAdminSupport = () => {
                     <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
                       msg.from === 'agent'
                         ? (msg.senderType === 'ai' ? 'bg-sky-600 text-white rounded-br-md' : 'bg-violet-600 text-white rounded-br-md')
-                        : 'bg-white text-gray-800 rounded-bl-md border border-gray-100 shadow-sm'
+                        : 'bg-card text-foreground rounded-bl-md border border-border shadow-sm'
                     }`}>
                       {msg.text}
                     </div>
-                    <span className="text-[10px] text-gray-400 px-1">
+                    <span className="text-[10px] text-muted-foreground px-1">
                       {msg.from === 'agent' ? `${msg.senderType === 'ai' ? 'Scalor IA' : (msg.agentName || 'Support')} · ` : ''}{fmtFull(msg.createdAt)}
                     </span>
                   </div>
                 </div>
               ))}
               {detail.messages.length === 0 && (
-                <div className="text-center text-sm text-gray-400 py-8">{tp('Aucun message dans cette conversation.')}</div>
+                <div className="text-center text-sm text-muted-foreground py-8">{tp('Aucun message dans cette conversation.')}</div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
             {detail.workflowStatus !== 'resolved' ? (
-              <form onSubmit={sendReply} className="px-4 py-3 bg-white border-t border-gray-100">
+              <form onSubmit={sendReply} className="px-4 py-3 bg-card border-t border-border">
                 <div className="flex items-end gap-2">
                   <div className="flex-1 relative">
                     <textarea
@@ -722,13 +722,13 @@ const SuperAdminSupport = () => {
                       onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(e); } }}
                       placeholder={tp('Répondre en tant que support humain…')}
                       rows={2}
-                      className="w-full resize-none text-sm text-gray-800 placeholder-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 outline-none focus:border-primary-400 focus:bg-white transition leading-relaxed"
+                      className="w-full resize-none text-sm text-foreground placeholder-gray-400 bg-background border border-border rounded-xl px-3.5 py-2.5 outline-none focus:border-primary-400 focus:bg-card transition leading-relaxed"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={!reply.trim() || sending}
-                    className="w-10 h-10 mb-0.5 rounded-xl bg-primary-600 hover:bg-primary-500 disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition flex-shrink-0"
+                    className="w-10 h-10 mb-0.5 rounded-xl bg-primary hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition flex-shrink-0"
                   >
                     {sending ? (
                       <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -739,12 +739,12 @@ const SuperAdminSupport = () => {
                     )}
                   </button>
                 </div>
-                <p className="text-[10px] text-gray-400 mt-1.5 px-1">{tp('La réponse est envoyée uniquement dans l\'application. WhatsApp reste un canal de notification non interactif.')}</p>
+                <p className="text-[10px] text-muted-foreground mt-1.5 px-1">{tp('La réponse est envoyée uniquement dans l\'application. WhatsApp reste un canal de notification non interactif.')}</p>
               </form>
             ) : (
-              <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 text-center">
-                <p className="text-xs text-gray-400 font-medium">{tp('Cette conversation est fermée.')}</p>
-                <button onClick={() => changeWorkflowStatus(detail.sessionId, 'pending_admin')} className="mt-1 text-xs text-primary-600 font-semibold hover:underline">{tp('Rouvrir')}</button>
+              <div className="px-5 py-3 bg-background border-t border-border text-center">
+                <p className="text-xs text-muted-foreground font-medium">{tp('Cette conversation est fermée.')}</p>
+                <button onClick={() => changeWorkflowStatus(detail.sessionId, 'pending_admin')} className="mt-1 text-xs text-primary font-semibold hover:underline">{tp('Rouvrir')}</button>
               </div>
             )}
           </>

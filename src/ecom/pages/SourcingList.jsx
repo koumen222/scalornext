@@ -5,9 +5,9 @@ import ecomApi from '../services/ecommApi';
 import { useMoney } from '../hooks/useMoney';
 import { getContextualError } from '../utils/errorMessages';
 import {
-  Plus, Search, BarChart3, Building2, X, ChevronRight,
+  Plus, Search, BarChart3, Building2, X,
   MoreHorizontal, Mail, Phone, Link as LinkIcon, Package2,
-  AlertTriangle, CheckCircle2, Clock, ArrowRight, Circle,
+  AlertTriangle, Clock, ArrowRight, Circle,
   Plane, Check, XCircle,
 } from 'lucide-react';
 
@@ -34,25 +34,16 @@ const EMPTY_ORDER_FORM = {
 // ─── Skeleton ──
 const Skeleton = () => (
   <div className="px-4 sm:px-6 py-6 space-y-6 max-w-7xl mx-auto">
-    <div className="h-10 w-32 bg-gray-100 rounded-xl animate-pulse" />
-    <div className="h-24 bg-gray-50 rounded-2xl animate-pulse" />
+    <div className="h-10 w-32 bg-muted rounded-xl animate-pulse" />
+    <div className="h-24 bg-background rounded-2xl animate-pulse" />
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="h-20 bg-gray-50 rounded-xl animate-pulse" />
+        <div key={i} className="h-20 bg-background rounded-xl animate-pulse" />
       ))}
     </div>
     {[...Array(5)].map((_, i) => (
-      <div key={i} className="h-16 bg-gray-50 rounded-xl animate-pulse" />
+      <div key={i} className="h-16 bg-background rounded-xl animate-pulse" />
     ))}
-  </div>
-);
-
-// ─── Compact stat (no colored icon box) ──
-const Stat = ({ label, value, sub }) => (
-  <div className="py-3">
-    <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
-    <p className="text-xl font-semibold text-gray-900 tabular-nums tracking-tight">{value}</p>
-    {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
   </div>
 );
 
@@ -60,8 +51,8 @@ const Stat = ({ label, value, sub }) => (
 const Chip = ({ active, onClick, children }) => (
   <button
     onClick={onClick}
-    className={`shrink-0 px-4 h-9 inline-flex items-center text-sm font-medium rounded-full ${T} ${
-      active ? 'bg-primary-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+    className={`inline-flex h-9 shrink-0 items-center rounded-xl px-3.5 text-[12px] font-semibold ${T} ${
+      active ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500 hover:bg-slate-50'
     }`}
   >
     {children}
@@ -86,15 +77,15 @@ const Sheet = ({ open, onClose, title, children, size = 'sm' }) => {
         style={{ animation: 'fadeIn 200ms ease-out' }}
       />
       <div
-        className={`relative w-full ${maxW} bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-h-[92vh] flex flex-col`}
+        className={`relative w-full ${maxW} bg-card rounded-t-2xl sm:rounded-2xl shadow-xl max-h-[92vh] flex flex-col`}
         style={{ animation: 'slideUp 220ms cubic-bezier(0.16, 1, 0.3, 1)' }}
       >
         <div className="sm:hidden flex justify-center pt-3">
           <div className="w-9 h-1 bg-gray-200 rounded-full" />
         </div>
-        <div className="px-6 pt-4 pb-3 flex items-center justify-between border-b border-gray-100 shrink-0">
-          <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-          <button onClick={onClose} className={`w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 ${T}`} aria-label="Fermer">
+        <div className="px-6 pt-4 pb-3 flex items-center justify-between border-b border-border shrink-0">
+          <h2 className="text-base font-semibold text-foreground">{title}</h2>
+          <button onClick={onClose} className={`w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground ${T}`} aria-label="Fermer">
             <X size={16} />
           </button>
         </div>
@@ -108,9 +99,9 @@ const Sheet = ({ open, onClose, title, children, size = 'sm' }) => {
 const StatusPill = ({ status }) => {
   const cfg = {
     in_transit: { bg: 'bg-amber-50',    text: 'text-amber-800',   ring: 'ring-amber-200/60',   Icon: Plane,   get label() { return tp('En transit'); } },
-    received:   { bg: 'bg-primary-50',  text: 'text-primary-700', ring: 'ring-primary-200/60', Icon: Check,   get label() { return tp('Reçue'); } },
-    cancelled:  { bg: 'bg-gray-100',    text: 'text-gray-600',    ring: 'ring-gray-200',       Icon: XCircle, get label() { return tp('Annulée'); } },
-  }[status] || { bg: 'bg-gray-100', text: 'text-gray-600', ring: 'ring-gray-200', Icon: Circle, label: status };
+    received:   { bg: 'bg-primary-50',  text: 'text-primary', ring: 'ring-primary-200/60', Icon: Check,   get label() { return tp('Reçue'); } },
+    cancelled:  { bg: 'bg-muted',    text: 'text-muted-foreground',    ring: 'ring-gray-200',       Icon: XCircle, get label() { return tp('Annulée'); } },
+  }[status] || { bg: 'bg-muted', text: 'text-muted-foreground', ring: 'ring-gray-200', Icon: Circle, label: status };
   const { bg, text, ring, Icon, label } = cfg;
 
   return (
@@ -121,21 +112,27 @@ const StatusPill = ({ status }) => {
   );
 };
 
-// ─── Payment pill — pill propre ──
-const PaymentPill = ({ paid, label }) => (
-  <span className={`inline-flex items-center gap-1 px-2 h-[22px] rounded-md text-[11px] font-semibold ring-1 ring-inset ${
-    paid
-      ? 'bg-primary-50 text-primary-700 ring-primary-200/60'
-      : 'bg-red-50 text-red-700 ring-red-200/60'
-  }`}>
-    {paid ? <Check size={11} strokeWidth={2.5} /> : <XCircle size={11} strokeWidth={2.5} />}
-    {label || (paid ? tp('Payé') : tp('Impayé'))}
-  </span>
-);
+const PaymentSummary = ({ order }) => {
+  const steps = order.sourcing === 'chine'
+    ? [{ label: 'Achat', paid: order.paidPurchase }, { label: 'Transport', paid: order.paidTransport }]
+    : [{ label: 'Commande', paid: order.paid }];
+  const pending = steps.filter(step => !step.paid).length;
+  return (
+    <div className="min-w-0">
+      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${pending === 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+        {pending === 0 ? <Check size={11} /> : <Clock size={11} />}
+        {pending === 0 ? 'Réglé' : `${pending} paiement${pending > 1 ? 's' : ''} à régler`}
+      </span>
+      <div className="mt-1.5 flex flex-wrap gap-x-2 gap-y-1">
+        {steps.map(step => <span key={step.label} className={`inline-flex items-center gap-1 text-[9px] ${step.paid ? 'text-slate-400' : 'text-amber-600'}`}><span className={`h-1.5 w-1.5 rounded-full ${step.paid ? 'bg-emerald-400' : 'bg-amber-400'}`} />{step.label}</span>)}
+      </div>
+    </div>
+  );
+};
 
 // ─── Sourcing pill — neutre, gris ──
 const SourcingPill = ({ sourcing }) => (
-  <span className="inline-flex items-center gap-1 px-2 h-[22px] rounded-md text-[11px] font-medium bg-gray-100 text-gray-700 ring-1 ring-inset ring-gray-200">
+  <span className="inline-flex items-center gap-1 px-2 h-[22px] rounded-md text-[11px] font-medium bg-muted text-foreground ring-1 ring-inset ring-gray-200">
     <span className="text-[10px]">{sourcing === 'chine' ? '🇨🇳' : '🇨🇲'}</span>
     {sourcing === 'chine' ? 'Chine' : tp('Local')}
   </span>
@@ -148,7 +145,7 @@ const RowMenu = ({ order, onOpen, onStatusChange, onDelete }) => {
     <div className="relative">
       <button
         onClick={() => setOpen(o => !o)}
-        className={`w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 border border-gray-200 ${T}`}
+        className={`w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted border border-border ${T}`}
         aria-label={tp('Actions')}
       >
         <MoreHorizontal size={15} />
@@ -156,25 +153,25 @@ const RowMenu = ({ order, onOpen, onStatusChange, onDelete }) => {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-9 z-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden min-w-[170px]">
+          <div className="absolute right-0 top-9 z-20 bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[170px]">
             <button onClick={() => { setOpen(false); onOpen(order); }}
-              className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 ${T}`}>
+              className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-background ${T}`}>
               {tp('Modifier')}
             </button>
             {order.status === 'in_transit' && (
               <button onClick={() => { setOpen(false); onStatusChange(order._id, 'receive'); }}
-                className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-primary-700 hover:bg-primary-50 border-t border-gray-100 ${T}`}>
+                className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-primary hover:bg-primary-50 border-t border-border ${T}`}>
                 {tp('Marquer reçue')}
               </button>
             )}
             {order.status === 'received' && (
               <button onClick={() => { setOpen(false); onStatusChange(order._id, 'back-to-transit'); }}
-                className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-amber-700 hover:bg-amber-50 border-t border-gray-100 ${T}`}>
+                className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-amber-700 hover:bg-amber-50 border-t border-border ${T}`}>
                 {tp('Repasser en transit')}
               </button>
             )}
             <button onClick={() => { setOpen(false); onDelete(order._id); }}
-              className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 ${T}`}>
+              className={`flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-border ${T}`}>
               {tp('Supprimer')}
             </button>
           </div>
@@ -188,17 +185,17 @@ const RowMenu = ({ order, onOpen, onStatusChange, onDelete }) => {
 const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
   <>
   {/* ── Mobile : cartes empilées ── */}
-  <div className="sm:hidden divide-y divide-gray-100 border border-gray-200 rounded-xl overflow-hidden">
+  <div className="sm:hidden divide-y divide-gray-100 border border-border rounded-xl overflow-hidden">
     {orders.map(order => {
       const purchaseTotal = (order.purchasePrice || 0) * (order.quantity || 0);
       const transport = order.transportCost || 0;
       const total = purchaseTotal + transport;
       return (
-        <div key={order._id} className="bg-white px-4 py-3">
+        <div key={order._id} className="bg-card px-4 py-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-gray-900 text-sm leading-tight">{order.productName || tp('Produit sans nom')}</p>
-              {order.supplierName && <p className="text-xs text-gray-400 mt-0.5">{order.supplierName}</p>}
+              <p className="font-semibold text-foreground text-sm leading-tight">{order.productName || tp('Produit sans nom')}</p>
+              {order.supplierName && <p className="text-xs text-muted-foreground mt-0.5">{order.supplierName}</p>}
             </div>
             <RowMenu order={order} onOpen={onOpen} onStatusChange={onStatusChange} onDelete={onDelete} />
           </div>
@@ -206,20 +203,11 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
             <SourcingPill sourcing={order.sourcing} />
             <StatusPill status={order.status} />
           </div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {order.sourcing === 'chine' ? (
-              <>
-                <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? tp('Achat payé') : tp('Achat impayé')} />
-                <PaymentPill paid={order.paidTransport} label={order.paidTransport ? tp('Transport payé') : tp('Transport impayé')} />
-              </>
-            ) : (
-              <PaymentPill paid={order.paid} label={order.paid ? tp('Payé') : tp('Impayé')} />
-            )}
-          </div>
-          <div className="mt-2.5 flex items-center gap-4 text-xs text-gray-500">
+          <div className="mt-2"><PaymentSummary order={order} /></div>
+          <div className="mt-2.5 flex items-center gap-4 text-xs text-muted-foreground">
             <span className="tabular-nums">{order.quantity || 0} unités</span>
             {order.weightKg > 0 && <span className="tabular-nums">{order.weightKg} kg</span>}
-            <span className="ml-auto font-black text-gray-900 tabular-nums text-sm">{fmt(total)}</span>
+            <span className="ml-auto font-black text-foreground tabular-nums text-sm">{fmt(total)}</span>
           </div>
         </div>
       );
@@ -227,10 +215,10 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
   </div>
 
   {/* ── Desktop : tableau ── */}
-  <div className="hidden sm:block overflow-x-auto border border-gray-200 rounded-xl">
-    <table className="w-full table-fixed divide-y divide-gray-200 text-sm">
+  <div className="hidden overflow-x-auto rounded-2xl border border-slate-200/80 bg-card shadow-[0_1px_3px_rgba(15,23,42,0.03)] sm:block">
+    <table className="w-full table-fixed divide-y divide-slate-100 text-sm">
       <colgroup>
-        <col className="w-[220px]" />
+        <col className="w-[260px]" />
         <col className="w-[90px]" />
         <col className="w-[80px]" />
         <col className="w-[120px]" />
@@ -241,29 +229,29 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
         <col className="w-[60px]" />
       </colgroup>
       <thead>
-        <tr className="bg-gray-50">
+        <tr className="bg-slate-50/70">
           {[tp('Produit'), tp('Sourcing'), tp('Qté'), tp('Achat'), tp('Transport'), tp('Total'), tp('Paiement'), tp('Statut'), tp('Actions')].map(h => (
-            <th key={h} className="px-3 py-2.5 text-left text-xs font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap border-b border-gray-200">
+            <th key={h} className="whitespace-nowrap border-b border-slate-200 px-3 py-3 text-left text-[10px] font-semibold text-slate-500">
               {h}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody className="divide-y divide-gray-100 bg-white">
-        {orders.map((order, idx) => {
+      <tbody className="divide-y divide-slate-100 bg-card">
+        {orders.map((order) => {
           const purchaseTotal = (order.purchasePrice || 0) * (order.quantity || 0);
           const transport = order.transportCost || 0;
           const total = purchaseTotal + transport;
           return (
-            <tr key={order._id} className={`hover:bg-primary-50/30 ${T} ${idx % 2 === 1 ? 'bg-gray-50/40' : ''}`}>
+            <tr key={order._id} className={`bg-card hover:bg-emerald-50/20 ${T}`}>
 
               {/* Produit */}
               <td className="px-3 py-3 align-top">
-                <p className="font-semibold text-gray-900 leading-tight break-words">
+                <p className="font-semibold text-foreground leading-tight break-words">
                   {order.productName || tp('Produit sans nom')}
                 </p>
                 {order.supplierName && (
-                  <p className="text-xs text-gray-400 mt-0.5 break-words">{order.supplierName}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 break-words">{order.supplierName}</p>
                 )}
               </td>
 
@@ -273,39 +261,30 @@ const OrdersTable = ({ orders, fmt, onOpen, onStatusChange, onDelete }) => (
               </td>
 
               {/* Qté */}
-              <td className="px-3 py-3 align-top tabular-nums text-gray-700 font-medium">
+              <td className="px-3 py-3 align-top tabular-nums text-foreground font-medium">
                 <span>{order.quantity || 0}</span>
                 {order.weightKg > 0 && (
-                  <p className="text-xs text-gray-400 mt-0.5">{order.weightKg} kg</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{order.weightKg} kg</p>
                 )}
               </td>
 
               {/* Achat */}
-              <td className="px-3 py-3 align-top tabular-nums text-gray-700 font-medium whitespace-nowrap">
+              <td className="px-3 py-3 align-top tabular-nums text-foreground font-medium whitespace-nowrap">
                 {fmt(purchaseTotal)}
               </td>
 
               {/* Transport */}
-              <td className="px-3 py-3 align-top tabular-nums text-gray-700 font-medium whitespace-nowrap">
+              <td className="px-3 py-3 align-top tabular-nums text-foreground font-medium whitespace-nowrap">
                 {transport > 0 ? fmt(transport) : <span className="text-gray-300">—</span>}
               </td>
 
               {/* Total */}
-              <td className="px-3 py-3 align-top tabular-nums font-black text-gray-900 whitespace-nowrap">
+              <td className="px-3 py-3 align-top tabular-nums font-black text-foreground whitespace-nowrap">
                 {fmt(total)}
               </td>
 
               {/* Paiement */}
-              <td className="px-3 py-3 align-top">
-                {order.sourcing === 'chine' ? (
-                  <div className="flex flex-col gap-1">
-                    <PaymentPill paid={order.paidPurchase} label={order.paidPurchase ? tp('Achat payé') : tp('Achat impayé')} />
-                    <PaymentPill paid={order.paidTransport} label={order.paidTransport ? tp('Transport payé') : tp('Transport impayé')} />
-                  </div>
-                ) : (
-                  <PaymentPill paid={order.paid} label={order.paid ? tp('Payé') : tp('Impayé')} />
-                )}
-              </td>
+              <td className="px-3 py-3 align-top"><PaymentSummary order={order} /></td>
 
               {/* Statut */}
               <td className="px-3 py-3 align-top">
@@ -331,17 +310,17 @@ const SupplierRow = ({ supplier, fmt, onOpen, onEdit, onDelete }) => {
   return (
     <div
       onClick={onOpen}
-      className={`group flex items-center gap-4 px-4 sm:px-5 py-4 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100 cursor-pointer ${T}`}
+      className={`group flex items-center gap-4 px-4 sm:px-5 py-4 border-b border-border hover:bg-background active:bg-muted cursor-pointer ${T}`}
     >
       {/* Avatar initial */}
-      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0 text-gray-600 font-semibold text-sm">
+      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-muted-foreground font-semibold text-sm">
         {supplier.name?.charAt(0).toUpperCase()}
       </div>
 
       {/* Name + contact */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-gray-900 truncate">{supplier.name}</p>
-        <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+        <p className="text-sm font-semibold text-foreground truncate">{supplier.name}</p>
+        <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
           {supplier.phone && (
             <span className="inline-flex items-center gap-1 truncate">
               <Phone size={10} strokeWidth={2} /> {supplier.phone}
@@ -368,12 +347,12 @@ const SupplierRow = ({ supplier, fmt, onOpen, onEdit, onDelete }) => {
       {/* Stats */}
       <div className="hidden sm:flex items-center gap-6 shrink-0">
         <div className="text-right">
-          <p className="text-xs text-gray-500">{tp('Commandes')}</p>
-          <p className="text-sm font-semibold text-gray-900 tabular-nums">{supplier.stats?.totalOrders || 0}</p>
+          <p className="text-xs text-muted-foreground">{tp('Commandes')}</p>
+          <p className="text-sm font-semibold text-foreground tabular-nums">{supplier.stats?.totalOrders || 0}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-500">{tp('Dépenses')}</p>
-          <p className="text-sm font-semibold text-gray-900 tabular-nums">{fmt(supplier.stats?.totalSpent || 0)}</p>
+          <p className="text-xs text-muted-foreground">{tp('Dépenses')}</p>
+          <p className="text-sm font-semibold text-foreground tabular-nums">{fmt(supplier.stats?.totalSpent || 0)}</p>
         </div>
       </div>
 
@@ -381,7 +360,7 @@ const SupplierRow = ({ supplier, fmt, onOpen, onEdit, onDelete }) => {
       <div className="shrink-0 relative">
         <button
           onClick={(e) => { e.stopPropagation(); setMenuOpen(m => !m); }}
-          className={`w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 ${T}`}
+          className={`w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-muted-foreground ${T}`}
           aria-label={tp('Actions')}
         >
           <MoreHorizontal size={16} />
@@ -389,13 +368,13 @@ const SupplierRow = ({ supplier, fmt, onOpen, onEdit, onDelete }) => {
         {menuOpen && (
           <>
             <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }} />
-            <div className="absolute right-0 top-9 z-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
+            <div className="absolute right-0 top-9 z-20 bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[160px]">
               <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onEdit(); }}
-                className={`block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 ${T}`}>
+                className={`block w-full text-left px-4 py-3 text-sm text-foreground hover:bg-background ${T}`}>
                 {tp('Modifier')}
               </button>
               <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onDelete(); }}
-                className={`block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 ${T}`}>
+                className={`block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 border-t border-border ${T}`}>
                 {tp('Supprimer')}
               </button>
             </div>
@@ -640,13 +619,13 @@ export default function SourcingList() {
     }
   };
 
-  const inputCls = `w-full h-10 px-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white ${T}`;
-  const labelCls = 'block text-xs font-medium text-gray-500 mb-2';
+  const inputCls = `w-full h-10 px-3 border border-border rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-card ${T}`;
+  const labelCls = 'block text-xs font-medium text-muted-foreground mb-2';
 
   if (loading && ordersLoading) return <Skeleton />;
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-slate-50/60 pb-24">
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -656,21 +635,21 @@ export default function SourcingList() {
       `}</style>
 
       {/* ─── Sticky Header ────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-100">
+      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-card/95 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="py-4 flex items-center justify-between gap-4">
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">{tp('Sourcing')}</h1>
+          <div className="flex items-center justify-between gap-4 py-4">
+            <div><h1 className="text-xl font-semibold tracking-tight text-slate-900">{tp('Sourcing')}</h1><p className="mt-0.5 text-[11px] text-slate-500">Suivez vos achats, transports et paiements fournisseurs.</p></div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/ecom/sourcing/stats')}
-                className={`hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 ${T}`}
+                className={`hidden h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-card px-3 text-[11px] font-semibold text-slate-600 hover:bg-slate-50 sm:inline-flex ${T}`}
               >
                 <BarChart3 size={14} strokeWidth={2} />
                 {tp('Stats')}
               </button>
               <button
                 onClick={() => activeTab === 'commandes' ? openOrderModal() : openSupplierModal()}
-                className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
+                className={`inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary px-4 text-[11px] font-semibold text-white shadow-sm hover:bg-primary ${T}`}
               >
                 <Plus size={15} strokeWidth={2.5} />
                 <span className="hidden xs:inline">{activeTab === 'commandes' ? 'Commande' : tp('Fournisseur')}</span>
@@ -679,8 +658,8 @@ export default function SourcingList() {
           </div>
 
           {/* Tab chips */}
-          <div className="pb-3 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-1 w-max">
+          <div className="-mx-4 overflow-x-auto px-4 pb-3 scrollbar-hide sm:-mx-6 sm:px-6">
+            <div className="flex w-max items-center gap-1 rounded-xl bg-slate-100/70 p-1">
               <Chip active={activeTab === 'commandes'} onClick={() => setActiveTab('commandes')}>
                 {tp('Commandes')} <span className="ml-1.5 text-xs opacity-60 tabular-nums">{orders.length}</span>
               </Chip>
@@ -705,27 +684,51 @@ export default function SourcingList() {
         )}
 
         {/* ═══ CONTENT TAB ═══════════════════════════════════════════════════ */}
-        <section className="py-8">
+        <section className="py-6">
 
           {activeTab === 'commandes' && (
             <>
-              <div className="flex items-center justify-between mb-2 px-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Commandes')}</p>
+              <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                {[
+                  { label: 'À régler', value: fmt(amountToPlan), sub: amountToPlan > 0 ? 'paiements fournisseurs' : 'tout est à jour', tone: amountToPlan > 0 ? 'text-amber-700' : 'text-emerald-700' },
+                  { label: 'Engagé', value: fmt(totalSpent), sub: 'achat + transport', tone: 'text-slate-900' },
+                  { label: 'En transit', value: inTransitCount, sub: `${orders.length} commandes au total`, tone: 'text-slate-900' },
+                  { label: 'CA potentiel', value: fmt(potentialRevenue), sub: `${receivedCount} reçues`, tone: 'text-violet-700' },
+                ].map(stat => (
+                  <div key={stat.label} className="rounded-2xl border border-slate-200/80 bg-card p-4 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{stat.label}</p>
+                    <p className={`mt-2 truncate text-xl font-semibold tracking-tight tabular-nums ${stat.tone}`}>{stat.value}</p>
+                    <p className="mt-1 text-[10px] text-slate-400">{stat.sub}</p>
+                  </div>
+                ))}
+              </div>
+
+              {amountToPlan > 0 && (
+                <div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-amber-100 bg-amber-50/50 px-4 py-3 text-[10px] text-slate-500">
+                  <span className="font-semibold text-amber-700">Paiements à prévoir</span>
+                  {chinaPurchaseToPlan > 0 && <span>Achat Chine <strong className="font-semibold text-slate-700 tabular-nums">{fmt(chinaPurchaseToPlan)}</strong></span>}
+                  {chinaTransportToPlan > 0 && <span>Transport <strong className="font-semibold text-slate-700 tabular-nums">{fmt(chinaTransportToPlan)}</strong></span>}
+                  {localToPlan > 0 && <span>Local <strong className="font-semibold text-slate-700 tabular-nums">{fmt(localToPlan)}</strong></span>}
+                </div>
+              )}
+
+              <div className="mb-2 flex items-center justify-between px-1">
+                <div><p className="text-[12px] font-semibold text-slate-800">{tp('Commandes')}</p><p className="mt-0.5 text-[10px] text-slate-400">Achats et acheminements fournisseurs</p></div>
                 {orders.length > 0 && (
-                  <p className="text-xs text-gray-400 tabular-nums">{orders.length}</p>
+                  <p className="text-[10px] text-slate-400 tabular-nums">{orders.length} commande{orders.length > 1 ? 's' : ''}</p>
                 )}
               </div>
 
               {ordersLoading ? (
-                <div className="py-16 text-center text-sm text-gray-400">{tp('Chargement...')}</div>
+                <div className="py-16 text-center text-sm text-muted-foreground">{tp('Chargement...')}</div>
               ) : orders.length === 0 ? (
                 <div className="py-16 text-center">
                   <Package2 size={28} className="text-gray-200 mx-auto mb-4" strokeWidth={1.5} />
-                  <p className="text-sm font-medium text-gray-700 mb-1">{tp('Aucune commande')}</p>
-                  <p className="text-sm text-gray-500 mb-6">{tp('Créez votre première commande fournisseur')}</p>
+                  <p className="text-sm font-medium text-foreground mb-1">{tp('Aucune commande')}</p>
+                  <p className="text-sm text-muted-foreground mb-6">{tp('Créez votre première commande fournisseur')}</p>
                   <button
                     onClick={() => openOrderModal()}
-                    className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
+                    className={`inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary px-4 text-[11px] font-semibold text-white hover:bg-primary ${T}`}
                   >
                     <Plus size={14} strokeWidth={2.5} /> Nouvelle commande
                   </button>
@@ -740,47 +743,6 @@ export default function SourcingList() {
                 />
               )}
 
-              {/* ═══ STATS COMPACT ══════════════════════════════════════════ */}
-              <section className="grid grid-cols-2 sm:grid-cols-4 gap-0 sm:gap-8 border-y border-gray-100 divide-x divide-gray-100 sm:divide-x-0 mt-8">
-                <div className="px-4 sm:px-0">
-                  <Stat label="Total dépensé" value={fmt(totalSpent)} sub="Achat + transport" />
-                </div>
-                <div className="px-4 sm:px-0">
-                  <Stat label="CA potentiel" value={fmt(potentialRevenue)} sub={`${inTransitCount} en transit`} />
-                </div>
-                <div className="px-4 sm:px-0">
-                  <Stat label="En transit" value={inTransitCount} />
-                </div>
-                <div className="px-4 sm:px-0">
-                  <Stat label="Reçues" value={receivedCount} />
-                </div>
-              </section>
-
-              {/* ═══ HERO METRIC — À prévoir ════════════════════════════════ */}
-              <section className="pt-8 pb-2">
-                <p className="text-xs font-medium text-primary-600 uppercase tracking-wider mb-2">{tp('À prévoir')}</p>
-                <div className="flex items-baseline gap-3 flex-wrap">
-                  <h2 className={`text-3xl sm:text-4xl font-semibold tracking-tight tabular-nums leading-none ${amountToPlan > 0 ? 'text-primary-600' : 'text-gray-400'}`}>
-                    {fmt(amountToPlan)}
-                  </h2>
-                </div>
-                <p className="text-sm text-gray-500 mt-3">
-                  {inTransitCount} commande{inTransitCount > 1 ? 's' : ''} en transit · {amountToPlan > 0 ? 'paiements à effectuer' : 'tout est à jour'}
-                </p>
-                {(chinaPurchaseToPlan > 0 || chinaTransportToPlan > 0 || localToPlan > 0) && (
-                  <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs">
-                    {chinaPurchaseToPlan > 0 && (
-                      <span className="text-gray-700">{tp('Achat Chine')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaPurchaseToPlan)}</strong></span>
-                    )}
-                    {chinaTransportToPlan > 0 && (
-                      <span className="text-gray-700">{tp('Transport')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(chinaTransportToPlan)}</strong></span>
-                    )}
-                    {localToPlan > 0 && (
-                      <span className="text-gray-700">{tp('Local')} <strong className="font-semibold text-gray-900 tabular-nums">{fmt(localToPlan)}</strong></span>
-                    )}
-                  </div>
-                )}
-              </section>
             </>
           )}
 
@@ -788,43 +750,43 @@ export default function SourcingList() {
             <>
               {/* Search */}
               <div className="relative mb-6">
-                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" strokeWidth={2} />
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" strokeWidth={2} />
                 <input
                   type="text"
                   placeholder={tp('Rechercher un fournisseur...')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className={`w-full h-10 pl-9 pr-3 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white ${T}`}
+                  className={`w-full h-10 pl-9 pr-3 border border-border rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-card ${T}`}
                 />
               </div>
 
               <div className="flex items-center justify-between mb-2 px-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Fournisseurs')}</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Fournisseurs')}</p>
                 {filteredSuppliers.length > 0 && (
-                  <p className="text-xs text-gray-400 tabular-nums">{filteredSuppliers.length}</p>
+                  <p className="text-xs text-muted-foreground tabular-nums">{filteredSuppliers.length}</p>
                 )}
               </div>
 
               {loading ? (
-                <div className="py-16 text-center text-sm text-gray-400">{tp('Chargement...')}</div>
+                <div className="py-16 text-center text-sm text-muted-foreground">{tp('Chargement...')}</div>
               ) : filteredSuppliers.length === 0 ? (
                 <div className="py-16 text-center">
                   <Building2 size={28} className="text-gray-200 mx-auto mb-4" strokeWidth={1.5} />
-                  <p className="text-sm font-medium text-gray-700 mb-1">{tp('Aucun fournisseur')}</p>
-                  <p className="text-sm text-gray-500 mb-6">
+                  <p className="text-sm font-medium text-foreground mb-1">{tp('Aucun fournisseur')}</p>
+                  <p className="text-sm text-muted-foreground mb-6">
                     {search ? 'Aucun résultat pour cette recherche' : tp('Ajoutez votre premier fournisseur')}
                   </p>
                   {!search && (
                     <button
                       onClick={() => openSupplierModal()}
-                      className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
+                      className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-primary text-white text-sm font-medium hover:bg-primary ${T}`}
                     >
                       <Plus size={14} strokeWidth={2.5} /> Nouveau fournisseur
                     </button>
                   )}
                 </div>
               ) : (
-                <div className="border-t border-gray-100">
+                <div className="border-t border-border">
                   {filteredSuppliers.map(s => (
                     <SupplierRow
                       key={s._id}
@@ -845,7 +807,7 @@ export default function SourcingList() {
       {/* Mobile FAB — stats */}
       <button
         onClick={() => navigate('/ecom/sourcing/stats')}
-        className={`sm:hidden fixed bottom-6 right-5 z-20 w-12 h-12 rounded-full bg-primary-500 text-white shadow-lg active:scale-95 flex items-center justify-center ${T}`}
+        className={`sm:hidden fixed bottom-6 right-5 z-20 w-12 h-12 rounded-full bg-primary text-white shadow-lg active:scale-95 flex items-center justify-center ${T}`}
         aria-label={tp('Statistiques')}
       >
         <BarChart3 size={18} strokeWidth={2} />
@@ -905,7 +867,7 @@ export default function SourcingList() {
             <textarea
               value={formData.notes}
               onChange={e => setFormData({ ...formData, notes: e.target.value })}
-              className={`w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white resize-none ${T}`}
+              className={`w-full px-3 py-2 border border-border rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-card resize-none ${T}`}
               rows="3"
               placeholder={tp('Notes...')}
             />
@@ -914,13 +876,13 @@ export default function SourcingList() {
             <button
               type="button"
               onClick={closeSupplierModal}
-              className={`flex-1 h-10 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 ${T}`}
+              className={`flex-1 h-10 rounded-xl border border-border text-foreground text-sm font-medium hover:bg-background ${T}`}
             >
               {tp('Annuler')}
             </button>
             <button
               type="submit"
-              className={`flex-1 h-10 rounded-xl bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 ${T}`}
+              className={`flex-1 h-10 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary ${T}`}
             >
               {tp('Enregistrer')}
             </button>
@@ -945,7 +907,7 @@ export default function SourcingList() {
 
           {/* Section: Produit & sourcing */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{tp('Produit')}</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{tp('Produit')}</p>
             <div className="space-y-3">
               <div>
                 <label className={labelCls}>{tp('Produit *')}</label>
@@ -1000,7 +962,7 @@ export default function SourcingList() {
 
           {/* Section: Prix */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Prix &amp; poids</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Prix &amp; poids</p>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelCls}>{tp('Poids total (kg)')}</label>
@@ -1047,10 +1009,10 @@ export default function SourcingList() {
 
           {/* Section: Paiement */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{tp('Statut de paiement')}</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{tp('Statut de paiement')}</p>
             {orderFormData.sourcing === 'chine' ? (
               <div className="space-y-2">
-                <label className={`flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 ${T}`}>
+                <label className={`flex items-start gap-3 p-3 border border-border rounded-xl cursor-pointer hover:bg-background ${T}`}>
                   <input
                     type="checkbox"
                     checked={orderFormData.paidPurchase}
@@ -1058,11 +1020,11 @@ export default function SourcingList() {
                     className="w-4 h-4 mt-0.5 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{tp('Achat Chine payé')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('L\'achat en Chine a été payé')}</p>
+                    <p className="text-sm font-medium text-foreground">{tp('Achat Chine payé')}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('L\'achat en Chine a été payé')}</p>
                   </div>
                 </label>
-                <label className={`flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 ${T}`}>
+                <label className={`flex items-start gap-3 p-3 border border-border rounded-xl cursor-pointer hover:bg-background ${T}`}>
                   <input
                     type="checkbox"
                     checked={orderFormData.paidTransport}
@@ -1070,13 +1032,13 @@ export default function SourcingList() {
                     className="w-4 h-4 mt-0.5 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{tp('Transport payé')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{tp('Le transport a été payé')}</p>
+                    <p className="text-sm font-medium text-foreground">{tp('Transport payé')}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Le transport a été payé')}</p>
                   </div>
                 </label>
               </div>
             ) : (
-              <label className={`flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 ${T}`}>
+              <label className={`flex items-start gap-3 p-3 border border-border rounded-xl cursor-pointer hover:bg-background ${T}`}>
                 <input
                   type="checkbox"
                   checked={orderFormData.paid}
@@ -1084,8 +1046,8 @@ export default function SourcingList() {
                   className="w-4 h-4 mt-0.5 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{tp('Commande payée')}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{tp('La commande locale a été payée')}</p>
+                  <p className="text-sm font-medium text-foreground">{tp('Commande payée')}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tp('La commande locale a été payée')}</p>
                 </div>
               </label>
             )}
@@ -1093,7 +1055,7 @@ export default function SourcingList() {
 
           {/* Section: Compléments */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{tp('Informations complémentaires')}</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{tp('Informations complémentaires')}</p>
             <div className="space-y-3">
               <div>
                 <label className={labelCls}>{tp('Date d\'arrivée prévue')}</label>
@@ -1119,7 +1081,7 @@ export default function SourcingList() {
                 <textarea
                   value={orderFormData.notes}
                   onChange={(e) => setOrderFormData(prev => ({ ...prev, notes: e.target.value }))}
-                  className={`w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-white resize-none ${T}`}
+                  className={`w-full px-3 py-2 border border-border rounded-xl text-sm focus:border-gray-900 focus:ring-0 outline-none bg-card resize-none ${T}`}
                   rows="2"
                   placeholder={tp('Notes...')}
                 />
@@ -1128,11 +1090,11 @@ export default function SourcingList() {
           </div>
         </form>
 
-        <div className="border-t border-gray-100 px-6 py-4 flex items-center gap-2 sticky bottom-0 bg-white shrink-0">
+        <div className="border-t border-border px-6 py-4 flex items-center gap-2 sticky bottom-0 bg-card shrink-0">
           <button
             type="button"
             onClick={closeOrderModal}
-            className={`flex-1 h-10 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 ${T}`}
+            className={`flex-1 h-10 rounded-xl border border-border text-foreground text-sm font-medium hover:bg-background ${T}`}
           >
             {tp('Annuler')}
           </button>
@@ -1140,7 +1102,7 @@ export default function SourcingList() {
             type="submit"
             form="order-form"
             disabled={orderFormLoading}
-            className={`flex-[2] h-10 rounded-xl bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 disabled:opacity-40 inline-flex items-center justify-center gap-2 ${T}`}
+            className={`flex-[2] h-10 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary disabled:opacity-40 inline-flex items-center justify-center gap-2 ${T}`}
           >
             {orderFormLoading ? 'Enregistrement...' : <>Enregistrer <ArrowRight size={14} strokeWidth={2.5} /></>}
           </button>

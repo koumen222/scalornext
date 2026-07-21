@@ -350,7 +350,7 @@ Nous publions un rapport de transparence annuel détaillant :
             <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
           </button>
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate(-1)} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition">
+            <button onClick={() => navigate(-1)} className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition">
               {tp('Retour')}
             </button>
             <button onClick={() => navigate('/ecom/login')} className="px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 rounded-xl transition">
@@ -363,11 +363,11 @@ Nous publions un rapport de transparence annuel détaillant :
       {/* Hero */}
       <div className="relative py-16 sm:py-24 px-4">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-700/10 rounded-full blur-3xl"></div>
         </div>
         <div className="relative max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full text-primary-400 text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary-500/20 rounded-full text-primary-400 text-sm font-medium mb-6">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
@@ -376,11 +376,11 @@ Nous publions un rapport de transparence annuel détaillant :
           <h1 className="text-3xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-primary-100 to-primary-200 bg-clip-text text-transparent leading-tight">
             Politique de Confidentialité<br />& Sécurité des Données
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
             {tp('Chez Scalor, la sécurité de vos données est notre priorité absolue.')} 
             Découvrez comment nous protégeons vos informations, vis-à-vis de nos propres administrateurs.
           </p>
-          <p className="text-gray-500 text-sm mt-4">Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p className="text-muted-foreground text-sm mt-4">Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
         </div>
       </div>
 
@@ -393,10 +393,10 @@ Nous publions un rapport de transparence annuel détaillant :
             { icon: '👁️‍🗨️', label: 'Transparence', get desc() { return tp('Accès à vos données'); } },
             { icon: '🚫', get label() { return tp('Zéro tracking'); }, desc: 'Aucun cookie pub' },
           ].map((badge, i) => (
-            <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center hover:bg-white/10 transition">
+            <div key={i} className="bg-card/5 border border-white/10 rounded-2xl p-4 text-center hover:bg-card/10 transition">
               <div className="text-2xl mb-2">{badge.icon}</div>
               <div className="text-sm font-semibold text-white">{badge.label}</div>
-              <div className="text-xs text-gray-500 mt-1">{badge.desc}</div>
+              <div className="text-xs text-muted-foreground mt-1">{badge.desc}</div>
             </div>
           ))}
         </div>
@@ -405,12 +405,12 @@ Nous publions un rapport de transparence annuel détaillant :
       {/* Sections */}
       <div className="max-w-4xl mx-auto px-4 pb-20 space-y-6">
         {sections.map((section, i) => (
-          <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/20 transition">
+          <div key={i} className="bg-card/[0.03] border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/20 transition">
             <div className="flex items-start gap-4">
               <div className="text-3xl flex-shrink-0 mt-1">{section.icon}</div>
               <div className="flex-1">
                 <h2 className="text-xl font-bold text-white mb-4">{section.title}</h2>
-                <div className="text-gray-400 text-sm leading-relaxed whitespace-pre-line">
+                <div className="text-muted-foreground text-sm leading-relaxed whitespace-pre-line">
                   {section.content.split('**').map((part, j) => 
                     j % 2 === 1 ? <strong key={j} className="text-white font-medium">{part}</strong> : part
                   )}
@@ -424,7 +424,7 @@ Nous publions un rapport de transparence annuel détaillant :
         <div className="bg-gradient-to-r from-primary-600/10 to-primary-700/10 border border-primary-600/20 rounded-2xl p-6 sm:p-8 text-center">
           <div className="text-4xl mb-4">✅</div>
           <h3 className="text-xl font-bold text-white mb-3">{tp('Votre consentement')}</h3>
-          <p className="text-gray-400 text-sm max-w-xl mx-auto mb-6">
+          <p className="text-muted-foreground text-sm max-w-xl mx-auto mb-6">
             {tp('En créant un compte sur Scalor, vous acceptez cette politique de confidentialité.')} 
             Vous pouvez retirer votre consentement à tout moment en supprimant votre compte ou en nous contactant.
           </p>
@@ -437,7 +437,7 @@ Nous publions un rapport de transparence annuel détaillant :
             </button>
             <button 
               onClick={() => navigate('/ecom/login')}
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-semibold text-sm transition"
+              className="px-6 py-3 bg-card/10 hover:bg-card/20 border border-white/20 rounded-xl font-semibold text-sm transition"
             >
               {tp('Se connecter')}
             </button>
@@ -448,13 +448,13 @@ Nous publions un rapport de transparence annuel détaillant :
       {/* Footer */}
       <footer className="border-t border-white/5 py-8 px-4">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} Scalor. Tous droits réservés.</p>
+          <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Scalor. Tous droits réservés.</p>
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/ecom/landing')} className="text-xs text-gray-500 hover:text-gray-300 transition">{tp('Accueil')}</button>
-            <span className="text-gray-700">•</span>
+            <button onClick={() => navigate('/ecom/landing')} className="text-xs text-muted-foreground hover:text-gray-300 transition">{tp('Accueil')}</button>
+            <span className="text-foreground">•</span>
             <span className="text-xs text-primary-500">{tp('Politique de confidentialité')}</span>
-            <span className="text-gray-700">•</span>
-            <button onClick={() => navigate('/ecom/terms')} className="text-xs text-gray-500 hover:text-gray-300 transition">CGU</button>
+            <span className="text-foreground">•</span>
+            <button onClick={() => navigate('/ecom/terms')} className="text-xs text-muted-foreground hover:text-gray-300 transition">CGU</button>
           </div>
         </div>
       </footer>

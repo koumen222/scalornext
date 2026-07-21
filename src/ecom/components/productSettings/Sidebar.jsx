@@ -11,8 +11,8 @@ const tabs = [
 ];
 
 const Sidebar = ({ activeTab, onTabChange }) => (
-  <nav className="w-56 shrink-0 bg-white rounded-2xl border border-gray-100 shadow-sm p-3 flex flex-col gap-1 h-fit sticky top-6">
-    <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">{tp('Product Settings')}</h3>
+  <nav className="w-56 shrink-0 bg-card rounded-2xl border shadow-sm p-3 flex flex-col gap-1 h-fit sticky top-6">
+    <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-3 mb-2">{tp('Product Settings')}</h3>
     {tabs.map(({ id, label, icon: Icon }) => {
       const active = activeTab === id;
       return (
@@ -22,7 +22,7 @@ const Sidebar = ({ activeTab, onTabChange }) => (
           className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
             active
               ? 'bg-[#0F6B4F] text-white shadow-sm'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              : 'text-muted-foreground hover:bg-background hover:text-foreground'
           }`}
         >
           <Icon size={16} strokeWidth={active ? 2.2 : 1.8} />

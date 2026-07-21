@@ -1,11 +1,11 @@
 'use client';
 
 import { RequireRole } from '@/lib/dashboard/guards';
-import Page from '@/src/ecom/pages/CreativeGenerator.jsx';
+import Page from '@/src/ecom/pages/SuperAdminCreative.jsx';
 
 export default function Wrapper() {
   return (
-    <RequireRole requiredRole={'ecom_admin'}>
+    <RequireRole requiredRole={'super_admin'}>
       <Page />
     </RequireRole>
   );

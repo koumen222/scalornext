@@ -61,7 +61,7 @@ export default function LivreurProfile() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-gradient-to-br from-gray-800 to-gray-900 px-4 pt-12 pb-8">
         <div className="flex items-center gap-4">
@@ -79,7 +79,7 @@ export default function LivreurProfile() {
           </div>
           <div className="flex-1">
             <h1 className="text-white text-xl font-bold">{localUser?.name || tp('Livreur')}</h1>
-            <p className="text-gray-400 text-sm mt-0.5">{localUser?.email || ''}</p>
+            <p className="text-muted-foreground text-sm mt-0.5">{localUser?.email || ''}</p>
             <div className="mt-2">
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                 🚚 Livreur
@@ -91,34 +91,34 @@ export default function LivreurProfile() {
 
       <div className="px-4 py-5 space-y-5">
         {/* Contact info */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-50">
-            <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">{tp('Coordonnées')}</h2>
+            <h2 className="font-semibold text-foreground text-sm uppercase tracking-wide">{tp('Coordonnées')}</h2>
           </div>
           <div className="divide-y divide-gray-50">
             {localUser?.phone && (
               <div className="flex items-center gap-3 px-4 py-3.5">
                 <Phone size={16} className="text-indigo-400" />
-                <span className="text-gray-700 text-sm">{localUser.phone}</span>
+                <span className="text-foreground text-sm">{localUser.phone}</span>
               </div>
             )}
             {localUser?.email && (
               <div className="flex items-center gap-3 px-4 py-3.5">
                 <Mail size={16} className="text-indigo-400" />
-                <span className="text-gray-700 text-sm">{localUser.email}</span>
+                <span className="text-foreground text-sm">{localUser.email}</span>
               </div>
             )}
             {!localUser?.phone && !localUser?.email && (
-              <div className="px-4 py-3.5 text-gray-400 text-sm">{tp('Aucune coordonnée renseignée')}</div>
+              <div className="px-4 py-3.5 text-muted-foreground text-sm">{tp('Aucune coordonnée renseignée')}</div>
             )}
           </div>
         </div>
 
         {/* Menu groups */}
         {menuItems.map((group) => (
-          <div key={group.group} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div key={group.group} className="bg-card rounded-2xl border shadow-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-50">
-              <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">{group.group}</h2>
+              <h2 className="font-semibold text-foreground text-sm uppercase tracking-wide">{group.group}</h2>
             </div>
             <div className="divide-y divide-gray-50">
               {group.items.map((item) => {
@@ -127,10 +127,10 @@ export default function LivreurProfile() {
                   <button
                     key={item.label}
                     onClick={item.onClick}
-                    className="flex items-center gap-3 px-4 py-3.5 w-full text-left active:bg-gray-50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3.5 w-full text-left active:bg-background transition-colors"
                   >
-                    <Icon size={18} className="text-gray-400" />
-                    <span className="flex-1 text-sm text-gray-700">{item.label}</span>
+                    <Icon size={18} className="text-muted-foreground" />
+                    <span className="flex-1 text-sm text-foreground">{item.label}</span>
                     <ChevronRight size={16} className="text-gray-300" />
                   </button>
                 );

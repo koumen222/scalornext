@@ -6,6 +6,7 @@ import { useMoney } from '../hooks/useMoney.js';
 import { formatMoney } from '../utils/currency.js';
 import { conversionRates } from '../contexts/CurrencyContext.jsx';
 import ecomApi from '../services/ecommApi.js';
+import { storeProductsApi } from '../services/storeApi.js';
 import { playCashRegisterSound, playConfirmSound } from '../services/soundService.js';
 import { getContextualError } from '../utils/errorMessages';
 import { tp } from '../i18n/platform.js';
@@ -15,28 +16,49 @@ import { tp } from '../i18n/platform.js';
 const SL = { pending: 'En attente', confirmed: 'Confirmé', shipped: 'Expédié', delivered: 'Livré', returned: 'Retourné', cancelled: 'Annulé', unreachable: 'Injoignable', called: 'Appelé', postponed: 'Reporté', reported: 'Reporté' };
 const SC = {
   pending: 'bg-yellow-50 text-yellow-700 border-yellow-100',
-  confirmed: 'bg-primary-50 text-primary-700 border-primary-100',
+  confirmed: 'bg-primary-50 text-primary border-primary-100',
   shipped: 'bg-primary-50 text-primary-800 border-primary-100',
   delivered: 'bg-green-50 text-green-700 border-green-100',
   returned: 'bg-orange-50 text-orange-700 border-orange-100',
   cancelled: 'bg-red-50 text-red-700 border-red-100',
-  unreachable: 'bg-gray-50 text-gray-700 border-gray-200',
+  unreachable: 'bg-background text-foreground border-border',
   called: 'bg-cyan-50 text-cyan-700 border-cyan-100',
   postponed: 'bg-amber-50 text-amber-700 border-amber-100',
   reported: 'bg-purple-50 text-purple-700 border-purple-100'
 };
 const STATUS_FILTER_META = [
   { key: 'pending', label: 'En attente', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-200' },
-  { key: 'confirmed', get label() { return tp('Confirmé'); }, color: 'bg-primary-100 text-primary-700 hover:bg-primary-200 border border-primary-200' },
+  { key: 'confirmed', get label() { return tp('Confirmé'); }, color: 'bg-primary-100 text-primary hover:bg-primary-200 border border-primary-200' },
   { key: 'shipped', get label() { return tp('Expédié'); }, color: 'bg-primary-100 text-primary-800 hover:bg-primary-200 border border-primary-200' },
   { key: 'delivered', get label() { return tp('Livré'); }, color: 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200' },
   { key: 'returned', get label() { return tp('Retourné'); }, color: 'bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-200' },
   { key: 'cancelled', get label() { return tp('Annulé'); }, color: 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200' },
-  { key: 'unreachable', label: 'Injoignable', color: 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300' },
+  { key: 'unreachable', label: 'Injoignable', color: 'bg-muted text-foreground hover:bg-gray-200 border border-gray-300' },
   { key: 'called', get label() { return tp('Appelé'); }, color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200 border border-cyan-200' },
   { key: 'postponed', get label() { return tp('Reporté'); }, color: 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-200' },
   { key: 'reported', get label() { return tp('Reporté'); }, color: 'bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200' }
 ];
+// Couleurs pour les statuts personnalisés (non standards) : chaque statut reçoit
+// une couleur stable et distincte, dérivée de son nom → cohérente à chaque rendu.
+const CUSTOM_STATUS_PALETTE = [
+  'bg-rose-100 text-rose-700 hover:bg-rose-200 border border-rose-200',
+  'bg-sky-100 text-sky-700 hover:bg-sky-200 border border-sky-200',
+  'bg-teal-100 text-teal-700 hover:bg-teal-200 border border-teal-200',
+  'bg-violet-100 text-violet-700 hover:bg-violet-200 border border-violet-200',
+  'bg-fuchsia-100 text-fuchsia-700 hover:bg-fuchsia-200 border border-fuchsia-200',
+  'bg-lime-100 text-lime-700 hover:bg-lime-200 border border-lime-200',
+  'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border border-indigo-200',
+  'bg-pink-100 text-pink-700 hover:bg-pink-200 border border-pink-200',
+  'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-200',
+  'bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-200',
+];
+const statusColorFor = (key) => {
+  let h = 0;
+  const k = String(key || '');
+  for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0;
+  return CUSTOM_STATUS_PALETTE[h % CUSTOM_STATUS_PALETTE.length];
+};
+
 const SD = {
   pending: '', confirmed: '', shipped: '',
   delivered: '', returned: '', cancelled: '',
@@ -191,6 +213,7 @@ const OrdersList = () => {
   const [deletingSource, setDeletingSource] = useState(null);
   // Auto WhatsApp config modal
   const [showAutoConfigModal, setShowAutoConfigModal] = useState(false);
+  const [autoConfigError, setAutoConfigError] = useState('');
   const [whatsappInstances, setWhatsappInstances] = useState([]);
   const [loadingInstances, setLoadingInstances] = useState(false);
   const [autoConfig, setAutoConfig] = useState({
@@ -198,6 +221,7 @@ const OrdersList = () => {
     imageUrl: '',
     audioUrl: '',
     template: '',
+    sendProductImage: true, // envoyer l'image du produit (boutique Scalor) avec le message
     productRules: []  // [{productKeyword, instanceId, template, imageUrl, audioUrl}]
   });
   const [savingAutoConfig, setSavingAutoConfig] = useState(false);
@@ -219,6 +243,7 @@ const OrdersList = () => {
   const [orderForm, setOrderForm] = useState({ clientName: '', clientPhone: '', city: '', address: '', product: '', productId: '', quantity: 1, price: 0, status: 'pending', notes: '' });
   const [savingOrder, setSavingOrder] = useState(false);
   const [availableProducts, setAvailableProducts] = useState([]);
+  const [scalorProducts, setScalorProducts] = useState([]); // produits de la boutique Scalor (règles Auto WhatsApp)
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [deletingOrderId, setDeletingOrderId] = useState(null);
   const [deletingAll, setDeletingAll] = useState(false);
@@ -372,7 +397,7 @@ const OrdersList = () => {
     if (parsed && !isNaN(parsed.getTime())) {
       const parsedDay = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
       if (parsedDay < today) return 'bg-red-50 text-red-700 border-red-300';
-      if (parsedDay.getTime() === today.getTime()) return 'bg-primary-50 text-primary-700 border-primary-300';
+      if (parsedDay.getTime() === today.getTime()) return 'bg-primary-50 text-primary border-primary-300';
       if (parsedDay.getTime() === tomorrow.getTime()) return 'bg-blue-50 text-blue-700 border-blue-300';
     }
     return 'bg-amber-50 text-amber-700 border-amber-200';
@@ -563,6 +588,7 @@ const OrdersList = () => {
         imageUrl: res.data.data.whatsappAutoImageUrl || '',
         audioUrl: res.data.data.whatsappAutoAudioUrl || '',
         template: res.data.data.whatsappOrderTemplate || '',
+        sendProductImage: res.data.data.whatsappAutoSendProductImage !== false,
         productRules: res.data.data.whatsappAutoProductMediaRules || []
       });
     } catch (err) {
@@ -664,9 +690,21 @@ const OrdersList = () => {
     }
   };
 
+  // Masquer le widget de chat tant que la modale Auto WhatsApp est ouverte.
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+    document.body.classList.toggle('modal-open', showAutoConfigModal);
+    return () => document.body.classList.remove('modal-open');
+  }, [showAutoConfigModal]);
+
   const openAutoConfigModal = async () => {
     setShowAutoConfigModal(true);
+    setAutoConfigError('');
     setLoadingInstances(true);
+    // Règles « par produit » : uniquement les produits de la boutique Scalor.
+    storeProductsApi.getProducts({ limit: 200 })
+      .then((r) => { const d = r.data?.data; setScalorProducts(Array.isArray(d) ? d : (d?.products || [])); })
+      .catch(() => setScalorProducts([]));
     try {
       const res = await ecomApi.get('/orders/whatsapp-instances');
       setWhatsappInstances(res.data.data || []);
@@ -751,31 +789,29 @@ const OrdersList = () => {
   };
 
   const saveAutoConfig = async () => {
+    // Une instance est obligatoire : c'est elle qui enverra les notifications.
+    if (!autoConfig.instanceId) {
+      setAutoConfigError(tp('Choisis l\'instance WhatsApp qui enverra les notifications.'));
+      return;
+    }
+    // L'instance choisie doit être connectée, sinon rien ne partira.
+    const selectedInstance = whatsappInstances.find(i => String(i._id) === String(autoConfig.instanceId));
+    if (selectedInstance && !selectedInstance.isConnected) {
+      setAutoConfigError(tp('L\'instance « {name} » n\'est pas connectée. Connecte-la d\'abord (scan du QR code) avant d\'activer, sinon les messages ne partiront pas.', { name: selectedInstance.customName || '' }));
+      return;
+    }
+    setAutoConfigError('');
     setSavingAutoConfig(true);
     try {
       const res = await ecomApi.patch('/orders/config/whatsapp-auto', {
         whatsappAutoConfirm: true,
         whatsappAutoInstanceId: autoConfig.instanceId || null,
         whatsappAutoImageUrl: autoConfig.imageUrl || null,
+        whatsappAutoSendProductImage: !!autoConfig.sendProductImage,
         whatsappAutoAudioUrl: autoConfig.audioUrl || null,
         whatsappOrderTemplate: autoConfig.template || null,
-        whatsappAutoProductMediaRules: (autoConfig.productRules || [])
-          .filter(r => r.productKeyword?.trim())
-          .map(r => {
-            const sendOrder = ['text'];
-            if (r.imageUrl) sendOrder.push('image');
-            if (r.videoUrl) sendOrder.push('video');
-            if (r.audioUrl) sendOrder.push('audio');
-            return {
-              productKeyword: r.productKeyword.trim(),
-              instanceId: r.instanceId || null,
-              template: r.template || null,
-              imageUrl: r.imageUrl || null,
-              videoUrl: r.videoUrl || null,
-              audioUrl: r.audioUrl || null,
-              sendOrder
-            };
-          })
+        // Logique « par produit » retirée : une seule instance globale envoie tout.
+        whatsappAutoProductMediaRules: []
       });
       if (res.data.success) {
         setWhatsappAutoConfirm(true);
@@ -1433,6 +1469,7 @@ const OrdersList = () => {
       const orderRevenue = (order?.price || 0) * (order?.quantity || 1);
       let postponedDate = '';
 
+      let postponedUntilIso = null;
       if (newStatus === 'postponed') {
         const input = window.prompt('Entrez la date de report (ex: 28/02/2026 14:00)', oldDeliveryTime || '');
         if (!input || !input.trim()) {
@@ -1440,6 +1477,17 @@ const OrdersList = () => {
           return;
         }
         postponedDate = input.trim();
+        // Parse DD/MM/YYYY [HH:mm] → date réelle pour le RAPPEL automatique à l'échéance.
+        const m = postponedDate.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})(?:\s+(\d{1,2})[:h](\d{2}))?/);
+        if (m) {
+          const [, d, mo, y, h = '9', mi = '0'] = m;
+          const year = Number(y) < 100 ? 2000 + Number(y) : Number(y);
+          const parsed = new Date(year, Number(mo) - 1, Number(d), Number(h), Number(mi));
+          if (!Number.isNaN(parsed.getTime())) postponedUntilIso = parsed.toISOString();
+        }
+        if (!postponedUntilIso) {
+          setError(tp('Format de date non reconnu — utilise JJ/MM/AAAA HH:mm (le rappel automatique ne sera pas programmé).'));
+        }
       }
       
       // 1. Update UI INSTANTLY (optimistic update)
@@ -1500,6 +1548,8 @@ const OrdersList = () => {
       const payload = { status: newStatus };
       if (newStatus === 'postponed') {
         payload.deliveryTime = postponedDate;
+        // Date réelle → le backend programme la notification de rappel à l'échéance.
+        if (postponedUntilIso) payload.postponedUntil = postponedUntilIso;
       }
 
       ecomApi.put(`/orders/${orderId}`, payload).catch(err => {
@@ -1888,7 +1938,7 @@ const OrdersList = () => {
       return {
         key,
         label: getStatusLabel(key),
-        color: 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+        color: statusColorFor(key)
       };
     }).filter(s => knownStatusKeys.has(s.key) || stats[s.key] || orders.some(o => o.status === s.key));
   }, [orders, stats]);
@@ -2136,12 +2186,12 @@ const OrdersList = () => {
           setShowImportMenu(false);
           navigate('/ecom/import');
         }}
-        className="flex min-h-[44px] w-full min-w-0 items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-50 transition"
+        className="flex min-h-[44px] w-full min-w-0 items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-primary-50 transition"
       >
-        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+        <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
         <div className="flex-1 text-left">
-          <div className="font-medium text-gray-900">{tp('Google Sheets')}</div>
-          <div className="text-xs text-gray-500">{tp('Importer depuis un tableur')}</div>
+          <div className="font-medium text-foreground">{tp('Google Sheets')}</div>
+          <div className="text-xs text-muted-foreground">{tp('Importer depuis un tableur')}</div>
         </div>
       </button>
       <button
@@ -2149,12 +2199,12 @@ const OrdersList = () => {
           setShowImportMenu(false);
           navigate('/ecom/integrations/shopify');
         }}
-        className="flex min-h-[44px] w-full min-w-0 items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-50 transition"
+        className="flex min-h-[44px] w-full min-w-0 items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-primary-50 transition"
       >
-        <svg className="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 24 24"><path d="M15.337 2.136c-.012-.012-.025-.012-.037-.024-.012-.013-.025-.013-.037-.025l-.427-.214c-.287-.15-.65-.1-.888.125l-.325.3c-.1.088-.225.163-.35.238-.538-.163-1.15-.238-1.825-.125-1.05.175-2.037.713-2.787 1.525-.537.575-.925 1.275-1.137 2.038-.688.2-1.175.35-1.2.363-.362.112-.375.125-.425.475-.037.262-1.05 8.1-1.05 8.1l10.562 2.025 5.1-1.188S15.35 2.148 15.337 2.136zm-2.7.938c-.175.05-.375.113-.6.175v-.15c0-.525-.075-1-.2-1.438.375.088.65.725.8 1.413zm-1.4-.363c-.125.038-.25.075-.4.125V1.723c0-.45-.088-.875-.238-1.25.538.2.888.863 1.013 1.638-.125.037-.25.075-.375.1zm-.95-1.788c.15.375.225.813.225 1.313v.088c-.4.125-.838.25-1.288.388.25-.963.725-1.438 1.063-1.788zm-.538 10.325l-.875-2.913c.4-.15.913-.325 1.013-.363.125-.037.15.05.15.1 0 .063-.025 1.663-.288 3.176zm3.338-8.738c-.012-.537-.1-1.025-.237-1.45.537.175.875.8 1.05 1.438-.188.062-.513.15-.813.237v-.225z"/></svg>
+        <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M15.337 2.136c-.012-.012-.025-.012-.037-.024-.012-.013-.025-.013-.037-.025l-.427-.214c-.287-.15-.65-.1-.888.125l-.325.3c-.1.088-.225.163-.35.238-.538-.163-1.15-.238-1.825-.125-1.05.175-2.037.713-2.787 1.525-.537.575-.925 1.275-1.137 2.038-.688.2-1.175.35-1.2.363-.362.112-.375.125-.425.475-.037.262-1.05 8.1-1.05 8.1l10.562 2.025 5.1-1.188S15.35 2.148 15.337 2.136zm-2.7.938c-.175.05-.375.113-.6.175v-.15c0-.525-.075-1-.2-1.438.375.088.65.725.8 1.413zm-1.4-.363c-.125.038-.25.075-.4.125V1.723c0-.45-.088-.875-.238-1.25.538.2.888.863 1.013 1.638-.125.037-.25.075-.375.1zm-.95-1.788c.15.375.225.813.225 1.313v.088c-.4.125-.838.25-1.288.388.25-.963.725-1.438 1.063-1.788zm-.538 10.325l-.875-2.913c.4-.15.913-.325 1.013-.363.125-.037.15.05.15.1 0 .063-.025 1.663-.288 3.176zm3.338-8.738c-.012-.537-.1-1.025-.237-1.45.537.175.875.8 1.05 1.438-.188.062-.513.15-.813.237v-.225z"/></svg>
         <div className="flex-1 text-left">
-          <div className="font-medium text-gray-900">Shopify</div>
-          <div className="text-xs text-gray-500">{tp('Importer depuis Shopify')}</div>
+          <div className="font-medium text-foreground">Shopify</div>
+          <div className="text-xs text-muted-foreground">{tp('Importer depuis Shopify')}</div>
         </div>
       </button>
     </>
@@ -2166,7 +2216,7 @@ const OrdersList = () => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-2">
           <div className="h-7 w-40 bg-gray-200 rounded-md animate-pulse"></div>
-          <div className="h-4 w-64 max-w-full bg-gray-100 rounded animate-pulse"></div>
+          <div className="h-4 w-64 max-w-full bg-muted rounded animate-pulse"></div>
         </div>
         <div className="flex flex-wrap gap-2">
           <div className="h-11 w-11 bg-gray-200 rounded-lg animate-pulse"></div>
@@ -2177,7 +2227,7 @@ const OrdersList = () => {
       {/* Skeleton stats */}
       <div className="grid grid-cols-2 gap-2">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg p-3 border border-gray-200">
+          <div key={i} className="bg-card rounded-lg p-3 border border-border">
             <div className="h-3 w-20 bg-gray-200 rounded animate-pulse mb-3"></div>
             <div className="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
           </div>
@@ -2186,19 +2236,19 @@ const OrdersList = () => {
       {/* Skeleton cards */}
       <div className="space-y-2">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg border border-gray-200 p-4">
+          <div key={i} className="bg-card rounded-lg border p-4">
             <div className="flex justify-between gap-4 mb-3">
               <div className="h-5 w-40 bg-gray-200 rounded animate-pulse"></div>
               <div className="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
             </div>
             <div className="flex gap-3 mb-3">
-              <div className="h-4 w-28 bg-gray-100 rounded animate-pulse"></div>
-              <div className="h-4 w-20 bg-gray-100 rounded animate-pulse"></div>
-              <div className="h-4 w-24 bg-gray-100 rounded animate-pulse"></div>
+              <div className="h-4 w-28 bg-muted rounded animate-pulse"></div>
+              <div className="h-4 w-20 bg-muted rounded animate-pulse"></div>
+              <div className="h-4 w-24 bg-muted rounded animate-pulse"></div>
             </div>
             <div className="flex justify-between pt-2 border-t border-gray-50">
-              <div className="h-6 w-24 bg-gray-100 rounded animate-pulse"></div>
-              <div className="h-6 w-16 bg-gray-100 rounded animate-pulse"></div>
+              <div className="h-6 w-24 bg-muted rounded animate-pulse"></div>
+              <div className="h-6 w-16 bg-muted rounded animate-pulse"></div>
             </div>
           </div>
         ))}
@@ -2213,7 +2263,7 @@ const OrdersList = () => {
       {/* Barre de chargement fluide */}
       {refreshing && (
         <div className="fixed top-0 left-0 right-0 z-[9999] h-0.5 bg-primary-100 overflow-hidden">
-          <div className="h-full bg-primary-600" style={{animation: 'loading-bar 1s ease-in-out infinite', width: '60%'}}></div>
+          <div className="h-full bg-primary" style={{animation: 'loading-bar 1s ease-in-out infinite', width: '60%'}}></div>
         </div>
       )}
       {success && <div className="mb-3 p-2.5 bg-green-50 text-green-800 rounded-lg text-sm border border-green-200 flex items-center gap-2"><svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>{success}</div>}
@@ -2227,12 +2277,12 @@ const OrdersList = () => {
         const pct = Math.min(100, Math.round((used / maxOrders) * 100));
         const isOver = used >= maxOrders;
         const isWarning = pct >= 80;
-        const barColor = isOver ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-primary-500';
+        const barColor = isOver ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-primary';
         const bgStyle = isOver
           ? 'bg-red-50 border-red-200 text-red-800'
           : isWarning
           ? 'bg-amber-50 border-amber-200 text-amber-800'
-          : 'bg-gray-50 border-gray-200 text-gray-700';
+          : 'bg-background border-border text-foreground';
         return (
           <div className={`mb-3 p-3 rounded-xl border ${bgStyle}`}>
             <div className="flex flex-wrap items-center justify-between gap-2 text-sm mb-2">
@@ -2242,7 +2292,7 @@ const OrdersList = () => {
                     <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
                   </svg>
                 ) : (
-                  <svg className="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 flex-shrink-0 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                   </svg>
                 )}
@@ -2256,7 +2306,7 @@ const OrdersList = () => {
                 </span>
               </div>
               <a href="/ecom/billing" className={`font-semibold underline underline-offset-2 whitespace-nowrap text-xs ${
-                isOver ? 'text-red-700 hover:text-red-900' : isWarning ? 'text-amber-700 hover:text-amber-900' : 'text-primary-700 hover:text-primary-900'
+                isOver ? 'text-red-700 hover:text-red-900' : isWarning ? 'text-amber-700 hover:text-amber-900' : 'text-primary hover:text-primary-900'
               }`}>{tp('Passer à Scalor →')}</a>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
@@ -2269,15 +2319,15 @@ const OrdersList = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="min-w-0 w-full sm:flex-1">
-          <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+          <h1 className="text-lg sm:text-2xl font-semibold text-foreground truncate tracking-tight">
             {selectedSourceId ? sources.find(s => s._id === selectedSourceId)?.name : tp('Commandes')}
           </h1>
-          <p className="text-[11px] text-gray-400 mt-0.5">
+          <p className="text-[11px] text-muted-foreground mt-0.5">
             {hasActiveFilters ? (
               <>
                 {filteredStats.total} commande{filteredStats.total > 1 ? 's' : ''} filtrée{filteredStats.total > 1 ? 's' : ''}
-                {filterStatus && <> • <span className="text-primary-600 font-medium">{getStatusLabel(filterStatus)}</span></>}
-                {filterCity && <> • <span className="text-primary-700 font-medium">{filterCity}</span></>}
+                {filterStatus && <> • <span className="text-primary font-medium">{getStatusLabel(filterStatus)}</span></>}
+                {filterCity && <> • <span className="text-primary font-medium">{filterCity}</span></>}
                 {filterProduct && <> • <span className="text-green-600 font-medium">{filterProduct}</span></>}
               </>
             ) : (
@@ -2293,7 +2343,7 @@ const OrdersList = () => {
               className={`inline-flex min-h-[44px] items-center gap-1.5 px-3 py-1.5 rounded-lg transition text-xs font-medium ${
                 viewAllWorkspaces
                   ? 'bg-gray-900 text-white hover:bg-gray-800'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-muted text-muted-foreground hover:bg-gray-200'
               }`}
               title={viewAllWorkspaces ? 'Voir toutes les commandes de tous les espaces' : tp('Voir uniquement les commandes de mon espace')}
             >
@@ -2311,21 +2361,21 @@ const OrdersList = () => {
                   onClick={toggleWhatsAppAuto}
                   className={`inline-flex min-h-[44px] items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 transition text-[11px] sm:text-xs font-medium ${
                     whatsappAutoConfirm
-                      ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 rounded-l-xl border-r-0'
-                      : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 rounded-xl'
+                      ? 'bg-green-50 text-green-600 border border-green-100 hover:bg-green-100 rounded-l-2xl border-r-0'
+                      : 'bg-background text-muted-foreground border border-border hover:bg-muted rounded-2xl'
                   }`}
                   title={whatsappAutoConfirm ? 'Cliquer pour désactiver' : tp('Cliquer pour configurer et activer')}
                 >
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                   </svg>
-                  <span className="hidden sm:inline">{whatsappAutoConfirm ? 'Auto ON' : tp('Auto OFF')}</span>
+                  <span className="hidden sm:inline">{tp('Message auto')}</span>
                   <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${whatsappAutoConfirm ? 'bg-green-500' : 'bg-gray-400'}`} />
                 </button>
                 {whatsappAutoConfirm && (
                   <button
                     onClick={openAutoConfigModal}
-                    className="inline-flex h-11 w-11 items-center justify-center px-2 py-1.5 bg-green-50 text-green-600 border border-green-200 border-l-0 rounded-r-xl hover:bg-green-100 transition"
+                    className="inline-flex h-11 w-11 items-center justify-center px-2 py-1.5 bg-green-50 text-green-600 border border-green-100 border-l-0 rounded-r-2xl hover:bg-green-100 transition"
                     title={tp('Modifier la configuration Auto WhatsApp')}
                     aria-label={tp('Modifier la configuration Auto WhatsApp')}
                   >
@@ -2336,7 +2386,7 @@ const OrdersList = () => {
 
               <button
                 onClick={openNotifModal}
-                className="inline-flex h-11 w-11 items-center justify-center p-2 text-gray-600 bg-white border border-gray-200 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition"
+                className="inline-flex h-11 w-11 items-center justify-center p-2 text-muted-foreground bg-background border border-border hover:text-foreground hover:bg-muted rounded-2xl transition"
                 title={tp('Configurer WhatsApp auto')}
                 aria-label={tp('Configurer les notifications WhatsApp')}
               >
@@ -2346,7 +2396,7 @@ const OrdersList = () => {
               </button>
               <button
                 onClick={openCreateOrder}
-                className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-primary-600 text-white rounded-xl active:scale-95 transition text-[11px] sm:text-xs font-semibold shadow-sm"
+                className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-primary hover:bg-primary text-white rounded-2xl active:scale-95 transition text-[11px] sm:text-xs font-semibold shadow-sm shadow-primary-500/20"
                 title={tp('Ajouter une commande')}
               >
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -2355,7 +2405,7 @@ const OrdersList = () => {
               <div className="relative" ref={importMenuRef}>
                 <button
                   onClick={() => setShowImportMenu(!showImportMenu)}
-                  className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-white text-gray-700 border border-gray-200 rounded-xl active:scale-95 hover:bg-gray-50 transition text-[11px] sm:text-xs font-semibold"
+                  className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-background text-muted-foreground border border-border rounded-2xl active:scale-95 hover:bg-muted transition text-[11px] sm:text-xs font-medium"
                   aria-label={tp('Importer des commandes')}
                   aria-expanded={showImportMenu}
                 >
@@ -2364,7 +2414,7 @@ const OrdersList = () => {
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
                 {showImportMenu && (
-                  <div className="orders-import-menu orders-import-menu-panel absolute right-0 mt-2 hidden w-56 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-lg z-50 sm:block">
+                  <div className="orders-import-menu orders-import-menu-panel absolute right-0 mt-2 hidden w-56 overflow-hidden rounded-xl border border-border bg-card py-1 shadow-lg z-50 sm:block">
                     {renderImportMenuOptions()}
                   </div>
                 )}
@@ -2372,7 +2422,7 @@ const OrdersList = () => {
               <button
                 onClick={() => handleSync()}
                 disabled={syncDisabled}
-                className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-white text-gray-700 border border-gray-200 rounded-xl active:scale-95 hover:bg-gray-50 transition text-[11px] sm:text-xs font-semibold disabled:opacity-50"
+                className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 sm:h-auto sm:min-h-[44px] sm:w-auto sm:px-3 py-1.5 sm:py-2 bg-background text-muted-foreground border border-border rounded-2xl active:scale-95 hover:bg-muted transition text-[11px] sm:text-xs font-medium disabled:opacity-50"
                 title={tp('Synchroniser')}
               >
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -2380,7 +2430,7 @@ const OrdersList = () => {
               </button>
               <button
                 onClick={() => navigate('/ecom/stats')}
-                className="hidden sm:inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 rounded-xl transition text-xs font-semibold"
+                className="hidden sm:inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-background text-muted-foreground border border-border hover:bg-muted rounded-2xl transition text-xs font-medium"
                 title={tp('Voir les statistiques globales')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
@@ -2389,7 +2439,7 @@ const OrdersList = () => {
               {orders.length > 0 && (
                 <button
                   onClick={toggleSelectionMode}
-                  className={`inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 py-2 sm:w-auto rounded-lg transition text-xs font-medium ${selectionMode ? 'bg-primary-100 text-primary-700 border border-primary-300' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
+                  className={`inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 py-2 sm:w-auto rounded-2xl transition text-xs font-medium ${selectionMode ? 'bg-primary-50 text-primary border border-primary-100' : 'text-muted-foreground hover:text-muted-foreground hover:bg-muted'}`}
                   title={tp('Sélection multiple')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
@@ -2400,7 +2450,7 @@ const OrdersList = () => {
                 <button
                   onClick={handleDeleteAll}
                   disabled={deletingAll}
-                  className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 py-2 sm:w-auto text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition text-xs font-medium"
+                  className="inline-flex h-11 w-11 items-center justify-center gap-1 px-2.5 py-2 sm:w-auto text-red-400 hover:text-red-600 hover:bg-red-50 rounded-2xl transition text-xs font-medium"
                   title={tp('Supprimer toutes les commandes')}
                 >
                   {deletingAll ? (
@@ -2428,30 +2478,30 @@ const OrdersList = () => {
       </div>
 
       {showImportMenu && (
-        <div className="orders-import-menu-panel sm:hidden overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-sm">
+        <div className="orders-import-menu-panel sm:hidden overflow-hidden rounded-xl border border-border bg-card py-1 shadow-sm">
           {renderImportMenuOptions()}
         </div>
       )}
 
       {/* Sources */}
       {(isAdmin || isSuperAdmin || (isCloseuse && sources.length > 0)) && (
-        <div className="bg-white rounded-xl border border-gray-200 p-2.5">
+        <div className="bg-card rounded-xl border p-2.5">
           <div className="flex items-center gap-2 mb-2">
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-            <span className="text-[11px] font-semibold text-gray-700">{tp('Sources')}</span>
-            <span className="text-[10px] text-gray-400 tabular-nums">({sources.length})</span>
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+            <span className="text-[11px] font-semibold text-foreground">{tp('Sources')}</span>
+            <span className="text-[10px] text-muted-foreground tabular-nums">({sources.length})</span>
           </div>
 
           {/* Information d'adaptation au Google Sheet */}
           {selectedSourceId && sourcesConfig[selectedSourceId] && (
-            <div className="mb-2 p-1.5 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="mb-2 p-1.5 bg-background border border-border rounded-lg">
               <div className="flex items-center gap-1.5 text-[11px]">
-                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <span className="text-primary-700 font-medium truncate">
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span className="text-primary font-medium truncate">
                   {sourcesConfig[selectedSourceId].name}
                 </span>
                 {sourcesConfig[selectedSourceId].detectedHeaders.length > 0 && (
-                  <span className="text-primary-600 flex-shrink-0">
+                  <span className="text-primary flex-shrink-0">
                     ({sourcesConfig[selectedSourceId].detectedHeaders.length})
                   </span>
                 )}
@@ -2464,7 +2514,7 @@ const OrdersList = () => {
               className={`inline-flex min-h-[36px] min-w-[36px] items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
                 !selectedSourceId
                   ? 'bg-gray-900 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-muted text-muted-foreground hover:bg-gray-200'
               }`}
             >
               <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
@@ -2478,7 +2528,7 @@ const OrdersList = () => {
                   className={`inline-flex min-h-[36px] min-w-0 items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
                     selectedSourceId === s._id
                       ? 'bg-gray-900 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-muted text-muted-foreground hover:bg-gray-200'
                   }`}
                 >
                   <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" /></svg>
@@ -2510,19 +2560,19 @@ const OrdersList = () => {
               </div>
             ))}
             {sources.length === 0 && (
-              <p className="text-[10px] sm:text-xs text-gray-400 italic py-1">
+              <p className="text-[10px] sm:text-xs text-muted-foreground italic py-1">
                 {isCloseuse ? 'Aucune source assignée' : tp('Aucune source. Importer des commandes.')}
               </p>
             )}
             {/* Source enum filters: Scalor (skelor+boutique) / Shopify */}
             {(isAdmin || isSuperAdmin) && [
-              { id: 'scalor', label: 'Scalor', color: 'bg-primary-600 text-white', inactive: 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200', deleteIds: ['skelor', 'boutique'] },
+              { id: 'scalor', label: 'Scalor', color: 'bg-primary text-white', inactive: 'bg-primary-50 text-primary hover:bg-primary-100 border border-primary-200', deleteIds: ['skelor', 'boutique'] },
               { id: 'shopify', label: 'Shopify', color: 'bg-green-700 text-white', inactive: 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200', deleteIds: ['shopify'] },
             ].map(src => (
               <div key={src.id} className="flex items-center gap-0.5">
                 <button
                   onClick={() => { setSelectedSourceId(selectedSourceId === src.id ? '' : src.id); setPage(1); }}
-                  className={`inline-flex min-h-[36px] min-w-[36px] items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${selectedSourceId === src.id ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  className={`inline-flex min-h-[36px] min-w-[36px] items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${selectedSourceId === src.id ? 'bg-gray-900 text-white' : 'bg-muted text-foreground hover:bg-gray-200'}`}
                 >
                   {src.label}
                 </button>
@@ -2543,16 +2593,16 @@ const OrdersList = () => {
       )}
 
       {/* Barre de filtres compacte */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-card rounded-lg border overflow-hidden">
         {/* En-tête des filtres */}
-        <div className="px-2.5 py-2 border-b border-gray-100">
+        <div className="px-2.5 py-2 border-b border-border">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <h3 className="text-xs font-semibold text-gray-900">{tp('Filtres')}</h3>
-              <p className="text-[11px] text-gray-500">
+              <h3 className="text-xs font-semibold text-foreground">{tp('Filtres')}</h3>
+              <p className="text-[11px] text-muted-foreground">
                 {hasActiveFilters ? (
                   <>
-                    <span className="font-semibold text-primary-600">{filteredStats.total}</span> / {stats.total || 0}
+                    <span className="font-semibold text-primary">{filteredStats.total}</span> / {stats.total || 0}
                   </>
                 ) : (
                   <>{stats.total || 0} commandes</>
@@ -2564,14 +2614,14 @@ const OrdersList = () => {
               <select 
                 value={sortOrder} 
                 onChange={(e) => { setSortOrder(e.target.value); setPage(1); }}
-                className="min-h-[36px] text-[11px] border border-gray-300 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="min-h-[36px] text-[11px] border border-gray-300 rounded-md px-2 py-1 bg-card focus:outline-none focus:ring-2 focus:ring-primary-600"
                 title={tp('Ordre d\'affichage')}
               >
                 <option value="newest_first">{tp('Plus récentes')}</option>
                 <option value="oldest_first">{tp('Plus anciennes')}</option>
               </select>
               {activeFiltersCount > 0 && (
-                <button onClick={clearAllFilters} className="inline-flex min-h-[36px] items-center gap-1 px-2 py-1 bg-white text-red-600 hover:bg-red-50 border border-red-100 rounded-md text-[11px] font-semibold transition-all">
+                <button onClick={clearAllFilters} className="inline-flex min-h-[36px] items-center gap-1 px-2 py-1 bg-card text-red-600 hover:bg-red-50 border border-red-100 rounded-md text-[11px] font-semibold transition-all">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   {tp('Réinitialiser')}
                 </button>
@@ -2582,10 +2632,10 @@ const OrdersList = () => {
 
         {/* Chips de filtres actifs */}
         {activeFiltersCount > 0 && (
-          <div className="px-2.5 py-1.5 bg-gray-50 border-b border-gray-100">
+          <div className="px-2.5 py-1.5 bg-background border-b border-border">
             <div className="flex flex-wrap gap-1">
               {filterStatus && (
-                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-white text-gray-700 rounded-full text-[10px] font-medium border border-gray-200">
+                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-background text-muted-foreground rounded-full text-[10px] font-medium border border-border">
                   {getStatusLabel(filterStatus)}
                   <button onClick={() => { setFilterStatus(''); setPage(1); }} className="hover:text-primary-900">
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -2593,7 +2643,7 @@ const OrdersList = () => {
                 </div>
               )}
               {filterCity && (
-                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-white text-gray-700 rounded-full text-[10px] font-medium border border-gray-200">
+                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-background text-muted-foreground rounded-full text-[10px] font-medium border border-border">
                   {filterCity}
                   <button onClick={() => { setFilterCity(''); setPage(1); }} className="hover:text-primary-900">
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -2601,7 +2651,7 @@ const OrdersList = () => {
                 </div>
               )}
               {filterProduct && (
-                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-white text-gray-700 rounded-full text-[10px] font-medium border border-gray-200">
+                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-background text-muted-foreground rounded-full text-[10px] font-medium border border-border">
                   {filterProduct}
                   <button onClick={() => { setFilterProduct(''); setPage(1); }} className="hover:text-green-900">
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -2609,7 +2659,7 @@ const OrdersList = () => {
                 </div>
               )}
               {filterStartDate && (
-                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-white text-gray-700 rounded-full text-[10px] font-medium border border-gray-200">
+                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-background text-muted-foreground rounded-full text-[10px] font-medium border border-border">
                   {filterStartDate}
                   <button onClick={() => { setFilterStartDate(''); setPage(1); }} className="hover:text-orange-900">
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -2617,7 +2667,7 @@ const OrdersList = () => {
                 </div>
               )}
               {filterEndDate && (
-                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-white text-gray-700 rounded-full text-[10px] font-medium border border-gray-200">
+                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-background text-muted-foreground rounded-full text-[10px] font-medium border border-border">
                   {filterEndDate}
                   <button onClick={() => { setFilterEndDate(''); setPage(1); }} className="hover:text-orange-900">
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -2625,9 +2675,9 @@ const OrdersList = () => {
                 </div>
               )}
               {search && (
-                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-white text-gray-700 rounded-full text-[10px] font-medium border border-gray-200">
+                <div className="inline-flex min-h-[24px] items-center gap-1 px-2 py-0.5 bg-background text-muted-foreground rounded-full text-[10px] font-medium border border-border">
                   {search}
-                  <button onClick={() => { setSearch(''); setPage(1); }} className="hover:text-gray-900">
+                  <button onClick={() => { setSearch(''); setPage(1); }} className="hover:text-foreground">
                     <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>
@@ -2640,18 +2690,18 @@ const OrdersList = () => {
         <div className="p-2.5">
           <div className="mb-2">
             <div className="relative">
-              <svg className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <svg className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               <input 
                 type="text" 
                 placeholder={tp('Client, téléphone, ville ou produit')} 
                 value={search} 
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="w-full min-h-[38px] pl-9 pr-9 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent"
+                className="w-full min-h-[38px] pl-9 pr-9 py-1.5 bg-background border border-border rounded-2xl text-sm transition focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-transparent focus:bg-card"
               />
               {search && (
                 <button 
                   onClick={() => { setSearch(''); setPage(1); }}
-                  className="absolute right-0.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                  className="absolute right-0.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-muted-foreground hover:bg-background"
                   aria-label={tp('Effacer la recherche')}
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -2662,12 +2712,12 @@ const OrdersList = () => {
 
           <div className="mb-2">
             <div className="-mx-2.5 flex gap-1.5 overflow-x-auto px-2.5 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
-          <button onClick={() => { setFilterStatus(''); setPage(1); }} className={`shrink-0 min-h-[34px] px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${!filterStatus ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
+          <button onClick={() => { setFilterStatus(''); setPage(1); }} className={`shrink-0 min-h-[24px] px-2.5 py-0.5 rounded-full text-[10px] font-semibold border transition-all ${!filterStatus ? 'bg-primary text-white border-transparent shadow-sm shadow-primary-500/20' : 'bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground'}`}>
             Tous ({(filterCity || filterProduct || filterTag || filterStartDate || filterEndDate || search) ? dynamicFilterCounts.total : stats.total || 0})
           </button>
               {statusFilters.map(s => (
                 <button key={s.key} onClick={() => { setFilterStatus(filterStatus === s.key ? '' : s.key); setPage(1); }}
-                  className={`shrink-0 min-h-[34px] px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${filterStatus === s.key ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+                  className={`shrink-0 min-h-[24px] px-2.5 py-0.5 rounded-full text-[10px] font-semibold transition-all ${s.color} ${filterStatus === s.key ? 'ring-2 ring-gray-900/20 shadow-sm font-bold' : 'opacity-80 hover:opacity-100'}`}>
                   {tp(s.label)} ({(filterCity || filterProduct || filterTag || filterStartDate || filterEndDate || search) ? dynamicFilterCounts[s.key] || 0 : stats[s.key] || 0})
                 </button>
               ))}
@@ -2675,7 +2725,7 @@ const OrdersList = () => {
           </div>
 
           <div className="mb-2.5">
-            <label className="block text-[11px] font-semibold text-gray-700 mb-1.5">{tp('Période rapide')}</label>
+            <label className="block text-[11px] font-semibold text-foreground mb-1.5">{tp('Période rapide')}</label>
             <div className="-mx-2.5 flex gap-1.5 overflow-x-auto px-2.5 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
               {[
                 { key: 'today', label: "Aujourd'hui" },
@@ -2686,10 +2736,10 @@ const OrdersList = () => {
                 <button
                   key={preset.key}
                   onClick={() => applyQuickDatePreset(preset.key)}
-                  className={`shrink-0 min-h-[34px] px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
+                  className={`shrink-0 min-h-[24px] px-2.5 py-0.5 rounded-full text-[10px] font-semibold border transition-all ${
                     activeQuickDatePreset === preset.key
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                      ? 'bg-primary text-white border-transparent shadow-sm shadow-primary-500/20'
+                      : 'bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground'
                   }`}
                 >
                   {tp(preset.label)}
@@ -2700,7 +2750,7 @@ const OrdersList = () => {
 
           <button 
             onClick={() => setShowFilters(!showFilters)} 
-            className={`w-full min-h-[36px] px-3 py-1.5 rounded-md text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all ${showFilters ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            className={`w-full min-h-[36px] px-3 py-1.5 rounded-md text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all ${showFilters ? 'bg-gray-900 text-white' : 'bg-muted text-foreground hover:bg-gray-200'}`}
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v2m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
             {showFilters ? tp('Masquer avancés') : tp('Filtres avancés')}
@@ -2708,33 +2758,33 @@ const OrdersList = () => {
 
           {/* Advanced filters panel */}
           {showFilters && (
-            <div className="mt-2.5 pt-2.5 border-t border-gray-100">
+            <div className="mt-2.5 pt-2.5 border-t border-border">
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Début')}</label>
-                  <input type="date" value={filterStartDate} onChange={e => { setFilterStartDate(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
+                  <label className="block text-[11px] font-medium text-muted-foreground mb-1">{tp('Début')}</label>
+                  <input type="date" value={filterStartDate} onChange={e => { setFilterStartDate(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Fin')}</label>
-                  <input type="date" value={filterEndDate} onChange={e => { setFilterEndDate(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
+                  <label className="block text-[11px] font-medium text-muted-foreground mb-1">{tp('Fin')}</label>
+                  <input type="date" value={filterEndDate} onChange={e => { setFilterEndDate(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Ville')}</label>
-                  <select value={filterCity} onChange={e => { setFilterCity(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
+                  <label className="block text-[11px] font-medium text-muted-foreground mb-1">{tp('Ville')}</label>
+                  <select value={filterCity} onChange={e => { setFilterCity(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
                     <option value="">{tp('Toutes les villes')}</option>
                     {uniqueCities.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Produit')}</label>
-                  <select value={filterProduct} onChange={e => { setFilterProduct(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
+                  <label className="block text-[11px] font-medium text-muted-foreground mb-1">{tp('Produit')}</label>
+                  <select value={filterProduct} onChange={e => { setFilterProduct(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
                     <option value="">{tp('Tous')}</option>
                     {uniqueProducts.map(p => <option key={p} value={p}>{p}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">{tp('Tag')}</label>
-                  <select value={filterTag} onChange={e => { setFilterTag(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
+                  <label className="block text-[11px] font-medium text-muted-foreground mb-1">{tp('Tag')}</label>
+                  <select value={filterTag} onChange={e => { setFilterTag(e.target.value); setPage(1); }} className="w-full min-h-[38px] px-2.5 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent">
                     <option value="">{tp('Tous')}</option>
                     {uniqueTags.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -2743,11 +2793,11 @@ const OrdersList = () => {
               {[filterCity, filterProduct, filterTag, filterStartDate, filterEndDate].filter(Boolean).length > 0 && (
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex flex-wrap gap-1.5">
-                    {filterStartDate && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium text-gray-700">{filterStartDate} <button onClick={() => { setFilterStartDate(''); setPage(1); }} className="hover:text-gray-900">&times;</button></span>}
-                    {filterEndDate && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium text-gray-700">{filterEndDate} <button onClick={() => { setFilterEndDate(''); setPage(1); }} className="hover:text-gray-900">&times;</button></span>}
-                    {filterCity && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium text-gray-700">{filterCity} <button onClick={() => { setFilterCity(''); setPage(1); }} className="hover:text-gray-900">&times;</button></span>}
-                    {filterProduct && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium text-gray-700">{filterProduct} <button onClick={() => { setFilterProduct(''); setPage(1); }} className="hover:text-gray-900">&times;</button></span>}
-                    {filterTag && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium text-gray-700">{filterTag} <button onClick={() => { setFilterTag(''); setPage(1); }} className="hover:text-gray-900">&times;</button></span>}
+                    {filterStartDate && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-foreground">{filterStartDate} <button onClick={() => { setFilterStartDate(''); setPage(1); }} className="hover:text-foreground">&times;</button></span>}
+                    {filterEndDate && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-foreground">{filterEndDate} <button onClick={() => { setFilterEndDate(''); setPage(1); }} className="hover:text-foreground">&times;</button></span>}
+                    {filterCity && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-foreground">{filterCity} <button onClick={() => { setFilterCity(''); setPage(1); }} className="hover:text-foreground">&times;</button></span>}
+                    {filterProduct && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-foreground">{filterProduct} <button onClick={() => { setFilterProduct(''); setPage(1); }} className="hover:text-foreground">&times;</button></span>}
+                    {filterTag && <span className="inline-flex min-h-[24px] items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-foreground">{filterTag} <button onClick={() => { setFilterTag(''); setPage(1); }} className="hover:text-foreground">&times;</button></span>}
                   </div>
                   <button onClick={clearAllFilters} className="text-[10px] text-red-600 hover:text-red-800 font-medium">{tp('Tout effacer')}</button>
                 </div>
@@ -2761,17 +2811,17 @@ const OrdersList = () => {
 
       {/* KPI Cards - Design compact */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="bg-white rounded-xl border border-gray-200 p-3">
-          <p className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Revenu livré')}</p>
-          <p className="text-xl font-bold text-gray-900 mb-1 tabular-nums">{fmtRaw(filteredStats.deliveredRevenue || 0) || `0 ${symbol}`}</p>
+        <div className="bg-card rounded-xl border p-3">
+          <p className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Revenu livré')}</p>
+          <p className="text-xl font-bold text-foreground mb-1 tabular-nums">{fmtRaw(filteredStats.deliveredRevenue || 0) || `0 ${symbol}`}</p>
           <p className="text-[11px] text-green-700 font-medium">{tp('{n} livrés', { n: filteredStats.delivered || 0 })} · {Math.round((filteredStats.delivered || 0) / (filteredStats.total || 1) * 100)}%</p>
         </div>
         
-        <div className="bg-white rounded-xl border border-gray-200 p-3">
-          <p className="text-[11px] font-semibold text-gray-500 mb-1">{tp('Taux livraison')}</p>
-          <p className="text-xl font-bold text-gray-900 mb-1.5 tabular-nums">{deliveryRate}%</p>
-          <div className="w-full bg-gray-100 rounded-full h-1.5">
-            <div className="bg-primary-600 h-1.5 rounded-full" style={{ width: `${Math.min(deliveryRate, 100)}%` }}></div>
+        <div className="bg-card rounded-xl border p-3">
+          <p className="text-[11px] font-semibold text-muted-foreground mb-1">{tp('Taux livraison')}</p>
+          <p className="text-xl font-bold text-foreground mb-1.5 tabular-nums">{deliveryRate}%</p>
+          <div className="w-full bg-muted rounded-full h-1.5">
+            <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.min(deliveryRate, 100)}%` }}></div>
           </div>
         </div>
       </div>
@@ -2803,15 +2853,15 @@ const OrdersList = () => {
 
       {/* Orders */}
       {orders.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <div className="bg-card rounded-xl border p-8 text-center">
+          <div className="w-14 h-14 bg-background rounded-xl flex items-center justify-center mx-auto mb-3">
             <svg className="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
           </div>
-          <p className="text-gray-500 text-sm font-medium">{tp('Aucune commande trouvée')}</p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-muted-foreground text-sm font-medium">{tp('Aucune commande trouvée')}</p>
+          <p className="text-xs text-muted-foreground mt-1">
             {search || filterStatus || filterCity || filterProduct || filterTag || filterStartDate || filterEndDate
               ? 'Essayez de modifier vos filtres ou votre recherche.'
-              : isAdmin ? <>{tp('Importez vos commandes depuis la page')} <a href="/ecom/import" className="text-primary-600 hover:underline">{tp('Import')}</a></> : 'Aucune commande disponible.'
+              : isAdmin ? <>{tp('Importez vos commandes depuis la page')} <a href="/ecom/import" className="text-primary hover:underline">{tp('Import')}</a></> : 'Aucune commande disponible.'
             }
           </p>
         </div>
@@ -2828,7 +2878,7 @@ const OrdersList = () => {
                   onChange={toggleSelectAll}
                   className="w-4 h-4 rounded accent-primary-600 cursor-pointer"
                 />
-                <span className="text-xs font-semibold text-primary-700">
+                <span className="text-xs font-semibold text-primary">
                   {selectedOrders.size === 0 ? 'Tout sélectionner' : `${selectedOrders.size} / ${orders.length} sélectionnée(s)`}
                 </span>
               </div>
@@ -2842,7 +2892,7 @@ const OrdersList = () => {
               const isSelected = selectedOrders.has(o._id);
 
               return (
-                <div key={o._id} data-order-id={o._id} className={`bg-white rounded-xl border transition-colors duration-150 group ${selectionMode ? 'cursor-default' : 'cursor-pointer hover:border-gray-300 hover:bg-gray-50/40'} ${isSelected ? 'border-primary-500 ring-1 ring-primary-400' : 'border-gray-200'}`} onClick={() => selectionMode ? toggleOrderSelection(o._id) : navigateToOrder(o._id)}>
+                <div key={o._id} data-order-id={o._id} className={`bg-card rounded-xl border transition-colors duration-150 group ${selectionMode ? 'cursor-default' : 'cursor-pointer hover:border-gray-300 hover:bg-background/40'} ${isSelected ? 'border-primary-500 ring-1 ring-primary-400' : 'border-border'}`} onClick={() => selectionMode ? toggleOrderSelection(o._id) : navigateToOrder(o._id)}>
                   <div className="p-3">
                     <div className="flex items-center justify-between gap-4">
                       {/* Checkbox (selection mode) */}
@@ -2857,17 +2907,17 @@ const OrdersList = () => {
                         </div>
                       )}
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="w-9 h-9 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center text-gray-700 font-bold text-sm flex-shrink-0">
+                        <div className="w-9 h-9 bg-muted border border-border rounded-lg flex items-center justify-center text-foreground font-bold text-sm flex-shrink-0">
                           {clientName ? clientName.charAt(0).toUpperCase() : '?'}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-gray-900 truncate">{clientName || tp('Sans nom')}</h3>
+                          <h3 className="text-sm font-bold text-foreground truncate">{clientName || tp('Sans nom')}</h3>
                           <div className="flex items-center gap-2 text-xs">
                             {clientPhone && (
-                              <span className="text-gray-600 font-mono">{clientPhone}</span>
+                              <span className="text-muted-foreground font-mono">{clientPhone}</span>
                             )}
                             {city && (
-                              <span className="text-gray-500">• {city}</span>
+                              <span className="text-muted-foreground">• {city}</span>
                             )}
                           </div>
                         </div>
@@ -2886,9 +2936,9 @@ const OrdersList = () => {
                       {/* Product */}
                       {productName && (
                         <div className="flex-shrink-0 max-w-[160px] hidden sm:block">
-                          <p className="text-xs text-gray-500 text-right truncate">{productName}</p>
+                          <p className="text-xs text-muted-foreground text-right truncate">{productName}</p>
                           {o.quantity > 1 && (
-                            <p className="text-[10px] text-gray-400 text-right">{tp('Qté')} : {o.quantity}</p>
+                            <p className="text-[10px] text-muted-foreground text-right">{tp('Qté')} : {o.quantity}</p>
                           )}
                         </div>
                       )}
@@ -2896,7 +2946,7 @@ const OrdersList = () => {
                       {/* Price */}
                       {totalPrice > 0 && (
                         <div className="flex-shrink-0">
-                          <p className="text-sm font-bold text-gray-900">{fmt(totalPrice, o.currency || 'XAF')}</p>
+                          <p className="text-sm font-bold text-foreground">{fmt(totalPrice, o.currency || 'XAF')}</p>
                         </div>
                       )}
 
@@ -2924,7 +2974,7 @@ const OrdersList = () => {
                       {/* Badge nom de source personnalisée (Scalor Store nommé, webhook, etc.) */}
                       {o.sourceName && !['skelor','shopify','boutique'].includes(o.source) && (
                         <div className="flex-shrink-0">
-                          <span className="block max-w-[90px] truncate rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[10px] font-semibold text-gray-700" title={o.sourceName}>{o.sourceName}</span>
+                          <span className="block max-w-[90px] truncate rounded-md border border-border bg-background px-2 py-1 text-[10px] font-semibold text-foreground" title={o.sourceName}>{o.sourceName}</span>
                         </div>
                       )}
 
@@ -2949,7 +2999,7 @@ const OrdersList = () => {
                       {/* Copy Button */}
                       <button
                         onClick={(e) => { e.stopPropagation(); handleCopyOrder(o); }}
-                        className="flex-shrink-0 w-10 h-10 text-primary-600 bg-white hover:bg-primary-50 border border-primary-200 rounded-lg transition flex items-center justify-center"
+                        className="flex-shrink-0 w-10 h-10 text-primary bg-card hover:bg-primary-50 border border-primary-200 rounded-lg transition flex items-center justify-center"
                         title={tp('Copier la commande')}
                         aria-label={tp('Copier la commande')}
                       >
@@ -2975,7 +3025,7 @@ const OrdersList = () => {
                   onChange={toggleSelectAll}
                   className="w-4 h-4 rounded accent-primary-600 cursor-pointer"
                 />
-                <span className="text-xs font-semibold text-primary-700">
+                <span className="text-xs font-semibold text-primary">
                   {selectedOrders.size === 0 ? 'Tout sélectionner' : `${selectedOrders.size} / ${orders.length} sélectionnée(s)`}
                 </span>
               </div>
@@ -2989,7 +3039,7 @@ const OrdersList = () => {
               const isSelected = selectedOrders.has(o._id);
 
               return (
-                <div key={o._id} data-order-id={o._id} className={`bg-white rounded-2xl border overflow-hidden transition-all duration-150 ${selectionMode ? 'cursor-default' : 'active:scale-[0.99]'} ${isSelected ? 'border-primary-400 ring-2 ring-primary-100' : 'border-gray-100 shadow-sm'}`} onClick={() => selectionMode ? toggleOrderSelection(o._id) : navigateToOrder(o._id)}>
+                <div key={o._id} data-order-id={o._id} className={`bg-card rounded-2xl border overflow-hidden transition-all duration-150 ${selectionMode ? 'cursor-default' : 'active:scale-[0.99]'} ${isSelected ? 'border-primary-400 ring-2 ring-primary-100' : 'border-border shadow-sm'}`} onClick={() => selectionMode ? toggleOrderSelection(o._id) : navigateToOrder(o._id)}>
                   <div className="px-4 pt-4 pb-3">
                     {/* Header: Avatar + Name/Phone + Price */}
                     <div className="flex items-center justify-between gap-3">
@@ -3008,16 +3058,16 @@ const OrdersList = () => {
                           {clientName ? clientName.charAt(0).toUpperCase() : '?'}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-[15px] font-semibold text-gray-900 truncate leading-tight">{clientName || tp('Sans nom')}</h3>
-                          <p className="text-xs text-gray-500 font-mono mt-0.5 truncate">{clientPhone || '—'}</p>
+                          <h3 className="text-[15px] font-semibold text-foreground truncate leading-tight">{clientName || tp('Sans nom')}</h3>
+                          <p className="text-xs text-muted-foreground font-mono mt-0.5 truncate">{clientPhone || '—'}</p>
                         </div>
                       </div>
                       <div className="flex flex-col items-end flex-shrink-0">
                         {totalPrice > 0 && (
-                          <p className="text-[15px] font-bold text-gray-900 tabular-nums">{fmtOrder(totalPrice, o.currency)}</p>
+                          <p className="text-[15px] font-bold text-foreground tabular-nums">{fmtOrder(totalPrice, o.currency)}</p>
                         )}
                         {o.quantity > 1 && (
-                          <span className="text-[10px] text-gray-400 font-medium">{tp('Qté')} : {o.quantity}</span>
+                          <span className="text-[10px] text-muted-foreground font-medium">{tp('Qté')} : {o.quantity}</span>
                         )}
                       </div>
                     </div>
@@ -3025,14 +3075,14 @@ const OrdersList = () => {
                     {/* Meta chips: Product + City */}
                     <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
                       {productName && productName !== '—' && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-600 bg-gray-50 border border-gray-100 rounded-lg px-2 py-1 max-w-[60%]">
-                          <svg className="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-background border border-border rounded-lg px-2 py-1 max-w-[60%]">
+                          <svg className="w-3 h-3 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                           <span className="truncate">{productName}</span>
                         </span>
                       )}
                       {city && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-600 bg-gray-50 border border-gray-100 rounded-lg px-2 py-1">
-                          <svg className="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-background border border-border rounded-lg px-2 py-1">
+                          <svg className="w-3 h-3 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                           {city}
                         </span>
                       )}
@@ -3050,7 +3100,7 @@ const OrdersList = () => {
                   </div>
 
                   {/* Footer: Source + Status + Quick Actions */}
-                  <div className="border-t border-gray-100/80 px-4 py-2.5 flex items-center justify-between gap-2 bg-gray-50/40" onClick={(e) => e.stopPropagation()}>
+                  <div className="border-t border-border/80 px-4 py-2.5 flex items-center justify-between gap-2 bg-background/40" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1.5 min-w-0">
                       {o.readyForDelivery && !o.assignedLivreur && (
                         <span className="inline-flex items-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-1.5 py-1 text-[10px] font-semibold text-amber-700">
@@ -3060,7 +3110,7 @@ const OrdersList = () => {
                       )}
                       {(o.source === 'skelor' || o.source === 'boutique') && <span className="inline-flex items-center rounded-lg border border-emerald-800 bg-emerald-900 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">Scalor</span>}
                       {o.source === 'shopify' && <span className="inline-flex items-center rounded-lg border border-lime-500 bg-lime-400 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-lime-900">Shopify</span>}
-                      {o.sourceName && !['skelor','shopify','boutique'].includes(o.source) && <span className="inline-flex max-w-[72px] items-center truncate rounded-lg border border-gray-200 bg-white px-2 py-1 text-[10px] font-bold text-gray-500">{o.sourceName}</span>}
+                      {o.sourceName && !['skelor','shopify','boutique'].includes(o.source) && <span className="inline-flex max-w-[72px] items-center truncate rounded-lg border border-border bg-card px-2 py-1 text-[10px] font-bold text-muted-foreground">{o.sourceName}</span>}
                       <select
                         value={o.status}
                         onChange={(e) => {
@@ -3081,7 +3131,7 @@ const OrdersList = () => {
                     <div className="flex flex-shrink-0 items-center gap-0.5">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleCopyOrder(o); }}
-                        className="inline-flex h-8 w-8 items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition"
+                        className="inline-flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-muted-foreground hover:bg-card rounded-lg transition"
                         aria-label={tp('Copier commande')}
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
@@ -3092,24 +3142,24 @@ const OrdersList = () => {
                             e.stopPropagation();
                             setExpandedId(expandedId === o._id ? null : o._id);
                           }}
-                          className="inline-flex h-8 w-8 items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition"
+                          className="inline-flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-muted-foreground hover:bg-card rounded-lg transition"
                           aria-label={tp('Plus d\'actions')}
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
                         </button>
                         {expandedId === o._id && (
-                          <div className="absolute right-0 bottom-full mb-1 min-w-[156px] rounded-xl border border-gray-100 bg-white py-1 shadow-xl shadow-gray-200/50" style={{zIndex: 9999}} onClick={(e) => e.stopPropagation()}>
-                            <button onClick={(e) => { e.stopPropagation(); navigateToOrder(o._id); setExpandedId(null); }} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-lg mx-0.5 transition">
-                              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                          <div className="absolute right-0 bottom-full mb-1 min-w-[156px] rounded-xl border border-border bg-card py-1 shadow-xl shadow-gray-200/50" style={{zIndex: 9999}} onClick={(e) => e.stopPropagation()}>
+                            <button onClick={(e) => { e.stopPropagation(); navigateToOrder(o._id); setExpandedId(null); }} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-foreground hover:bg-background rounded-lg mx-0.5 transition">
+                              <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                               {tp('Voir détails')}
                             </button>
-                            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(o.clientPhone || ''); setExpandedId(null); setSuccess(tp('Téléphone copié')); }} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-lg mx-0.5 transition">
-                              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(o.clientPhone || ''); setExpandedId(null); setSuccess(tp('Téléphone copié')); }} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-foreground hover:bg-background rounded-lg mx-0.5 transition">
+                              <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                               {tp('Copier tél.')}
                             </button>
                             {isAdmin && (
                               <>
-                                <div className="my-1 mx-3 border-t border-gray-100"></div>
+                                <div className="my-1 mx-3 border-t border-border"></div>
                                 <button onClick={(e) => { e.stopPropagation(); handleDeleteOrder(o._id); setExpandedId(null); }} disabled={deletingOrderId === o._id} className="flex min-h-[40px] w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg mx-0.5 disabled:opacity-50 transition">
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                   {tp('Supprimer')}
@@ -3129,19 +3179,19 @@ const OrdersList = () => {
       )}
 
       {/* Pagination */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white rounded-xl border border-gray-200 px-4 py-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-card rounded-xl border px-4 py-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-          <p className="text-[11px] text-gray-400">
+          <p className="text-[11px] text-muted-foreground">
             {pagination.pages > 1 ? (
               <>
-                {tp('Page')} <span className="font-semibold text-gray-900 tabular-nums">{page}</span>
+                {tp('Page')} <span className="font-semibold text-foreground tabular-nums">{page}</span>
                 <span className="text-gray-300"> / </span>
                 <span className="tabular-nums">{pagination.pages}</span>
                 <span className="text-gray-300"> · </span>
                 <span className="tabular-nums">
                   {Math.min((page - 1) * itemsPerPage + 1, pagination.total)}–{Math.min(page * itemsPerPage, pagination.total)}
                 </span>
-                <span className="text-gray-400"> {tp('sur')} </span>
+                <span className="text-muted-foreground"> {tp('sur')} </span>
                 <span className="tabular-nums">{pagination.total}</span> {tp('commandes')}
               </>
             ) : (
@@ -3149,11 +3199,11 @@ const OrdersList = () => {
             )}
           </p>
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-gray-500 font-medium">{tp('Lignes par page:')}</label>
+            <label className="text-[11px] text-muted-foreground font-medium">{tp('Lignes par page:')}</label>
             <select
               value={itemsPerPage}
               onChange={(e) => { setItemsPerPage(Number(e.target.value)); setPage(1); }}
-              className="min-h-[44px] text-[11px] px-2 py-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="min-h-[44px] text-[11px] px-2 py-2 border border-border rounded-md bg-card hover:bg-background focus:outline-none focus:ring-2 focus:ring-primary-600"
             >
               <option value={25}>25</option>
               <option value={50}>50</option>
@@ -3169,7 +3219,7 @@ const OrdersList = () => {
             <button
               onClick={() => setPage(1)}
               disabled={page <= 1}
-              className="h-11 w-11 px-2.5 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="h-11 w-11 px-2.5 py-2 text-xs rounded-lg border border-border hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
               aria-label={tp('Première page')}
               title={tp('Première page')}
             >
@@ -3178,24 +3228,24 @@ const OrdersList = () => {
             <button
               onClick={() => setPage(Math.max(1, page - 1))}
               disabled={page <= 1}
-              className="min-h-[44px] px-3 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="min-h-[44px] px-3 py-2 text-xs rounded-lg border border-border hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {tp('Préc')}
             </button>
-            <span className="px-2 text-xs text-gray-400 tabular-nums">
+            <span className="px-2 text-xs text-muted-foreground tabular-nums">
               {page}/{pagination.pages}
             </span>
             <button
               onClick={() => setPage(Math.min(pagination.pages, page + 1))}
               disabled={page >= pagination.pages}
-              className="min-h-[44px] px-3 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="min-h-[44px] px-3 py-2 text-xs rounded-lg border border-border hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
             >
               {tp('Suiv')}
             </button>
             <button
               onClick={() => setPage(pagination.pages)}
               disabled={page >= pagination.pages}
-              className="h-11 w-11 px-2.5 py-2 text-xs rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
+              className="h-11 w-11 px-2.5 py-2 text-xs rounded-lg border border-border hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 ease-out"
               aria-label={tp('Dernière page')}
               title={tp('Dernière page')}
             >
@@ -3207,23 +3257,70 @@ const OrdersList = () => {
 
       {/* Modal Configuration Auto WhatsApp — Instance + Personnalisation */}
       {showAutoConfigModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowAutoConfigModal(false)}>
-          <div className="bg-white rounded-xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">{tp('Configurer Auto WhatsApp')}</h3>
-                <p className="text-xs text-gray-500 mt-0.5">{tp('Personnaliser le message automatique envoyé aux clients')}</p>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[60] p-4" onClick={() => setShowAutoConfigModal(false)}>
+          <div className="bg-card rounded-3xl shadow-xl ring-1 ring-gray-100 max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 z-10 bg-card/95 backdrop-blur border-b border-border px-5 py-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl bg-green-50 flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold text-foreground truncate">{tp('Configurer Auto WhatsApp')}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">{tp('Personnaliser le message automatique envoyé aux clients')}</p>
+                </div>
               </div>
-              <button onClick={() => setShowAutoConfigModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label={tp('Fermer')}>
+              <button onClick={() => setShowAutoConfigModal(false)} className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-muted-foreground hover:text-muted-foreground hover:bg-muted transition shrink-0" aria-label={tp('Fermer')}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="p-5 space-y-5">
 
+              {/* Instance qui envoie ces notifications */}
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                    {tp('Instance WhatsApp qui envoie ces notifications')}
+                  </span>
+                </label>
+                <select
+                  value={autoConfig.instanceId || ''}
+                  onChange={e => { setAutoConfig(prev => ({ ...prev, instanceId: e.target.value })); setAutoConfigError(''); }}
+                  className={`w-full h-11 px-3 rounded-2xl border text-sm bg-background transition focus:ring-2 focus:ring-green-500/40 focus:bg-card focus:outline-none ${!autoConfig.instanceId ? 'border-amber-200' : 'border-border'}`}
+                >
+                  <option value="">{tp('— Choisir l\'instance —')}</option>
+                  {whatsappInstances.map(inst => (
+                    <option key={inst._id} value={inst._id}>
+                      {inst.customName} — {inst.isConnected ? tp('Connectée') : tp('Déconnectée')}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-muted-foreground mt-1">{tp('Tous les messages automatiques de commande partiront de cette instance.')}</p>
+                {(() => {
+                  const sel = whatsappInstances.find(i => String(i._id) === String(autoConfig.instanceId));
+                  if (!autoConfig.instanceId || !sel || sel.isConnected) return null;
+                  return (
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <span className="flex items-center gap-1.5 text-[11px] text-amber-600">
+                        <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M12 3l9 16H3L12 3z"/></svg>
+                        {tp('Instance déconnectée — impossible d\'envoyer.')}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => { setShowAutoConfigModal(false); navigate('/ecom/whatsapp/service'); }}
+                        className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full bg-amber-500 text-white text-[11px] font-semibold hover:bg-amber-600 transition"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        {tp('Connecter')}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </div>
 
               {/* Template message texte */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   <span className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                     {tp('Message texte personnalisé')}
@@ -3234,22 +3331,35 @@ const OrdersList = () => {
                   onChange={e => setAutoConfig(prev => ({ ...prev, template: e.target.value }))}
                   placeholder="Bonjour {{first_name}}&#10;&#10;Votre commande #{{order_number}} a été reçue...&#10;&#10;Variables : {{first_name}}, {{order_number}}, {{product}}, {{quantity}}, {{city}}, {{total_price}}, {{currency}}, {{store_name}}"
                   rows={5}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
+                  className="w-full px-3.5 py-3 bg-background border border-border rounded-2xl text-sm transition focus:ring-2 focus:ring-green-500/40 focus:border-transparent focus:bg-card resize-none"
                 />
-                <p className="text-[10px] text-gray-400 mt-1">{tp('Laissez vide pour utiliser le template par défaut')}</p>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {['first_name', 'order_number', 'product', 'quantity', 'price', 'city', 'currency', 'store_name'].map(v => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => setAutoConfig(prev => ({ ...prev, template: `${prev.template || ''}{{${v}}}` }))}
+                      className="px-2 py-0.5 rounded-full bg-background border border-border text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition"
+                      title={tp('Insérer la variable')}
+                    >
+                      {`{{${v}}}`}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1.5">{tp('Cliquez une variable pour l\'insérer. Laissez vide pour le template par défaut.')}</p>
               </div>
 
-              {/* ─── Règles par produit ─── */}
-              <div className="border-t border-gray-100 pt-5">
+              {/* ─── Règles par produit — RETIRÉ (une seule instance globale) ─── */}
+              <div className="hidden">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{tp('Par produit')}</p>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{tp('Instance et message spécifiques selon le produit commandé')}</p>
+                    <p className="text-sm font-semibold text-foreground">{tp('Par produit')}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{tp('Instance et message spécifiques selon le produit commandé')}</p>
                   </div>
                   <button
                     type="button"
-                    onClick={() => setAutoConfig(prev => ({ ...prev, productRules: [...(prev.productRules || []), { productKeyword: '', instanceId: '', template: '', imageUrl: '', audioUrl: '' }] }))}
-                    className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition"
+                    onClick={() => setAutoConfig(prev => ({ ...prev, productRules: [...(prev.productRules || []), { productKeyword: '', instanceId: '', template: '', imageUrl: '', videoUrl: '', audioUrl: '', sendOrder: ['text'] }] }))}
+                    className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-green-600 bg-green-50 hover:bg-green-100 border border-green-100 rounded-full transition"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
                     {tp('Ajouter')}
@@ -3258,23 +3368,24 @@ const OrdersList = () => {
 
                 <div className="space-y-3">
                   {(autoConfig.productRules || []).map((rule, ridx) => (
-                    <div key={ridx} className="rounded-xl border border-gray-200 p-3 space-y-2.5 bg-gray-50/50">
-                      {/* Header: keyword + delete */}
+                    <div key={ridx} className="rounded-2xl border border-border p-3.5 space-y-2.5 bg-card shadow-sm">
+                      {/* Header: badge + produit + delete */}
                       <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-green-50 text-green-600 text-[11px] font-bold flex items-center justify-center shrink-0">{ridx + 1}</span>
                         <select
                           value={rule.productKeyword}
                           onChange={e => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => i === ridx ? { ...r, productKeyword: e.target.value } : r) }))}
-                          className="flex-1 h-9 px-2 border border-gray-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none"
+                          className="flex-1 h-9 px-2.5 border border-border bg-background rounded-xl text-sm focus:ring-2 focus:ring-green-500/30 focus:bg-card focus:outline-none"
                         >
                           <option value="">{tp('— Sélectionner un produit —')}</option>
-                          {availableProducts.map(p => (
+                          {scalorProducts.map(p => (
                             <option key={p._id} value={p.name}>{p.name}</option>
                           ))}
                         </select>
                         <button
                           type="button"
                           onClick={() => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.filter((_, i) => i !== ridx) }))}
-                          className="h-9 w-9 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition flex-shrink-0"
+                          className="h-9 w-9 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition flex-shrink-0"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
@@ -3285,7 +3396,7 @@ const OrdersList = () => {
                         <select
                           value={rule.instanceId || ''}
                           onChange={e => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => i === ridx ? { ...r, instanceId: e.target.value } : r) }))}
-                          className={`w-full h-9 px-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none ${!rule.instanceId ? 'border-amber-300 text-gray-400' : 'border-green-300 text-gray-900'}`}
+                          className={`w-full h-9 px-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-green-500/30 focus:bg-card focus:outline-none ${!rule.instanceId ? 'border-amber-200 bg-amber-50/50 text-muted-foreground' : 'border-green-200 bg-green-50/40 text-foreground'}`}
                         >
                           <option value="">{tp('⚠️ Choisir une instance pour ce produit')}</option>
                           {whatsappInstances.map(inst => (
@@ -3305,7 +3416,7 @@ const OrdersList = () => {
                         onChange={e => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => i === ridx ? { ...r, template: e.target.value } : r) }))}
                         placeholder={tp('Message personnalisé pour ce produit... (laisser vide = message global)')}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none resize-none"
+                        className="w-full px-3 py-2.5 border border-border bg-background rounded-xl text-xs focus:ring-2 focus:ring-green-500/30 focus:bg-card focus:outline-none resize-none"
                       />
 
                       {/* Image + Vidéo */}
@@ -3324,13 +3435,13 @@ const OrdersList = () => {
                               </button>
                             </div>
                           ) : (
-                            <label className={`flex flex-col items-center justify-center gap-1 h-20 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-purple-300 hover:bg-purple-50 transition ${uploadingRuleMedia[`${ridx}_imageUrl`] ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <label className={`flex flex-col items-center justify-center gap-1 h-20 border-2 border-dashed border-border rounded-2xl cursor-pointer hover:border-purple-300 hover:bg-purple-50 transition ${uploadingRuleMedia[`${ridx}_imageUrl`] ? 'opacity-50 pointer-events-none' : ''}`}>
                               {uploadingRuleMedia[`${ridx}_imageUrl`] ? (
                                 <svg className="animate-spin w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                               ) : (
                                 <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                               )}
-                              <span className="text-[10px] text-gray-400">{tp('Image')}</span>
+                              <span className="text-[10px] text-muted-foreground">{tp('Image')}</span>
                               <input type="file" accept="image/*" className="hidden" onChange={e => handleRuleMediaUpload(ridx, 'imageUrl', e.target.files?.[0])} />
                             </label>
                           )}
@@ -3351,29 +3462,62 @@ const OrdersList = () => {
                               </button>
                             </div>
                           ) : (
-                            <label className={`flex flex-col items-center justify-center gap-1 h-20 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition ${uploadingRuleMedia[`${ridx}_videoUrl`] ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <label className={`flex flex-col items-center justify-center gap-1 h-20 border-2 border-dashed border-border rounded-2xl cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition ${uploadingRuleMedia[`${ridx}_videoUrl`] ? 'opacity-50 pointer-events-none' : ''}`}>
                               {uploadingRuleMedia[`${ridx}_videoUrl`] ? (
                                 <svg className="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                               ) : (
                                 <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
                               )}
-                              <span className="text-[10px] text-gray-400">{tp('Vidéo')}</span>
+                              <span className="text-[10px] text-muted-foreground">{tp('Vidéo')}</span>
                               <input type="file" accept="video/*,.mp4,.mov,.avi" className="hidden" onChange={e => handleRuleMediaUpload(ridx, 'videoUrl', e.target.files?.[0])} />
                             </label>
                           )}
                         </div>
                       </div>
+
+                      {/* Ordre d'envoi de ce produit — réordonnable */}
+                      {(() => {
+                        const avail = ['text', ...(rule.imageUrl ? ['image'] : []), ...(rule.videoUrl ? ['video'] : []), ...(rule.audioUrl ? ['audio'] : [])];
+                        const saved = (rule.sendOrder || ['text']).filter(s => avail.includes(s));
+                        const ordered = [...saved, ...avail.filter(s => !saved.includes(s))];
+                        if (ordered.length <= 1) return null;
+                        const META = { text: tp('Texte'), image: tp('Image'), video: tp('Vidéo'), audio: tp('Vocal') };
+                        const CLS = { text: 'bg-muted text-muted-foreground', image: 'bg-purple-50 text-purple-600', video: 'bg-blue-50 text-blue-600', audio: 'bg-orange-50 text-orange-600' };
+                        const move = (from, to) => setAutoConfig(prev => ({ ...prev, productRules: prev.productRules.map((r, i) => {
+                          if (i !== ridx) return r;
+                          const arr = [...ordered]; const [x] = arr.splice(from, 1); arr.splice(to, 0, x);
+                          return { ...r, sendOrder: arr };
+                        }) }));
+                        return (
+                          <div>
+                            <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">{tp('Ordre d\'envoi au client')}</p>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {ordered.map((s, idx) => (
+                                <div key={s} className={`inline-flex items-center gap-0.5 pl-2.5 pr-1 py-1 rounded-full text-[11px] font-medium ${CLS[s]}`}>
+                                  <span className="opacity-50 mr-0.5">{idx + 1}.</span>{META[s]}
+                                  <button type="button" disabled={idx === 0} onClick={() => move(idx, idx - 1)} className="p-0.5 rounded-full disabled:opacity-20 hover:bg-black/10 transition" aria-label={tp('Avancer')}>
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                                  </button>
+                                  <button type="button" disabled={idx === ordered.length - 1} onClick={() => move(idx, idx + 1)} className="p-0.5 rounded-full disabled:opacity-20 hover:bg-black/10 transition" aria-label={tp('Reculer')}>
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   ))}
                   {(autoConfig.productRules || []).length === 0 && (
-                    <p className="text-xs text-gray-400 italic py-1">{tp('Aucune règle — toutes les commandes utilisent la config globale ci-dessus.')}</p>
+                    <p className="text-xs text-muted-foreground italic py-1">{tp('Aucune règle — toutes les commandes utilisent la config globale ci-dessus.')}</p>
                   )}
                 </div>
               </div>
 
-              {/* Info envoi progressif */}
-              {(autoConfig.template || autoConfig.imageUrl || autoConfig.audioUrl) && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+              {/* Info envoi progressif — RETIRÉ */}
+              {false && (
+                <div className="bg-blue-50/70 border border-blue-100 rounded-2xl p-3">
                   <p className="text-xs font-medium text-blue-700 mb-1">{tp('Ordre d\'envoi progressif :')}</p>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-[10px] font-medium">
@@ -3400,8 +3544,8 @@ const OrdersList = () => {
               )}
             </div>
 
-            {/* Zone debug DB */}
-            <div className="px-5 pb-2">
+            {/* Zone debug DB — masquée */}
+            <div className="hidden">
               <button
                 type="button"
                 onClick={async () => {
@@ -3413,7 +3557,7 @@ const OrdersList = () => {
                   } catch { setDbConfig({ error: 'Erreur' }); }
                   finally { setLoadingDbConfig(false); }
                 }}
-                className="text-[10px] text-gray-400 hover:text-gray-600 underline"
+                className="text-[10px] text-muted-foreground hover:text-muted-foreground underline"
               >
                 {loadingDbConfig ? 'Chargement...' : '🔍 Voir config en base de données'}
               </button>
@@ -3435,21 +3579,42 @@ const OrdersList = () => {
               )}
             </div>
 
+            {/* Option : envoyer avec l'image du produit (boutique Scalor) */}
+            <div className="px-5 pb-2">
+              <button
+                type="button"
+                onClick={() => setAutoConfig(prev => ({ ...prev, sendProductImage: !prev.sendProductImage }))}
+                className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border transition text-left ${autoConfig.sendProductImage ? 'bg-green-50/60 border-green-100' : 'bg-background border-border'}`}
+              >
+                <span className={`w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 ${autoConfig.sendProductImage ? 'bg-green-100 text-green-600' : 'bg-muted text-muted-foreground'}`}>
+                  <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-[13px] font-semibold text-foreground">{tp('Envoyer avec l\'image du produit')}</span>
+                  <span className="block text-[11px] text-muted-foreground">{tp('L\'image du produit sur ta boutique Scalor est jointe au message.')}</span>
+                </span>
+                {/* Switch */}
+                <span className={`relative w-10 h-6 rounded-full transition shrink-0 ${autoConfig.sendProductImage ? 'bg-green-500' : 'bg-gray-300'}`}>
+                  <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-card shadow transition-all ${autoConfig.sendProductImage ? 'left-[18px]' : 'left-0.5'}`} />
+                </span>
+              </button>
+            </div>
+
             {/* Zone test */}
             <div className="px-5 pb-4 space-y-2">
-              <p className="text-xs font-semibold text-gray-500">{tp('Tester l\'envoi')}</p>
+              <p className="text-xs font-semibold text-muted-foreground">{tp('Tester l\'envoi')}</p>
               <div className="flex gap-2">
                 <input
                   type="tel"
                   placeholder={tp('Numéro (ex: 237612345678)')}
                   value={testAutoPhone}
                   onChange={e => { setTestAutoPhone(e.target.value); setTestAutoResult(null); }}
-                  className="flex-1 h-9 px-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500/20 focus:outline-none"
+                  className="flex-1 h-9 px-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-green-500/30 focus:bg-card focus:outline-none"
                 />
                 <select
                   value={testAutoProduct}
                   onChange={e => { setTestAutoProduct(e.target.value); setTestAutoResult(null); }}
-                  className="w-36 h-9 px-2 border border-gray-200 rounded-lg text-xs bg-white focus:ring-2 focus:ring-green-500/20 focus:outline-none"
+                  className="w-36 h-9 px-2 bg-background border border-border rounded-xl text-xs focus:ring-2 focus:ring-green-500/30 focus:bg-card focus:outline-none"
                 >
                   <option value="">{tp('— Produit —')}</option>
                   {availableProducts.map(p => <option key={p._id} value={p.name}>{p.name}</option>)}
@@ -3458,7 +3623,7 @@ const OrdersList = () => {
                   type="button"
                   onClick={testAutoConfig}
                   disabled={testingAuto || !testAutoPhone.trim()}
-                  className="h-9 px-3 text-xs font-medium text-white bg-gray-800 hover:bg-gray-700 rounded-lg disabled:opacity-40 transition flex items-center gap-1.5"
+                  className="h-9 px-4 text-xs font-semibold text-white bg-gray-800 hover:bg-gray-900 rounded-xl disabled:opacity-40 transition flex items-center gap-1.5"
                 >
                   {testingAuto ? <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>}
                   Tester
@@ -3471,18 +3636,28 @@ const OrdersList = () => {
               )}
             </div>
 
+            {/* Erreur de validation */}
+            {autoConfigError && (
+              <div className="px-5 pb-1">
+                <div className="flex items-start gap-2 text-[12px] text-red-600 bg-red-50 border border-red-100 rounded-2xl px-3 py-2.5">
+                  <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M12 3l9 16H3L12 3z"/></svg>
+                  <span>{autoConfigError}</span>
+                </div>
+              </div>
+            )}
+
             {/* Footer boutons */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4 flex items-center justify-between gap-3">
+            <div className="sticky bottom-0 bg-card border-t border-border px-5 py-4 flex items-center justify-between gap-3">
               <button
                 onClick={() => setShowAutoConfigModal(false)}
-                className="min-h-[44px] px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition"
+                className="min-h-[44px] px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-2xl transition"
               >
                 {tp('Annuler')}
               </button>
               <button
                 onClick={saveAutoConfig}
                 disabled={savingAutoConfig}
-                className="flex min-h-[44px] items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl transition disabled:opacity-50"
+                className="flex min-h-[44px] items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-green-500 hover:bg-green-600 rounded-2xl shadow-sm shadow-green-500/25 transition disabled:opacity-50"
               >
                 {savingAutoConfig ? (
                   <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -3502,42 +3677,42 @@ const OrdersList = () => {
       {/* Modal Créer/Modifier Commande */}
       {showOrderModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowOrderModal(false)}>
-          <div className="bg-white rounded-xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900">{editingOrder ? 'Modifier la commande' : tp('Nouvelle commande')}</h3>
-              <button onClick={() => setShowOrderModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label={tp('Fermer')}>
+          <div className="bg-card rounded-xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-card border-b border-border px-5 py-4 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-foreground">{editingOrder ? 'Modifier la commande' : tp('Nouvelle commande')}</h3>
+              <button onClick={() => setShowOrderModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground hover:text-muted-foreground hover:bg-background" aria-label={tp('Fermer')}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Nom client *')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Nom client *')}</label>
                   <input type="text" value={orderForm.clientName} onChange={e => setOrderForm({...orderForm, clientName: e.target.value})}
                     placeholder={tp('Nom complet')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Telephone *')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Telephone *')}</label>
                   <input type="text" value={orderForm.clientPhone} onChange={e => setOrderForm({...orderForm, clientPhone: e.target.value})}
                     placeholder="06..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Ville')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Ville')}</label>
                   <input type="text" value={orderForm.city} onChange={e => setOrderForm({...orderForm, city: e.target.value})}
                     placeholder={tp('Ville')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Adresse')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Adresse')}</label>
                   <input type="text" value={orderForm.address} onChange={e => setOrderForm({...orderForm, address: e.target.value})}
                     placeholder={tp('Adresse de livraison')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Produit *')}</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Produit *')}</label>
                 {loadingProducts ? (
-                  <div className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-400">
+                  <div className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-muted-foreground">
                     {tp('Chargement des produits...')}
                   </div>
                 ) : availableProducts.length > 0 ? (
@@ -3573,17 +3748,17 @@ const OrdersList = () => {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Prix')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Prix')}</label>
                   <input type="number" value={orderForm.price} onChange={e => setOrderForm({...orderForm, price: parseFloat(e.target.value) || 0})}
                     min="0" step="0.01" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Quantite')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Quantite')}</label>
                   <input type="number" value={orderForm.quantity} onChange={e => setOrderForm({...orderForm, quantity: parseInt(e.target.value) || 1})}
                     min="1" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Statut')}</label>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Statut')}</label>
                   <select value={orderForm.status} onChange={e => { if (e.target.value === '__custom') { const c = prompt('Entrez le statut personnalisé :'); if (c && c.trim()) setOrderForm({...orderForm, status: c.trim()}); } else setOrderForm({...orderForm, status: e.target.value}); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600">
                     {Object.entries(SL).map(([k, v]) => <option key={k} value={k}>{tp(v)}</option>)}
@@ -3593,17 +3768,17 @@ const OrdersList = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{tp('Notes')}</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-1">{tp('Notes')}</label>
                 <textarea value={orderForm.notes} onChange={e => setOrderForm({...orderForm, notes: e.target.value})}
                   rows={2} placeholder={tp('Notes, remarques...')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 resize-none" />
               </div>
             </div>
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4 flex gap-3">
-              <button onClick={() => setShowOrderModal(false)} className="flex-1 min-h-[44px] px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium">
+            <div className="sticky bottom-0 bg-card border-t border-border px-5 py-4 flex gap-3">
+              <button onClick={() => setShowOrderModal(false)} className="flex-1 min-h-[44px] px-4 py-2.5 border border-gray-300 rounded-lg text-foreground hover:bg-background text-sm font-medium">
                 {tp('Annuler')}
               </button>
               <button onClick={handleSaveOrder} disabled={savingOrder}
-                className="flex min-h-[44px] flex-1 items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-sm font-medium">
+                className="flex min-h-[44px] flex-1 items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-sm font-medium">
                 {savingOrder ? (
                   <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> {tp('Enregistrement...')}</>
                 ) : editingOrder ? 'Modifier' : tp('Creer')}
@@ -3615,14 +3790,14 @@ const OrdersList = () => {
 
       {showWhatsAppConfig && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center z-50" onClick={() => setShowWhatsAppConfig(false)}>
-          <div className="bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-2xl max-h-[92vh] flex flex-col" onClick={e => e.stopPropagation()}>
+          <div className="bg-card w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-2xl max-h-[92vh] flex flex-col" onClick={e => e.stopPropagation()}>
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 flex-shrink-0">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-border flex-shrink-0">
               <div>
-                <h3 className="text-base font-semibold text-gray-900">{tp('Notifications')}</h3>
-                <p className="text-xs text-gray-400 mt-0.5">{tp('Configuration WhatsApp')}</p>
+                <h3 className="text-base font-semibold text-foreground">{tp('Notifications')}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">{tp('Configuration WhatsApp')}</p>
               </div>
-              <button onClick={() => setShowWhatsAppConfig(false)} className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
+              <button onClick={() => setShowWhatsAppConfig(false)} className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-muted-foreground transition">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -3636,13 +3811,13 @@ const OrdersList = () => {
                   <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
                     <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                   </div>
-                  <h4 className="text-sm font-semibold text-gray-900">{tp('Closeuses')}</h4>
+                  <h4 className="text-sm font-semibold text-foreground">{tp('Closeuses')}</h4>
                 </div>
-                <p className="text-xs text-gray-400 mb-4 pl-[38px]">{tp('Reçoivent un message à chaque nouvelle commande.')}</p>
+                <p className="text-xs text-muted-foreground mb-4 pl-[38px]">{tp('Reçoivent un message à chaque nouvelle commande.')}</p>
 
                 <div className="space-y-3">
                   {closeuseNotifNumbers.map((item, idx) => (
-                    <div key={idx} className={`rounded-xl border p-4 transition-colors ${item.isActive ? 'border-gray-200 bg-white' : 'border-gray-100 bg-gray-50/50'}`}>
+                    <div key={idx} className={`rounded-xl border p-4 transition-colors ${item.isActive ? 'border-border bg-card' : 'border-border bg-background/50'}`}>
                       {/* Row 1: Label + Phone + Toggle + Delete */}
                       <div className="flex items-center gap-2">
                         <input
@@ -3650,14 +3825,14 @@ const OrdersList = () => {
                           placeholder={tp('Label')}
                           value={item.label}
                           onChange={e => setCloseuseNotifNumbers(prev => prev.map((n, i) => i === idx ? { ...n, label: e.target.value } : n))}
-                          className="flex-1 min-w-0 h-10 px-3 bg-gray-50 border-0 rounded-lg text-sm text-gray-900 placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 transition"
+                          className="flex-1 min-w-0 h-10 px-3 bg-background border-0 rounded-lg text-sm text-foreground placeholder:text-gray-300 focus:bg-card focus:ring-2 focus:ring-emerald-500/20 transition"
                         />
                         <input
                           type="tel"
                           placeholder="+237..."
                           value={item.phoneNumber}
                           onChange={e => setCloseuseNotifNumbers(prev => prev.map((n, i) => i === idx ? { ...n, phoneNumber: e.target.value } : n))}
-                          className="w-[140px] h-10 px-3 bg-gray-50 border-0 rounded-lg text-sm font-mono text-gray-900 placeholder:text-gray-300 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 transition"
+                          className="w-[140px] h-10 px-3 bg-background border-0 rounded-lg text-sm font-mono text-foreground placeholder:text-gray-300 focus:bg-card focus:ring-2 focus:ring-emerald-500/20 transition"
                         />
                         <button
                           type="button"
@@ -3665,7 +3840,7 @@ const OrdersList = () => {
                           className={`relative h-6 w-11 rounded-full transition-colors flex-shrink-0 ${item.isActive ? 'bg-emerald-500' : 'bg-gray-200'}`}
                           title={item.isActive ? 'Actif' : tp('Inactif')}
                         >
-                          <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${item.isActive ? 'translate-x-5' : 'translate-x-0'}`} />
+                          <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-card shadow-sm transition-transform ${item.isActive ? 'translate-x-5' : 'translate-x-0'}`} />
                         </button>
                         <button
                           type="button"
@@ -3677,12 +3852,12 @@ const OrdersList = () => {
                       </div>
 
                       {/* Row 2: Instance WhatsApp */}
-                      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
+                      <div className="mt-3 pt-3 border-t border-border flex items-center gap-2">
                         <svg className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                         <select
                           value={item.instanceId || ''}
                           onChange={e => setCloseuseNotifNumbers(prev => prev.map((n, i) => i === idx ? { ...n, instanceId: e.target.value || null } : n))}
-                          className="flex-1 h-7 px-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                          className="flex-1 h-7 px-2 bg-background border border-border rounded-lg text-[11px] text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                         >
                           <option value="">{tp('— Instance par défaut du workspace —')}</option>
                           {whatsappInstances.map(inst => (
@@ -3694,7 +3869,7 @@ const OrdersList = () => {
                       </div>
 
                       {/* Row 3: Products */}
-                      <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="mt-3 pt-3 border-t border-border">
                         <div className="flex flex-wrap items-center gap-1.5">
                           {(item.products || []).map((prod, pidx) => (
                             <span key={pidx} className="inline-flex items-center gap-1 h-6 px-2 bg-emerald-50 text-emerald-700 rounded-md text-[11px] font-medium">
@@ -3712,7 +3887,7 @@ const OrdersList = () => {
                                 setCloseuseNotifNumbers(prev => prev.map((n, i) => i === idx ? { ...n, products: [...(n.products || []), val] } : n));
                               }
                             }}
-                            className="flex-1 min-w-[140px] h-7 px-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
+                            className="flex-1 min-w-[140px] h-7 px-2 bg-background border border-border rounded-lg text-[11px] text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
                           >
                             <option value="">{item.products?.length ? '+ Ajouter un produit...' : tp('Tous les produits (sélectionner pour filtrer)')}</option>
                             {availableProducts.filter(p => !(item.products || []).includes(p.name)).map(p => (
@@ -3728,7 +3903,7 @@ const OrdersList = () => {
                 <button
                   type="button"
                   onClick={() => setCloseuseNotifNumbers(prev => [...prev, { label: '', phoneNumber: '', isActive: true, products: [] }])}
-                  className="mt-3 inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 border border-dashed border-gray-200 hover:border-gray-300 rounded-lg transition"
+                  className="mt-3 inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background border border-dashed border-border hover:border-gray-300 rounded-lg transition"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
                   {tp('Ajouter')}
@@ -3742,20 +3917,20 @@ const OrdersList = () => {
                     <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
                       <svg className="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
-                    <h4 className="text-sm font-semibold text-gray-900">{tp('Groupes de livraison')}</h4>
+                    <h4 className="text-sm font-semibold text-foreground">{tp('Groupes de livraison')}</h4>
                   </div>
-                  <a href="/ecom/settings?tab=delivery_groups" className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition">
+                  <a href="/ecom/settings?tab=delivery_groups" className="text-[11px] font-medium text-muted-foreground hover:text-muted-foreground transition">
                     {tp('Gérer')}
                   </a>
                 </div>
-                <p className="text-xs text-gray-400 mb-4 pl-[38px]">{tp('Groupes notifiés à chaque nouvelle commande.')}</p>
+                <p className="text-xs text-muted-foreground mb-4 pl-[38px]">{tp('Groupes notifiés à chaque nouvelle commande.')}</p>
 
                 {deliveryGroupNumbers.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-gray-200 py-8 flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                  <div className="rounded-xl border border-dashed border-border py-8 flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center">
                       <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
-                    <p className="text-xs text-gray-400">{tp('Aucun groupe configuré')}</p>
+                    <p className="text-xs text-muted-foreground">{tp('Aucun groupe configuré')}</p>
                     <a href="/ecom/settings?tab=delivery_groups" className="text-xs font-medium text-emerald-600 hover:text-emerald-700 transition">
                       {tp('Configurer dans Paramètres')}
                     </a>
@@ -3763,7 +3938,7 @@ const OrdersList = () => {
                 ) : (
                   <div className="space-y-2">
                     {deliveryGroupNumbers.map((item, idx) => (
-                      <label key={idx} className={`flex items-center gap-3 h-14 px-4 rounded-xl border cursor-pointer transition-all ${item.isActive !== false ? 'border-gray-200 bg-white hover:border-gray-300' : 'border-gray-100 bg-gray-50/50'}`}>
+                      <label key={idx} className={`flex items-center gap-3 h-14 px-4 rounded-xl border cursor-pointer transition-all ${item.isActive !== false ? 'border-border bg-card hover:border-gray-300' : 'border-border bg-background/50'}`}>
                         <input
                           type="checkbox"
                           checked={item.isActive !== false}
@@ -3771,10 +3946,10 @@ const OrdersList = () => {
                           className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500/20 flex-shrink-0"
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-800 truncate">{item.label || tp('Groupe sans nom')}</p>
-                          <p className="text-[11px] font-mono text-gray-400 truncate">{item.phoneNumber}</p>
+                          <p className="text-sm font-medium text-foreground truncate">{item.label || tp('Groupe sans nom')}</p>
+                          <p className="text-[11px] font-mono text-muted-foreground truncate">{item.phoneNumber}</p>
                         </div>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.isActive !== false ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.isActive !== false ? 'bg-emerald-50 text-emerald-600' : 'bg-muted text-muted-foreground'}`}>
                           {item.isActive !== false ? 'Actif' : tp('Off')}
                         </span>
                       </label>
@@ -3804,17 +3979,17 @@ const OrdersList = () => {
             </div>
 
             {/* Footer actions */}
-            <div className="flex items-center gap-3 px-6 py-4 border-t border-gray-100 flex-shrink-0">
+            <div className="flex items-center gap-3 px-6 py-4 border-t border-border flex-shrink-0">
               <button
                 type="button"
                 onClick={testNotifConfig}
                 disabled={testingNotifConfig || savingNotifConfig}
-                className="h-11 px-4 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl disabled:opacity-40 transition flex items-center gap-2"
+                className="h-11 px-4 text-sm font-medium text-muted-foreground bg-background hover:bg-muted border border-border rounded-xl disabled:opacity-40 transition flex items-center gap-2"
               >
                 {testingNotifConfig ? (
                   <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"/>
                 ) : (
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                  <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
                 )}
                 Tester
               </button>
@@ -3839,14 +4014,14 @@ const OrdersList = () => {
       {/* Modal pour ajouter/modifier un numéro WhatsApp */}
       {showWhatsAppMultiConfig && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowWhatsAppMultiConfig(false)}>
-          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-5" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
+          <div className="bg-card rounded-xl shadow-lg max-w-md w-full p-5" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-foreground mb-4">
               {editingWhatsAppNumber ? 'Modifier le numéro WhatsApp' : tp('Ajouter un numéro WhatsApp')}
             </h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Pays')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Pays')}</label>
                 <select
                   value={whatsappForm.country}
                   onChange={(e) => {
@@ -3870,7 +4045,7 @@ const OrdersList = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Numéro WhatsApp')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1">{tp('Numéro WhatsApp')}</label>
                 <input
                   type="text"
                   value={whatsappForm.phoneNumber}
@@ -3878,7 +4053,7 @@ const OrdersList = () => {
                   placeholder="+237676463725"
                   className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Format: +indicatif + numéro (ex: +237676463725)
                 </p>
               </div>
@@ -3891,7 +4066,7 @@ const OrdersList = () => {
                     onChange={(e) => setWhatsappForm({ ...whatsappForm, isActive: e.target.checked })}
                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                   />
-                  <span className="text-sm text-gray-700">{tp('Numéro actif')}</span>
+                  <span className="text-sm text-foreground">{tp('Numéro actif')}</span>
                 </label>
                 
                 <label className="flex items-center gap-2">
@@ -3901,7 +4076,7 @@ const OrdersList = () => {
                     onChange={(e) => setWhatsappForm({ ...whatsappForm, autoNotifyOrders: e.target.checked })}
                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                   />
-                  <span className="text-sm text-gray-700">{tp('Notifier automatiquement')}</span>
+                  <span className="text-sm text-foreground">{tp('Notifier automatiquement')}</span>
                 </label>
               </div>
             </div>
@@ -3920,7 +4095,7 @@ const OrdersList = () => {
                     autoNotifyOrders: true
                   });
                 }}
-                className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
+                className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 rounded-lg text-foreground hover:bg-background text-sm"
               >
                 {tp('Annuler')}
               </button>
@@ -3940,23 +4115,23 @@ const OrdersList = () => {
       {/* Sync Clients Modal */}
       {showSyncClientsModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowSyncClientsModal(false)}>
-          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-card rounded-xl shadow-lg max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">{tp('Synchroniser les clients')}</h3>
-              <button onClick={() => setShowSyncClientsModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50" aria-label={tp('Fermer')}>
+              <h3 className="text-lg font-bold text-foreground">{tp('Synchroniser les clients')}</h3>
+              <button onClick={() => setShowSyncClientsModal(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground hover:text-muted-foreground hover:bg-background" aria-label={tp('Fermer')}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-muted-foreground mb-4">
               Sélectionnez les statuts de commandes ù  synchroniser :
             </p>
             
             <div className="space-y-2 mb-6 max-h-64 overflow-y-auto">
               {[
                 { key: 'delivered', get label() { return tp('Livré'); }, color: 'bg-green-500' },
-                { key: 'confirmed', get label() { return tp('Confirmé'); }, color: 'bg-primary-600' },
-                { key: 'shipped', get label() { return tp('Expédié'); }, color: 'bg-primary-600' },
+                { key: 'confirmed', get label() { return tp('Confirmé'); }, color: 'bg-primary' },
+                { key: 'shipped', get label() { return tp('Expédié'); }, color: 'bg-primary' },
                 { key: 'pending', label: 'En attente', color: 'bg-yellow-500' },
                 { key: 'returned', get label() { return tp('Retourné'); }, color: 'bg-orange-500' },
                 { key: 'cancelled', get label() { return tp('Annulé'); }, color: 'bg-red-500' },
@@ -3964,7 +4139,7 @@ const OrdersList = () => {
                 { key: 'called', get label() { return tp('Appelé'); }, color: 'bg-cyan-500' },
                 { key: 'postponed', get label() { return tp('Reporté'); }, color: 'bg-amber-500' }
               ].map(status => (
-                <label key={status.key} className="flex min-h-[44px] items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <label key={status.key} className="flex min-h-[44px] items-center gap-3 p-2 rounded-lg hover:bg-background cursor-pointer">
                   <input
                     type="checkbox"
                     checked={syncClientsStatuses.includes(status.key)}
@@ -3978,7 +4153,7 @@ const OrdersList = () => {
                     className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
                   />
                   <span className={`w-2 h-2 rounded-full ${status.color}`}></span>
-                  <span className="text-sm text-gray-700">{tp(status.label)}</span>
+                  <span className="text-sm text-foreground">{tp(status.label)}</span>
                 </label>
               ))}
             </div>
@@ -3986,7 +4161,7 @@ const OrdersList = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSyncClientsModal(false)}
-                className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
+                className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 rounded-lg text-foreground hover:bg-background text-sm font-medium"
               >
                 {tp('Annuler')}
               </button>

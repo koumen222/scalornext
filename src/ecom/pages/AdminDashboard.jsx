@@ -4,13 +4,13 @@ import { useEcomAuth } from '../hooks/useEcomAuth';
 import { useMoney } from '../hooks/useMoney.js';
 import ecomApi from '../services/ecommApi.js';
 import { useStore } from '../contexts/StoreContext.jsx';
-import { ArrowRight, CheckCircle2, Store } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Store, Rocket, Package, ShoppingCart, BarChart3, Target, Check, X } from 'lucide-react';
 import { usePlatformT, tp } from '../i18n/platform.js';
 
 const ChartContent = React.memo(({ data, selectedMetric, fmt }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="h-56 flex items-center justify-center text-gray-400 text-sm">
+      <div className="h-56 flex items-center justify-center text-muted-foreground text-sm">
         {tp('Aucune donnée disponible')}
       </div>
     );
@@ -88,25 +88,25 @@ const KPICard = React.memo(({ card, isSelected, onClick, loadingKpi, isLastInRow
   <button
     onClick={onClick}
     className={`text-left px-4 py-3 sm:px-5 sm:py-4 transition-all relative ${
-      isSelected ? 'bg-white' : 'bg-white hover:bg-gray-50'
-    } ${!isLastInRowMobile ? 'border-r border-gray-200 md:border-r-0' : ''}
-     ${!isLastInRowDesktop && index < 2 ? 'md:border-r md:border-gray-200' : ''}`}
+      isSelected ? 'bg-card' : 'bg-card hover:bg-background'
+    } ${!isLastInRowMobile ? 'border-r border-border md:border-r-0' : ''}
+     ${!isLastInRowDesktop && index < 2 ? 'md:border-r md:border-border' : ''}`}
   >
     {isSelected && (
-      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-t"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t"></div>
     )}
-    <p className={`text-xs font-medium mb-0.5 sm:mb-1 ${isSelected ? 'text-gray-900' : 'text-gray-500'}`}>
+    <p className={`text-xs font-medium mb-0.5 sm:mb-1 ${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}>
       {card.title}
     </p>
     <div className="flex items-baseline gap-1.5 sm:gap-2">
       {loadingKpi ? (
         <>
           <div className="h-6 w-24 bg-gray-200 rounded animate-pulse" />
-          <div className="h-3 w-12 bg-gray-100 rounded animate-pulse" />
+          <div className="h-3 w-12 bg-muted rounded animate-pulse" />
         </>
       ) : (
         <>
-          <p className="text-lg sm:text-xl font-bold tabular-nums text-gray-900">{card.value}</p>
+          <p className="text-lg sm:text-xl font-bold tabular-nums text-foreground">{card.value}</p>
           <span className={`text-xs font-medium ${card.trendUp ? 'text-green-600' : 'text-red-500'}`}>
             {card.trend}
           </span>
@@ -118,36 +118,36 @@ const KPICard = React.memo(({ card, isSelected, onClick, loadingKpi, isLastInRow
 KPICard.displayName = 'KPICard';
 
 const DashboardSkeleton = () => (
-  <div className="min-h-screen bg-gray-50">
+  <div className="min-h-screen bg-background">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Header skeleton */}
       <div className="mb-6">
         <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-2" />
-        <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+        <div className="h-4 w-32 bg-muted rounded animate-pulse" />
       </div>
       {/* KPI cards skeleton */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div key={i} className="bg-card rounded-2xl border p-4">
             <div className="h-3 w-24 bg-gray-200 rounded animate-pulse mb-3" />
             <div className="h-8 w-32 bg-gray-200 rounded animate-pulse mb-2" />
-            <div className="h-3 w-16 bg-gray-100 rounded animate-pulse" />
+            <div className="h-3 w-16 bg-muted rounded animate-pulse" />
           </div>
         ))}
       </div>
       {/* Chart skeleton */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div className="bg-card rounded-2xl border p-6 mb-6">
         <div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" />
-        <div className="h-56 bg-gray-100 rounded-xl animate-pulse" />
+        <div className="h-56 bg-muted rounded-xl animate-pulse" />
       </div>
       {/* Bottom grid skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6">
+          <div key={i} className="bg-card rounded-2xl border p-6">
             <div className="h-6 w-32 bg-gray-200 rounded animate-pulse mb-4" />
             <div className="space-y-3">
               {[...Array(4)].map((_, j) => (
-                <div key={j} className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+                <div key={j} className="h-12 bg-muted rounded-lg animate-pulse" />
               ))}
             </div>
           </div>
@@ -195,6 +195,9 @@ const AdminDashboard = () => {
   });
   const [timeRange, setTimeRange] = useState('today');
   const [selectedMetric, setSelectedMetric] = useState('revenue');
+  // Guide de démarrage ("Premiers pas") — signaux all-time indépendants de la période
+  const [onboarding, setOnboarding] = useState({ hasProducts: false, hasOrders: false, hasReports: false, loaded: false });
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
@@ -400,6 +403,17 @@ const AdminDashboard = () => {
       isCustomRange ? customEndDate : null
     );
 
+    // Lance TOUT en parallèle : les 5 requêtes secondaires (Phase 2) partent
+    // maintenant et se résolvent pendant qu'on rend déjà les KPIs — fin de la
+    // cascade Phase 1 → Phase 2 (temps total ≈ max au lieu de somme).
+    const phase2Promise = Promise.all([
+      ecomApi.get(`/reports/stats/products-ranking?startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: [] } })),
+      ecomApi.get('/stock-locations').catch(() => ({ data: { data: [] } })),
+      ecomApi.get('/decisions/dashboard/overview').catch(() => ({ data: { data: {} } })),
+      ecomApi.get(`/reports/dashboard/stats?period=${daysCount}&startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: {} } })),
+      ecomApi.get('/goals', { params: { periodType: 'monthly', year: new Date().getFullYear(), month: new Date().getMonth() + 1 } }).catch(() => ({ data: { data: [] } }))
+    ]);
+
     // ── PHASE 1 : KPIs financiers + graphique (priorité max) ──────────────────
     try {
       const [financialRes, prevFinancialRes, dailyRes] = await Promise.all([
@@ -445,15 +459,9 @@ const AdminDashboard = () => {
       }
     }
 
-    // ── PHASE 2 : reste en arrière-plan ───────────────────────────
+    // ── PHASE 2 : reste en arrière-plan (déjà en vol depuis le début de la fonction) ──
     try {
-      const [topProductsRes, stockLocationsRes, decisionsRes, dashStatsRes, goalsRes] = await Promise.all([
-        ecomApi.get(`/reports/stats/products-ranking?startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: [] } })),
-        ecomApi.get('/stock-locations').catch(() => ({ data: { data: [] } })),
-        ecomApi.get('/decisions/dashboard/overview').catch(() => ({ data: { data: {} } })),
-        ecomApi.get(`/reports/dashboard/stats?period=${daysCount}&startDate=${startStr}&endDate=${endStr}`).catch(() => ({ data: { data: {} } })),
-        ecomApi.get('/goals', { params: { periodType: 'monthly', year: new Date().getFullYear(), month: new Date().getMonth() + 1 } }).catch(() => ({ data: { data: [] } }))
-      ]);
+      const [topProductsRes, stockLocationsRes, decisionsRes, dashStatsRes, goalsRes] = await phase2Promise;
 
       const topProducts = (topProductsRes.data?.data || [])
         .sort((a, b) => (b.ordersDelivered || 0) - (a.ordersDelivered || 0))
@@ -542,8 +550,43 @@ const AdminDashboard = () => {
   loadDashboardDataRef.current = loadDashboardData;
 
   useEffect(() => {
+    // Attendre la résolution des boutiques avant le 1er fetch : sinon on charge une
+    // fois avec activeStore=null (données jetées) puis une 2e fois quand il se résout.
+    // L'UI affiche déjà un loader tant que storesLoading est vrai (cf. plus bas).
+    if (storesLoading) return;
     loadDashboardDataRef.current();
-  }, [timeRange, customStartDate, customEndDate, activeStore?._id]);
+  }, [timeRange, customStartDate, customEndDate, activeStore?._id, storesLoading]);
+
+  // Signaux d'activation (all-time) pour le guide "Premiers pas" — 1 seule fois par boutique
+  useEffect(() => {
+    let cancelled = false;
+    const hasData = (res) => Array.isArray(res?.data?.data) && res.data.data.length > 0;
+    (async () => {
+      const [p, o, r] = await Promise.all([
+        ecomApi.get('/products?limit=1').catch(() => null),
+        ecomApi.get('/orders?limit=1').catch(() => null),
+        ecomApi.get('/reports?limit=1').catch(() => null),
+      ]);
+      if (cancelled) return;
+      setOnboarding({ hasProducts: hasData(p), hasOrders: hasData(o), hasReports: hasData(r), loaded: true });
+    })();
+    return () => { cancelled = true; };
+  }, [activeStore?._id]);
+
+  // Restaurer l'état "masqué" du guide (par workspace)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      setOnboardingDismissed(localStorage.getItem(`scalor_gs_dismissed_${workspaceId || 'default'}`) === '1');
+    } catch { /* localStorage indisponible */ }
+  }, [workspaceId]);
+
+  const dismissOnboarding = () => {
+    setOnboardingDismissed(true);
+    try {
+      if (typeof window !== 'undefined') localStorage.setItem(`scalor_gs_dismissed_${workspaceId || 'default'}`, '1');
+    } catch { /* localStorage indisponible */ }
+  };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -557,20 +600,20 @@ const AdminDashboard = () => {
   const getStatusColor = (status) => {
     const colors = {
       test: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      stable: 'bg-primary-100 text-primary-700 border-primary-200',
-      winner: 'bg-primary-100 text-primary-700 border-primary-200',
+      stable: 'bg-primary-100 text-primary border-primary-200',
+      winner: 'bg-primary-100 text-primary border-primary-200',
       pause: 'bg-orange-100 text-orange-700 border-orange-200',
       stop: 'bg-red-100 text-red-700 border-red-200'
     };
-    return colors[status] || 'bg-gray-100 text-gray-700 border-gray-200';
+    return colors[status] || 'bg-muted text-foreground border-border';
   };
 
   const getOrderStatusColor = (status) => {
     const colors = {
       pending: 'bg-yellow-500',
-      confirmed: 'bg-primary-600',
-      shipped: 'bg-primary-600',
-      delivered: 'bg-primary-500',
+      confirmed: 'bg-primary',
+      shipped: 'bg-primary',
+      delivered: 'bg-primary',
       cancelled: 'bg-red-500',
       returned: 'bg-orange-500',
       reported: 'bg-purple-500'
@@ -669,7 +712,7 @@ const AdminDashboard = () => {
         </svg>
       ),
       iconBg: 'bg-primary-100',
-      iconColor: 'text-primary-600',
+      iconColor: 'text-primary',
       link: '/ecom/products/new'
     },
     {
@@ -681,7 +724,7 @@ const AdminDashboard = () => {
         </svg>
       ),
       iconBg: 'bg-primary-100',
-      iconColor: 'text-primary-700',
+      iconColor: 'text-primary',
       link: '/ecom/orders'
     },
     {
@@ -693,7 +736,7 @@ const AdminDashboard = () => {
         </svg>
       ),
       iconBg: 'bg-primary-100',
-      iconColor: 'text-primary-600',
+      iconColor: 'text-primary',
       link: '/ecom/stock/orders'
     }
   ];
@@ -709,30 +752,46 @@ const AdminDashboard = () => {
   }
 
   const hasStores = stores.length > 0;
-  const showStoreSetupBanner = Boolean(workspaceId) && !hasStores;
+
+  // ── Guide "Premiers pas" : checklist d'activation qui pousse à l'action ──
+  const gsSteps = [
+    { key: 'store',   done: hasStores,             icon: Store,        short: tp('Boutique'), title: tp('Créer votre boutique'),          to: '/ecom/boutique/wizard' },
+    { key: 'product', done: onboarding.hasProducts, icon: Package,      short: tp('Produit'),  title: tp('Ajouter votre premier produit'), to: '/ecom/products/new' },
+    { key: 'order',   done: onboarding.hasOrders,   icon: ShoppingCart, short: tp('Commande'), title: tp('Marquer une commande'),          to: '/ecom/orders' },
+    { key: 'report',  done: onboarding.hasReports,  icon: BarChart3,    short: tp('Rapport'),  title: tp('Créer votre premier rapport'),   to: '/ecom/reports/new' },
+    { key: 'goal',    done: (stats.goals || []).length > 0, icon: Target, short: tp('Objectif'), title: tp('Définir un objectif du mois'), to: '/ecom/goals' },
+  ];
+  const gsDone = gsSteps.filter(s => s.done).length;
+  const gsAllDone = gsDone === gsSteps.length;
+  const gsPct = Math.round((gsDone / gsSteps.length) * 100);
+  const nextStepKey = gsSteps.find(s => !s.done)?.key;
+  const showGuide = onboarding.loaded && !gsAllDone && !onboardingDismissed;
+
+  // La bannière "créer une boutique" est redondante avec l'étape 1 du guide
+  const showStoreSetupBanner = Boolean(workspaceId) && !hasStores && !showGuide;
 
   // Si pas de workspace — afficher CTA (ici pour respecter les Rules of Hooks)
   if (!user?.workspaceId) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 mb-4">
-            <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{tp('Aucun espace configuré')}</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">{tp('Aucun espace configuré')}</h2>
+          <p className="text-muted-foreground mb-6">
             {user?.role === 'ecom_admin'
               ? 'Créez votre propre espace pour commencer à utiliser Scalor.'
               : 'Rejoignez une équipe existante pour accéder aux données partagées.'}
           </p>
           <div className="space-y-3">
-            <Link to="/ecom/workspace-setup" className="block w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition">
+            <Link to="/ecom/workspace-setup" className="block w-full py-3 px-4 bg-primary hover:bg-primary-700 text-white font-medium rounded-lg transition">
               {tp('Créer un espace')}
             </Link>
             {user?.role !== 'ecom_admin' && (
-              <div className="p-3 bg-gray-100 rounded-lg text-xs text-gray-600">
+              <div className="p-3 bg-muted rounded-lg text-xs text-muted-foreground">
                 Pour rejoindre une équipe, demandez un lien d'invitation à votre administrateur
               </div>
             )}
@@ -743,13 +802,13 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 relative">
+    <div className="min-h-screen bg-background relative">
 
       {/* Barre de progression subtile en haut */}
       {(loadingKpi || loadingSecondary) && (
         <div className="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-40">
           <div 
-            className="h-full bg-primary-500 transition-all duration-300 ease-out"
+            className="h-full bg-primary transition-all duration-300 ease-out"
             style={{ width: `${Math.min(loadingProgress, 100)}%` }}
           />
         </div>
@@ -759,24 +818,75 @@ const AdminDashboard = () => {
 
         {/* Message de bienvenue */}
         <div className="mb-4">
-          <h1 className="text-xl font-bold text-gray-900">
+          <h1 className="text-xl font-bold text-foreground">
             {getGreeting()}, {user?.name?.split(' ')[0] || tp('Admin')} ! 👋
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {t('Voici un aperçu de votre activité aujourd\'hui.')}
           </p>
         </div>
 
+        {/* Guide "Premiers pas" — stepper compact qui pousse à l'action */}
+        {showGuide && (
+          <section className="mb-4 rounded-xl border border-border/70 bg-card px-3 py-2.5 shadow-sm sm:px-4">
+            {/* Ligne 1 : titre + progression + fermer */}
+            <div className="flex items-center gap-2.5">
+              <Rocket className="h-4 w-4 shrink-0 text-primary" />
+              <h2 className="text-[13px] font-semibold text-foreground whitespace-nowrap">{tp('Lancez votre activité')} 🚀</h2>
+              <div className="hidden sm:block h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${gsPct}%` }} />
+              </div>
+              <span className="ml-auto sm:ml-0 whitespace-nowrap text-[11px] text-muted-foreground">
+                <span className="font-semibold tabular-nums text-foreground">{gsDone}/{gsSteps.length}</span>
+              </span>
+              <button
+                onClick={dismissOnboarding}
+                aria-label={tp('Masquer le guide')}
+                className="shrink-0 rounded-md p-1 text-muted-foreground transition hover:bg-background hover:text-muted-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {/* Ligne 2 : pastilles d'étapes (compact, wrap) */}
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              {gsSteps.map((step) => {
+                const Icon = step.icon;
+                const isNext = step.key === nextStepKey;
+                return (
+                  <Link
+                    key={step.key}
+                    to={step.to}
+                    title={step.title}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+                      step.done
+                        ? 'border-transparent bg-background text-muted-foreground'
+                        : isNext
+                          ? 'border-primary-200 bg-primary-50 text-primary hover:bg-primary-100'
+                          : 'border-border bg-card text-foreground hover:border-gray-300 hover:bg-background'
+                    }`}
+                  >
+                    {step.done
+                      ? <Check className="h-3.5 w-3.5 text-primary-500" />
+                      : <Icon className={`h-3.5 w-3.5 ${isNext ? 'text-primary' : 'text-muted-foreground'}`} />}
+                    <span className={step.done ? 'line-through' : ''}>{step.short}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {showStoreSetupBanner && (
-          <section className="mb-5 rounded-lg border border-primary-100 bg-white shadow-sm">
+          <section className="mb-5 rounded-lg border border-primary-100 bg-card shadow-sm">
             <div className="flex flex-col gap-4 px-4 py-4 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary">
                   <Store className="h-5 w-5" />
                 </div>
 
                 <div className="min-w-0">
-                  <div className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold text-primary-700">
+                  <div className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     {tp('Création du workspace validée')}
                   </div>
@@ -784,7 +894,7 @@ const AdminDashboard = () => {
                   <h2 className="text-base font-semibold text-gray-950 sm:text-lg">
                     Vous n'avez pas encore de boutique
                   </h2>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {tp('Veuillez créer une boutique pour commencer à vendre vos produits.')}
                   </p>
                 </div>
@@ -792,7 +902,7 @@ const AdminDashboard = () => {
 
               <Link
                 to="/ecom/boutique/wizard"
-                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 {tp('Créer une boutique')}
                 <ArrowRight className="h-4 w-4" />
@@ -803,8 +913,8 @@ const AdminDashboard = () => {
 
         {/* Période selector - Style Shopify */}
         <div className="mb-4">
-          <div className="flex flex-wrap items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
-            <svg className="w-3.5 h-3.5 text-gray-500 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex flex-wrap items-center gap-1 bg-card border border-border rounded-lg p-1">
+            <svg className="w-3.5 h-3.5 text-muted-foreground ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             {[
@@ -820,7 +930,7 @@ const AdminDashboard = () => {
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${
                   timeRange === period.id
                     ? 'bg-gray-800 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    : 'text-muted-foreground hover:bg-muted'
                 }`}
               >
                 {isRefreshing && timeRange === period.id
@@ -837,7 +947,7 @@ const AdminDashboard = () => {
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1.5 ${
                 timeRange === 'custom'
                   ? 'bg-gray-800 text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-muted-foreground hover:bg-muted'
               }`}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -853,12 +963,12 @@ const AdminDashboard = () => {
         {/* Modal de sélection de dates avec calendrier */}
         {showDatePicker && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowDatePicker(false)}>
-            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-card rounded-2xl shadow-2xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-gray-900">{t('Sélectionner une période')}</h3>
+                <h3 className="text-lg font-bold text-foreground">{t('Sélectionner une période')}</h3>
                 <button
                   onClick={() => setShowDatePicker(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-muted-foreground"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -879,7 +989,7 @@ const AdminDashboard = () => {
                     key={p.id}
                     onClick={() => { setTimeRange(p.id); setCustomStartDate(''); setCustomEndDate(''); setShowDatePicker(false); }}
                     className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                      timeRange === p.id ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      timeRange === p.id ? 'bg-primary text-white' : 'bg-muted text-foreground hover:bg-gray-200'
                     }`}
                   >
                     {p.label}
@@ -897,13 +1007,13 @@ const AdminDashboard = () => {
                         newDate.setMonth(newDate.getMonth() - 1);
                         setCurrentCalendarMonth(newDate);
                       }}
-                      className="p-2 hover:bg-gray-100 rounded-lg"
+                      className="p-2 hover:bg-muted rounded-lg"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <h4 className="text-sm font-semibold text-gray-900">
+                    <h4 className="text-sm font-semibold text-foreground">
                       {currentCalendarMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
                     </h4>
                     <button
@@ -912,7 +1022,7 @@ const AdminDashboard = () => {
                         newDate.setMonth(newDate.getMonth() + 1);
                         setCurrentCalendarMonth(newDate);
                       }}
-                      className="p-2 hover:bg-gray-100 rounded-lg"
+                      className="p-2 hover:bg-muted rounded-lg"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -923,7 +1033,7 @@ const AdminDashboard = () => {
 
                 <div className="grid grid-cols-7 gap-1 text-center mb-2">
                   {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, i) => (
-                    <div key={i} className="text-xs font-medium text-gray-500 py-2">
+                    <div key={i} className="text-xs font-medium text-muted-foreground py-2">
                       {day}
                     </div>
                   ))}
@@ -943,11 +1053,11 @@ const AdminDashboard = () => {
                         disabled={isDisabled}
                         className={`
                           h-10 text-sm rounded-lg transition-all
-                          ${isDisabled ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100'}
+                          ${isDisabled ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-muted'}
                           ${isToday ? 'font-bold' : ''}
-                          ${isSelected ? 'bg-primary-600 text-white hover:bg-primary-700' : ''}
+                          ${isSelected ? 'bg-primary text-white hover:bg-primary-700' : ''}
                           ${isInRange && !isSelected ? 'bg-primary-100 text-primary-800' : ''}
-                          ${!isDisabled && !isSelected && !isInRange ? 'text-gray-700' : ''}
+                          ${!isDisabled && !isSelected && !isInRange ? 'text-foreground' : ''}
                         `}
                       >
                         {date.getDate()}
@@ -973,7 +1083,7 @@ const AdminDashboard = () => {
                     setCustomEndDate('');
                     setShowDatePicker(false);
                   }}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-foreground hover:bg-background transition"
                 >
                   {tp('Fermer')}
                 </button>
@@ -983,10 +1093,10 @@ const AdminDashboard = () => {
         )}
 
         {/* Bloc Shopify : KPI + Courbe dans un seul bloc blanc */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+        <div className="bg-card border border-border rounded-xl shadow-sm mb-6">
 
           {/* KPI Row - style Shopify */}
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x-0 md:divide-x divide-gray-200 border-b border-gray-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x-0 md:divide-x divide-gray-200 border-b border-border">
             {kpiCards.map((card, i) => {
               const isSelected = selectedMetric === card.id;
               const isLastInRowMobile = (i + 1) % 2 === 0;
@@ -1007,34 +1117,53 @@ const AdminDashboard = () => {
           </div>
 
           {/* Séparateur */}
-          <div className="border-t border-gray-200"></div>
+          <div className="border-t border-border"></div>
 
           {/* Courbe - pleine largeur */}
           <div className="p-4">
             {loadingKpi ? (
-              <div className="h-56 bg-gray-100 rounded-xl animate-pulse" />
+              <div className="h-56 bg-muted rounded-xl animate-pulse" />
+            ) : (periodStats.totalRevenue === 0 && periodStats.totalOrders === 0) ? (
+              /* Période vide → CTA plutôt qu'un graphique mort */
+              <div className="flex h-56 flex-col items-center justify-center px-4 text-center">
+                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary">
+                  <BarChart3 className="h-5 w-5" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">{tp('Aucune activité sur cette période')}</p>
+                <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+                  {tp('Créez un rapport ou ajoutez un produit pour voir vos ventes apparaître ici.')}
+                </p>
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                  <Link to="/ecom/reports/new" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-primary-700">
+                    <BarChart3 className="h-3.5 w-3.5" /> {tp('Créer un rapport')}
+                  </Link>
+                  <Link to="/ecom/products/new" className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3.5 py-2 text-xs font-semibold text-foreground transition hover:bg-background">
+                    <Package className="h-3.5 w-3.5" /> {tp('Ajouter un produit')}
+                  </Link>
+                </div>
+              </div>
             ) : <ChartContent data={stats.dailyFinancial || []} selectedMetric={selectedMetric} fmt={fmt} />}
           </div>
         </div>
 
         {/* Quick Actions */}
         <div className="mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
             {quickActions.map((action, i) => (
               <Link
                 key={i}
                 to={action.link}
-                className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-all duration-200"
+                className="group bg-card border border-border rounded-xl p-3 sm:p-4 hover:shadow-sm active:scale-[0.99] transition-all duration-200"
               >
-                <div className="flex items-start gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3">
                   <div className={`${action.iconBg} ${action.iconColor} w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0`}>
                     {action.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{action.name}</h3>
-                    <p className="text-xs text-gray-500">{action.description}</p>
+                    <h3 className="text-[13px] sm:text-sm font-semibold text-foreground leading-tight">{action.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">{action.description}</p>
                   </div>
-                  <svg className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-300 group-hover:text-muted-foreground transition-colors flex-shrink-0 mt-0.5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -1046,17 +1175,17 @@ const AdminDashboard = () => {
         {/* Top Products & Stock Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Products */}
-          <div className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6">
+          <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6">
             <div className="flex items-center justify-between gap-3 mb-5">
               <div className="min-w-0">
-                <h3 className="text-[15px] font-semibold text-gray-900">{t('Top produits')}</h3>
-                <p className="text-[13px] text-gray-500 mt-0.5">{t('Par nombre de ventes livrées')}</p>
+                <h3 className="text-[15px] font-semibold text-foreground">{t('Top produits')}</h3>
+                <p className="text-[13px] text-muted-foreground mt-0.5">{t('Par nombre de ventes livrées')}</p>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">
-                <span className="hidden sm:inline text-xs text-gray-400 tabular-nums">
+                <span className="hidden sm:inline text-xs text-muted-foreground tabular-nums">
                   {tp('{n} visibles', { n: topProductsPreview.length })}
                 </span>
-                <Link to="/ecom/reports" className="inline-flex items-center gap-1 text-[13px] text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap">
+                <Link to="/ecom/reports" className="inline-flex items-center gap-1 text-[13px] text-primary hover:text-primary font-medium whitespace-nowrap">
                   {tp('Voir tout')} <span aria-hidden>→</span>
                 </Link>
               </div>
@@ -1065,11 +1194,11 @@ const AdminDashboard = () => {
               {loadingSecondary ? (
                 [...Array(5)].map((_, i) => (
                   <div key={i} className="flex items-start gap-4 py-4">
-                    <div className="h-4 w-4 rounded bg-gray-100 animate-pulse mt-0.5 flex-shrink-0" />
+                    <div className="h-4 w-4 rounded bg-muted animate-pulse mt-0.5 flex-shrink-0" />
                     <div className="flex-1 space-y-2">
                       <div className="h-3.5 w-40 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-3 w-28 bg-gray-100 rounded animate-pulse" />
-                      <div className="h-1 w-full bg-gray-100 rounded-full animate-pulse" />
+                      <div className="h-3 w-28 bg-muted rounded animate-pulse" />
+                      <div className="h-1 w-full bg-muted rounded-full animate-pulse" />
                     </div>
                   </div>
                 ))
@@ -1083,38 +1212,38 @@ const AdminDashboard = () => {
                     <span className="w-4 pt-0.5 text-sm font-semibold text-gray-300 tabular-nums flex-shrink-0">{i + 1}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
-                        <p className="font-medium text-sm sm:text-[15px] text-gray-900 leading-snug truncate">{product.productName || t('Produit inconnu')}</p>
+                        <p className="font-medium text-sm sm:text-[15px] text-foreground leading-snug truncate">{product.productName || t('Produit inconnu')}</p>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-sm sm:text-[15px] font-semibold text-gray-900 whitespace-nowrap">{fmt(product.revenue || 0)}</p>
-                          <p className={`text-xs font-medium tabular-nums ${(product.profit || 0) >= 0 ? 'text-primary-600' : 'text-red-500'}`}>
+                          <p className="text-sm sm:text-[15px] font-semibold text-foreground whitespace-nowrap">{fmt(product.revenue || 0)}</p>
+                          <p className={`text-xs font-medium tabular-nums ${(product.profit || 0) >= 0 ? 'text-primary' : 'text-red-500'}`}>
                             {(product.profit || 0) >= 0 ? '+' : ''}{fmt(product.profit || 0)}
                           </p>
                         </div>
                       </div>
-                      <p className="mt-1 text-xs text-gray-500 tabular-nums">
+                      <p className="mt-1 text-xs text-muted-foreground tabular-nums">
                         {product.ordersDelivered || 0} {tp('livrées')}
                         <span className="text-gray-300"> · </span>
                         {deliveryRate}% {tp('livraison')}
                         <span className="text-gray-300"> · </span>
                         {product.ordersReceived || 0} {tp('reçues')}
                       </p>
-                      <div className="mt-2.5 h-1 w-full rounded-full bg-gray-100 overflow-hidden">
-                        <div className="h-full rounded-full bg-primary-500" style={{ width: `${deliveredRatio}%` }} />
+                      <div className="mt-2.5 h-1 w-full rounded-full bg-muted overflow-hidden">
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${deliveredRatio}%` }} />
                       </div>
                     </div>
                   </div>
                 );
               })}
               {!loadingSecondary && topProductsPreview.length === 0 && (
-                <div className="px-6 py-12 text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400">
+                <div className="px-6 py-10 sm:py-12 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 17l4-4 3 3 5-6M7 7h10M7 12h6" />
                     </svg>
                   </div>
-                  <p className="text-gray-900 font-semibold mb-1">{t('Aucune donnée de vente disponible')}</p>
-                  <p className="text-sm text-gray-500 mb-5 max-w-xs mx-auto">{t('Créez des rapports pour faire remonter les produits leaders.')}</p>
-                  <Link to="/ecom/reports/new" className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold transition">
+                  <p className="text-foreground font-semibold mb-1">{t('Aucune donnée de vente disponible')}</p>
+                  <p className="text-sm text-muted-foreground mb-5 max-w-xs mx-auto">{t('Créez des rapports pour faire remonter les produits leaders.')}</p>
+                  <Link to="/ecom/reports/new" className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-700 text-white rounded-xl text-sm font-semibold transition">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 6v12m6-6H6" /></svg>
                     {tp('Créer un rapport')}
                   </Link>
@@ -1124,11 +1253,11 @@ const AdminDashboard = () => {
           </div>
 
           {/* Stock Alerts */}
-          <div className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6">
+          <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6">
             <div className="flex items-center justify-between gap-3 mb-5">
               <div className="min-w-0">
-                <h3 className="text-[15px] font-semibold text-gray-900">{t('Alertes stock')}</h3>
-                <p className="text-[13px] text-gray-500 mt-0.5">{t('Produits nécessitant réapprovisionnement')}</p>
+                <h3 className="text-[15px] font-semibold text-foreground">{t('Alertes stock')}</h3>
+                <p className="text-[13px] text-muted-foreground mt-0.5">{t('Produits nécessitant réapprovisionnement')}</p>
               </div>
               {lowStockCount > 0 && (
                 <span className="text-xs font-medium text-red-600 tabular-nums whitespace-nowrap flex-shrink-0">
@@ -1141,13 +1270,13 @@ const AdminDashboard = () => {
               <div className="divide-y divide-gray-100">
                 {[...Array(4)].map((_, i) => (
                   <div key={i} className="flex items-start gap-4 py-4">
-                    <div className="h-2 w-2 rounded-full bg-gray-100 animate-pulse mt-1.5 flex-shrink-0" />
+                    <div className="h-2 w-2 rounded-full bg-muted animate-pulse mt-1.5 flex-shrink-0" />
                     <div className="flex-1 space-y-2">
                       <div className="h-3.5 w-36 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-3 w-24 bg-gray-100 rounded animate-pulse" />
-                      <div className="h-1 w-full bg-gray-100 rounded-full animate-pulse" />
+                      <div className="h-3 w-24 bg-muted rounded animate-pulse" />
+                      <div className="h-1 w-full bg-muted rounded-full animate-pulse" />
                     </div>
-                    <div className="h-6 w-24 bg-gray-100 rounded animate-pulse" />
+                    <div className="h-6 w-24 bg-muted rounded animate-pulse" />
                   </div>
                 ))}
               </div>
@@ -1167,19 +1296,19 @@ const AdminDashboard = () => {
                       <span className={`mt-1.5 h-2 w-2 rounded-full flex-shrink-0 ${tone.dot}`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-3">
-                          <p className="text-sm sm:text-[15px] font-medium text-gray-900 leading-snug truncate">{alert.name}</p>
+                          <p className="text-sm sm:text-[15px] font-medium text-foreground leading-snug truncate">{alert.name}</p>
                           <span className={`text-xs font-medium flex-shrink-0 ${tone.label}`}>{tone.text}</span>
                         </div>
-                        <p className="mt-1 text-xs text-gray-500 tabular-nums">
-                          {t('Stock actuel')} <span className="font-semibold text-gray-700">{alert.stock}</span>
+                        <p className="mt-1 text-xs text-muted-foreground tabular-nums">
+                          {t('Stock actuel')} <span className="font-semibold text-foreground">{alert.stock}</span>
                           <span className="text-gray-300"> · </span>
                           {tp('Seuil')} {alert.reorderThreshold}
                         </p>
-                        <div className="mt-2.5 h-1 w-full rounded-full bg-gray-100 overflow-hidden">
+                        <div className="mt-2.5 h-1 w-full rounded-full bg-muted overflow-hidden">
                           <div className={`h-full rounded-full ${tone.bar}`} style={{ width: `${stockProgress}%` }} />
                         </div>
                       </div>
-                      <Link to="/ecom/stock/orders/new" className="flex-shrink-0 self-center text-xs sm:text-sm font-medium text-primary-600 hover:text-primary-700 whitespace-nowrap">
+                      <Link to="/ecom/stock/orders/new" className="flex-shrink-0 self-center text-xs sm:text-sm font-medium text-primary hover:text-primary whitespace-nowrap">
                         {tp('Réapprovisionner')}
                       </Link>
                     </div>
@@ -1187,19 +1316,19 @@ const AdminDashboard = () => {
                 })}
               </div>
             ) : (
-              <div className="px-6 py-12 text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-primary-600">
+              <div className="px-6 py-10 sm:py-12 text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-background border border-border flex items-center justify-center text-primary">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="text-gray-900 font-semibold">{tp('Tous les stocks sont au vert')}</p>
-                <p className="text-sm text-gray-500 mt-1">{tp('Aucun réapprovisionnement nécessaire pour le moment.')}</p>
+                <p className="text-foreground font-semibold">{tp('Tous les stocks sont au vert')}</p>
+                <p className="text-sm text-muted-foreground mt-1">{tp('Aucun réapprovisionnement nécessaire pour le moment.')}</p>
               </div>
             )}
 
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <Link to="/ecom/stock" className="flex items-center justify-center text-[13px] text-gray-500 hover:text-gray-700 font-medium py-1.5 transition">
+            <div className="mt-4 pt-4 border-t border-border">
+              <Link to="/ecom/stock" className="flex items-center justify-center text-[13px] text-muted-foreground hover:text-foreground font-medium py-1.5 transition">
                 {tp('Voir le rapport de stock')}
               </Link>
             </div>
@@ -1207,31 +1336,31 @@ const AdminDashboard = () => {
         </div>
 
         {/* Objectifs */}
-        <div className="mt-8 bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-6">
+        <div className="mt-8 bg-card rounded-2xl border/80 p-5 sm:p-6">
           <div className="flex items-center justify-between mb-5 gap-3">
             <div className="min-w-0">
-              <h3 className="text-[15px] font-semibold text-gray-900">{tp('Objectifs du mois')}</h3>
-              <p className="text-[13px] text-gray-500 mt-0.5">{tp('Suivi de vos cibles mensuelles')}</p>
+              <h3 className="text-[15px] font-semibold text-foreground">{tp('Objectifs du mois')}</h3>
+              <p className="text-[13px] text-muted-foreground mt-0.5">{tp('Suivi de vos cibles mensuelles')}</p>
             </div>
-            <Link to="/ecom/goals" className="inline-flex items-center gap-1 text-[13px] text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap flex-shrink-0">
+            <Link to="/ecom/goals" className="inline-flex items-center gap-1 text-[13px] text-primary hover:text-primary font-medium whitespace-nowrap flex-shrink-0">
               {tp('Gérer')} <span aria-hidden>→</span>
             </Link>
           </div>
           {loadingSecondary ? (
             <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="border border-gray-100 rounded-xl p-4">
+                <div key={i} className="border border-border rounded-xl p-4">
                   <div className="flex justify-between mb-3">
                     <div className="space-y-1.5">
                       <div className="h-3.5 w-32 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-3 w-20 bg-gray-100 rounded animate-pulse" />
+                      <div className="h-3 w-20 bg-muted rounded animate-pulse" />
                     </div>
                     <div className="space-y-1.5 text-right">
                       <div className="h-3.5 w-24 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-3 w-16 bg-gray-100 rounded animate-pulse" />
+                      <div className="h-3 w-16 bg-muted rounded animate-pulse" />
                     </div>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full animate-pulse" />
+                  <div className="h-2 bg-muted rounded-full animate-pulse" />
                 </div>
               ))}
             </div>
@@ -1250,20 +1379,20 @@ const AdminDashboard = () => {
                 const progress = (current / target) * 100;
                 const done = progress >= 100;
                 const tone = done ? 'emerald' : progress >= 75 ? 'primary' : progress >= 50 ? 'amber' : 'orange';
-                const barColor = { emerald: 'bg-emerald-500', primary: 'bg-primary-600', amber: 'bg-amber-500', orange: 'bg-orange-500' }[tone];
-                const badgeColor = { emerald: 'bg-emerald-50 text-emerald-700', primary: 'bg-primary-50 text-primary-700', amber: 'bg-amber-50 text-amber-700', orange: 'bg-orange-50 text-orange-700' }[tone];
+                const barColor = { emerald: 'bg-emerald-500', primary: 'bg-primary', amber: 'bg-amber-500', orange: 'bg-orange-500' }[tone];
+                const badgeColor = { emerald: 'bg-emerald-50 text-emerald-700', primary: 'bg-primary-50 text-primary', amber: 'bg-amber-50 text-amber-700', orange: 'bg-orange-50 text-orange-700' }[tone];
                 const fmtVal = (v) => goal.type === 'delivery_rate' ? `${Number(v).toFixed(1)}%` : goal.type === 'ordersDelivered' || goal.type === 'orders' ? v : fmt(v);
                 return (
-                  <div key={goal._id || idx} className="rounded-2xl border border-gray-200 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 bg-white">
+                  <div key={goal._id || idx} className="rounded-2xl border border-border p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 bg-card">
                     <div className="flex items-start justify-between gap-3 mb-1">
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-gray-900">{goalTypeLabels[goal.type] || goal.type}</p>
+                        <p className="text-sm font-bold text-foreground">{goalTypeLabels[goal.type] || goal.type}</p>
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
                           {goal.productId?.name && (
-                            <span className="inline-flex max-w-[180px] truncate px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px] font-medium" title={goal.productId.name}>📦 {goal.productId.name}</span>
+                            <span className="inline-flex max-w-[180px] truncate px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[11px] font-medium" title={goal.productId.name}>📦 {goal.productId.name}</span>
                           )}
                           {goal.closeuseId?.name && (
-                            <span className="inline-flex px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px] font-medium">👤 {goal.closeuseId.name}</span>
+                            <span className="inline-flex px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[11px] font-medium">👤 {goal.closeuseId.name}</span>
                           )}
                         </div>
                       </div>
@@ -1272,10 +1401,10 @@ const AdminDashboard = () => {
                       </span>
                     </div>
                     <div className="flex items-baseline gap-1.5 mt-2 mb-2">
-                      <span className="text-xl font-extrabold text-gray-900 tracking-tight tabular-nums">{fmtVal(current)}</span>
-                      <span className="text-xs text-gray-400 font-medium">/ {fmtVal(target)}</span>
+                      <span className="text-xl font-extrabold text-foreground tracking-tight tabular-nums">{fmtVal(current)}</span>
+                      <span className="text-xs text-muted-foreground font-medium">/ {fmtVal(target)}</span>
                     </div>
-                    <div className="relative h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
                       <div className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${barColor}`} style={{ width: `${Math.min(progress, 100)}%` }} />
                     </div>
                   </div>
@@ -1283,20 +1412,27 @@ const AdminDashboard = () => {
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-12 text-center">
+            <div className="rounded-2xl border border-dashed border-border bg-background/60 px-6 py-12 text-center">
               <div className="relative w-16 h-16 mx-auto mb-4">
                 <div className="absolute inset-0 rounded-2xl bg-violet-100/60 rotate-6" />
-                <div className="relative w-16 h-16 bg-white rounded-2xl border border-violet-100 shadow-sm flex items-center justify-center text-violet-600">
+                <div className="relative w-16 h-16 bg-card rounded-2xl border border-violet-100 shadow-sm flex items-center justify-center text-violet-600">
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="9" strokeWidth={1.8} /><circle cx="12" cy="12" r="5" strokeWidth={1.8} /><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
                   </svg>
                 </div>
               </div>
-              <p className="text-gray-900 font-bold mb-1">{tp('Aucun objectif défini pour ce mois')}</p>
-              <p className="text-sm text-gray-500 mb-5 max-w-xs mx-auto">{tp('Fixez des cibles pour suivre votre progression chaque mois.')}</p>
-              <Link to="/ecom/goals" className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm transition">
+              <p className="text-foreground font-bold mb-1">{tp('Donnez un cap à votre mois')}</p>
+              <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">{tp('Un objectif clair vous garde motivé et transforme vos ventes quotidiennes en progression visible.')}</p>
+              <div className="mb-5 flex flex-wrap items-center justify-center gap-1.5">
+                {[tp("Chiffre d'affaires"), tp('Livraisons'), tp('Bénéfice')].map((chip) => (
+                  <span key={chip} className="inline-flex items-center gap-1 rounded-full border border-violet-100 bg-card px-2.5 py-1 text-[11px] font-medium text-violet-700">
+                    <Target className="h-3 w-3" /> {chip}
+                  </span>
+                ))}
+              </div>
+              <Link to="/ecom/goals" className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm transition">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 6v12m6-6H6" /></svg>
-                {tp('Créer un objectif')}
+                {tp('Définir mon premier objectif')}
               </Link>
             </div>
           )}
@@ -1310,11 +1446,11 @@ const AdminDashboard = () => {
             { label: tp('Clients actifs'), value: dashboardStats.activeClients.toString(), trend: `${dashboardStats.activeClientsTrend >= 0 ? '+' : ''}${dashboardStats.activeClientsTrend}` },
             { label: tp('Retours'), value: `${dashboardStats.returnRate}%`, trend: `${parseFloat(dashboardStats.returnRateTrend) >= 0 ? '+' : ''}${dashboardStats.returnRateTrend}%` },
           ].map((stat, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
-              <p className="text-xs text-gray-500 mb-1">{stat.label}</p>
+            <div key={i} className="bg-card rounded-xl border p-4">
+              <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
               <div className="flex items-end gap-2">
-                <p className="text-lg font-bold text-gray-900">{stat.value}</p>
-                <span className="text-xs text-primary-600 font-medium mb-0.5">{stat.trend}</span>
+                <p className="text-lg font-bold text-foreground">{stat.value}</p>
+                <span className="text-xs text-primary font-medium mb-0.5">{stat.trend}</span>
               </div>
             </div>
           ))}

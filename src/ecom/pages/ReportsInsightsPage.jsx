@@ -112,13 +112,13 @@ const ReportsInsightsPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/ecom/reports')}
-            className="p-2.5 hover:bg-gray-100 rounded-xl transition border border-gray-200 shadow-sm"
+            className="p-2.5 hover:bg-muted rounded-xl transition border border-border shadow-sm"
           >
-            <ArrowLeft size={18} className="text-gray-600" />
+            <ArrowLeft size={18} className="text-muted-foreground" />
           </button>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">{tp('📈 Insights mensuels')}</h3>
-            <p className="text-sm text-gray-500">{tp('Classement détaillé des jours rentables et des agences')}</p>
+            <h3 className="text-lg font-semibold text-foreground mb-1">{tp('📈 Insights mensuels')}</h3>
+            <p className="text-sm text-muted-foreground">{tp('Classement détaillé des jours rentables et des agences')}</p>
           </div>
         </div>
       </div>
@@ -126,13 +126,13 @@ const ReportsInsightsPage = () => {
       <div className="flex gap-2 mb-6">
         <Link
           to="/ecom/reports/insights?tab=days"
-          className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'days' ? 'bg-primary-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'days' ? 'bg-primary text-white' : 'bg-card border border-border text-foreground hover:bg-background'}`}
         >
           {tp('Jours rentables')}
         </Link>
         <Link
           to="/ecom/reports/insights?tab=agencies"
-          className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'agencies' ? 'bg-primary-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'agencies' ? 'bg-primary text-white' : 'bg-card border border-border text-foreground hover:bg-background'}`}
         >
           {tp('Agences efficaces')}
         </Link>
@@ -141,31 +141,31 @@ const ReportsInsightsPage = () => {
       {loading ? (
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+            <div key={i} className="bg-card rounded-xl border p-4">
               <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mb-2" />
-              <div className="h-3 w-24 bg-gray-100 rounded animate-pulse" />
+              <div className="h-3 w-24 bg-muted rounded animate-pulse" />
             </div>
           ))}
         </div>
       ) : activeTab === 'days' ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-            <CalendarDays size={16} className="text-primary-600" />
-            <h2 className="text-sm font-semibold text-gray-700">{tp('Tous les jours classés par rentabilité')}</h2>
+        <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
+            <CalendarDays size={16} className="text-primary" />
+            <h2 className="text-sm font-semibold text-foreground">{tp('Tous les jours classés par rentabilité')}</h2>
           </div>
           <div className="divide-y divide-gray-100">
             {topProfitDays.length === 0 ? (
-              <p className="px-4 py-6 text-sm text-gray-500">{tp('Aucune donnée disponible')}</p>
+              <p className="px-4 py-6 text-sm text-muted-foreground">{tp('Aucune donnée disponible')}</p>
             ) : (
               topProfitDays.map((day, idx) => (
                 <div key={day.date} className="px-4 py-3 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">#{idx + 1} {new Date(day.date).toLocaleDateString('fr-FR')}</p>
-                    <p className="text-xs text-gray-500">{day.delivered} livrées • {day.reports} rapport{day.reports > 1 ? 's' : ''}</p>
+                    <p className="text-sm font-medium text-foreground">#{idx + 1} {new Date(day.date).toLocaleDateString('fr-FR')}</p>
+                    <p className="text-xs text-muted-foreground">{day.delivered} livrées • {day.reports} rapport{day.reports > 1 ? 's' : ''}</p>
                   </div>
                   <div className="text-right">
                     <p className={`text-sm font-semibold ${day.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>{fmt(day.profit)}</p>
-                    <p className="text-xs text-gray-500">CA: {fmt(day.revenue || 0)}</p>
+                    <p className="text-xs text-muted-foreground">CA: {fmt(day.revenue || 0)}</p>
                   </div>
                 </div>
               ))
@@ -173,25 +173,25 @@ const ReportsInsightsPage = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-            <Truck size={16} className="text-primary-700" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">{tp('🔍 Recommandations')}</h3>
-            <h2 className="text-sm font-semibold text-gray-700"> {tp('les agences classées par efficacité')}</h2>
+        <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
+            <Truck size={16} className="text-primary" />
+            <h3 className="text-lg font-semibold text-foreground mb-1">{tp('🔍 Recommandations')}</h3>
+            <h2 className="text-sm font-semibold text-foreground"> {tp('les agences classées par efficacité')}</h2>
           </div>
           <div className="divide-y divide-gray-100">
             {topAgencies.length === 0 ? (
-              <p className="px-4 py-6 text-sm text-gray-500">{tp('Aucune donnée d\'agence disponible')}</p>
+              <p className="px-4 py-6 text-sm text-muted-foreground">{tp('Aucune donnée d\'agence disponible')}</p>
             ) : (
               topAgencies.map((agency, idx) => (
                 <div key={agency.agencyName} className="px-4 py-3 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">#{idx + 1} {agency.agencyName}</p>
-                    <p className="text-xs text-gray-500">{agency.ordersDelivered} livrées • {agency.reportsCount} rapport{agency.reportsCount > 1 ? 's' : ''}</p>
+                    <p className="text-sm font-medium text-foreground">#{idx + 1} {agency.agencyName}</p>
+                    <p className="text-xs text-muted-foreground">{agency.ordersDelivered} livrées • {agency.reportsCount} rapport{agency.reportsCount > 1 ? 's' : ''}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-primary-700">{fmt(agency.deliveryCost)}</p>
-                    <p className="text-xs text-gray-500">{tp('Total livraisons')}</p>
+                    <p className="text-sm font-semibold text-primary">{fmt(agency.deliveryCost)}</p>
+                    <p className="text-xs text-muted-foreground">{tp('Total livraisons')}</p>
                   </div>
                 </div>
               ))

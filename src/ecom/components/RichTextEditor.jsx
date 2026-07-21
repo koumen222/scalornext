@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useState } from 'react';
+import React, { useRef, useEffect, useCallback, useState, forwardRef, useImperativeHandle } from 'react';
 import { storeProductsApi } from '../services/storeApi.js';
 import { tp } from '../i18n/platform.js';
 
@@ -10,8 +10,8 @@ const Btn = ({ title, onClick, active, children }) => (
     onMouseDown={(e) => { e.preventDefault(); onClick(); }}
     className={`p-1.5 rounded text-sm transition-colors select-none
       ${active
-        ? 'bg-primary-100 text-primary-700'
-        : 'hover:bg-gray-200 text-gray-700'
+        ? 'bg-primary-100 text-primary'
+        : 'hover:bg-gray-200 text-foreground'
       }`}
   >
     {children}
@@ -25,8 +25,8 @@ const LinkModal = ({ onConfirm, onClose }) => {
   const [url, setUrl] = useState('https://');
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-5 w-80">
-        <p className="text-sm font-semibold text-gray-900 mb-3">{tp('Insérer un lien')}</p>
+      <div className="bg-card rounded-xl shadow-xl border border-border p-5 w-80">
+        <p className="text-sm font-semibold text-foreground mb-3">{tp('Insérer un lien')}</p>
         <input
           autoFocus
           type="url"
@@ -37,8 +37,8 @@ const LinkModal = ({ onConfirm, onClose }) => {
           onKeyDown={e => { if (e.key === 'Enter') onConfirm(url); if (e.key === 'Escape') onClose(); }}
         />
         <div className="flex gap-2 mt-3">
-          <button type="button" onClick={onClose} className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">{tp('Annuler')}</button>
-          <button type="button" onClick={() => onConfirm(url)} className="flex-1 px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-semibold">OK</button>
+          <button type="button" onClick={onClose} className="flex-1 px-3 py-2 text-sm bg-muted text-foreground rounded-lg hover:bg-gray-200 transition">{tp('Annuler')}</button>
+          <button type="button" onClick={() => onConfirm(url)} className="flex-1 px-3 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-700 transition font-semibold">OK</button>
         </div>
       </div>
     </div>
@@ -61,25 +61,25 @@ const ImageModal = ({ onInsert, onClose, onUpload, uploading }) => {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-5 w-96">
+      <div className="bg-card rounded-xl shadow-xl border border-border p-5 w-96">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-semibold text-gray-900">{tp('Insérer une image')}</p>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100">
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <p className="text-sm font-semibold text-foreground">{tp('Insérer une image / GIF')}</p>
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted">
+            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-4 bg-gray-100 rounded-lg p-1">
+        <div className="flex gap-1 mb-4 bg-muted rounded-lg p-1">
           {[['upload', 'Uploader'], ['url', 'URL']].map(([t, l]) => (
             <button
               key={t}
               type="button"
               onClick={() => setTab(t)}
               className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors
-                ${tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                ${tab === t ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               {l}
             </button>
@@ -93,14 +93,14 @@ const ImageModal = ({ onInsert, onClose, onUpload, uploading }) => {
               className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50 transition"
             >
               {uploading ? (
-                <p className="text-sm text-primary-600 font-medium">{tp('Upload en cours…')}</p>
+                <p className="text-sm text-primary font-medium">{tp('Upload en cours…')}</p>
               ) : (
                 <>
-                  <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8 text-muted-foreground mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <p className="text-sm text-gray-600">{tp('Cliquer pour choisir une image')}</p>
-                  <p className="text-xs text-gray-400 mt-1">{tp('JPG, PNG, WebP — max 5 Mo')}</p>
+                  <p className="text-sm text-muted-foreground">{tp('Cliquer pour choisir une image ou un GIF')}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{tp('JPG, PNG, WebP, GIF — max 15 Mo')}</p>
                 </>
               )}
             </div>
@@ -127,7 +127,7 @@ const ImageModal = ({ onInsert, onClose, onUpload, uploading }) => {
               type="button"
               disabled={!url.trim()}
               onClick={() => onInsert(url.trim(), alt.trim())}
-              className="w-full py-2 text-sm font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition disabled:opacity-40"
+              className="w-full py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition disabled:opacity-40"
             >
               {tp('Insérer')}
             </button>
@@ -162,11 +162,11 @@ const VideoModal = ({ onInsert, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-5 w-96">
+      <div className="bg-card rounded-xl shadow-xl border border-border p-5 w-96">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-semibold text-gray-900">{tp('Insérer une vidéo')}</p>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100">
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <p className="text-sm font-semibold text-foreground">{tp('Insérer une vidéo')}</p>
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted">
+            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -180,16 +180,55 @@ const VideoModal = ({ onInsert, onClose }) => {
             placeholder={tp('URL YouTube, Vimeo ou vidéo directe (.mp4)')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
-          <p className="text-xs text-gray-400">{tp('YouTube, Vimeo, ou lien direct .mp4 / .webm')}</p>
+          <p className="text-xs text-muted-foreground">{tp('YouTube, Vimeo, ou lien direct .mp4 / .webm')}</p>
           <button
             type="button"
             disabled={!url.trim() || !buildEmbed(url)}
             onClick={handleInsert}
-            className="w-full py-2 text-sm font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition disabled:opacity-40"
+            className="w-full py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition disabled:opacity-40"
           >
             {tp('Insérer')}
           </button>
         </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Code modal ───────────────────────────────────────────────────────────────
+const CodeModal = ({ onInsert, onClose }) => {
+  const [code, setCode] = useState('');
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40">
+      <div className="bg-card rounded-xl shadow-xl border border-border p-5 w-[520px] max-w-[92vw]">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-foreground">{tp('Insérer du code HTML')}</p>
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted">
+            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <textarea
+          autoFocus
+          value={code}
+          onChange={e => setCode(e.target.value)}
+          rows={9}
+          spellCheck={false}
+          placeholder={'<iframe src="https://..."></iframe>\n<div style="...">…</div>'}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-mono bg-gray-900 text-green-400 resize-y focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+        <p className="text-[11px] text-muted-foreground mt-2">
+          {tp('Embeds (YouTube, iframe…), tableaux, styles… Les balises <script> ne sont pas exécutées dans la description — utilisez la section « Code personnalisé » du builder pour du JavaScript.')}
+        </p>
+        <button
+          type="button"
+          disabled={!code.trim()}
+          onClick={() => onInsert(code)}
+          className="w-full mt-3 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition disabled:opacity-40"
+        >
+          {tp('Insérer')}
+        </button>
       </div>
     </div>
   );
@@ -212,7 +251,7 @@ const HeadingSelect = ({ onSelect }) => {
       <button
         type="button"
         onMouseDown={e => { e.preventDefault(); setOpen(o => !o); }}
-        className="flex items-center gap-1 px-2 py-1.5 rounded hover:bg-gray-200 text-xs text-gray-700 font-medium transition"
+        className="flex items-center gap-1 px-2 py-1.5 rounded hover:bg-gray-200 text-xs text-foreground font-medium transition"
       >
         {current}
         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +259,7 @@ const HeadingSelect = ({ onSelect }) => {
         </svg>
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden min-w-[140px]">
+        <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-50 overflow-hidden min-w-[140px]">
           {opts.map(o => (
             <button
               key={o.tag}
@@ -233,7 +272,7 @@ const HeadingSelect = ({ onSelect }) => {
                 onSelect();
               }}
               style={o.style}
-              className="block w-full text-left px-3 py-2 hover:bg-gray-50 transition"
+              className="block w-full text-left px-3 py-2 hover:bg-background transition"
             >
               {o.label}
             </button>
@@ -258,12 +297,12 @@ const ColorPicker = ({ onColor }) => {
         className="p-1.5 rounded hover:bg-gray-200 transition flex items-center gap-0.5"
       >
         <span className="text-sm font-bold" style={{ color: '#374151' }}>A</span>
-        <svg className="w-2.5 h-2.5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+        <svg className="w-2.5 h-2.5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2 flex gap-1 flex-wrap w-[120px]">
+        <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-50 p-2 flex gap-1 flex-wrap w-[120px]">
           {COLORS.map(c => (
             <button
               key={c}
@@ -319,7 +358,7 @@ const ImageResizeToolbar = ({ imageEl, onResize, onClose }) => {
         zIndex: 300,
       }}
     >
-      <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg shadow-lg px-2 py-1.5">
+      <div className="flex items-center gap-1 bg-card border border-border rounded-lg shadow-lg px-2 py-1.5">
         {sizes.map(s => (
           <button
             key={s.label}
@@ -327,8 +366,8 @@ const ImageResizeToolbar = ({ imageEl, onResize, onClose }) => {
             onMouseDown={e => { e.preventDefault(); e.stopPropagation(); onResize(s.value); }}
             className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
               currentWidth === s.value || (!currentWidth && s.value === '')
-                ? 'bg-primary-100 text-primary-700'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-primary-100 text-primary'
+                : 'text-muted-foreground hover:bg-muted'
             }`}
           >
             {s.label}
@@ -338,7 +377,7 @@ const ImageResizeToolbar = ({ imageEl, onResize, onClose }) => {
         <button
           type="button"
           onMouseDown={e => { e.preventDefault(); e.stopPropagation(); onClose(); }}
-          className="p-1 rounded hover:bg-gray-100 text-gray-400"
+          className="p-1 rounded hover:bg-muted text-muted-foreground"
           title={tp('Fermer')}
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -364,15 +403,20 @@ const ImageResizeToolbar = ({ imageEl, onResize, onClose }) => {
  *   minHeight  {number}   Min height of editor area in px (default 140)
  *   maxHeight  {number}   Max height before scroll (default 400)
  *   uploadFn   {fn}       Optional async fn(file) → url string. Falls back to storeProductsApi.
+ *
+ * Ref (useImperativeHandle) :
+ *   insertHtmlAtCaret(html) — insère du HTML à la position du curseur
+ *   (dernière position connue dans l'éditeur), ou à la fin si aucune.
+ *   Utilisé par les générateurs IA (image, GIF, paragraphe).
  */
-const RichTextEditor = ({
+const RichTextEditor = forwardRef(({
   value = '',
   onChange,
   placeholder = 'Écrivez votre description…',
   minHeight = 140,
   maxHeight = 400,
   uploadFn,
-}) => {
+}, ref) => {
   const editorRef = useRef(null);
   const lastHtml = useRef(value);
   const savedRange = useRef(null);
@@ -380,6 +424,8 @@ const RichTextEditor = ({
   const [showLink, setShowLink] = useState(false);
   const [showImage, setShowImage] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [showCode, setShowCode] = useState(false);
+  const [sourceMode, setSourceMode] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -490,6 +536,58 @@ const RichTextEditor = ({
     handleInput();
   }, [handleInput]);
 
+  // ── API publique : insertion au caret depuis l'extérieur (boutons IA) ──
+  useImperativeHandle(ref, () => ({
+    insertHtmlAtCaret: (html) => {
+      const el = editorRef.current;
+      if (!el) return;
+      el.focus();
+      restoreSelection();
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && el.contains(sel.anchorNode)) {
+        document.execCommand('insertHTML', false, html);
+      } else {
+        el.innerHTML += html; // aucun curseur connu → fin du contenu
+      }
+      handleInput();
+    },
+  }), [handleInput]);
+
+  // ── Insert raw HTML code at caret ──────────────────────────────────────
+  const insertCode = useCallback((code) => {
+    const el = editorRef.current;
+    if (!el) return;
+    el.focus();
+    restoreSelection();
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && el.contains(sel.anchorNode)) {
+      document.execCommand('insertHTML', false, code);
+    } else {
+      // Pas de caret dans l'éditeur → ajouter à la fin
+      el.innerHTML += code;
+    }
+    setShowCode(false);
+    handleInput();
+  }, [handleInput]);
+
+  // ── Toggle HTML source mode ────────────────────────────────────────────
+  const toggleSourceMode = useCallback(() => {
+    setSourceMode(prev => {
+      if (prev) {
+        // Sortie du mode source → réinjecter le HTML dans l'éditeur visuel
+        const el = editorRef.current;
+        if (el) el.innerHTML = lastHtml.current || '';
+      }
+      return !prev;
+    });
+  }, []);
+
+  const handleSourceChange = useCallback((e) => {
+    const html = e.target.value;
+    lastHtml.current = html;
+    onChange?.(html);
+  }, [onChange]);
+
   // ── Insert link ────────────────────────────────────────────────────────
   const insertLink = useCallback((url) => {
     restoreSelection();
@@ -567,7 +665,8 @@ const RichTextEditor = ({
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-transparent transition">
       {/* ── Toolbar ── */}
-      <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 bg-gray-50 border-b border-gray-200">
+      <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 bg-background border-b border-border">
+        <div className={`flex flex-wrap items-center gap-0.5 ${sourceMode ? 'opacity-30 pointer-events-none' : ''}`}>
         <HeadingSelect onSelect={() => editorRef.current?.focus()} />
         <Sep />
         <Btn title={tp('Gras (Ctrl+B)')} onClick={() => cmd('bold')}><strong className="text-xs">B</strong></Btn>
@@ -619,6 +718,11 @@ const RichTextEditor = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </Btn>
+        <Btn title={tp('Insérer du code HTML')} onClick={() => { saveSelection(); setShowCode(true); }}>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        </Btn>
         <Sep />
         <Btn title={tp('Ligne horizontale')} onClick={() => { cmd('insertHorizontalRule'); }}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -630,13 +734,19 @@ const RichTextEditor = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </Btn>
+        </div>
+        <div className="ml-auto">
+          <Btn title={sourceMode ? tp('Retour à l\'éditeur visuel') : tp('Éditer le HTML source')} onClick={toggleSourceMode} active={sourceMode}>
+            <span className="text-[11px] font-mono font-bold">&lt;/&gt;</span>
+          </Btn>
+        </div>
       </div>
 
       {/* ── Editable area ── */}
       <div className="relative">
-        {isEmpty && (
+        {isEmpty && !sourceMode && (
           <div
-            className="absolute top-0 left-0 px-3 py-2 text-sm text-gray-400 pointer-events-none select-none"
+            className="absolute top-0 left-0 px-3 py-2 text-sm text-muted-foreground pointer-events-none select-none"
             aria-hidden="true"
           >
             {placeholder}
@@ -661,8 +771,19 @@ const RichTextEditor = ({
             direction: 'ltr',
             lineHeight: 1.65,
             fontSize: 14,
+            display: sourceMode ? 'none' : undefined,
           }}
         />
+        {sourceMode && (
+          <textarea
+            value={value}
+            onChange={handleSourceChange}
+            spellCheck={false}
+            placeholder="<p>Votre HTML…</p>"
+            className="w-full px-3 py-2 font-mono text-xs bg-gray-900 text-green-400 focus:outline-none resize-y"
+            style={{ minHeight: Math.max(minHeight, 200), maxHeight: maxHeight + 100, overflowY: 'auto' }}
+          />
+        )}
       </div>
 
       {/* ── Editor styles ── */}
@@ -712,8 +833,16 @@ const RichTextEditor = ({
           onClose={() => { setShowVideo(false); restoreSelection(); }}
         />
       )}
+      {showCode && (
+        <CodeModal
+          onInsert={insertCode}
+          onClose={() => { setShowCode(false); restoreSelection(); }}
+        />
+      )}
     </div>
   );
-};
+});
+
+RichTextEditor.displayName = 'RichTextEditor';
 
 export default RichTextEditor;

@@ -63,16 +63,19 @@ function normalizeEnvBaseUrl(raw = '') {
 }
 
 function resolveApiBaseUrl() {
-  const envBase = normalizeEnvBaseUrl(process.env.NEXT_PUBLIC_API_URL);
+  const envBase = normalizeEnvBaseUrl(
+    process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL
+  );
 
-  // On scalor.net frontend, always target public API domain to avoid
-  // accidental Railway/origin redirects that break CORS preflight.
+  // Une configuration explicite ne doit jamais être remplacée par la prod.
+  if (envBase) return envBase;
+
+  // Fallback historique uniquement si le build n'a reçu aucune variable API.
   if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
-    if (envBase.includes('api.scalor.net')) return envBase;
     return 'https://api.scalor.net/api/ecom';
   }
 
-  return envBase || '/api/ecom';
+  return '/api/ecom';
 }
 
 const API_BASE_URL = resolveApiBaseUrl();

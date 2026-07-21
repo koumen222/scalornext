@@ -5,13 +5,13 @@ import { tp } from '../i18n/platform.js';
 
 const PLAN_LABELS = { starter: 'Starter', pro: 'Pro', business: 'Business', enterprise: 'Enterprise' };
 const PLAN_COLORS = {
-  starter:    'bg-gray-100 text-gray-600',
-  pro:        'bg-primary-100 text-primary-700',
+  starter:    'bg-muted text-muted-foreground',
+  pro:        'bg-primary-100 text-primary',
   business:   'bg-blue-100 text-blue-700',
   enterprise: 'bg-amber-100 text-amber-700',
 };
 const STATUS_COLORS = {
-  sent:    'bg-primary-100 text-primary-700',
+  sent:    'bg-primary-100 text-primary',
   failed:  'bg-red-100 text-red-700',
   skipped: 'bg-amber-100 text-amber-700',
 };
@@ -117,13 +117,13 @@ export default function SuperAdminScalorWhatsApp() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{tp('WhatsApp — Utilisateurs Scalor')}</h1>
-          <p className="text-sm text-gray-500 mt-1">{tp('Envoyez des messages WhatsApp aux utilisateurs de la plateforme Scalor.')}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tp('WhatsApp — Utilisateurs Scalor')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{tp('Envoyez des messages WhatsApp aux utilisateurs de la plateforme Scalor.')}</p>
         </div>
         {/* Badge instance */}
         {adminInstance ? (
-          <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium ${instanceOk ? 'bg-primary-50 border-primary-200 text-primary-700' : 'bg-red-50 border-red-200 text-red-600'}`}>
-            <span className={`w-2 h-2 rounded-full ${instanceOk ? 'bg-primary-500' : 'bg-red-400'}`} />
+          <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium ${instanceOk ? 'bg-primary-50 border-primary-200 text-primary' : 'bg-red-50 border-red-200 text-red-600'}`}>
+            <span className={`w-2 h-2 rounded-full ${instanceOk ? 'bg-primary' : 'bg-red-400'}`} />
             {adminInstance.customName || adminInstance.instanceName}
             <span className="text-[10px] font-bold uppercase opacity-60">{adminInstance.status}</span>
           </div>
@@ -146,36 +146,36 @@ export default function SuperAdminScalorWhatsApp() {
         {/* Liste utilisateurs */}
         <div className="lg:col-span-2 space-y-3">
           {/* Filtres */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+          <div className="bg-card rounded-xl border p-4 space-y-3">
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
                 placeholder={tp('Nom, email, téléphone…')}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                className="flex-1 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
               <select
                 value={filterPlan}
                 onChange={e => setFilterPlan(e.target.value)}
-                className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                className="border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               >
                 <option value="">{tp('Tous les plans')}</option>
                 {Object.entries(PLAN_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer whitespace-nowrap">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer whitespace-nowrap">
                 <input type="checkbox" checked={filterHasPhone} onChange={e => setFilterHasPhone(e.target.checked)} className="rounded" />
                 {tp('Avec téléphone')}
               </label>
             </div>
-            <div className="flex items-center justify-between text-xs text-gray-400">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
                 {users.length}/{allUsers.length} utilisateur(s) —{' '}
-                <span className="text-primary-600 font-semibold">{usersWithPhone.length} avec téléphone</span>
+                <span className="text-primary font-semibold">{usersWithPhone.length} avec téléphone</span>
                 {allUsers.length > 0 && <span className="text-gray-300 ml-1">({totalWithPhone} total)</span>}
               </span>
               {!sendAll && usersWithPhone.length > 0 && (
-                <button onClick={toggleAll} className="text-gray-500 hover:text-gray-900 font-medium transition">
+                <button onClick={toggleAll} className="text-muted-foreground hover:text-foreground font-medium transition">
                   {selected.size === usersWithPhone.length ? 'Tout désélectionner' : tp('Tout sélectionner')}
                 </button>
               )}
@@ -183,11 +183,11 @@ export default function SuperAdminScalorWhatsApp() {
           </div>
 
           {/* Liste */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-card rounded-xl border overflow-hidden">
             {loadingUsers ? (
-              <div className="flex items-center justify-center py-12 text-gray-400 text-sm">{tp('Chargement…')}</div>
+              <div className="flex items-center justify-center py-12 text-muted-foreground text-sm">{tp('Chargement…')}</div>
             ) : users.length === 0 ? (
-              <div className="flex items-center justify-center py-12 text-gray-400 text-sm">{tp('Aucun utilisateur trouvé.')}</div>
+              <div className="flex items-center justify-center py-12 text-muted-foreground text-sm">{tp('Aucun utilisateur trouvé.')}</div>
             ) : (
               <div className="divide-y divide-gray-100 max-h-[440px] overflow-y-auto">
                 {users.map(u => {
@@ -197,7 +197,7 @@ export default function SuperAdminScalorWhatsApp() {
                     <div
                       key={u._id}
                       onClick={() => !sendAll && hasPhone && toggleUser(u._id)}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors ${!sendAll && hasPhone ? 'cursor-pointer hover:bg-gray-50' : ''} ${!hasPhone ? 'opacity-40' : ''} ${isChecked ? 'bg-primary-50/50' : ''}`}
+                      className={`flex items-center gap-3 px-4 py-3 transition-colors ${!sendAll && hasPhone ? 'cursor-pointer hover:bg-background' : ''} ${!hasPhone ? 'opacity-40' : ''} ${isChecked ? 'bg-primary-50/50' : ''}`}
                     >
                       {!sendAll && (
                         <input
@@ -211,17 +211,17 @@ export default function SuperAdminScalorWhatsApp() {
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold text-gray-900 truncate">{u.name}</span>
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${PLAN_COLORS[u.plan] || 'bg-gray-100 text-gray-600'}`}>
+                          <span className="text-sm font-semibold text-foreground truncate">{u.name}</span>
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${PLAN_COLORS[u.plan] || 'bg-muted text-muted-foreground'}`}>
                             {PLAN_LABELS[u.plan] || u.plan}
                           </span>
                           {!u.isActive && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">{tp('Inactif')}</span>}
                         </div>
-                        <p className="text-xs text-gray-400 truncate">{u.email}</p>
+                        <p className="text-xs text-muted-foreground truncate">{u.email}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         {hasPhone
-                          ? <p className="text-xs font-medium text-gray-700">{u.phone}</p>
+                          ? <p className="text-xs font-medium text-foreground">{u.phone}</p>
                           : <p className="text-xs text-gray-300 italic">{tp('Pas de numéro')}</p>
                         }
                         <p className="text-[10px] text-gray-300">{fmt(u.createdAt)}</p>
@@ -237,9 +237,9 @@ export default function SuperAdminScalorWhatsApp() {
         {/* Panneau de composition */}
         <div className="space-y-4">
           {/* Destinataires */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-            <h3 className="text-sm font-bold text-gray-900">{tp('Destinataires')}</h3>
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <div className="bg-card rounded-xl border p-4 space-y-3">
+            <h3 className="text-sm font-bold text-foreground">{tp('Destinataires')}</h3>
+            <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
               <input
                 type="checkbox"
                 checked={sendAll}
@@ -252,28 +252,28 @@ export default function SuperAdminScalorWhatsApp() {
               <select
                 value={sendAllPlan}
                 onChange={e => setSendAllPlan(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               >
                 <option value="">{tp('Tous les plans')}</option>
                 {Object.entries(PLAN_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             ) : (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 {selected.size === 0 ? 'Aucun sélectionné' : `${selected.size} sélectionné(s)`}
               </p>
             )}
           </div>
 
           {/* Message */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
-            <h3 className="text-sm font-bold text-gray-900">{tp('Message')}</h3>
+          <div className="bg-card rounded-xl border p-4 space-y-2">
+            <h3 className="text-sm font-bold text-foreground">{tp('Message')}</h3>
             <textarea
               rows={7}
               placeholder={tp('Rédigez votre message…')}
               value={message}
               onChange={e => setMessage(e.target.value)}
               maxLength={4000}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 resize-none"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 resize-none"
             />
             <p className="text-[10px] text-gray-300 text-right">{message.length}/4000</p>
           </div>
@@ -306,11 +306,11 @@ export default function SuperAdminScalorWhatsApp() {
 
       {/* Résultats */}
       {results && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-          <h3 className="text-sm font-bold text-gray-900">{tp('Rapport d\'envoi')}</h3>
+        <div className="bg-card rounded-xl border p-5 space-y-4">
+          <h3 className="text-sm font-bold text-foreground">{tp('Rapport d\'envoi')}</h3>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { get label() { return tp('Envoyés'); }, value: results.sent, cls: 'bg-primary-50 text-primary-600' },
+              { get label() { return tp('Envoyés'); }, value: results.sent, cls: 'bg-primary-50 text-primary' },
               { get label() { return tp('Échoués'); }, value: results.failed, cls: 'bg-red-50 text-red-500' },
               { get label() { return tp('Ignorés'); }, value: results.skipped, cls: 'bg-amber-50 text-amber-500' },
             ].map(s => (
@@ -321,15 +321,15 @@ export default function SuperAdminScalorWhatsApp() {
             ))}
           </div>
           {results.results?.length > 0 && (
-            <div className="max-h-56 overflow-y-auto divide-y divide-gray-100 border border-gray-100 rounded-lg text-xs">
+            <div className="max-h-56 overflow-y-auto divide-y divide-gray-100 border border-border rounded-lg text-xs">
               {results.results.map((r, i) => (
                 <div key={i} className="flex items-center justify-between px-3 py-2 gap-3">
                   <div className="min-w-0">
-                    <span className="font-semibold text-gray-800">{r.name}</span>
-                    <span className="text-gray-400 ml-2">{r.phone}</span>
+                    <span className="font-semibold text-foreground">{r.name}</span>
+                    <span className="text-muted-foreground ml-2">{r.phone}</span>
                     {r.error && <span className="text-red-500 ml-2">— {r.error}</span>}
                   </div>
-                  <span className={`flex-shrink-0 font-bold px-2 py-0.5 rounded-full text-[10px] uppercase ${STATUS_COLORS[r.status] || 'bg-gray-100 text-gray-500'}`}>
+                  <span className={`flex-shrink-0 font-bold px-2 py-0.5 rounded-full text-[10px] uppercase ${STATUS_COLORS[r.status] || 'bg-muted text-muted-foreground'}`}>
                     {r.status}
                   </span>
                 </div>

@@ -45,12 +45,11 @@ class AnalyticsService {
       return '/api/ecom/analytics/track';
     }
 
-    // In production on scalor.net, use the public API
-    if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
-      return 'https://api.scalor.net/api/ecom/analytics/track';
-    }
-
-    const backendUrl = (process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net').replace(/\/$/, '');
+    const backendUrl = (
+      process.env.NEXT_PUBLIC_BACKEND_URL
+      || process.env.NEXT_PUBLIC_API_URL
+      || 'https://api.scalor.net'
+    ).replace(/\/$/, '');
     return `${backendUrl}/api/ecom/analytics/track`;
   }
 

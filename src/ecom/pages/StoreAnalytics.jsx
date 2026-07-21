@@ -18,10 +18,10 @@ import { tp } from '../i18n/platform.js';
  */
 const TABS = [
   { key: 'summary',   get label() { return tp('Résumé'); },    get shortLabel() { return tp('Résumé'); },  icon: LayoutGrid,  iconClass: 'text-primary-500' },
-  { key: 'sales',     label: 'Ventes',    shortLabel: 'Ventes',  icon: ShoppingBag, iconClass: 'text-primary-600' },
+  { key: 'sales',     label: 'Ventes',    shortLabel: 'Ventes',  icon: ShoppingBag, iconClass: 'text-primary' },
   { key: 'orders',    label: 'Commandes', shortLabel: 'Cmd',     icon: Package,     iconClass: 'text-scalor-copper' },
   { key: 'delivery',  label: 'Livraison', shortLabel: 'Livr.',   icon: Truck,       iconClass: 'text-primary-500' },
-  { key: 'visits',    label: 'Visites',   shortLabel: 'Visites', icon: Eye,         iconClass: 'text-primary-600' },
+  { key: 'visits',    label: 'Visites',   shortLabel: 'Visites', icon: Eye,         iconClass: 'text-primary' },
   { key: 'customers', label: 'Clients',   shortLabel: 'Clients', icon: Users,       iconClass: 'text-scalor-copper-light' },
 ];
 
@@ -330,29 +330,29 @@ export default function StoreAnalytics() {
     : `${fmtDateLabel(startDate)} – ${fmtDateLabel(endDate)}`;
 
   return (
-    <div className="max-w-[1100px] mx-auto px-3 sm:px-4 py-5 sm:py-6 space-y-5 sm:space-y-6 bg-gray-50 min-h-screen">
+    <div className="max-w-[1100px] mx-auto px-3 sm:px-4 py-5 sm:py-6 space-y-5 sm:space-y-6 bg-background min-h-screen">
       <div className="space-y-1">
         <h1 className="text-[34px] sm:text-2xl font-semibold text-gray-950 leading-none">{tp('Analyses')}</h1>
-        <p className="text-sm text-gray-500">{tp('Vue simple des ventes, commandes, livraisons et visites de la boutique.')}</p>
+        <p className="text-sm text-muted-foreground">{tp('Vue simple des ventes, commandes, livraisons et visites de la boutique.')}</p>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-4">
+      <div className="bg-card border border-border rounded-xl p-4 space-y-4">
         <div className="relative" ref={pickerRef}>
           <button
             onClick={() => setDatePickerOpen(v => !v)}
-            className="w-full flex items-center gap-2.5 px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 hover:border-gray-300 transition"
+            className="w-full flex items-center gap-2.5 px-4 py-3 bg-card border border-border rounded-lg text-sm text-foreground hover:border-gray-300 transition"
           >
-            <Calendar className="w-4 h-4 text-gray-500" />
+            <Calendar className="w-4 h-4 text-muted-foreground" />
             <span className="font-medium">{dateRangeLabel}</span>
-            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">
+            <span className="ml-auto text-xs text-muted-foreground hidden sm:inline">
               {fmtDateLabel(startDate)} – {fmtDateLabel(endDate)}
             </span>
           </button>
           {datePickerOpen && (
-            <div className="absolute z-30 mt-2 left-0 right-0 sm:right-auto sm:min-w-[560px] bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden flex flex-col sm:flex-row">
+            <div className="absolute z-30 mt-2 left-0 right-0 sm:right-auto sm:min-w-[560px] bg-card border border-border rounded-xl shadow-lg overflow-hidden flex flex-col sm:flex-row">
               {/* Presets sidebar */}
-              <div className="w-full sm:w-60 bg-gray-50 p-2 sm:border-r border-gray-200">
-                <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">{tp('Périodes rapides')}</p>
+              <div className="w-full sm:w-60 bg-background p-2 sm:border-r border-border">
+                <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{tp('Périodes rapides')}</p>
                 <ul className="space-y-0.5">
                   {DATE_PRESETS.map(p => {
                     const selected = p.key === presetKey;
@@ -363,7 +363,7 @@ export default function StoreAnalytics() {
                           className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition ${
                             selected
                               ? 'bg-gray-900 text-white font-medium'
-                              : 'text-gray-700 hover:bg-white'
+                              : 'text-foreground hover:bg-card'
                           }`}
                         >
                           {p.label}
@@ -376,19 +376,19 @@ export default function StoreAnalytics() {
               </div>
               {/* Custom range */}
               <div className="flex-1 p-5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">{tp('Plage personnalisée')}</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">{tp('Plage personnalisée')}</p>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className="flex flex-col text-xs text-gray-600">
+                  <label className="flex flex-col text-xs text-muted-foreground">
                     {tp('Date de début')}
                     <input
                       type="date"
                       value={startDate}
                       max={endDate}
                       onChange={(e) => { setStartDate(e.target.value); setPresetKey('custom'); }}
-                      className="mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                      className="mt-1 px-3 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                     />
                   </label>
-                  <label className="flex flex-col text-xs text-gray-600">
+                  <label className="flex flex-col text-xs text-muted-foreground">
                     {tp('Date de fin')}
                     <input
                       type="date"
@@ -396,14 +396,14 @@ export default function StoreAnalytics() {
                       min={startDate}
                       max={toDateInput(new Date())}
                       onChange={(e) => { setEndDate(e.target.value); setPresetKey('custom'); }}
-                      className="mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                      className="mt-1 px-3 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                     />
                   </label>
                 </div>
                 <div className="mt-5 flex items-center justify-end gap-2">
                   <button
                     onClick={() => setDatePickerOpen(false)}
-                    className="px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-md"
+                    className="px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted rounded-md"
                   >
                     {tp('Annuler')}
                   </button>
@@ -419,7 +419,7 @@ export default function StoreAnalytics() {
           )}
         </div>
 
-        <div className="-mx-1 px-1 flex items-center gap-2 overflow-x-auto scrollbar-hide border-b border-gray-200 pb-2">
+        <div className="-mx-1 px-1 flex items-center gap-2 overflow-x-auto scrollbar-hide border-b border-border pb-2">
         {TABS.map(t => {
           const Icon = t.icon;
           const active = activeTab === t.key;
@@ -430,7 +430,7 @@ export default function StoreAnalytics() {
               className={`flex-shrink-0 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 text-[13px] sm:text-sm whitespace-nowrap border-b-2 transition ${
                 active
                   ? 'border-gray-900 text-gray-950 font-medium'
-                  : 'border-transparent text-gray-500 hover:text-gray-800'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               <Icon className="hidden sm:block w-4 h-4" />
@@ -444,8 +444,8 @@ export default function StoreAnalytics() {
 
       {/* ─── Tab content ────────────────────────────────────────── */}
       {loading && !data ? (
-        <div className="flex items-center justify-center min-h-[40vh] bg-white border border-gray-200 rounded-xl">
-          <Loader2 className="w-7 h-7 animate-spin text-gray-700" />
+        <div className="flex items-center justify-center min-h-[40vh] bg-card border border-border rounded-xl">
+          <Loader2 className="w-7 h-7 animate-spin text-foreground" />
         </div>
       ) : (
         <>
@@ -466,9 +466,9 @@ export default function StoreAnalytics() {
  * ═══════════════════════════════════════════════════════════════ */
 const Card = ({ value, label, highlight = false, accent = 'default' }) => {
   const accents = {
-    default: 'bg-white border-gray-200',
-    green:   'bg-white border-gray-200',
-    copper:  'bg-white border-gray-200',
+    default: 'bg-card border-border',
+    green:   'bg-card border-border',
+    copper:  'bg-card border-border',
   };
   return (
     <div className={`rounded-xl border p-4 min-h-[104px] ${accents[accent] || accents.default}`}>
@@ -477,7 +477,7 @@ const Card = ({ value, label, highlight = false, accent = 'default' }) => {
       }`}>
         {value}
       </p>
-      <p className="text-sm text-gray-500">{label}</p>
+      <p className="text-sm text-muted-foreground">{label}</p>
     </div>
   );
 };
@@ -489,7 +489,7 @@ const SectionTitle = ({ children }) => (
 );
 
 const EmptyRow = ({ text = 'Aucune donnée disponible' }) => (
-  <div className="bg-white border border-gray-200 rounded-xl py-10 flex items-center justify-center text-sm text-gray-400">
+  <div className="bg-card border border-border rounded-xl py-10 flex items-center justify-center text-sm text-muted-foreground">
     {text}
   </div>
 );
@@ -532,7 +532,7 @@ function SummaryTab({ kpi, daily, fmtCurrency }) {
 
       <section className="space-y-3">
         <SectionTitle>{tp('Revenu encaissé quotidien')}</SectionTitle>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="bg-card border border-border rounded-xl p-4">
           <AreaChart data={daily.series} color="#0F6B4F" fill="rgba(15,107,79,0.14)" yFormat={(v) => fmtCompactCurrency(v)} />
         </div>
       </section>
@@ -569,7 +569,7 @@ function SalesTab({ kpi, daily, fmtCurrency }) {
 
       <section className="space-y-3">
         <SectionTitle>{tp('Revenu encaissé quotidien')}</SectionTitle>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="bg-card border border-border rounded-xl p-4">
           <AreaChart data={salesSeries} color="#0F6B4F" fill="rgba(15,107,79,0.14)" yFormat={(v) => fmtCompactCurrency(v)} />
         </div>
       </section>
@@ -619,22 +619,22 @@ function SalesTab({ kpi, daily, fmtCurrency }) {
 
         <section className="space-y-3">
           <SectionTitle>{tp('Ventes par canal')}</SectionTitle>
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+          <div className="bg-card border border-border rounded-xl p-4 space-y-3">
             {kpi.channelPerformance.length === 0 ? (
-              <div className="text-sm text-gray-400 text-center py-6">{tp('Aucune donnée par canal')}</div>
+              <div className="text-sm text-muted-foreground text-center py-6">{tp('Aucune donnée par canal')}</div>
             ) : kpi.channelPerformance.map((channel) => (
-              <div key={channel.channel} className="border border-gray-100 rounded-lg p-3 space-y-2">
+              <div key={channel.channel} className="border border-border rounded-lg p-3 space-y-2">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{formatChannelLabel(channel.channel)}</p>
-                    <p className="text-xs text-gray-500">{fmtNumber(channel.orders)} commandes · {((channel.orders / totalChannelOrders) * 100).toFixed(0)}%</p>
+                    <p className="text-sm font-medium text-foreground">{formatChannelLabel(channel.channel)}</p>
+                    <p className="text-xs text-muted-foreground">{fmtNumber(channel.orders)} commandes · {((channel.orders / totalChannelOrders) * 100).toFixed(0)}%</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">{fmtCurrency(channel.revenue)}</p>
-                    <p className="text-xs text-gray-500">encaissé: {fmtCurrency(channel.deliveredRevenue)}</p>
+                    <p className="text-sm font-semibold text-foreground">{fmtCurrency(channel.revenue)}</p>
+                    <p className="text-xs text-muted-foreground">encaissé: {fmtCurrency(channel.deliveredRevenue)}</p>
                   </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded overflow-hidden">
+                <div className="h-2 bg-muted rounded overflow-hidden">
                   <div className="h-full bg-gray-900" style={{ width: `${Math.min((channel.orders / totalChannelOrders) * 100, 100)}%` }} />
                 </div>
               </div>
@@ -674,20 +674,20 @@ function OrdersTab({ kpi }) {
 
       <section className="space-y-3">
         <SectionTitle>{tp('Entonnoir COD')}</SectionTitle>
-        <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+        <div className="bg-card border border-border rounded-xl p-4 space-y-3">
           {steps.map((s, i) => {
             const pct = (s.count / total) * 100;
             const Icon = s.icon;
             return (
               <div key={i}>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <span className="flex items-center gap-1.5 text-gray-700 font-medium">
+                  <span className="flex items-center gap-1.5 text-foreground font-medium">
                     <Icon className="w-3.5 h-3.5" style={{ color: s.color }} />
                     {s.label}
                   </span>
-                  <span className="text-gray-500">{fmtNumber(s.count)} · {pct.toFixed(1)}%</span>
+                  <span className="text-muted-foreground">{fmtNumber(s.count)} · {pct.toFixed(1)}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded overflow-hidden">
+                <div className="h-2 bg-muted rounded overflow-hidden">
                   <div
                     className="h-full transition-all"
                     style={{ width: `${Math.min(pct, 100)}%`, background: s.color }}
@@ -701,7 +701,7 @@ function OrdersTab({ kpi }) {
 
       <section className="space-y-3">
         <SectionTitle>{tp('Canal de commande')}</SectionTitle>
-        <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+        <div className="bg-card border border-border rounded-xl p-4 space-y-3">
           <ChannelRow
             icon={<MessageCircle className="w-4 h-4 text-[#25D366]" />}
             label="WhatsApp"
@@ -710,7 +710,7 @@ function OrdersTab({ kpi }) {
             color="#25D366"
           />
           <ChannelRow
-            icon={<LayoutGrid className="w-4 h-4 text-primary-600" />}
+            icon={<LayoutGrid className="w-4 h-4 text-primary" />}
             label="Boutique en ligne"
             count={store}
             pct={(store / totalCh) * 100}
@@ -740,7 +740,7 @@ function DeliveryTab({ kpi, fmtCurrency }) {
 
       <section className="space-y-3">
         <SectionTitle>{tp('Top zones de livraison')}</SectionTitle>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="bg-card border border-border rounded-xl p-4">
           {cities.length === 0 ? (
             <EmptyRow text="Aucune zone de livraison sur cette période" />
           ) : (
@@ -750,15 +750,15 @@ function DeliveryTab({ kpi, fmtCurrency }) {
                 return (
                   <li key={i}>
                     <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="flex items-center gap-1.5 font-medium text-gray-800">
-                        <MapPin className="w-3.5 h-3.5 text-primary-600" />
+                      <span className="flex items-center gap-1.5 font-medium text-foreground">
+                        <MapPin className="w-3.5 h-3.5 text-primary" />
                         {c.name}
                       </span>
-                      <span className="text-gray-500">
+                      <span className="text-muted-foreground">
                         {fmtNumber(c.count)} cmd · {fmtNumber(c.delivered)} livrées · {success.toFixed(0)}%
                       </span>
                     </div>
-                    <div className="h-2 bg-gray-100 rounded overflow-hidden relative">
+                    <div className="h-2 bg-muted rounded overflow-hidden relative">
                       <div
                         className="h-full"
                         style={{ width: `${(c.count / maxCount) * 100}%`, background: '#0F6B4F' }}
@@ -810,7 +810,7 @@ function VisitsTab({ kpi, daily }) {
       {/* Daily visits chart */}
       <section className="space-y-3">
         <SectionTitle>{tp('Visites quotidiennes')}</SectionTitle>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="bg-card border border-border rounded-xl p-4">
           <AreaChart
             data={daily.visitSeries}
             color="#C56A2D"
@@ -824,7 +824,7 @@ function VisitsTab({ kpi, daily }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="space-y-3">
           <SectionTitle>{tp('Par type d\'appareil')}</SectionTitle>
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+          <div className="bg-card border border-border rounded-xl p-4 space-y-3">
             <DeviceLine icon={Monitor}    label="Ordinateur" count={desktop} total={deviceTotal} />
             <DeviceLine icon={Smartphone} label="Mobile"     count={mobile}  total={deviceTotal} />
             <DeviceLine icon={Tablet}     label="Tablette"   count={tablet}  total={deviceTotal} />
@@ -919,13 +919,13 @@ const DeviceLine = ({ icon: Icon, label, count, total }) => {
   return (
     <div>
       <div className="flex items-center justify-between text-xs mb-1.5">
-        <span className="flex items-center gap-1.5 font-medium text-gray-700">
-          <Icon className="w-4 h-4 text-primary-600" />
+        <span className="flex items-center gap-1.5 font-medium text-foreground">
+          <Icon className="w-4 h-4 text-primary" />
           {label}
         </span>
-        <span className="text-gray-500">{fmtNumber(count)} · {pct.toFixed(0)}%</span>
+        <span className="text-muted-foreground">{fmtNumber(count)} · {pct.toFixed(0)}%</span>
       </div>
-      <div className="h-2 bg-gray-100 rounded overflow-hidden">
+      <div className="h-2 bg-muted rounded overflow-hidden">
         <div
           className="h-full"
           style={{ width: `${pct}%`, background: '#0F6B4F' }}
@@ -938,7 +938,7 @@ const DeviceLine = ({ icon: Icon, label, count, total }) => {
 const RankedCard = ({ items, icon: Icon, emptyText = 'Aucune donnée', valueFormatter = fmtNumber }) => {
   if (!items || items.length === 0) {
     return (
-      <div className="bg-white border border-gray-200 rounded-xl py-10 flex items-center justify-center text-sm text-gray-400">
+      <div className="bg-card border border-border rounded-xl py-10 flex items-center justify-center text-sm text-muted-foreground">
         {emptyText}
       </div>
     );
@@ -946,22 +946,22 @@ const RankedCard = ({ items, icon: Icon, emptyText = 'Aucune donnée', valueForm
   const max = Math.max(...items.map(i => i.value), 1);
   const total = items.reduce((s, i) => s + i.value, 0) || 1;
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+    <div className="bg-card border border-border rounded-xl p-4 space-y-3">
       {items.slice(0, 8).map((it, i) => {
         const pct = (it.value / total) * 100;
         return (
           <div key={i}>
             <div className="flex items-center justify-between text-xs mb-1.5 gap-2">
-              <span className="flex items-center gap-1.5 text-gray-700 truncate min-w-0">
-                {Icon && <Icon className="w-3.5 h-3.5 text-primary-600 flex-shrink-0" />}
+              <span className="flex items-center gap-1.5 text-foreground truncate min-w-0">
+                {Icon && <Icon className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
                 <span className="truncate font-medium" title={it.label}>{it.label}</span>
-                {it.sub && <span className="text-[10px] text-gray-400 truncate">· {it.sub}</span>}
+                {it.sub && <span className="text-[10px] text-muted-foreground truncate">· {it.sub}</span>}
               </span>
-              <span className="text-gray-500 flex-shrink-0 font-semibold">
-                {valueFormatter(it.value)} <span className="text-gray-400 font-normal">· {pct.toFixed(0)}%</span>
+              <span className="text-muted-foreground flex-shrink-0 font-semibold">
+                {valueFormatter(it.value)} <span className="text-muted-foreground font-normal">· {pct.toFixed(0)}%</span>
               </span>
             </div>
-            <div className="h-1.5 bg-gray-100 rounded overflow-hidden">
+            <div className="h-1.5 bg-muted rounded overflow-hidden">
               <div
                 className="h-full"
                 style={{ width: `${(it.value / max) * 100}%`, background: '#0F6B4F' }}
@@ -1040,7 +1040,7 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
               sub === s.key
                 ? 'bg-gray-900 text-white'
-                : 'text-gray-600 hover:bg-gray-100'
+                : 'text-muted-foreground hover:bg-muted'
             }`}
           >
             {s.label}
@@ -1051,18 +1051,18 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={tp('Rechercher (nom, téléphone, ville)…')}
-          className="ml-auto w-full sm:w-64 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-700 outline-none transition focus:border-gray-400"
+          className="ml-auto w-full sm:w-64 rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground outline-none transition focus:border-gray-400"
         />
       </div>
 
       {rows.length === 0 ? (
         <EmptyRow text={query ? 'Aucun client ne correspond à la recherche' : tp('Aucun client sur la période')} />
       ) : (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-left text-[11px] uppercase tracking-wide text-gray-400">
+                <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                   <th className="px-4 py-2.5 font-medium">{tp('Client')}</th>
                   <th className="px-4 py-2.5 font-medium">{tp('Téléphone')}</th>
                   <th className="px-4 py-2.5 font-medium">{tp('Ville')}</th>
@@ -1073,25 +1073,25 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {rows.map((c) => (
-                  <tr key={c.key} className="hover:bg-gray-50 transition">
+                  <tr key={c.key} className="hover:bg-background transition">
                     <td className="px-4 py-2.5">
-                      <span className="font-medium text-gray-800">{c.name}</span>
+                      <span className="font-medium text-foreground">{c.name}</span>
                       {c.ordersCount >= 2 && (
                         <span className="ml-2 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">{tp('Récurrent')}</span>
                       )}
                     </td>
-                    <td className="px-4 py-2.5 text-gray-600 tabular-nums">{c.phone || '—'}</td>
-                    <td className="px-4 py-2.5 text-gray-600">{c.city || '—'}</td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-gray-800">{fmtNumber(c.ordersCount)}</td>
-                    <td className="px-4 py-2.5 text-right tabular-nums font-medium text-gray-900">{fmtCurrency(c.totalSpent)}</td>
-                    <td className="px-4 py-2.5 text-right text-gray-500">{fmtDate(c.lastOrderAt)}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground tabular-nums">{c.phone || '—'}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground">{c.city || '—'}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-foreground">{fmtNumber(c.ordersCount)}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums font-medium text-foreground">{fmtCurrency(c.totalSpent)}</td>
+                    <td className="px-4 py-2.5 text-right text-muted-foreground">{fmtDate(c.lastOrderAt)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           {(filtered.length > MAX_ROWS || customers?.truncated) && (
-            <div className="border-t border-gray-100 px-4 py-2 text-[11px] text-gray-400">
+            <div className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
               {filtered.length > MAX_ROWS && `${MAX_ROWS} premiers clients affichés sur ${fmtNumber(filtered.length)}. `}
               {customers?.truncated && 'Basé sur les 1 000 dernières commandes de la période.'}
             </div>
@@ -1104,14 +1104,14 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
         {kpi.topCities.length === 0 ? (
           <EmptyRow />
         ) : (
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+          <div className="bg-card border border-border rounded-xl p-4 space-y-3">
             {kpi.topCities.slice(0, 5).map((c, i) => (
               <div key={i} className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-2 text-gray-700 font-medium">
-                  <MapPin className="w-4 h-4 text-primary-600" />
+                <span className="flex items-center gap-2 text-foreground font-medium">
+                  <MapPin className="w-4 h-4 text-primary" />
                   {c.name}
                 </span>
-                <span className="text-gray-500">{fmtNumber(c.count)} commandes · {fmtCurrency(c.revenue)}</span>
+                <span className="text-muted-foreground">{fmtNumber(c.count)} commandes · {fmtCurrency(c.revenue)}</span>
               </div>
             ))}
           </div>
@@ -1124,10 +1124,10 @@ function CustomersTab({ kpi, customers, fmtCurrency }) {
 const ChannelRow = ({ icon, label, count, pct, color }) => (
   <div>
     <div className="flex items-center justify-between text-xs mb-1.5">
-      <span className="flex items-center gap-1.5 font-medium text-gray-700">{icon}{label}</span>
-      <span className="text-gray-500">{fmtNumber(count)} · {pct.toFixed(0)}%</span>
+      <span className="flex items-center gap-1.5 font-medium text-foreground">{icon}{label}</span>
+      <span className="text-muted-foreground">{fmtNumber(count)} · {pct.toFixed(0)}%</span>
     </div>
-    <div className="h-2 bg-gray-100 rounded overflow-hidden">
+    <div className="h-2 bg-muted rounded overflow-hidden">
       <div className="h-full" style={{ width: `${pct}%`, background: color }} />
     </div>
   </div>
@@ -1135,9 +1135,9 @@ const ChannelRow = ({ icon, label, count, pct, color }) => (
 
 const StatusCard = ({ icon: Icon, label, count, tone = 'gray' }) => {
   const tones = {
-    gray:   'bg-white border-gray-200 text-gray-700',
-    green:  'bg-white border-gray-200 text-gray-700',
-    copper: 'bg-white border-gray-200 text-gray-700',
+    gray:   'bg-card border-border text-foreground',
+    green:  'bg-card border-border text-foreground',
+    copper: 'bg-card border-border text-foreground',
   };
   return (
     <div className={`rounded-xl border p-4 ${tones[tone]}`}>
@@ -1164,7 +1164,7 @@ function AreaChart({ data, color = '#10b981', fill = 'rgba(16,185,129,0.15)', yF
   const innerH = H - padT - padB;
 
   if (!data || data.length === 0) {
-    return <div className="h-[260px] flex items-center justify-center text-sm text-gray-400">{tp('Aucune donnée')}</div>;
+    return <div className="h-[260px] flex items-center justify-center text-sm text-muted-foreground">{tp('Aucune donnée')}</div>;
   }
 
   const max = Math.max(...data.map(d => d.value), 1);

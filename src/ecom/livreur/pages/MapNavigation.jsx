@@ -57,7 +57,7 @@ export default function MapNavigation() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center active:scale-95"
+            className="w-10 h-10 rounded-full bg-card/20 backdrop-blur-sm flex items-center justify-center active:scale-95"
           >
             <ArrowLeft size={20} className="text-white" />
           </button>
@@ -86,14 +86,14 @@ export default function MapNavigation() {
           />
         ) : (
           <div className="absolute inset-0 bg-gray-800 flex flex-col items-center justify-center text-center px-8">
-            <MapPin size={48} className="text-gray-500 mb-3" />
-            <p className="text-gray-400 text-sm">{tp('Adresse non disponible pour afficher la carte')}</p>
+            <MapPin size={48} className="text-muted-foreground mb-3" />
+            <p className="text-muted-foreground text-sm">{tp('Adresse non disponible pour afficher la carte')}</p>
           </div>
         )}
       </div>
 
       {/* Bottom panel */}
-      <div className="bg-white rounded-t-3xl px-4 pt-5 pb-8 shadow-2xl">
+      <div className="bg-card rounded-t-3xl px-4 pt-5 pb-8 shadow-2xl">
         {/* Handle */}
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
 
@@ -104,17 +104,17 @@ export default function MapNavigation() {
                 <Truck size={18} className="text-indigo-600" />
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="font-bold text-gray-900">{order.clientName || tp('Client')}</h2>
+                <h2 className="font-bold text-foreground">{order.clientName || tp('Client')}</h2>
                 {address && (
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <MapPin size={13} className="text-gray-400 shrink-0" />
-                    <p className="text-gray-500 text-sm truncate">{address}</p>
+                    <MapPin size={13} className="text-muted-foreground shrink-0" />
+                    <p className="text-muted-foreground text-sm truncate">{address}</p>
                   </div>
                 )}
                 {phone && (
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <Phone size={13} className="text-gray-400 shrink-0" />
-                    <p className="text-gray-500 text-sm">{phone}</p>
+                    <Phone size={13} className="text-muted-foreground shrink-0" />
+                    <p className="text-muted-foreground text-sm">{phone}</p>
                   </div>
                 )}
               </div>
@@ -149,7 +149,7 @@ export default function MapNavigation() {
               <button
                 onClick={copyAddress}
                 disabled={!address}
-                className="py-3 rounded-xl bg-gray-100 text-gray-700 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 disabled:opacity-40"
+                className="py-3 rounded-xl bg-muted text-foreground text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 disabled:opacity-40"
               >
                 <Copy size={16} />
                 {copied ? 'Copié !' : tp('Copier adresse')}
@@ -157,7 +157,7 @@ export default function MapNavigation() {
             </div>
           </>
         ) : (
-          <p className="text-center text-gray-400 text-sm py-4">{tp('Données introuvables')}</p>
+          <p className="text-center text-muted-foreground text-sm py-4">{tp('Données introuvables')}</p>
         )}
       </div>
     </div>

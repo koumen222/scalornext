@@ -4,14 +4,14 @@ import ecomApi from '../services/ecommApi.js';
 import { tp } from '../i18n/platform.js';
 
 const PixelCard = ({ title, icon, color, description, fields, values, onChange, validatePixel, extra }) => (
-  <div className="bg-white rounded-2xl border border-gray-200 p-5">
+  <div className="bg-card rounded-2xl border p-5">
     <div className="flex items-center gap-3 mb-4">
       <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: color + '15', color }}>
         {icon}
       </div>
       <div>
-        <h3 className="text-sm font-bold text-gray-900">{title}</h3>
-        <p className="text-xs text-gray-500">{description}</p>
+        <h3 className="text-sm font-bold text-foreground">{title}</h3>
+        <p className="text-xs text-muted-foreground">{description}</p>
       </div>
     </div>
     <div className="space-y-3">
@@ -19,18 +19,18 @@ const PixelCard = ({ title, icon, color, description, fields, values, onChange, 
         const err = validatePixel ? validatePixel(f.key, values[f.key]) : null;
         return (
           <div key={f.key}>
-            <label className="text-xs font-semibold text-gray-600 mb-1 block">{f.label}</label>
+            <label className="text-xs font-semibold text-muted-foreground mb-1 block">{f.label}</label>
             <input
               type="text"
               value={values[f.key] || ''}
               onChange={(e) => onChange(f.key, e.target.value)}
               placeholder={f.placeholder}
-              className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent transition bg-gray-50 focus:bg-white ${
-                err ? 'border-red-300 bg-red-50' : 'border-gray-200'
+              className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent transition bg-background focus:bg-card ${
+                err ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
             />
             {err && <p className="text-[11px] text-red-500 mt-1 font-medium">{err} — {f.hint}</p>}
-            {!err && f.hint && <p className="text-[11px] text-gray-400 mt-1">{f.hint}</p>}
+            {!err && f.hint && <p className="text-[11px] text-muted-foreground mt-1">{f.hint}</p>}
           </div>
         );
       })}
@@ -45,7 +45,7 @@ const CodePreview = ({ pixels }) => {
 
   return (
     <div className="bg-gray-900 rounded-2xl p-5 overflow-x-auto">
-      <p className="text-xs font-bold text-gray-400 mb-3">{tp('Code injecté automatiquement dans votre boutique :')}</p>
+      <p className="text-xs font-bold text-muted-foreground mb-3">{tp('Code injecté automatiquement dans votre boutique :')}</p>
       <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap leading-relaxed">
 {pixels.metaPixelId && `<!-- Meta Pixel -->
 <script>
@@ -210,8 +210,8 @@ const BoutiquePixel = () => {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Pixel & Tracking</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{tp('Connectez vos pixels pour tracker les conversions')}</p>
+          <h1 className="text-xl font-bold text-foreground">Pixel & Tracking</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{tp('Connectez vos pixels pour tracker les conversions')}</p>
         </div>
         <button
           onClick={handleSave}
@@ -253,7 +253,7 @@ const BoutiquePixel = () => {
             <div className="space-y-2.5">
               {/* test_event_code input — pour faire apparaître l'event dans le tab Test Events de Meta */}
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1 block">
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
                   {tp('Test Event Code (optionnel)')}
                 </label>
                 <input
@@ -261,9 +261,9 @@ const BoutiquePixel = () => {
                   value={testEventCode}
                   onChange={(e) => setTestEventCode(e.target.value.trim())}
                   placeholder="TEST12345"
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition bg-gray-50 focus:bg-white font-mono"
+                  className="w-full px-3 py-2 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition bg-background focus:bg-card font-mono"
                 />
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="text-[11px] text-muted-foreground mt-1">
                   Récupère-le dans Events Manager → onglet <em>{tp('Test events')}</em>. Sans ce code, l'événement n'apparaît pas dans ce tab (mais sera visible dans l'Overview après quelques minutes).
                 </p>
               </div>
@@ -377,8 +377,8 @@ const BoutiquePixel = () => {
       <CodePreview pixels={pixels} />
 
       {/* Events tracked */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-3">{tp('Événements trackés automatiquement')}</h2>
+      <div className="bg-card rounded-2xl border p-5">
+        <h2 className="text-sm font-bold text-foreground mb-3">{tp('Événements trackés automatiquement')}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { name: 'PageView', desc: 'Chaque visite de page', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg> },
@@ -390,10 +390,10 @@ const BoutiquePixel = () => {
             { name: 'Search', desc: 'Recherche produit', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg> },
             { name: 'CompleteRegistration', get desc() { return tp('Création de compte'); }, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
           ].map(e => (
-            <div key={e.name} className="p-3 bg-gray-50 rounded-xl">
-              <span className="w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 mb-2">{e.icon}</span>
-              <p className="text-xs font-bold text-gray-900">{e.name}</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">{e.desc}</p>
+            <div key={e.name} className="p-3 bg-background rounded-xl">
+              <span className="w-7 h-7 rounded-lg bg-card border border-border flex items-center justify-center text-muted-foreground mb-2">{e.icon}</span>
+              <p className="text-xs font-bold text-foreground">{e.name}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{e.desc}</p>
             </div>
           ))}
         </div>

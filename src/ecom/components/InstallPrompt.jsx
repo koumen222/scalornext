@@ -74,7 +74,7 @@ export default function InstallPrompt() {
     <div className="fixed bottom-0 inset-x-0 z-50 p-4 sm:p-0 sm:bottom-6 sm:right-6 sm:left-auto sm:max-w-sm">
       <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl shadow-2xl p-4 text-white">
         <div className="flex items-start gap-3">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 bg-card/20 rounded-xl flex items-center justify-center flex-shrink-0">
             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
@@ -97,13 +97,13 @@ export default function InstallPrompt() {
         <div className="flex gap-2 mt-3">
           <button
             onClick={dismiss}
-            className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-white/10 hover:bg-white/20 transition"
+            className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-card/10 hover:bg-card/20 transition"
           >
             {tp('Plus tard')}
           </button>
           <button
             onClick={install}
-            className="flex-1 px-3 py-2 text-xs font-bold rounded-lg bg-white text-primary-600 hover:bg-primary-50 transition flex items-center justify-center gap-1.5"
+            className="flex-1 px-3 py-2 text-xs font-bold rounded-lg bg-card text-primary hover:bg-primary-50 transition flex items-center justify-center gap-1.5"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />

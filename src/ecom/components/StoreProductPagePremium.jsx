@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import { PAYMENT_METHOD_META } from '../utils/storePaymentMethods.js';
 import { useStorefrontT, useMerchantTextLocalizer, getStorefrontT, localizeMerchantDefault, StorefrontLangContext } from '../i18n/storefront.js';
 import {
   Award,
@@ -23,7 +24,40 @@ import {
 } from 'lucide-react';
 import QuickOrderModal from './QuickOrderModal.jsx';
 import EmbeddedOrderForm from './EmbeddedOrderForm.jsx';
+import CustomCodeSection from './CustomCodeSection.jsx';
 import { StorefrontHeader } from './StorefrontShared.jsx';
+
+// ─── Sections personnalisées ajoutées par l'IA (customSections) ──────────────
+// Chaque entrée est une vraie section : { id, label, placement: 'top'|'bottom', enabled, html }.
+// Compat ascendante : les anciennes entrées { html } reçoivent id/label/placement par défaut.
+export const normalizeAiSections = (list) => (Array.isArray(list) ? list : []).map((s, i) => ({
+  id: s.id || `cs_${i}`,
+  label: s.label || 'Section IA',
+  placement: s.placement === 'top' ? 'top' : 'bottom',
+  enabled: s.enabled !== false,
+  html: s.html || '',
+  style: (s.style && typeof s.style === 'object') ? s.style : {},
+}));
+
+const AiCustomSections = ({ sections, placement, onSectionClick, activeSection }) => (
+  <>
+    {sections
+      .filter((s) => s.placement === placement && s.enabled && s.html.trim())
+      .map((s) => (
+        <div
+          key={s.id}
+          data-premium-section={s.id}
+          onClick={onSectionClick ? () => onSectionClick(s.id) : undefined}
+          style={onSectionClick ? {
+            cursor: 'pointer',
+            ...(activeSection === s.id ? { outline: '2px solid #6366f1', outlineOffset: '-2px', borderRadius: 8 } : {}),
+          } : undefined}
+        >
+          <CustomCodeSection content={{ html: s.html, style: s.style }} />
+        </div>
+      ))}
+  </>
+);
 import { useStoreCart } from '../hooks/useStoreCart.js';
 import { formatMoney } from '../utils/currency.js';
 import { storeProductsApi } from '../services/storeApi.js';
@@ -445,9 +479,14 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
       { question: t('premium.faq4Q'), answer: t('premium.faq4A') },
       { question: t('premium.faq5Q'), answer: t('premium.faq5A') },
     ];
+  const scalorPayOn = store?.paymentMethods?.scalorPay === true;
+  // Quand Scalor Pay est actif, tout libellé « paiement à la livraison » (y compris
+  // dans la réassurance générée par l'IA et stockée en page) est remplacé.
+  const codRegex = /paiement\s+(à|a)\s+la\s+livraison|cash\s+on\s+delivery|pago\s+contra\s+entrega/i;
+  const adaptCodLabel = (label) => (scalorPayOn && codRegex.test(String(label || '')) ? t('shipping.codOrOnline') : label);
   const reassurance = asArray(premium.hero?.reassurance).length
     ? premium.hero.reassurance
-    : [t('shipping.codTitle'), t('store.fastDelivery'), t('premium.whatsappSupport')];
+    : [scalorPayOn ? t('shipping.codOrOnline') : t('shipping.codTitle'), t('store.fastDelivery'), t('premium.whatsappSupport')];
   const heroAccordions = asArray(premium.hero?.accordions).length
     ? premium.hero.accordions
     : asArray(product?._pageData?.hero_accordions).length
@@ -666,10 +705,18 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
 
       <StorefrontHeader store={store} cartCount={cartCount} prefix={prefix} />
 
-      {/* Custom HTML banner injected by AI (before main content) */}
+      {/* Custom HTML banner injected by AI (before main content) — legacy */}
       {productPageConfig?.customHtml && (
         <div dangerouslySetInnerHTML={{ __html: productPageConfig.customHtml }} />
       )}
+
+      {/* Sections personnalisées — placement haut (barres d'annonce, bannières) */}
+      <AiCustomSections
+        sections={normalizeAiSections(productPageConfig?.customSections)}
+        placement="top"
+        onSectionClick={onSectionClick}
+        activeSection={activeSection}
+      />
 
       <main>
         <section
@@ -782,9 +829,26 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
 
             <div className="premium-reassurance">
               {reassurance.slice(0, 3).map((item, index) => (
-                <span key={index}>{index === 0 ? <Truck size={14} /> : index === 1 ? <Shield size={14} /> : <BadgeCheck size={14} />}{tv(item)}</span>
+                <span key={index}>{index === 0 ? <Truck size={14} /> : index === 1 ? <Shield size={14} /> : <BadgeCheck size={14} />}{adaptCodLabel(tv(item))}</span>
               ))}
             </div>
+
+            {/* Opérateurs de paiement en ligne (Scalor Pay actif) */}
+            {scalorPayOn && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 5, marginTop: 9 }}>
+                {(PAYMENT_METHOD_META.scalor_pay?.badges || []).map((b) => (
+                  <span
+                    key={b.label}
+                    style={{
+                      fontSize: 9.5, fontWeight: 800, padding: '3px 8px', borderRadius: 999,
+                      backgroundColor: b.bg, color: b.color, letterSpacing: 0.2, whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {b.label}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div className="premium-hero-accordions">
               {heroAccordions.map((acc, index) => (
@@ -813,16 +877,31 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
             .map((g) => (typeof g === 'string' ? g : g?.url || ''))
             .filter(Boolean);
           const hidden = productPageConfig?.hiddenSections || [];
+          // Sections personnalisées dans le FLUX de la page (hors "top" qui reste au-dessus du hero) :
+          // elles participent à sectionOrder et peuvent être placées entre les sections standard.
+          const aiFlowSections = normalizeAiSections(productPageConfig?.customSections)
+            .filter((s) => s.placement !== 'top' && s.enabled && s.html.trim());
+          const isKnownId = (id) => DEFAULT_ORDER.includes(id) || aiFlowSections.some((s) => s.id === id);
           const configuredOrder = Array.isArray(productPageConfig?.sectionOrder)
-            ? productPageConfig.sectionOrder.filter((id) => DEFAULT_ORDER.includes(id))
+            ? productPageConfig.sectionOrder.filter(isKnownId)
             : DEFAULT_ORDER;
           const orderedSections = configuredOrder.includes('guide')
             ? configuredOrder
             : ['guide', ...configuredOrder];
-          const order = [...orderedSections, ...DEFAULT_ORDER.filter((id) => !orderedSections.includes(id))]
-            .filter((id) => !hidden.includes(id));
+          const order = [
+            ...orderedSections,
+            ...DEFAULT_ORDER.filter((id) => !orderedSections.includes(id)),
+            ...aiFlowSections.map((s) => s.id).filter((id) => !orderedSections.includes(id)),
+          ].filter((id) => !hidden.includes(id));
+
+          const aiFlowMap = Object.fromEntries(aiFlowSections.map((s) => [s.id, (
+            <div key={s.id}>
+              <CustomCodeSection content={{ html: s.html, style: s.style }} />
+            </div>
+          )]));
 
           const sectionMap = {
+            ...aiFlowMap,
             guide: bonusEbook ? (
               <PremiumBonusEbook
                 lang={premiumLang}
@@ -848,7 +927,6 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
                       <article key={index} className="premium-testimonial-card">
                         <div className="premium-testimonial-image">
                           {testimonialImage(index) && <img src={testimonialImage(index)} alt="" style={{ objectFit: 'cover' }} />}
-                          <div className="premium-tags">{cleanPremiumTags(item.tags).map((tag, tagIndex) => <span key={tagIndex}>{tag}</span>)}</div>
                         </div>
                         <div className="premium-review-stars">{[1, 2, 3, 4, 5].map((i) => <Star key={i} size={17} fill="currentColor" />)}</div>
                         <p className="premium-testimonial-text">{tv(item.text)}</p>
@@ -1085,10 +1163,26 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
         })()}
       </main>
 
-      {/* Custom HTML sections added by AI */}
-      {productPageConfig?.customSections?.map((sec, i) => (
-        <div key={i} dangerouslySetInnerHTML={{ __html: sec.html }} />
-      ))}
+      {/* Section "Code personnalisé" configurée dans le builder */}
+      {(() => {
+        const customCodeSection = productPageConfig?.general?.sections?.find((s) => s.id === 'customCode');
+        if (!customCodeSection?.enabled) return null;
+        return (
+          <div
+            data-premium-section="customCode"
+            onClick={onSectionClick ? () => onSectionClick('customCode') : undefined}
+            style={onSectionClick ? {
+              cursor: 'pointer',
+              ...(activeSection === 'customCode' ? { outline: '2px solid #6366f1', outlineOffset: '-2px', borderRadius: 8 } : {}),
+            } : undefined}
+          >
+            <CustomCodeSection content={customCodeSection.content || {}} />
+          </div>
+        );
+      })()}
+
+      {/* Les sections personnalisées hors "top" sont rendues dans le flux de la page
+          (via sectionOrder) — voir aiFlowSections dans le <main> ci-dessus. */}
 
       {/* Custom JS injected by AI — executed via useEffect so it runs in the React context */}
 
@@ -1100,6 +1194,7 @@ const StoreProductPagePremium = ({ product, store, productPageConfig, subdomain,
         <QuickOrderModal
           isOpen={showOrderModal}
           onClose={() => setShowOrderModal(false)}
+          onRequestOpen={() => setShowOrderModal(true)}
           product={product}
           store={store}
           subdomain={subdomain}

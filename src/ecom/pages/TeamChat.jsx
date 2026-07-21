@@ -19,15 +19,15 @@ const resolveSocketUrl = () => {
 const SOCKET_URL = resolveSocketUrl();
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
 
-const ROLE_COLORS = { 
-  ecom_admin: 'bg-primary-600', 
-  ecom_closeuse: 'bg-amber-500', 
-  ecom_compta: 'bg-primary-500', 
-  ecom_livreur: 'bg-orange-500', 
-  super_admin: 'bg-primary-700' 
+const ROLE_COLORS = {
+  ecom_admin: 'bg-primary',
+  ecom_closeuse: 'bg-amber-500',
+  ecom_compta: 'bg-primary',
+  ecom_livreur: 'bg-orange-500',
+  super_admin: 'bg-primary-700'
 };
 
-const CHANNEL_COLORS = ['bg-primary-600', 'bg-green-500', 'bg-primary-600', 'bg-orange-500', 'bg-amber-500', 'bg-teal-500'];
+const CHANNEL_COLORS = ['bg-primary', 'bg-green-500', 'bg-primary', 'bg-orange-500', 'bg-amber-500', 'bg-teal-500'];
 
 const formatTime = (d) => {
   const date = new Date(d);
@@ -59,13 +59,13 @@ const renderMessageContent = (content, own) => {
     const title = lines[0]?.replace(/^(📦|🏷️|📊|👤|💰|📎)\s*/, '') || '';
     const subtitle = lines.slice(1).join(' ').trim();
     return (
-      <Link to={link} className={`block rounded-xl p-3 min-w-[200px] transition-colors border ${own ? 'bg-white/15 border-white/20 hover:bg-white/25' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
+      <Link to={link} className={`block rounded-xl p-3 min-w-[200px] transition-colors border ${own ? 'bg-card/15 border-white/20 hover:bg-card/25' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
         <div className="flex items-start gap-2">
           <span className="text-xl flex-shrink-0">{emoji}</span>
           <div className="min-w-0 flex-1">
             <p className={`text-[13px] font-bold leading-tight ${own ? 'text-white' : 'text-slate-800'}`}>{title}</p>
             {subtitle && <p className={`text-[11px] mt-0.5 ${own ? 'text-white/70' : 'text-slate-500'}`}>{subtitle}</p>}
-            <p className={`text-[11px] font-semibold mt-1.5 ${own ? 'text-white/80' : 'text-primary-600'}`}>{'Ouvrir →'}</p>
+            <p className={`text-[11px] font-semibold mt-1.5 ${own ? 'text-white/80' : 'text-primary'}`}>{'Ouvrir →'}</p>
           </div>
         </div>
       </Link>
@@ -76,7 +76,7 @@ const renderMessageContent = (content, own) => {
     <p className={`text-[15px] leading-relaxed whitespace-pre-wrap break-words ${own ? 'text-white' : 'text-slate-900'}`}>
       {parts.map((part, i) =>
         part.startsWith('@')
-          ? <span key={i} className={`font-bold px-1 rounded ${own ? 'bg-white/20' : 'text-primary-600 bg-primary-50'}`}>{part}</span>
+          ? <span key={i} className={`font-bold px-1 rounded ${own ? 'bg-card/20' : 'text-primary bg-primary-50'}`}>{part}</span>
           : part
       )}
     </p>
@@ -135,8 +135,8 @@ export default function TeamChat() {
     const { method = 'GET', body, params } = opts;
     const config = { method, params };
     if (body) config.data = JSON.parse(body);
-    
-    const response = method === 'GET' 
+
+    const response = method === 'GET'
       ? await api.get(`/dm${path}`, config)
       : await api.request({ ...config, url: `/dm${path}` });
     return response.data;
@@ -146,7 +146,7 @@ export default function TeamChat() {
     const { method = 'GET', body, params } = opts;
     const config = { method, params };
     if (body) config.data = JSON.parse(body);
-    
+
     const response = method === 'GET'
       ? await api.get(`/messages${path}`, config)
       : await api.request({ ...config, url: `/messages${path}` });
@@ -349,12 +349,12 @@ export default function TeamChat() {
       if (!cfg) return;
       const params = { limit: 10 };
       if (query) params.search = query;
-      
+
       // Extraire le path de l'endpoint
       const path = cfg.endpoint.replace(`${BACKEND_URL}/api/ecom`, '');
       const response = await api.get(path, { params });
       const json = response.data;
-      
+
       // Chaque API a une structure différente
       let items = [];
       if (type === 'order') items = json.data?.orders || [];
@@ -594,9 +594,9 @@ export default function TeamChat() {
 
       {/* LIST VIEW */}
       {view === 'list' && (
-        <div className="flex-1 flex flex-col bg-white">
+        <div className="flex-1 flex flex-col bg-card">
           {/* Header plateforme */}
-          <div className="bg-white border-b border-slate-200 px-4 pt-4 pb-0">
+          <div className="bg-card border-b border-slate-200 px-4 pt-4 pb-0">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <button onClick={goBackFromList} className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-600">
@@ -609,7 +609,7 @@ export default function TeamChat() {
               </div>
               <button
                 onClick={() => tab === 'dm' ? setShowNewChat(true) : setShowNewGroup(true)}
-                className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-3 py-2 rounded-xl transition-colors"
+                className="flex items-center gap-2 bg-primary hover:bg-primary-700 text-white text-sm font-medium px-3 py-2 rounded-xl transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                 <span className="hidden sm:inline">{tp('Nouveau')}</span>
@@ -622,10 +622,10 @@ export default function TeamChat() {
             </div>
             {/* Tabs */}
             <div className="flex gap-1">
-              <button onClick={() => setTab('dm')} className={`flex-1 py-2 text-sm font-semibold rounded-t-lg border-b-2 transition-colors ${tab === 'dm' ? 'text-primary-600 border-primary-600 bg-primary-50' : 'text-slate-500 border-transparent hover:text-slate-700'}`}>
+              <button onClick={() => setTab('dm')} className={`flex-1 py-2 text-sm font-semibold rounded-t-lg border-b-2 transition-colors ${tab === 'dm' ? 'text-primary border-primary-600 bg-primary-50' : 'text-slate-500 border-transparent hover:text-slate-700'}`}>
                 💬 Discussions
               </button>
-              <button onClick={() => setTab('groups')} className={`flex-1 py-2 text-sm font-semibold rounded-t-lg border-b-2 transition-colors ${tab === 'groups' ? 'text-primary-600 border-primary-600 bg-primary-50' : 'text-slate-500 border-transparent hover:text-slate-700'}`}>
+              <button onClick={() => setTab('groups')} className={`flex-1 py-2 text-sm font-semibold rounded-t-lg border-b-2 transition-colors ${tab === 'groups' ? 'text-primary border-primary-600 bg-primary-50' : 'text-slate-500 border-transparent hover:text-slate-700'}`}>
                 👥 Groupes
               </button>
             </div>
@@ -646,7 +646,7 @@ export default function TeamChat() {
                   </div>
                   <p className="font-semibold text-slate-700 mb-1">{tp('Aucune conversation')}</p>
                   <p className="text-sm text-slate-400 mb-4">{tp('Démarrez une discussion avec un membre de l\'équipe')}</p>
-                  <button onClick={() => setShowNewChat(true)} className="bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">{tp('Nouvelle conversation')}</button>
+                  <button onClick={() => setShowNewChat(true)} className="bg-primary hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">{tp('Nouvelle conversation')}</button>
                 </div>
               ) : filteredConvs.map(conv => {
                 const other = conv.other;
@@ -667,11 +667,11 @@ export default function TeamChat() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-0.5">
                         <span className={`text-[15px] truncate ${hasUnread ? 'font-bold text-slate-900' : 'font-semibold text-slate-800'}`}>{other.name || other.email?.split('@')[0]}</span>
-                        <span className={`text-[11px] flex-shrink-0 ml-2 ${hasUnread ? 'text-primary-600 font-semibold' : 'text-slate-400'}`}>{conv.lastMessage ? formatTime(conv.lastMessage.createdAt) : ''}</span>
+                        <span className={`text-[11px] flex-shrink-0 ml-2 ${hasUnread ? 'text-primary font-semibold' : 'text-slate-400'}`}>{conv.lastMessage ? formatTime(conv.lastMessage.createdAt) : ''}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <p className={`text-sm truncate ${hasUnread ? 'text-slate-700 font-medium' : 'text-slate-400'}`}>{conv.preview || 'Démarrer la conversation'}</p>
-                        {hasUnread && <span className="ml-2 min-w-[20px] h-5 bg-primary-600 text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1.5 flex-shrink-0">{conv.unread}</span>}
+                        {hasUnread && <span className="ml-2 min-w-[20px] h-5 bg-primary text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1.5 flex-shrink-0">{conv.unread}</span>}
                       </div>
                     </div>
                   </button>
@@ -685,7 +685,7 @@ export default function TeamChat() {
                   </div>
                   <p className="font-semibold text-slate-700 mb-1">{tp('Aucun groupe')}</p>
                   <p className="text-sm text-slate-400 mb-4">{tp('Créez un canal pour collaborer en équipe')}</p>
-                  <button onClick={() => setShowNewGroup(true)} className="bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">{tp('Créer un groupe')}</button>
+                  <button onClick={() => setShowNewGroup(true)} className="bg-primary hover:bg-primary-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">{tp('Créer un groupe')}</button>
                 </div>
               ) : channels.filter(c => !search || c.name?.toLowerCase().includes(search.toLowerCase())).map((channel, idx) => (
                 <button
@@ -712,7 +712,7 @@ export default function TeamChat() {
       {view === 'chat' && (activeConv || activeChannel) && (
         <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden">
           {/* Header */}
-          <div className="bg-white border-b border-slate-200 px-3 py-3 flex items-center gap-3 shadow-sm">
+          <div className="bg-card border-b border-slate-200 px-3 py-3 flex items-center gap-3 shadow-sm">
             <button onClick={goBack} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 flex-shrink-0 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
@@ -775,7 +775,7 @@ export default function TeamChat() {
                   {/* Séparateur de date */}
                   {(showDate || showTimeSep) && (
                     <div className="flex items-center justify-center my-4">
-                      <span className="bg-white text-slate-400 text-[11px] font-medium px-3 py-1 rounded-full shadow-sm border border-slate-200">
+                      <span className="bg-card text-slate-400 text-[11px] font-medium px-3 py-1 rounded-full shadow-sm border border-slate-200">
                         {showDate
                           ? new Date(msg.createdAt).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
                           : new Date(msg.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
@@ -808,8 +808,8 @@ export default function TeamChat() {
 
                       <div className={`relative px-3 py-2.5 shadow-sm
                         ${own
-                          ? 'bg-primary-600 text-white'
-                          : 'bg-white text-slate-900 border border-slate-200'}
+                          ? 'bg-primary text-white'
+                          : 'bg-card text-slate-900 border border-slate-200'}
                         ${isFirst && own ? 'rounded-tl-2xl rounded-tr-sm rounded-bl-2xl rounded-br-2xl'
                           : isFirst && !own ? 'rounded-tl-sm rounded-tr-2xl rounded-bl-2xl rounded-br-2xl'
                           : 'rounded-2xl'}
@@ -817,7 +817,7 @@ export default function TeamChat() {
 
                         {/* Queue de bulle */}
                         {isFirst && own && (
-                          <svg className="absolute -right-[6px] bottom-0 w-3 h-3 text-primary-600" viewBox="0 0 8 13" fill="currentColor">
+                          <svg className="absolute -right-[6px] bottom-0 w-3 h-3 text-primary" viewBox="0 0 8 13" fill="currentColor">
                             <path d="M5.188 1H1v11.193l6.467-8.625C8.334 2.116 7.607 1 5.188 1z" />
                           </svg>
                         )}
@@ -829,8 +829,8 @@ export default function TeamChat() {
 
                         {/* Reply preview */}
                         {(msg.replyToPreview || msg.replyToContent) && (
-                          <div className={`border-l-[3px] pl-2 mb-2 rounded-r py-1 pr-2 ${own ? 'border-white/50 bg-white/10' : 'border-primary-500 bg-slate-50'}`}>
-                            <p className={`text-[11px] font-semibold ${own ? 'text-white/80' : 'text-primary-600'}`}>
+                          <div className={`border-l-[3px] pl-2 mb-2 rounded-r py-1 pr-2 ${own ? 'border-white/50 bg-card/10' : 'border-primary-500 bg-slate-50'}`}>
+                            <p className={`text-[11px] font-semibold ${own ? 'text-white/80' : 'text-primary'}`}>
                               {msg.replyToPreview?.senderName || msg.replyToSenderName || ''}
                             </p>
                             <p className={`text-[12px] truncate ${own ? 'text-white/70' : 'text-slate-500'}`}>
@@ -854,8 +854,8 @@ export default function TeamChat() {
                           <video src={msg.mediaUrl} controls className="max-w-full rounded-xl max-h-64" />
                         ) : msg.messageType === 'document' ? (
                           <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer"
-                            className={`flex items-center gap-2 rounded-xl px-2 py-2 min-w-[160px] ${own ? 'bg-white/10' : 'bg-slate-50 border border-slate-200'}`}>
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${own ? 'bg-white/20' : 'bg-primary-600'}`}>
+                            className={`flex items-center gap-2 rounded-xl px-2 py-2 min-w-[160px] ${own ? 'bg-card/10' : 'bg-slate-50 border border-slate-200'}`}>
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${own ? 'bg-card/20' : 'bg-primary'}`}>
                               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                             </div>
                             <div className="min-w-0">
@@ -890,9 +890,9 @@ export default function TeamChat() {
 
           {/* Reply preview */}
           {replyTo && (
-            <div className="bg-white border-t border-slate-200 px-4 py-2 flex items-center gap-3">
+            <div className="bg-card border-t border-slate-200 px-4 py-2 flex items-center gap-3">
               <div className="flex-1 border-l-2 border-primary-600 pl-3">
-                <p className="text-xs font-bold text-primary-600">{replyTo.senderName}</p>
+                <p className="text-xs font-bold text-primary">{replyTo.senderName}</p>
                 <p className="text-xs text-slate-500 truncate">{replyTo.content || '📎 Média'}</p>
               </div>
               <button onClick={() => setReplyTo(null)} className="text-slate-400 hover:text-slate-600">
@@ -902,7 +902,7 @@ export default function TeamChat() {
           )}
 
           {/* Input */}
-          <div className="bg-white border-t border-slate-200 px-3 py-3 flex items-end gap-2">
+          <div className="bg-card border-t border-slate-200 px-3 py-3 flex items-end gap-2">
             {isRecording ? (
               <div className="flex-1 flex items-center gap-3 bg-slate-100 rounded-2xl px-4 py-2.5">
                 <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
@@ -911,7 +911,7 @@ export default function TeamChat() {
                 <button onClick={cancelRecording} className="text-slate-400 hover:text-red-500 transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
-                <button onClick={stopRecording} className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center text-white hover:bg-primary-700 transition-colors">
+                <button onClick={stopRecording} className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center text-white hover:bg-primary-700 transition-colors">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                 </button>
               </div>
@@ -919,11 +919,11 @@ export default function TeamChat() {
               <>
                 <input ref={fileInputRef} type="file" className="hidden" onChange={e => e.target.files?.[0] && sendFile(e.target.files[0])} />
                 <div className="relative">
-                  <button onClick={() => setShowShareMenu(!showShareMenu)} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-primary-600 hover:bg-primary-50 transition-colors">
+                  <button onClick={() => setShowShareMenu(!showShareMenu)} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-primary hover:bg-primary-50 transition-colors">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                   </button>
                   {showShareMenu && (
-                    <div className="absolute bottom-12 left-0 bg-white rounded-2xl shadow-xl border border-slate-200 w-52 overflow-hidden z-50">
+                    <div className="absolute bottom-12 left-0 bg-card rounded-2xl shadow-xl border border-slate-200 w-52 overflow-hidden z-50">
                       <button onClick={() => { fileInputRef.current?.click(); setShowShareMenu(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left text-sm">
                         <span className="w-8 h-8 bg-primary-100 rounded-xl flex items-center justify-center text-lg">📎</span>
                         <span className="font-semibold text-slate-700">{tp('Fichier')}</span>
@@ -949,7 +949,7 @@ export default function TeamChat() {
                     style={{ minHeight: '40px' }}
                   />
                   {newMessage.trim() ? (
-                    <button type="submit" disabled={sending} className="w-10 h-10 bg-primary-600 hover:bg-primary-700 rounded-2xl flex items-center justify-center text-white flex-shrink-0 transition-colors disabled:opacity-60">
+                    <button type="submit" disabled={sending} className="w-10 h-10 bg-primary hover:bg-primary-700 rounded-2xl flex items-center justify-center text-white flex-shrink-0 transition-colors disabled:opacity-60">
                       {sending ? (
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       ) : (
@@ -957,7 +957,7 @@ export default function TeamChat() {
                       )}
                     </button>
                   ) : (
-                    <button type="button" onMouseDown={startRecording} className="w-10 h-10 bg-primary-600 hover:bg-primary-700 rounded-2xl flex items-center justify-center text-white flex-shrink-0 transition-colors">
+                    <button type="button" onMouseDown={startRecording} className="w-10 h-10 bg-primary hover:bg-primary-700 rounded-2xl flex items-center justify-center text-white flex-shrink-0 transition-colors">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
                     </button>
                   )}
@@ -971,7 +971,7 @@ export default function TeamChat() {
       {/* ═══════════════════════════════════════════════════════════════ NEW CHAT MODAL ═══════════════════════════════════════════════════════════════ */}
       {showNewChat && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center" onClick={() => setShowNewChat(false)}>
-          <div className="bg-white w-full sm:max-w-md sm:rounded-2xl max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-card w-full sm:max-w-md sm:rounded-2xl max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="px-4 py-4 flex items-center gap-3 border-b border-slate-100 sm:rounded-t-2xl">
               <button onClick={() => setShowNewChat(false)} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1006,7 +1006,7 @@ export default function TeamChat() {
       {/* ═══════════════════════════════════════════════════════════════ NEW GROUP MODAL ═══════════════════════════════════════════════════════════════ */}
       {showNewGroup && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center" onClick={() => setShowNewGroup(false)}>
-          <div className="bg-white w-full sm:max-w-md sm:rounded-2xl max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-card w-full sm:max-w-md sm:rounded-2xl max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="px-4 py-4 flex items-center gap-3 border-b border-slate-100">
               <button onClick={() => setShowNewGroup(false)} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1022,7 +1022,7 @@ export default function TeamChat() {
                       key={em}
                       type="button"
                       onClick={() => setNewGroupEmoji(em)}
-                      className={`w-10 h-10 text-xl rounded-xl flex items-center justify-center transition-colors ${newGroupEmoji === em ? 'bg-primary-600 shadow-sm' : 'bg-slate-100 hover:bg-slate-200'}`}
+                      className={`w-10 h-10 text-xl rounded-xl flex items-center justify-center transition-colors ${newGroupEmoji === em ? 'bg-primary shadow-sm' : 'bg-slate-100 hover:bg-slate-200'}`}
                     >
                       {em}
                     </button>
@@ -1043,7 +1043,7 @@ export default function TeamChat() {
               <button
                 onClick={createChannel}
                 disabled={!newGroupName.trim()}
-                className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 bg-primary hover:bg-primary-700 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {tp('Créer le groupe')}
               </button>
@@ -1055,7 +1055,7 @@ export default function TeamChat() {
       {/* ═══════════════════════════════════════════════════════════════ SHARE PLATFORM ELEMENT MODAL ═══════════════════════════════════════════════════════════════ */}
       {shareType && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center" onClick={() => { setShareType(null); setShareResults([]); }}>
-          <div className="bg-white w-full sm:max-w-md sm:rounded-2xl max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-card w-full sm:max-w-md sm:rounded-2xl max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="px-4 py-4 flex items-center gap-3 border-b border-slate-100">
               <button onClick={() => { setShareType(null); setShareResults([]); }} className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -1103,7 +1103,7 @@ export default function TeamChat() {
                       <p className="text-xs text-slate-400 truncate mt-0.5">{card.subtitle}</p>
                     </div>
                     {card.price != null && card.price !== 0 && (
-                      <span className="text-sm font-bold text-primary-600 flex-shrink-0">{Number(card.price).toLocaleString('fr-FR')} MAD</span>
+                      <span className="text-sm font-bold text-primary flex-shrink-0">{Number(card.price).toLocaleString('fr-FR')} MAD</span>
                     )}
                   </button>
                 );

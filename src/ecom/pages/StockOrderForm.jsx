@@ -151,11 +151,11 @@ const StockOrderForm = () => {
   if (initialLoading) return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
       <div className="h-8 w-52 bg-gray-200 rounded-lg animate-pulse mb-6" />
-      <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+      <div className="bg-card rounded-xl border p-6 space-y-4">
         {[...Array(7)].map((_, i) => (
           <div key={i}>
             <div className="h-3 w-28 bg-gray-200 rounded animate-pulse mb-2" />
-            <div className="h-10 w-full bg-gray-100 rounded-lg animate-pulse" />
+            <div className="h-10 w-full bg-muted rounded-lg animate-pulse" />
           </div>
         ))}
       </div>
@@ -165,10 +165,10 @@ const StockOrderForm = () => {
   return (
     <div className="p-3 sm:p-4 lg:p-6">
       <div className="mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">
+        <h1 className="text-xl sm:text-3xl font-bold text-foreground">
           {isEditing ? 'Modifier la commande de stock' : tp('Nouvelle commande de stock')}
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-muted-foreground mt-2">
           {isEditing ? 'Modifiez les informations de la commande' : tp('Enregistrez une nouvelle commande de stock')}
         </p>
       </div>
@@ -181,11 +181,11 @@ const StockOrderForm = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Informations produit et sourcing */}
-        <div className="bg-white shadow rounded-lg p-3 sm:p-6">
+        <div className="bg-card shadow rounded-lg p-3 sm:p-6">
           <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{tp('Produit et sourcing')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Produit *
               </label>
               <select
@@ -212,7 +212,7 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Sourcing *
               </label>
               <select
@@ -228,7 +228,7 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Quantité *
               </label>
               <input
@@ -243,7 +243,7 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 {tp('Fournisseur')}
               </label>
               <input
@@ -258,13 +258,13 @@ const StockOrderForm = () => {
         </div>
 
         {/* Prix et poids */}
-        <div className="bg-white shadow rounded-lg p-3 sm:p-6">
+        <div className="bg-card shadow rounded-lg p-3 sm:p-6">
           <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{tp('Prix et poids')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Poids unitaire (kg) *
-                <span className="text-xs text-gray-500 ml-1">{tp('(par unité)')}</span>
+                <span className="text-xs text-muted-foreground ml-1">{tp('(par unité)')}</span>
               </label>
               <input
                 type="number"
@@ -279,17 +279,17 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 {tp('Poids total (kg)')}
-                <span className="text-xs text-gray-500 ml-1">{tp('(calculé: poids unitaire × quantité)')}</span>
+                <span className="text-xs text-muted-foreground ml-1">{tp('(calculé: poids unitaire × quantité)')}</span>
               </label>
-              <div className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-900 font-semibold">
+              <div className="w-full px-3 py-2 bg-muted border border-gray-300 rounded-md text-foreground font-semibold">
                 {totalWeightKg.toFixed(2)} kg
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Prix par kg ({symbol}) *
               </label>
               <input
@@ -305,9 +305,9 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Prix d'achat unitaire ({symbol}) *
-                {formData.sourcing === 'chine' && <span className="text-xs text-primary-600 ml-1">{tp('(en Chine)')}</span>}
+                {formData.sourcing === 'chine' && <span className="text-xs text-primary ml-1">{tp('(en Chine)')}</span>}
               </label>
               <input
                 type="number"
@@ -322,7 +322,7 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Prix de vente unitaire ({symbol}) *
               </label>
               <input
@@ -338,11 +338,11 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Coût de transport ({symbol})
-                <span className="text-xs text-gray-500 ml-1">{tp('(poids x prix/kg)')}</span>
+                <span className="text-xs text-muted-foreground ml-1">{tp('(poids x prix/kg)')}</span>
               </label>
-              <div className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-900 font-semibold">
+              <div className="w-full px-3 py-2 bg-muted border border-gray-300 rounded-md text-foreground font-semibold">
                 {fmt(transportCost)}
               </div>
             </div>
@@ -350,11 +350,11 @@ const StockOrderForm = () => {
         </div>
 
         {/* Livraison */}
-        <div className="bg-white shadow rounded-lg p-3 sm:p-6">
+        <div className="bg-card shadow rounded-lg p-3 sm:p-6">
           <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{tp('Livraison')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Date d'arrivée prévue
               </label>
               <input
@@ -367,7 +367,7 @@ const StockOrderForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 {tp('Numéro de suivi')}
               </label>
               <input
@@ -381,7 +381,7 @@ const StockOrderForm = () => {
           </div>
 
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               {tp('Notes')}
             </label>
             <textarea
@@ -401,39 +401,39 @@ const StockOrderForm = () => {
             <h3 className="text-sm font-medium mb-3">{tp('Aperçu financier')}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 text-sm">
               <div>
-                <span className="text-gray-600">{tp('Quantité:')}</span>
+                <span className="text-muted-foreground">{tp('Quantité:')}</span>
                 <p className="font-semibold text-lg">{qty}</p>
               </div>
               <div>
-                <span className="text-gray-600">{tp('Coût d\'achat total:')}</span>
+                <span className="text-muted-foreground">{tp('Coût d\'achat total:')}</span>
                 <p className="font-semibold">{fmt(totalPurchaseCost)}</p>
               </div>
               <div>
-                <span className="text-gray-600">{tp('Transport:')}</span>
+                <span className="text-muted-foreground">{tp('Transport:')}</span>
                 <p className="font-semibold">{fmt(transportCost)}</p>
               </div>
               <div>
-                <span className="text-gray-600">{tp('Coût total:')}</span>
+                <span className="text-muted-foreground">{tp('Coût total:')}</span>
                 <p className="font-bold text-red-600">{fmt(totalCost)}</p>
               </div>
               <div>
-                <span className="text-gray-600">{tp('Valeur de vente:')}</span>
-                <p className="font-semibold text-primary-600">{fmt(totalSellingValue)}</p>
+                <span className="text-muted-foreground">{tp('Valeur de vente:')}</span>
+                <p className="font-semibold text-primary">{fmt(totalSellingValue)}</p>
               </div>
               <div>
-                <span className="text-gray-600">{tp('Profit estimé:')}</span>
+                <span className="text-muted-foreground">{tp('Profit estimé:')}</span>
                 <p className={`font-bold text-lg ${estimatedProfit > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(estimatedProfit)}
                 </p>
               </div>
               <div>
-                <span className="text-gray-600">{tp('Profit/unité:')}</span>
+                <span className="text-muted-foreground">{tp('Profit/unité:')}</span>
                 <p className={`font-semibold ${profitPerUnit > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {fmt(profitPerUnit)}
                 </p>
               </div>
               <div>
-                <span className="text-gray-600">{tp('Poids total:')}</span>
+                <span className="text-muted-foreground">{tp('Poids total:')}</span>
                 <p className="font-semibold">{totalWeightKg.toFixed(2)} kg</p>
               </div>
             </div>
@@ -444,14 +444,14 @@ const StockOrderForm = () => {
           <button
             type="button"
             onClick={() => navigate('/ecom/stock/orders')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 rounded-md text-foreground hover:bg-background"
           >
             {tp('Annuler')}
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
           >
             {loading ? (isEditing ? 'Modification...' : 'Création...') : (isEditing ? 'Modifier la commande' : 'Créer la commande')}
           </button>

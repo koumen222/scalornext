@@ -78,13 +78,13 @@ const SPECIAL_CASES_DEFAULT = [
 const AUTONOMY_LEVELS = [
   { level: 1, label: 'Assistante', get desc() { return tp('Répond aux questions simples uniquement'); }, color: 'bg-blue-100 text-blue-700' },
   { level: 2, get label() { return tp('Conseillère'); }, desc: 'Recommande des produits et qualifie les leads', color: 'bg-cyan-100 text-cyan-700' },
-  { level: 3, label: 'Commerciale', desc: "Gère les objections et pousse à l'achat", color: 'bg-primary-100 text-primary-700' },
+  { level: 3, label: 'Commerciale', desc: "Gère les objections et pousse à l'achat", color: 'bg-primary-100 text-primary' },
   { level: 4, get label() { return tp('Négociatrice'); }, get desc() { return tp('Conclut des ventes de façon autonome'); }, color: 'bg-amber-100 text-amber-700' },
   { level: 5, label: 'Chasseuse', desc: 'Mode offensif : closing agressif, upsell', color: 'bg-red-100 text-red-700' },
 ];
 
 const MODES_CONFIG = [
-  { id: 'client', label: '👤 Mode Client', subtitle: 'Vente & Support', get desc() { return tp('Rita parle au client : chaleureuse, naturelle, persuasive. Suit la logique Comprendre → Répondre → Valeur → Question.'); }, color: 'border-primary-400 bg-primary-50/60', iconBg: 'bg-primary-100', iconColor: 'text-primary-700' },
+  { id: 'client', label: '👤 Mode Client', subtitle: 'Vente & Support', get desc() { return tp('Rita parle au client : chaleureuse, naturelle, persuasive. Suit la logique Comprendre → Répondre → Valeur → Question.'); }, color: 'border-primary-400 bg-primary-50/60', iconBg: 'bg-primary-100', iconColor: 'text-primary' },
   { id: 'boss', label: '🧑‍💼 Mode Boss', subtitle: 'Analyse & Rapports', get desc() { return tp('Rita parle au boss : professionnelle, analytique, directe. Analyse les conversations, explique les erreurs, propose des améliorations.'); }, color: 'border-blue-400 bg-blue-50/60', iconBg: 'bg-blue-100', iconColor: 'text-blue-700' },
   { id: 'execution', get label() { return tp('⚙️ Mode Exécution'); }, subtitle: 'Actions Boss', get desc() { return tp('Le boss donne une instruction, Rita comprend, adapte et exécute intelligemment. Elle ne copie jamais le message du boss.'); }, color: 'border-amber-400 bg-amber-50/60', iconBg: 'bg-amber-100', iconColor: 'text-amber-700' },
 ];
@@ -168,9 +168,9 @@ const getInstanceStatusLabel = (status) => {
 
 const Field = ({ label, hint, required, children }) => (
   <div>
-    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
       {label}{required && <span className="text-red-400 ml-0.5">*</span>}
-      {hint && <span className="text-[10px] text-gray-400 font-normal normal-case tracking-normal ml-1">({hint})</span>}
+      {hint && <span className="text-[10px] text-muted-foreground font-normal normal-case tracking-normal ml-1">({hint})</span>}
     </label>
     {children}
   </div>
@@ -179,12 +179,12 @@ const Field = ({ label, hint, required, children }) => (
 const Toggle = ({ enabled, onChange, label, description }) => (
   <div className="flex flex-col gap-3 py-2 sm:flex-row sm:items-center sm:justify-between">
     <div className="flex-1 min-w-0">
-      <p className="text-[13px] font-semibold text-gray-700">{label}</p>
-      {description && <p className="text-[11px] text-gray-400 mt-0.5">{description}</p>}
+      <p className="text-[13px] font-semibold text-foreground">{label}</p>
+      {description && <p className="text-[11px] text-muted-foreground mt-0.5">{description}</p>}
     </div>
     <button type="button" onClick={() => onChange(!enabled)}
-      className={`relative self-end sm:self-auto w-[44px] h-[26px] rounded-full transition-all duration-200 flex-shrink-0 ${enabled ? 'bg-primary-500' : 'bg-gray-200 hover:bg-gray-300'}`}>
-      <span className={`absolute top-[3px] w-5 h-5 bg-white rounded-full shadow-md transition-all duration-200 ${enabled ? 'left-[21px]' : 'left-[3px]'}`} />
+      className={`relative self-end sm:self-auto w-[44px] h-[26px] rounded-full transition-all duration-200 flex-shrink-0 ${enabled ? 'bg-primary' : 'bg-gray-200 hover:bg-gray-300'}`}>
+      <span className={`absolute top-[3px] w-5 h-5 bg-card rounded-full shadow-md transition-all duration-200 ${enabled ? 'left-[21px]' : 'left-[3px]'}`} />
     </button>
   </div>
 );
@@ -203,16 +203,16 @@ const SelectDropdown = ({ value, onChange, options, placeholder = 'Sélectionner
   return (
     <div ref={ref} className={open ? 'relative z-[120]' : 'relative z-10'}>
       <button type="button" onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 text-[13px] font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:border-gray-300 hover:bg-white transition-all">
-        <span className="truncate">{selected ? selected.label : <span className="text-gray-400">{placeholder}</span>}</span>
-        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+        className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 text-[13px] font-medium text-foreground bg-background border border-border rounded-xl hover:border-gray-300 hover:bg-card transition-all">
+        <span className="truncate">{selected ? selected.label : <span className="text-muted-foreground">{placeholder}</span>}</span>
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div className="absolute z-[130] top-full mt-1 left-0 right-0 bg-white border border-gray-100 rounded-xl shadow-xl py-1 max-h-[220px] overflow-y-auto animate-in fade-in slide-in-from-top-1">
+        <div className="absolute z-[130] top-full mt-1 left-0 right-0 bg-card border border-border rounded-xl shadow-xl py-1 max-h-[220px] overflow-y-auto animate-in fade-in slide-in-from-top-1">
           {options.map(opt => (
             <button key={opt.value} type="button"
               onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full text-left px-3.5 py-2 text-[13px] hover:bg-gray-50 transition-colors ${opt.value === value ? 'text-primary-700 font-semibold bg-primary-50/50' : 'text-gray-600'}`}>
+              className={`w-full text-left px-3.5 py-2 text-[13px] hover:bg-background transition-colors ${opt.value === value ? 'text-primary font-semibold bg-primary-50/50' : 'text-muted-foreground'}`}>
               {opt.label}
             </button>
           ))}
@@ -231,30 +231,30 @@ const AccordionField = ({ icon, label, badge, badgeColor = 'emerald', value, onC
 
   return (
     <>
-      <div className="rounded-xl border border-gray-200 overflow-hidden">
+      <div className="rounded-xl border border-border overflow-hidden">
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors bg-white hover:bg-gray-50"
+          className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors bg-card hover:bg-background"
         >
           {icon && <span className="text-[16px] flex-shrink-0">{icon}</span>}
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-semibold text-gray-800 flex items-center gap-2">
+            <p className="text-[13px] font-semibold text-foreground flex items-center gap-2">
               {label}
-              {hint && <span className="text-[10px] text-gray-400 font-normal">{hint}</span>}
+              {hint && <span className="text-[10px] text-muted-foreground font-normal">{hint}</span>}
             </p>
-            <p className="text-[11px] truncate mt-0.5 text-gray-400 italic">
+            <p className="text-[11px] truncate mt-0.5 text-muted-foreground italic">
               {preview || 'Non renseigné — cliquez pour éditer'}
             </p>
           </div>
           {badge && (
             <span className={`flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-              badgeColor === 'emerald' ? 'bg-primary-100 text-primary-700'
-              : badgeColor === 'gray' ? 'bg-gray-100 text-gray-500'
+              badgeColor === 'emerald' ? 'bg-primary-100 text-primary'
+              : badgeColor === 'gray' ? 'bg-muted text-muted-foreground'
               : 'bg-amber-100 text-amber-700'
             }`}>{badge}</span>
           )}
-          <ChevronDown className="w-4 h-4 flex-shrink-0 text-gray-400" />
+          <ChevronDown className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
         </button>
       </div>
       <TextEditModal
@@ -311,12 +311,12 @@ const TextEditModal = ({ open, title, value, placeholder, rows = 6, onClose, onC
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
       <div
-        className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+        className="relative w-full max-w-lg bg-card rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <p className="text-[14px] font-bold text-gray-900">{title || tp('Modifier')}</p>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <p className="text-[14px] font-bold text-foreground">{title || tp('Modifier')}</p>
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -329,7 +329,7 @@ const TextEditModal = ({ open, title, value, placeholder, rows = 6, onClose, onC
               placeholder={placeholder}
               rows={rows}
               onKeyDown={handleKeyDown}
-              className="w-full px-4 py-3 text-[13px] text-gray-800 bg-gray-50 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent leading-relaxed"
+              className="w-full px-4 py-3 text-[13px] text-foreground bg-background border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent leading-relaxed"
             />
           ) : (
             <input
@@ -338,13 +338,13 @@ const TextEditModal = ({ open, title, value, placeholder, rows = 6, onClose, onC
               onChange={e => setDraft(e.target.value)}
               placeholder={placeholder}
               onKeyDown={handleKeyDown}
-              className="w-full px-4 py-3 text-[13px] text-gray-800 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent"
+              className="w-full px-4 py-3 text-[13px] text-foreground bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent"
             />
           )}
         </div>
-        <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-100 bg-gray-50/60">
+        <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-border bg-background/60">
           <button type="button" onClick={onClose}
-            className="px-4 py-2 text-[13px] font-semibold text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors">
+            className="px-4 py-2 text-[13px] font-semibold text-muted-foreground hover:text-foreground rounded-xl hover:bg-muted transition-colors">
             {tp('Annuler')}
           </button>
           <button type="button" onClick={handleConfirm}
@@ -374,7 +374,7 @@ const ModalInput = ({ value, onChange, placeholder, label, className, type = 'te
         type="button"
         disabled={disabled}
         onClick={() => setOpen(true)}
-        className={`${className || 'ac-input'} text-left truncate w-full ${isEmpty ? 'text-gray-400' : 'text-gray-800'}`}
+        className={`${className || 'ac-input'} text-left truncate w-full ${isEmpty ? 'text-muted-foreground' : 'text-foreground'}`}
         style={style}
       >
         {isEmpty ? (placeholder || 'Cliquer pour saisir…') : displayVal}
@@ -404,7 +404,7 @@ const ModalTextarea = ({ value, onChange, placeholder, label, rows = 6, classNam
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`${className || 'ac-textarea'} text-left w-full ${isEmpty ? 'text-gray-400 italic' : 'text-gray-700'}`}
+        className={`${className || 'ac-textarea'} text-left w-full ${isEmpty ? 'text-muted-foreground italic' : 'text-foreground'}`}
         style={{ minHeight: '2.5rem', ...style }}
       >
         {isEmpty ? (placeholder || 'Cliquer pour saisir…') : preview}
@@ -1772,41 +1772,41 @@ export default function AgentConfig() {
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="text-center">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg animate-pulse">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-primary flex items-center justify-center mb-4 shadow-lg animate-pulse">
           <Bot className="w-7 h-7 text-white" />
         </div>
-        <p className="text-sm text-gray-400">{tp('Chargement de la configuration...')}</p>
+        <p className="text-sm text-muted-foreground">{tp('Chargement de la configuration...')}</p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-full bg-gray-50/50 pb-20">
+    <div className="min-h-full bg-background/50 pb-20">
 
       {/* ═══ HEADER ═══ */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <div className="py-3">
-            <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-gray-400">
+            <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-muted-foreground">
               <button onClick={() => {
                 if (hasChanges && !window.confirm(tp('Vous avez des modifications non sauvegardées. Voulez-vous vraiment quitter ?'))) return;
                 navigate('/ecom/agent-ia');
-              }} className="hover:text-gray-600 transition-colors">{tp('Agent IA')}</button>
+              }} className="hover:text-muted-foreground transition-colors">{tp('Agent IA')}</button>
               <span>›</span>
-              <span className="text-gray-600 font-medium">{agent?.name || tp('Configuration')}</span>
+              <span className="text-muted-foreground font-medium">{agent?.name || tp('Configuration')}</span>
             </nav>
           </div>
 
           {/* Title bar */}
           <div className="flex flex-col gap-4 pb-4 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0">
-              <h1 className="text-[20px] sm:text-[22px] font-bold text-gray-900 break-words">{agent?.name || tp('Configuration Agent IA')}</h1>
-              <p className="text-[13px] text-gray-400 mt-0.5">{tp('Configurez les produits, messages et paramètres de votre agent.')}</p>
+              <h1 className="text-[20px] sm:text-[22px] font-bold text-foreground break-words">{agent?.name || tp('Configuration Agent IA')}</h1>
+              <p className="text-[13px] text-muted-foreground mt-0.5">{tp('Configurez les produits, messages et paramètres de votre agent.')}</p>
             </div>
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:gap-3 w-full md:w-auto">
               <button onClick={handleReset} disabled={!hasChanges}
-                className="w-full sm:w-auto px-4 py-2 text-[13px] font-medium text-gray-500 hover:text-gray-700 disabled:opacity-40 transition-colors">
+                className="w-full sm:w-auto px-4 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors">
                 {tp('Annuler')}
               </button>
               <button onClick={handleSave} disabled={saving}
@@ -1827,8 +1827,8 @@ export default function AgentConfig() {
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 text-[12px] sm:text-[13px] font-medium border-b-2 transition-all flex-shrink-0 ${
                     isActive
-                      ? 'border-primary-600 text-primary-700'
-                      : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
+                      ? 'border-primary-600 text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-muted-foreground hover:border-border'
                   }`}>
                   {tab.label}
                 </button>
@@ -1848,7 +1848,7 @@ export default function AgentConfig() {
             <div className="lg:col-span-2 space-y-5">
 
               {/* ── Hero Profile Card ── */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="bg-card rounded-2xl border overflow-hidden">
                 {/* Header: avatar + name + toggle all in one clean row */}
                 <div className="px-5 py-4 flex items-center gap-4" style={{ background: 'linear-gradient(135deg, #0b3d2e 0%, #0f6b4f 60%, #1a9c70 100%)' }}>
                   {/* Avatar */}
@@ -1873,14 +1873,14 @@ export default function AgentConfig() {
                     onClick={() => set('enabled', !config.enabled)}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-bold transition-all flex-shrink-0 ${
                       config.enabled
-                        ? 'bg-white/20 text-white border border-white/30'
+                        ? 'bg-card/20 text-white border border-white/30'
                         : 'bg-black/20 text-white/60 border border-white/10'
                     }`}
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${config.enabled ? 'bg-primary-400' : 'bg-white/30'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${config.enabled ? 'bg-primary-400' : 'bg-card/30'}`} />
                     {config.enabled ? 'Actif' : tp('Inactif')}
-                    <span className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${config.enabled ? 'bg-primary-500' : 'bg-white/20'}`}>
-                      <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform ${config.enabled ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                    <span className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${config.enabled ? 'bg-primary' : 'bg-card/20'}`}>
+                      <span className={`inline-block h-3 w-3 transform rounded-full bg-card shadow transition-transform ${config.enabled ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
                     </span>
                   </button>
                 </div>
@@ -1914,18 +1914,18 @@ export default function AgentConfig() {
               </div>
 
               {/* ── WhatsApp Instance ── */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
-                  <span className="text-[13px] font-bold text-gray-900 flex items-center gap-2.5">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-border flex items-center justify-between">
+                  <span className="text-[13px] font-bold text-foreground flex items-center gap-2.5">
                     <span className="w-7 h-7 rounded-lg bg-primary-50 flex items-center justify-center">
-                      <svg className="w-4 h-4 text-primary-600" viewBox="0 0 24 24" fill="currentColor">
+                      <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                       </svg>
                     </span>
                     WhatsApp
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className={`text-[11px] font-semibold ${config.enabled ? 'text-primary-600' : 'text-gray-400'}`}>
+                    <span className={`text-[11px] font-semibold ${config.enabled ? 'text-primary' : 'text-muted-foreground'}`}>
                       {config.enabled ? 'Agent actif' : tp('Agent inactif')}
                     </span>
                   </div>
@@ -1934,16 +1934,16 @@ export default function AgentConfig() {
                 <div className="p-4">
                   {instances.length === 0 ? (
                     <div className="flex flex-col items-center py-6 gap-2">
-                      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-1">
-                        <svg className="w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-1">
+                        <svg className="w-6 h-6 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <p className="text-[13px] font-semibold text-gray-600">{instanceError || tp('Aucune instance connectée')}</p>
-                      <p className="text-[12px] text-gray-400 text-center max-w-[260px]">
+                      <p className="text-[13px] font-semibold text-muted-foreground">{instanceError || tp('Aucune instance connectée')}</p>
+                      <p className="text-[12px] text-muted-foreground text-center max-w-[260px]">
                         Connectez un numéro WhatsApp dans l'onglet <strong>{tp('Service WhatsApp')}</strong> pour activer l'agent.
                       </p>
-                      <button type="button" onClick={loadInstances} className="mt-2 text-[12px] font-bold text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-4 py-1.5 rounded-full transition-colors">
+                      <button type="button" onClick={loadInstances} className="mt-2 text-[12px] font-bold text-primary hover:text-primary bg-primary-50 hover:bg-primary-100 px-4 py-1.5 rounded-full transition-colors">
                         ↻ Recharger
                       </button>
                     </div>
@@ -1951,18 +1951,18 @@ export default function AgentConfig() {
                     <div className="flex items-center gap-3 px-1">
                       <div className={`w-3 h-3 rounded-full flex-shrink-0 ring-4 ${isInstanceConnected(selectedInstance?.status) ? 'bg-primary-400 ring-primary-100' : 'bg-gray-300 ring-gray-100'}`} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[14px] font-bold text-gray-800 truncate">
+                        <p className="text-[14px] font-bold text-foreground truncate">
                           {selectedInstance?.customName || selectedInstance?.instanceName || tp('Instance WhatsApp')}
                         </p>
-                        <p className="text-[11px] text-gray-400">{isInstanceConnected(selectedInstance?.status) ? '● Connectée et prête' : '○ Hors ligne'}</p>
+                        <p className="text-[11px] text-muted-foreground">{isInstanceConnected(selectedInstance?.status) ? '● Connectée et prête' : '○ Hors ligne'}</p>
                       </div>
-                      <span className={`flex-shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ${isInstanceConnected(selectedInstance?.status) ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-500'}`}>
+                      <span className={`flex-shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ${isInstanceConnected(selectedInstance?.status) ? 'bg-primary-100 text-primary' : 'bg-muted text-muted-foreground'}`}>
                         {isInstanceConnected(selectedInstance?.status) ? '✓ Prête' : tp('Déconnectée')}
                       </span>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <p className="text-[11px] text-gray-400 mb-2 font-semibold uppercase tracking-wider">{tp('Choisir l\'instance active')}</p>
+                      <p className="text-[11px] text-muted-foreground mb-2 font-semibold uppercase tracking-wider">{tp('Choisir l\'instance active')}</p>
                       {instances.map(inst => (
                         <button
                           key={inst._id}
@@ -1971,38 +1971,38 @@ export default function AgentConfig() {
                           className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all ${
                             config.instanceId === inst._id
                               ? 'border-primary-400 bg-primary-50 shadow-sm'
-                              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                              : 'border-border hover:border-gray-300 hover:bg-background'
                           }`}
                         >
                           <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${isInstanceConnected(inst.status) ? 'bg-primary-400' : 'bg-gray-300'}`} />
                           <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-gray-800 truncate">
+                            <p className="text-[13px] font-semibold text-foreground truncate">
                               {inst.customName || inst.instanceName || tp('Instance WhatsApp')}
                             </p>
-                            <p className="text-[11px] text-gray-400">{isInstanceConnected(inst.status) ? 'Connectée' : tp('Déconnectée')}</p>
+                            <p className="text-[11px] text-muted-foreground">{isInstanceConnected(inst.status) ? 'Connectée' : tp('Déconnectée')}</p>
                           </div>
                           {config.instanceId === inst._id && (
-                            <span className="text-[11px] font-bold text-primary-600 bg-primary-100 px-2 py-0.5 rounded-full flex-shrink-0">{tp('✓ Sélectionnée')}</span>
+                            <span className="text-[11px] font-bold text-primary bg-primary-100 px-2 py-0.5 rounded-full flex-shrink-0">{tp('✓ Sélectionnée')}</span>
                           )}
                         </button>
                       ))}
                     </div>
                   )}
                   {instanceSwitching && <p className="mt-3 text-[12px] text-blue-600 text-center">{tp('Changement en cours…')}</p>}
-                  {instanceSwitchStatus === 'success' && <p className="mt-3 text-[12px] text-primary-600 text-center">{tp('Instance changée ✓')}</p>}
+                  {instanceSwitchStatus === 'success' && <p className="mt-3 text-[12px] text-primary text-center">{tp('Instance changée ✓')}</p>}
                   {instanceSwitchStatus === 'error' && <p className="mt-3 text-[12px] text-red-500 text-center">{tp('Impossible de changer l\'instance.')}</p>}
                 </div>
               </div>
 
               {/* ── Personnalité + Messages — 2 champs essentiels ── */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-border flex items-center gap-2">
                   <span className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
                     <MessageCircle className="w-4 h-4 text-purple-600" />
                   </span>
                   <div>
-                    <h2 className="text-[14px] font-bold text-gray-900">Personnalité &amp; Messages</h2>
-                    <p className="text-[11px] text-gray-400">{tp('Cliquez sur un champ pour l\'éditer.')}</p>
+                    <h2 className="text-[14px] font-bold text-foreground">Personnalité &amp; Messages</h2>
+                    <p className="text-[11px] text-muted-foreground">{tp('Cliquez sur un champ pour l\'éditer.')}</p>
                   </div>
                 </div>
                 <div className="p-4 space-y-2">
@@ -2033,16 +2033,16 @@ export default function AgentConfig() {
             <div className="space-y-4">
 
               {/* ── Comportement ── */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center"><Settings size={14} className="text-gray-600" /></span>
-                  <h2 className="text-[13px] font-bold text-gray-900">{tp('Comportement')}</h2>
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-4 py-3 border-b border-border flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-md bg-muted flex items-center justify-center"><Settings size={14} className="text-muted-foreground" /></span>
+                  <h2 className="text-[13px] font-bold text-foreground">{tp('Comportement')}</h2>
                 </div>
                 <div className="p-4 space-y-4">
 
                   {/* Ton — grille compacte 2+3 */}
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{tp('Ton')}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{tp('Ton')}</p>
                     <div className="grid grid-cols-2 gap-1.5">
                       {TONE_OPTIONS.map(t => {
                         const active = config.toneStyle === t.value;
@@ -2051,7 +2051,7 @@ export default function AgentConfig() {
                             className={`flex items-center gap-1.5 text-left px-2.5 py-2 rounded-lg border text-[11px] transition-all leading-tight ${
                               active
                                 ? 'border-primary-400 bg-primary-50 text-primary-800 font-semibold'
-                                : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50'
+                                : 'border-border text-muted-foreground hover:border-gray-300 hover:bg-background'
                             }`}>
                             <t.Icon size={13} className="flex-shrink-0" />
                             {t.label}
@@ -2064,8 +2064,8 @@ export default function AgentConfig() {
                   {/* Délai de réponse */}
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{tp('Délai de réponse')}</p>
-                      <span className="text-[13px] font-bold text-primary-700 tabular-nums">{config.responseDelay}s</span>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{tp('Délai de réponse')}</p>
+                      <span className="text-[13px] font-bold text-primary tabular-nums">{config.responseDelay}s</span>
                     </div>
                     <div className="relative">
                       <input type="range" min="0" max="15" value={config.responseDelay}
@@ -2080,18 +2080,18 @@ export default function AgentConfig() {
                   </div>
 
                   {/* Toggles compacts */}
-                  <div className="space-y-0 divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
+                  <div className="space-y-0 divide-y divide-gray-100 border border-border rounded-xl overflow-hidden">
                     {[
                       { key: 'useEmojis', Icon: Smile, get label() { return tp('Emojis dans les réponses'); } },
                       { key: 'signMessages', Icon: Bot, label: 'Mentionner que c\'est une IA' },
                     ].map(({ key, Icon: ToggleIcon, label }) => (
-                      <div key={key} className="flex items-center justify-between px-3 py-2.5 bg-white">
-                        <span className="text-[12px] text-gray-600 flex items-center gap-2">
-                          <ToggleIcon size={14} className="text-gray-400" />{label}
+                      <div key={key} className="flex items-center justify-between px-3 py-2.5 bg-card">
+                        <span className="text-[12px] text-muted-foreground flex items-center gap-2">
+                          <ToggleIcon size={14} className="text-muted-foreground" />{label}
                         </span>
                         <button type="button" onClick={() => set(key, !config[key])}
-                          className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors ${config[key] ? 'bg-primary-500' : 'bg-gray-200'}`}>
-                          <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${config[key] ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                          className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors ${config[key] ? 'bg-primary' : 'bg-gray-200'}`}>
+                          <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-card shadow transition-transform ${config[key] ? 'translate-x-4' : 'translate-x-0.5'}`} />
                         </button>
                       </div>
                     ))}
@@ -2100,14 +2100,14 @@ export default function AgentConfig() {
               </div>
 
               {/* ── Voix ── */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-4 py-3 border-b border-border flex items-center gap-2">
                   <span className="w-6 h-6 rounded-md bg-purple-50 flex items-center justify-center"><Mic size={14} className="text-purple-600" /></span>
-                  <h2 className="text-[13px] font-bold text-gray-900">{tp('Voix')}</h2>
+                  <h2 className="text-[13px] font-bold text-foreground">{tp('Voix')}</h2>
                 </div>
                 <div className="p-4 space-y-4">
                   {/* Mode selector — 3 pills */}
-                  <div className="grid grid-cols-3 gap-1.5 bg-gray-100 p-1 rounded-xl">
+                  <div className="grid grid-cols-3 gap-1.5 bg-muted p-1 rounded-xl">
                     {[
                       { value: 'text', Icon: Type, label: 'Texte' },
                       { value: 'voice', Icon: Mic, label: 'Vocal' },
@@ -2117,7 +2117,7 @@ export default function AgentConfig() {
                       return (
                         <button key={m.value} type="button" onClick={() => set('responseMode', m.value)}
                           className={`flex flex-col items-center gap-0.5 py-2 rounded-lg text-[11px] font-semibold transition-all ${
-                            isActive ? 'bg-white shadow-sm text-primary-700' : 'text-gray-400 hover:text-gray-600'
+                            isActive ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-muted-foreground'
                           }`}>
                           <m.Icon size={16} />
                           {m.label}
@@ -2134,8 +2134,8 @@ export default function AgentConfig() {
                           <button key={p.value} type="button" onClick={() => set('ttsProvider', p.value)}
                             className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold border transition-all ${
                               (config.ttsProvider || 'elevenlabs') === p.value
-                                ? 'border-primary-400 bg-primary-50 text-primary-700'
-                                : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                                ? 'border-primary-400 bg-primary-50 text-primary'
+                                : 'border-border text-muted-foreground hover:border-gray-300'
                             }`}>
                             {p.label}
                           </button>
@@ -2154,19 +2154,19 @@ export default function AgentConfig() {
                               className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border cursor-pointer transition-all ${
                                 isSelected
                                   ? 'border-primary-400 bg-primary-50'
-                                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                  : 'border-border hover:border-gray-300 hover:bg-background'
                               }`}>
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] flex-shrink-0 ${isSelected ? 'bg-primary-100' : 'bg-gray-100'}`}>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] flex-shrink-0 ${isSelected ? 'bg-primary-100' : 'bg-muted'}`}>
                                 {voice.gender}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-[12px] font-bold text-gray-800">{voice.name}</p>
-                                <p className="text-[10px] text-gray-400 truncate">{voice.desc}</p>
+                                <p className="text-[12px] font-bold text-foreground">{voice.name}</p>
+                                <p className="text-[10px] text-muted-foreground truncate">{voice.desc}</p>
                               </div>
                               <button type="button"
                                 onClick={e => { e.stopPropagation(); isEL ? previewElevenLabsVoice(voice.id) : previewVoice(voice.id); }}
                                 className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-                                  isPlaying ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-primary-100 hover:text-primary-600'
+                                  isPlaying ? 'bg-primary text-white' : 'bg-muted text-muted-foreground hover:bg-primary-100 hover:text-primary'
                                 }`}>
                                 {isPlaying
                                   ? <span className="text-[8px] font-bold">■</span>
@@ -2181,8 +2181,8 @@ export default function AgentConfig() {
                       {config.responseMode === 'both' && (
                         <div>
                           <div className="flex justify-between mb-1">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{tp('Fréquence vocale')}</p>
-                            <span className="text-[11px] font-bold text-primary-700">{config.mixedVoiceReplyChance || 0}%</span>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{tp('Fréquence vocale')}</p>
+                            <span className="text-[11px] font-bold text-primary">{config.mixedVoiceReplyChance || 0}%</span>
                           </div>
                           <input type="range" min="0" max="100" value={config.mixedVoiceReplyChance || 0}
                             onChange={e => set('mixedVoiceReplyChance', parseInt(e.target.value) || 0)}
@@ -2218,8 +2218,8 @@ export default function AgentConfig() {
                     <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[84%] px-3 py-2 rounded-2xl text-[12px] leading-relaxed ${
                         msg.role === 'user'
-                          ? 'bg-primary-500 text-white rounded-br-sm'
-                          : 'bg-white/12 text-white/90 rounded-bl-sm'
+                          ? 'bg-primary text-white rounded-br-sm'
+                          : 'bg-card/12 text-white/90 rounded-bl-sm'
                       }`}>
                         {msg.text}
                       </div>
@@ -2227,9 +2227,9 @@ export default function AgentConfig() {
                   ))}
                   {simTyping && (
                     <div className="flex justify-start">
-                      <div className="bg-white/12 px-3.5 py-2.5 rounded-2xl rounded-bl-sm flex gap-1 items-center">
+                      <div className="bg-card/12 px-3.5 py-2.5 rounded-2xl rounded-bl-sm flex gap-1 items-center">
                         {[0, 1, 2].map(d => (
-                          <span key={d} className="w-1.5 h-1.5 rounded-full bg-white/50"
+                          <span key={d} className="w-1.5 h-1.5 rounded-full bg-card/50"
                             style={{ animation: `pulse 1.2s ease-in-out ${d * 0.2}s infinite` }} />
                         ))}
                       </div>
@@ -2240,13 +2240,13 @@ export default function AgentConfig() {
 
                 {/* Input */}
                 <div className="px-3 pb-3 pt-1">
-                  <div className="flex gap-2 bg-white/10 rounded-xl px-3 py-1.5">
+                  <div className="flex gap-2 bg-card/10 rounded-xl px-3 py-1.5">
                     <input value={simInput} onChange={e => setSimInput(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && handleSimSend()}
                       placeholder={tp('Testez une question…')}
                       className="flex-1 bg-transparent text-[12px] text-white placeholder-white/30 outline-none" />
                     <button onClick={handleSimSend} disabled={simTyping}
-                      className="w-7 h-7 flex items-center justify-center bg-primary-500 hover:bg-primary-400 rounded-lg transition-colors disabled:opacity-40 flex-shrink-0">
+                      className="w-7 h-7 flex items-center justify-center bg-primary hover:bg-primary-400 rounded-lg transition-colors disabled:opacity-40 flex-shrink-0">
                       <Send className="w-3 h-3 text-white" />
                     </button>
                   </div>
@@ -2268,19 +2268,19 @@ export default function AgentConfig() {
             <div className="lg:col-span-2 space-y-6">
 
               {/* 3 Modes de fonctionnement */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="bg-card rounded-2xl border overflow-hidden">
                 <div className="px-6 pt-5 pb-4">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
                       <Zap className="w-3.5 h-3.5 text-violet-500" />
                     </span>
-                    <h2 className="text-[14px] font-bold text-gray-900">{tp('3 Modes de Fonctionnement')}</h2>
+                    <h2 className="text-[14px] font-bold text-foreground">{tp('3 Modes de Fonctionnement')}</h2>
                   </div>
-                  <p className="text-[11.5px] text-gray-400 ml-9">{tp('Rita adapte sa personnalité selon l\'interlocuteur')}</p>
+                  <p className="text-[11.5px] text-muted-foreground ml-9">{tp('Rita adapte sa personnalité selon l\'interlocuteur')}</p>
                 </div>
                 <div className="px-4 pb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { id: 'client',    Icon: Users,    label: 'Mode Client',    subtitle: 'Vente & Support',    desc: 'Chaleureuse, naturelle, persuasive. Logique Comprendre → Valeur → Question.', accent: '#05976D', bg: '#f0fdf8', pill: 'bg-primary-100 text-primary-700' },
+                    { id: 'client',    Icon: Users,    label: 'Mode Client',    subtitle: 'Vente & Support',    desc: 'Chaleureuse, naturelle, persuasive. Logique Comprendre → Valeur → Question.', accent: '#05976D', bg: '#f0fdf8', pill: 'bg-primary-100 text-primary' },
                     { id: 'boss',      Icon: BarChart3, label: 'Mode Boss',      subtitle: 'Analyse & Rapports', get desc() { return tp('Professionnelle, analytique, directe. Analyse les conversations et propose des améliorations.'); }, accent: '#2563eb', bg: '#eff6ff', pill: 'bg-blue-100 text-blue-700' },
                     { id: 'execution', Icon: Settings,  get label() { return tp('Mode Exécution'); }, subtitle: 'Actions Boss',        get desc() { return tp('Comprend, adapte et exécute les instructions intelligemment sans copier.'); }, accent: '#d97706', bg: '#fffbeb', pill: 'bg-amber-100 text-amber-700' },
                   ].map(mode => {
@@ -2298,22 +2298,22 @@ export default function AgentConfig() {
                               style={{ background: active ? `${mode.accent}18` : '#f3f4f6' }}>
                               <mode.Icon className="w-4 h-4" style={{ color: active ? mode.accent : '#9ca3af' }} />
                             </span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${active ? mode.pill : 'bg-gray-100 text-gray-400'}`}>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${active ? mode.pill : 'bg-muted text-muted-foreground'}`}>
                               {active ? 'Actif' : tp('Inactif')}
                             </span>
                           </div>
                           <div>
                             <p className="font-bold text-[13px]" style={{ color: active ? mode.accent : '#374151' }}>{mode.label}</p>
-                            <p className="text-[10.5px] font-medium text-gray-400 mt-0.5">{mode.subtitle}</p>
+                            <p className="text-[10.5px] font-medium text-muted-foreground mt-0.5">{mode.subtitle}</p>
                           </div>
-                          <p className="text-[11px] text-gray-500 leading-relaxed">{mode.desc}</p>
+                          <p className="text-[11px] text-muted-foreground leading-relaxed">{mode.desc}</p>
                           {/* toggle dot */}
                           <div className="mt-1 flex items-center gap-1.5">
                             <div className="w-7 h-4 rounded-full flex items-center px-0.5 transition-all duration-200"
                               style={{ background: active ? mode.accent : '#d1d5db' }}>
-                              <div className={`w-3 h-3 rounded-full bg-white shadow transition-transform duration-200 ${active ? 'translate-x-3' : 'translate-x-0'}`} />
+                              <div className={`w-3 h-3 rounded-full bg-card shadow transition-transform duration-200 ${active ? 'translate-x-3' : 'translate-x-0'}`} />
                             </div>
-                            <span className="text-[10.5px] text-gray-400">{active ? 'Activé' : tp('Désactivé')}</span>
+                            <span className="text-[10.5px] text-muted-foreground">{active ? 'Activé' : tp('Désactivé')}</span>
                           </div>
                         </div>
                       </button>
@@ -2323,15 +2323,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Autonomy Level */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="bg-card rounded-2xl border overflow-hidden">
                 <div className="px-6 pt-5 pb-4">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
                       <Target className="w-3.5 h-3.5 text-orange-500" />
                     </span>
-                    <h2 className="text-[14px] font-bold text-gray-900">{tp('Niveau d\'autonomie')}</h2>
+                    <h2 className="text-[14px] font-bold text-foreground">{tp('Niveau d\'autonomie')}</h2>
                   </div>
-                  <p className="text-[11.5px] text-gray-400 ml-6">{tp('Contrôlez jusqu\'où Rita peut aller sans intervention humaine')}</p>
+                  <p className="text-[11.5px] text-muted-foreground ml-6">{tp('Contrôlez jusqu\'où Rita peut aller sans intervention humaine')}</p>
                 </div>
                 <div className="px-6 pb-6">
                   {/* Slider visuel 5 niveaux */}
@@ -2366,7 +2366,7 @@ export default function AgentConfig() {
                           style={{ background: colors[i] }}>{cur?.level}</div>
                         <div>
                           <p className="font-bold text-[13px]" style={{ color: colors[i] }}>{cur?.label}</p>
-                          <p className="text-[11.5px] text-gray-500 mt-0.5">{cur?.desc}</p>
+                          <p className="text-[11.5px] text-muted-foreground mt-0.5">{cur?.desc}</p>
                         </div>
                       </div>
                     );
@@ -2375,15 +2375,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Détection & Analyse Client */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="bg-card rounded-2xl border overflow-hidden">
                 <div className="px-6 pt-5 pb-4">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="w-7 h-7 rounded-lg bg-cyan-50 flex items-center justify-center">
                       <Eye className="w-3.5 h-3.5 text-cyan-500" />
                     </span>
-                    <h2 className="text-[14px] font-bold text-gray-900">{tp('Analyse Avant Chaque Réponse')}</h2>
+                    <h2 className="text-[14px] font-bold text-foreground">{tp('Analyse Avant Chaque Réponse')}</h2>
                   </div>
-                  <p className="text-[11.5px] text-gray-400 ml-9">{tp('Rita analyse chaque message pour adapter sa stratégie')}</p>
+                  <p className="text-[11.5px] text-muted-foreground ml-9">{tp('Rita analyse chaque message pour adapter sa stratégie')}</p>
                 </div>
                 <div className="px-4 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
@@ -2402,11 +2402,11 @@ export default function AgentConfig() {
                           </span>
                           <div className="w-8 h-4.5 rounded-full flex items-center px-0.5 transition-all duration-200 mt-0.5"
                             style={{ background: active ? item.color : '#d1d5db', height: 18 }}>
-                            <div className={`w-3.5 h-3.5 rounded-full bg-white shadow transition-transform duration-200 ${active ? 'translate-x-3' : 'translate-x-0'}`} />
+                            <div className={`w-3.5 h-3.5 rounded-full bg-card shadow transition-transform duration-200 ${active ? 'translate-x-3' : 'translate-x-0'}`} />
                           </div>
                         </div>
                         <p className="font-bold text-[12.5px]" style={{ color: active ? item.color : '#374151' }}>{item.label}</p>
-                        <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">{item.desc}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">{item.desc}</p>
                       </button>
                     );
                   })}
@@ -2414,26 +2414,26 @@ export default function AgentConfig() {
               </div>
 
               {/* Follow-up */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="bg-card rounded-2xl border overflow-hidden">
                 {/* Header toggle */}
                 <button type="button" onClick={() => set('followUpEnabled', !config.followUpEnabled)}
-                  className="w-full flex items-center gap-4 px-6 py-4 border-b border-gray-100 hover:bg-gray-50/50 transition-colors text-left">
+                  className="w-full flex items-center gap-4 px-6 py-4 border-b border-border hover:bg-background/50 transition-colors text-left">
                   <span className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ background: config.followUpEnabled ? '#fdf4ff' : '#f3f4f6' }}>
                     <MessageSquare className="w-4 h-4" style={{ color: config.followUpEnabled ? '#a855f7' : '#9ca3af' }} />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-[13.5px] text-gray-900">Relances & Suivi Clients</p>
-                    <p className="text-[11.5px] text-gray-400 mt-0.5">{tp('Rita relance automatiquement les prospects silencieux')}</p>
+                    <p className="font-bold text-[13.5px] text-foreground">Relances & Suivi Clients</p>
+                    <p className="text-[11.5px] text-muted-foreground mt-0.5">{tp('Rita relance automatiquement les prospects silencieux')}</p>
                   </div>
                   {/* big pill toggle */}
                   <div className="flex-shrink-0 flex items-center gap-2">
-                    <span className={`text-[11px] font-bold ${config.followUpEnabled ? 'text-purple-600' : 'text-gray-400'}`}>
+                    <span className={`text-[11px] font-bold ${config.followUpEnabled ? 'text-purple-600' : 'text-muted-foreground'}`}>
                       {config.followUpEnabled ? 'Activé' : tp('Désactivé')}
                     </span>
                     <div className="w-10 h-6 rounded-full flex items-center px-0.5 transition-all duration-200"
                       style={{ background: config.followUpEnabled ? '#a855f7' : '#d1d5db' }}>
-                      <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${config.followUpEnabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                      <div className={`w-5 h-5 rounded-full bg-card shadow transition-transform duration-200 ${config.followUpEnabled ? 'translate-x-4' : 'translate-x-0'}`} />
                     </div>
                   </div>
                 </button>
@@ -2442,18 +2442,18 @@ export default function AgentConfig() {
                   <div className="p-5 space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                       {/* Délai */}
-                      <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-3">
-                        <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Relancer après')}</p>
+                      <div className="rounded-xl border border-border bg-background/60 p-3">
+                        <p className="text-[10.5px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Relancer après')}</p>
                         <div className="flex items-baseline gap-1.5">
                           <input type="number" value={config.followUpDelay}
                             onChange={e => set('followUpDelay', parseInt(e.target.value) || 24)}
-                            min="1" className="w-16 text-[20px] font-bold text-gray-900 bg-transparent border-none outline-none p-0" />
-                          <span className="text-[12px] text-gray-400 font-medium">{tp('heures')}</span>
+                            min="1" className="w-16 text-[20px] font-bold text-foreground bg-transparent border-none outline-none p-0" />
+                          <span className="text-[12px] text-muted-foreground font-medium">{tp('heures')}</span>
                         </div>
                       </div>
                       {/* Max relances */}
-                      <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-3">
-                        <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Max relances')}</p>
+                      <div className="rounded-xl border border-border bg-background/60 p-3">
+                        <p className="text-[10.5px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Max relances')}</p>
                         <div className="flex items-center gap-2 mt-1">
                           {[1,2,3,4,5].map(n => (
                             <button key={n} type="button" onClick={() => set('followUpMaxRelances', n)}
@@ -2468,12 +2468,12 @@ export default function AgentConfig() {
                     </div>
                     {/* Message */}
                     <div>
-                      <p className="text-[10.5px] font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Message de relance')}</p>
+                      <p className="text-[10.5px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Message de relance')}</p>
                       <ModalTextarea value={config.followUpMessage}
                         onChange={e => set('followUpMessage', e.target.value)}
                         rows={5}
                         label="Message de relance"
-                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12.5px] text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent" />
+                        className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[12.5px] text-foreground focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent" />
                     </div>
                   </div>
                 )}
@@ -2482,9 +2482,9 @@ export default function AgentConfig() {
 
             <div className="space-y-6">
               {/* Permissions */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Permissions')}</h2>
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-5 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground">{tp('Permissions')}</h2>
                 </div>
                 <div className="p-5 space-y-1">
                   <Toggle enabled={config.canCloseDeals} onChange={v => set('canCloseDeals', v)}
@@ -2497,9 +2497,9 @@ export default function AgentConfig() {
               </div>
 
               {/* Comportement humain */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-5 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="text-sm">🧠</span>
                     {tp('Comportement Humain')}
                   </h2>
@@ -2513,9 +2513,9 @@ export default function AgentConfig() {
               </div>
 
               {/* Business hours */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Disponibilité')}</h2>
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-5 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground">{tp('Disponibilité')}</h2>
                 </div>
                 <div className="p-5 space-y-3">
                   <Toggle enabled={config.businessHoursOnly} onChange={v => set('businessHoursOnly', v)}
@@ -2543,15 +2543,15 @@ export default function AgentConfig() {
             <div className="lg:col-span-2 space-y-6">
 
               {/* Règles de vente intelligente */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
-                      <ShieldCheck className="w-4 h-4 text-primary-600" />
+                      <ShieldCheck className="w-4 h-4 text-primary" />
                     </span>
                     {tp('Règles de Vente Intelligente')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Les règles que Rita respecte en permanence')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Les règles que Rita respecte en permanence')}</p>
                 </div>
                 <div className="p-6 space-y-1">
                   <Toggle enabled={config.alwaysAnswerFirst} onChange={v => set('alwaysAnswerFirst', v)}
@@ -2570,15 +2570,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Groupe WhatsApmp */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
                       <MessageCircle className="w-4 h-4 text-green-600" />
                     </span>
                     {tp('Groupe WhatsApp')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Rita promotionnera votre groupe auprès des clients intéressés')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Rita promotionnera votre groupe auprès des clients intéressés')}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <Toggle
@@ -2603,16 +2603,16 @@ export default function AgentConfig() {
               </div>
 
               {/* Offres commerciales */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border flex items-center justify-between gap-3">
                   <div>
-                    <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+                    <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                       <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                         <Bell className="w-4 h-4 text-amber-600" />
                       </span>
                       {tp('Offres Commerciales')}
                     </h2>
-                    <p className="text-[12px] text-gray-400 mt-1">{tp('Promotions, bonus et arguments que Rita peut proposer au bon moment.')}</p>
+                    <p className="text-[12px] text-muted-foreground mt-1">{tp('Promotions, bonus et arguments que Rita peut proposer au bon moment.')}</p>
                   </div>
                   <Toggle enabled={config.commercialOffersEnabled} onChange={v => set('commercialOffersEnabled', v)} label="" />
                 </div>
@@ -2641,15 +2641,15 @@ export default function AgentConfig() {
                     </div>
 
                     {(config.commercialOffers || []).length === 0 ? (
-                      <div className="rounded-xl border border-dashed border-gray-200 p-4 text-center text-[12px] text-gray-400">
+                      <div className="rounded-xl border border-dashed border-border p-4 text-center text-[12px] text-muted-foreground">
                         {tp('Aucune offre configurée.')}
                       </div>
                     ) : (
                       <div className="space-y-3">
                         {(config.commercialOffers || []).map((offer, idx) => (
-                          <div key={idx} className="rounded-xl border border-gray-200 p-4 space-y-3 bg-gray-50/60">
+                          <div key={idx} className="rounded-xl border border-border p-4 space-y-3 bg-background/60">
                             <div className="flex items-center justify-between gap-3">
-                              <p className="text-[13px] font-bold text-gray-800">Offre {idx + 1}</p>
+                              <p className="text-[13px] font-bold text-foreground">Offre {idx + 1}</p>
                               <div className="flex items-center gap-2">
                                 <Toggle enabled={offer.active !== false} onChange={v => updateCommercialOffer(idx, 'active', v)} label="" />
                                 <button type="button" onClick={() => removeCommercialOffer(idx)} className="text-[12px] text-red-500 hover:text-red-700">
@@ -2690,26 +2690,26 @@ export default function AgentConfig() {
               </div>
 
               {/* Cas spéciaux */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
                       <AlertTriangle className="w-4 h-4 text-red-500" />
                     </span>
                     {tp('Gestion des Cas Spéciaux')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Comment Rita réagit à chaque situation particulière')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Comment Rita réagit à chaque situation particulière')}</p>
                 </div>
                 <div className="p-6 space-y-2">
                   {(config.specialCases || SPECIAL_CASES_DEFAULT).map((sc, idx) => (
                     <div key={sc.trigger} className={`flex items-start gap-3 p-3 rounded-xl border transition-all ${
-                      sc.enabled ? 'border-gray-200 bg-white' : 'border-gray-100 bg-gray-50 opacity-60'
+                      sc.enabled ? 'border-border bg-card' : 'border-border bg-background opacity-60'
                     }`}>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-[12px] font-bold text-gray-700">{sc.label}</span>
+                          <span className="text-[12px] font-bold text-foreground">{sc.label}</span>
                         </div>
-                        <p className="text-[11px] text-gray-400 mt-0.5">→ {sc.reaction}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">→ {sc.reaction}</p>
                       </div>
                       <Toggle enabled={sc.enabled} onChange={v => {
                         const updated = [...(config.specialCases || SPECIAL_CASES_DEFAULT)];
@@ -2725,16 +2725,16 @@ export default function AgentConfig() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Prix & Négociation */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-5 py-4 border-b border-border flex items-center justify-between">
                   <div>
-                    <h2 className="text-[15px] font-bold text-gray-900">💰 Prix & Négociation</h2>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{tp('Configure comment Rita gère les demandes de réduction')}</p>
+                    <h2 className="text-[15px] font-bold text-foreground">💰 Prix & Négociation</h2>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{tp('Configure comment Rita gère les demandes de réduction')}</p>
                   </div>
                   <button type="button"
                     onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), enabled: !config.pricingNegotiation?.enabled })}
-                    className={`relative w-[44px] h-[26px] rounded-full transition-all duration-200 flex-shrink-0 ${config.pricingNegotiation?.enabled ? 'bg-primary-500' : 'bg-gray-200 hover:bg-gray-300'}`}>
-                    <span className={`absolute top-[3px] w-5 h-5 bg-white rounded-full shadow-md transition-all duration-200 ${config.pricingNegotiation?.enabled ? 'left-[21px]' : 'left-[3px]'}`} />
+                    className={`relative w-[44px] h-[26px] rounded-full transition-all duration-200 flex-shrink-0 ${config.pricingNegotiation?.enabled ? 'bg-primary' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                    <span className={`absolute top-[3px] w-5 h-5 bg-card rounded-full shadow-md transition-all duration-200 ${config.pricingNegotiation?.enabled ? 'left-[21px]' : 'left-[3px]'}`} />
                   </button>
                 </div>
 
@@ -2743,34 +2743,34 @@ export default function AgentConfig() {
 
                     {/* Politique de prix */}
                     <div>
-                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">{tp('Politique de prix')}</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{tp('Politique de prix')}</p>
                       <div className="grid grid-cols-2 gap-2">
                         <button type="button"
                           onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), priceIsFinal: true, allowDiscount: false })}
                           className={`text-left px-3 py-3 rounded-xl border-2 transition-all duration-200 ${
-                            config.pricingNegotiation?.priceIsFinal ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                            config.pricingNegotiation?.priceIsFinal ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-border bg-background hover:border-border'
                           }`}>
-                          <p className="font-semibold text-[12px] text-gray-800">{tp('🔒 Prix fixe')}</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">{tp('Rita ne négocie pas. Le prix affiché est le dernier prix.')}</p>
+                          <p className="font-semibold text-[12px] text-foreground">{tp('🔒 Prix fixe')}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">{tp('Rita ne négocie pas. Le prix affiché est le dernier prix.')}</p>
                         </button>
                         <button type="button"
                           onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), priceIsFinal: false, allowDiscount: true })}
                           className={`text-left px-3 py-3 rounded-xl border-2 transition-all duration-200 ${
-                            !config.pricingNegotiation?.priceIsFinal ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                            !config.pricingNegotiation?.priceIsFinal ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-border bg-background hover:border-border'
                           }`}>
-                          <p className="font-semibold text-[12px] text-gray-800">{tp('🤝 Prix négociable')}</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">{tp('Rita peut accorder des réductions selon tes règles.')}</p>
+                          <p className="font-semibold text-[12px] text-foreground">{tp('🤝 Prix négociable')}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">{tp('Rita peut accorder des réductions selon tes règles.')}</p>
                         </button>
                       </div>
                     </div>
 
                     {/* Si prix négociable */}
                     {config.pricingNegotiation?.allowDiscount && (
-                      <div className="space-y-4 pt-3 border-t border-gray-100">
+                      <div className="space-y-4 pt-3 border-t border-border">
 
                         {/* Style de négociation */}
                         <div>
-                          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">{tp('Style de négociation')}</p>
+                          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{tp('Style de négociation')}</p>
                           <div className="grid grid-cols-3 gap-2">
                             {[
                               { id: 'firm', label: '💪 Ferme', get desc() { return tp('Réduction rare, seulement si insistance'); } },
@@ -2780,10 +2780,10 @@ export default function AgentConfig() {
                               <button key={s.id} type="button"
                                 onClick={() => set('pricingNegotiation', { ...(config.pricingNegotiation || {}), negotiationStyle: s.id })}
                                 className={`text-left px-2.5 py-2.5 rounded-xl border-2 transition-all duration-200 ${
-                                  config.pricingNegotiation?.negotiationStyle === s.id ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                                  config.pricingNegotiation?.negotiationStyle === s.id ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-border bg-background hover:border-border'
                                 }`}>
-                                <p className="font-semibold text-[11px] text-gray-800">{s.label}</p>
-                                <p className="text-[10px] text-gray-400 mt-0.5 leading-tight">{s.desc}</p>
+                                <p className="font-semibold text-[11px] text-foreground">{s.label}</p>
+                                <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{s.desc}</p>
                               </button>
                             ))}
                           </div>
@@ -2853,23 +2853,23 @@ export default function AgentConfig() {
         {/* ─── Store Import Modal ─── */}
         {showStoreImport && (
           <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[6vh] pb-4 px-4 bg-black/40 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col" style={{ maxHeight: 'min(90vh, 700px)' }}>
+            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col" style={{ maxHeight: 'min(90vh, 700px)' }}>
               {/* Header */}
-              <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3 px-5 py-4 border-b border-border">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${ACCENT}15` }}>
                   <Package className="w-5 h-5" style={{ color: ACCENT }} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-[15px] font-bold text-gray-900">{tp('Importer depuis le store')}</h3>
-                  <p className="text-[12px] text-gray-400">{tp('Sélectionnez des produits à ajouter au catalogue Rita')}</p>
+                  <h3 className="text-[15px] font-bold text-foreground">{tp('Importer depuis le store')}</h3>
+                  <p className="text-[12px] text-muted-foreground">{tp('Sélectionnez des produits à ajouter au catalogue Rita')}</p>
                 </div>
-                <button onClick={() => setShowStoreImport(false)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                <button onClick={() => setShowStoreImport(false)} className="p-1.5 rounded-lg text-muted-foreground hover:text-muted-foreground hover:bg-muted transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Search */}
-              <div className="px-5 py-3 border-b border-gray-100">
+              <div className="px-5 py-3 border-b border-border">
                 <input
                   type="text"
                   placeholder={tp('Rechercher un produit...')}
@@ -2879,7 +2879,7 @@ export default function AgentConfig() {
                     setStoreImportPage(1);
                     fetchStoreImportProducts(e.target.value, 1);
                   }}
-                  className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent"
+                  className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent"
                   style={{ '--tw-ring-color': `${ACCENT}40` }}
                 />
               </div>
@@ -2893,7 +2893,7 @@ export default function AgentConfig() {
                 ) : storeImportProducts.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-16 text-center">
                     <Package className="w-10 h-10 text-gray-200 mb-3" />
-                    <p className="text-[13px] font-semibold text-gray-400">{tp('Aucun produit trouvé')}</p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">{tp('Aucun produit trouvé')}</p>
                     <p className="text-[11px] text-gray-300 mt-1">{tp('Essayez une autre recherche ou ajoutez des produits dans votre store')}</p>
                   </div>
                 ) : (
@@ -2912,11 +2912,11 @@ export default function AgentConfig() {
                               return next;
                             });
                           }}
-                          className={`relative text-left rounded-xl border-2 overflow-hidden transition-all ${selected ? 'shadow-md' : 'border-gray-200 hover:border-gray-300'}`}
+                          className={`relative text-left rounded-xl border-2 overflow-hidden transition-all ${selected ? 'shadow-md' : 'border-border hover:border-gray-300'}`}
                           style={selected ? { borderColor: ACCENT, background: `${ACCENT}05` } : {}}
                         >
                           {/* Thumbnail */}
-                          <div className="aspect-square bg-gray-50 overflow-hidden">
+                          <div className="aspect-square bg-background overflow-hidden">
                             {thumb ? (
                               <img src={thumb} alt={p.name} className="w-full h-full object-cover" />
                             ) : (
@@ -2927,12 +2927,12 @@ export default function AgentConfig() {
                           </div>
                           {/* Info */}
                           <div className="p-2.5">
-                            <p className="text-[12px] font-semibold text-gray-900 leading-tight line-clamp-2">{p.name || tp('Sans nom')}</p>
+                            <p className="text-[12px] font-semibold text-foreground leading-tight line-clamp-2">{p.name || tp('Sans nom')}</p>
                             {p.price != null && (
                               <p className="text-[11px] font-bold mt-1" style={{ color: ACCENT }}>{Number(p.price).toLocaleString('fr-FR')} FCFA</p>
                             )}
                             {p.category && (
-                              <p className="text-[10px] text-gray-400 mt-0.5 truncate">{p.category}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{p.category}</p>
                             )}
                           </div>
                           {/* Check badge */}
@@ -2951,15 +2951,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100 flex-shrink-0 bg-white">
-                <span className="text-[12px] text-gray-400">
+              <div className="flex items-center justify-between px-5 py-4 border-t border-border flex-shrink-0 bg-card">
+                <span className="text-[12px] text-muted-foreground">
                   {storeImportSelected.size > 0
                     ? <span className="font-semibold" style={{ color: ACCENT }}>{storeImportSelected.size} produit{storeImportSelected.size > 1 ? 's' : ''} sélectionné{storeImportSelected.size > 1 ? 's' : ''}</span>
                     : tp('Sélectionnez des produits')}
                 </span>
                 <div className="flex items-center gap-2">
                   <button onClick={() => setShowStoreImport(false)}
-                    className="px-4 py-2 text-[12px] font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+                    className="px-4 py-2 text-[12px] font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors">
                     {tp('Annuler')}
                   </button>
                   <button
@@ -2982,7 +2982,7 @@ export default function AgentConfig() {
             <div className="lg:col-span-2 space-y-6">
               
               {/* Livraison */}
-              <div className="rounded-2xl border border-gray-200 overflow-hidden" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)' }}>
+              <div className="rounded-2xl border border-border overflow-hidden" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)' }}>
                 <div className="px-6 py-5" style={{ background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)' }}>
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)' }}>
@@ -3012,7 +3012,7 @@ export default function AgentConfig() {
                   <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                      <span className="text-[13px] font-bold text-gray-800">{tp('Zones de livraison')}</span>
+                      <span className="text-[13px] font-bold text-foreground">{tp('Zones de livraison')}</span>
                       {(config.deliveryZones || []).length > 0 && (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}>
                           {(config.deliveryZones || []).length}
@@ -3029,7 +3029,7 @@ export default function AgentConfig() {
                   {(config.deliveryZones || []).length === 0 ? (
                     <div className="rounded-xl border-2 border-dashed border-blue-200 p-8 text-center" style={{ background: 'rgba(59,130,246,0.03)' }}>
                       <MapPin className="w-8 h-8 text-blue-300 mx-auto mb-2" />
-                      <p className="text-[13px] font-medium text-gray-400">{tp('Aucune zone configurée')}</p>
+                      <p className="text-[13px] font-medium text-muted-foreground">{tp('Aucune zone configurée')}</p>
                       <p className="text-[11px] text-gray-300 mt-1">{tp('Ajoutez vos premières zones de livraison')}</p>
                     </div>
                   ) : (
@@ -3039,7 +3039,7 @@ export default function AgentConfig() {
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                               <span className="w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-bold text-white" style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}>{idx + 1}</span>
-                              <span className="text-[12px] font-bold text-gray-700">{zone.city || tp('Nouvelle zone')}</span>
+                              <span className="text-[12px] font-bold text-foreground">{zone.city || tp('Nouvelle zone')}</span>
                             </div>
                             <button type="button" onClick={() => set('deliveryZones', (config.deliveryZones || []).filter((_, i) => i !== idx))}
                               className="w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 transition-all duration-200 text-[14px]">✕</button>
@@ -3063,7 +3063,7 @@ export default function AgentConfig() {
               </div>
 
               {/* Expéditions */}
-              <div className="rounded-2xl border border-gray-200 overflow-hidden" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 100%)' }}>
+              <div className="rounded-2xl border border-border overflow-hidden" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 100%)' }}>
                 <div className="px-6 py-5 flex items-center justify-between gap-3" style={{ background: 'linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #f97316 100%)' }}>
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)' }}>
@@ -3082,14 +3082,14 @@ export default function AgentConfig() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-                        <span className="text-[13px] font-bold text-gray-800">{tp('Villes éligibles')}</span>
+                        <span className="text-[13px] font-bold text-foreground">{tp('Villes éligibles')}</span>
                         {(config.expeditionCities || []).length > 0 && (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f97316, #c2410c)' }}>
                             {(config.expeditionCities || []).length}
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-gray-400">{tp('Cochez les villes où vous pouvez expédier vos produits')}</p>
+                      <p className="text-[11px] text-muted-foreground">{tp('Cochez les villes où vous pouvez expédier vos produits')}</p>
                       
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {(CITIES_BY_COUNTRY[config.businessCountry || 'CM'] || CITIES_BY_COUNTRY.CM).map((city) => {
@@ -3102,7 +3102,7 @@ export default function AgentConfig() {
                               <input type="checkbox" checked={isChecked}
                                 onChange={(e) => { const u = e.target.checked ? [...(config.expeditionCities || []), city] : (config.expeditionCities || []).filter(c => c !== city); set('expeditionCities', u); }}
                                 className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500" />
-                              <span className={`text-[12px] font-medium ${isChecked ? 'text-orange-800' : 'text-gray-600'}`}>{city}</span>
+                              <span className={`text-[12px] font-medium ${isChecked ? 'text-orange-800' : 'text-muted-foreground'}`}>{city}</span>
                             </label>
                           );
                         })}
@@ -3122,7 +3122,7 @@ export default function AgentConfig() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                          <span className="text-[13px] font-bold text-gray-800">{tp('Comptes Mobile Money')}</span>
+                          <span className="text-[13px] font-bold text-foreground">{tp('Comptes Mobile Money')}</span>
                         </div>
                         <button type="button" onClick={() => { const u = { ...config.paymentCoordinates, mobileMoney: [...(config.paymentCoordinates?.mobileMoney || []), { provider: 'Orange Money', number: '', accountName: '' }] }; set('paymentCoordinates', u); }}
                           className="text-[12px] font-semibold px-4 py-2 rounded-xl transition-all duration-200 hover:shadow-md"
@@ -3134,7 +3134,7 @@ export default function AgentConfig() {
                       {(config.paymentCoordinates?.mobileMoney || []).length === 0 ? (
                         <div className="rounded-xl border-2 border-dashed border-orange-200 p-8 text-center" style={{ background: 'rgba(249,115,22,0.03)' }}>
                           <Phone className="w-8 h-8 text-orange-300 mx-auto mb-2" />
-                          <p className="text-[13px] font-medium text-gray-400">{tp('Aucun compte configuré')}</p>
+                          <p className="text-[13px] font-medium text-muted-foreground">{tp('Aucun compte configuré')}</p>
                           <p className="text-[11px] text-gray-300 mt-1">{tp('Ajoutez Orange Money, MTN MoMo, etc.')}</p>
                         </div>
                       ) : (
@@ -3144,7 +3144,7 @@ export default function AgentConfig() {
                               <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-2">
                                   <span className="w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-bold text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>{idx + 1}</span>
-                                  <span className="text-[12px] font-bold text-gray-700">{mm.provider || tp('Compte')}</span>
+                                  <span className="text-[12px] font-bold text-foreground">{mm.provider || tp('Compte')}</span>
                                 </div>
                                 <button type="button" onClick={() => { const u = { ...config.paymentCoordinates }; u.mobileMoney = u.mobileMoney.filter((_, i) => i !== idx); set('paymentCoordinates', u); }}
                                   className="w-7 h-7 rounded-lg flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 transition-all duration-200 text-[14px]">✕</button>
@@ -3201,7 +3201,7 @@ export default function AgentConfig() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Récapitulatif */}
-              <div className="rounded-2xl border border-gray-200 overflow-hidden" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)' }}>
+              <div className="rounded-2xl border border-border overflow-hidden" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)' }}>
                 <div className="px-5 py-4" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
                   <h2 className="text-[15px] font-bold text-white flex items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-slate-300" />
@@ -3269,7 +3269,7 @@ export default function AgentConfig() {
                   </span>
                   <p className="text-[13px] font-bold text-primary-800">{tp('Conseil')}</p>
                 </div>
-                <p className="text-[11px] text-primary-700 leading-relaxed">
+                <p className="text-[11px] text-primary leading-relaxed">
                   Configurez les zones de livraison locale pour Douala/Yaoundé, et activez les expéditions pour les autres villes du Cameroun.
                 </p>
               </div>
@@ -3287,15 +3287,15 @@ export default function AgentConfig() {
               {/* List header */}
               <div className="flex items-center gap-2">
                 <div className="flex-1">
-                  <h2 className="text-[14px] font-bold text-gray-900">
+                  <h2 className="text-[14px] font-bold text-foreground">
                     {tp('Catalogue')}
-                    <span className="ml-2 text-[11px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                    <span className="ml-2 text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                       {config.productCatalog.length}
                     </span>
                   </h2>
                 </div>
                 <button onClick={() => setShowImport(!showImport)}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors" title={tp('Importer CSV')}>
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title={tp('Importer CSV')}>
                   <Upload className="w-3.5 h-3.5" />
                 </button>
                 <button onClick={openStoreImport}
@@ -3343,11 +3343,11 @@ export default function AgentConfig() {
               {/* Product list */}
               {config.productCatalog.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center py-16 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 rounded-2xl bg-background border-2 border-dashed border-border flex items-center justify-center mb-4">
                     <Package className="w-7 h-7 text-gray-300" />
                   </div>
-                  <p className="text-[13px] font-semibold text-gray-500">{tp('Catalogue vide')}</p>
-                  <p className="text-[11px] text-gray-400 mt-1 mb-4 max-w-[180px]">{tp('Ajoutez vos produits pour que Rita puisse les recommander')}</p>
+                  <p className="text-[13px] font-semibold text-muted-foreground">{tp('Catalogue vide')}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1 mb-4 max-w-[180px]">{tp('Ajoutez vos produits pour que Rita puisse les recommander')}</p>
                   <button onClick={addProduct}
                     className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-bold text-white rounded-xl shadow-sm"
                     style={{ background: ACCENT }}>
@@ -3361,8 +3361,8 @@ export default function AgentConfig() {
                       onClick={() => { setEditingProduct(editingProduct === idx ? null : idx); setProductFormTab('info'); }}
                       className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
                         editingProduct === idx
-                          ? 'bg-primary-600 shadow-md'
-                          : 'bg-white border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40 hover:shadow-sm'
+                          ? 'bg-primary shadow-md'
+                          : 'bg-card border border-border hover:border-primary-200 hover:bg-primary-50/40 hover:shadow-sm'
                       }`}>
 
                       {/* Checkbox */}
@@ -3376,7 +3376,7 @@ export default function AgentConfig() {
 
                       {/* Thumbnail */}
                       <div className={`w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center text-[12px] font-bold transition-all ${
-                        editingProduct === idx ? 'bg-white/20 text-white' : 'bg-primary-50 text-primary-700'
+                        editingProduct === idx ? 'bg-card/20 text-white' : 'bg-primary-50 text-primary'
                       }`}>
                         {product.images?.[0]
                           ? <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
@@ -3385,10 +3385,10 @@ export default function AgentConfig() {
 
                       {/* Info */}
                       <div className="min-w-0 flex-1">
-                        <p className={`text-[12px] font-semibold truncate leading-tight ${editingProduct === idx ? 'text-white' : 'text-gray-800'}`}>
+                        <p className={`text-[12px] font-semibold truncate leading-tight ${editingProduct === idx ? 'text-white' : 'text-foreground'}`}>
                           {product.name || <span className="italic opacity-60">{tp('Sans nom')}</span>}
                         </p>
-                        <p className={`text-[11px] truncate mt-0.5 ${editingProduct === idx ? 'text-primary-100' : 'text-gray-400'}`}>
+                        <p className={`text-[11px] truncate mt-0.5 ${editingProduct === idx ? 'text-primary-100' : 'text-muted-foreground'}`}>
                           {product.price || '—'}
                           {product.inStock === false && <span className="ml-1">· 🔴</span>}
                         </p>
@@ -3397,7 +3397,7 @@ export default function AgentConfig() {
                       {/* Delete */}
                       <button onClick={e => { e.stopPropagation(); removeProduct(idx); }}
                         className={`flex-shrink-0 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-all ${
-                          editingProduct === idx ? 'text-white/60 hover:text-white hover:bg-white/10' : 'text-gray-300 hover:text-red-500 hover:bg-red-50'
+                          editingProduct === idx ? 'text-white/60 hover:text-white hover:bg-card/10' : 'text-gray-300 hover:text-red-500 hover:bg-red-50'
                         }`}>
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -3406,7 +3406,7 @@ export default function AgentConfig() {
 
                   {/* Bottom add */}
                   <button onClick={addProduct}
-                    className="w-full flex items-center justify-center gap-1.5 py-2.5 mt-1 rounded-xl border-2 border-dashed border-gray-200 text-[12px] font-semibold text-gray-400 hover:border-primary-300 hover:text-primary-600 hover:bg-primary-50 transition-all">
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 mt-1 rounded-xl border-2 border-dashed border-border text-[12px] font-semibold text-muted-foreground hover:border-primary-300 hover:text-primary hover:bg-primary-50 transition-all">
                     <Plus className="w-3.5 h-3.5" /> Ajouter un produit
                   </button>
                 </div>
@@ -3418,15 +3418,15 @@ export default function AgentConfig() {
               const product = config.productCatalog[editingProduct];
               const idx = editingProduct;
               return (
-                <div className="flex-1 min-w-0 bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
+                <div className="flex-1 min-w-0 bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
 
                   {/* Panel header */}
-                  <div className="px-5 pt-4 pb-0 border-b border-gray-100">
+                  <div className="px-5 pt-4 pb-0 border-b border-border">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="min-w-0">
-                        <p className="text-[15px] font-bold text-gray-900 truncate">{product.name || tp('Nouveau produit')}</p>
-                        <p className="text-[11px] text-gray-400 mt-0.5">
-                          {product.price && <span className="font-semibold text-primary-600">{product.price}</span>}
+                        <p className="text-[15px] font-bold text-foreground truncate">{product.name || tp('Nouveau produit')}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          {product.price && <span className="font-semibold text-primary">{product.price}</span>}
                           {product.category && <span> · {product.category}</span>}
                         </p>
                       </div>
@@ -3434,13 +3434,13 @@ export default function AgentConfig() {
                         <button type="button" onClick={() => updateProduct(idx, 'inStock', !(product.inStock !== false))}
                           className={`text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all ${
                             product.inStock !== false
-                              ? 'text-primary-700 bg-primary-50 border-primary-200 hover:bg-primary-100'
+                              ? 'text-primary bg-primary-50 border-primary-200 hover:bg-primary-100'
                               : 'text-red-600 bg-red-50 border-red-200 hover:bg-red-100'
                           }`}>
                           {product.inStock !== false ? '🟢 En stock' : '🔴 Rupture'}
                         </button>
                         <button onClick={() => setEditingProduct(null)}
-                          className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                          className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-300 hover:text-muted-foreground hover:bg-muted transition-colors">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -3458,8 +3458,8 @@ export default function AgentConfig() {
                           onClick={() => setProductFormTab(tab.id)}
                           className={`px-3.5 py-2 text-[12px] font-semibold rounded-t-lg border-b-2 transition-all ${
                             productFormTab === tab.id
-                              ? 'text-primary-700 border-primary-500 bg-primary-50/50'
-                              : 'text-gray-400 border-transparent hover:text-gray-600 hover:bg-gray-50'
+                              ? 'text-primary border-primary-500 bg-primary-50/50'
+                              : 'text-muted-foreground border-transparent hover:text-muted-foreground hover:bg-background'
                           }`}>
                           <span className="mr-1">{tab.emoji}</span>{tab.label}
                         </button>
@@ -3498,10 +3498,10 @@ export default function AgentConfig() {
 
                         {/* Caractéristiques */}
                         <div>
-                          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">{tp('Caractéristiques clés')}</p>
+                          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{tp('Caractéristiques clés')}</p>
                           <div className="flex flex-wrap gap-1.5 mb-2 min-h-[28px]">
                             {(product.features || []).map((f, fIdx) => (
-                              <span key={fIdx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary-700 rounded-lg text-[11px] font-medium border border-primary-100">
+                              <span key={fIdx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-50 text-primary rounded-lg text-[11px] font-medium border border-primary-100">
                                 {f}
                                 <button type="button" onClick={() => removeProductFeature(idx, fIdx)} className="text-primary-400 hover:text-red-500 leading-none text-base">×</button>
                               </span>
@@ -3526,8 +3526,8 @@ export default function AgentConfig() {
                         {/* Images */}
                         <div>
                           <div className="flex items-center justify-between mb-3">
-                            <p className="text-[13px] font-bold text-gray-800">{tp('Photos du produit')}</p>
-                            <label className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg text-primary-700 bg-primary-50 hover:bg-primary-100 cursor-pointer transition-colors border border-primary-100">
+                            <p className="text-[13px] font-bold text-foreground">{tp('Photos du produit')}</p>
+                            <label className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg text-primary bg-primary-50 hover:bg-primary-100 cursor-pointer transition-colors border border-primary-100">
                               <input type="file" accept="image/*" multiple className="hidden"
                                 onChange={async (e) => { await handleProductMediaUpload(idx, 'images', e.target.files); e.target.value = ''; }} />
                               {mediaUploadingByProduct[`${idx}:images`]
@@ -3536,7 +3536,7 @@ export default function AgentConfig() {
                             </label>
                           </div>
                           {(product.images || []).length === 0 ? (
-                            <label className="flex flex-col items-center justify-center h-24 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 hover:border-primary-300 hover:text-primary-500 hover:bg-primary-50 transition-all cursor-pointer">
+                            <label className="flex flex-col items-center justify-center h-24 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:border-primary-300 hover:text-primary-500 hover:bg-primary-50 transition-all cursor-pointer">
                               <input type="file" accept="image/*" multiple className="hidden"
                                 onChange={async (e) => { await handleProductMediaUpload(idx, 'images', e.target.files); e.target.value = ''; }} />
                               <Image className="w-5 h-5 mb-1" />
@@ -3545,7 +3545,7 @@ export default function AgentConfig() {
                           ) : (
                             <div className="grid grid-cols-4 gap-2">
                               {(product.images || []).map((url, imageIndex) => (
-                                <div key={imageIndex} className="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+                                <div key={imageIndex} className="relative group aspect-square rounded-xl overflow-hidden border border-border bg-background">
                                   <img src={url} alt="" className="w-full h-full object-cover" />
                                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all" />
                                   <button type="button" onClick={() => removeProductMedia(idx, 'images', imageIndex)}
@@ -3554,7 +3554,7 @@ export default function AgentConfig() {
                                   </button>
                                 </div>
                               ))}
-                              <label className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300 hover:border-primary-300 hover:text-primary-500 hover:bg-primary-50 transition-all cursor-pointer">
+                              <label className="aspect-square rounded-xl border-2 border-dashed border-border flex items-center justify-center text-gray-300 hover:border-primary-300 hover:text-primary-500 hover:bg-primary-50 transition-all cursor-pointer">
                                 <input type="file" accept="image/*" multiple className="hidden"
                                   onChange={async (e) => { await handleProductMediaUpload(idx, 'images', e.target.files); e.target.value = ''; }} />
                                 <Plus className="w-5 h-5" />
@@ -3567,8 +3567,8 @@ export default function AgentConfig() {
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800">{tp('Vidéos du produit')}</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Rita envoie la vidéo quand le client hésite ou veut voir le produit en action')}</p>
+                              <p className="text-[13px] font-bold text-foreground">{tp('Vidéos du produit')}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{tp('Rita envoie la vidéo quand le client hésite ou veut voir le produit en action')}</p>
                             </div>
                             <label className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors border border-blue-100">
                               <input type="file" accept="video/*" multiple className="hidden"
@@ -3579,7 +3579,7 @@ export default function AgentConfig() {
                             </label>
                           </div>
                           {(product.videos || []).length === 0 ? (
-                            <p className="text-[11px] text-gray-400 py-2">{tp('Aucune vidéo ajoutée')}</p>
+                            <p className="text-[11px] text-muted-foreground py-2">{tp('Aucune vidéo ajoutée')}</p>
                           ) : (
                             <div className="space-y-1.5">
                               {(product.videos || []).map((url, videoIndex) => (
@@ -3587,7 +3587,7 @@ export default function AgentConfig() {
                                   <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                                     <PlayCircle className="w-4 h-4 text-blue-500" />
                                   </div>
-                                  <span className="text-[11px] text-gray-600 flex-1 truncate font-medium">Vidéo {videoIndex + 1}</span>
+                                  <span className="text-[11px] text-muted-foreground flex-1 truncate font-medium">Vidéo {videoIndex + 1}</span>
                                   <a href={url} target="_blank" rel="noreferrer" className="text-[10px] text-blue-500 hover:text-blue-700 font-semibold">{tp('Voir ▶')}</a>
                                   <button type="button" onClick={() => removeProductMedia(idx, 'videos', videoIndex)}
                                     className="text-gray-300 hover:text-red-500 transition-colors">
@@ -3631,9 +3631,9 @@ export default function AgentConfig() {
                             </div>
                           </div>
                         ) : (
-                          <div className="flex items-start gap-2.5 px-3.5 py-3 bg-gray-50 border border-gray-200 rounded-xl">
+                          <div className="flex items-start gap-2.5 px-3.5 py-3 bg-background border border-border rounded-xl">
                             <span className="text-sm">💡</span>
-                            <p className="text-[11px] text-gray-500 leading-snug">{tp('Activez')} <strong>Prix & Négociation</strong> {tp('dans la sidebar pour configurer les règles de remise par produit.')}</p>
+                            <p className="text-[11px] text-muted-foreground leading-snug">{tp('Activez')} <strong>Prix & Négociation</strong> {tp('dans la sidebar pour configurer les règles de remise par produit.')}</p>
                           </div>
                         )}
 
@@ -3641,8 +3641,8 @@ export default function AgentConfig() {
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800">{tp('Paliers de quantité')}</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Réductions automatiques selon la quantité commandée')}</p>
+                              <p className="text-[13px] font-bold text-foreground">{tp('Paliers de quantité')}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{tp('Réductions automatiques selon la quantité commandée')}</p>
                             </div>
                             <button type="button" onClick={() => addProductQuantityOffer(idx)}
                               className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-100 transition-colors">
@@ -3650,9 +3650,9 @@ export default function AgentConfig() {
                             </button>
                           </div>
                           {(product.quantityOffers || []).length === 0 ? (
-                            <div className="flex items-center gap-2.5 px-3.5 py-3 border-2 border-dashed border-gray-200 rounded-xl">
+                            <div className="flex items-center gap-2.5 px-3.5 py-3 border-2 border-dashed border-border rounded-xl">
                               <span className="text-gray-300 text-lg">📦</span>
-                              <p className="text-[11px] text-gray-400">{tp('Aucun palier — les clients paient le prix standard')}</p>
+                              <p className="text-[11px] text-muted-foreground">{tp('Aucun palier — les clients paient le prix standard')}</p>
                             </div>
                           ) : (
                             <div className="space-y-2">
@@ -3700,8 +3700,8 @@ export default function AgentConfig() {
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800">FAQ</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Questions fréquentes et réponses de Rita')}</p>
+                              <p className="text-[13px] font-bold text-foreground">FAQ</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{tp('Questions fréquentes et réponses de Rita')}</p>
                             </div>
                             <button type="button" onClick={() => addProductFaq(idx)}
                               className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-100 transition-colors">
@@ -3709,19 +3709,19 @@ export default function AgentConfig() {
                             </button>
                           </div>
                           {(product.faq || []).length === 0 ? (
-                            <p className="text-[11px] text-gray-400 py-1">{tp('Aucune FAQ configurée')}</p>
+                            <p className="text-[11px] text-muted-foreground py-1">{tp('Aucune FAQ configurée')}</p>
                           ) : (
                             <div className="space-y-2">
                               {(product.faq || []).map((f, fIdx) => (
-                                <div key={fIdx} className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden">
-                                  <div className="flex items-center gap-2 px-3 py-2 bg-purple-50/60 border-b border-gray-100">
+                                <div key={fIdx} className="bg-background border border-border rounded-xl overflow-hidden">
+                                  <div className="flex items-center gap-2 px-3 py-2 bg-purple-50/60 border-b border-border">
                                     <span className="w-5 h-5 rounded-md bg-purple-100 text-purple-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">Q</span>
                                     <ModalInput value={f.question} onChange={e => updateProductFaq(idx, fIdx, 'question', e.target.value)}
                                       placeholder={tp('Question du client…')} label="Question FAQ" className="ac-input flex-1 text-xs bg-transparent border-0 px-0 py-0 focus:ring-0" />
                                     <button type="button" onClick={() => removeProductFaq(idx, fIdx)} className="text-gray-300 hover:text-red-500 flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
                                   </div>
                                   <div className="flex items-start gap-2 px-3 py-2">
-                                    <span className="w-5 h-5 rounded-md bg-primary-100 text-primary-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">R</span>
+                                    <span className="w-5 h-5 rounded-md bg-primary-100 text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">R</span>
                                     <ModalTextarea value={f.answer} onChange={e => updateProductFaq(idx, fIdx, 'answer', e.target.value)}
                                       placeholder={tp('Réponse de Rita…')} rows={4} label="Réponse FAQ"
                                       className="ac-textarea flex-1 text-xs" />
@@ -3736,8 +3736,8 @@ export default function AgentConfig() {
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800">{tp('Objections')}</p>
-                              <p className="text-[10px] text-gray-400 mt-0.5">{tp('Comment Rita répond aux blocages clients')}</p>
+                              <p className="text-[13px] font-bold text-foreground">{tp('Objections')}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{tp('Comment Rita répond aux blocages clients')}</p>
                             </div>
                             <button type="button" onClick={() => addProductObjection(idx)}
                               className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-100 transition-colors">
@@ -3745,19 +3745,19 @@ export default function AgentConfig() {
                             </button>
                           </div>
                           {(product.objections || []).length === 0 ? (
-                            <p className="text-[11px] text-gray-400 py-1">{tp('Aucune objection configurée')}</p>
+                            <p className="text-[11px] text-muted-foreground py-1">{tp('Aucune objection configurée')}</p>
                           ) : (
                             <div className="space-y-2">
                               {(product.objections || []).map((o, oIdx) => (
-                                <div key={oIdx} className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden">
-                                  <div className="flex items-center gap-2 px-3 py-2 bg-orange-50/60 border-b border-gray-100">
+                                <div key={oIdx} className="bg-background border border-border rounded-xl overflow-hidden">
+                                  <div className="flex items-center gap-2 px-3 py-2 bg-orange-50/60 border-b border-border">
                                     <span className="w-5 h-5 rounded-md bg-orange-100 text-orange-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0 shrink-0">!</span>
                                     <ModalInput value={o.objection} onChange={e => updateProductObjection(idx, oIdx, 'objection', e.target.value)}
                                       placeholder={tp('ex: C\'est trop cher…')} label="Objection client" className="ac-input flex-1 text-xs bg-transparent border-0 px-0 py-0 focus:ring-0" />
                                     <button type="button" onClick={() => removeProductObjection(idx, oIdx)} className="text-gray-300 hover:text-red-500 flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
                                   </div>
                                   <div className="flex items-start gap-2 px-3 py-2">
-                                    <span className="w-5 h-5 rounded-md bg-primary-100 text-primary-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">→</span>
+                                    <span className="w-5 h-5 rounded-md bg-primary-100 text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">→</span>
                                     <ModalTextarea value={o.response} onChange={e => updateProductObjection(idx, oIdx, 'response', e.target.value)}
                                       placeholder={tp('Réponse de Rita…')} rows={4} label="Réponse à l'objection"
                                       className="ac-textarea flex-1 text-xs" />
@@ -3775,13 +3775,13 @@ export default function AgentConfig() {
               );
             })() : (
               config.productCatalog.length > 0 && (
-                <div className="flex-1 hidden lg:flex flex-col items-center justify-center text-center gap-3 bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-2xl">
-                  <div className="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+                <div className="flex-1 hidden lg:flex flex-col items-center justify-center text-center gap-3 bg-background/50 border-2 border-dashed border-border rounded-2xl">
+                  <div className="w-12 h-12 rounded-2xl bg-card border border-border flex items-center justify-center shadow-sm">
                     <Package className="w-5 h-5 text-gray-300" />
                   </div>
                   <div>
-                    <p className="text-[13px] font-semibold text-gray-500">{tp('Sélectionnez un produit')}</p>
-                    <p className="text-[11px] text-gray-400 mt-1">{tp('Cliquez sur un produit dans la liste pour l\'éditer')}</p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">{tp('Sélectionnez un produit')}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{tp('Cliquez sur un produit dans la liste pour l\'éditer')}</p>
                   </div>
                 </div>
               )
@@ -3792,11 +3792,11 @@ export default function AgentConfig() {
         {/* ─── TAB: STOCK ─── */}
         {activeTab === 'stock' && (
           <div className="space-y-4">
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="bg-card rounded-2xl border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border flex items-center justify-between">
                 <div>
-                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Gestion du Stock')}</h2>
-                  <p className="text-[12px] text-gray-400 mt-0.5">{tp('L\'agent adapte ses réponses en fonction du stock disponible')}</p>
+                  <h2 className="text-[15px] font-bold text-foreground">{tp('Gestion du Stock')}</h2>
+                  <p className="text-[12px] text-muted-foreground mt-0.5">{tp('L\'agent adapte ses réponses en fonction du stock disponible')}</p>
                 </div>
                 <Toggle enabled={config.stockManagementEnabled} onChange={v => set('stockManagementEnabled', v)} label="" />
               </div>
@@ -3809,16 +3809,16 @@ export default function AgentConfig() {
                     </button>
                   </div>
                   {(config.stockEntries || []).length === 0 ? (
-                    <p className="text-center text-[13px] text-gray-400 py-6">{tp('Aucune entrée de stock. Ajoutez vos produits pour activer le suivi.')}</p>
+                    <p className="text-center text-[13px] text-muted-foreground py-6">{tp('Aucune entrée de stock. Ajoutez vos produits pour activer le suivi.')}</p>
                   ) : (
                     <div className="space-y-2">
                       {(config.stockEntries || []).map((entry, idx) => (
-                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-background rounded-xl">
                           <ModalInput value={entry.productName || ''} onChange={e => updateStockEntry(idx, 'productName', e.target.value)}
-                            placeholder={tp('Nom du produit')} label="Nom du produit" className="ac-input flex-1 !bg-white" />
+                            placeholder={tp('Nom du produit')} label="Nom du produit" className="ac-input flex-1 !bg-card" />
                           <input type="number" value={entry.quantity || 0} onChange={e => updateStockEntry(idx, 'quantity', parseInt(e.target.value) || 0)}
-                            className="ac-input w-full sm:w-20 !bg-white text-center" min="0" />
-                          <button onClick={() => removeStockEntry(idx)} className="self-end sm:self-auto text-gray-400 hover:text-red-500 transition-colors p-1">
+                            className="ac-input w-full sm:w-20 !bg-card text-center" min="0" />
+                          <button onClick={() => removeStockEntry(idx)} className="self-end sm:self-auto text-muted-foreground hover:text-red-500 transition-colors p-1">
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                           </button>
                         </div>
@@ -3836,28 +3836,28 @@ export default function AgentConfig() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               {/* Coordonnées Admin */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                       <UserCog className="w-4 h-4 text-blue-600" />
                     </span>
                     Coordonnées de l'Administrateur
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Informations utilisées par Rita pour vous contacter et personnaliser les interactions')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Informations utilisées par Rita pour vous contacter et personnaliser les interactions')}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Field label="Nom de l'admin" required>
                       <div className="relative">
-                        <UserCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <UserCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                         <ModalInput value={config.adminName} onChange={e => set('adminName', e.target.value)}
                           placeholder={tp('ex: Mohamed Diallo')} label="Nom de l'admin" className="ac-input !pl-10" />
                       </div>
                     </Field>
                     <Field label="Téléphone admin (WhatsApp)" required>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                         <ModalInput value={config.bossPhone} onChange={e => set('bossPhone', e.target.value)}
                           placeholder={tp('ex: +225 07 00 00 00')} label="Téléphone admin" className="ac-input !pl-10" />
                       </div>
@@ -3865,7 +3865,7 @@ export default function AgentConfig() {
                   </div>
                   <Field label="Email de l'admin">
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                       <ModalInput type="email" value={config.adminEmail} onChange={e => set('adminEmail', e.target.value)}
                         placeholder={tp('ex: admin@monshop.com')} label="Email admin" className="ac-input !pl-10" />
                     </div>
@@ -3874,28 +3874,28 @@ export default function AgentConfig() {
               </div>
 
               {/* Informations Business */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
                       <Building2 className="w-4 h-4 text-purple-600" />
                     </span>
                     {tp('Informations du Business')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Rita utilise ces informations pour mieux représenter votre marque')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Rita utilise ces informations pour mieux représenter votre marque')}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Field label="Nom du business / boutique" required>
                       <div className="relative">
-                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                         <ModalInput value={config.businessName} onChange={e => set('businessName', e.target.value)}
                           placeholder={tp('ex: Zendo Store')} label="Nom du business" className="ac-input !pl-10" />
                       </div>
                     </Field>
                     <Field label="Pays" required>
                       <div className="relative">
-                        <Globe2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Globe2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <select 
                           value={config.businessCountry || 'CM'} 
                           onChange={e => set('businessCountry', e.target.value)}
@@ -3913,7 +3913,7 @@ export default function AgentConfig() {
                   </div>
                   <Field label="Ville / Localisation">
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                       <ModalInput value={config.businessCity} onChange={e => set('businessCity', e.target.value)}
                         placeholder={tp('ex: Douala, Yaoundé, Abidjan...')} label="Ville / Localisation" className="ac-input !pl-10" />
                     </div>
@@ -3930,31 +3930,31 @@ export default function AgentConfig() {
 
             {/* Sidebar résumé */}
             <div className="space-y-6">
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900">{tp('Résumé du Profil')}</h2>
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-5 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground">{tp('Résumé du Profil')}</h2>
                 </div>
                 <div className="p-5 space-y-3">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div className="flex items-center gap-3 p-3 bg-background rounded-xl">
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                       <UserCog className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-gray-900 truncate">{config.adminName || tp('Non renseigné')}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{config.bossPhone || tp('Aucun téléphone')}</p>
+                      <p className="text-[13px] font-bold text-foreground truncate">{config.adminName || tp('Non renseigné')}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{config.bossPhone || tp('Aucun téléphone')}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div className="flex items-center gap-3 p-3 bg-background rounded-xl">
                     <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
                       <Building2 className="w-5 h-5 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-gray-900 truncate">{config.businessName || tp('Non renseigné')}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{config.businessCity || tp('Aucune ville')}</p>
+                      <p className="text-[13px] font-bold text-foreground truncate">{config.businessName || tp('Non renseigné')}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{config.businessCity || tp('Aucune ville')}</p>
                     </div>
                   </div>
                   {config.adminEmail && (
-                    <div className="flex items-center gap-2 p-2 text-[12px] text-gray-500">
+                    <div className="flex items-center gap-2 p-2 text-[12px] text-muted-foreground">
                       <Mail className="w-3.5 h-3.5" />
                       <span className="truncate">{config.adminEmail}</span>
                     </div>
@@ -3977,16 +3977,16 @@ export default function AgentConfig() {
         {activeTab === 'testimonials' && (
           <div className="space-y-6">
             {/* Header */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="bg-card rounded-2xl border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                       <Star className="w-4 h-4 text-amber-600" />
                     </span>
                     {tp('Témoignages Clients')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">
+                  <p className="text-[12px] text-muted-foreground mt-1">
                     {tp('Rita utilisera ces témoignages pour convaincre les clients hésitants.')} 
                     Ajoutez des photos/vidéos pour plus d'impact.
                   </p>
@@ -3996,16 +3996,16 @@ export default function AgentConfig() {
 
               {config.testimonialsEnabled && (
                 <div className="p-6 space-y-4">
-                  <p className="text-[12px] text-gray-500 bg-amber-50 border border-amber-100 rounded-xl p-3">
+                  <p className="text-[12px] text-muted-foreground bg-amber-50 border border-amber-100 rounded-xl p-3">
                     💡 Quand un client hésite ou ne répond plus après le prix, Rita enverra automatiquement un témoignage pertinent avec sa photo/vidéo pour rassurer et convaincre.
                   </p>
 
                   {(config.testimonials || []).map((t, idx) => {
                     const selectedProduct = (config.productCatalog || []).find(p => p.name === t.productName);
                     return (
-                      <div key={idx} className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-3">
+                      <div key={idx} className="bg-background rounded-xl border border-border p-4 space-y-3">
                         <div className="flex items-start justify-between">
-                          <span className="text-[12px] font-bold text-gray-500">Témoignage #{idx + 1}</span>
+                          <span className="text-[12px] font-bold text-muted-foreground">Témoignage #{idx + 1}</span>
                           <button onClick={() => removeTestimonial(idx)}
                             className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                             <Trash2 className="w-4 h-4" />
@@ -4014,7 +4014,7 @@ export default function AgentConfig() {
 
                         {/* Product Selection */}
                         <div>
-                          <label className="text-[12px] font-semibold text-gray-600 mb-2 block">
+                          <label className="text-[12px] font-semibold text-muted-foreground mb-2 block">
                             🎯 Produit (sélection directe du catalogue)
                           </label>
                           <select value={t.productName || ''} onChange={e => updateTestimonial(idx, 'productName', e.target.value)}
@@ -4030,14 +4030,14 @@ export default function AgentConfig() {
 
                         {/* Product Preview */}
                         {selectedProduct && (
-                          <div className="bg-white rounded-lg border border-primary-200 p-3 flex flex-col sm:flex-row gap-3">
+                          <div className="bg-card rounded-lg border border-primary-200 p-3 flex flex-col sm:flex-row gap-3">
                             {selectedProduct.images?.[0] && (
                               <img src={selectedProduct.images[0]} alt="" className="w-20 h-20 rounded-lg object-cover" />
                             )}
                             <div className="flex-1 text-[11px]">
-                              <p className="font-bold text-gray-900">{selectedProduct.name}</p>
-                              {selectedProduct.price && <p className="text-primary-600 font-semibold">{selectedProduct.price}</p>}
-                              {selectedProduct.description && <p className="text-gray-500 line-clamp-2 mt-1">{selectedProduct.description}</p>}
+                              <p className="font-bold text-foreground">{selectedProduct.name}</p>
+                              {selectedProduct.price && <p className="text-primary font-semibold">{selectedProduct.price}</p>}
+                              {selectedProduct.description && <p className="text-muted-foreground line-clamp-2 mt-1">{selectedProduct.description}</p>}
                             </div>
                           </div>
                         )}
@@ -4073,12 +4073,12 @@ export default function AgentConfig() {
 
                         {/* Images */}
                         <div>
-                          <label className="text-[12px] font-semibold text-gray-600 mb-1 block flex items-center gap-1">
+                          <label className="text-[12px] font-semibold text-muted-foreground mb-1 block flex items-center gap-1">
                             <Image className="w-3.5 h-3.5" /> Photos du témoignage (optionnel)
                           </label>
                           <div className="flex flex-wrap gap-2 mb-2">
                             {(t.images || []).map((url, imgIdx) => (
-                              <div key={imgIdx} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
+                              <div key={imgIdx} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-border">
                                 <img src={url} alt="" className="w-full h-full object-cover" />
                                 <button onClick={() => removeTestimonialMedia(idx, 'images', imgIdx)}
                                   className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity">
@@ -4087,24 +4087,24 @@ export default function AgentConfig() {
                               </div>
                             ))}
                           </div>
-                          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-primary-700 bg-primary-50 border border-primary-200 rounded-lg cursor-pointer hover:bg-primary-100 transition-colors">
+                          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-primary bg-primary-50 border border-primary-200 rounded-lg cursor-pointer hover:bg-primary-100 transition-colors">
                             <input type="file" accept="image/*" multiple className="hidden"
                               onChange={async (e) => { await handleTestimonialMediaUpload(idx, 'images', e.target.files); e.target.value = ''; }} />
                             <Plus className="w-3 h-3" /> Ajouter photos
                           </label>
-                          {testimonialUploading[`${idx}:images`] && <span className="text-[11px] text-primary-600 ml-2">{tp('Upload en cours...')}</span>}
+                          {testimonialUploading[`${idx}:images`] && <span className="text-[11px] text-primary ml-2">{tp('Upload en cours...')}</span>}
                         </div>
 
                         {/* Videos */}
                         <div>
-                          <label className="text-[12px] font-semibold text-gray-600 mb-1 block flex items-center gap-1">
+                          <label className="text-[12px] font-semibold text-muted-foreground mb-1 block flex items-center gap-1">
                             <Video className="w-3.5 h-3.5" /> Vidéos du témoignage (optionnel)
                           </label>
                           <div className="flex flex-wrap gap-2 mb-2">
                             {(t.videos || []).map((url, vidIdx) => (
-                              <div key={vidIdx} className="relative group flex items-center gap-2 px-2 py-1.5 bg-gray-100 border border-gray-200 rounded-lg text-[11px]">
-                                <Video className="w-3.5 h-3.5 text-gray-500" />
-                                <span className="text-gray-600 max-w-[120px] truncate">{url.split('/').pop()}</span>
+                              <div key={vidIdx} className="relative group flex items-center gap-2 px-2 py-1.5 bg-muted border border-border rounded-lg text-[11px]">
+                                <Video className="w-3.5 h-3.5 text-muted-foreground" />
+                                <span className="text-muted-foreground max-w-[120px] truncate">{url.split('/').pop()}</span>
                                 <button onClick={() => removeTestimonialMedia(idx, 'videos', vidIdx)}
                                   className="text-red-400 hover:text-red-600 transition-colors">
                                   <X className="w-3 h-3" />
@@ -4124,7 +4124,7 @@ export default function AgentConfig() {
                   })}
 
                   <button onClick={addTestimonial}
-                    className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-xl text-[13px] font-semibold text-gray-500 hover:border-primary-400 hover:text-primary-600 hover:bg-primary-50/30 transition-all flex items-center justify-center gap-2">
+                    className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-xl text-[13px] font-semibold text-muted-foreground hover:border-primary-400 hover:text-primary hover:bg-primary-50/30 transition-all flex items-center justify-center gap-2">
                     <Plus className="w-4 h-4" /> Ajouter un témoignage
                   </button>
                 </div>
@@ -4139,15 +4139,15 @@ export default function AgentConfig() {
             <div className="lg:col-span-2 space-y-6">
 
               {/* Mode Boss — Analyse */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                       <span className="text-sm">🧑‍💼</span>
                     </span>
                     Mode Boss — Analyse
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Quand vous parlez à Rita, elle est professionnelle, analytique et directe')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Quand vous parlez à Rita, elle est professionnelle, analytique et directe')}</p>
                 </div>
                 <div className="p-6 space-y-1">
                   <Toggle enabled={config.bossAnalyzeConversations} onChange={v => set('bossAnalyzeConversations', v)}
@@ -4163,15 +4163,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Mode Exécution Boss */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                       <Zap className="w-4 h-4 text-amber-600" />
                     </span>
                     {tp('Mode Exécution Boss')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Quand vous donnez une instruction, Rita l\'exécute intelligemment')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Quand vous donnez une instruction, Rita l\'exécute intelligemment')}</p>
                 </div>
                 <div className="p-6 space-y-3">
                   <Toggle enabled={config.executionAdaptMessage} onChange={v => set('executionAdaptMessage', v)}
@@ -4185,15 +4185,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Notifications */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                       <Bell className="w-4 h-4 text-amber-600" />
                     </span>
                     {tp('Notifications Admin')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Contrôlez quand Rita vous envoie des alertes sur WhatsApp')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Contrôlez quand Rita vous envoie des alertes sur WhatsApp')}</p>
                 </div>
                 <div className="p-6 space-y-1">
                   <Toggle enabled={config.bossNotifications} onChange={v => set('bossNotifications', v)}
@@ -4213,15 +4213,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Escalade */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
                       <Headphones className="w-4 h-4 text-red-500" />
                     </span>
                     Escalade vers l'Admin
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Quand Rita ne sait pas répondre, elle vous passe la main')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Quand Rita ne sait pas répondre, elle vous passe la main')}</p>
                 </div>
                 <div className="p-6 space-y-3">
                   <Toggle enabled={config.bossEscalationEnabled} onChange={v => set('bossEscalationEnabled', v)}
@@ -4232,7 +4232,7 @@ export default function AgentConfig() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Field label="Timeout d'escalade" hint="minutes">
                           <div className="relative">
-                            <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <input type="number" value={config.bossEscalationTimeoutMin}
                               onChange={e => set('bossEscalationTimeoutMin', parseInt(e.target.value) || 30)}
                               min="5" max="180" className="ac-input !pl-10" />
@@ -4250,15 +4250,15 @@ export default function AgentConfig() {
               </div>
 
               {/* Résumé quotidien */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
-                      <BarChart3 className="w-4 h-4 text-primary-600" />
+                      <BarChart3 className="w-4 h-4 text-primary" />
                     </span>
                     {tp('Résumé Quotidien')}
                   </h2>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Recevez un récap chaque jour de l\'activité de Rita')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Recevez un récap chaque jour de l\'activité de Rita')}</p>
                 </div>
                 <div className="p-6 space-y-3">
                   <Toggle enabled={config.dailySummary} onChange={v => set('dailySummary', v)}
@@ -4267,7 +4267,7 @@ export default function AgentConfig() {
                   {config.dailySummary && (
                     <Field label="Heure d'envoi du résumé">
                       <div className="relative">
-                        <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input type="time" value={config.dailySummaryTime}
                           onChange={e => set('dailySummaryTime', e.target.value)}
                           className="ac-input !pl-10" />
@@ -4300,7 +4300,7 @@ export default function AgentConfig() {
               {[{ v: 1, l: "Aujourd'hui" }, { v: 7, l: '7 jours' }, { v: 30, l: '30 jours' }].map(p => (
                 <button key={p.v} onClick={() => setAnalyticsDays(p.v)}
                   className={`px-4 py-2 text-[12px] font-semibold rounded-xl transition-all ${
-                    analyticsDays === p.v ? 'text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50'
+                    analyticsDays === p.v ? 'text-white shadow-sm' : 'bg-card border border-border text-muted-foreground hover:bg-background'
                   }`}
                   style={analyticsDays === p.v ? { background: ACCENT } : {}}>
                   {p.l}
@@ -4310,12 +4310,12 @@ export default function AgentConfig() {
 
             {analyticsLoading ? (
               <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
               </div>
             ) : !activityData ? (
-              <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+              <div className="bg-card rounded-2xl border p-12 text-center">
                 <BarChart3 className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-[14px] font-semibold text-gray-500">{tp('Aucune donnée disponible')}</p>
+                <p className="text-[14px] font-semibold text-muted-foreground">{tp('Aucune donnée disponible')}</p>
               </div>
             ) : (
               <>
@@ -4329,29 +4329,29 @@ export default function AgentConfig() {
                   ].map(s => (
                     <div key={s.label} className={`${s.bg} rounded-2xl p-5 text-center`}>
                       <div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div>
-                      <div className="text-[11px] text-gray-500 mt-1 font-medium">{s.label}</div>
+                      <div className="text-[11px] text-muted-foreground mt-1 font-medium">{s.label}</div>
                     </div>
                   ))}
                 </div>
 
                 {/* Recent activity */}
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                  <div className="px-6 py-4 border-b border-gray-100">
-                    <h2 className="text-[15px] font-bold text-gray-900">{tp('Activité récente')}</h2>
+                <div className="bg-card rounded-2xl border overflow-hidden">
+                  <div className="px-6 py-4 border-b border-border">
+                    <h2 className="text-[15px] font-bold text-foreground">{tp('Activité récente')}</h2>
                   </div>
                   <div className="p-6">
                     {(activityData.recent || []).length === 0 ? (
-                      <p className="text-center text-[13px] text-gray-400 py-6">{tp('Aucune activité pour cette période')}</p>
+                      <p className="text-center text-[13px] text-muted-foreground py-6">{tp('Aucune activité pour cette période')}</p>
                     ) : (
                       <div className="space-y-1.5 max-h-[400px] overflow-y-auto">
                         {(activityData.recent || []).map((a, i) => {
                           const LABELS = {
                             message_received: { get label() { return tp('Message reçu'); }, emoji: '💬', bg: 'bg-blue-50 text-blue-700' },
-                            message_replied: { get label() { return tp('Réponse'); }, emoji: '📤', bg: 'bg-primary-50 text-primary-700' },
+                            message_replied: { get label() { return tp('Réponse'); }, emoji: '📤', bg: 'bg-primary-50 text-primary' },
                             order_confirmed: { label: 'Commande', emoji: '📦', bg: 'bg-purple-50 text-purple-700' },
                             vocal_transcribed: { label: 'Vocal', emoji: '🎤', bg: 'bg-amber-50 text-amber-700' },
                           };
-                          const info = LABELS[a.type] || { label: a.type, emoji: '•', bg: 'bg-gray-50 text-gray-600' };
+                          const info = LABELS[a.type] || { label: a.type, emoji: '•', bg: 'bg-background text-muted-foreground' };
                           return (
                             <div key={i} className={`flex items-center gap-2.5 px-3 py-2 rounded-lg ${info.bg}`}>
                               <span className="text-sm">{info.emoji}</span>
@@ -4378,8 +4378,8 @@ export default function AgentConfig() {
             {/* Header */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <h2 className="text-[15px] font-bold text-gray-900">{tp('Liste des contacts Rita')}</h2>
-                <p className="text-[12px] text-gray-400 mt-0.5">{contactsTotal} contact{contactsTotal !== 1 ? 's' : ''} enregistré{contactsTotal !== 1 ? 's' : ''}</p>
+                <h2 className="text-[15px] font-bold text-foreground">{tp('Liste des contacts Rita')}</h2>
+                <p className="text-[12px] text-muted-foreground mt-0.5">{contactsTotal} contact{contactsTotal !== 1 ? 's' : ''} enregistré{contactsTotal !== 1 ? 's' : ''}</p>
               </div>
               <button
                 onClick={exportContactsCSV}
@@ -4391,49 +4391,49 @@ export default function AgentConfig() {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="bg-card rounded-2xl border overflow-hidden">
               {contactsLoading ? (
                 <div className="flex items-center justify-center py-16">
-                  <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                  <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                 </div>
               ) : contactsList.length === 0 ? (
                 <div className="text-center py-16">
                   <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-[14px] text-gray-500">{tp('Aucun contact enregistré')}</p>
-                  <p className="text-[12px] text-gray-400 mt-1">{tp('Les contacts s\'enregistrent automatiquement dès le premier message reçu')}</p>
+                  <p className="text-[14px] text-muted-foreground">{tp('Aucun contact enregistré')}</p>
+                  <p className="text-[12px] text-muted-foreground mt-1">{tp('Les contacts s\'enregistrent automatiquement dès le premier message reçu')}</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-[12px]">
                     <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50/60">
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">N°</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Téléphone')}</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Nom')}</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Ville')}</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Messages')}</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Commandé')}</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Premier contact')}</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-500">{tp('Dernier message')}</th>
+                      <tr className="border-b border-border bg-background/60">
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">N°</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">{tp('Téléphone')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">{tp('Nom')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">{tp('Ville')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">{tp('Messages')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">{tp('Commandé')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">{tp('Premier contact')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">{tp('Dernier message')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {contactsList.map((c, i) => (
-                        <tr key={c.clientNumber} className={`border-b border-gray-50 hover:bg-gray-50/40 transition-colors ${i % 2 === 0 ? '' : 'bg-gray-50/20'}`}>
-                          <td className="px-4 py-3 font-mono text-gray-400">sc1-{c.clientNumber}</td>
-                          <td className="px-4 py-3 font-medium text-gray-800">{c.phone}</td>
-                          <td className="px-4 py-3 text-gray-600">{c.nom || c.pushName || <span className="text-gray-300 italic">—</span>}</td>
-                          <td className="px-4 py-3 text-gray-600">{c.ville || <span className="text-gray-300 italic">—</span>}</td>
-                          <td className="px-4 py-3 text-gray-600">{c.messageCount}</td>
+                        <tr key={c.clientNumber} className={`border-b border-gray-50 hover:bg-background/40 transition-colors ${i % 2 === 0 ? '' : 'bg-background/20'}`}>
+                          <td className="px-4 py-3 font-mono text-muted-foreground">sc1-{c.clientNumber}</td>
+                          <td className="px-4 py-3 font-medium text-foreground">{c.phone}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{c.nom || c.pushName || <span className="text-gray-300 italic">—</span>}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{c.ville || <span className="text-gray-300 italic">—</span>}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{c.messageCount}</td>
                           <td className="px-4 py-3">
                             {c.hasOrdered
-                              ? <span className="px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 font-semibold text-[11px]">{tp('✓ Oui')}</span>
-                              : <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 text-[11px]">{tp('Non')}</span>}
+                              ? <span className="px-2 py-0.5 rounded-full bg-primary-50 text-primary font-semibold text-[11px]">{tp('✓ Oui')}</span>
+                              : <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[11px]">{tp('Non')}</span>}
                           </td>
-                          <td className="px-4 py-3 text-gray-400">
+                          <td className="px-4 py-3 text-muted-foreground">
                             {c.firstMessageAt ? new Date(c.firstMessageAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—'}
                           </td>
-                          <td className="px-4 py-3 text-gray-400">
+                          <td className="px-4 py-3 text-muted-foreground">
                             {c.lastMessageAt ? new Date(c.lastMessageAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—'}
                           </td>
                         </tr>
@@ -4450,14 +4450,14 @@ export default function AgentConfig() {
                 <button
                   disabled={contactsPage === 1}
                   onClick={() => fetchContacts(contactsPage - 1)}
-                  className="px-3 py-1.5 text-[12px] font-medium rounded-lg border border-gray-200 disabled:opacity-40 hover:bg-gray-50 transition-colors">
+                  className="px-3 py-1.5 text-[12px] font-medium rounded-lg border border-border disabled:opacity-40 hover:bg-background transition-colors">
                   ← Précédent
                 </button>
-                <span className="text-[12px] text-gray-500">Page {contactsPage} / {Math.ceil(contactsTotal / 50)}</span>
+                <span className="text-[12px] text-muted-foreground">Page {contactsPage} / {Math.ceil(contactsTotal / 50)}</span>
                 <button
                   disabled={contactsPage >= Math.ceil(contactsTotal / 50)}
                   onClick={() => fetchContacts(contactsPage + 1)}
-                  className="px-3 py-1.5 text-[12px] font-medium rounded-lg border border-gray-200 disabled:opacity-40 hover:bg-gray-50 transition-colors">
+                  className="px-3 py-1.5 text-[12px] font-medium rounded-lg border border-border disabled:opacity-40 hover:bg-background transition-colors">
                   Suivant →
                 </button>
               </div>
@@ -4471,8 +4471,8 @@ export default function AgentConfig() {
             {/* Header + bouton ajouter */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <h2 className="text-[15px] font-bold text-gray-900">{tp('Statuts WhatsApp automatiques')}</h2>
-                <p className="text-[12px] text-gray-500 mt-0.5">{tp('Planifiez des statuts avec images de vos produits — publiés automatiquement chaque jour')}</p>
+                <h2 className="text-[15px] font-bold text-foreground">{tp('Statuts WhatsApp automatiques')}</h2>
+                <p className="text-[12px] text-muted-foreground mt-0.5">{tp('Planifiez des statuts avec images de vos produits — publiés automatiquement chaque jour')}</p>
               </div>
               <button
                 onClick={() => { setEditingStatut(null); setStatutForm({ name: '', type: 'product', caption: '', mediaUrl: '', productName: '', backgroundColor: '#0F6B4F', scheduleType: 'daily', sendTime: '09:00', weekDays: [] }); setShowStatutForm(true); }}
@@ -4485,10 +4485,10 @@ export default function AgentConfig() {
 
             {/* Formulaire création/édition */}
             {showStatutForm && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
-                <h3 className="text-[14px] font-bold text-gray-900">{editingStatut ? 'Modifier le statut' : tp('Nouveau statut')}</h3>
+              <div className="bg-card rounded-2xl border p-5 space-y-4">
+                <h3 className="text-[14px] font-bold text-foreground">{editingStatut ? 'Modifier le statut' : tp('Nouveau statut')}</h3>
 
-                <div className={`rounded-xl border p-3 text-[12px] ${config.instanceId ? 'border-primary-100 bg-primary-50 text-primary-700' : 'border-amber-100 bg-amber-50 text-amber-700'}`}>
+                <div className={`rounded-xl border p-3 text-[12px] ${config.instanceId ? 'border-primary-100 bg-primary-50 text-primary' : 'border-amber-100 bg-amber-50 text-amber-700'}`}>
                   {config.instanceId
                     ? `Ce statut sera publié avec l'instance WhatsApp actuellement sélectionnée pour Rita : ${selectedInstance?.customName || selectedInstance?.instanceName || 'Instance configurée'}.`
                     : 'Aucune instance WhatsApp Rita n\'est sélectionnée. Vous pouvez créer le statut maintenant, mais il faudra configurer une instance pour pouvoir le publier.'}
@@ -4496,16 +4496,16 @@ export default function AgentConfig() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Nom')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Nom')}</label>
                     <ModalInput type="text" value={statutForm.name} onChange={e => setStatutForm(p => ({ ...p, name: e.target.value }))}
                       placeholder={tp('Ex: Statut produit phare du lundi')}
                       label="Nom du statut"
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Type de contenu')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Type de contenu')}</label>
                     <select value={statutForm.type} onChange={e => setStatutForm(p => ({ ...p, type: e.target.value }))}
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none bg-white">
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none bg-card">
                       <option value="product">{tp('📦 Produit du catalogue (auto)')}</option>
                       <option value="image">{tp('🖼️ Image manuelle + texte')}</option>
                       <option value="text">{tp('💬 Texte uniquement')}</option>
@@ -4515,27 +4515,27 @@ export default function AgentConfig() {
 
                 {statutForm.type === 'product' && (
                   <div className="space-y-3">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Produit')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Produit')}</label>
                     <select value={statutForm.productName} onChange={e => setStatutForm(p => ({ ...p, productName: e.target.value, mediaUrl: '' }))}
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none bg-white">
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none bg-card">
                       <option value="">{tp('— Choisir un produit —')}</option>
                       {(config.productCatalog || []).filter(p => p.name).map((p, i) => (
                         <option key={i} value={p.name}>{p.name}{p.price ? ` (${p.price})` : ''}</option>
                       ))}
                     </select>
-                    <p className="text-[11px] text-gray-400">{tp('Choisissez le produit, personnalisez le texte si besoin, puis laissez le média en automatique ou sélectionnez une image / vidéo déjà uploadée.')}</p>
+                    <p className="text-[11px] text-muted-foreground">{tp('Choisissez le produit, personnalisez le texte si besoin, puis laissez le média en automatique ou sélectionnez une image / vidéo déjà uploadée.')}</p>
 
                     {statutForm.productName && (
                       <div className="space-y-2">
-                        <label className="text-[12px] font-semibold text-gray-600">{tp('Média du produit')}</label>
+                        <label className="text-[12px] font-semibold text-muted-foreground">{tp('Média du produit')}</label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <button
                             type="button"
                             onClick={() => setStatutForm(p => ({ ...p, mediaUrl: '' }))}
-                            className={`rounded-xl border px-3 py-3 text-left transition-colors ${!statutForm.mediaUrl ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-primary-300'}`}
+                            className={`rounded-xl border px-3 py-3 text-left transition-colors ${!statutForm.mediaUrl ? 'border-primary-500 bg-primary-50' : 'border-border hover:border-primary-300'}`}
                           >
-                            <p className="text-[12px] font-semibold text-gray-700">{tp('Automatique')}</p>
-                            <p className="text-[11px] text-gray-400 mt-1">{tp('Utiliser le premier média disponible du produit')}</p>
+                            <p className="text-[12px] font-semibold text-foreground">{tp('Automatique')}</p>
+                            <p className="text-[11px] text-muted-foreground mt-1">{tp('Utiliser le premier média disponible du produit')}</p>
                           </button>
 
                           {statutProductMediaOptions.map((media) => (
@@ -4543,9 +4543,9 @@ export default function AgentConfig() {
                               key={media.key}
                               type="button"
                               onClick={() => setStatutForm(p => ({ ...p, mediaUrl: media.url }))}
-                              className={`rounded-xl border overflow-hidden text-left transition-colors ${statutForm.mediaUrl === media.url ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-primary-300'}`}
+                              className={`rounded-xl border overflow-hidden text-left transition-colors ${statutForm.mediaUrl === media.url ? 'border-primary-500 bg-primary-50' : 'border-border hover:border-primary-300'}`}
                             >
-                              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
+                              <div className="aspect-[4/3] bg-muted flex items-center justify-center overflow-hidden">
                                 {media.type === 'video' ? (
                                   <video src={media.url} className="h-full w-full object-cover" muted playsInline preload="metadata" />
                                 ) : (
@@ -4553,8 +4553,8 @@ export default function AgentConfig() {
                                 )}
                               </div>
                               <div className="px-3 py-2 flex items-center justify-between gap-2">
-                                <span className="text-[12px] font-semibold text-gray-700 truncate">{media.label}</span>
-                                <span className="text-[11px] text-gray-400 flex items-center gap-1 flex-shrink-0">
+                                <span className="text-[12px] font-semibold text-foreground truncate">{media.label}</span>
+                                <span className="text-[11px] text-muted-foreground flex items-center gap-1 flex-shrink-0">
                                   {media.type === 'video' ? <Video className="w-3.5 h-3.5" /> : <Image className="w-3.5 h-3.5" />}
                                   {media.type === 'video' ? 'Vidéo' : tp('Image')}
                                 </span>
@@ -4573,60 +4573,60 @@ export default function AgentConfig() {
 
                 {statutForm.type === 'image' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('URL de l\'image')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('URL de l\'image')}</label>
                     <ModalInput type="text" value={statutForm.mediaUrl} onChange={e => setStatutForm(p => ({ ...p, mediaUrl: e.target.value }))}
                       placeholder="https://..."
                       label="URL de l'image"
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-primary-200" />
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
                 )}
 
                 {statutForm.type !== 'product' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Texte / Légende')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Texte / Légende')}</label>
                     <ModalTextarea rows={4} value={statutForm.caption} onChange={e => setStatutForm(p => ({ ...p, caption: e.target.value }))}
                       placeholder={tp('Ex: 🔥 Notre produit phare en stock ! Contactez-nous pour commander.')}
                       label="Texte / Légende"
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
                 )}
 
                 {statutForm.type === 'product' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Texte personnalisé (optionnel)')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Texte personnalisé (optionnel)')}</label>
                     <ModalTextarea rows={3} value={statutForm.caption} onChange={e => setStatutForm(p => ({ ...p, caption: e.target.value }))}
                       placeholder={tp('Laissez vide pour générer automatiquement depuis le produit')}
                       label="Texte personnalisé du statut"
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Fréquence')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Fréquence')}</label>
                     <select value={statutForm.scheduleType} onChange={e => setStatutForm(p => ({ ...p, scheduleType: e.target.value }))}
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none bg-white">
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none bg-card">
                       <option value="daily">{tp('Tous les jours')}</option>
                       <option value="weekly">{tp('Certains jours')}</option>
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Heure d\'envoi')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Heure d\'envoi')}</label>
                     <input type="time" value={statutForm.sendTime} onChange={e => setStatutForm(p => ({ ...p, sendTime: e.target.value }))}
-                      className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
+                      className="w-full px-3 py-2 text-[13px] border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-200" />
                   </div>
                   {statutForm.type === 'text' && (
                     <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-gray-600">{tp('Couleur de fond')}</label>
+                      <label className="text-[12px] font-semibold text-muted-foreground">{tp('Couleur de fond')}</label>
                       <input type="color" value={statutForm.backgroundColor} onChange={e => setStatutForm(p => ({ ...p, backgroundColor: e.target.value }))}
-                        className="w-full h-[38px] px-1 py-1 border border-gray-200 rounded-xl cursor-pointer" />
+                        className="w-full h-[38px] px-1 py-1 border border-border rounded-xl cursor-pointer" />
                     </div>
                   )}
                 </div>
 
                 {statutForm.scheduleType === 'weekly' && (
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-semibold text-gray-600">{tp('Jours')}</label>
+                    <label className="text-[12px] font-semibold text-muted-foreground">{tp('Jours')}</label>
                     <div className="flex gap-2 flex-wrap">
                       {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map((d, i) => (
                         <button key={i}
@@ -4637,7 +4637,7 @@ export default function AgentConfig() {
                           className={`px-3 py-1.5 text-[12px] font-semibold rounded-lg border transition-colors ${
                             statutForm.weekDays.includes(i)
                               ? 'text-white border-primary-600'
-                              : 'text-gray-500 border-gray-200 hover:border-primary-300'
+                              : 'text-muted-foreground border-border hover:border-primary-300'
                           }`}
                           style={statutForm.weekDays.includes(i) ? { background: ACCENT } : {}}
                         >{d}</button>
@@ -4646,7 +4646,7 @@ export default function AgentConfig() {
                   </div>
                 )}
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2 border-t border-border">
                   <button onClick={saveStatut}
                     disabled={statutSaving}
                     className="w-full sm:w-auto px-5 py-2 text-[13px] font-bold text-white rounded-xl disabled:opacity-60"
@@ -4654,7 +4654,7 @@ export default function AgentConfig() {
                     {statutSaving ? 'Enregistrement...' : editingStatut ? 'Enregistrer' : tp('Créer')}
                   </button>
                   <button onClick={() => { setShowStatutForm(false); setEditingStatut(null); }}
-                    className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50">
+                    className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-muted-foreground border border-border rounded-xl hover:bg-background">
                     {tp('Annuler')}
                   </button>
                 </div>
@@ -4664,37 +4664,37 @@ export default function AgentConfig() {
             {/* Liste des statuts */}
             {statutsLoading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
               </div>
             ) : statuts.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center">
+              <div className="bg-card rounded-2xl border p-10 text-center">
                 <Radio className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-                <p className="text-[14px] font-semibold text-gray-500">{tp('Aucun statut planifié')}</p>
-                <p className="text-[12px] text-gray-400 mt-1">{tp('Créez votre premier statut automatique avec les images de vos produits')}</p>
+                <p className="text-[14px] font-semibold text-muted-foreground">{tp('Aucun statut planifié')}</p>
+                <p className="text-[12px] text-muted-foreground mt-1">{tp('Créez votre premier statut automatique avec les images de vos produits')}</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {statuts.map(s => (
-                  <div key={s._id} className={`bg-white rounded-2xl border p-4 flex flex-col sm:flex-row sm:items-center gap-4 ${s.enabled ? 'border-gray-200' : 'border-gray-100 opacity-60'}`}>
+                  <div key={s._id} className={`bg-card rounded-2xl border p-4 flex flex-col sm:flex-row sm:items-center gap-4 ${s.enabled ? 'border-border' : 'border-border opacity-60'}`}>
                     {/* Icône type */}
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${s.type === 'product' ? 'bg-primary-50' : s.type === 'image' ? 'bg-blue-50' : 'bg-amber-50'}`}>
-                      {s.type === 'product' ? <Package className="w-5 h-5 text-primary-600" />
+                      {s.type === 'product' ? <Package className="w-5 h-5 text-primary" />
                         : s.type === 'image' ? <Image className="w-5 h-5 text-blue-600" />
                         : <MessageCircle className="w-5 h-5 text-amber-600" />}
                     </div>
 
                     {/* Infos */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold text-gray-900">{s.name || tp('Sans titre')}</p>
+                      <p className="text-[13px] font-semibold text-foreground">{s.name || tp('Sans titre')}</p>
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-0.5">
-                        <span className="text-[11px] text-gray-400">
+                        <span className="text-[11px] text-muted-foreground">
                           {s.scheduleType === 'daily' ? 'Tous les jours' : tp('Certains jours')} à {s.sendTime}
                         </span>
                         {s.type === 'product' && s.productName && (
-                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary-50 text-primary-600 font-medium">{s.productName}</span>
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary-50 text-primary font-medium">{s.productName}</span>
                         )}
                         {s.sentCount > 0 && (
-                          <span className="text-[11px] text-gray-400">{s.sentCount} envois</span>
+                          <span className="text-[11px] text-muted-foreground">{s.sentCount} envois</span>
                         )}
                       </div>
                     </div>
@@ -4703,23 +4703,23 @@ export default function AgentConfig() {
                     <div className="flex items-center justify-end gap-2 flex-shrink-0 w-full sm:w-auto">
                       {/* Toggle */}
                       <button onClick={() => toggleStatut(s)}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${s.enabled ? 'bg-primary-600' : 'bg-gray-300'}`}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${s.enabled ? 'bg-primary' : 'bg-gray-300'}`}
                       >
-                        <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${s.enabled ? 'translate-x-4' : 'translate-x-1'}`} />
+                        <span className={`inline-block h-3.5 w-3.5 rounded-full bg-card shadow-sm transition-transform ${s.enabled ? 'translate-x-4' : 'translate-x-1'}`} />
                       </button>
                       {/* Envoyer maintenant */}
                       <button onClick={() => sendNow(s)} disabled={statutSending === s._id}
                         title={tp('Publier maintenant')}
-                        className="p-1.5 text-gray-400 hover:text-primary-600 transition-colors">
+                        className="p-1.5 text-muted-foreground hover:text-primary transition-colors">
                         {statutSending === s._id ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}
                       </button>
                       {/* Modifier */}
                       <button onClick={() => { setEditingStatut(s); setStatutForm({ name: s.name, type: s.type, caption: s.caption, mediaUrl: s.mediaUrl, productName: s.productName, backgroundColor: s.backgroundColor, scheduleType: s.scheduleType, sendTime: s.sendTime, weekDays: s.weekDays || [] }); setShowStatutForm(true); }}
-                        className="p-1.5 text-gray-400 hover:text-blue-500 transition-colors">
+                        className="p-1.5 text-muted-foreground hover:text-blue-500 transition-colors">
                         <Settings className="w-4 h-4" />
                       </button>
                       {/* Supprimer */}
-                      <button onClick={() => deleteStatut(s._id)} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
+                      <button onClick={() => deleteStatut(s._id)} className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -4744,23 +4744,23 @@ export default function AgentConfig() {
           <div className="space-y-6">
 
             {/* ── RÈGLES PREMIER MESSAGE ── */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="p-5 border-b border-gray-100 flex items-center gap-3">
+            <div className="bg-card rounded-2xl border overflow-hidden">
+              <div className="p-5 border-b border-border flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#f0fdf4' }}>
                   <MessageSquare className="w-5 h-5" style={{ color: ACCENT }} />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-bold text-gray-900">{tp('Règles du premier message')}</h3>
-                  <p className="text-[12px] text-gray-500">{tp('Définissez ce que l\'agent envoie automatiquement quand un contact vous écrit pour la première fois')}</p>
+                  <h3 className="text-[15px] font-bold text-foreground">{tp('Règles du premier message')}</h3>
+                  <p className="text-[12px] text-muted-foreground">{tp('Définissez ce que l\'agent envoie automatiquement quand un contact vous écrit pour la première fois')}</p>
                 </div>
               </div>
 
               <div className="p-5 space-y-5">
                 {/* Toggle */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-background rounded-xl border border-border">
                   <div>
-                    <p className="text-[14px] font-semibold text-gray-800">{tp('Activer les règles du premier message')}</p>
-                    <p className="text-[12px] text-gray-500 mt-0.5">
+                    <p className="text-[14px] font-semibold text-foreground">{tp('Activer les règles du premier message')}</p>
+                    <p className="text-[12px] text-muted-foreground mt-0.5">
                       {config.firstMessageRulesEnabled
                         ? '✅ Actif — vos règles s\'appliquent au premier contact'
                         : '⬜ Inactif — l\'agent accueille naturellement sans règle fixe'}
@@ -4768,9 +4768,9 @@ export default function AgentConfig() {
                   </div>
                   <button
                     onClick={() => set('firstMessageRulesEnabled', !config.firstMessageRulesEnabled)}
-                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${config.firstMessageRulesEnabled ? 'bg-primary-600' : 'bg-gray-300'}`}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${config.firstMessageRulesEnabled ? 'bg-primary' : 'bg-gray-300'}`}
                   >
-                    <span className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${config.firstMessageRulesEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                    <span className={`inline-block h-5 w-5 rounded-full bg-card shadow-sm transition-transform ${config.firstMessageRulesEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                 </div>
 
@@ -4778,7 +4778,7 @@ export default function AgentConfig() {
                 {config.firstMessageRulesEnabled && (
                   <div className="space-y-3">
                     {(config.firstMessageRules || []).map((rule, idx) => (
-                      <div key={idx} className="p-4 rounded-xl border border-gray-200 bg-gray-50 space-y-3">
+                      <div key={idx} className="p-4 rounded-xl border border-border bg-background space-y-3">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                           <div className="flex flex-wrap items-center gap-2">
                             <button
@@ -4786,9 +4786,9 @@ export default function AgentConfig() {
                                 const updated = (config.firstMessageRules || []).map((r, i) => i === idx ? { ...r, enabled: !r.enabled } : r);
                                 set('firstMessageRules', updated);
                               }}
-                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${rule.enabled ? 'bg-primary-600' : 'bg-gray-300'}`}
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${rule.enabled ? 'bg-primary' : 'bg-gray-300'}`}
                             >
-                              <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${rule.enabled ? 'translate-x-4' : 'translate-x-1'}`} />
+                              <span className={`inline-block h-3.5 w-3.5 rounded-full bg-card shadow-sm transition-transform ${rule.enabled ? 'translate-x-4' : 'translate-x-1'}`} />
                             </button>
                             <select
                               value={rule.type}
@@ -4796,7 +4796,7 @@ export default function AgentConfig() {
                                 const updated = (config.firstMessageRules || []).map((r, i) => i === idx ? { ...r, type: e.target.value, content: '' } : r);
                                 set('firstMessageRules', updated);
                               }}
-                              className="text-[12px] font-semibold border border-gray-200 rounded-lg px-2 py-1 bg-white focus:outline-none"
+                              className="text-[12px] font-semibold border border-border rounded-lg px-2 py-1 bg-card focus:outline-none"
                             >
                               <option value="video">{tp('🎥 Vidéo')}</option>
                               <option value="image">{tp('🖼️ Image')}</option>
@@ -4806,7 +4806,7 @@ export default function AgentConfig() {
                           </div>
                           <button
                             onClick={() => set('firstMessageRules', (config.firstMessageRules || []).filter((_, i) => i !== idx))}
-                            className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                            className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -4822,7 +4822,7 @@ export default function AgentConfig() {
                                 set('firstMessageRules', updated);
                               }}
                               placeholder={tp('Description courte (ex: Vidéo de présentation)')}
-                              className="w-full px-3 py-2 text-[12px] border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-200"
+                              className="w-full px-3 py-2 text-[12px] border border-border rounded-lg bg-card focus:outline-none focus:ring-2 focus:ring-primary-200"
                             />
                             <input
                               type="text"
@@ -4836,26 +4836,26 @@ export default function AgentConfig() {
                                 rule.type === 'image' ? 'URL de l\'image (ex: https://...)' :
                                 'Message à envoyer au client'
                               }
-                              className="w-full px-3 py-2 text-[12px] border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-200 font-mono"
+                              className="w-full px-3 py-2 text-[12px] border border-border rounded-lg bg-card focus:outline-none focus:ring-2 focus:ring-primary-200 font-mono"
                             />
                           </div>
                         )}
                         {rule.type === 'catalog' && (
-                          <p className="text-[11px] text-gray-500 italic">{tp('L\'agent enverra la liste complète de vos produits avec prix dès le premier contact.')}</p>
+                          <p className="text-[11px] text-muted-foreground italic">{tp('L\'agent enverra la liste complète de vos produits avec prix dès le premier contact.')}</p>
                         )}
                       </div>
                     ))}
 
                     <button
                       onClick={() => set('firstMessageRules', [...(config.firstMessageRules || []), { type: 'text', content: '', label: '', enabled: true }])}
-                      className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-xl text-[12px] font-semibold text-gray-500 hover:border-primary-400 hover:text-primary-600 transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-xl text-[12px] font-semibold text-muted-foreground hover:border-primary-400 hover:text-primary transition-colors flex items-center justify-center gap-2"
                     >
                       <Plus className="w-4 h-4" /> Ajouter une règle
                     </button>
                   </div>
                 )}
 
-                <div className={`p-3 rounded-xl border text-[11px] space-y-1 ${config.firstMessageRulesEnabled ? 'bg-primary-50 border-primary-200 text-primary-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                <div className={`p-3 rounded-xl border text-[11px] space-y-1 ${config.firstMessageRulesEnabled ? 'bg-primary-50 border-primary-200 text-primary' : 'bg-background border-border text-muted-foreground'}`}>
                   <p className="font-bold">{tp('Exemples de règles :')}</p>
                   <p>{tp('• Vidéo : envoyer une vidéo de présentation du produit phare dès le premier message')}</p>
                   <p>{tp('• Image : envoyer une photo du catalogue ou d\'une promo en cours')}</p>
@@ -4866,23 +4866,23 @@ export default function AgentConfig() {
             </div>
 
             {/* ── INSTRUCTIONS PERSONNALISÉES ── */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="p-5 border-b border-gray-100 flex items-center gap-3">
+            <div className="bg-card rounded-2xl border overflow-hidden">
+              <div className="p-5 border-b border-border flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#f0fdf4' }}>
                   <FileText className="w-5 h-5" style={{ color: ACCENT }} />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-bold text-gray-900">{tp('Instructions personnalisées')}</h3>
-                  <p className="text-[12px] text-gray-500">{tp('Écrivez vos propres règles — elles remplacent le comportement par défaut quand activées')}</p>
+                  <h3 className="text-[15px] font-bold text-foreground">{tp('Instructions personnalisées')}</h3>
+                  <p className="text-[12px] text-muted-foreground">{tp('Écrivez vos propres règles — elles remplacent le comportement par défaut quand activées')}</p>
                 </div>
               </div>
 
               <div className="p-5 space-y-5">
                 {/* Toggle activation */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-background rounded-xl border border-border">
                   <div>
-                    <p className="text-[14px] font-semibold text-gray-800">{tp('Activer les instructions personnalisées')}</p>
-                    <p className="text-[12px] text-gray-500 mt-0.5">
+                    <p className="text-[14px] font-semibold text-foreground">{tp('Activer les instructions personnalisées')}</p>
+                    <p className="text-[12px] text-muted-foreground mt-0.5">
                       {config.customInstructionsEnabled
                         ? '✅ Actif — vos instructions remplacent le comportement par défaut'
                         : '⬜ Inactif — l\'agent utilise le comportement standard'}
@@ -4890,15 +4890,15 @@ export default function AgentConfig() {
                   </div>
                   <button
                     onClick={() => set('customInstructionsEnabled', !config.customInstructionsEnabled)}
-                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${config.customInstructionsEnabled ? 'bg-primary-600' : 'bg-gray-300'}`}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${config.customInstructionsEnabled ? 'bg-primary' : 'bg-gray-300'}`}
                   >
-                    <span className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${config.customInstructionsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                    <span className={`inline-block h-5 w-5 rounded-full bg-card shadow-sm transition-transform ${config.customInstructionsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                 </div>
 
                 {/* Zone de texte */}
                 <div className="space-y-2">
-                  <label className="text-[13px] font-semibold text-gray-700">{tp('Vos instructions')}</label>
+                  <label className="text-[13px] font-semibold text-foreground">{tp('Vos instructions')}</label>
                   <ModalTextarea
                     rows={14}
                     value={config.customInstructions}
@@ -4907,17 +4907,17 @@ export default function AgentConfig() {
                     label="Instructions personnalisées"
                     className={`w-full px-4 py-3 rounded-xl border text-[13px] font-mono focus:outline-none focus:ring-2 transition-all ${
                       config.customInstructionsEnabled
-                        ? 'border-primary-300 bg-white focus:ring-primary-200'
-                        : 'border-gray-200 bg-gray-50 text-gray-400 focus:ring-gray-200'
+                        ? 'border-primary-300 bg-card focus:ring-primary-200'
+                        : 'border-border bg-background text-muted-foreground focus:ring-gray-200'
                     }`}
                   />
-                  <p className="text-[11px] text-gray-400">
+                  <p className="text-[11px] text-muted-foreground">
                     {config.customInstructions?.length || 0} caractères · Écrivez en langage naturel, l'agent comprend vos instructions directement
                   </p>
                 </div>
 
                 {/* Info box */}
-                <div className={`p-4 rounded-xl border text-[12px] space-y-1.5 ${config.customInstructionsEnabled ? 'bg-primary-50 border-primary-200 text-primary-800' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
+                <div className={`p-4 rounded-xl border text-[12px] space-y-1.5 ${config.customInstructionsEnabled ? 'bg-primary-50 border-primary-200 text-primary-800' : 'bg-background border-border text-muted-foreground'}`}>
                   <p className="font-bold">{tp('Comment ça fonctionne :')}</p>
                   <p>{tp('• Quand')} <strong>{tp('activé')}</strong> {tp(': vos instructions ont la priorité maximale sur toutes les règles par défaut')}</p>
                   <p>{tp('• Quand')} <strong>{tp('désactivé')}</strong> {tp(': l\'agent ignore ces instructions et applique le comportement standard')}</p>
@@ -4935,22 +4935,22 @@ export default function AgentConfig() {
 
             {/* Flash */}
             {groupMsg && (
-              <div className={`text-[13px] px-4 py-2.5 rounded-xl font-medium ${groupMsg.ok ? 'bg-primary-50 text-primary-700' : 'bg-red-50 text-red-700'}`}>
+              <div className={`text-[13px] px-4 py-2.5 rounded-xl font-medium ${groupMsg.ok ? 'bg-primary-50 text-primary' : 'bg-red-50 text-red-700'}`}>
                 {groupMsg.text}
               </div>
             )}
 
             {!groupConfig ? (
               <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
               </div>
             ) : (
               <>
                 {/* ── Tabs internes : Groupes / Campagnes ── */}
-                <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+                <div className="flex gap-1 bg-muted rounded-xl p-1">
                   {[{ id: 'list', label: '👥 Groupes' }, { id: 'campaigns', label: '📋 Campagnes' }].map(t => (
                     <button key={t.id} onClick={() => { setGroupView(t.id); setOpenedGroup(null); if (t.id === 'campaigns') openCampaigns(); }}
-                      className={`flex-1 text-[13px] font-semibold py-2 rounded-lg transition ${groupView === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                      className={`flex-1 text-[13px] font-semibold py-2 rounded-lg transition ${groupView === t.id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                       {t.label}
                     </button>
                   ))}
@@ -4960,14 +4960,14 @@ export default function AgentConfig() {
                 {groupView === 'campaigns' && (
                   <div className="space-y-4">
                     {/* Formulaire nouvelle campagne */}
-                    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                        <h3 className="text-[15px] font-bold text-gray-900">
+                    <div className="bg-card rounded-2xl border overflow-hidden">
+                      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                        <h3 className="text-[15px] font-bold text-foreground">
                           {campaignEditing !== null ? 'Modifier la campagne' : tp('Nouvelle campagne')}
                         </h3>
                         {campaignEditing !== null && (
                           <button onClick={() => { setCampaignEditing(null); setCampaignForm({ name: '', message: '', mediaUrl: '', caption: '', scheduleAt: '', groupJids: [] }); }}
-                            className="text-[12px] text-gray-400 hover:text-gray-600">{tp('Annuler')}</button>
+                            className="text-[12px] text-muted-foreground hover:text-muted-foreground">{tp('Annuler')}</button>
                         )}
                       </div>
                       <div className="px-5 py-4 space-y-3">
@@ -4982,9 +4982,9 @@ export default function AgentConfig() {
 
                         {/* Média : upload ou URL */}
                         <div className="space-y-2">
-                          <p className="text-[12px] font-semibold text-gray-600">{tp('Image / Vidéo')}</p>
+                          <p className="text-[12px] font-semibold text-muted-foreground">{tp('Image / Vidéo')}</p>
                           <div className="flex items-center gap-2">
-                            <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 cursor-pointer transition flex-shrink-0">
+                            <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-semibold text-muted-foreground bg-muted hover:bg-gray-200 cursor-pointer transition flex-shrink-0">
                               <input type="file" accept="image/*,video/*" className="hidden"
                                 onChange={async (e) => {
                                   const file = e.target.files?.[0];
@@ -5010,7 +5010,7 @@ export default function AgentConfig() {
                           {campaignForm.mediaUrl && (
                             <div className="flex items-center gap-2">
                               {/\.(jpg|jpeg|png|webp|gif)$/i.test(campaignForm.mediaUrl) && (
-                                <img src={campaignForm.mediaUrl} alt="" className="w-14 h-14 rounded-lg object-cover border border-gray-200 flex-shrink-0" />
+                                <img src={campaignForm.mediaUrl} alt="" className="w-14 h-14 rounded-lg object-cover border border-border flex-shrink-0" />
                               )}
                               <ModalInput value={campaignForm.caption} onChange={e => setCampaignForm(f => ({ ...f, caption: e.target.value }))}
                                 placeholder={tp('Légende (optionnel)...')} label="Légende du média" className="ac-input flex-1 text-[12px]" />
@@ -5022,11 +5022,11 @@ export default function AgentConfig() {
                         <div className="space-y-3">
                           <div className="flex items-center gap-3">
                             <button type="button" onClick={() => setCampaignForm(f => ({ ...f, repeat: false }))}
-                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${!campaignForm.repeat ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}>
+                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${!campaignForm.repeat ? 'bg-gray-900 text-white border-gray-900' : 'bg-card text-muted-foreground border-border hover:border-gray-300'}`}>
                               📅 Ponctuel
                             </button>
                             <button type="button" onClick={() => setCampaignForm(f => ({ ...f, repeat: true, scheduleAt: '' }))}
-                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${campaignForm.repeat ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}>
+                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${campaignForm.repeat ? 'bg-gray-900 text-white border-gray-900' : 'bg-card text-muted-foreground border-border hover:border-gray-300'}`}>
                               🔁 Répétitif
                             </button>
                           </div>
@@ -5037,23 +5037,23 @@ export default function AgentConfig() {
                               className="ac-input" />
                           ) : (
                             <div className="space-y-2">
-                              <p className="text-[11px] text-gray-500">{tp('Jours d\'envoi')}</p>
+                              <p className="text-[11px] text-muted-foreground">{tp('Jours d\'envoi')}</p>
                               <div className="flex flex-wrap gap-1.5">
                                 {['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'].map(d => {
                                   const active = campaignForm.repeatDays.includes(d);
                                   return (
                                     <button key={d} type="button"
                                       onClick={() => setCampaignForm(f => ({ ...f, repeatDays: active ? f.repeatDays.filter(x => x !== d) : [...f.repeatDays, d] }))}
-                                      className={`text-[11px] px-2.5 py-1 rounded-full border transition font-medium ${active ? 'bg-primary-50 border-primary-400 text-primary-700' : 'bg-white border-gray-200 text-gray-400'}`}>
+                                      className={`text-[11px] px-2.5 py-1 rounded-full border transition font-medium ${active ? 'bg-primary-50 border-primary-400 text-primary' : 'bg-card border-border text-muted-foreground'}`}>
                                       {d.slice(0,2)}
                                     </button>
                                   );
                                 })}
                                 <button type="button" onClick={() => setCampaignForm(f => ({ ...f, repeatDays: ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'] }))}
-                                  className="text-[10px] px-2 text-primary-600 hover:underline">{tp('Tous')}</button>
+                                  className="text-[10px] px-2 text-primary hover:underline">{tp('Tous')}</button>
                               </div>
                               <div className="flex items-center gap-2">
-                                <p className="text-[11px] text-gray-500 flex-shrink-0">{tp('Heure')}</p>
+                                <p className="text-[11px] text-muted-foreground flex-shrink-0">{tp('Heure')}</p>
                                 <input type="time" value={campaignForm.repeatHour}
                                   onChange={e => setCampaignForm(f => ({ ...f, repeatHour: e.target.value }))}
                                   className="ac-input w-32" />
@@ -5062,23 +5062,23 @@ export default function AgentConfig() {
                           )}
                         </div>
                         <div>
-                          <p className="text-[12px] font-semibold text-gray-600 mb-2">{tp('Groupes destinataires')}</p>
+                          <p className="text-[12px] font-semibold text-muted-foreground mb-2">{tp('Groupes destinataires')}</p>
                           {whatsappGroups.length === 0 ? (
-                            <p className="text-[12px] text-gray-400">{tp('Chargez d\'abord vos groupes dans l\'onglet Groupes')}</p>
+                            <p className="text-[12px] text-muted-foreground">{tp('Chargez d\'abord vos groupes dans l\'onglet Groupes')}</p>
                           ) : (
-                            <div className="max-h-48 overflow-y-auto space-y-1 border border-gray-200 rounded-xl p-2">
+                            <div className="max-h-48 overflow-y-auto space-y-1 border border-border rounded-xl p-2">
                               {whatsappGroups.map(wg => {
                                 const sel = campaignForm.groupJids.includes(wg.id);
                                 return (
-                                  <label key={wg.id} className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition ${sel ? 'bg-primary-50' : 'hover:bg-gray-50'}`}>
+                                  <label key={wg.id} className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition ${sel ? 'bg-primary-50' : 'hover:bg-background'}`}>
                                     <input type="checkbox" checked={sel}
                                       onChange={() => setCampaignForm(f => ({
                                         ...f,
                                         groupJids: sel ? f.groupJids.filter(id => id !== wg.id) : [...f.groupJids, wg.id]
                                       }))}
-                                      className="w-4 h-4 rounded border-gray-300 text-primary-600" />
-                                    <span className="text-[13px] font-medium text-gray-800 truncate flex-1">{wg.name}</span>
-                                    <span className="text-[10px] text-gray-400">{wg.participants} membres</span>
+                                      className="w-4 h-4 rounded border-gray-300 text-primary" />
+                                    <span className="text-[13px] font-medium text-foreground truncate flex-1">{wg.name}</span>
+                                    <span className="text-[10px] text-muted-foreground">{wg.participants} membres</span>
                                   </label>
                                 );
                               })}
@@ -5096,13 +5096,13 @@ export default function AgentConfig() {
                     {/* Liste des campagnes */}
                     {campaigns.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-[13px] font-semibold text-gray-700">{campaigns.length} campagne{campaigns.length > 1 ? 's' : ''} enregistrée{campaigns.length > 1 ? 's' : ''}</p>
+                        <p className="text-[13px] font-semibold text-foreground">{campaigns.length} campagne{campaigns.length > 1 ? 's' : ''} enregistrée{campaigns.length > 1 ? 's' : ''}</p>
                         {campaigns.map((c, i) => (
-                          <div key={i} className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+                          <div key={i} className="bg-card rounded-2xl border p-4 space-y-2">
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0 flex-1">
-                                <p className="text-[14px] font-bold text-gray-900">{c.name}</p>
-                                <p className="text-[11px] text-gray-400 mt-0.5">
+                                <p className="text-[14px] font-bold text-foreground">{c.name}</p>
+                                <p className="text-[11px] text-muted-foreground mt-0.5">
                                   {c.groupJids.length} groupe{c.groupJids.length > 1 ? 's' : ''}
                                   {c.scheduleAt ? ` · 📅 ${new Date(c.scheduleAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}` : ''}
                                   {c.sent ? ' · ✅ Envoyée' : ''}
@@ -5110,7 +5110,7 @@ export default function AgentConfig() {
                               </div>
                               <div className="flex items-center gap-1 flex-shrink-0">
                                 <button onClick={() => { setCampaignEditing(i); setCampaignForm({ name: c.name, message: c.message, mediaUrl: c.mediaUrl || '', caption: c.caption || '', scheduleAt: c.scheduleAt || '', groupJids: c.groupJids }); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                  className="text-[11px] px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition">
+                                  className="text-[11px] px-2.5 py-1 rounded-lg bg-muted hover:bg-gray-200 text-muted-foreground transition">
                                   {tp('Modifier')}
                                 </button>
                                 <button onClick={() => sendCampaign(i)} disabled={bcSending}
@@ -5124,11 +5124,11 @@ export default function AgentConfig() {
                                 </button>
                               </div>
                             </div>
-                            {c.message && <p className="text-[12px] text-gray-500 line-clamp-2">{c.message}</p>}
+                            {c.message && <p className="text-[12px] text-muted-foreground line-clamp-2">{c.message}</p>}
                             {c.mediaUrl && (
                               <div className="flex items-center gap-2">
                                 {/\.(jpg|jpeg|png|webp|gif)$/i.test(c.mediaUrl) && (
-                                  <img src={c.mediaUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-gray-200" />
+                                  <img src={c.mediaUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-border" />
                                 )}
                                 <span className="text-[11px] text-blue-500 truncate">{c.mediaUrl}</span>
                               </div>
@@ -5145,16 +5145,16 @@ export default function AgentConfig() {
                 <>
                 {/* ── Vue détail groupe ouvert ── */}
                 {openedGroup ? (
-                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                  <div className="bg-card rounded-2xl border overflow-hidden">
                     {/* Header avec retour */}
-                    <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div className="px-5 py-4 border-b border-border flex items-center gap-3">
                       <button onClick={() => { setOpenedGroup(null); setBcMessage(''); setBcMediaUrl(''); setBcCaption(''); setBcScheduleAt(''); }}
-                        className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">
-                        <ChevronDown className="w-4 h-4 text-gray-600 rotate-90" />
+                        className="w-8 h-8 rounded-full bg-muted hover:bg-gray-200 flex items-center justify-center transition">
+                        <ChevronDown className="w-4 h-4 text-muted-foreground rotate-90" />
                       </button>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-[15px] font-bold text-gray-900 truncate">{openedGroup.name}</h3>
-                        <p className="text-[11px] text-gray-400">{openedGroup.participants} membre{openedGroup.participants !== 1 ? 's' : ''}</p>
+                        <h3 className="text-[15px] font-bold text-foreground truncate">{openedGroup.name}</h3>
+                        <p className="text-[11px] text-muted-foreground">{openedGroup.participants} membre{openedGroup.participants !== 1 ? 's' : ''}</p>
                       </div>
                     </div>
 
@@ -5167,7 +5167,7 @@ export default function AgentConfig() {
 
                       {/* Upload ou URL média */}
                       <div className="flex items-center gap-2">
-                        <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 cursor-pointer transition">
+                        <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-semibold text-muted-foreground bg-muted hover:bg-gray-200 cursor-pointer transition">
                           <input type="file" accept="image/*,video/*" className="hidden"
                             onChange={async (e) => {
                               const file = e.target.files?.[0];
@@ -5190,7 +5190,7 @@ export default function AgentConfig() {
                       {bcMediaUrl && (
                         <div className="flex items-center gap-2">
                           {/\.(jpg|jpeg|png|webp|gif)$/i.test(bcMediaUrl) && (
-                            <img src={bcMediaUrl} alt="" className="w-16 h-16 rounded-lg object-cover border border-gray-200 flex-shrink-0" />
+                            <img src={bcMediaUrl} alt="" className="w-16 h-16 rounded-lg object-cover border border-border flex-shrink-0" />
                           )}
                           <ModalInput value={bcCaption} onChange={e => setBcCaption(e.target.value)}
                             placeholder={tp('Légende (optionnel)...')} label="Légende du média" className="ac-input flex-1 text-[12px]" />
@@ -5212,21 +5212,21 @@ export default function AgentConfig() {
                   </div>
                 ) : (
                   /* ── Vue liste groupes ── */
-                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                    <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                  <div className="bg-card rounded-2xl border overflow-hidden">
+                    <div className="px-5 py-4 border-b border-border flex items-center justify-between">
                       <div>
-                        <h3 className="text-[15px] font-bold text-gray-900">{tp('Mes groupes WhatsApp')}</h3>
-                        <p className="text-[12px] text-gray-400 mt-0.5">{tp('Cliquez sur un groupe pour envoyer')}</p>
+                        <h3 className="text-[15px] font-bold text-foreground">{tp('Mes groupes WhatsApp')}</h3>
+                        <p className="text-[12px] text-muted-foreground mt-0.5">{tp('Cliquez sur un groupe pour envoyer')}</p>
                       </div>
                       <button onClick={loadGroupAnimation} disabled={groupsLoading}
-                        className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition disabled:opacity-40 flex items-center gap-1">
+                        className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-muted hover:bg-gray-200 text-muted-foreground transition disabled:opacity-40 flex items-center gap-1">
                         {groupsLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : '↻ Rafraîchir'}
                       </button>
                     </div>
 
                     {/* Barre de recherche */}
                     {whatsappGroups.length > 0 && (
-                      <div className="px-5 py-3 border-b border-gray-100">
+                      <div className="px-5 py-3 border-b border-border">
                         <input
                           value={groupSearch}
                           onChange={e => setGroupSearch(e.target.value)}
@@ -5238,14 +5238,14 @@ export default function AgentConfig() {
 
                     {groupsLoading ? (
                       <div className="px-5 py-10 flex items-center justify-center gap-2">
-                        <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-                        <span className="text-[13px] text-gray-400">{tp('Chargement des groupes...')}</span>
+                        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                        <span className="text-[13px] text-muted-foreground">{tp('Chargement des groupes...')}</span>
                       </div>
                     ) : whatsappGroups.length === 0 ? (
                       <div className="px-5 py-10 text-center">
                         <Users className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-                        <p className="text-[13px] text-gray-500">{tp('Aucun groupe trouvé')}</p>
-                        <p className="text-[11px] text-gray-400 mt-1">{tp('Vérifiez que Rita est connectée à WhatsApp, puis rafraîchissez')}</p>
+                        <p className="text-[13px] text-muted-foreground">{tp('Aucun groupe trouvé')}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1">{tp('Vérifiez que Rita est connectée à WhatsApp, puis rafraîchissez')}</p>
                       </div>
                     ) : (
                       <div className="divide-y divide-gray-50">
@@ -5257,8 +5257,8 @@ export default function AgentConfig() {
                               👥
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-semibold text-gray-900 truncate">{wg.name}</p>
-                              <p className="text-[11px] text-gray-400">{wg.participants} membre{wg.participants !== 1 ? 's' : ''}</p>
+                              <p className="text-[13px] font-semibold text-foreground truncate">{wg.name}</p>
+                              <p className="text-[11px] text-muted-foreground">{wg.participants} membre{wg.participants !== 1 ? 's' : ''}</p>
                             </div>
                             <ChevronDown className="w-4 h-4 text-gray-300 -rotate-90 group-hover:text-primary-500 transition" />
                           </button>
@@ -5267,8 +5267,8 @@ export default function AgentConfig() {
                     )}
 
                     {/* Rejoindre via lien */}
-                    <div className="px-5 py-4 border-t border-gray-100 bg-gray-50/50">
-                      <p className="text-[11px] text-gray-500 mb-2">{tp('Rejoindre un groupe via lien d\'invitation')}</p>
+                    <div className="px-5 py-4 border-t border-border bg-background/50">
+                      <p className="text-[11px] text-muted-foreground mb-2">{tp('Rejoindre un groupe via lien d\'invitation')}</p>
                       <div className="flex gap-2">
                         <input type="text" value={groupInviteLink} onChange={e => setGroupInviteLink(e.target.value)}
                           placeholder="https://chat.whatsapp.com/..."
@@ -5286,11 +5286,11 @@ export default function AgentConfig() {
 
                 {/* ── SECTION 3 : Posts récurrents (config avancée) ── */}
                 {groupConfig.groups?.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                    <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                  <div className="bg-card rounded-2xl border overflow-hidden">
+                    <div className="px-5 py-4 border-b border-border flex items-center justify-between">
                       <div>
-                        <h3 className="text-[15px] font-bold text-gray-900">{tp('Posts récurrents')}</h3>
-                        <p className="text-[12px] text-gray-400 mt-0.5">{tp('Messages automatiques planifiés par groupe')}</p>
+                        <h3 className="text-[15px] font-bold text-foreground">{tp('Posts récurrents')}</h3>
+                        <p className="text-[12px] text-muted-foreground mt-0.5">{tp('Messages automatiques planifiés par groupe')}</p>
                       </div>
                       <button onClick={saveGroupConfig} disabled={groupSaving}
                         className="text-[12px] font-bold px-3 py-1.5 rounded-xl text-white disabled:opacity-50"
@@ -5305,13 +5305,13 @@ export default function AgentConfig() {
                         return (
                           <div key={gi}>
                             <button type="button" onClick={() => setGroupExpandedIdx(isExpanded ? null : gi)}
-                              className="w-full px-5 py-3.5 flex items-center gap-3 text-left hover:bg-gray-50 transition">
+                              className="w-full px-5 py-3.5 flex items-center gap-3 text-left hover:bg-background transition">
                               <div className="w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center text-[14px] flex-shrink-0">
                                 {group.role === 'clients' ? '🛒' : group.role === 'prospects' ? '🎯' : group.role === 'vip' ? '⭐' : '👥'}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-[13px] font-semibold text-gray-900 truncate">{group.name || group.groupJid}</p>
-                                <p className="text-[11px] text-gray-400">{postsCount} post{postsCount !== 1 ? 's' : ''} planifié{postsCount !== 1 ? 's' : ''}</p>
+                                <p className="text-[13px] font-semibold text-foreground truncate">{group.name || group.groupJid}</p>
+                                <p className="text-[11px] text-muted-foreground">{postsCount} post{postsCount !== 1 ? 's' : ''} planifié{postsCount !== 1 ? 's' : ''}</p>
                               </div>
                               <button onClick={e => { e.stopPropagation(); removeGroupFromAnimation(gi); }}
                                 className="text-[11px] text-gray-300 hover:text-red-400 transition mr-1">{tp('Retirer')}</button>
@@ -5319,9 +5319,9 @@ export default function AgentConfig() {
                             </button>
 
                             {isExpanded && (
-                              <div className="px-5 pb-5 space-y-3 bg-gray-50/30">
+                              <div className="px-5 pb-5 space-y-3 bg-background/30">
                                 <div className="flex items-center justify-between pt-2">
-                                  <p className="text-[12px] font-semibold text-gray-600">{tp('Posts planifiés')}</p>
+                                  <p className="text-[12px] font-semibold text-muted-foreground">{tp('Posts planifiés')}</p>
                                   <button onClick={() => {
                                     const posts = [...(group.scheduledPosts || []), { type: 'text', content: '', productName: '', days: [], hour: '09:00', enabled: true }];
                                     updateManagedGroup(gi, { ...group, scheduledPosts: posts });
@@ -5331,16 +5331,16 @@ export default function AgentConfig() {
                                 </div>
 
                                 {!postsCount && (
-                                  <p className="text-[12px] text-gray-400 py-2">{tp('Aucun post planifié.')}</p>
+                                  <p className="text-[12px] text-muted-foreground py-2">{tp('Aucun post planifié.')}</p>
                                 )}
 
                                 {(group.scheduledPosts || []).map((post, pi) => (
-                                  <div key={pi} className="bg-white border border-gray-200 rounded-xl p-3 space-y-2.5">
+                                  <div key={pi} className="bg-card border border-border rounded-xl p-3 space-y-2.5">
                                     <div className="flex items-center gap-2 flex-wrap">
                                       <select value={post.type} onChange={e => {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], type: e.target.value };
                                         updateManagedGroup(gi, { ...group, scheduledPosts: ps });
-                                      }} className="text-[12px] border rounded-lg px-2 py-1.5 bg-gray-50">
+                                      }} className="text-[12px] border rounded-lg px-2 py-1.5 bg-background">
                                         <option value="text">{tp('📝 Texte')}</option>
                                         <option value="image">{tp('🖼️ Image')}</option>
                                         <option value="product">{tp('🛍️ Produit')}</option>
@@ -5349,12 +5349,12 @@ export default function AgentConfig() {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], hour: e.target.value };
                                         updateManagedGroup(gi, { ...group, scheduledPosts: ps });
                                       }} className="text-[12px] border rounded-lg px-2 py-1.5" />
-                                      <div className={`relative w-8 h-4 rounded-full cursor-pointer transition ml-auto ${post.enabled !== false ? 'bg-primary-500' : 'bg-gray-300'}`}
+                                      <div className={`relative w-8 h-4 rounded-full cursor-pointer transition ml-auto ${post.enabled !== false ? 'bg-primary' : 'bg-gray-300'}`}
                                         onClick={() => {
                                           const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], enabled: !(post.enabled !== false) };
                                           updateManagedGroup(gi, { ...group, scheduledPosts: ps });
                                         }}>
-                                        <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${post.enabled !== false ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                                        <div className={`absolute top-0.5 w-3 h-3 bg-card rounded-full shadow transition-transform ${post.enabled !== false ? 'translate-x-4' : 'translate-x-0.5'}`} />
                                       </div>
                                       <button onClick={() => {
                                         const ps = [...group.scheduledPosts]; ps.splice(pi, 1);
@@ -5393,14 +5393,14 @@ export default function AgentConfig() {
                                           const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], days };
                                           updateManagedGroup(gi, { ...group, scheduledPosts: ps });
                                         }}
-                                          className={`text-[10px] px-1.5 py-0.5 rounded-full border transition ${(post.days || []).includes(d) ? 'bg-primary-50 border-primary-400 text-primary-700' : 'bg-white border-gray-200 text-gray-400'}`}>
+                                          className={`text-[10px] px-1.5 py-0.5 rounded-full border transition ${(post.days || []).includes(d) ? 'bg-primary-50 border-primary-400 text-primary' : 'bg-card border-border text-muted-foreground'}`}>
                                           {d.slice(0, 2)}
                                         </button>
                                       ))}
                                       <button onClick={() => {
                                         const ps = [...group.scheduledPosts]; ps[pi] = { ...ps[pi], days: GA_DAYS.slice() };
                                         updateManagedGroup(gi, { ...group, scheduledPosts: ps });
-                                      }} className="text-[10px] px-1.5 text-primary-600 hover:underline">{tp('Tous')}</button>
+                                      }} className="text-[10px] px-1.5 text-primary hover:underline">{tp('Tous')}</button>
                                     </div>
                                   </div>
                                 ))}
@@ -5424,16 +5424,16 @@ export default function AgentConfig() {
           <div className="space-y-6">
             
             {/* ─── AUTOPILOTE IA RELANCES ─── */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50/10">
+            <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+              <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-blue-50/10">
                 <div>
-                  <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+                  <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                       <Bot className="w-4 h-4 text-blue-600" />
                     </span>
                     {tp('Autopilote IA : Relances Autonomes')}
                   </h2>
-                  <p className="text-[13px] text-gray-500 mt-1">{tp('Laissez l\'IA relancer elle-même les clients inactifs en scannant leurs historiques.')}</p>
+                  <p className="text-[13px] text-muted-foreground mt-1">{tp('Laissez l\'IA relancer elle-même les clients inactifs en scannant leurs historiques.')}</p>
                 </div>
                 <Toggle
                   checked={config.autoRelanceEnabled || false}
@@ -5475,22 +5475,22 @@ export default function AgentConfig() {
               )}
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-              <div className="px-6 py-4 border-b border-gray-100">
-                <h2 className="text-[15px] font-bold text-gray-900 flex items-center gap-2">
+            <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+              <div className="px-6 py-4 border-b border-border">
+                <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                   <span className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
-                    <Send className="w-4 h-4 text-primary-600" />
+                    <Send className="w-4 h-4 text-primary" />
                   </span>
                   {tp('Relances Automatiques par Produit')}
                 </h2>
-                <p className="text-[13px] text-gray-500 mt-1">{tp('Recontactez massivement (mais un par un) tous les clients ayant manifesté de l\'intérêt ou commandé un produit spécifique.')}</p>
+                <p className="text-[13px] text-muted-foreground mt-1">{tp('Recontactez massivement (mais un par un) tous les clients ayant manifesté de l\'intérêt ou commandé un produit spécifique.')}</p>
               </div>
               <div className="p-6 space-y-5">
                 <Field label="Sélectionnez le produit">
                   <select 
                     value={rpProduct} 
                     onChange={e => handleProductSelect(e.target.value)}
-                    className="ac-input appearance-none bg-white font-medium"
+                    className="ac-input appearance-none bg-card font-medium"
                   >
                     <option value="">{tp('-- Choisir un produit du catalogue --')}</option>
                     {(config.productCatalog || []).map((p, idx) => (
@@ -5509,7 +5509,7 @@ export default function AgentConfig() {
                 </Field>
 
                 {rpStatus && (
-                  <div className={`text-[13px] px-4 py-3 rounded-xl font-medium ${rpStatus.type === 'success' ? 'bg-primary-50 text-primary-700 border border-primary-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+                  <div className={`text-[13px] px-4 py-3 rounded-xl font-medium ${rpStatus.type === 'success' ? 'bg-primary-50 text-primary border border-primary-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
                     {rpStatus.type === 'success' ? '✅ ' : '❌ '}{rpStatus.text}
                   </div>
                 )}
@@ -5524,7 +5524,7 @@ export default function AgentConfig() {
                     {rpLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     Lancer la campagne de relance
                   </button>
-                  <p className="text-[11px] text-gray-400 mt-2 italic">{tp('⚠️ L\'envoi est progressif pour protéger votre numéro contre les signalements WhatsApp (anti-spam).')}</p>
+                  <p className="text-[11px] text-muted-foreground mt-2 italic">{tp('⚠️ L\'envoi est progressif pour protéger votre numéro contre les signalements WhatsApp (anti-spam).')}</p>
                 </div>
               </div>
             </div>
@@ -5535,15 +5535,15 @@ export default function AgentConfig() {
 
       {/* ═══ BOTTOM SAVE BAR ═══ */}
       {hasChanges && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.08)] z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.08)] z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span className="text-[13px] font-medium text-gray-600">{tp('Modifications non enregistrées')}</span>
+              <span className="text-[13px] font-medium text-muted-foreground">{tp('Modifications non enregistrées')}</span>
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <button onClick={handleReset}
-                className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                className="w-full sm:w-auto px-4 py-2 text-[13px] font-semibold text-muted-foreground border border-border rounded-xl hover:bg-background transition-colors">
                 {tp('Réinitialiser')}
               </button>
               <button onClick={handleSave} disabled={saving}
@@ -5560,7 +5560,7 @@ export default function AgentConfig() {
       {/* Save status toast */}
       {saveStatus && (
         <div className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-50 px-4 py-2.5 rounded-xl text-[13px] font-semibold shadow-lg transition-all animate-in fade-in slide-in-from-top-2 ${
-          saveStatus === 'success' ? 'bg-primary-600 text-white' : 'bg-red-600 text-white'
+          saveStatus === 'success' ? 'bg-primary text-white' : 'bg-red-600 text-white'
         }`}>
           {saveStatus === 'success' ? '✅ Configuration enregistrée' : '❌ Erreur lors de la sauvegarde'}
         </div>

@@ -12,25 +12,25 @@ const ComptaDashboard = () => {
   // Si pas de workspace : afficher un CTA
   if (!user?.workspaceId) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 mb-4">
-            <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{tp('Aucun espace configuré')}</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">{tp('Aucun espace configuré')}</h2>
+          <p className="text-muted-foreground mb-6">
             {user?.role === 'ecom_admin' 
               ? 'Créez votre propre espace pour commencer à utiliser Scalor.'
               : 'Rejoignez une équipe existante pour accéder aux données partagées.'}
           </p>
           <div className="space-y-3">
-            <Link to="/ecom/workspace-setup" className="block w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition">
+            <Link to="/ecom/workspace-setup" className="block w-full py-3 px-4 bg-primary hover:bg-primary-700 text-white font-medium rounded-lg transition">
               {tp('Créer un espace')}
             </Link>
             {user?.role !== 'ecom_admin' && (
-              <div className="p-3 bg-gray-100 rounded-lg text-xs text-gray-600">
+              <div className="p-3 bg-muted rounded-lg text-xs text-muted-foreground">
                 Pour rejoindre une équipe, demandez un lien d'invitation à votre administrateur
               </div>
             )}
@@ -104,13 +104,13 @@ const ComptaDashboard = () => {
         <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-6" />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
+            <div key={i} className="bg-card rounded-xl border p-4">
               <div className="h-3 w-20 bg-gray-200 rounded animate-pulse mb-2" />
               <div className="h-7 w-24 bg-gray-200 rounded animate-pulse" />
             </div>
           ))}
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-6 h-48 animate-pulse" />
+        <div className="bg-card rounded-xl border p-6 h-48 animate-pulse" />
       </div>
     );
   }
@@ -118,9 +118,9 @@ const ComptaDashboard = () => {
   return (
     <div className="p-3 sm:p-4 lg:p-6 max-w-7xl mx-auto">
         {/* Actions rapides */}
-        <div className="mb-4 sm:mb-8 bg-white rounded-lg shadow">
-          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">{tp('Actions rapides')}</h3>
+        <div className="mb-4 sm:mb-8 bg-card rounded-lg shadow">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">{tp('Actions rapides')}</h3>
           </div>
           <div className="p-3 sm:p-6">
             <div className="grid grid-cols-3 gap-2 sm:gap-4">
@@ -129,7 +129,7 @@ const ComptaDashboard = () => {
                 + Transaction
               </Link>
               <Link to="/ecom/transactions"
-                className="px-3 py-2.5 sm:px-4 sm:py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-center font-medium text-xs sm:text-sm block">
+                className="px-3 py-2.5 sm:px-4 sm:py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition text-center font-medium text-xs sm:text-sm block">
                 {tp('Transactions')}
               </Link>
               <Link to="/ecom/reports"
@@ -141,11 +141,11 @@ const ComptaDashboard = () => {
         </div>
 
         {/* Sélecteur de période */}
-        <div className="bg-white rounded-lg shadow p-3 sm:p-6 mb-4 sm:mb-8">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{tp('Période d\'analyse')}</h3>
+        <div className="bg-card rounded-lg shadow p-3 sm:p-6 mb-4 sm:mb-8">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">{tp('Période d\'analyse')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Date de début')}</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{tp('Date de début')}</label>
               <input
                 type="date"
                 value={dateRange.startDate}
@@ -154,7 +154,7 @@ const ComptaDashboard = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Date de fin')}</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{tp('Date de fin')}</label>
               <input
                 type="date"
                 value={dateRange.endDate}
@@ -180,23 +180,23 @@ const ComptaDashboard = () => {
 
         {/* KPIs Principaux */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-8">
-          <div className="bg-white rounded-lg shadow p-3 sm:p-6">
+          <div className="bg-card rounded-lg shadow p-3 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 hidden sm:block">
-                <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-white text-sm font-bold">F</span>
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Chiffre d\'Affaires')}</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{tp('Chiffre d\'Affaires')}</p>
+                <p className="text-lg sm:text-2xl font-bold text-foreground">
                   {fmt(financialStats.totalRevenue)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-3 sm:p-6">
+          <div className="bg-card rounded-lg shadow p-3 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 hidden sm:block">
                 <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
@@ -204,15 +204,15 @@ const ComptaDashboard = () => {
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Coûts Totaux')}</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{tp('Coûts Totaux')}</p>
+                <p className="text-lg sm:text-2xl font-bold text-foreground">
                   {fmt(financialStats.totalCost)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-3 sm:p-6">
+          <div className="bg-card rounded-lg shadow p-3 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 hidden sm:block">
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -220,7 +220,7 @@ const ComptaDashboard = () => {
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Bénéfice Net')}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{tp('Bénéfice Net')}</p>
                 <p className={`text-lg sm:text-2xl font-bold ${getProfitColor(financialStats.totalProfit)}`}>
                   {fmt(financialStats.totalProfit)}
                 </p>
@@ -228,15 +228,15 @@ const ComptaDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-3 sm:p-6">
+          <div className="bg-card rounded-lg shadow p-3 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 hidden sm:block">
-                <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-white text-sm font-bold">%</span>
                 </div>
               </div>
               <div className="sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">{tp('Marge Nette')}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{tp('Marge Nette')}</p>
                 <p className={`text-lg sm:text-2xl font-bold ${getProfitColor(financialStats.totalProfit / financialStats.totalRevenue)}`}>
                   {financialStats.totalRevenue > 0 ? 
                     formatPercent(financialStats.totalProfit / financialStats.totalRevenue) : '0%'}
@@ -248,15 +248,15 @@ const ComptaDashboard = () => {
 
         {/* Détail des coûts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mb-4 sm:mb-8">
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">{tp('Répartition des Coûts')}</h3>
+          <div className="bg-card rounded-lg shadow">
+            <div className="px-6 py-4 border-b border-border">
+              <h3 className="text-lg font-semibold text-foreground">{tp('Répartition des Coûts')}</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">{tp('Coûts Produits')}</span>
+                    <span className="text-muted-foreground">{tp('Coûts Produits')}</span>
                     <span className="font-semibold">{fmt(financialStats.totalProductCost)}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -269,7 +269,7 @@ const ComptaDashboard = () => {
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">{tp('Coûts Livraison')}</span>
+                    <span className="text-muted-foreground">{tp('Coûts Livraison')}</span>
                     <span className="font-semibold">{fmt(financialStats.totalDeliveryCost)}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -282,12 +282,12 @@ const ComptaDashboard = () => {
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">{tp('Dépenses Pub')}</span>
+                    <span className="text-muted-foreground">{tp('Dépenses Pub')}</span>
                     <span className="font-semibold">{fmt(financialStats.totalAdSpend)}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-primary-600 h-2 rounded-full"
+                      className="bg-primary h-2 rounded-full"
                       style={{ width: `${financialStats.totalCost > 0 ? (financialStats.totalAdSpend / financialStats.totalCost) * 100 : 0}%` }}
                     ></div>
                   </div>
@@ -297,35 +297,35 @@ const ComptaDashboard = () => {
           </div>
 
           {/* Indicateurs de performance */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">{tp('Indicateurs de Performance')}</h3>
+          <div className="bg-card rounded-lg shadow">
+            <div className="px-6 py-4 border-b border-border">
+              <h3 className="text-lg font-semibold text-foreground">{tp('Indicateurs de Performance')}</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{tp('ROAS (Return on Ad Spend)')}</span>
+                  <span className="text-muted-foreground">{tp('ROAS (Return on Ad Spend)')}</span>
                   <span className={`font-semibold ${getROASColor(financialStats.roas)}`}>
                     {financialStats.roas?.toFixed(2) || '0.00'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{tp('Taux de Livraison')}</span>
+                  <span className="text-muted-foreground">{tp('Taux de Livraison')}</span>
                   <span className="font-semibold">{formatPercent(financialStats.deliveryRate)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{tp('Commandes Totales')}</span>
+                  <span className="text-muted-foreground">{tp('Commandes Totales')}</span>
                   <span className="font-semibold">{financialStats.totalOrdersDelivered || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{tp('Panier Moyen')}</span>
+                  <span className="text-muted-foreground">{tp('Panier Moyen')}</span>
                   <span className="font-semibold">
                     {fmt(financialStats.totalOrdersDelivered > 0 ? 
                       financialStats.totalRevenue / financialStats.totalOrdersDelivered : 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{tp('Coût par Commande')}</span>
+                  <span className="text-muted-foreground">{tp('Coût par Commande')}</span>
                   <span className="font-semibold">
                     {fmt(financialStats.totalOrdersDelivered > 0 ? 
                       financialStats.totalCost / financialStats.totalOrdersDelivered : 0)}
@@ -337,24 +337,24 @@ const ComptaDashboard = () => {
         </div>
 
         {/* Statuts des produits */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">{tp('Produits par Statut')}</h3>
+        <div className="bg-card rounded-lg shadow">
+          <div className="px-6 py-4 border-b border-border">
+            <h3 className="text-lg font-semibold text-foreground">{tp('Produits par Statut')}</h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
               {['test', 'stable', 'winner', 'pause', 'stop'].map((status) => {
                 const statusData = productStats.find(s => s._id === status);
                 return (
-                  <div key={status} className="border border-gray-200 rounded-lg p-4">
+                  <div key={status} className="border border-border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-600 capitalize">{status}</span>
-                      <span className="text-2xl font-bold text-gray-900">
+                      <span className="text-sm font-medium text-muted-foreground capitalize">{status}</span>
+                      <span className="text-2xl font-bold text-foreground">
                         {statusData?.count || 0}
                       </span>
                     </div>
                     {statusData && (
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-muted-foreground">
                         <div>Stock total: {statusData.totalStock || 0}</div>
                         <div>Marge moyenne: {fmt(statusData.avgMargin || 0)}</div>
                       </div>
@@ -367,10 +367,10 @@ const ComptaDashboard = () => {
         </div>
 
         {/* Bilan Transactions */}
-        <div className="mt-8 bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-900">{tp('Flux de Trésorerie')}</h3>
-            <Link to="/ecom/transactions" className="text-sm text-primary-700 hover:text-primary-900 font-medium">
+        <div className="mt-8 bg-card rounded-lg shadow">
+          <div className="px-6 py-4 border-b border-border flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-foreground">{tp('Flux de Trésorerie')}</h3>
+            <Link to="/ecom/transactions" className="text-sm text-primary hover:text-primary-900 font-medium">
               Voir tout &rarr;
             </Link>
           </div>
@@ -387,11 +387,11 @@ const ComptaDashboard = () => {
                 <p className="text-xs text-red-500 mt-1">{txSummary.expenseCount || 0} transactions</p>
               </div>
               <div className={`rounded-lg p-4 text-center ${(txSummary.balance || 0) >= 0 ? 'bg-primary-50' : 'bg-orange-50'}`}>
-                <p className={`text-xs font-medium uppercase ${(txSummary.balance || 0) >= 0 ? 'text-primary-700' : 'text-orange-700'}`}>{tp('Solde')}</p>
-                <p className={`text-xl font-bold mt-1 ${(txSummary.balance || 0) >= 0 ? 'text-primary-600' : 'text-orange-600'}`}>
+                <p className={`text-xs font-medium uppercase ${(txSummary.balance || 0) >= 0 ? 'text-primary' : 'text-orange-700'}`}>{tp('Solde')}</p>
+                <p className={`text-xl font-bold mt-1 ${(txSummary.balance || 0) >= 0 ? 'text-primary' : 'text-orange-600'}`}>
                   {fmt(txSummary.balance)}
                 </p>
-                <p className={`text-xs mt-1 ${(txSummary.balance || 0) >= 0 ? 'text-primary-600' : 'text-orange-500'}`}>
+                <p className={`text-xs mt-1 ${(txSummary.balance || 0) >= 0 ? 'text-primary' : 'text-orange-500'}`}>
                   {(txSummary.balance || 0) >= 0 ? 'Excédent' : tp('Déficit')}
                 </p>
               </div>
@@ -400,15 +400,15 @@ const ComptaDashboard = () => {
             {/* Dernières transactions */}
             {recentTransactions.length > 0 && (
               <div className="border-t pt-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">{tp('Dernières transactions')}</h4>
+                <h4 className="text-sm font-semibold text-foreground mb-3">{tp('Dernières transactions')}</h4>
                 <div className="space-y-2">
                   {recentTransactions.map(tx => (
-                    <Link key={tx._id} to={`/ecom/transactions/${tx._id}`} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded -mx-2 px-2 transition">
+                    <Link key={tx._id} to={`/ecom/transactions/${tx._id}`} className="flex justify-between items-center py-2 border-b border-border last:border-0 hover:bg-background rounded -mx-2 px-2 transition">
                       <div className="flex items-center gap-3">
                         <span className={`w-2 h-2 rounded-full ${tx.type === 'income' ? 'bg-green-500' : 'bg-red-500'}`}></span>
                         <div>
-                          <p className="text-sm text-primary-700 hover:text-primary-900">{tx.description || tx.category}</p>
-                          <p className="text-xs text-gray-400">{new Date(tx.date).toLocaleDateString('fr-FR')}</p>
+                          <p className="text-sm text-primary hover:text-primary-900">{tx.description || tx.category}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(tx.date).toLocaleDateString('fr-FR')}</p>
                         </div>
                       </div>
                       <span className={`text-sm font-semibold ${tx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>

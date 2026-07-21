@@ -18,9 +18,9 @@ import DigitalProductEbookModal from './DigitalProductEbookModal.jsx';
 import { tp } from '../i18n/platform.js';
 
 const API_ORIGIN = (() => {
-  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || '').trim();
+  const raw = String(process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').trim();
 
-  if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
+  if (!raw && typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
     return 'https://api.scalor.net';
   }
 
@@ -107,7 +107,7 @@ function PremiumPreview({ product, accent }) {
   ].filter(Boolean);
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-3xl border border-slate-200 bg-card shadow-sm overflow-hidden">
       <div className="grid gap-6 p-5 lg:grid-cols-[1.1fr_0.9fr] lg:p-7">
         <div className="rounded-2xl bg-slate-50 aspect-square overflow-hidden flex items-center justify-center">
           {images[0] ? (
@@ -147,7 +147,7 @@ function PremiumPreview({ product, accent }) {
         <p className="text-xs font-black uppercase tracking-wide text-slate-400">{tp('Structure générée')}</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {sections.map((section, index) => (
-            <div key={index} className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-bold text-slate-700">
+            <div key={index} className="rounded-2xl border border-slate-200 bg-card px-3 py-3 text-sm font-bold text-slate-700">
               {section}
             </div>
           ))}
@@ -177,6 +177,11 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
   const [dragOver, setDragOver] = useState(false);
   const [themeColor, setThemeColor] = useState('#0F766E');
   const [targetGender, setTargetGender] = useState('auto');
+  const [targetAgeRange, setTargetAgeRange] = useState('auto');
+  // Prix du produit (saisi ici → injecté tel quel dans la page générée)
+  const [price, setPrice] = useState('');
+  const [compareAtPrice, setCompareAtPrice] = useState('');
+  const [targetNiche, setTargetNiche] = useState('');
   const [targetProfile, setTargetProfile] = useState('premium');
   const [mainProblem, setMainProblem] = useState('');
   const [creditsInfo, setCreditsInfo] = useState(null);
@@ -379,8 +384,12 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
     formData.append('tone', 'premium');
     formData.append('language', generationLanguage);
     formData.append('targetGender', targetGender);
+    formData.append('targetAgeRange', targetAgeRange);
+    if (targetNiche.trim()) formData.append('targetAvatar', targetNiche.trim());
     formData.append('targetProfile', targetProfile);
     if (mainProblem.trim()) formData.append('mainProblem', mainProblem.trim());
+    if (String(price).trim()) formData.append('price', String(price).trim());
+    if (String(compareAtPrice).trim()) formData.append('compareAtPrice', String(compareAtPrice).trim());
     photos.forEach((photo) => formData.append('images', photo));
 
     const controller = new AbortController();
@@ -534,7 +543,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
     <>
     <div className={pageMode ? 'min-h-screen bg-slate-50' : 'fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4'}>
       <div className={pageMode ? 'min-h-screen bg-slate-50' : 'max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-3xl bg-slate-50 shadow-2xl'}>
-        <div className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur">
+        <div className="sticky top-0 z-10 border-b border-slate-200 bg-card/95 px-5 py-4 backdrop-blur">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <button type="button" onClick={onClose} className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 text-slate-500 hover:bg-slate-50" aria-label={tp('Fermer')}>
@@ -575,7 +584,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
           {phase === 'input' && (
             <div className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr]">
               <div className="space-y-4">
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-3xl border border-slate-200 bg-card p-5 shadow-sm">
                   <div className="mb-4 flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-slate-400" />
                     <h2 className="text-sm font-black text-slate-950">{tp('Source produit')}</h2>
@@ -589,7 +598,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                         key={mode}
                         type="button"
                         onClick={() => setInputMode(mode)}
-                        className={`rounded-xl px-3 py-2 text-sm font-bold transition ${inputMode === mode ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                        className={`rounded-xl px-3 py-2 text-sm font-bold transition ${inputMode === mode ? 'bg-card text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                       >
                         {label}
                       </button>
@@ -619,7 +628,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                   )}
                 </div>
 
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-3xl border border-slate-200 bg-card p-5 shadow-sm">
                   <div className="mb-4 flex items-center gap-2">
                     <Palette className="h-4 w-4 text-slate-400" />
                     <h2 className="text-sm font-black text-slate-950">{tp('Direction premium')}</h2>
@@ -627,7 +636,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                   <label className="block">
                     <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Couleur accent')}</span>
                     <div className="mt-2 flex items-center gap-3">
-                      <input type="color" value={themeColor} onChange={(event) => setThemeColor(event.target.value)} className="h-11 w-14 rounded-xl border border-slate-200 bg-white p-1" />
+                      <input type="color" value={themeColor} onChange={(event) => setThemeColor(event.target.value)} className="h-11 w-14 rounded-xl border border-slate-200 bg-card p-1" />
                       <input value={themeColor} onChange={(event) => setThemeColor(event.target.value)} className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold uppercase outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100" />
                     </div>
                   </label>
@@ -640,6 +649,29 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                         <option value="male">{tp('Homme')}</option>
                         <option value="mixed">{tp('Mixte')}</option>
                       </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Tranche d\'âge')}</span>
+                      <select value={targetAgeRange} onChange={(event) => setTargetAgeRange(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-slate-400">
+                        <option value="auto">{tp('Auto (selon le produit)')}</option>
+                        <option value="18-25">18-25</option>
+                        <option value="25-40">25-40</option>
+                        <option value="40-55">40-55</option>
+                        <option value="55-70">55-70</option>
+                        <option value="65+">65+</option>
+                      </select>
+                    </label>
+                    <label className="block sm:col-span-2">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Niche / public cible')} <span className="font-normal normal-case text-slate-400">({tp('optionnel')})</span></span>
+                      <input value={targetNiche} onChange={(event) => setTargetNiche(event.target.value)} placeholder={tp('ex. personnes âgées avec fatigue oculaire')} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-slate-400" />
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Prix de vente')} <span className="font-normal normal-case text-slate-400">({tp('affiché sur la page')})</span></span>
+                      <input type="number" min="0" value={price} onChange={(event) => setPrice(event.target.value)} placeholder={tp('ex. 14900')} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-slate-400" />
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Prix barré')} <span className="font-normal normal-case text-slate-400">({tp('optionnel')})</span></span>
+                      <input type="number" min="0" value={compareAtPrice} onChange={(event) => setCompareAtPrice(event.target.value)} placeholder={tp('ex. 19900')} className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold outline-none focus:border-slate-400" />
                     </label>
                     <label className="block">
                       <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{tp('Langue du contenu')}</span>
@@ -673,7 +705,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-3xl border border-slate-200 bg-card p-5 shadow-sm">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <ImageIcon className="h-4 w-4 text-slate-400" />
@@ -688,7 +720,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                     onDragOver={(event) => { event.preventDefault(); setDragOver(true); }}
                     onDragLeave={() => setDragOver(false)}
                     onDrop={(event) => { event.preventDefault(); setDragOver(false); addPhotos(event.dataTransfer.files); }}
-                    className={`flex min-h-[180px] w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed px-6 py-8 text-center transition ${dragOver ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'}`}
+                    className={`flex min-h-[180px] w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed px-6 py-8 text-center transition ${dragOver ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-card hover:border-slate-300 hover:bg-slate-50'}`}
                   >
                     <Upload className="h-8 w-8 text-slate-400" />
                     <span className="mt-3 text-sm font-black text-slate-900">{tp('Ajouter les photos qui serviront de référence')}</span>
@@ -703,7 +735,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                           <button
                             type="button"
                             onClick={() => setPhotos((current) => current.filter((_, photoIndex) => photoIndex !== index))}
-                            className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-slate-500 opacity-0 shadow-sm transition group-hover:opacity-100"
+                            className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-card/90 text-slate-500 opacity-0 shadow-sm transition group-hover:opacity-100"
                             aria-label={tp('Retirer la photo')}
                           >
                             <X className="h-4 w-4" />
@@ -714,7 +746,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                   )}
                 </div>
 
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-3xl border border-slate-200 bg-card p-5 shadow-sm">
                   <h2 className="text-sm font-black text-slate-950">{tp('Ce système va générer')}</h2>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     {['Hero split premium', 'Bande de preuves', 'Galerie témoignages', 'Section problème', 'Cause / mécanisme', 'Science / formule', 'Résultats + rituel', 'Comparaison + closing'].map((item) => (
@@ -743,7 +775,7 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
 
           {phase === 'loading' && (
             <div className="flex min-h-[520px] items-center justify-center">
-              <div className="w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+              <div className="w-full max-w-xl rounded-3xl border border-slate-200 bg-card p-8 text-center shadow-sm">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-950 text-white">
                   <Loader2 className="h-7 w-7 animate-spin" />
                 </div>
@@ -785,15 +817,15 @@ const PremiumProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, 
                 >
                   {digitalProductLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
                   {product?.ebook ? "Régénérer l’ebook" : "Produit digital de ce produit"}
-                  <span className="ml-1 px-1.5 py-0.5 bg-white/20 text-white text-[10px] font-black rounded-full leading-none border border-white/30">{tp('3 crédits')}</span>
+                  <span className="ml-1 px-1.5 py-0.5 bg-card/20 text-white text-[10px] font-black rounded-full leading-none border border-white/30">{tp('3 crédits')}</span>
                 </button>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <button type="button" onClick={() => setPhase('input')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50">
+                <button type="button" onClick={() => setPhase('input')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-card px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50">
                   {tp('Modifier la source')}
                 </button>
                 {currentTaskId && (
-                  <button type="button" onClick={() => handleLoadTask(currentTaskId)} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50">
+                  <button type="button" onClick={() => handleLoadTask(currentTaskId)} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-card px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50">
                     {tp('Recharger')}
                   </button>
                 )}

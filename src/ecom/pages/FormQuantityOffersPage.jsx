@@ -52,11 +52,11 @@ const FormQuantityOffersPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Package className="w-7 h-7 text-purple-600 bg-purple-100 p-1.5 rounded-lg" />
             {tp('Offres de quantité')}
           </h1>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             {tp('Créez des offres de quantité et des réductions dynamiques pour augmenter votre panier moyen.')}
           </p>
         </div>
@@ -70,22 +70,22 @@ const FormQuantityOffersPage = () => {
 
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-4 mb-8">
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center">
             <LayoutTemplate className="w-6 h-6 text-purple-600" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">{allOffers.length}</div>
-            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">{tp('Offres créées')}</div>
+            <div className="text-2xl font-bold text-foreground">{allOffers.length}</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{tp('Offres créées')}</div>
           </div>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
             <Package className="w-6 h-6 text-green-600" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">{activeCount}</div>
-            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">{tp('Actives en ligne')}</div>
+            <div className="text-2xl font-bold text-foreground">{activeCount}</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{tp('Actives en ligne')}</div>
           </div>
         </div>
       </div>
@@ -102,10 +102,10 @@ const FormQuantityOffersPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
         </div>
       ) : allOffers.length === 0 ? (
-        <div className="text-center py-20 bg-white border border-dashed border-gray-300 rounded-2xl">
+        <div className="text-center py-20 bg-card border border-dashed border-gray-300 rounded-2xl">
           <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-gray-900 mb-1">{tp('Aucune offre configurée')}</h3>
-          <p className="text-sm text-gray-500 mb-6">{tp('Lancez le créateur pour concevoir votre première offre de quantité.')}</p>
+          <h3 className="text-lg font-bold text-foreground mb-1">{tp('Aucune offre configurée')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">{tp('Lancez le créateur pour concevoir votre première offre de quantité.')}</p>
           <button
             onClick={() => navigate('/ecom/boutique/form-builder/quantity-offers/wizard/new')}
             className="flex items-center gap-2 px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition shadow flex-shrink-0 mx-auto"
@@ -116,11 +116,11 @@ const FormQuantityOffersPage = () => {
       ) : (
         <div className="grid gap-4">
           {allOffers.map((campaign) => (
-            <div key={campaign._id} className={`bg-white rounded-2xl border transition hover:border-purple-200 overflow-hidden ${!campaign.isActive ? 'opacity-70 grayscale-[30%]' : 'border-gray-200 shadow-sm'}`}>
+            <div key={campaign._id} className={`bg-card rounded-2xl border transition hover:border-purple-200 overflow-hidden ${!campaign.isActive ? 'opacity-70 grayscale-[30%]' : 'border-border shadow-sm'}`}>
               <div className="flex flex-col sm:flex-row items-start sm:items-center p-5 gap-4">
                 
                 {/* Image */}
-                <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
+                <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center overflow-hidden flex-shrink-0 border border-border">
                   {campaign.productId?.images?.[0]?.url ? (
                     <img src={campaign.productId.images[0].url} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -131,15 +131,15 @@ const FormQuantityOffersPage = () => {
                 {/* Details */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-base font-bold text-gray-900 truncate">{campaign.name || tp('Offre sans nom')}</h3>
+                    <h3 className="text-base font-bold text-foreground truncate">{campaign.name || tp('Offre sans nom')}</h3>
                     {!campaign.isActive && (
-                      <span className="flex items-center gap-1 text-[10px] bg-gray-100 text-gray-500 font-bold px-2 py-0.5 rounded-full">
+                      <span className="flex items-center gap-1 text-[10px] bg-muted text-muted-foreground font-bold px-2 py-0.5 rounded-full">
                         <EyeOff className="w-3 h-3" /> Inactif
                       </span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-500">
-                    S'applique sur : <span className="font-medium text-gray-700">{campaign.productId?.name || tp('Produit inconnu')}</span>
+                  <div className="text-sm text-muted-foreground">
+                    S'applique sur : <span className="font-medium text-foreground">{campaign.productId?.name || tp('Produit inconnu')}</span>
                   </div>
                   <div className="text-xs text-purple-600 font-medium mt-1.5 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
@@ -148,17 +148,17 @@ const FormQuantityOffersPage = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-0 border-gray-100">
+                <div className="flex items-center gap-2 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-0 border-border">
                   <button onClick={() => navigate(`/ecom/boutique/form-builder/quantity-offers/wizard/${campaign._id}`)}
-                    className="flex-1 sm:flex-none flex justify-center items-center p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition" title={tp('Éditer le design et les prix')}>
+                    className="flex-1 sm:flex-none flex justify-center items-center p-2 text-muted-foreground hover:text-purple-600 hover:bg-purple-50 rounded-lg transition" title={tp('Éditer le design et les prix')}>
                     <Edit3 className="w-5 h-5" />
                   </button>
                   <button onClick={() => handleDuplicate(campaign._id)}
-                    className="flex-1 sm:flex-none flex justify-center items-center p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition" title={tp('Dupliquer l\'offre')}>
+                    className="flex-1 sm:flex-none flex justify-center items-center p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition" title={tp('Dupliquer l\'offre')}>
                     <Copy className="w-5 h-5" />
                   </button>
                   <button onClick={() => handleDelete(campaign._id)}
-                    className="flex-1 sm:flex-none flex justify-center items-center p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title={tp('Supprimer l\'offre')}>
+                    className="flex-1 sm:flex-none flex justify-center items-center p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition" title={tp('Supprimer l\'offre')}>
                     <Trash2 className="w-5 h-5" />
                   </button>
                 </div>

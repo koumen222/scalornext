@@ -158,7 +158,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
               setTimeout(() => inputRef.current?.focus(), 100);
             }
           }}
-          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-600 active:bg-gray-200 transition-colors"
+          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-muted text-muted-foreground active:bg-gray-200 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -168,18 +168,18 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
         {isOpen && (
           <>
             <div className="fixed inset-0 bg-black/50 z-[60]" onClick={() => setIsOpen(false)} />
-            <div className="fixed top-0 left-0 right-0 z-[70] bg-white shadow-lg">
-              <div className="flex items-center gap-2 p-3 border-b border-gray-200">
+            <div className="fixed top-0 left-0 right-0 z-[70] bg-card shadow-lg">
+              <div className="flex items-center gap-2 p-3 border-b border-border">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 text-gray-500 active:bg-gray-100 rounded-full"
+                  className="p-2 text-muted-foreground active:bg-muted rounded-full"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
                 <div className="flex-1 relative">
-                  <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
@@ -188,7 +188,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={tp('Rechercher tout...')}
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
+                    className="w-full pl-10 pr-4 py-2.5 bg-muted rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
                   />
                 </div>
               </div>
@@ -200,22 +200,22 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                       <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
                     </div>
                   ) : totalResults === 0 ? (
-                    <div className="text-center py-8 text-gray-500 text-sm">
+                    <div className="text-center py-8 text-muted-foreground text-sm">
                       Aucun résultat pour "{searchTerm}"
                     </div>
                   ) : (
                     <div className="divide-y divide-gray-100">
                       {results.orders.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Commandes')}</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('Commandes')}</p>
                           {results.orders.map(order => (
                             <button
                               key={order._id}
                               onClick={() => handleResultClick('order', order)}
-                              className="w-full text-left p-3 hover:bg-gray-50 rounded-lg mb-1"
+                              className="w-full text-left p-3 hover:bg-background rounded-lg mb-1"
                             >
-                              <p className="text-sm font-medium text-gray-900">{order.clientName}</p>
-                              <p className="text-xs text-gray-500">{order.product} - {order.clientPhone}</p>
+                              <p className="text-sm font-medium text-foreground">{order.clientName}</p>
+                              <p className="text-xs text-muted-foreground">{order.product} - {order.clientPhone}</p>
                             </button>
                           ))}
                         </div>
@@ -223,15 +223,15 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
 
                       {results.products.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Produits')}</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('Produits')}</p>
                           {results.products.map(product => (
                             <button
                               key={product._id}
                               onClick={() => handleResultClick('product', product)}
-                              className="w-full text-left p-3 hover:bg-gray-50 rounded-lg mb-1"
+                              className="w-full text-left p-3 hover:bg-background rounded-lg mb-1"
                             >
-                              <p className="text-sm font-medium text-gray-900">{product.name}</p>
-                              <p className="text-xs text-gray-500">Stock: {product.stock} - {product.status}</p>
+                              <p className="text-sm font-medium text-foreground">{product.name}</p>
+                              <p className="text-xs text-muted-foreground">Stock: {product.stock} - {product.status}</p>
                             </button>
                           ))}
                         </div>
@@ -239,15 +239,15 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
 
                       {results.clients.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Clients')}</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('Clients')}</p>
                           {results.clients.map(client => (
                             <button
                               key={client._id}
                               onClick={() => handleResultClick('client', client)}
-                              className="w-full text-left p-3 hover:bg-gray-50 rounded-lg mb-1"
+                              className="w-full text-left p-3 hover:bg-background rounded-lg mb-1"
                             >
-                              <p className="text-sm font-medium text-gray-900">{client.name}</p>
-                              <p className="text-xs text-gray-500">{client.phone} - {client.city}</p>
+                              <p className="text-sm font-medium text-foreground">{client.name}</p>
+                              <p className="text-xs text-muted-foreground">{client.phone} - {client.city}</p>
                             </button>
                           ))}
                         </div>
@@ -255,15 +255,15 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
 
                       {results.users.length > 0 && (
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('Utilisateurs')}</p>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('Utilisateurs')}</p>
                           {results.users.map(user => (
                             <button
                               key={user._id}
                               onClick={() => handleResultClick('user', user)}
-                              className="w-full text-left p-3 hover:bg-gray-50 rounded-lg mb-1"
+                              className="w-full text-left p-3 hover:bg-background rounded-lg mb-1"
                             >
-                              <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                              <p className="text-xs text-gray-500">{user.email} - {user.role}</p>
+                              <p className="text-sm font-medium text-foreground">{user.name}</p>
+                              <p className="text-xs text-muted-foreground">{user.email} - {user.role}</p>
                             </button>
                           ))}
                         </div>
@@ -283,7 +283,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
     <div ref={searchRef} className="relative w-full">
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg className={`h-4 w-4 ${isSuperAdmin ? 'text-gray-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className={`h-4 w-4 ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -299,28 +299,28 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
           className={`block w-full pl-9 pr-3 py-1.5 rounded-lg leading-5 text-sm focus:outline-none focus:ring-1 ${
             isSuperAdmin
               ? 'bg-gray-800 border border-gray-700 text-gray-200 placeholder-gray-500 focus:border-primary-600 focus:ring-primary-600'
-              : 'bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:border-primary-600 focus:ring-primary-600'
+              : 'bg-card border border-gray-300 text-foreground placeholder-gray-400 focus:border-primary-600 focus:ring-primary-600'
           }`}
         />
       </div>
 
       {isOpen && searchTerm.trim().length >= 2 && (
         <div className={`absolute top-full left-0 right-0 mt-2 rounded-xl shadow-2xl border overflow-hidden z-50 max-h-[500px] overflow-y-auto ${
-          isSuperAdmin ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
+          isSuperAdmin ? 'bg-gray-900 border-gray-700' : 'bg-card border-border'
         }`}>
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : totalResults === 0 ? (
-            <div className={`text-center py-8 text-sm ${isSuperAdmin ? 'text-gray-400' : 'text-gray-500'}`}>
+            <div className={`text-center py-8 text-sm ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
               Aucun résultat pour "{searchTerm}"
             </div>
           ) : (
             <div>
               {results.orders.length > 0 && (
-                <div className={`p-3 border-b ${isSuperAdmin ? 'border-gray-800' : 'border-gray-100'}`}>
-                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                <div className={`p-3 border-b ${isSuperAdmin ? 'border-gray-800' : 'border-border'}`}>
+                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                     Commandes ({results.orders.length})
                   </p>
                   {results.orders.map(order => (
@@ -328,13 +328,13 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                       key={order._id}
                       onClick={() => handleResultClick('order', order)}
                       className={`w-full text-left p-3 rounded-lg mb-1 transition-colors ${
-                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-gray-50'
+                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-background'
                       }`}
                     >
-                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-gray-900'}`}>
+                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-foreground'}`}>
                         {order.clientName}
                       </p>
-                      <p className={`text-xs ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                      <p className={`text-xs ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                         {order.product} - {order.clientPhone}
                       </p>
                     </button>
@@ -343,8 +343,8 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
               )}
 
               {results.products.length > 0 && (
-                <div className={`p-3 border-b ${isSuperAdmin ? 'border-gray-800' : 'border-gray-100'}`}>
-                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                <div className={`p-3 border-b ${isSuperAdmin ? 'border-gray-800' : 'border-border'}`}>
+                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                     Produits ({results.products.length})
                   </p>
                   {results.products.map(product => (
@@ -352,13 +352,13 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                       key={product._id}
                       onClick={() => handleResultClick('product', product)}
                       className={`w-full text-left p-3 rounded-lg mb-1 transition-colors ${
-                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-gray-50'
+                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-background'
                       }`}
                     >
-                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-gray-900'}`}>
+                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-foreground'}`}>
                         {product.name}
                       </p>
-                      <p className={`text-xs ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                      <p className={`text-xs ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                         Stock: {product.stock} - {product.status}
                       </p>
                     </button>
@@ -367,8 +367,8 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
               )}
 
               {results.clients.length > 0 && (
-                <div className={`p-3 border-b ${isSuperAdmin ? 'border-gray-800' : 'border-gray-100'}`}>
-                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                <div className={`p-3 border-b ${isSuperAdmin ? 'border-gray-800' : 'border-border'}`}>
+                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                     Clients ({results.clients.length})
                   </p>
                   {results.clients.map(client => (
@@ -376,13 +376,13 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                       key={client._id}
                       onClick={() => handleResultClick('client', client)}
                       className={`w-full text-left p-3 rounded-lg mb-1 transition-colors ${
-                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-gray-50'
+                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-background'
                       }`}
                     >
-                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-gray-900'}`}>
+                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-foreground'}`}>
                         {client.name}
                       </p>
-                      <p className={`text-xs ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                      <p className={`text-xs ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                         {client.phone} - {client.city}
                       </p>
                     </button>
@@ -392,7 +392,7 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
 
               {results.users.length > 0 && (
                 <div className="p-3">
-                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                  <p className={`text-xs font-semibold uppercase mb-2 ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                     Utilisateurs ({results.users.length})
                   </p>
                   {results.users.map(user => (
@@ -400,13 +400,13 @@ const GlobalSearch = ({ isSuperAdmin = false, isMobile = false }) => {
                       key={user._id}
                       onClick={() => handleResultClick('user', user)}
                       className={`w-full text-left p-3 rounded-lg mb-1 transition-colors ${
-                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-gray-50'
+                        isSuperAdmin ? 'hover:bg-gray-800' : 'hover:bg-background'
                       }`}
                     >
-                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-gray-900'}`}>
+                      <p className={`text-sm font-medium ${isSuperAdmin ? 'text-gray-200' : 'text-foreground'}`}>
                         {user.name}
                       </p>
-                      <p className={`text-xs ${isSuperAdmin ? 'text-gray-500' : 'text-gray-500'}`}>
+                      <p className={`text-xs ${isSuperAdmin ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                         {user.email} - {user.role}
                       </p>
                     </button>

@@ -9,8 +9,9 @@ const resolvePublicApiBase = () => {
   const explicitStoreApi = process.env.NEXT_PUBLIC_STORE_API_URL;
   const explicitApiBase = process.env.NEXT_PUBLIC_API_BASE_URL;
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const candidate = explicitStoreApi || explicitApiBase || backendUrl;
+  const candidate = explicitStoreApi || explicitApiBase || backendUrl || apiUrl;
   if (candidate) {
     const clean = String(candidate).replace(/\/+$/, '');
     return clean.endsWith('/api/ecom') ? clean : `${clean}/api/ecom`;

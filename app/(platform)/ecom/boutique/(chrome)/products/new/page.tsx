@@ -1,3 +1,7 @@
 'use client';
 
-export { default } from '@/src/ecom/pages/StoreProductForm.jsx';
+import StoreProductForm from '@/src/ecom/pages/StoreProductForm.jsx';
+
+export default function StoreProductNewPage() {
+  return <StoreProductForm />;
+}

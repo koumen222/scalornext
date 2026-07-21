@@ -84,12 +84,25 @@ interface GuardProps {
   children: ReactNode;
 }
 
+/** Boutique d'abord : vrai pour un NOUVEL admin dont la boutique n'existe pas
+ *  encore (flag `needsStoreSetup` posé par le backend à l'inscription, levé à
+ *  la création de la boutique). Les comptes existants ne sont jamais bloqués. */
+export function needsStoreOnboarding(user: Record<string, any> | null): boolean {
+  return Boolean(
+    user
+    && user.role === 'ecom_admin'
+    && user.needsStoreSetup === true
+    && !user.storeId,
+  );
+}
+
 /** Décision d'accès iso ProtectedRoute — retourne null (ok) ou l'URL de redirection. */
 function decideRedirect(
   user: Record<string, any> | null,
   isAuthenticated: boolean,
   requiredRole?: Role | Role[],
-  requireRitaAgentAccess?: boolean
+  requireRitaAgentAccess?: boolean,
+  currentPath?: string | null
 ): string | null {
   const hasToken = typeof localStorage !== 'undefined' && !!localStorage.getItem('ecomToken');
   const localUser = user || readLocalUser();
@@ -97,6 +110,25 @@ function decideRedirect(
   const effectiveUser = user || localUser;
 
   if (!effectiveAuth) return '/ecom/login';
+
+  // Boutique d'abord : un NOUVEAU compte admin sans boutique est envoyé vers
+  // /ecom/onboarding/boutique — un RELAIS qui vérifie l'état RÉEL côté serveur
+  // (getProfile) puis route : wizard si la boutique manque vraiment, dashboard
+  // sinon. Un flag localStorage/contexte périmé ne peut donc JAMAIS bloquer le
+  // retour au back-office après création. Exclusions : le relais, tout
+  // /ecom/boutique (le wizard y vit), le billing (choix du plan) et le
+  // Creative Center (accessible sans boutique).
+  const path = currentPath || '';
+  if (
+    needsStoreOnboarding(effectiveUser)
+    && needsStoreOnboarding(readLocalUser() || effectiveUser)
+    && !path.startsWith('/ecom/onboarding')
+    && !path.startsWith('/ecom/boutique')
+    && !path.startsWith('/ecom/billing')
+    && !path.startsWith('/ecom/creatives')
+  ) {
+    return '/ecom/onboarding/boutique';
+  }
 
   if (requiredRole) {
     const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
@@ -114,18 +146,27 @@ function decideRedirect(
 
 export function Protected({ requiredRole, requireRitaAgentAccess = false, children }: GuardProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, isAuthenticated } = useEcomAuth();
-  const [status, setStatus] = useState<'checking' | 'ok'>('checking');
+  // Décision SYNCHRONE au 1er rendu : si l'utilisateur est déjà connu (token + user
+  // en cache) et autorisé, on rend directement le contenu — plus de splash quand on
+  // est connecté (le loader ne reste que pour un vrai boot non authentifié).
+  const [status, setStatus] = useState<'checking' | 'ok'>(() =>
+    (typeof window !== 'undefined'
+      && decideRedirect(user, isAuthenticated, requiredRole, requireRitaAgentAccess, pathname) === null)
+      ? 'ok'
+      : 'checking'
+  );
 
   useEffect(() => {
-    const redirect = decideRedirect(user, isAuthenticated, requiredRole, requireRitaAgentAccess);
+    const redirect = decideRedirect(user, isAuthenticated, requiredRole, requireRitaAgentAccess, pathname);
     if (redirect) {
       router.replace(redirect);
       return;
     }
     setStatus('ok');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isAuthenticated, requiredRole, requireRitaAgentAccess]);
+  }, [user, isAuthenticated, requiredRole, requireRitaAgentAccess, pathname]);
 
   if (status !== 'ok') return <PageLoader />;
   return <>{children}</>;
@@ -188,6 +229,12 @@ export function DashboardRedirect() {
 
     if (!effectiveAuth) {
       router.replace('/ecom/login');
+      return;
+    }
+    // Boutique d'abord : boutique obligatoire avant le dashboard. Redirection
+    // vers le RELAIS (vérification serveur) — jamais bloqué par un état périmé.
+    if (needsStoreOnboarding(effectiveUser) && needsStoreOnboarding(readLocalUser() || effectiveUser)) {
+      router.replace('/ecom/onboarding/boutique');
       return;
     }
     router.replace(ROLE_DASHBOARD_MAP[effectiveUser?.role] || '/ecom/dashboard/admin');

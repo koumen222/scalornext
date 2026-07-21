@@ -96,7 +96,7 @@ function renderInlineScalarInput(value, onChange) {
         type="number"
         value={Number(value) || 0}
         onChange={(e) => onChange(parseInt(e.target.value, 10) || 0)}
-        className="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg"
+        className="w-full px-2 py-1.5 text-xs border border-border rounded-lg"
       />
     );
   }
@@ -106,7 +106,7 @@ function renderInlineScalarInput(value, onChange) {
       type="text"
       value={String(value ?? '')}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg"
+      className="w-full px-2 py-1.5 text-xs border border-border rounded-lg"
     />
   );
 }
@@ -142,7 +142,7 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
           value={String(value)}
           onChange={(e) => update(key, e.target.value)}
           rows={4}
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+          className="w-full px-3 py-2 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
         />
       );
     }
@@ -159,7 +159,7 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
               // keep invalid JSON as-is in UI without crashing
             }
           }}
-          className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl font-mono focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+          className="w-full px-3 py-2 text-xs border border-border rounded-xl font-mono focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
         />
       );
     }
@@ -169,13 +169,13 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
       return (
         <div className="space-y-2">
           {list.length === 0 && (
-            <p className="text-[11px] text-gray-400">{tp('Aucune sous-section.')}</p>
+            <p className="text-[11px] text-muted-foreground">{tp('Aucune sous-section.')}</p>
           )}
 
           {list.map((item, idx) => (
-            <div key={`${key}-${idx}`} className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 space-y-2">
+            <div key={`${key}-${idx}`} className="rounded-lg border border-border bg-background p-2.5 space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-[11px] font-semibold text-gray-600">Sous-section {idx + 1}</p>
+                <p className="text-[11px] font-semibold text-muted-foreground">Sous-section {idx + 1}</p>
                 <button
                   type="button"
                   onClick={() => removeArrayItem(key, idx)}
@@ -189,7 +189,7 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
                 <div className="space-y-2">
                   {Object.entries(item).map(([subKey, subValue]) => (
                     <div key={subKey}>
-                      <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">
+                      <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">
                         {humanizeKey(subKey)}
                       </label>
                       {renderInlineScalarInput(subValue, (nextValue) => {
@@ -223,7 +223,7 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
           type="number"
           value={Number(value) || 0}
           onChange={(e) => update(key, parseInt(e.target.value, 10) || 0)}
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+          className="w-full px-3 py-2 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
         />
       );
     }
@@ -235,13 +235,13 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
             type="color"
             value={String(value || '#000000')}
             onChange={(e) => update(key, e.target.value)}
-            className="w-10 h-10 rounded-lg border border-gray-200"
+            className="w-10 h-10 rounded-lg border border-border"
           />
           <input
             type="text"
             value={String(value)}
             onChange={(e) => update(key, e.target.value)}
-            className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-xl font-mono focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+            className="flex-1 px-3 py-2 text-sm border border-border rounded-xl font-mono focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
           />
         </div>
       );
@@ -255,13 +255,13 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
             value={String(value)}
             placeholder="https://..."
             onChange={(e) => update(key, e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+            className="w-full px-3 py-2 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
           />
           {value ? (
             <img
               src={String(value)}
               alt="preview"
-              className="w-full h-24 object-cover rounded-lg border border-gray-200"
+              className="w-full h-24 object-cover rounded-lg border border-border"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
           ) : null}
@@ -274,32 +274,32 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
         type="text"
         value={String(value)}
         onChange={(e) => update(key, e.target.value)}
-        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+        className="w-full px-3 py-2 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
       />
     );
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm max-h-[70vh] flex flex-col">
-        <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-gray-800">Modifier : {section.label || section.type}</h3>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 text-gray-500">✕</button>
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-sm max-h-[70vh] flex flex-col">
+        <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+          <h3 className="text-sm font-bold text-foreground">Modifier : {section.label || section.type}</h3>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted text-muted-foreground">✕</button>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {fields.map((field) => (
             <div key={field.key}>
-              <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1 block">
                 {field.label}
               </label>
               {renderField(field)}
             </div>
           ))}
           {fields.length === 0 && (
-            <p className="text-xs text-gray-400">{tp('Aucun champ éditable pour cette section.')}</p>
+            <p className="text-xs text-muted-foreground">{tp('Aucun champ éditable pour cette section.')}</p>
           )}
         </div>
-        <div className="px-4 py-3 border-t border-gray-100 flex gap-2">
+        <div className="px-4 py-3 border-t border-border flex gap-2">
           <button
             onClick={() => { onDelete(); onClose(); }}
             className="px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition"
@@ -307,7 +307,7 @@ function SectionEditor({ section, onSave, onClose, onDelete }) {
           >
             <Trash2 className="w-4 h-4" />
           </button>
-          <button onClick={onClose} className="flex-1 py-2 text-xs font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">{tp('Annuler')}</button>
+          <button onClick={onClose} className="flex-1 py-2 text-xs font-semibold text-foreground bg-muted rounded-xl hover:bg-gray-200 transition">{tp('Annuler')}</button>
           <button onClick={() => { onSave({ ...section, config }); onClose(); }}
             className="flex-1 py-2 text-xs font-bold text-white bg-[#0F6B4F] rounded-xl hover:bg-[#0A5740] transition">{tp('Enregistrer')}</button>
         </div>
@@ -437,8 +437,8 @@ function IframePreview({ subdomain, device, iframeKey, onLoad }) {
 
   if (!subdomain) {
     return (
-      <div className="flex-1 bg-gray-100 flex items-center justify-center">
-        <div className="text-center text-gray-400">
+      <div className="flex-1 bg-muted flex items-center justify-center">
+        <div className="text-center text-muted-foreground">
           <div className="text-4xl mb-3">🏪</div>
           <p className="text-sm font-medium">{tp('Boutique introuvable')}</p>
           <p className="text-xs mt-1">{tp('Configurez un sous-domaine dans les paramètres')}</p>
@@ -451,7 +451,7 @@ function IframePreview({ subdomain, device, iframeKey, onLoad }) {
     <div className="flex-1 bg-[#e8eaed] flex flex-col overflow-hidden">
       {/* Device chrome */}
       {device !== 'desktop' && (
-        <div className="flex justify-center pt-3 pb-1 text-xs text-gray-400 font-medium select-none">
+        <div className="flex justify-center pt-3 pb-1 text-xs text-muted-foreground font-medium select-none">
           {deviceConfig[device].label} — {width}
         </div>
       )}
@@ -459,7 +459,7 @@ function IframePreview({ subdomain, device, iframeKey, onLoad }) {
       {/* Iframe wrapper */}
       <div className="flex-1 flex items-start justify-center overflow-auto p-3 pt-2">
         <div
-          className="shadow-xl rounded-b-none rounded-t-lg overflow-hidden bg-white"
+          className="shadow-xl rounded-b-none rounded-t-lg overflow-hidden bg-card"
           style={{
             width,
             maxWidth: '100%',
@@ -467,13 +467,13 @@ function IframePreview({ subdomain, device, iframeKey, onLoad }) {
           }}
         >
           {/* Browser chrome bar */}
-          <div className="h-8 bg-gray-100 border-b border-gray-200 flex items-center px-3 gap-2 select-none">
+          <div className="h-8 bg-muted border-b border-border flex items-center px-3 gap-2 select-none">
             <div className="flex gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
               <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
             </div>
-            <div className="flex-1 bg-white rounded px-2 py-0.5 text-[10px] text-gray-400 font-mono border border-gray-200 truncate">
+            <div className="flex-1 bg-card rounded px-2 py-0.5 text-[10px] text-muted-foreground font-mono border border-border truncate">
               {window.location.origin}/store/{subdomain}
             </div>
           </div>
@@ -497,19 +497,19 @@ function IframePreview({ subdomain, device, iframeKey, onLoad }) {
 function ColorRow({ label, value, onChange }) {
   return (
     <div className="flex items-center justify-between py-2">
-      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
       <div className="flex items-center gap-2">
         <input
           type="color"
           value={value || '#000000'}
           onChange={e => onChange(e.target.value)}
-          className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0.5 bg-white"
+          className="w-8 h-8 rounded-lg border border-border cursor-pointer p-0.5 bg-card"
         />
         <input
           type="text"
           value={value || ''}
           onChange={e => onChange(e.target.value)}
-          className="w-24 px-2 py-1 text-xs border border-gray-200 rounded-lg font-mono bg-gray-50"
+          className="w-24 px-2 py-1 text-xs border border-border rounded-lg font-mono bg-background"
           maxLength={7}
         />
       </div>
@@ -521,12 +521,12 @@ function ColorRow({ label, value, onChange }) {
 function ToggleRow({ label, value, onChange }) {
   return (
     <div className="flex items-center justify-between py-2">
-      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
       <button
         onClick={() => onChange(!value)}
         className={`relative w-10 h-5 rounded-full transition-colors ${value ? 'bg-green-500' : 'bg-gray-300'}`}
       >
-        <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${value ? 'translate-x-5' : ''}`} />
+        <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-card rounded-full shadow transition-transform ${value ? 'translate-x-5' : ''}`} />
       </button>
     </div>
   );
@@ -536,16 +536,16 @@ function ToggleRow({ label, value, onChange }) {
 function AccordionSection({ title, icon, children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-gray-100">
+    <div className="border-b border-border">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition text-left"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-background transition text-left"
       >
         <div className="flex items-center gap-2">
-          <span className="text-gray-500">{icon}</span>
-          <span className="text-sm font-semibold text-gray-700">{title}</span>
+          <span className="text-muted-foreground">{icon}</span>
+          <span className="text-sm font-semibold text-foreground">{title}</span>
         </div>
-        <span className={`text-gray-400 text-xs transition-transform ${open ? 'rotate-180' : ''}`}>▼</span>
+        <span className={`text-muted-foreground text-xs transition-transform ${open ? 'rotate-180' : ''}`}>▼</span>
       </button>
       {open && <div className="px-4 pb-3 space-y-0.5">{children}</div>}
     </div>
@@ -775,30 +775,30 @@ const VisualBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-7 h-7 animate-spin text-gray-400" />
-          <p className="text-sm text-gray-500">{tp('Chargement du builder…')}</p>
+          <Loader2 className="w-7 h-7 animate-spin text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">{tp('Chargement du builder…')}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
+    <div className="flex flex-col h-screen bg-muted overflow-hidden">
 
       {/* ── Top bar ──────────────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between h-12 px-4 bg-white border-b border-gray-200 flex-shrink-0 z-10 shadow-sm">
+      <header className="flex items-center justify-between h-12 px-4 bg-card border-b border-border flex-shrink-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/ecom/boutique')}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline text-xs font-medium">{tp('Retour')}</span>
           </button>
           <div className="w-px h-5 bg-gray-200" />
-          <h1 className="text-sm font-bold text-gray-800 tracking-tight">{tp('Site Builder')}</h1>
+          <h1 className="text-sm font-bold text-foreground tracking-tight">{tp('Site Builder')}</h1>
           <div 
             className={`flex items-center gap-1 px-2 py-0.5 rounded-full transition-all ${
               isConnected 
@@ -807,14 +807,14 @@ const VisualBuilder = () => {
             }`}
             title={isConnected ? 'Aperçu en temps réel actif' : tp('Connexion au serveur...')}
           >
-            <Zap className={`w-3 h-3 ${isConnected ? 'text-primary-600' : 'text-orange-500 animate-pulse'}`} />
+            <Zap className={`w-3 h-3 ${isConnected ? 'text-primary' : 'text-orange-500 animate-pulse'}`} />
             <span className={`text-[10px] font-bold uppercase tracking-wide ${
-              isConnected ? 'text-primary-700' : 'text-orange-600'
+              isConnected ? 'text-primary' : 'text-orange-600'
             }`}>
               {isConnected ? 'Live' : tp('Connexion...')}
             </span>
             {lastBroadcast && isConnected && (
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-ping" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
             )}
           </div>
         </div>
@@ -822,11 +822,11 @@ const VisualBuilder = () => {
         <div className="flex items-center gap-1.5">
           {/* Undo / Redo */}
           <button onClick={undo} disabled={!canUndo} title={tp('Annuler (Ctrl+Z)')}
-            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-25 transition text-gray-500">
+            className="p-1.5 rounded-lg hover:bg-muted disabled:opacity-25 transition text-muted-foreground">
             <RotateCcw className="w-4 h-4" />
           </button>
           <button onClick={redo} disabled={!canRedo} title={tp('Rétablir')}
-            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-25 transition text-gray-500"
+            className="p-1.5 rounded-lg hover:bg-muted disabled:opacity-25 transition text-muted-foreground"
             style={{ transform: 'scaleX(-1)' }}>
             <RotateCcw className="w-4 h-4" />
           </button>
@@ -834,14 +834,14 @@ const VisualBuilder = () => {
           <div className="w-px h-5 bg-gray-200 mx-1" />
 
           {/* Device switcher */}
-          <div className="flex items-center gap-0.5 bg-gray-100 rounded-lg p-0.5">
+          <div className="flex items-center gap-0.5 bg-muted rounded-lg p-0.5">
             {[
               { id: 'desktop', icon: <Monitor className="w-3.5 h-3.5" />, title: 'Bureau' },
               { id: 'tablet',  icon: <Tablet className="w-3.5 h-3.5" />,  title: 'Tablette' },
               { id: 'mobile',  icon: <Smartphone className="w-3.5 h-3.5" />, title: 'Mobile' },
             ].map(({ id, icon, title }) => (
               <button key={id} onClick={() => setDevice(id)} title={title}
-                className={`p-1.5 rounded-md transition ${device === id ? 'bg-white shadow-sm text-gray-800' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`p-1.5 rounded-md transition ${device === id ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-muted-foreground'}`}
               >{icon}</button>
             ))}
           </div>
@@ -851,7 +851,7 @@ const VisualBuilder = () => {
           {/* Reload iframe */}
           <button onClick={() => { setIframeLoaded(false); setIframeKey(k => k + 1); }}
             title={tp('Recharger l\'aperçu')}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-500">
+            className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
 
@@ -859,7 +859,7 @@ const VisualBuilder = () => {
           {subdomain && (
             <a href={`https://${subdomain}.scalor.net`} target="_blank" rel="noopener noreferrer"
               title={tp('Ouvrir la boutique')}
-              className="p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-500">
+              className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
@@ -867,7 +867,7 @@ const VisualBuilder = () => {
           {/* Publish */}
           <button onClick={handleSave} disabled={saving}
             className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white rounded-lg transition-all shadow-sm disabled:opacity-60 ml-1 ${
-              saved ? 'bg-primary-500' : 'bg-[#0F6B4F] hover:bg-[#0A5740]'
+              saved ? 'bg-primary' : 'bg-[#0F6B4F] hover:bg-[#0A5740]'
             }`}>
             {saving
               ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -883,10 +883,10 @@ const VisualBuilder = () => {
       <div className="flex flex-1 overflow-hidden">
 
         {/* ─── Left panel ──────────────────────────────────────────────────── */}
-        <aside className="w-72 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
+        <aside className="w-72 flex-shrink-0 bg-card border-r border-border flex flex-col overflow-hidden">
 
           {/* Tabs */}
-          <div className="flex border-b border-gray-100 flex-shrink-0">
+          <div className="flex border-b border-border flex-shrink-0">
             {[
               { id: 'theme',    get label() { return tp('Thème'); },    icon: <Palette className="w-3.5 h-3.5" /> },
               { id: 'sections', label: 'Sections', icon: <LayoutGrid className="w-3.5 h-3.5" /> },
@@ -895,7 +895,7 @@ const VisualBuilder = () => {
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-semibold transition border-b-2 ${
                   activeTab === tab.id
                     ? 'border-[#0F6B4F] text-[#0F6B4F]'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}>
                 {tab.icon}
                 {tab.label}
@@ -910,18 +910,18 @@ const VisualBuilder = () => {
             {activeTab === 'theme' && (
               <>
                 {/* Template */}
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{tp('Template')}</p>
+                <div className="px-4 py-3 border-b border-border">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{tp('Template')}</p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {TEMPLATES.map(t => (
                       <button key={t.id} onClick={() => updateTheme({ template: t.id })}
                         className={`py-2 px-1 text-[10px] font-semibold rounded-lg border transition flex flex-col items-center gap-0.5 ${
                           theme.template === t.id
-                            ? 'border-[#0F6B4F] bg-primary-50 text-primary-700'
-                            : 'border-gray-200 text-gray-500 hover:border-gray-300 bg-gray-50'
+                            ? 'border-[#0F6B4F] bg-primary-50 text-primary'
+                            : 'border-border text-muted-foreground hover:border-gray-300 bg-background'
                         }`}>
                         {t.name}
-                        <span className="text-[9px] font-normal text-gray-400">{t.desc}</span>
+                        <span className="text-[9px] font-normal text-muted-foreground">{t.desc}</span>
                       </button>
                     ))}
                   </div>
@@ -941,7 +941,7 @@ const VisualBuilder = () => {
                     value={theme.backgroundColor}
                     onChange={v => updateTheme({ backgroundColor: v })} />
                   {/* Live preview strip */}
-                  <div className="mt-2 p-2.5 rounded-xl border border-gray-200" style={{ backgroundColor: theme.backgroundColor }}>
+                  <div className="mt-2 p-2.5 rounded-xl border border-border" style={{ backgroundColor: theme.backgroundColor }}>
                     <div className="flex gap-1.5 mb-1.5">
                       <div className="flex-1 h-1.5 rounded" style={{ backgroundColor: theme.primaryColor }} />
                       <div className="flex-1 h-1.5 rounded" style={{ backgroundColor: theme.ctaColor }} />
@@ -954,14 +954,14 @@ const VisualBuilder = () => {
 
                 <AccordionSection title={tp('Typographie')} icon={<Type className="w-4 h-4" />} defaultOpen>
                   <div className="space-y-2 pt-1">
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block">{tp('Police')}</label>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide block">{tp('Police')}</label>
                     <div className="grid grid-cols-2 gap-1.5">
                       {FONT_OPTIONS.map(f => (
                         <button key={f.id} onClick={() => updateTheme({ font: f.id })}
                           className={`px-2 py-2 text-xs rounded-lg border transition text-left truncate leading-tight ${
                             theme.font === f.id
-                              ? 'border-[#0F6B4F] bg-primary-50 text-primary-700 font-semibold'
-                              : 'border-gray-200 text-gray-600 hover:border-gray-300 bg-gray-50'
+                              ? 'border-[#0F6B4F] bg-primary-50 text-primary font-semibold'
+                              : 'border-border text-muted-foreground hover:border-gray-300 bg-background'
                           }`}
                           style={{ fontFamily: f.css }}>
                           {f.label}
@@ -973,14 +973,14 @@ const VisualBuilder = () => {
 
                 <AccordionSection title={tp('Formes')} icon={<Square className="w-4 h-4" />} defaultOpen>
                   <div className="space-y-2 pt-1">
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block">Arrondi des boutons & cartes</label>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide block">Arrondi des boutons & cartes</label>
                     <div className="grid grid-cols-3 gap-1.5">
                       {RADIUS_OPTIONS.map(r => (
                         <button key={r.id} onClick={() => updateTheme({ borderRadius: r.id })}
                           className={`py-2 text-[11px] font-medium border transition flex flex-col items-center gap-1.5 ${
                             theme.borderRadius === r.id
-                              ? 'border-[#0F6B4F] bg-primary-50 text-primary-700'
-                              : 'border-gray-200 text-gray-500 hover:border-gray-300 bg-gray-50'
+                              ? 'border-[#0F6B4F] bg-primary-50 text-primary'
+                              : 'border-border text-muted-foreground hover:border-gray-300 bg-background'
                           }`}
                           style={{ borderRadius: r.px }}>
                           <div className="w-6 h-4 border-2 border-current" style={{ borderRadius: r.px }} />
@@ -997,20 +997,20 @@ const VisualBuilder = () => {
             {activeTab === 'sections' && (
               <div className="p-3 space-y-3">
                 {sections.length === 0 && (
-                  <div className="text-center py-6 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl">
+                  <div className="text-center py-6 text-muted-foreground bg-background border border-border rounded-xl">
                     <LayoutGrid className="w-7 h-7 mx-auto mb-2 opacity-30" />
                     <p className="text-xs">{tp('Aucune section configurée')}</p>
                   </div>
                 )}
 
                 {groupedSections.map((group) => (
-                  <div key={group.id} className="border border-gray-200 rounded-xl overflow-hidden bg-white">
-                    <div className="px-3 py-2 border-b border-gray-100 bg-gray-50">
-                      <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wide">{group.title}</p>
+                  <div key={group.id} className="border border-border rounded-xl overflow-hidden bg-card">
+                    <div className="px-3 py-2 border-b border-border bg-background">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wide">{group.title}</p>
                     </div>
                     <div className="p-2 space-y-1.5">
                       {group.items.length === 0 && (
-                        <p className="text-[11px] text-gray-400 px-1 py-2">{tp('Aucune section')}</p>
+                        <p className="text-[11px] text-muted-foreground px-1 py-2">{tp('Aucune section')}</p>
                       )}
 
                       {group.items.map(({ section, idx }) => {
@@ -1026,8 +1026,8 @@ const VisualBuilder = () => {
                               dragIdx === idx
                                 ? 'border-[#0F6B4F] shadow-md bg-primary-50'
                                 : section.enabled
-                                  ? 'bg-white border-gray-200'
-                                  : 'bg-gray-50 border-gray-100 opacity-60'
+                                  ? 'bg-card border-border'
+                                  : 'bg-background border-border opacity-60'
                             }`}
                           >
                             <GripVertical className="w-3 h-3 text-gray-300 flex-shrink-0" />
@@ -1037,15 +1037,15 @@ const VisualBuilder = () => {
                               onClick={() => setEditingIdx(idx)}
                               className="flex-1 min-w-0 text-left"
                             >
-                              <p className={`text-xs font-semibold truncate ${section.enabled ? 'text-gray-700' : 'text-gray-400'}`}>
+                              <p className={`text-xs font-semibold truncate ${section.enabled ? 'text-foreground' : 'text-muted-foreground'}`}>
                                 {meta.label}
                               </p>
-                              <p className="text-[10px] text-gray-400 truncate">{section.type}</p>
+                              <p className="text-[10px] text-muted-foreground truncate">{section.type}</p>
                             </button>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
                               <button
                                 onClick={() => setEditingIdx(idx)}
-                                className="p-1 rounded hover:bg-gray-100 text-gray-500 text-[10px]"
+                                className="p-1 rounded hover:bg-muted text-muted-foreground text-[10px]"
                                 title={tp('Modifier')}
                               >
                                 ✏️
@@ -1062,14 +1062,14 @@ const VisualBuilder = () => {
                               onClick={() => toggleSection(idx)}
                               className={`relative w-8 h-4 rounded-full transition-colors flex-shrink-0 ${section.enabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
                             >
-                              <span className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${section.enabled ? 'translate-x-4' : ''}`} />
+                              <span className={`absolute top-0.5 left-0.5 w-3 h-3 bg-card rounded-full shadow transition-transform ${section.enabled ? 'translate-x-4' : ''}`} />
                             </button>
                           </div>
                         );
                       })}
 
                       <div className="pt-1">
-                        <label className="text-[10px] text-gray-400 font-semibold uppercase tracking-wide px-1 block mb-1">{tp('Ajouter une section')}</label>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide px-1 block mb-1">{tp('Ajouter une section')}</label>
                         <select
                           onChange={(e) => {
                             if (!e.target.value) return;
@@ -1077,7 +1077,7 @@ const VisualBuilder = () => {
                             e.target.value = '';
                           }}
                           defaultValue=""
-                          className="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+                          className="w-full px-2 py-1.5 text-xs border border-border rounded-lg bg-card focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
                         >
                           <option value="" disabled>{tp('Choisir...')}</option>
                           {Object.entries(NEW_SECTION_TEMPLATES).map(([type, tpl]) => (
@@ -1091,25 +1091,25 @@ const VisualBuilder = () => {
 
                 {/* Product page toggles */}
                 <div className="pt-1">
-                  <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wide px-1 pb-2">{tp('Page Produit')}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wide px-1 pb-2">{tp('Page Produit')}</p>
                   {PRODUCT_PAGE_TOGGLES.map(({ key, label, desc }) => (
                     <div key={key} className="flex items-center justify-between py-1.5">
                       <div className="flex-1 min-w-0 mr-2">
-                        <p className="text-xs font-medium text-gray-700 truncate">{label}</p>
-                        <p className="text-[10px] text-gray-400 truncate">{desc}</p>
+                        <p className="text-xs font-medium text-foreground truncate">{label}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{desc}</p>
                       </div>
                       <button
                         onClick={() => updateTheme((prev) => ({ ...prev, sections: { ...prev.sections, [key]: !(prev.sections?.[key] ?? getSectionToggleDefault(key)) } }))}
                         className={`relative w-8 h-4 rounded-full transition-colors flex-shrink-0 ${(theme.sections?.[key] ?? getSectionToggleDefault(key)) ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
                       >
-                        <span className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${(theme.sections?.[key] ?? getSectionToggleDefault(key)) ? 'translate-x-4' : ''}`} />
+                        <span className={`absolute top-0.5 left-0.5 w-3 h-3 bg-card rounded-full shadow transition-transform ${(theme.sections?.[key] ?? getSectionToggleDefault(key)) ? 'translate-x-4' : ''}`} />
                       </button>
                     </div>
                   ))}
                 </div>
 
                 {sections.length > 0 && (
-                  <p className="text-[10px] text-gray-400 text-center pt-1">{tp('Publiez pour appliquer les changements live')}</p>
+                  <p className="text-[10px] text-muted-foreground text-center pt-1">{tp('Publiez pour appliquer les changements live')}</p>
                 )}
               </div>
             )}
@@ -1126,8 +1126,8 @@ const VisualBuilder = () => {
           </div>
 
           {/* Bottom info */}
-          <div className="flex-shrink-0 px-4 py-2.5 border-t border-gray-100 bg-gray-50">
-            <p className="text-[10px] text-gray-400 flex items-center gap-1.5">
+          <div className="flex-shrink-0 px-4 py-2.5 border-t border-border bg-background">
+            <p className="text-[10px] text-muted-foreground flex items-center gap-1.5">
               <Zap className="w-3 h-3 text-primary-500" />
               {tp('Thème appliqué en temps réel aux visiteurs')}
             </p>
@@ -1138,10 +1138,10 @@ const VisualBuilder = () => {
         <div className="flex-1 flex flex-col overflow-hidden relative">
           {/* Loading overlay while iframe loads */}
           {!iframeLoaded && subdomain && (
-            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
+            <div className="absolute inset-0 bg-muted flex items-center justify-center z-10">
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="w-7 h-7 animate-spin text-[#0F6B4F]" />
-                <p className="text-sm text-gray-500 font-medium">{tp('Chargement de la boutique…')}</p>
+                <p className="text-sm text-muted-foreground font-medium">{tp('Chargement de la boutique…')}</p>
               </div>
             </div>
           )}

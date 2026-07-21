@@ -30,35 +30,35 @@ const PushSection = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+    <div className="bg-card rounded-2xl shadow-sm border border-border p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isSubscribed ? 'bg-primary-100' : 'bg-gray-100'}`}>
-            <svg className={`w-5 h-5 ${isSubscribed ? 'text-primary-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isSubscribed ? 'bg-primary-100' : 'bg-muted'}`}>
+            <svg className={`w-5 h-5 ${isSubscribed ? 'text-primary' : 'text-muted-foreground'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">{tp('Notifications push')}</p>
-            <p className="text-xs text-gray-500">
+            <p className="text-sm font-semibold text-foreground">{tp('Notifications push')}</p>
+            <p className="text-xs text-muted-foreground">
               {permission === 'denied' ? '🚫 Bloquées dans le navigateur' :
                isSubscribed ? '✅ Activées sur cet appareil' :
                '⬜ Désactivées sur cet appareil'}
             </p>
-            {testSent && <p className="text-xs text-primary-600 font-medium mt-0.5">{tp('✅ Notification de test envoyée !')}</p>}
+            {testSent && <p className="text-xs text-primary font-medium mt-0.5">{tp('✅ Notification de test envoyée !')}</p>}
             {error && <p className="text-xs text-red-500 mt-0.5">{error}</p>}
           </div>
         </div>
 
         {permission === 'denied' ? (
-          <span className="text-xs text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg">{tp('Bloquer')}</span>
+          <span className="text-xs text-muted-foreground bg-muted px-3 py-1.5 rounded-lg">{tp('Bloquer')}</span>
         ) : (
           <button
             onClick={handleToggle}
             disabled={activating || loading}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 ${isSubscribed ? 'bg-primary-600' : 'bg-gray-300'}`}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 ${isSubscribed ? 'bg-primary' : 'bg-gray-300'}`}
           >
-            <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${isSubscribed ? 'translate-x-6' : 'translate-x-1'}`} />
+            <span className={`inline-block h-4 w-4 transform rounded-full bg-card shadow transition-transform duration-200 ${isSubscribed ? 'translate-x-6' : 'translate-x-1'}`} />
           </button>
         )}
       </div>
@@ -348,9 +348,9 @@ const Profile = () => {
     return (
       <div className="p-4 sm:p-6">
         <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse mb-6" />
-        <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+        <div className="bg-card rounded-xl border p-6 space-y-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" />
+            <div key={i} className="h-4 bg-muted rounded animate-pulse" />
           ))}
         </div>
       </div>
@@ -362,10 +362,10 @@ const Profile = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">{tp('Utilisateur non trouvé')}</p>
+          <p className="text-muted-foreground mb-4">{tp('Utilisateur non trouvé')}</p>
           <button
             onClick={() => window.location.href = '/ecom/login'}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700"
           >
             {tp('Se connecter')}
           </button>
@@ -378,14 +378,14 @@ const Profile = () => {
     <div className="ecom-mobile-container max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 safe-area-top safe-area-bottom">
       {switchingWsId && <SwitchOverlay name={switchingName} />}
       {/* Header avec avatar */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+      <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
         <div className="h-24 bg-gradient-to-r from-primary-600 via-primary-600 to-primary-700"></div>
         <div className="px-6 pb-6 -mt-12">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="relative w-24 h-24 bg-white rounded-2xl shadow-lg border-4 border-white group cursor-pointer"
+              className="relative w-24 h-24 bg-card rounded-2xl shadow-lg border-4 border-white group cursor-pointer"
               title={tp('Changer la photo de profil')}
             >
               {avatarPreview ? (
@@ -419,10 +419,10 @@ const Profile = () => {
               />
             </button>
             <div className="flex-1 pb-1">
-              <h1 className="text-xl font-bold text-gray-900">{user?.name || user?.email?.split('@')[0]}</h1>
-              <p className="text-sm text-gray-500">{user?.email}</p>
+              <h1 className="text-xl font-bold text-foreground">{user?.name || user?.email?.split('@')[0]}</h1>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
-            <span className={`self-start sm:self-end px-3 py-1 rounded-full text-xs font-semibold ${roleColors[user?.role] || 'bg-gray-100 text-gray-800'}`}>
+            <span className={`self-start sm:self-end px-3 py-1 rounded-full text-xs font-semibold ${roleColors[user?.role] || 'bg-muted text-foreground'}`}>
               {roleLabels[user?.role] || user?.role}
             </span>
           </div>
@@ -430,11 +430,11 @@ const Profile = () => {
       </div>
 
       {/* Informations du profil */}
-      <div className="ecom-mobile-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="ecom-mobile-card bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="ecom-mobile-text text-base font-semibold text-gray-900">{tp('Informations personnelles')}</h2>
-            <p className="text-xs text-gray-500 mt-0.5">{tp('Modifiez votre nom et numéro de téléphone')}</p>
+            <h2 className="ecom-mobile-text text-base font-semibold text-foreground">{tp('Informations personnelles')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">{tp('Modifiez votre nom et numéro de téléphone')}</p>
           </div>
           {profileMsg && (
             <span className={`text-xs font-medium px-3 py-1 rounded-full ${profileMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -445,7 +445,7 @@ const Profile = () => {
         <form onSubmit={handleSaveProfile} className="p-6">
           <div className="ecom-mobile-grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom complet')}</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Nom complet')}</label>
               <input
                 type="text"
                 value={name}
@@ -455,7 +455,7 @@ const Profile = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Téléphone')}</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Téléphone')}</label>
               <input
                 type="tel"
                 value={phone}
@@ -465,22 +465,22 @@ const Profile = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
               <input
                 type="email"
                 value={user?.email || ''}
                 disabled
-                className="ecom-mobile-input w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+                className="ecom-mobile-input w-full px-4 py-2.5 border border-border rounded-xl text-sm bg-background text-muted-foreground cursor-not-allowed"
               />
-              <p className="text-[11px] text-gray-400 mt-1">{tp('L\'email ne peut pas être modifié')}</p>
+              <p className="text-[11px] text-muted-foreground mt-1">{tp('L\'email ne peut pas être modifié')}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Rôle')}</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Rôle')}</label>
               <input
                 type="text"
                 value={roleLabels[user?.role] || user?.role || ''}
                 disabled
-                className="ecom-mobile-input w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+                className="ecom-mobile-input w-full px-4 py-2.5 border border-border rounded-xl text-sm bg-background text-muted-foreground cursor-not-allowed"
               />
             </div>
           </div>
@@ -488,7 +488,7 @@ const Profile = () => {
             <button
               type="submit"
               disabled={saving}
-              className="ecom-mobile-button px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-xl hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="ecom-mobile-button px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving && (
                 <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -504,10 +504,10 @@ const Profile = () => {
 
       {/* Espace de travail */}
       {workspace && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-base font-semibold text-gray-900">{tp('Espace de travail')}</h2>
-            <p className="text-xs text-gray-500 mt-0.5">{tp('Votre espace de travail actuel')}</p>
+        <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-base font-semibold text-foreground">{tp('Espace de travail')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">{tp('Votre espace de travail actuel')}</p>
           </div>
           <div className="p-6">
             <div className="flex items-center gap-4 mb-4">
@@ -515,20 +515,20 @@ const Profile = () => {
                 <span className="text-white text-lg font-bold">{workspace.name?.charAt(0)?.toUpperCase() || 'W'}</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{workspace.name}</p>
-                <p className="text-xs text-gray-500 font-mono">{workspace.slug}</p>
+                <p className="text-sm font-semibold text-foreground">{workspace.name}</p>
+                <p className="text-xs text-muted-foreground font-mono">{workspace.slug}</p>
               </div>
             </div>
             {workspace.inviteCode && user?.role === 'ecom_admin' && (
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <div className="bg-background rounded-xl p-4 border border-border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{tp('Code d\'invitation')}</p>
-                    <p className="text-lg font-mono font-bold text-gray-900 tracking-widest mt-1">{workspace.inviteCode}</p>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{tp('Code d\'invitation')}</p>
+                    <p className="text-lg font-mono font-bold text-foreground tracking-widest mt-1">{workspace.inviteCode}</p>
                   </div>
                   <button
                     onClick={() => { navigator.clipboard.writeText(workspace.inviteCode); }}
-                    className="px-4 py-2 bg-primary-50 text-primary-600 rounded-xl hover:bg-primary-100 transition text-sm font-medium flex items-center gap-2"
+                    className="px-4 py-2 bg-primary-50 text-primary rounded-xl hover:bg-primary-100 transition text-sm font-medium flex items-center gap-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -536,7 +536,7 @@ const Profile = () => {
                     {tp('Copier')}
                   </button>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">{tp('Partagez ce code pour inviter des membres dans votre espace.')}</p>
+                <p className="text-xs text-muted-foreground mt-2">{tp('Partagez ce code pour inviter des membres dans votre espace.')}</p>
               </div>
             )}
           </div>
@@ -544,11 +544,11 @@ const Profile = () => {
       )}
 
       {/* Sécurité */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">{tp('Sécurité')}</h2>
-            <p className="text-xs text-gray-500 mt-0.5">{tp('Gérez votre mot de passe')}</p>
+            <h2 className="text-base font-semibold text-foreground">{tp('Sécurité')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">{tp('Gérez votre mot de passe')}</p>
           </div>
           {pwdMsg && (
             <span className={`text-xs font-medium px-3 py-1 rounded-full ${pwdMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -558,7 +558,7 @@ const Profile = () => {
         </div>
         <div className="p-6">
           {!showPwdForm ? (
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-between p-4 bg-background rounded-xl border border-border">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
                   <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -566,13 +566,13 @@ const Profile = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{tp('Mot de passe')}</p>
-                  <p className="text-xs text-gray-500">{tp('Changez votre mot de passe pour sécuriser votre compte')}</p>
+                  <p className="text-sm font-medium text-foreground">{tp('Mot de passe')}</p>
+                  <p className="text-xs text-muted-foreground">{tp('Changez votre mot de passe pour sécuriser votre compte')}</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowPwdForm(true)}
-                className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-xl hover:bg-primary-100 transition"
+                className="px-4 py-2 text-sm font-medium text-primary bg-primary-50 rounded-xl hover:bg-primary-100 transition"
               >
                 {tp('Modifier')}
               </button>
@@ -580,7 +580,7 @@ const Profile = () => {
           ) : (
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Mot de passe actuel')}</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Mot de passe actuel')}</label>
                 <input
                   type="password"
                   value={currentPassword}
@@ -591,7 +591,7 @@ const Profile = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nouveau mot de passe')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Nouveau mot de passe')}</label>
                   <input
                     type="password"
                     value={newPassword}
@@ -602,7 +602,7 @@ const Profile = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Confirmer')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Confirmer')}</label>
                   <input
                     type="password"
                     value={confirmPassword}
@@ -617,14 +617,14 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={() => { setShowPwdForm(false); setCurrentPassword(''); setNewPassword(''); setConfirmPassword(''); }}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition"
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground bg-muted rounded-xl hover:bg-gray-200 transition"
                 >
                   {tp('Annuler')}
                 </button>
                 <button
                   type="submit"
                   disabled={changingPwd}
-                  className="px-5 py-2 bg-primary-600 text-white text-sm font-medium rounded-xl hover:bg-primary-700 transition disabled:opacity-50 flex items-center gap-2"
+                  className="px-5 py-2 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary-700 transition disabled:opacity-50 flex items-center gap-2"
                 >
                   {changingPwd && (
                     <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -641,26 +641,26 @@ const Profile = () => {
       </div>
 
       {/* Infos compte */}
-      <div className="ecom-mobile-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="ecom-mobile-text text-base font-semibold text-gray-900">{tp('Informations du compte')}</h2>
+      <div className="ecom-mobile-card bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="ecom-mobile-text text-base font-semibold text-foreground">{tp('Informations du compte')}</h2>
         </div>
         <div className="p-6">
           <div className="ecom-mobile-grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{tp('Membre depuis')}</p>
-              <p className="ecom-mobile-text text-sm font-semibold text-gray-900">
+            <div className="bg-background rounded-xl p-4 border border-border text-center">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{tp('Membre depuis')}</p>
+              <p className="ecom-mobile-text text-sm font-semibold text-foreground">
                 {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
               </p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{tp('Dernière connexion')}</p>
-              <p className="ecom-mobile-text text-sm font-semibold text-gray-900">
+            <div className="bg-background rounded-xl p-4 border border-border text-center">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{tp('Dernière connexion')}</p>
+              <p className="ecom-mobile-text text-sm font-semibold text-foreground">
                 {user?.lastLogin ? new Date(user.lastLogin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
               </p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{tp('Statut')}</p>
+            <div className="bg-background rounded-xl p-4 border border-border text-center">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{tp('Statut')}</p>
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-green-700">
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 {tp('Actif')}
@@ -670,14 +670,14 @@ const Profile = () => {
 
           {/* 🆕 Espace de travail info si disponible */}
           {workspace && (
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-border">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl flex items-center justify-center">
                   <span className="text-white text-lg font-bold">{workspace.name?.charAt(0)?.toUpperCase() || 'W'}</span>
                 </div>
                 <div>
-                  <p className="ecom-mobile-text text-sm font-semibold text-gray-900">{workspace.name}</p>
-                  <p className="text-xs text-gray-500 font-mono">{workspace.slug}</p>
+                  <p className="ecom-mobile-text text-sm font-semibold text-foreground">{workspace.name}</p>
+                  <p className="text-xs text-muted-foreground font-mono">{workspace.slug}</p>
                 </div>
               </div>
             </div>
@@ -687,14 +687,14 @@ const Profile = () => {
 
       {/* Mes workspaces */}
       {myWorkspaces.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
+          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">{tp('Mes workspaces')}</h2>
-              <p className="text-xs text-gray-500 mt-0.5">{tp('Basculer entre vos espaces (rôle différent selon l\'espace).')}</p>
+              <h2 className="text-base font-semibold text-foreground">{tp('Mes workspaces')}</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">{tp('Basculer entre vos espaces (rôle différent selon l\'espace).')}</p>
             </div>
             {loadingWorkspaces && (
-              <div className="w-4 h-4 rounded-full border-2 border-gray-200 border-t-primary-600 animate-spin" />
+              <div className="w-4 h-4 rounded-full border-2 border-border border-t-primary-600 animate-spin" />
             )}
           </div>
           <div className="divide-y divide-gray-100">
@@ -704,17 +704,17 @@ const Profile = () => {
               return (
                 <div key={id} className="px-6 py-4 flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{ws.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Rôle: {roleLabels[ws.role] || ws.role}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{ws.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Rôle: {roleLabels[ws.role] || ws.role}</p>
                   </div>
                   {active ? (
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">{tp('Actif')}</span>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary">{tp('Actif')}</span>
                   ) : (
                     <button
                       type="button"
                       onClick={() => handleSwitchWorkspace(id)}
                       disabled={!!switchingWsId}
-                      className="px-3 py-2 rounded-xl text-xs font-semibold bg-primary-600 text-white hover:bg-primary-700 transition disabled:opacity-50"
+                      className="px-3 py-2 rounded-xl text-xs font-semibold bg-primary text-white hover:bg-primary-700 transition disabled:opacity-50"
                     >
                       {switchingWsId === id ? 'Switch…' : tp('Basculer')}
                     </button>
@@ -727,10 +727,10 @@ const Profile = () => {
       )}
 
       {/* Rejoindre un espace par code */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">{tp('Rejoindre un espace')}</h2>
-          <p className="text-xs text-gray-500 mt-0.5">{tp('Entrez un code d\'invitation pour rejoindre un nouvel espace de travail.')}</p>
+      <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="text-base font-semibold text-foreground">{tp('Rejoindre un espace')}</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{tp('Entrez un code d\'invitation pour rejoindre un nouvel espace de travail.')}</p>
         </div>
         <form onSubmit={handleJoinWorkspace} className="px-6 py-4 flex gap-3">
           <input
@@ -738,7 +738,7 @@ const Profile = () => {
             value={joinCode}
             onChange={e => { setJoinCode(e.target.value); setJoinMsg(null); }}
             placeholder={tp('Code d\'invitation (ex: ABC123)')}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 font-mono uppercase placeholder-normal"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 font-mono uppercase placeholder-normal"
             style={{ textTransform: 'none' }}
             maxLength={32}
             disabled={joiningWorkspace}
@@ -746,13 +746,13 @@ const Profile = () => {
           <button
             type="submit"
             disabled={joiningWorkspace || !joinCode.trim()}
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-primary-600 text-white hover:bg-primary-700 transition disabled:opacity-50 flex-shrink-0"
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-700 transition disabled:opacity-50 flex-shrink-0"
           >
             {joiningWorkspace ? 'Envoi…' : tp('Rejoindre')}
           </button>
         </form>
         {joinMsg && (
-          <p className={`px-6 pb-4 text-xs font-medium ${joinMsg.type === 'error' ? 'text-red-600' : 'text-primary-600'}`}>
+          <p className={`px-6 pb-4 text-xs font-medium ${joinMsg.type === 'error' ? 'text-red-600' : 'text-primary'}`}>
             {joinMsg.text}
           </p>
         )}
@@ -762,11 +762,11 @@ const Profile = () => {
       <PushSection />
 
       {/* Sessions actives */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-bold text-gray-800">{tp('Sessions actives')}</h2>
-            <p className="text-xs text-gray-400 mt-0.5">{tp('Gérez vos appareils connectés')}</p>
+            <h2 className="text-sm font-bold text-foreground">{tp('Sessions actives')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">{tp('Gérez vos appareils connectés')}</p>
           </div>
           {sessions.length > 1 && (
             <button
@@ -782,17 +782,17 @@ const Profile = () => {
           {loadingSessions ? (
             <div className="space-y-2">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+                <div key={i} className="h-12 bg-muted rounded-lg animate-pulse" />
               ))}
             </div>
           ) : sessions.length === 0 ? (
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <div className="w-16 h-16 bg-background rounded-2xl flex items-center justify-center mx-auto mb-3">
                 <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <p className="text-sm text-gray-500">{tp('Aucune session active')}</p>
+              <p className="text-sm text-muted-foreground">{tp('Aucune session active')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -807,34 +807,34 @@ const Profile = () => {
                     className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
                       session.isCurrent
                         ? 'bg-primary-50 border-primary-200'
-                        : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                        : 'bg-background border-border hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${
-                        session.isCurrent ? 'bg-primary-100' : 'bg-white border border-gray-200'
+                        session.isCurrent ? 'bg-primary-100' : 'bg-card border border-border'
                       }`}>
                         {deviceIcon}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <p className="text-sm font-semibold text-gray-900 truncate">
+                          <p className="text-sm font-semibold text-foreground truncate">
                             {session.browser || tp('Navigateur inconnu')} · {session.os || session.device || tp('Appareil inconnu')}
                           </p>
                           {session.isCurrent && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-100 text-primary-700 flex-shrink-0">
-                              <span className="w-1.5 h-1.5 bg-primary-600 rounded-full"></span>
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-100 text-primary flex-shrink-0">
+                              <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
                               {tp('Session actuelle')}
                             </span>
                           )}
                           {!session.isCurrent && isRecent && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-100 text-primary-700 flex-shrink-0">
-                              <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse"></span>
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-100 text-primary flex-shrink-0">
+                              <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
                               {tp('Active')}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           {session.city && session.country && (
                             <span className="flex items-center gap-1">
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -8,7 +8,9 @@ import WhatsAppSendModal from './WhatsAppSendModal.jsx';
 import { tp } from '../i18n/platform.js';
 // WhatsAppConfigModal supprimé
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'https://api.scalor.net';
 
 const STEPS = [
   { id: 1, icon: '🔍', label: 'Analyse de la page Alibaba' },
@@ -36,7 +38,7 @@ function CopyButton({ text }) {
     <button
       type="button"
       onClick={copy}
-      className="p-1 text-gray-400 hover:text-primary-600 transition"
+      className="p-1 text-muted-foreground hover:text-primary transition"
       title={tp('Copier')}
     >
       {copied ? <CheckCircle className="w-3.5 h-3.5 text-primary-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -47,19 +49,19 @@ function CopyButton({ text }) {
 function CollapsibleSection({ title, icon: Icon, children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border border-gray-100 rounded-lg overflow-hidden">
+    <div className="border border-border rounded-lg overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen(p => !p)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition text-left"
+        className="w-full flex items-center justify-between px-4 py-3 bg-background hover:bg-muted transition text-left"
       >
-        <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-          {Icon && <Icon className="w-4 h-4 text-primary-600" />}
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          {Icon && <Icon className="w-4 h-4 text-primary" />}
           {title}
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+        {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
       </button>
-      {open && <div className="px-4 py-3 bg-white space-y-2">{children}</div>}
+      {open && <div className="px-4 py-3 bg-card space-y-2">{children}</div>}
     </div>
   );
 }
@@ -253,25 +255,25 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[96vh]">
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[96vh]">
 
         {/* ── Header ────────────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-sm">
               <span className="text-lg">🛒</span>
             </div>
             <div>
-              <h2 className="font-bold text-gray-900 text-base">{tp('Importer depuis Alibaba')}</h2>
-              <p className="text-xs text-gray-400">{tp('IA analyse + génère la fiche produit complète')}</p>
+              <h2 className="font-bold text-foreground text-base">{tp('Importer depuis Alibaba')}</h2>
+              <p className="text-xs text-muted-foreground">{tp('IA analyse + génère la fiche produit complète')}</p>
             </div>
           </div>
           <button
             type="button"
             onClick={phase === 'loading' ? handleCancel : onClose}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition"
+            className="p-1.5 rounded-lg hover:bg-muted transition"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -283,7 +285,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
             <div className="p-5 space-y-5">
               {/* URL field */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   {tp('Lien Alibaba')}
                 </label>
                 <div className="relative">
@@ -301,13 +303,13 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-orange-500"
                     >
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   )}
                 </div>
-                <p className="text-xs text-gray-400 mt-1.5">
+                <p className="text-xs text-muted-foreground mt-1.5">
                   Fonctionne aussi avec AliExpress · La page sera analysée par notre IA
                 </p>
               </div>
@@ -331,21 +333,21 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               </div>
 
               {/* Image generation toggle */}
-              <label className="flex items-center justify-between p-3.5 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-100 transition">
+              <label className="flex items-center justify-between p-3.5 bg-background rounded-xl border border-border cursor-pointer hover:bg-muted transition">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-violet-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{tp('Générer des images marketing IA')}</p>
-                    <p className="text-xs text-gray-400">{tp('Photo produit + lifestyle (DALL-E 3) · +30s')}</p>
+                    <p className="text-sm font-medium text-foreground">{tp('Générer des images marketing IA')}</p>
+                    <p className="text-xs text-muted-foreground">{tp('Photo produit + lifestyle (DALL-E 3) · +30s')}</p>
                   </div>
                 </div>
                 <div
                   onClick={() => setWithImages(p => !p)}
                   className={`relative w-11 h-6 rounded-full transition-colors ${withImages ? 'bg-violet-500' : 'bg-gray-300'}`}
                 >
-                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${withImages ? 'translate-x-5' : 'translate-x-1'}`} />
+                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-card shadow transition-transform ${withImages ? 'translate-x-5' : 'translate-x-1'}`} />
                 </div>
               </label>
 
@@ -371,10 +373,10 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
               {/* Current label */}
               <div className="text-center space-y-1">
-                <p className="text-base font-semibold text-gray-800">
+                <p className="text-base font-semibold text-foreground">
                   {stepLabel || tp('Initialisation...')}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   L'IA analyse et génère votre fiche produit complète
                 </p>
               </div>
@@ -389,23 +391,23 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                       key={step.id}
                       className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
                         active ? 'bg-orange-50 border-orange-200 shadow-sm' :
-                        done ? 'bg-primary-50 border-primary-200' : 'bg-gray-50 border-gray-200 opacity-50'
+                        done ? 'bg-primary-50 border-primary-200' : 'bg-background border-border opacity-50'
                       }`}
                     >
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium ${
-                        done ? 'bg-primary-500 text-white' :
-                        active ? 'bg-orange-100 border-2 border-orange-300' : 'bg-gray-200 text-gray-500'
+                        done ? 'bg-primary text-white' :
+                        active ? 'bg-orange-100 border-2 border-orange-300' : 'bg-gray-200 text-muted-foreground'
                       }`}>
                         {done ? '✓' : active ? <Loader2 className="w-4 h-4 animate-spin text-orange-500" /> : step.id}
                       </div>
                       <div className="flex-1">
                         <div className={`text-sm font-medium ${
-                          active ? 'text-orange-700' : done ? 'text-primary-700' : 'text-gray-500'
+                          active ? 'text-orange-700' : done ? 'text-primary' : 'text-muted-foreground'
                         }`}>
                           {step.label}
                         </div>
                         {done && (
-                          <div className="text-xs text-primary-600 font-semibold mt-0.5">
+                          <div className="text-xs text-primary font-semibold mt-0.5">
                             ✅ Terminé
                           </div>
                         )}
@@ -427,7 +429,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                 })}
               </div>
 
-              <p className="text-xs text-gray-400 text-center">
+              <p className="text-xs text-muted-foreground text-center">
                 {withImages ? 'Environ 45-90 secondes avec génération d\'images' : tp('Environ 15-30 secondes')}
               </p>
             </div>
@@ -447,18 +449,18 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-gray-900 text-base leading-tight">{product.name}</p>
+                    <p className="font-bold text-foreground text-base leading-tight">{product.name}</p>
                     {product.hook && (
-                      <p className="text-sm text-primary-700 mt-0.5 italic">"{product.hook}"</p>
+                      <p className="text-sm text-primary mt-0.5 italic">"{product.hook}"</p>
                     )}
                     <div className="flex items-center gap-3 mt-2 flex-wrap">
                       {product.suggestedPrice > 0 && (
-                        <span className="text-sm font-bold text-primary-700 bg-primary-100 px-2 py-0.5 rounded-lg">
+                        <span className="text-sm font-bold text-primary bg-primary-100 px-2 py-0.5 rounded-lg">
                           {product.suggestedPrice.toLocaleString()} {product.currency || tp('XAF')}
                         </span>
                       )}
                       {product.category && (
-                        <span className="text-xs text-gray-500 bg-white border border-gray-200 px-2 py-0.5 rounded-lg">
+                        <span className="text-xs text-muted-foreground bg-card border border-border px-2 py-0.5 rounded-lg">
                           {product.category}
                         </span>
                       )}
@@ -468,7 +470,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               </div>
 
               {/* Tabs */}
-              <div className="flex border-b border-gray-100 px-2 flex-shrink-0">
+              <div className="flex border-b border-border px-2 flex-shrink-0">
                 {TABS.map(tab => {
                   const Icon = tab.icon;
                   return (
@@ -478,8 +480,8 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center gap-1.5 px-3 py-3 text-xs font-medium border-b-2 transition ${
                         activeTab === tab.id
-                          ? 'border-primary-500 text-primary-700'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                          ? 'border-primary-500 text-primary'
+                          : 'border-transparent text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -504,7 +506,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.problemSolved && (
                       <CollapsibleSection title={tp('Problème résolu')} defaultOpen>
-                        <p className="text-sm text-gray-700">{product.problemSolved}</p>
+                        <p className="text-sm text-foreground">{product.problemSolved}</p>
                       </CollapsibleSection>
                     )}
 
@@ -512,7 +514,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                       <CollapsibleSection title={tp('5 Bénéfices clés')} defaultOpen>
                         <ul className="space-y-1.5">
                           {product.benefits.map((b, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <li key={i} className="flex items-start gap-2 text-sm text-foreground">
                               <span className="text-primary-500 mt-0.5 flex-shrink-0">✓</span>
                               {b}
                             </li>
@@ -523,7 +525,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.description && (
                       <CollapsibleSection title={tp('Description complète')}>
-                        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{product.description}</p>
+                        <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
                       </CollapsibleSection>
                     )}
 
@@ -532,8 +534,8 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                         <div className="divide-y divide-gray-100">
                           {product.specs.map((s, i) => (
                             <div key={i} className="flex justify-between py-1.5 text-xs">
-                              <span className="text-gray-500 font-medium">{s.label}</span>
-                              <span className="text-gray-800">{s.value}</span>
+                              <span className="text-muted-foreground font-medium">{s.label}</span>
+                              <span className="text-foreground">{s.value}</span>
                             </div>
                           ))}
                         </div>
@@ -542,10 +544,10 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.tags?.length > 0 && (
                       <div>
-                        <p className="text-xs text-gray-500 font-semibold mb-1.5">{tp('Tags')}</p>
+                        <p className="text-xs text-muted-foreground font-semibold mb-1.5">{tp('Tags')}</p>
                         <div className="flex flex-wrap gap-1.5">
                           {product.tags.map((t, i) => (
-                            <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full border border-gray-200">
+                            <span key={i} className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded-full border border-border">
                               {t}
                             </span>
                           ))}
@@ -560,7 +562,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                   <div className="space-y-3">
                     {product.marketingAngles?.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('📣 Angles marketing')}</p>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('📣 Angles marketing')}</p>
                         <div className="space-y-1.5">
                           {product.marketingAngles.map((a, i) => (
                             <div key={i} className="flex items-start gap-2 p-2.5 bg-amber-50 border border-amber-100 rounded-lg text-sm text-amber-800">
@@ -574,7 +576,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.tiktokHooks?.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('🎵 Hooks TikTok / Reels')}</p>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('🎵 Hooks TikTok / Reels')}</p>
                         <div className="space-y-1.5">
                           {product.tiktokHooks.map((h, i) => (
                             <div key={i} className="flex items-center justify-between p-2.5 bg-pink-50 border border-pink-100 rounded-lg">
@@ -589,7 +591,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                     {product.whatsappMessage && (
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs font-semibold text-gray-500 uppercase">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase">
                             <MessageCircle className="w-3.5 h-3.5 inline mr-1 text-green-500" />
                             {tp('Message WhatsApp')}
                           </p>
@@ -602,7 +604,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                           </button>
                         </div>
                         <div className="relative p-3 bg-green-50 border border-green-100 rounded-xl">
-                          <p className="text-sm text-gray-700 whitespace-pre-line pr-6">{product.whatsappMessage}</p>
+                          <p className="text-sm text-foreground whitespace-pre-line pr-6">{product.whatsappMessage}</p>
                           <div className="absolute top-2 right-2">
                             <CopyButton text={product.whatsappMessage} />
                           </div>
@@ -612,10 +614,10 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {product.useCases?.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('🎯 Cas d\'usage')}</p>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('🎯 Cas d\'usage')}</p>
                         <div className="space-y-1.5">
                           {product.useCases.map((u, i) => (
-                            <div key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <div key={i} className="flex items-start gap-2 text-sm text-foreground">
                               <span className="text-blue-400 flex-shrink-0">→</span>
                               {u}
                             </div>
@@ -626,7 +628,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
 
                     {(product.seoTitle || product.seoDescription) && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{tp('🔍 SEO')}</p>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{tp('🔍 SEO')}</p>
                         <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl space-y-2">
                           {product.seoTitle && (
                             <div>
@@ -650,16 +652,16 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                 {activeTab === 'faq' && (
                   <div className="space-y-2">
                     {product.faq?.length > 0 ? product.faq.map((item, i) => (
-                      <div key={i} className="border border-gray-100 rounded-xl overflow-hidden">
-                        <div className="px-4 py-3 bg-gray-50">
-                          <p className="text-sm font-semibold text-gray-800">Q: {item.question}</p>
+                      <div key={i} className="border border-border rounded-xl overflow-hidden">
+                        <div className="px-4 py-3 bg-background">
+                          <p className="text-sm font-semibold text-foreground">Q: {item.question}</p>
                         </div>
                         <div className="px-4 py-3">
-                          <p className="text-sm text-gray-600">{item.answer}</p>
+                          <p className="text-sm text-muted-foreground">{item.answer}</p>
                         </div>
                       </div>
                     )) : (
-                      <p className="text-sm text-gray-400 text-center py-8">{tp('Aucune FAQ générée')}</p>
+                      <p className="text-sm text-muted-foreground text-center py-8">{tp('Aucune FAQ générée')}</p>
                     )}
                   </div>
                 )}
@@ -670,7 +672,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                     {product.images?.length > 0 ? (
                       <div className="grid grid-cols-2 gap-3">
                         {product.images.map((img, i) => (
-                          <div key={i} className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-50">
+                          <div key={i} className="relative group rounded-xl overflow-hidden border border-border aspect-square bg-background">
                             <img
                               src={img.url}
                               alt={img.alt || product.name}
@@ -686,7 +688,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-10 text-gray-400">
+                      <div className="text-center py-10 text-muted-foreground">
                         <Image className="w-10 h-10 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">{tp('Aucune image générée')}</p>
                         <p className="text-xs mt-1">{tp('Activez la génération d\'images pour obtenir des visuels')}</p>
@@ -700,7 +702,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
         </div>
 
         {/* ── Footer ────────────────────────────────────────────────────────── */}
-        <div className="px-5 py-4 border-t border-gray-100 flex-shrink-0">
+        <div className="px-5 py-4 border-t border-border flex-shrink-0">
           {phase === 'input' && (
             <button
               type="button"
@@ -718,7 +720,7 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
             <button
               type="button"
               onClick={handleCancel}
-              className="w-full py-3 text-sm font-medium text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition"
+              className="w-full py-3 text-sm font-medium text-muted-foreground border border-gray-300 rounded-xl hover:bg-background transition"
             >
               {tp('Annuler')}
             </button>
@@ -729,14 +731,14 @@ const AlibabaImportModal = ({ onClose, onApply }) => {
               <button
                 type="button"
                 onClick={() => { setPhase('input'); setProduct(null); setUrl(''); }}
-                className="px-4 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition"
+                className="px-4 py-2.5 text-sm font-medium text-muted-foreground border border-gray-300 rounded-xl hover:bg-background transition"
               >
                 {tp('Nouveau produit')}
               </button>
               <button
                 type="button"
                 onClick={handleApply}
-                className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition text-sm shadow-sm"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-700 transition text-sm shadow-sm"
               >
                 <CheckCircle className="w-4 h-4" />
                 {tp('Appliquer au formulaire')}

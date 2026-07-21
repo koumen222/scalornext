@@ -13,11 +13,13 @@ import { useDmUnread } from '../hooks/useDmUnread.js';
 import GlobalSearch from './GlobalSearch.jsx';
 import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu.jsx';
 import WorkspaceSwitcher from './WorkspaceSwitcher.jsx';
+import { ThemeToggle } from '@/components/theme-toggle';
 import TopLoader from './TopLoader.jsx';
 import SupportChatWidget from './SupportChatWidget.jsx';
 import { usePlanGate } from '../contexts/PlanGateContext.jsx';
 import { usePlatformT, usePlatformLang, tp } from '../i18n/platform.js';
 import PlatformLanguageSelector from './PlatformLanguageSelector.jsx';
+import StoreAssistantChat from './StoreAssistantChat.jsx';
 
 const EcomLayoutComponent = ({ children }) => {
   const { user, workspace, logout } = useEcomAuth();
@@ -27,6 +29,7 @@ const EcomLayoutComponent = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [railCollapsed, setRailCollapsed] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifModalOpen, setNotifModalOpen] = useState(false);
@@ -161,7 +164,7 @@ const EcomLayoutComponent = ({ children }) => {
     'super_admin': 'bg-gradient-to-br from-primary-700 to-primary-900',
     'ecom_admin': 'bg-scalor-green',
     'ecom_closeuse': 'bg-scalor-copper',
-    'ecom_compta': 'bg-primary-600',
+    'ecom_compta': 'bg-primary',
     'ecom_livreur': 'bg-amber-600'
   };
 
@@ -173,8 +176,8 @@ const EcomLayoutComponent = ({ children }) => {
   const currentPlan = planInfo?.plan || (isTrialActive ? 'pro' : workspace?.plan || 'free');
   const planLabels = { free: t('Gratuit'), starter: 'Scalor', pro: 'Scalor + IA', ultra: 'Scalor IA Pro' };
   const planColors = {
-    free: 'bg-gray-100 text-gray-600',
-    starter: 'bg-primary-50 text-primary-700',
+    free: 'bg-muted text-muted-foreground',
+    starter: 'bg-primary-50 text-primary',
     pro: 'bg-blue-50 text-blue-700',
     ultra: 'bg-slate-100 text-slate-800',
     trial: 'bg-amber-50 text-amber-700',
@@ -208,16 +211,18 @@ const EcomLayoutComponent = ({ children }) => {
       roles: ['ecom_admin'],
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
     },
-    {
-      name: t('Sourcing'), shortName: t('Sourcing'), href: '/ecom/sourcing', primary: false,
-      roles: ['ecom_admin', 'ecom_compta'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-    },
         {
       name: t('Ma Boutique'), shortName: t('Boutique'), href: '/ecom/boutique', primary: true,
           roles: ['ecom_admin'],
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
     },
+    {
+      name: t('Creative Center'), shortName: t('Creative'), href: '/ecom/creatives', primary: false,
+      roles: ['ecom_admin'], highlight: true,
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5L13 3z" /></svg>
+    },
+    // « Montage Auto » — entrée retirée du menu à la demande. La route
+    // /ecom/montage-auto reste fonctionnelle (accès par URL directe).
     {
       name: t('Commissions'), shortName: t('Commissions'), href: '/ecom/commissions', primary: true,
       roles: ['ecom_closeuse'],
@@ -257,11 +262,6 @@ const EcomLayoutComponent = ({ children }) => {
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
     },
     {
-      name: t('Recherche Produits'), shortName: t('Recherche'), href: '/ecom/product-research', primary: false,
-      roles: ['ecom_admin', 'ecom_closeuse', 'ecom_compta'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5l7 7M5 11h19M12 11l-7 7m-7 7m-7-7v6" /></svg>
-    },
-    {
       name: t('Finances'), shortName: t('Finances'), href: '/ecom/transactions', primary: false,
       roles: ['ecom_admin', 'ecom_compta'],
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -280,35 +280,17 @@ const EcomLayoutComponent = ({ children }) => {
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
     },
     {
-      name: t('Créatives Images'), shortName: t('Créatives'), href: '/ecom/creatives', primary: false,
-      roles: ['ecom_admin'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-    },
-    {
-      name: t('Mes Visuels'), shortName: t('Visuels'), href: '/ecom/creatives/gallery', primary: false,
-      roles: ['ecom_admin'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-    },
-    {
-      name: t('Service WhatsApp'), shortName: t('WhatsApp'), href: '/ecom/whatsapp/service', primary: false,
+      name: t('Service Messagerie'), shortName: t('Messagerie'), href: '/ecom/whatsapp/service', primary: false,
       roles: ['ecom_admin', 'ecom_closeuse', 'ecom_compta'], requiredPlan: 'pro',
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
     },
-    {
-      name: t('Commercial IA'), shortName: t('Commercial IA'), href: '/ecom/agent-ia', primary: false,
-      roles: ['ecom_admin'], requiredPlan: 'pro',
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5M14.25 3.104c.251.023.501.05.75.082M19 14.5l-2.47 2.47a2.25 2.25 0 01-1.59.659H9.06a2.25 2.25 0 01-1.591-.659L5 14.5m14 0V17a2 2 0 01-2 2H7a2 2 0 01-2-2v-2.5" /></svg>
-    },
+    // « Commercial IA » (agents WhatsApp) — lien retiré : fonctionnalité en stand-by.
+    // La page/route /ecom/agent-ia existe toujours mais n'est plus accessible via le menu.
 
     {
       name: t('Équipe'), shortName: t('Équipe'), href: '/ecom/users', primary: false,
       roles: ['ecom_admin'],
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-    },
-    {
-      name: t('Affectations'), shortName: t('Affectations'), href: '/ecom/assignments', primary: false,
-      roles: ['ecom_admin'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
     },
 
     {
@@ -328,11 +310,6 @@ const EcomLayoutComponent = ({ children }) => {
       name: t('Abonnement'), shortName: t('Plan'), href: '/ecom/billing', primary: false,
       roles: ['ecom_admin'],
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-    },
-    {
-      name: t('Paramètres'), shortName: t('Réglages'), href: '/ecom/settings', primary: false,
-      roles: ['ecom_admin', 'ecom_closeuse', 'ecom_compta', 'ecom_livreur'],
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
     },
   ], [t]);
 
@@ -490,20 +467,26 @@ const EcomLayoutComponent = ({ children }) => {
       <Link
         to={item.href}
         onClick={handleClick}
-        className={`group relative flex items-center gap-3 pl-3.5 pr-3 py-[7px] rounded-xl text-[13px] font-medium transition-all duration-150 ${
+        title={item.name}
+        className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-colors duration-150 ${railCollapsed ? 'lg:justify-center lg:px-2' : ''} ${
           active
-            ? 'bg-[#0F6B4F]/[0.08] text-[#0F6B4F] font-semibold'
-            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+            ? 'bg-sidebar-accent text-sidebar-foreground font-semibold'
+            : item.highlight
+              ? 'text-primary font-semibold hover:bg-sidebar-accent'
+              : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
         }`}
       >
-        {/* Indicateur actif latéral */}
-        <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-[#0F6B4F] transition-all duration-200 ${active ? 'h-5 opacity-100' : 'h-0 opacity-0'}`} />
+        {/* Indicateur latéral retiré (style Minea : fond plein neutre) */}
+        <span className={`hidden absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-primary transition-all duration-200 ${active ? 'h-5 opacity-100' : 'h-0 opacity-0'}`} />
         <span className={`flex-shrink-0 transition-colors ${
-          active ? 'text-[#0F6B4F]' : 'text-gray-400 group-hover:text-gray-600'
+          active ? 'text-sidebar-foreground' : item.highlight ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
         }`}>
           {React.cloneElement(item.icon, { className: 'w-[18px] h-[18px]' })}
         </span>
-        <span className="truncate flex-1">{item.name}</span>
+        <span className={`truncate flex-1 ${railCollapsed ? 'lg:hidden' : ''}`}>{item.name}</span>
+        {item.highlight && !active && !locked && !railCollapsed && (
+          <span className="flex-shrink-0 rounded-full bg-primary-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary">IA</span>
+        )}
         {locked && (
           <svg className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -517,7 +500,7 @@ const EcomLayoutComponent = ({ children }) => {
   console.log('[EcomLayout] workspace?.subscriptionWarning:', JSON.stringify(workspace?.subscriptionWarning));
 
   return (
-    <div className="ecom-app min-h-dvh bg-gray-50 flex flex-col lg:flex-row overflow-x-hidden max-w-[100vw]">
+    <div className="ecom-app min-h-dvh bg-background flex flex-col lg:flex-row overflow-x-hidden max-w-[100vw]">
       <TopLoader />
       {/* Subscription Warning Banner — alerte rouge renouvellement */}
       {workspace?.subscriptionWarning?.active && (
@@ -556,23 +539,36 @@ const EcomLayoutComponent = ({ children }) => {
         );
       })()}
       {/* Desktop Sidebar — white, clean, Chariow-inspired */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-[232px] lg:fixed lg:inset-y-0 z-30 bg-white border-r border-gray-200/80">
+      <aside className={`hidden lg:flex lg:flex-col ${railCollapsed ? 'lg:w-[72px]' : 'lg:w-[232px]'} lg:fixed lg:inset-y-0 z-30 bg-sidebar border-r border-sidebar-border transition-[width] duration-200`}>
         <div className="flex flex-col h-full">
 
           {/* Logo + workspace area */}
-          <div className="px-4 pt-4 pb-3 border-b border-gray-100">
-            <Link to={dashboardPath} className="flex items-center gap-2.5 mb-3">
-              <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
-            </Link>
+          <div className="px-4 pt-4 pb-3 border-b border-sidebar-border">
+            <div className={`flex items-center gap-2 mb-3 ${railCollapsed ? 'lg:justify-center' : 'justify-between'}`}>
+              <Link to={dashboardPath} className={`flex items-center gap-2.5 ${railCollapsed ? 'lg:hidden' : ''}`}>
+                <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
+              </Link>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <ThemeToggle className={railCollapsed ? 'lg:hidden' : ''} />
+                <button
+                  type="button"
+                  onClick={() => setRailCollapsed(v => !v)}
+                  aria-label={railCollapsed ? 'Déplier le menu' : 'Replier le menu'}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors flex-shrink-0"
+                >
+                  <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" strokeWidth={2} /><line x1="9" y1="4" x2="9" y2="20" strokeWidth={2} /></svg>
+                </button>
+              </div>
+            </div>
             {/* Workspace switcher */}
-            {!useAdminLayout && <WorkspaceSwitcher />}
+            {!useAdminLayout && !railCollapsed && <WorkspaceSwitcher />}
           </div>
 
           {/* Main navigation */}
           <nav className="flex-1 px-3 py-3 space-y-[3px] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#e5e7eb_transparent]">
             {useAdminLayout ? (
               <>
-                <p className="px-2 pt-1 pb-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{isSuperAdmin ? 'Administration' : tp('Service Client')}</p>
+                <p className={`px-2 pt-1 pb-1.5 text-[11px] font-semibold text-muted-foreground tracking-normal ${railCollapsed ? 'lg:hidden' : ''}`}>{isSuperAdmin ? 'Administration' : tp('Service Client')}</p>
                 {filteredSuperAdmin.map(item => <NavLink key={item.name} item={item} />)}
               </>
             ) : (
@@ -581,24 +577,25 @@ const EcomLayoutComponent = ({ children }) => {
                   <>
                     <Link
                       to={boutiqueItem.href}
-                      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-150 ${
+                      title={boutiqueItem.name}
+                      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-colors duration-150 ${railCollapsed ? 'lg:justify-center lg:px-2' : ''} ${
                         isActive(boutiqueItem.href)
-                          ? 'bg-[#0F6B4F] text-white shadow-sm shadow-[#0F6B4F]/30'
-                          : 'bg-[#0F6B4F]/[0.06] text-[#0F6B4F] ring-1 ring-[#0F6B4F]/15 hover:bg-[#0F6B4F]/[0.1]'
+                          ? 'bg-primary text-white shadow-sm shadow-primary/30'
+                          : 'bg-primary/[0.06] text-primary ring-1 ring-primary/15 hover:bg-primary/[0.1]'
                       }`}
                     >
                       <span className="flex-shrink-0">{React.cloneElement(boutiqueItem.icon, { className: 'w-[18px] h-[18px]' })}</span>
-                      <span className="truncate flex-1">{boutiqueItem.name}</span>
-                      <svg className="w-4 h-4 opacity-60 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                      <span className={`truncate flex-1 ${railCollapsed ? 'lg:hidden' : ''}`}>{boutiqueItem.name}</span>
+                      <svg className={`w-4 h-4 opacity-60 flex-shrink-0 ${railCollapsed ? 'lg:hidden' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </Link>
-                    <div className="my-2 border-t border-gray-100" />
+                    <div className="my-2 border-t border-border" />
                   </>
                 )}
+                <p className={`px-2 pt-1 pb-1.5 text-[11px] font-semibold text-muted-foreground tracking-normal ${railCollapsed ? 'lg:hidden' : ''}`}>{tp('Menu')}</p>
                 {mainNavItems.map(item => <NavLink key={item.name} item={item} />)}
                 {filteredSecondary.length > 0 && (
                   <>
-                    <div className="my-2 border-t border-gray-100" />
-                    <p className="px-2 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tp('Gestion')}</p>
+                    <div className="my-2 border-t border-border" />
                     {filteredSecondary.map(item => <NavLink key={item.name} item={item} />)}
                   </>
                 )}
@@ -607,7 +604,7 @@ const EcomLayoutComponent = ({ children }) => {
           </nav>
 
           {/* Bottom: settings + user */}
-          <div className="border-t border-gray-100">
+          <div className="border-t border-border">
             {filteredBottom.map(item => (
               <div key={item.name} className="px-3 py-2">
                 <NavLink item={item} />
@@ -615,20 +612,20 @@ const EcomLayoutComponent = ({ children }) => {
             ))}
             {/* User card — profil à gauche, déconnexion en action dédiée */}
             <div className="px-3 pb-3">
-              <div className="flex items-center gap-1 rounded-xl border border-gray-100 bg-gray-50/60 p-1.5">
-                <Link to="/ecom/profile" className="flex items-center gap-2.5 flex-1 min-w-0 px-1.5 py-1 rounded-lg hover:bg-white transition-colors">
+              <div className={`flex items-center gap-1 rounded-xl border border-sidebar-border bg-muted/60 p-1.5 ${railCollapsed ? 'lg:justify-center lg:border-0 lg:bg-transparent lg:p-0' : ''}`}>
+                <Link to="/ecom/profile" title={displayUser?.name || ''} className={`flex items-center gap-2.5 flex-1 min-w-0 px-1.5 py-1 rounded-lg hover:bg-card transition-colors ${railCollapsed ? 'lg:flex-none lg:px-0 lg:justify-center' : ''}`}>
                   <div className={`w-8 h-8 ${roleColors[displayUser?.role] || 'bg-gray-300'} rounded-full flex items-center justify-center flex-shrink-0 ring-2 ring-white shadow-sm`}>
                     <span className="text-white text-xs font-bold">{initial}</span>
                   </div>
-                  <div className="min-w-0 flex-1 text-left">
-                    <p className="text-xs font-semibold text-gray-900 truncate">{displayUser?.name || displayUser?.email?.split('@')[0]}</p>
-                    <p className="text-[10px] text-gray-400 truncate">{roleLabel[displayUser?.role] || displayUser?.role}</p>
+                  <div className={`min-w-0 flex-1 text-left ${railCollapsed ? 'lg:hidden' : ''}`}>
+                    <p className="text-xs font-semibold text-foreground truncate">{displayUser?.name || displayUser?.email?.split('@')[0]}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{roleLabel[displayUser?.role] || displayUser?.role}</p>
                   </div>
                 </Link>
                 <button
                   onClick={handleLogout}
                   title={t('Déconnexion')}
-                  className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors flex-shrink-0"
+                  className={`p-2 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 transition-colors flex-shrink-0 ${railCollapsed ? 'lg:hidden' : ''}`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                 </button>
@@ -639,9 +636,9 @@ const EcomLayoutComponent = ({ children }) => {
       </aside>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:ml-[232px]">
+      <div className={`flex-1 flex flex-col min-w-0 ${railCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[232px]'}`} style={{ paddingRight: 'var(--store-assistant-dock, 0px)', transition: 'padding-right 200ms ease' }}>
         {/* ── Mobile Header: Scalor style (hidden on chat) ── */}
-        <header className={`lg:hidden fixed top-0 left-0 right-0 z-20 bg-white border-b border-gray-200 pt-safe ${location.pathname.startsWith('/ecom/chat') ? 'hidden' : ''}`}>
+        <header className={`lg:hidden fixed top-0 left-0 right-0 z-20 bg-card border-b border-border pt-safe ${location.pathname.startsWith('/ecom/chat') ? 'hidden' : ''}`}>
           <div className="flex items-center justify-between min-h-[56px] px-3 sm:px-4">
             {/* Logo left */}
             <Link to={dashboardPath} className="flex min-h-[44px] min-w-[44px] items-center gap-2">
@@ -657,33 +654,23 @@ const EcomLayoutComponent = ({ children }) => {
               <div ref={notifRef}>
                 <button
                   onClick={() => { setNotifOpen(!notifOpen); setUserMenuOpen(false); }}
-                  className="relative flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-600 active:bg-gray-200"
+                  className="relative flex h-11 w-11 items-center justify-center rounded-full bg-muted text-muted-foreground active:bg-gray-200"
                   aria-label={tp('Ouvrir les notifications')}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                  {unreadCount > 0 && <span className="absolute top-0 right-0 min-w-[18px] h-[18px] flex items-center justify-center px-1 rounded-full bg-[#0F6B4F] text-white text-[10px] font-bold">{unreadCount > 99 ? '99+' : unreadCount}</span>}
+                  {unreadCount > 0 && <span className="absolute top-0 right-0 min-w-[18px] h-[18px] flex items-center justify-center px-1 rounded-full bg-primary text-white text-[10px] font-bold">{unreadCount > 99 ? '99+' : unreadCount}</span>}
                 </button>
               </div>
 
-              {/* Profile */}
-              <Link to="/ecom/profile" className="flex h-11 w-11 items-center justify-center" aria-label={tp('Ouvrir le profil')}>
-                {displayUser?.avatar ? (
-                  <img src={displayUser.avatar} alt="" className="w-9 h-9 rounded-full object-cover" />
-                ) : (
-                  <div className={`w-9 h-9 ${roleColors[displayUser?.role] || 'bg-[#0F6B4F]'} rounded-full flex items-center justify-center`}>
-                    <span className="text-white text-sm font-bold">{initial}</span>
-                  </div>
-                )}
-              </Link>
             </div>
           </div>
         </header>
 
         {/* ── Desktop Header ── Chariow-inspired: page title left, search center, actions right */}
-        <header className="hidden lg:flex border-b h-14 items-center px-5 fixed top-0 left-[232px] right-0 z-20 bg-white border-gray-200 gap-4">
+        <header className={`hidden lg:flex border-b h-14 items-center px-5 fixed top-0 ${railCollapsed ? 'left-[72px]' : 'left-[232px]'} z-20 bg-card border-border gap-4`} style={{ right: 'var(--store-assistant-dock, 0px)', transition: 'right 200ms ease' }}>
           {/* Left: page title */}
           <div className="flex items-center gap-2 min-w-[160px]">
-            <h1 className="text-[15px] font-semibold text-gray-900 truncate">{getPageTitle(location.pathname, t)}</h1>
+            <h1 className="text-[15px] font-semibold text-foreground truncate">{getPageTitle(location.pathname, t)}</h1>
           </div>
 
           {/* Center: search bar */}
@@ -722,8 +709,8 @@ const EcomLayoutComponent = ({ children }) => {
               onClick={clearUnread}
               className={`relative p-2 rounded-lg transition-colors ${
                 location.pathname.startsWith('/ecom/chat')
-                  ? 'text-[#0F6B4F] bg-[#0F6B4F]/10'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  ? 'text-primary bg-primary/10'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
               }`}
               title={tp('Messages')}
             >
@@ -737,7 +724,7 @@ const EcomLayoutComponent = ({ children }) => {
             <div ref={notifRef}>
               <button
                 onClick={() => { setNotifOpen(!notifOpen); setUserMenuOpen(false); }}
-                className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                 {unreadCount > 0 && <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center px-1 rounded-full bg-red-500 text-white text-[10px] font-bold">{unreadCount > 99 ? '99+' : unreadCount}</span>}
@@ -748,37 +735,37 @@ const EcomLayoutComponent = ({ children }) => {
             <div className="relative ml-1" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-lg hover:bg-muted transition-colors"
               >
                 {displayUser?.avatar ? (
                   <img src={displayUser.avatar} alt="" className="w-7 h-7 rounded-full object-cover" />
                 ) : (
-                  <div className={`w-7 h-7 ${roleColors[displayUser?.role] || 'bg-[#0F6B4F]'} rounded-full flex items-center justify-center flex-shrink-0`}>
+                  <div className={`w-7 h-7 ${roleColors[displayUser?.role] || 'bg-primary'} rounded-full flex items-center justify-center flex-shrink-0`}>
                     <span className="text-white text-xs font-bold">{initial}</span>
                   </div>
                 )}
-                <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
               {userMenuOpen && (
-                <div className="absolute right-0 mt-1 w-56 rounded-xl shadow-xl border overflow-hidden z-50 bg-white border-gray-200">
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="text-sm font-semibold text-gray-900">{displayUser?.name || displayUser?.email?.split('@')[0]}</p>
-                    <p className="text-xs text-gray-500">{displayUser?.email}</p>
-                    {isSuperAdmin && <span className="inline-block text-[10px] font-bold text-[#0F6B4F] uppercase tracking-wider mt-1">{t('Super Admin')}</span>}
+                <div className="absolute right-0 mt-1 w-56 rounded-xl shadow-xl border overflow-hidden z-50 bg-card border-border">
+                  <div className="px-4 py-3 border-b border-border">
+                    <p className="text-sm font-semibold text-foreground">{displayUser?.name || displayUser?.email?.split('@')[0]}</p>
+                    <p className="text-xs text-muted-foreground">{displayUser?.email}</p>
+                    {isSuperAdmin && <span className="inline-block text-[10px] font-bold text-primary uppercase tracking-wider mt-1">{t('Super Admin')}</span>}
                     {isServiceClient && <span className="inline-block text-[10px] font-bold text-blue-600 uppercase tracking-wider mt-1">{t('Service Client')}</span>}
                   </div>
                   {!useAdminLayout && <WorkspaceSwitcherMenu isSuperAdmin={isSuperAdmin} onWorkspaceSwitch={() => setUserMenuOpen(false)} />}
                   <div className="py-1">
-                    <Link to="/ecom/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    <Link to="/ecom/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-background">
+                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                       {t('Mon profil')}
                     </Link>
-                    <Link to="/ecom/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
+                    <Link to="/ecom/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-background">
+                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
                       {t('Paramètres')}
                     </Link>
                   </div>
-                  <div className="border-t py-1 border-gray-100">
+                  <div className="border-t py-1 border-border">
                       <button onClick={() => { setUserMenuOpen(false); handleLogout(); }} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                         {t('Déconnexion')}
@@ -801,7 +788,7 @@ const EcomLayoutComponent = ({ children }) => {
           >
             <button
               onClick={() => { setToast(null); setNotifOpen(true); }}
-              className="w-full flex items-start gap-3 p-4 bg-white rounded-2xl shadow-2xl border border-gray-200 hover:shadow-xl transition-shadow"
+              className="w-full flex items-start gap-3 p-4 bg-card rounded-2xl shadow-2xl border border-border hover:shadow-xl transition-shadow"
             >
               <div className="flex-shrink-0 w-10 h-10 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -809,13 +796,13 @@ const EcomLayoutComponent = ({ children }) => {
                 </svg>
               </div>
               <div className="flex-1 min-w-0 text-left">
-                <p className="text-sm font-semibold text-gray-900 truncate">{toast.title}</p>
-                {toast.body && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{toast.body}</p>}
-                <p className="text-[11px] text-primary-600 font-medium mt-1">{tp('Voir les notifications →')}</p>
+                <p className="text-sm font-semibold text-foreground truncate">{toast.title}</p>
+                {toast.body && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{toast.body}</p>}
+                <p className="text-[11px] text-primary font-medium mt-1">{tp('Voir les notifications →')}</p>
               </div>
               <button
                 onClick={(e) => { e.stopPropagation(); setToast(null); }}
-                className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 rounded-full"
+                className="flex-shrink-0 p-1 text-muted-foreground hover:text-muted-foreground rounded-full"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
@@ -838,11 +825,11 @@ const EcomLayoutComponent = ({ children }) => {
       {showTutorial && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeTutorial} />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+          <div className="relative bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 bg-[#25D366]">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+                <div className="w-9 h-9 bg-card/20 rounded-xl flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                   </svg>
@@ -852,7 +839,7 @@ const EcomLayoutComponent = ({ children }) => {
                   <p className="text-white/80 text-xs">{tp('Communauté Scalor sur WhatsApp')}</p>
                 </div>
               </div>
-              <button onClick={closeTutorial} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+              <button onClick={closeTutorial} className="w-8 h-8 flex items-center justify-center rounded-full bg-card/20 hover:bg-card/30 transition-colors">
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -863,15 +850,15 @@ const EcomLayoutComponent = ({ children }) => {
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{tp('Rejoignez notre groupe support')}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+              <h3 className="text-xl font-bold text-foreground mb-2">{tp('Rejoignez notre groupe support')}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6">
                 Obtenez de l'aide, des conseils et restez à jour avec les dernières fonctionnalités Scalor. Notre équipe est disponible pour vous accompagner.
               </p>
               <div className="space-y-3 text-left mb-6">
                 {[
                   {
                     icon: (
-                      <svg className="w-4 h-4 text-primary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3-3-3z" />
                       </svg>
                     ),
@@ -879,7 +866,7 @@ const EcomLayoutComponent = ({ children }) => {
                   },
                   {
                     icon: (
-                      <svg className="w-4 h-4 text-primary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     ),
@@ -887,14 +874,14 @@ const EcomLayoutComponent = ({ children }) => {
                   },
                   {
                     icon: (
-                      <svg className="w-4 h-4 text-primary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                       </svg>
                     ),
                     text: 'Nouvelles fonctionnalités en avant-première',
                   },
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-gray-700">
+                  <div key={i} className="flex items-center gap-3 text-sm text-foreground">
                     {item.icon}
                     <span>{item.text}</span>
                   </div>
@@ -915,7 +902,7 @@ const EcomLayoutComponent = ({ children }) => {
             </div>
             {/* Footer */}
             <div className="px-6 pb-4 text-center">
-              <button onClick={closeTutorial} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+              <button onClick={closeTutorial} className="text-xs text-muted-foreground hover:text-muted-foreground transition-colors">
                 {tp('Plus tard')}
               </button>
             </div>
@@ -941,8 +928,19 @@ const EcomLayoutComponent = ({ children }) => {
       {/* Support Chat Widget */}
       {!useAdminLayout && <SupportChatWidget />}
 
+      {/* Assistant IA transversal du back-office. La Boutique possède son assistant dédié. */}
+      {!location.pathname.startsWith('/ecom/boutique') &&
+       !location.pathname.includes('builder') &&
+       !location.pathname.startsWith('/ecom/chat') && (
+        <StoreAssistantChat
+          mode="backoffice"
+          pageTitle={getPageTitle(location.pathname, t)}
+          workspaceName={workspace?.name || ''}
+        />
+      )}
+
       {/* ── Mobile Bottom Tab Bar - Scalor style (hidden on chat page) ── */}
-      <nav className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 ${location.pathname.startsWith('/ecom/chat') ? 'hidden' : ''}`}>
+      <nav className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border ${location.pathname.startsWith('/ecom/chat') ? 'hidden' : ''}`}>
         <div className="flex items-stretch gap-1 px-2 bottom-nav-safe min-h-[64px]">
           {mobileMainTabs.map((item) => {
             const active = isActive(item.href);
@@ -962,11 +960,11 @@ const EcomLayoutComponent = ({ children }) => {
                 {locked && (
                   <span className="absolute top-1 right-3 w-2 h-2 rounded-full bg-amber-500" />
                 )}
-                <span className={`transition-colors duration-200 ${active ? 'text-[#0F6B4F]' : 'text-gray-500'}`}>
+                <span className={`transition-colors duration-200 ${active ? 'text-primary' : 'text-muted-foreground'}`}>
                   {mobileIcon(item)}
                 </span>
                 <span className={`max-w-full truncate text-[10px] font-medium leading-none transition-colors duration-200 ${
-                  active ? 'text-gray-900' : 'text-gray-500'
+                  active ? 'text-foreground' : 'text-muted-foreground'
                 }`}>{item.shortName}</span>
               </Link>
             );
@@ -980,12 +978,12 @@ const EcomLayoutComponent = ({ children }) => {
                 aria-expanded={moreMenuOpen}
                 aria-label={tp('Ouvrir le menu')}
               >
-                <svg className={`w-5 h-5 transition-colors duration-200 ${moreMenuOpen ? 'text-[#0F6B4F]' : 'text-gray-500'}`} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 transition-colors duration-200 ${moreMenuOpen ? 'text-primary' : 'text-muted-foreground'}`} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01" />
                   <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
                 </svg>
                 <span className={`max-w-full truncate text-[10px] font-medium leading-none transition-colors duration-200 ${
-                  moreMenuOpen ? 'text-gray-900' : 'text-gray-500'
+                  moreMenuOpen ? 'text-foreground' : 'text-muted-foreground'
                 }`}>{t('Menu')}</span>
               </button>
 
@@ -994,13 +992,13 @@ const EcomLayoutComponent = ({ children }) => {
                 <>
                   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[45] ios-fade-in" onClick={() => setMoreMenuOpen(false)} />
                   <div className="fixed bottom-0 left-0 right-0 z-50 px-3 ios-slide-up" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)' }}>
-                    <div className="bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl mb-2 max-h-[70vh] flex flex-col">
+                    <div className="bg-card/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl mb-2 max-h-[70vh] flex flex-col">
                       <div className="px-5 pt-3 pb-2 flex-shrink-0">
                         <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3" />
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{tp('Plus d\'options')}</p>
-                          <button onClick={() => setMoreMenuOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 active:bg-gray-200 transition-colors">
-                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Plus d\'options')}</p>
+                          <button onClick={() => setMoreMenuOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-muted active:bg-gray-200 transition-colors">
+                            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
                           </button>
                         </div>
                       </div>
@@ -1018,10 +1016,10 @@ const EcomLayoutComponent = ({ children }) => {
                                 key={item.name}
                                 to={item.href}
                                 onClick={handleClick}
-                                className={`flex items-center gap-4 px-5 py-4 text-[16px] font-medium active:bg-gray-100 transition-colors ${active ? 'text-scalor-green' : 'text-gray-900'
+                                className={`flex items-center gap-4 px-5 py-4 text-[16px] font-medium active:bg-muted transition-colors ${active ? 'text-scalor-green' : 'text-foreground'
                                   }`}
                               >
-                                <span className={`flex-shrink-0 ${active ? 'text-scalor-green' : 'text-gray-400'}`}>{mobileIconLg(item)}</span>
+                                <span className={`flex-shrink-0 ${active ? 'text-scalor-green' : 'text-muted-foreground'}`}>{mobileIconLg(item)}</span>
                                 <span className="flex-1 truncate">{item.name}</span>
                                 {locked && (
                                   <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1033,13 +1031,13 @@ const EcomLayoutComponent = ({ children }) => {
                             );
                           })}
                         </div>
-                        <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-between">
-                          <span className="text-[15px] font-medium text-gray-900">{t('Langue')}</span>
+                        <div className="border-t border-border px-5 py-3 flex items-center justify-between">
+                          <span className="text-[15px] font-medium text-foreground">{t('Langue')}</span>
                           <PlatformLanguageSelector compact />
                         </div>
-                        <div className="border-t border-gray-100">
-                          <Link to="/ecom/profile" onClick={() => setMoreMenuOpen(false)} className="flex items-center gap-4 px-5 py-4 text-[16px] font-medium text-gray-900 active:bg-gray-100">
-                            <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        <div className="border-t border-border">
+                          <Link to="/ecom/profile" onClick={() => setMoreMenuOpen(false)} className="flex items-center gap-4 px-5 py-4 text-[16px] font-medium text-foreground active:bg-muted">
+                            <svg className="w-7 h-7 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                             {t('Mon profil')}
                           </Link>
                         </div>
@@ -1047,7 +1045,7 @@ const EcomLayoutComponent = ({ children }) => {
                     </div>
                     <button
                       onClick={() => { setMoreMenuOpen(false); handleLogout(); }}
-                      className="w-full bg-white/95 backdrop-blur-xl rounded-2xl py-4 text-[17px] font-semibold text-red-500 active:bg-gray-100 shadow-2xl transition-colors"
+                      className="w-full bg-card/95 backdrop-blur-xl rounded-2xl py-4 text-[17px] font-semibold text-red-500 active:bg-muted shadow-2xl transition-colors"
                     >
                       {t('Déconnexion')}
                     </button>
@@ -1101,8 +1099,8 @@ const getPageTitle = (pathname, t = (x) => x) => {
   if (pathname.includes('/agent-ia')) return t('Commercial IA');
   if (pathname.includes('/whatsapp/agent-config')) return t('Configurer Commercial IA');
   if (pathname.includes('/whatsapp/conversations')) return t('Conversations Rita');
-  if (pathname.includes('/whatsapp/service')) return t('Service WhatsApp');
-  if (pathname.includes('/whatsapp/connexion')) return t('Service WhatsApp');
+  if (pathname.includes('/whatsapp/service')) return t('Service Messagerie');
+  if (pathname.includes('/whatsapp/connexion')) return t('Service Messagerie');
 
   if (pathname.includes('/campaigns')) return t('Marketing');
   if (pathname.includes('/super-admin/mail-server')) return t('Serveur mail');
@@ -1117,7 +1115,7 @@ const getPageTitle = (pathname, t = (x) => x) => {
   if (pathname.includes('/super-admin/whatsapp')) return t('Postulations WhatsApp');
   if (pathname.includes('/super-admin')) return t('Super Administration');
   if (pathname.includes('/users')) return t('Gestion Équipe');
-  if (pathname.includes('/assignments')) return t('Affectations');
+  if (pathname.includes('/assignments')) return t('Attributions');
   if (pathname.includes('/commissions')) return t('Commissions');
   if (pathname.includes('/settings')) return t('Paramètres');
   if (pathname.includes('/chat')) return t('Chat Équipe');

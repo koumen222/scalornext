@@ -170,7 +170,7 @@ export default function AffiliateDashboard() {
         <div className="flex items-center justify-center h-[80vh]">
           <div className="flex flex-col items-center gap-3">
             <svg className="w-8 h-8 animate-spin text-[#0F6B4F]" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-            <p className="text-sm text-gray-500">{tp('Chargement...')}</p>
+            <p className="text-sm text-muted-foreground">{tp('Chargement...')}</p>
           </div>
         </div>
       </AffiliateLayout>
@@ -196,7 +196,7 @@ export default function AffiliateDashboard() {
                 <h1 className="text-xl font-bold">Bienvenue, {affiliate?.name || tp('Affilié')}</h1>
                 <p className="text-sm text-white/70 mt-0.5">{tp('Votre lien de parrainage')}</p>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-white/10 rounded-full border border-white/20 self-start">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-card/10 rounded-full border border-white/20 self-start">
                 {tp('Affilié Scalor')}
               </span>
             </div>
@@ -208,7 +208,7 @@ export default function AffiliateDashboard() {
                 <button
                   onClick={() => copyToClipboard(referralUrl)}
                   className={`px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 ${
-                    copied ? 'bg-white text-[#0F6B4F]' : 'bg-white/20 hover:bg-white/30 text-white border border-white/20'
+                    copied ? 'bg-card text-[#0F6B4F]' : 'bg-card/20 hover:bg-card/30 text-white border border-white/20'
                   }`}
                 >
                   {copied ? (
@@ -231,36 +231,36 @@ export default function AffiliateDashboard() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+          <div className="bg-card border border-border rounded-xl p-4 hover:shadow-md transition-shadow">
             <div className="w-9 h-9 bg-[#0F6B4F]/10 rounded-lg flex items-center justify-center mb-2">
               <svg className="w-5 h-5 text-[#0F6B4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalBalance} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Solde disponible (FCFA)')}</p>
+            <p className="text-2xl font-bold text-foreground"><AnimatedCounter value={totalBalance} /></p>
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">{tp('Solde disponible (FCFA)')}</p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+          <div className="bg-card border border-border rounded-xl p-4 hover:shadow-md transition-shadow">
             <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center mb-2">
               <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalInscriptions} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Inscriptions (x300 FCFA)')}</p>
+            <p className="text-2xl font-bold text-foreground"><AnimatedCounter value={totalInscriptions} /></p>
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">{tp('Inscriptions (x300 FCFA)')}</p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+          <div className="bg-card border border-border rounded-xl p-4 hover:shadow-md transition-shadow">
             <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center mb-2">
               <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalClients} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Clients actifs')}</p>
+            <p className="text-2xl font-bold text-foreground"><AnimatedCounter value={totalClients} /></p>
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">{tp('Clients actifs')}</p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+          <div className="bg-card border border-border rounded-xl p-4 hover:shadow-md transition-shadow">
             <div className="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center mb-2">
               <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900"><AnimatedCounter value={totalMonthCommissions} /></p>
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 mt-0.5">{tp('Commissions ce mois (30%)')}</p>
+            <p className="text-2xl font-bold text-foreground"><AnimatedCounter value={totalMonthCommissions} /></p>
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">{tp('Commissions ce mois (30%)')}</p>
           </div>
         </div>
 
@@ -276,8 +276,8 @@ export default function AffiliateDashboard() {
         </div>
 
         {showWithdraw && (
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-base font-semibold text-gray-900 mb-3">{tp('Demander un retrait')}</h3>
+          <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-foreground mb-3">{tp('Demander un retrait')}</h3>
             {withdrawSuccess && (
               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm mb-4">{withdrawSuccess}</div>
             )}
@@ -290,12 +290,12 @@ export default function AffiliateDashboard() {
                 placeholder={tp('Montant (min 5 000 FCFA)')}
                 value={withdrawForm.amount}
                 onChange={e => setWithdrawForm(f => ({ ...f, amount: e.target.value }))}
-                className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                className="flex-1 px-4 py-3 bg-card border border-gray-300 rounded-xl text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               />
               <select
                 value={withdrawForm.operator}
                 onChange={e => setWithdrawForm(f => ({ ...f, operator: e.target.value }))}
-                className="px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                className="px-4 py-3 bg-card border border-gray-300 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
               >
                 <option value="orange_money">{tp('Orange Money')}</option>
                 <option value="mtn">{tp('MTN MoMo')}</option>
@@ -305,64 +305,64 @@ export default function AffiliateDashboard() {
                 {tp('Retirer')}
               </button>
             </form>
-            <p className="text-xs text-gray-500 mt-2">{tp('Solde disponible :')} <span className="text-[#0F6B4F] font-bold">{fmt(totalBalance)} FCFA</span></p>
+            <p className="text-xs text-muted-foreground mt-2">{tp('Solde disponible :')} <span className="text-[#0F6B4F] font-bold">{fmt(totalBalance)} FCFA</span></p>
           </div>
         )}
 
         {/* Gains table */}
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">{tp('Historique des gains')}</h3>
-            <span className="text-xs text-gray-500">{simData.history.length + conversions.length} transactions</span>
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-foreground">{tp('Historique des gains')}</h3>
+            <span className="text-xs text-muted-foreground">{simData.history.length + conversions.length} transactions</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Date')}</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Type')}</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Client')}</th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Montant')}</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{tp('Statut')}</th>
+                <tr className="bg-background border-b border-border">
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Date')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Type')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Client')}</th>
+                  <th className="px-5 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Montant')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{tp('Statut')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {simData.history.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3 text-sm text-gray-500">{item.date}</td>
-                    <td className="px-5 py-3 text-sm text-gray-900 font-medium">
+                  <tr key={item.id} className="hover:bg-background transition-colors">
+                    <td className="px-5 py-3 text-sm text-muted-foreground">{item.date}</td>
+                    <td className="px-5 py-3 text-sm text-foreground font-medium">
                       {item.type === 'inscription' && 'Inscription (+300 FCFA)'}
                       {item.type === 'commission' && 'Commission 30%'}
                       {item.type === 'retrait' && 'Retrait'}
                     </td>
-                    <td className="px-5 py-3 text-sm text-gray-500">{item.client}</td>
+                    <td className="px-5 py-3 text-sm text-muted-foreground">{item.client}</td>
                     <td className={`px-5 py-3 text-sm text-right font-bold ${item.amount > 0 ? 'text-[#0F6B4F]' : 'text-red-600'}`}>
                       {item.amount > 0 ? '+' : ''}{fmt(item.amount)} F
                     </td>
                     <td className="px-5 py-3">
-                      <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full ${statusColors[item.status] || 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full ${statusColors[item.status] || 'bg-muted text-muted-foreground'}`}>
                         {statusLabels[item.status] || item.status}
                       </span>
                     </td>
                   </tr>
                 ))}
                 {conversions.map((c) => (
-                  <tr key={c._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3 text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
-                    <td className="px-5 py-3 text-sm text-gray-900 font-medium">
+                  <tr key={c._id} className="hover:bg-background transition-colors">
+                    <td className="px-5 py-3 text-sm text-muted-foreground">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
+                    <td className="px-5 py-3 text-sm text-foreground font-medium">
                       {c.conversionType === 'signup' ? 'Inscription' : tp('Commission')}
                     </td>
-                    <td className="px-5 py-3 text-sm text-gray-500">{c.referredUser?.name || '—'}</td>
+                    <td className="px-5 py-3 text-sm text-muted-foreground">{c.referredUser?.name || '—'}</td>
                     <td className="px-5 py-3 text-sm text-right font-bold text-[#0F6B4F]">+{fmt(c.commissionAmount)} F</td>
                     <td className="px-5 py-3">
-                      <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full ${statusColors[c.status] || 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full ${statusColors[c.status] || 'bg-muted text-muted-foreground'}`}>
                         {statusLabels[c.status] || c.status}
                       </span>
                     </td>
                   </tr>
                 ))}
                 {simData.history.length === 0 && conversions.length === 0 && (
-                  <tr><td colSpan={5} className="px-5 py-10 text-center text-sm text-gray-500">{tp('Aucune transaction. Utilisez le simulateur ci-dessous.')}</td></tr>
+                  <tr><td colSpan={5} className="px-5 py-10 text-center text-sm text-muted-foreground">{tp('Aucune transaction. Utilisez le simulateur ci-dessous.')}</td></tr>
                 )}
               </tbody>
             </table>
@@ -370,36 +370,36 @@ export default function AffiliateDashboard() {
         </div>
 
         {/* Simulator */}
-        <div className="bg-gray-100 border border-gray-200 rounded-xl p-5">
+        <div className="bg-muted border border-border rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{tp('Simulateur')}</span>
-            <span className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">{tp('Démo')}</span>
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{tp('Simulateur')}</span>
+            <span className="text-[10px] text-muted-foreground bg-card px-2 py-0.5 rounded-full border border-border">{tp('Démo')}</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <button
               onClick={() => simulate('inscription', 0, 300)}
-              className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
+              className="px-4 py-3 bg-card hover:bg-primary-50 border border-border hover:border-primary-200 rounded-xl text-sm text-foreground hover:text-foreground transition-all duration-200 text-left"
             >
               <span className="block text-xs font-medium">{tp('+ Inscription')}</span>
               <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">+300 FCFA</span>
             </button>
             <button
               onClick={() => simulate('commission', 5000, 1500)}
-              className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
+              className="px-4 py-3 bg-card hover:bg-primary-50 border border-border hover:border-primary-200 rounded-xl text-sm text-foreground hover:text-foreground transition-all duration-200 text-left"
             >
               <span className="block text-xs font-medium">{tp('Achat 5 000F')}</span>
               <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">{tp('+1 500 FCFA (30%)')}</span>
             </button>
             <button
               onClick={() => simulate('commission', 10000, 3000)}
-              className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
+              className="px-4 py-3 bg-card hover:bg-primary-50 border border-border hover:border-primary-200 rounded-xl text-sm text-foreground hover:text-foreground transition-all duration-200 text-left"
             >
               <span className="block text-xs font-medium">{tp('Achat 10 000F')}</span>
               <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">{tp('+3 000 FCFA (30%)')}</span>
             </button>
             <button
               onClick={() => simulate('commission', 15000, 4500)}
-              className="px-4 py-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-xl text-sm text-gray-700 hover:text-gray-900 transition-all duration-200 text-left"
+              className="px-4 py-3 bg-card hover:bg-primary-50 border border-border hover:border-primary-200 rounded-xl text-sm text-foreground hover:text-foreground transition-all duration-200 text-left"
             >
               <span className="block text-xs font-medium">{tp('Achat 15 000F')}</span>
               <span className="block text-[11px] text-[#0F6B4F] font-bold mt-0.5">{tp('+4 500 FCFA (30%)')}</span>
@@ -407,46 +407,46 @@ export default function AffiliateDashboard() {
           </div>
           <button
             onClick={() => setSimData({ balance: 0, inscriptions: 0, clients: 0, monthCommissions: 0, history: [] })}
-            className="mt-3 text-xs text-gray-500 hover:text-gray-700 transition-colors"
+            className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             {tp('Réinitialiser la simulation')}
           </button>
         </div>
 
         {/* Commission rules */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Règles de commission')}</h3>
+        <div className="bg-card border border-border rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Règles de commission')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="flex items-center gap-3 p-3 rounded-lg bg-primary-50 border border-primary-100">
-              <div className="w-8 h-8 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center text-sm font-bold">1</div>
+              <div className="w-8 h-8 bg-primary-100 text-primary rounded-lg flex items-center justify-center text-sm font-bold">1</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{tp('Inscription via lien')}</p>
+                <p className="text-sm font-medium text-foreground">{tp('Inscription via lien')}</p>
                 <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+300 FCFA (immédiat)')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-100">
               <div className="w-8 h-8 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center text-sm font-bold">2</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{tp('Abonnement 5 000 FCFA/mois')}</p>
+                <p className="text-sm font-medium text-foreground">{tp('Abonnement 5 000 FCFA/mois')}</p>
                 <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+1 500 FCFA/mois (30%)')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 border border-purple-100">
               <div className="w-8 h-8 bg-purple-100 text-purple-700 rounded-lg flex items-center justify-center text-sm font-bold">3</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{tp('Abonnement 10 000 FCFA/mois')}</p>
+                <p className="text-sm font-medium text-foreground">{tp('Abonnement 10 000 FCFA/mois')}</p>
                 <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+3 000 FCFA/mois (30%)')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
               <div className="w-8 h-8 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center text-sm font-bold">4</div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{tp('Abonnement 15 000 FCFA/mois')}</p>
+                <p className="text-sm font-medium text-foreground">{tp('Abonnement 15 000 FCFA/mois')}</p>
                 <p className="text-xs text-[#0F6B4F] font-semibold">{tp('+4 500 FCFA/mois (30%)')}</p>
               </div>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-3">{tp('Retrait minimum :')} <span className="text-[#0F6B4F] font-bold">5 000 FCFA</span> {tp('— via Orange Money, MTN MoMo ou virement.')}</p>
+          <p className="text-xs text-muted-foreground mt-3">{tp('Retrait minimum :')} <span className="text-[#0F6B4F] font-bold">5 000 FCFA</span> {tp('— via Orange Money, MTN MoMo ou virement.')}</p>
         </div>
       </div>
     </AffiliateLayout>

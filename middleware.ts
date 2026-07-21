@@ -15,7 +15,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Repris de useSubdomain.js
 const ROOT_DOMAINS = ['scalor.net', 'ecomcookpit.site', 'ecomcookpit.pages.dev'];
-const IGNORED_SUBS = ['www', 'api'];
+const IGNORED_SUBS = ['www', 'api', 'staging', 'api-staging'];
 const SUBDOMAIN_RE = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/;
 
 // Hôtes plateforme supplémentaires (dev/preview Next)

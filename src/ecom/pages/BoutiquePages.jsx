@@ -48,10 +48,10 @@ const SECTION_TYPES = {
   image_text: { label: 'Image + Texte', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>, color: 'bg-cyan-100 text-cyan-700' },
   banner: { label: 'Bannière promo', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>, color: 'bg-amber-100 text-amber-700' },
   gallery: { label: 'Galerie images', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>, color: 'bg-violet-100 text-violet-700' },
-  newsletter: { label: 'Newsletter', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>, color: 'bg-primary-100 text-primary-700' },
+  newsletter: { label: 'Newsletter', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>, color: 'bg-primary-100 text-primary' },
   text: { label: 'Texte libre', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" /></svg>, color: 'bg-indigo-100 text-indigo-700' },
-  spacer: { label: 'Espacement', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>, color: 'bg-gray-100 text-gray-600' },
-  custom: { label: 'Section personnalisée', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>, color: 'bg-gray-100 text-gray-700' },
+  spacer: { label: 'Espacement', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>, color: 'bg-muted text-muted-foreground' },
+  custom: { label: 'Section personnalisée', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>, color: 'bg-muted text-foreground' },
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -60,7 +60,7 @@ const SECTION_TYPES = {
 
 const Field = ({ label, value, onChange, multiline, rich, type = 'text', placeholder, hint }) => (
   <div>
-    <label className="text-xs font-semibold text-gray-600 mb-1 block">{label}</label>
+    <label className="text-xs font-semibold text-muted-foreground mb-1 block">{label}</label>
     {rich ? (
       <RichTextEditor
         value={value || ''}
@@ -75,7 +75,7 @@ const Field = ({ label, value, onChange, multiline, rich, type = 'text', placeho
         onChange={e => onChange(e.target.value)}
         rows={3}
         placeholder={placeholder}
-        className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent resize-none"
+        className="w-full px-3 py-2.5 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent resize-none"
       />
     ) : (
       <input
@@ -83,20 +83,20 @@ const Field = ({ label, value, onChange, multiline, rich, type = 'text', placeho
         value={value || ''}
         onChange={e => onChange(type === 'number' ? (parseInt(e.target.value) || 0) : e.target.value)}
         placeholder={placeholder}
-        className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+        className="w-full px-3 py-2.5 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
       />
     )}
-    {hint && <p className="text-[11px] text-gray-400 mt-1">{hint}</p>}
+    {hint && <p className="text-[11px] text-muted-foreground mt-1">{hint}</p>}
   </div>
 );
 
 const IconSelect = ({ value, onChange }) => (
   <div>
-    <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Icône')}</label>
+    <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Icône')}</label>
     <select
       value={value || 'star'}
       onChange={e => onChange(e.target.value)}
-      className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
+      className="w-full px-3 py-2.5 text-sm border border-border rounded-xl focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent"
     >
       {AVAILABLE_ICONS.map(ic => (
         <option key={ic.id} value={ic.id}>{ic.label}</option>
@@ -133,7 +133,7 @@ const ItemsEditor = ({ items = [], onChange, renderItem, newItem, label = 'Élé
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-bold text-gray-700 uppercase tracking-wide">{label}s ({items.length})</p>
+        <p className="text-xs font-bold text-foreground uppercase tracking-wide">{label}s ({items.length})</p>
         {items.length < max && (
           <button
             onClick={addItem}
@@ -147,15 +147,15 @@ const ItemsEditor = ({ items = [], onChange, renderItem, newItem, label = 'Élé
         )}
       </div>
       {items.map((item, idx) => (
-        <div key={idx} className="relative bg-gray-50 rounded-xl border border-gray-200 p-4">
+        <div key={idx} className="relative bg-background rounded-xl border border-border p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold text-gray-400 uppercase">{label} {idx + 1}</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">{label} {idx + 1}</span>
             <div className="flex items-center gap-1">
               <button onClick={() => moveItem(idx, -1)} disabled={idx === 0} className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 transition">
-                <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+                <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
               </button>
               <button onClick={() => moveItem(idx, 1)} disabled={idx === items.length - 1} className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 transition">
-                <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
               <button onClick={() => removeItem(idx)} className="p-1 rounded hover:bg-red-100 transition">
                 <svg className="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -166,8 +166,8 @@ const ItemsEditor = ({ items = [], onChange, renderItem, newItem, label = 'Élé
         </div>
       ))}
       {items.length === 0 && (
-        <div className="text-center py-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-          <p className="text-xs text-gray-400">Aucun {label.toLowerCase()}</p>
+        <div className="text-center py-6 bg-background rounded-xl border-2 border-dashed border-border">
+          <p className="text-xs text-muted-foreground">Aucun {label.toLowerCase()}</p>
         </div>
       )}
     </div>
@@ -220,13 +220,13 @@ const SectionCard = ({
         isActive
           ? 'border-[#3b82f6] bg-[#eff6ff] shadow-sm'
           : section.visible !== false
-            ? 'border-transparent bg-white hover:border-gray-200 hover:bg-gray-50'
-            : 'border-transparent opacity-60 bg-gray-50/70'
+            ? 'border-transparent bg-card hover:border-border hover:bg-background'
+            : 'border-transparent opacity-60 bg-background/70'
       } ${isDragging ? 'opacity-50 scale-[0.99]' : ''} ${isDragOver ? 'ring-2 ring-[#3b82f6] ring-offset-1' : ''}`}
       onClick={() => onSelect?.(section)}
     >
       <div className="flex items-center gap-2.5 px-2.5 py-2">
-        <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 transition flex-shrink-0">
+        <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-muted-foreground transition flex-shrink-0">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 6h2v2H8V6zm6 0h2v2h-2V6zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zm-6 5h2v2H8v-2zm6 0h2v2h-2v-2z" />
           </svg>
@@ -238,14 +238,14 @@ const SectionCard = ({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <p className="text-[12px] font-semibold text-gray-900 truncate">{title}</p>
+            <p className="text-[12px] font-semibold text-foreground truncate">{title}</p>
             {section.visible === false && (
-              <span className="inline-flex rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-500 flex-shrink-0">
+              <span className="inline-flex rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground flex-shrink-0">
                 {tp('Masquée')}
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-[10px] text-gray-400 font-medium truncate">
+          <p className="mt-0.5 text-[10px] text-muted-foreground font-medium truncate">
             {typeInfo.label}{itemCount ? ` · ${itemCount} éléments` : ''}
           </p>
         </div>
@@ -254,25 +254,25 @@ const SectionCard = ({
           <button
             onClick={(e) => { e.stopPropagation(); onMove(index, -1); }}
             disabled={index === 0}
-            className="hidden group-hover:inline-flex p-1 rounded-md hover:bg-gray-100 disabled:opacity-30 transition"
+            className="hidden group-hover:inline-flex p-1 rounded-md hover:bg-muted disabled:opacity-30 transition"
             title={tp('Monter')}
           >
-            <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+            <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onMove(index, 1); }}
             disabled={index === total - 1}
-            className="hidden group-hover:inline-flex p-1 rounded-md hover:bg-gray-100 disabled:opacity-30 transition"
+            className="hidden group-hover:inline-flex p-1 rounded-md hover:bg-muted disabled:opacity-30 transition"
             title={tp('Descendre')}
           >
-            <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            <svg className="w-3.5 h-3.5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onToggle(section.id); }}
             className={`relative w-9 h-5 rounded-full transition-colors ${section.visible !== false ? 'bg-[#111827]' : 'bg-gray-300'}`}
             title={section.visible !== false ? 'Masquer' : tp('Afficher')}
           >
-            <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${section.visible !== false ? 'translate-x-4' : ''}`} />
+            <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-card shadow transition-transform ${section.visible !== false ? 'translate-x-4' : ''}`} />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(section.id); }}
@@ -316,15 +316,15 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
       </div>
       <Field label="Image de fond (URL)" value={config.backgroundImage} onChange={v => updateField('backgroundImage', v)} placeholder="https://..." hint="Laissez vide pour le dégradé par défaut" />
       {config.backgroundImage && (
-        <div className="rounded-xl overflow-hidden border border-gray-200 h-32">
+        <div className="rounded-xl overflow-hidden border border-border h-32">
           <img src={config.backgroundImage} alt={tp('Aperçu')} className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
         </div>
       )}
       <div>
-        <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Alignement du texte')}</label>
+        <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Alignement du texte')}</label>
         <div className="flex gap-2">
           {['left', 'center', 'right'].map(a => (
-            <button key={a} onClick={() => updateField('alignment', a)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${config.alignment === a ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+            <button key={a} onClick={() => updateField('alignment', a)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${config.alignment === a ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-border text-muted-foreground hover:border-gray-300'}`}>
               {a === 'left' ? 'Gauche' : a === 'center' ? 'Centre' : tp('Droite')}
             </button>
           ))}
@@ -400,7 +400,7 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
             </div>
             <Field label="Avis" value={item.content} onChange={v => update({ content: v })} multiline placeholder={tp('Le témoignage du client...')} />
             <div>
-              <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Note')}</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Note')}</label>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map(star => (
                   <button key={star} onClick={() => update({ rating: star })} className={`text-xl transition ${(item.rating || 5) >= star ? 'text-yellow-400' : 'text-gray-300'}`}>
@@ -468,10 +468,10 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
       <Field label="Contenu" value={config.content} onChange={v => updateField('content', v)} rich />
       <Field label="Couleur de fond" value={config.backgroundColor} onChange={v => updateField('backgroundColor', v)} placeholder="#ffffff" hint="Code hex (ex: #f3f4f6)" />
       <div>
-        <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Alignement')}</label>
+        <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Alignement')}</label>
         <div className="flex gap-2">
           {['left', 'center', 'right'].map(a => (
-            <button key={a} onClick={() => updateField('alignment', a)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${(config.alignment || 'left') === a ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+            <button key={a} onClick={() => updateField('alignment', a)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${(config.alignment || 'left') === a ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-border text-muted-foreground hover:border-gray-300'}`}>
               {a === 'left' ? 'Gauche' : a === 'center' ? 'Centre' : tp('Droite')}
             </button>
           ))}
@@ -484,10 +484,10 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   const renderImageText = () => (
     <>
       <div>
-        <label className="text-xs font-semibold text-gray-600 mb-1 block">{tp('Disposition')}</label>
+        <label className="text-xs font-semibold text-muted-foreground mb-1 block">{tp('Disposition')}</label>
         <div className="flex gap-2">
           {[{ v: 'text_left', l: '📝 Texte à gauche' }, { v: 'text_right', l: '🖼️ Image à gauche' }].map(o => (
-            <button key={o.v} onClick={() => updateField('layout', o.v)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${(config.layout || 'text_left') === o.v ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+            <button key={o.v} onClick={() => updateField('layout', o.v)} className={`flex-1 px-3 py-2 text-xs font-semibold rounded-lg border-2 transition ${(config.layout || 'text_left') === o.v ? 'border-[#0F6B4F] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-border text-muted-foreground hover:border-gray-300'}`}>
               {o.l}
             </button>
           ))}
@@ -502,7 +502,7 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
       </div>
       <Field label="Image (URL)" value={config.image} onChange={v => updateField('image', v)} placeholder="https://..." hint="L'image affichée à côté du texte" />
       {config.image && (
-        <div className="rounded-xl overflow-hidden border border-gray-200 h-32">
+        <div className="rounded-xl overflow-hidden border border-border h-32">
           <img src={config.image} alt={tp('Aperçu')} className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
         </div>
       )}
@@ -551,7 +551,7 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
             <Field label="URL de l'image" value={item.url} onChange={v => update({ url: v })} placeholder="https://..." />
             <Field label="Légende" value={item.alt} onChange={v => update({ alt: v })} placeholder={tp('Description de l\'image')} />
             {item.url && (
-              <div className="rounded-lg overflow-hidden border border-gray-200 h-20">
+              <div className="rounded-lg overflow-hidden border border-border h-20">
                 <img src={item.url} alt={item.alt || ''} className="w-full h-full object-cover" onError={e => e.target.style.display = 'none'} />
               </div>
             )}
@@ -611,18 +611,18 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
   const isWide = ['badges', 'features', 'testimonials', 'faq', 'image_text', 'gallery'].includes(section?.type);
 
   const content = (
-      <div className={`bg-white rounded-2xl ${inline ? 'border border-gray-200 h-full' : 'shadow-2xl border border-gray-200'} w-full ${inline ? 'max-w-none' : isWide ? 'max-w-2xl' : 'max-w-md'} ${inline ? 'flex-1' : 'max-h-[90vh]'} flex flex-col`} onClick={e => e.stopPropagation()}>
+      <div className={`bg-card rounded-2xl ${inline ? 'border border-border h-full' : 'shadow-2xl border border-border'} w-full ${inline ? 'max-w-none' : isWide ? 'max-w-2xl' : 'max-w-md'} ${inline ? 'flex-1' : 'max-h-[90vh]'} flex flex-col`} onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${typeInfo.color}`}>
               {typeInfo.icon}
             </span>
-            <h3 className="text-sm font-bold text-gray-900">Modifier : {typeInfo.label}</h3>
+            <h3 className="text-sm font-bold text-foreground">Modifier : {typeInfo.label}</h3>
           </div>
           {onClose ? (
-            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 transition">
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition">
+              <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -633,13 +633,13 @@ const SectionEditor = ({ section, onSave, onClose, inline = false }) => {
           {renderFields()}
         </div>
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-gray-100 flex gap-3 flex-shrink-0">
+        <div className="px-5 py-4 border-t border-border flex gap-3 flex-shrink-0">
           {onClose ? (
-            <button onClick={onClose} className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+            <button onClick={onClose} className="flex-1 px-4 py-2.5 text-sm font-semibold text-foreground bg-muted rounded-xl hover:bg-gray-200 transition">
               {tp('Annuler')}
             </button>
           ) : (
-            <div className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-400 bg-gray-50 rounded-xl text-center">
+            <div className="flex-1 px-4 py-2.5 text-sm font-semibold text-muted-foreground bg-background rounded-xl text-center">
               {tp('Sauvegarde automatique active')}
             </div>
           )}
@@ -665,11 +665,11 @@ const AddSectionModal = ({ onAdd, onClose }) => {
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md" onClick={e => e.stopPropagation()}>
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-gray-900">{tp('Ajouter une section')}</h3>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 transition">
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          <h3 className="text-sm font-bold text-foreground">{tp('Ajouter une section')}</h3>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition">
+            <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -1070,18 +1070,18 @@ const BoutiquePages = () => {
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0F6B4F] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-border border-t-[#0F6B4F] rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="h-screen min-h-0 w-full bg-[#f3f4f6] flex flex-col overflow-hidden">
-      <div className="h-14 border-b border-gray-200 bg-white px-4 lg:px-6 flex items-center justify-between gap-3">
+      <div className="h-14 border-b border-border bg-card px-4 lg:px-6 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <Link
             to="/ecom/boutique"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-background"
             title={tp('Retour au dashboard boutique')}
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1091,7 +1091,7 @@ const BoutiquePages = () => {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setSidebarOpen((current) => !current)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-background"
               title={sidebarOpen ? 'Fermer le panneau' : tp('Ouvrir le panneau')}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1102,7 +1102,7 @@ const BoutiquePages = () => {
             <button
               onClick={handleUndo}
               disabled={undoStack.length === 0}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
               title={tp('Retour en arrière')}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1112,7 +1112,7 @@ const BoutiquePages = () => {
             <button
               onClick={handleRedo}
               disabled={redoStack.length === 0}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
               title={tp('Aller en avant')}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1122,18 +1122,18 @@ const BoutiquePages = () => {
             <div className="h-9 w-px bg-gray-200" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-gray-900 truncate">{tp('Page d\'accueil')}</p>
-            <p className="text-[11px] text-gray-400 truncate">{tp('Builder boutique style Shopify')}</p>
+            <p className="text-sm font-semibold text-foreground truncate">{tp('Page d\'accueil')}</p>
+            <p className="text-[11px] text-muted-foreground truncate">{tp('Builder boutique style Shopify')}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center bg-gray-100 rounded-xl p-1">
+          <div className="hidden md:flex items-center bg-muted rounded-xl p-1">
               {['desktop', 'tablet', 'mobile'].map((device) => (
                 <button
                   key={device}
                   onClick={() => setPreviewDevice(device)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${previewDevice === device ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${previewDevice === device ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   {device === 'desktop' ? 'Desktop' : device === 'tablet' ? 'Tablette' : tp('Mobile')}
                 </button>
@@ -1144,7 +1144,7 @@ const BoutiquePages = () => {
               href={storeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition"
+              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-muted-foreground border border-border hover:bg-background transition"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1158,7 +1158,7 @@ const BoutiquePages = () => {
               setPreviewLoading(true);
               setIframeKey((current) => current + 1);
             }}
-            className="px-3 py-2 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
+            className="px-3 py-2 rounded-lg text-xs font-semibold bg-muted text-muted-foreground hover:bg-gray-200 transition"
           >
             {tp('Recharger')}
           </button>
@@ -1193,25 +1193,25 @@ const BoutiquePages = () => {
       <div className="flex-1 min-h-0 overflow-hidden">
         <div className="flex h-full bg-[#f3f4f6]">
           {sidebarOpen && (
-            <aside className="w-full max-w-[284px] flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
+            <aside className="w-full max-w-[284px] flex-shrink-0 border-r border-border bg-card flex flex-col">
               {sidebarMode === 'editor' && activeSection ? (
                 <>
-                  <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 bg-white">
+                  <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 bg-card">
                     <button
                       onClick={backToSections}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 transition"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                       {tp('Sections')}
                     </button>
-                    <p className="text-xs font-bold text-gray-800 truncate">{SECTION_TYPES[activeSection.type]?.label || tp('Section')}</p>
+                    <p className="text-xs font-bold text-foreground truncate">{SECTION_TYPES[activeSection.type]?.label || tp('Section')}</p>
                     <button
                       onClick={() => setSidebarOpen(false)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 transition"
                     >
-                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5" />
                       </svg>
                     </button>
@@ -1227,22 +1227,22 @@ const BoutiquePages = () => {
                 </>
               ) : sidebarMode === 'library' ? (
                 <>
-                  <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 bg-white">
+                  <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 bg-card">
                     <button
                       onClick={backToSections}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 transition"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                       {tp('Retour')}
                     </button>
-                    <p className="text-xs font-bold text-gray-800">{tp('Bibliothèque de sections')}</p>
+                    <p className="text-xs font-bold text-foreground">{tp('Bibliothèque de sections')}</p>
                     <button
                       onClick={() => setSidebarOpen(false)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 transition"
                     >
-                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5" />
                       </svg>
                     </button>
@@ -1261,7 +1261,7 @@ const BoutiquePages = () => {
                           onClick={() => handleAdd(type)}
                           className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition hover:border-[#4D9F82] hover:shadow-sm ${info.color}`}
                         >
-                          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/80">{info.icon}</span>
+                          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-card/80">{info.icon}</span>
                           <span className="text-sm font-semibold">{info.label}</span>
                           <svg className="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -1273,25 +1273,25 @@ const BoutiquePages = () => {
                 </>
               ) : (
                 <>
-                  <div className="border-b border-gray-200 bg-white flex-shrink-0">
+                  <div className="border-b border-border bg-card flex-shrink-0">
                     <div className="px-4 py-3">
-                      <p className="text-sm font-semibold text-gray-900">{tp('Page d\'accueil')}</p>
+                      <p className="text-sm font-semibold text-foreground">{tp('Page d\'accueil')}</p>
                     </div>
                   </div>
 
-                  <div className="flex-1 min-h-0 overflow-y-auto bg-white">
+                  <div className="flex-1 min-h-0 overflow-y-auto bg-card">
                     <div className="px-4 py-3 space-y-1">
-                      <div className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-gray-500 hover:bg-gray-50 transition">
+                      <div className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-muted-foreground hover:bg-background transition">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                         {tp('En-tête')}
                       </div>
-                      <div className="rounded-lg border border-gray-200 bg-gray-50/80">
-                        <div className="flex items-center justify-between px-2.5 py-2 border-b border-gray-200/80">
+                      <div className="rounded-lg border border-border bg-background/80">
+                        <div className="flex items-center justify-between px-2.5 py-2 border-b border-border/80">
                           <div>
-                            <p className="text-[12px] font-semibold text-gray-800">{tp('Modèle')}</p>
-                            <p className="text-[10px] text-gray-400">{sections.length} sections</p>
+                            <p className="text-[12px] font-semibold text-foreground">{tp('Modèle')}</p>
+                            <p className="text-[10px] text-muted-foreground">{sections.length} sections</p>
                           </div>
                           <button
                             onClick={openLibrary}
@@ -1305,7 +1305,7 @@ const BoutiquePages = () => {
                         </div>
                         <div className="p-2 space-y-1.5">
                           {sections.length === 0 ? (
-                            <div className="rounded-lg border border-dashed border-gray-200 bg-white px-3 py-5 text-center text-xs text-gray-400">
+                            <div className="rounded-lg border border-dashed border-border bg-card px-3 py-5 text-center text-xs text-muted-foreground">
                               {tp('Aucune section dans le modèle.')}
                             </div>
                           ) : (
@@ -1332,29 +1332,29 @@ const BoutiquePages = () => {
                           )}
                           <button
                             onClick={openLibrary}
-                            className="w-full flex items-center gap-2 rounded-lg border border-dashed border-gray-200 bg-white px-3 py-3 text-[12px] font-medium text-[#2563eb] hover:bg-blue-50 hover:border-blue-200 transition"
+                            className="w-full flex items-center gap-2 rounded-lg border border-dashed border-border bg-card px-3 py-3 text-[12px] font-medium text-[#2563eb] hover:bg-blue-50 hover:border-blue-200 transition"
                           >
                             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-current">+</span>
                             {tp('Ajouter une section')}
                           </button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-gray-500 hover:bg-gray-50 transition">
+                      <div className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-muted-foreground hover:bg-background transition">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M6 10h12M8 14h8M10 18h4" />
                         </svg>
                         {tp('Pied de page')}
                       </div>
                     </div>
-                    <div className="px-2 pt-3 border-t border-gray-100 flex items-center justify-between gap-3 sticky bottom-0 bg-white/95 backdrop-blur">
+                    <div className="px-2 pt-3 border-t border-border flex items-center justify-between gap-3 sticky bottom-0 bg-card/95 backdrop-blur">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{tp('Actions')}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tp('Actions')}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={handleRegenerate}
                           disabled={regenerating}
-                          className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition disabled:opacity-60"
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-foreground bg-muted hover:bg-gray-200 transition disabled:opacity-60"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -1365,7 +1365,7 @@ const BoutiquePages = () => {
                           onClick={() => setSidebarOpen(false)}
                           className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 transition"
                         >
-                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5" />
                           </svg>
                         </button>
@@ -1381,7 +1381,7 @@ const BoutiquePages = () => {
             {!sidebarOpen && (
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition"
+                className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground shadow-sm hover:bg-background transition"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -1390,14 +1390,14 @@ const BoutiquePages = () => {
               </button>
             )}
 
-            <div className="h-full rounded-[20px] bg-white shadow-lg overflow-hidden border border-gray-200 flex flex-col">
-              <div className="h-10 bg-[#f7f7f8] border-b border-gray-200 flex items-center px-3 gap-2 select-none shrink-0">
+            <div className="h-full rounded-[20px] bg-card shadow-lg overflow-hidden border border-border flex flex-col">
+              <div className="h-10 bg-[#f7f7f8] border-b border-border flex items-center px-3 gap-2 select-none shrink-0">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                   <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                 </div>
-                <div className="flex-1 bg-white rounded px-2 py-1 text-[10px] text-gray-400 font-mono border border-gray-200 truncate">
+                <div className="flex-1 bg-card rounded px-2 py-1 text-[10px] text-muted-foreground font-mono border border-border truncate">
                   {previewSrc ? `${window.location.origin}${previewSrc}` : 'Aperçu indisponible'}
                 </div>
               </div>
@@ -1414,12 +1414,12 @@ const BoutiquePages = () => {
                       }}
                     >
                       {previewLoading && (
-                        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[16px] border border-gray-200 bg-white/92 backdrop-blur-sm shadow-sm">
+                        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[16px] border border-border bg-card/92 backdrop-blur-sm shadow-sm">
                           <div className="flex flex-col items-center gap-3 text-center px-6">
-                            <div className="h-10 w-10 rounded-full border-4 border-gray-200 border-t-[#0F6B4F] animate-spin" />
+                            <div className="h-10 w-10 rounded-full border-4 border-border border-t-[#0F6B4F] animate-spin" />
                             <div>
-                              <p className="text-sm font-semibold text-gray-900">{tp('Chargement de l\'aperçu')}</p>
-                              <p className="text-xs text-gray-500 mt-1">{tp('La page d\'accueil se charge dans le canvas builder.')}</p>
+                              <p className="text-sm font-semibold text-foreground">{tp('Chargement de l\'aperçu')}</p>
+                              <p className="text-xs text-muted-foreground mt-1">{tp('La page d\'accueil se charge dans le canvas builder.')}</p>
                             </div>
                           </div>
                         </div>
@@ -1441,22 +1441,22 @@ const BoutiquePages = () => {
                             setPreviewLoading(false);
                             pushPreviewSections(sections);
                           }}
-                          className="rounded-[16px] border border-gray-200 bg-white shadow-sm"
+                          className="rounded-[16px] border border-border bg-card shadow-sm"
                           style={{ width: `${previewFrameSize.width}px`, height: `${previewFrameSize.height}px` }}
                         />
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="h-full min-h-[640px] flex items-center justify-center bg-white rounded-[20px] border border-gray-200">
+                  <div className="h-full min-h-[640px] flex items-center justify-center bg-card rounded-[20px] border border-border">
                     <div className="max-w-md text-center px-8">
-                      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-500">
+                      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
                         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5h18M7 3v4m10-4v4M6 9h12a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2z" />
                         </svg>
                       </div>
-                      <p className="text-base font-semibold text-gray-900">{tp('Aperçu indisponible')}</p>
-                      <p className="mt-2 text-sm text-gray-500">{tp('Configurez d\'abord un sous-domaine pour afficher votre page d\'accueil dans un canvas professionnel.')}</p>
+                      <p className="text-base font-semibold text-foreground">{tp('Aperçu indisponible')}</p>
+                      <p className="mt-2 text-sm text-muted-foreground">{tp('Configurez d\'abord un sous-domaine pour afficher votre page d\'accueil dans un canvas professionnel.')}</p>
                     </div>
                   </div>
                 )}

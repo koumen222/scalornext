@@ -5,10 +5,11 @@ import {
   ArrowLeft, Save, Eye, EyeOff, Plus, Trash2, GripVertical,
   ChevronUp, ChevronDown, ChevronLeft, Settings, Code, Star, MessageSquare,
   HelpCircle, Zap, Image, Type, Layout, Copy, CheckCircle,
-  AlertCircle, Loader2, Layers, Smartphone, Monitor, X,
+  AlertCircle, Loader2, Layers, Smartphone, Monitor, X, Sparkles,
   ChevronRight, Package, ShoppingCart, BarChart3, Box, Flame,
   Clock, Shield, Gift, FileText, Frown, Lightbulb, Link2,
-  Pin, Rocket, MousePointerClick, Upload
+  Pin, Rocket, MousePointerClick, Upload,
+  Megaphone, Timer, ArrowLeftRight, Play, ListOrdered, Table, Truck, MessageCircle,
 } from 'lucide-react';
 import { storeProductsApi, storeManageApi, storeDeliveryZonesApi } from '../services/storeApi.js';
 import { useStore } from '../contexts/StoreContext.jsx';
@@ -16,7 +17,14 @@ import defaultConfig from '../components/productSettings/defaultConfig.js';
 import { formatMoney } from '../utils/currency.js';
 import { buildMergedProductPageConfig, buildProductOnlyPageConfig } from '../utils/productPageConfig.js';
 import BuilderAIChatWidget from '../components/BuilderAIChatWidget.jsx';
-import StoreProductPagePremium from '../components/StoreProductPagePremium.jsx';
+import CustomCodeEditor from '../components/CustomCodeEditor.jsx';
+import { SECTION_TEMPLATES } from '../components/sectionTemplates.js';
+
+// Icônes monochromes des templates de sections prédéfinies
+const TEMPLATE_ICONS = {
+  Megaphone, Timer, ArrowLeftRight, Play, Shield, ListOrdered, Table,
+  Star, HelpCircle, Truck, MessageCircle, BarChart3, ImageIcon: Image,
+};
 
 // ─── Section metadata for the 20 productPageConfig sections ──────────────────
 const SECTION_META = {
@@ -30,15 +38,19 @@ const SECTION_META = {
   benefitsBullets:  { label: 'Bénéfices produit',         desc: 'Liste des bénéfices',                 icon: Zap,          color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
   conversionBlocks: { label: 'Blocs de réassurance',      desc: 'Blocs de réassurance',                icon: Shield,       color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
   offerBlock:       { label: 'Bloc garantie / offre',     desc: 'Garantie / offre spéciale',           icon: Gift,         color: 'bg-pink-100 text-pink-700 border-pink-200' },
-  description:      { label: 'Description produit',       desc: 'Description complète',                icon: FileText,     color: 'bg-gray-100 text-gray-700 border-gray-200' },
+  description:      { label: 'Description produit',       desc: 'Description complète',                icon: FileText,     color: 'bg-muted text-foreground border-border' },
   problemSection:   { label: 'Section Problème',          desc: 'Points de douleur client',            icon: Frown,        color: 'bg-rose-100 text-rose-700 border-rose-200' },
-  solutionSection:  { label: 'Section Solution',          desc: 'Solution persuasive',                 icon: Lightbulb,    color: 'bg-primary-100 text-primary-700 border-primary-200' },
+  solutionSection:  { label: 'Section Solution',          desc: 'Solution persuasive',                 icon: Lightbulb,    color: 'bg-primary-100 text-primary border-primary-200' },
   faq:              { label: 'Section FAQ',               desc: 'Questions fréquentes',                icon: HelpCircle,   color: 'bg-orange-100 text-orange-700 border-orange-200' },
   testimonials:     { label: 'Témoignages clients',       desc: 'Témoignages clients',                 icon: MessageSquare,color: 'bg-pink-100 text-pink-700 border-pink-200' },
   relatedProducts:  { label: 'Produits similaires',       desc: 'Produits similaires',                 icon: Link2,        color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  stickyOrderBar:   { label: 'Barre de commande fixe',    desc: 'Barre fixe Commander',                icon: Pin,          color: 'bg-gray-100 text-gray-700 border-gray-200' },
+  stickyOrderBar:   { label: 'Barre de commande fixe',    desc: 'Barre fixe Commander',                icon: Pin,          color: 'bg-muted text-foreground border-border' },
   upsell:           { label: 'Upsell',                    desc: 'Produit de valeur supérieure',        icon: Rocket,       color: 'bg-violet-100 text-violet-700 border-violet-200' },
   orderBump:        { label: 'Order Bump',                desc: 'Produit complémentaire',              icon: ShoppingCart, color: 'bg-teal-100 text-teal-700 border-teal-200' },
+  orderForm:        { label: 'Bouton / Formulaire',       desc: 'Bouton commander et formulaire',      icon: MousePointerClick, color: 'bg-muted text-foreground border-border' },
+  productGallery:   { label: 'Photos du produit',         desc: 'Galerie d\'images du produit',        icon: Image,        color: 'bg-muted text-foreground border-border' },
+  comparison:       { label: 'Tableau comparatif',        desc: 'Votre produit vs les autres',         icon: BarChart3,    color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  customCode:       { label: 'Code personnalisé',         desc: 'HTML, CSS et JS injectés dans la page', icon: Code,        color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
 };
 
 // ─── Merge helpers (same as ProductSettingsPage) ─────────────────────────────
@@ -95,11 +107,12 @@ const EDITABLE_SECTIONS = {
     { key: 'quickResult', label: 'Résultat rapide', placeholder: 'Ex: 7 jours', type: 'text' },
   ]},
   conversionBlocks: { fields: 'iconTextList', label: 'Blocs de réassurance', iconPlaceholder: '🚚', textPlaceholder: 'Livraison gratuite partout' },
-  description:     { fields: [{ key: 'text', label: 'Description', placeholder: 'Description détaillée du produit…', type: 'textarea' }] },
+  description:     { fields: [{ key: 'text', label: 'Description (texte ou code HTML)', placeholder: 'Description détaillée du produit… (HTML accepté : <p>, <img>, <iframe>…)', type: 'textarea' }] },
   stockCounter:    { fields: [{ key: 'text', label: 'Texte stock', placeholder: 'Ex: ⚡ Plus que 5 en stock !', type: 'text' }] },
+  customCode:      { fields: 'code' },
 };
 
-const inputCls = "w-full px-3 py-2 rounded-lg border border-gray-200 text-[13px] outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200 transition-all bg-white";
+const inputCls = "w-full px-3 py-2 rounded-lg border border-border text-[13px] outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-200 transition-all bg-card";
 
 const DEFAULT_TESTIMONIALS = [
   { name: 'Thierry M.', location: 'Douala', rating: 5, text: 'Produit vraiment excellent ! J\'ai vu des résultats en moins d\'une semaine. Je recommande à 100%.', verified: true, date: 'Il y a 3 jours' },
@@ -272,15 +285,30 @@ const getDefaultContent = (sectionId, product) => {
   }
 };
 
-const SectionContentEditor = ({ section, onChange, product }) => {
+const SectionContentEditor = ({ section, onChange, product, onRemoveSection }) => {
   const schema = EDITABLE_SECTIONS[section.id];
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [galleryUploadError, setGalleryUploadError] = useState('');
   const [aiImagePrompt, setAiImagePrompt] = useState('');
   const [aiImageGenerating, setAiImageGenerating] = useState(false);
   const [aiImageError, setAiImageError] = useState('');
+
+  // Sections personnalisées du thème classique (ccs_…) — éditeur code complet
+  if (String(section.id).startsWith('ccs_')) {
+    const content = section.content || {};
+    return (
+      <CustomCodeEditor
+        html={content.html || ''}
+        onChangeHtml={(value) => onChange({ ...section, content: { ...content, html: value } })}
+        style={content.style || {}}
+        onChangeStyle={(value) => onChange({ ...section, content: { ...content, style: value } })}
+        onRemove={onRemoveSection ? () => onRemoveSection(section.id) : undefined}
+      />
+    );
+  }
+
   if (!schema) return (
-    <div className="text-[11px] text-gray-400 italic py-2">Contenu généré automatiquement par l'IA ou géré via les paramètres de la boutique.</div>
+    <div className="text-[11px] text-muted-foreground italic py-2">Contenu généré automatiquement par l'IA ou géré via les paramètres de la boutique.</div>
   );
 
   // Merge: saved content takes priority, fallback to product data (AI defaults)
@@ -315,14 +343,14 @@ const SectionContentEditor = ({ section, onChange, product }) => {
     const updateStat = (i, key, val) => { const copy = [...stats]; copy[i] = { ...copy[i], [key]: val }; update('stats', copy); };
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">Statistiques (3 max)</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">Statistiques (3 max)</div>
         {stats.slice(0, 3).map((st, i) => (
           <div key={i} className="flex gap-2">
             <input className={inputCls + " w-20 shrink-0"} value={st.value} onChange={e => updateStat(i, 'value', e.target.value)} placeholder="1200+" />
             <input className={inputCls + " flex-1"} value={st.label} onChange={e => updateStat(i, 'label', e.target.value)} placeholder="Clients satisfaits" />
           </div>
         ))}
-        <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA</div>
+        <div className="text-[10px] text-muted-foreground">Laissez vide pour utiliser les données IA</div>
       </div>
     );
   }
@@ -334,14 +362,14 @@ const SectionContentEditor = ({ section, onChange, product }) => {
     const removeItem = (i) => update('items', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-1.5">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || 'Éléments'}</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">{schema.label || 'Éléments'}</div>
         {items.map((item, i) => (
           <div key={i} className="flex gap-1.5 items-center">
             <input className={inputCls + " flex-1"} value={item} onChange={e => updateItem(i, e.target.value)} placeholder={schema.placeholder} />
             {items.length > 1 && <button onClick={() => removeItem(i)} className="p-1 text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>}
           </div>
         ))}
-        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1">
+        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary mt-1">
           <Plus size={12} /> Ajouter
         </button>
       </div>
@@ -355,9 +383,9 @@ const SectionContentEditor = ({ section, onChange, product }) => {
     const removeFaq = (i) => update('faqItems', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">Questions fréquentes</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">Questions fréquentes</div>
         {items.map((item, i) => (
-          <div key={i} className="rounded-lg border border-gray-100 p-2 bg-gray-50/50 space-y-1.5">
+          <div key={i} className="rounded-lg border border-border p-2 bg-background/50 space-y-1.5">
             <div className="flex gap-1.5 items-center">
               <input className={inputCls + " flex-1"} value={item.question} onChange={e => updateFaq(i, 'question', e.target.value)} placeholder="Question…" />
               {items.length > 1 && <button onClick={() => removeFaq(i)} className="p-1 text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>}
@@ -365,7 +393,7 @@ const SectionContentEditor = ({ section, onChange, product }) => {
             <textarea className={inputCls + " resize-none"} rows={2} value={item.answer} onChange={e => updateFaq(i, 'answer', e.target.value)} placeholder="Réponse…" />
           </div>
         ))}
-        <button onClick={addFaq} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1">
+        <button onClick={addFaq} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary mt-1">
           <Plus size={12} /> Ajouter une question
         </button>
       </div>
@@ -380,9 +408,9 @@ const SectionContentEditor = ({ section, onChange, product }) => {
     const dupT = (i) => update('items', [...items.slice(0, i + 1), { ...items[i] }, ...items.slice(i + 1)]);
     return (
       <div className="space-y-2">
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 space-y-2">
-          <div className="text-[11px] font-semibold text-gray-700">Affichage section</div>
-          <label className="flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer">
+        <div className="rounded-xl border border-border bg-background p-3 space-y-2">
+          <div className="text-[11px] font-semibold text-foreground">Affichage section</div>
+          <label className="flex items-center gap-2 text-[12px] text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
               checked={content.showEyebrowLine !== false}
@@ -391,7 +419,7 @@ const SectionContentEditor = ({ section, onChange, product }) => {
             />
             Afficher la ligne avant "Avis clients"
           </label>
-          <label className="flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer">
+          <label className="flex items-center gap-2 text-[12px] text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
               checked={content.showSocialProofImage !== false}
@@ -401,7 +429,7 @@ const SectionContentEditor = ({ section, onChange, product }) => {
             Afficher l'image témoignages
           </label>
           <div>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">Image témoignages (URL)</div>
+            <div className="text-[11px] font-semibold text-muted-foreground mb-1">Image témoignages (URL)</div>
             <input
               className={inputCls}
               value={content.socialProofImageUrl || ''}
@@ -411,20 +439,20 @@ const SectionContentEditor = ({ section, onChange, product }) => {
           </div>
         </div>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] font-semibold text-gray-700">{items.length} avis client{items.length !== 1 ? 's' : ''}</span>
-          <button onClick={addT} className="flex items-center gap-1 text-[11px] text-primary-600 font-semibold hover:text-primary-700 bg-primary-50 px-2 py-1 rounded-lg">
+          <span className="text-[11px] font-semibold text-foreground">{items.length} avis client{items.length !== 1 ? 's' : ''}</span>
+          <button onClick={addT} className="flex items-center gap-1 text-[11px] text-primary font-semibold hover:text-primary bg-primary-50 px-2 py-1 rounded-lg">
             <Plus size={11} /> Ajouter
           </button>
         </div>
         {items.map((t, i) => (
-          <div key={i} className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div key={i} className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
             {/* Avis header */}
-            <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-100">
+            <div className="flex items-center justify-between px-3 py-2 bg-background border-b border-border">
               <div className="flex items-center gap-1.5">
-                <div className="w-5 h-5 rounded-full bg-primary-100 text-primary-700 text-[10px] font-bold flex items-center justify-center uppercase">
+                <div className="w-5 h-5 rounded-full bg-primary-100 text-primary text-[10px] font-bold flex items-center justify-center uppercase">
                   {(t.name || '?')[0]}
                 </div>
-                <span className="text-[11px] font-semibold text-gray-700">Avis #{i + 1}</span>
+                <span className="text-[11px] font-semibold text-foreground">Avis #{i + 1}</span>
               </div>
               <div className="flex gap-1">
                 <button onClick={() => dupT(i)} className="p-1 text-gray-300 hover:text-blue-400 transition" title="Dupliquer"><Copy size={11} /></button>
@@ -445,7 +473,7 @@ const SectionContentEditor = ({ section, onChange, product }) => {
                 <label className="flex items-center gap-1.5 cursor-pointer ml-auto">
                   <input type="checkbox" checked={!!t.verified} onChange={e => updateT(i, 'verified', e.target.checked)}
                     className="w-3.5 h-3.5 accent-primary-500" />
-                  <span className="text-[10px] text-gray-500">Achat vérifié ✓</span>
+                  <span className="text-[10px] text-muted-foreground">Achat vérifié ✓</span>
                 </label>
               </div>
               {/* Nom + Ville */}
@@ -461,11 +489,34 @@ const SectionContentEditor = ({ section, onChange, product }) => {
           </div>
         ))}
         {items.length === 0 && (
-          <button onClick={addT} className="w-full py-6 border-2 border-dashed border-gray-200 rounded-xl text-[12px] text-gray-400 hover:border-primary-300 hover:text-primary-600 transition">
+          <button onClick={addT} className="w-full py-6 border-2 border-dashed border-border rounded-xl text-[12px] text-muted-foreground hover:border-primary-300 hover:text-primary transition">
             + Ajouter un premier avis
           </button>
         )}
       </div>
+    );
+  }
+
+  // ── Code editor (customCode) — un seul champ (HTML + CSS + JS ensemble) ──
+  if (schema.fields === 'code') {
+    const legacyExtras = [
+      content.css?.trim() ? `<style>\n${content.css}\n</style>` : '',
+      content.js?.trim() ? `<script>\n${content.js}\n</script>` : '',
+    ].filter(Boolean).join('\n\n');
+    const displayValue = [content.html || '', legacyExtras].filter(Boolean).join('\n\n');
+    const handleCodeChange = (val) => {
+      const next = { ...content, html: val };
+      if (content.css) next.css = '';
+      if (content.js) next.js = '';
+      onChange({ ...section, content: next });
+    };
+    return (
+      <CustomCodeEditor
+        html={displayValue}
+        onChangeHtml={handleCodeChange}
+        style={content.style || {}}
+        onChangeStyle={(value) => update('style', value)}
+      />
     );
   }
 
@@ -477,7 +528,7 @@ const SectionContentEditor = ({ section, onChange, product }) => {
     const removeItem = (i) => update('items', items.filter((_, idx) => idx !== i));
     return (
       <div className="space-y-2">
-        <div className="text-[11px] font-semibold text-gray-500 mb-1">{schema.label || 'Éléments'}</div>
+        <div className="text-[11px] font-semibold text-muted-foreground mb-1">{schema.label || 'Éléments'}</div>
         {items.map((item, i) => (
           <div key={i} className="flex gap-1.5 items-center">
             <input className={inputCls + " w-12 text-center shrink-0"} value={item.icon || ''} onChange={e => updateItem(i, 'icon', e.target.value)} placeholder={schema.iconPlaceholder || '🚚'} />
@@ -485,8 +536,8 @@ const SectionContentEditor = ({ section, onChange, product }) => {
             {items.length > 1 && <button onClick={() => removeItem(i)} className="p-1 text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>}
           </div>
         ))}
-        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700 mt-1"><Plus size={12} /> Ajouter</button>
-        <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA</div>
+        <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary mt-1"><Plus size={12} /> Ajouter</button>
+        <div className="text-[10px] text-muted-foreground">Laissez vide pour utiliser les données IA</div>
       </div>
     );
   }
@@ -499,14 +550,14 @@ const SectionContentEditor = ({ section, onChange, product }) => {
           return (
             <label key={field.key} className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={!!content[field.key]} onChange={e => update(field.key, e.target.checked)} className="w-4 h-4 accent-primary-500" />
-              <span className="text-[12px] text-gray-600">{field.label}</span>
+              <span className="text-[12px] text-muted-foreground">{field.label}</span>
             </label>
           );
         }
         if (field.type === 'number') {
           return (
             <div key={field.key}>
-              <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+              <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
               <input type="number" min="0" className={inputCls + " w-28"} value={content[field.key] || ''} onChange={e => update(field.key, parseInt(e.target.value) || 0)} placeholder={field.placeholder} />
             </div>
           );
@@ -518,14 +569,14 @@ const SectionContentEditor = ({ section, onChange, product }) => {
           const removeItem = (i) => update(field.key, items.filter((_, idx) => idx !== i));
           return (
             <div key={field.key}>
-              <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+              <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
               {items.map((item, i) => (
                 <div key={i} className="flex gap-1.5 items-center mb-1">
                   <input className={inputCls + " flex-1"} value={item} onChange={e => updateItem(i, e.target.value)} placeholder={field.placeholder} />
                   {items.length > 1 && <button onClick={() => removeItem(i)} className="p-1 text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>}
                 </div>
               ))}
-              <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary-600 font-medium hover:text-primary-700">
+              <button onClick={addItem} className="flex items-center gap-1 text-[11px] text-primary font-medium hover:text-primary">
                 <Plus size={12} /> Ajouter
               </button>
             </div>
@@ -534,7 +585,7 @@ const SectionContentEditor = ({ section, onChange, product }) => {
         if (field.type === 'textarea') {
           return (
             <div key={field.key}>
-              <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+              <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
               <textarea className={inputCls + " resize-none"} rows={3} value={content[field.key] || ''}
                 onChange={e => update(field.key, e.target.value)} placeholder={field.placeholder} />
             </div>
@@ -542,13 +593,13 @@ const SectionContentEditor = ({ section, onChange, product }) => {
         }
         return (
           <div key={field.key}>
-            <div className="text-[11px] font-semibold text-gray-500 mb-1">{field.label}</div>
+            <div className="text-[11px] font-semibold text-muted-foreground mb-1">{field.label}</div>
             <input className={inputCls} value={content[field.key] || ''}
               onChange={e => update(field.key, e.target.value)} placeholder={field.placeholder} />
           </div>
         );
       })}
-      <div className="text-[10px] text-gray-400">Laissez vide pour utiliser les données IA</div>
+      <div className="text-[10px] text-muted-foreground">Laissez vide pour utiliser les données IA</div>
     </div>
   );
 };
@@ -583,7 +634,7 @@ const SECTION_TYPES = {
   description: {
     label: 'Description',
     icon: Type,
-    color: 'bg-gray-100 text-gray-700 border-gray-200',
+    color: 'bg-muted text-foreground border-border',
     defaultConfig: {
       title: 'À propos du produit',
       content: '',
@@ -748,39 +799,39 @@ const buildSection = (type) => ({
 const HeroEditor = ({ config, onChange }) => (
   <div className="space-y-3">
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Badge (optionnel)</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Badge (optionnel)</label>
       <input value={config.badge || ''} onChange={e => onChange({ ...config, badge: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" placeholder="⭐ Bestseller" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm" placeholder="⭐ Bestseller" />
     </div>
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Sous-titre</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Sous-titre</label>
       <input value={config.subtitle || ''} onChange={e => onChange({ ...config, subtitle: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" placeholder="Votre accroche principale" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm" placeholder="Votre accroche principale" />
     </div>
     <div className="grid grid-cols-2 gap-3">
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Couleur fond</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-1">Couleur fond</label>
         <div className="flex gap-2">
           <input type="color" value={config.bgColor || '#ffffff'} onChange={e => onChange({ ...config, bgColor: e.target.value })}
-            className="w-10 h-9 border border-gray-200 rounded-lg cursor-pointer" />
+            className="w-10 h-9 border border-border rounded-lg cursor-pointer" />
           <input value={config.bgColor || '#ffffff'} onChange={e => onChange({ ...config, bgColor: e.target.value })}
-            className="flex-1 border border-gray-200 rounded-lg px-2 py-2 text-xs font-mono" />
+            className="flex-1 border border-border rounded-lg px-2 py-2 text-xs font-mono" />
         </div>
       </div>
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Couleur CTA</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-1">Couleur CTA</label>
         <div className="flex gap-2">
           <input type="color" value={config.ctaColor || '#0F6B4F'} onChange={e => onChange({ ...config, ctaColor: e.target.value })}
-            className="w-10 h-9 border border-gray-200 rounded-lg cursor-pointer" />
+            className="w-10 h-9 border border-border rounded-lg cursor-pointer" />
           <input value={config.ctaColor || '#0F6B4F'} onChange={e => onChange({ ...config, ctaColor: e.target.value })}
-            className="flex-1 border border-gray-200 rounded-lg px-2 py-2 text-xs font-mono" />
+            className="flex-1 border border-border rounded-lg px-2 py-2 text-xs font-mono" />
         </div>
       </div>
     </div>
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Texte bouton CTA</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Texte bouton CTA</label>
       <input value={config.ctaText || 'Commander maintenant'} onChange={e => onChange({ ...config, ctaText: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
     </div>
     <div className="flex items-center gap-4">
       <label className="flex items-center gap-2 text-sm cursor-pointer">
@@ -807,14 +858,14 @@ const BenefitsEditor = ({ config, onChange }) => {
   return (
     <div className="space-y-3">
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Titre de section</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-1">Titre de section</label>
         <input value={config.title || ''} onChange={e => onChange({ ...config, title: e.target.value })}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+          className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
       </div>
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Disposition</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-1">Disposition</label>
         <select value={config.layout || 'list'} onChange={e => onChange({ ...config, layout: e.target.value })}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+          className="w-full border border-border rounded-lg px-3 py-2 text-sm">
           <option value="list">Liste</option>
           <option value="grid">Grille 2 colonnes</option>
           <option value="icons">Icônes centrées</option>
@@ -822,21 +873,21 @@ const BenefitsEditor = ({ config, onChange }) => {
       </div>
       <div className="space-y-2">
         {(config.items || []).map((item, idx) => (
-          <div key={idx} className="flex gap-2 items-start bg-gray-50 p-2 rounded-lg">
+          <div key={idx} className="flex gap-2 items-start bg-background p-2 rounded-lg">
             <input value={item.icon || ''} onChange={e => updateItem(idx, 'icon', e.target.value)}
-              className="w-12 border border-gray-200 rounded-lg px-2 py-1.5 text-sm text-center" placeholder="✓" />
+              className="w-12 border border-border rounded-lg px-2 py-1.5 text-sm text-center" placeholder="✓" />
             <div className="flex-1 space-y-1">
               <input value={item.text || ''} onChange={e => updateItem(idx, 'text', e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm" placeholder="Titre du bénéfice" />
+                className="w-full border border-border rounded-lg px-2 py-1.5 text-sm" placeholder="Titre du bénéfice" />
               <input value={item.description || ''} onChange={e => updateItem(idx, 'description', e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-500" placeholder="Description (optionnel)" />
+                className="w-full border border-border rounded-lg px-2 py-1.5 text-xs text-muted-foreground" placeholder="Description (optionnel)" />
             </div>
             <button onClick={() => removeItem(idx)} className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg">
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
         ))}
-        <button onClick={addItem} className="w-full flex items-center justify-center gap-1 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-green-400 hover:text-green-600 transition">
+        <button onClick={addItem} className="w-full flex items-center justify-center gap-1 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-muted-foreground hover:border-green-400 hover:text-green-600 transition">
           <Plus className="w-4 h-4" /> Ajouter un bénéfice
         </button>
       </div>
@@ -872,9 +923,9 @@ const TestimonialsEditor = ({ config, onChange }) => {
   return (
     <div className="space-y-3">
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Titre de section</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-1">Titre de section</label>
         <input value={config.title || ''} onChange={e => onChange({ ...config, title: e.target.value })}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+          className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
       </div>
       <div className="flex items-center gap-4">
         <label className="flex items-center gap-2 text-sm cursor-pointer">
@@ -888,35 +939,35 @@ const TestimonialsEditor = ({ config, onChange }) => {
       </div>
       <div className="space-y-3">
         {(config.items || []).map((item, idx) => (
-          <div key={idx} className="bg-gray-50 p-3 rounded-lg space-y-2">
+          <div key={idx} className="bg-background p-3 rounded-lg space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold text-gray-600">Avis #{idx + 1}</span>
+              <span className="text-xs font-semibold text-muted-foreground">Avis #{idx + 1}</span>
               <button onClick={() => removeItem(idx)} className="p-1 text-red-400 hover:bg-red-50 rounded">
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <input value={item.name || ''} onChange={e => updateItem(idx, 'name', e.target.value)}
-                className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm" placeholder="Nom" />
+                className="border border-border rounded-lg px-2 py-1.5 text-sm" placeholder="Nom" />
               <input value={item.location || ''} onChange={e => updateItem(idx, 'location', e.target.value)}
-                className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm" placeholder="Ville" />
+                className="border border-border rounded-lg px-2 py-1.5 text-sm" placeholder="Ville" />
             </div>
             {/* Avatar upload */}
             <div className="flex items-center gap-2">
               {item.image ? (
                 <div className="relative group">
-                  <img src={item.image} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" />
+                  <img src={item.image} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-border" />
                   <button onClick={() => updateItem(idx, 'image', '')}
                     className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition">
                     <X className="w-3 h-3" />
                   </button>
                 </div>
               ) : (
-                <div className="w-10 h-10 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
-                  <Image className="w-4 h-4 text-gray-400" />
+                <div className="w-10 h-10 rounded-full bg-muted border-2 border-dashed border-gray-300 flex items-center justify-center">
+                  <Image className="w-4 h-4 text-muted-foreground" />
                 </div>
               )}
-              <label className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition">
+              <label className="flex items-center gap-1 px-2 py-1 text-xs bg-muted hover:bg-gray-200 rounded-lg cursor-pointer transition">
                 {uploadingIdx === idx ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
                 <span>{item.image ? 'Changer' : 'Photo'}</span>
                 <input type="file" accept="image/*,image/gif,video/mp4,video/webm,video/quicktime" className="hidden"
@@ -925,21 +976,21 @@ const TestimonialsEditor = ({ config, onChange }) => {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <select value={item.rating || 5} onChange={e => updateItem(idx, 'rating', Number(e.target.value))}
-                className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm">
+                className="border border-border rounded-lg px-2 py-1.5 text-sm">
                 {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} étoiles</option>)}
               </select>
               <input value={item.date || ''} onChange={e => updateItem(idx, 'date', e.target.value)}
-                className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm" placeholder="Il y a 3 jours" />
+                className="border border-border rounded-lg px-2 py-1.5 text-sm" placeholder="Il y a 3 jours" />
             </div>
             <textarea value={item.text || ''} onChange={e => updateItem(idx, 'text', e.target.value)}
-              rows={2} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm resize-none" placeholder="Texte de l'avis..." />
+              rows={2} className="w-full border border-border rounded-lg px-2 py-1.5 text-sm resize-none" placeholder="Texte de l'avis..." />
             <label className="flex items-center gap-2 text-sm cursor-pointer">
               <input type="checkbox" checked={!!item.verified} onChange={e => updateItem(idx, 'verified', e.target.checked)} className="rounded" />
               Achat vérifié
             </label>
           </div>
         ))}
-        <button onClick={addItem} className="w-full flex items-center justify-center gap-1 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-pink-400 hover:text-pink-600 transition">
+        <button onClick={addItem} className="w-full flex items-center justify-center gap-1 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-muted-foreground hover:border-pink-400 hover:text-pink-600 transition">
           <Plus className="w-4 h-4" /> Ajouter un avis
         </button>
       </div>
@@ -959,26 +1010,26 @@ const FaqEditor = ({ config, onChange }) => {
   return (
     <div className="space-y-3">
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Titre de section</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-1">Titre de section</label>
         <input value={config.title || ''} onChange={e => onChange({ ...config, title: e.target.value })}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+          className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
       </div>
       <div className="space-y-2">
         {(config.items || []).map((item, idx) => (
-          <div key={idx} className="bg-gray-50 p-3 rounded-lg space-y-2">
+          <div key={idx} className="bg-background p-3 rounded-lg space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold text-gray-600">Q&A #{idx + 1}</span>
+              <span className="text-xs font-semibold text-muted-foreground">Q&A #{idx + 1}</span>
               <button onClick={() => removeItem(idx)} className="p-1 text-red-400 hover:bg-red-50 rounded">
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
             <input value={item.question || ''} onChange={e => updateItem(idx, 'question', e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm" placeholder="Question..." />
+              className="w-full border border-border rounded-lg px-2 py-1.5 text-sm" placeholder="Question..." />
             <textarea value={item.answer || ''} onChange={e => updateItem(idx, 'answer', e.target.value)}
-              rows={2} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm resize-none" placeholder="Réponse..." />
+              rows={2} className="w-full border border-border rounded-lg px-2 py-1.5 text-sm resize-none" placeholder="Réponse..." />
           </div>
         ))}
-        <button onClick={addItem} className="w-full flex items-center justify-center gap-1 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-orange-400 hover:text-orange-600 transition">
+        <button onClick={addItem} className="w-full flex items-center justify-center gap-1 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-muted-foreground hover:border-orange-400 hover:text-orange-600 transition">
           <Plus className="w-4 h-4" /> Ajouter une question
         </button>
       </div>
@@ -988,12 +1039,12 @@ const FaqEditor = ({ config, onChange }) => {
 
 const ColorPicker = ({ label, value, fallback, onChange }) => (
   <div>
-    <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+    <label className="block text-xs font-medium text-muted-foreground mb-1">{label}</label>
     <div className="flex gap-2">
       <input type="color" value={value || fallback} onChange={e => onChange(e.target.value)}
-        className="w-10 h-9 border border-gray-200 rounded-lg cursor-pointer" />
+        className="w-10 h-9 border border-border rounded-lg cursor-pointer" />
       <input value={value || fallback} onChange={e => onChange(e.target.value)}
-        className="flex-1 border border-gray-200 rounded-lg px-2 py-2 text-xs font-mono" />
+        className="flex-1 border border-border rounded-lg px-2 py-2 text-xs font-mono" />
     </div>
   </div>
 );
@@ -1001,31 +1052,31 @@ const ColorPicker = ({ label, value, fallback, onChange }) => (
 const CtaEditor = ({ config, onChange }) => (
   <div className="space-y-3">
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Titre principal</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Titre principal</label>
       <input value={config.title || ''} onChange={e => onChange({ ...config, title: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
     </div>
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Sous-titre</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Sous-titre</label>
       <input value={config.subtitle || ''} onChange={e => onChange({ ...config, subtitle: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
     </div>
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Texte du bouton</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Texte du bouton</label>
       <input value={config.buttonText || ''} onChange={e => onChange({ ...config, buttonText: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
     </div>
     <ColorPicker label="Couleur du bouton" value={config.buttonColor} fallback="#0F6B4F"
       onChange={v => onChange({ ...config, buttonColor: v })} />
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Texte d'urgence (optionnel)</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Texte d'urgence (optionnel)</label>
       <input value={config.urgencyText || ''} onChange={e => onChange({ ...config, urgencyText: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" placeholder="🔥 Offre limitée - Stock épuisé rapidement" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm" placeholder="🔥 Offre limitée - Stock épuisé rapidement" />
     </div>
 
     {/* Countdown */}
-    <div className="border border-gray-200 rounded-xl p-3 space-y-3">
-      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 cursor-pointer">
+    <div className="border border-border rounded-xl p-3 space-y-3">
+      <label className="flex items-center gap-2 text-sm font-semibold text-foreground cursor-pointer">
         <input type="checkbox" checked={!!config.showCountdown} onChange={e => onChange({ ...config, showCountdown: e.target.checked })} className="rounded" />
         Compte à rebours
       </label>
@@ -1033,7 +1084,7 @@ const CtaEditor = ({ config, onChange }) => (
         <>
           {/* Style selector */}
           <div>
-            <label className="block text-[10px] font-medium text-gray-500 mb-1.5">Style d'affichage</label>
+            <label className="block text-[10px] font-medium text-muted-foreground mb-1.5">Style d'affichage</label>
             <div className="grid grid-cols-2 gap-2">
               {[
                 { value: 'bar', label: 'Barre', preview: (bg, color) => (
@@ -1064,9 +1115,9 @@ const CtaEditor = ({ config, onChange }) => (
                 const active = (config.countdownStyle || 'bar') === value;
                 return (
                   <button key={value} onClick={() => onChange({ ...config, countdownStyle: value })}
-                    className={`rounded-xl border-2 p-2 transition text-left ${active ? 'border-[#0F6B4F]' : 'border-gray-200 hover:border-gray-300'}`}>
+                    className={`rounded-xl border-2 p-2 transition text-left ${active ? 'border-[#0F6B4F]' : 'border-border hover:border-gray-300'}`}>
                     <div className="mb-1.5">{preview(bg, color)}</div>
-                    <div className={`text-[10px] font-bold text-center ${active ? 'text-[#0F6B4F]' : 'text-gray-400'}`}>{label}</div>
+                    <div className={`text-[10px] font-bold text-center ${active ? 'text-[#0F6B4F]' : 'text-muted-foreground'}`}>{label}</div>
                   </button>
                 );
               })}
@@ -1082,10 +1133,10 @@ const CtaEditor = ({ config, onChange }) => (
               { label: 'Sec', key: 'countdownSeconds', max: 59, def: 0 },
             ].map(({ label, key, max, def }) => (
               <div key={key}>
-                <label className="block text-[10px] font-medium text-gray-500 mb-1">{label}</label>
+                <label className="block text-[10px] font-medium text-muted-foreground mb-1">{label}</label>
                 <input type="number" min="0" max={max} value={config[key] ?? def}
                   onChange={e => onChange({ ...config, [key]: Number(e.target.value) })}
-                  className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm text-center font-mono" />
+                  className="w-full border border-border rounded-lg px-2 py-1.5 text-sm text-center font-mono" />
               </div>
             ))}
           </div>
@@ -1110,15 +1161,15 @@ const DescriptionEditor = ({ config, onChange }) => (
     </div>
     {config.showTitle !== false && (
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Titre</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-1">Titre</label>
         <input value={config.title || ''} onChange={e => onChange({ ...config, title: e.target.value })}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+          className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
       </div>
     )}
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Contenu (HTML supporté)</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Contenu (HTML supporté)</label>
       <textarea value={config.content || ''} onChange={e => onChange({ ...config, content: e.target.value })}
-        rows={6} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono resize-y" placeholder="<p>Votre description...</p>" />
+        rows={6} className="w-full border border-border rounded-lg px-3 py-2 text-sm font-mono resize-y" placeholder="<p>Votre description...</p>" />
     </div>
   </div>
 );
@@ -1127,27 +1178,27 @@ const CustomEditor = ({ config, onChange }) => {
   const [tab, setTab] = useState('html');
   return (
     <div className="space-y-3">
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex gap-1 bg-muted p-1 rounded-lg">
         {['html', 'css', 'js'].map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`flex-1 py-1.5 rounded-md text-xs font-bold uppercase transition ${tab === t ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`flex-1 py-1.5 rounded-md text-xs font-bold uppercase transition ${tab === t ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
             {t}
           </button>
         ))}
       </div>
       {tab === 'html' && (
         <textarea value={config.html || ''} onChange={e => onChange({ ...config, html: e.target.value })}
-          rows={10} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-green-400" placeholder="<div>Votre HTML...</div>" />
+          rows={10} className="w-full border border-border rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-green-400" placeholder="<div>Votre HTML...</div>" />
       )}
       {tab === 'css' && (
         <textarea value={config.css || ''} onChange={e => onChange({ ...config, css: e.target.value })}
-          rows={10} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-blue-400" placeholder="/* Votre CSS... */" />
+          rows={10} className="w-full border border-border rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-blue-400" placeholder="/* Votre CSS... */" />
       )}
       {tab === 'js' && (
         <textarea value={config.js || ''} onChange={e => onChange({ ...config, js: e.target.value })}
-          rows={10} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-yellow-400" placeholder="// Votre JavaScript..." />
+          rows={10} className="w-full border border-border rounded-lg px-3 py-2 text-xs font-mono resize-y bg-gray-900 text-yellow-400" placeholder="// Votre JavaScript..." />
       )}
-      <p className="text-xs text-gray-400">Le code sera injecté directement dans la page produit publique.</p>
+      <p className="text-xs text-muted-foreground">Le code sera injecté directement dans la page produit publique.</p>
     </div>
   );
 };
@@ -1155,15 +1206,15 @@ const CustomEditor = ({ config, onChange }) => {
 const GalleryEditor = ({ config, onChange }) => (
   <div className="space-y-3">
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">Disposition</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">Disposition</label>
       <select value={config.layout || 'carousel'} onChange={e => onChange({ ...config, layout: e.target.value })}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm">
         <option value="carousel">Carrousel</option>
         <option value="grid">Grille</option>
         <option value="masonry">Masonry</option>
       </select>
     </div>
-    <p className="text-xs text-gray-400 bg-gray-50 p-2 rounded-lg">Les images du produit seront utilisées automatiquement. Modifiez-les dans l'éditeur principal du produit.</p>
+    <p className="text-xs text-muted-foreground bg-background p-2 rounded-lg">Les images du produit seront utilisées automatiquement. Modifiez-les dans l'éditeur principal du produit.</p>
   </div>
 );
 
@@ -1200,7 +1251,7 @@ const GalleryPreview = ({ config, product }) => {
     <div className="px-6 py-6">
       <div className={`gap-2 ${config.layout === 'grid' ? 'grid grid-cols-2' : 'flex overflow-x-auto'}`}>
         {imgs.slice(0, 4).map((img, i) => (
-          <div key={i} className="aspect-square bg-gray-100 rounded-xl overflow-hidden flex-shrink-0" style={{ minWidth: config.layout !== 'grid' ? '160px' : undefined }}>
+          <div key={i} className="aspect-square bg-muted rounded-xl overflow-hidden flex-shrink-0" style={{ minWidth: config.layout !== 'grid' ? '160px' : undefined }}>
             {img.url ? <img src={img.url} alt={img.alt} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><Image className="w-8 h-8" /></div>}
           </div>
         ))}
@@ -1211,21 +1262,21 @@ const GalleryPreview = ({ config, product }) => {
 
 const DescriptionPreview = ({ config }) => (
   <div className="px-6 py-6">
-    {config.showTitle !== false && config.title && <h2 className="text-lg font-bold text-gray-900 mb-3">{config.title}</h2>}
-    {config.content ? <div className="text-sm text-gray-600 leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={safeHtml(config.content)} /> : <p className="text-sm text-gray-400 italic">Contenu vide</p>}
+    {config.showTitle !== false && config.title && <h2 className="text-lg font-bold text-foreground mb-3">{config.title}</h2>}
+    {config.content ? <div className="text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={safeHtml(config.content)} /> : <p className="text-sm text-muted-foreground italic">Contenu vide</p>}
   </div>
 );
 
 const BenefitsPreview = ({ config }) => (
   <div className="px-6 py-6">
-    {config.title && <h2 className="text-lg font-bold text-gray-900 mb-4">{config.title}</h2>}
+    {config.title && <h2 className="text-lg font-bold text-foreground mb-4">{config.title}</h2>}
     <div className={config.layout === 'grid' ? 'grid grid-cols-2 gap-3' : 'space-y-3'}>
       {(config.items || []).map((item, i) => (
         <div key={i} className={`flex gap-3 ${config.layout === 'icons' ? 'flex-col items-center text-center' : 'items-start'}`}>
           <span className="text-xl flex-shrink-0">{item.icon || '✓'}</span>
           <div>
-            <p className="text-sm font-semibold text-gray-900">{item.text}</p>
-            {item.description && <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>}
+            <p className="text-sm font-semibold text-foreground">{item.text}</p>
+            {item.description && <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>}
           </div>
         </div>
       ))}
@@ -1235,17 +1286,17 @@ const BenefitsPreview = ({ config }) => (
 
 const TestimonialsPreview = ({ config }) => (
   <div className="px-6 py-6">
-    {config.title && <h2 className="text-lg font-bold text-gray-900 mb-4">{config.title}</h2>}
+    {config.title && <h2 className="text-lg font-bold text-foreground mb-4">{config.title}</h2>}
     <div className="space-y-3">
       {(config.items || []).map((item, i) => (
-        <div key={i} className="bg-gray-50 rounded-xl p-4">
+        <div key={i} className="bg-background rounded-xl p-4">
           {config.showRating !== false && <div className="text-yellow-400 text-sm mb-1">{'★'.repeat(item.rating || 5)}{'☆'.repeat(5 - (item.rating || 5))}</div>}
-          <p className="text-sm text-gray-700 mb-2 italic">"{item.text}"</p>
+          <p className="text-sm text-foreground mb-2 italic">"{item.text}"</p>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">{(item.name || '?')[0]}</div>
+            <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-muted-foreground">{(item.name || '?')[0]}</div>
             <div>
-              <p className="text-xs font-semibold text-gray-900">{item.name}{config.showVerified !== false && item.verified && <span className="text-primary-500 ml-1">✓</span>}</p>
-              {item.location && <p className="text-[10px] text-gray-400">{item.location}{item.date ? ` · ${item.date}` : ''}</p>}
+              <p className="text-xs font-semibold text-foreground">{item.name}{config.showVerified !== false && item.verified && <span className="text-primary-500 ml-1">✓</span>}</p>
+              {item.location && <p className="text-[10px] text-muted-foreground">{item.location}{item.date ? ` · ${item.date}` : ''}</p>}
             </div>
           </div>
         </div>
@@ -1258,15 +1309,15 @@ const FaqPreview = ({ config }) => {
   const [open, setOpen] = React.useState(null);
   return (
     <div className="px-6 py-6">
-      {config.title && <h2 className="text-lg font-bold text-gray-900 mb-4">{config.title}</h2>}
+      {config.title && <h2 className="text-lg font-bold text-foreground mb-4">{config.title}</h2>}
       <div className="space-y-2">
         {(config.items || []).map((item, i) => (
-          <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
-            <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50">
+          <div key={i} className="border border-border rounded-xl overflow-hidden">
+            <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between px-4 py-3 text-left text-sm font-medium text-foreground hover:bg-background">
               {item.question}
-              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${open === i ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open === i ? 'rotate-180' : ''}`} />
             </button>
-            {open === i && <div className="px-4 pb-3 text-sm text-gray-600">{item.answer}</div>}
+            {open === i && <div className="px-4 pb-3 text-sm text-muted-foreground">{item.answer}</div>}
           </div>
         ))}
       </div>
@@ -1339,9 +1390,9 @@ const CtaPreview = ({ config, design = {}, button = {} }) => {
   const btnRadius = design.borderRadius || '12px';
   const btnText = config.buttonText || button.text;
   return (
-    <div className="px-6 py-8 text-center bg-gray-50">
-      {config.title && <h2 className="text-xl font-extrabold text-gray-900 mb-2">{config.title}</h2>}
-      {config.subtitle && <p className="text-sm text-gray-500 mb-4">{config.subtitle}</p>}
+    <div className="px-6 py-8 text-center bg-background">
+      {config.title && <h2 className="text-xl font-extrabold text-foreground mb-2">{config.title}</h2>}
+      {config.subtitle && <p className="text-sm text-muted-foreground mb-4">{config.subtitle}</p>}
       {config.urgencyText && <p className="text-sm font-semibold text-red-600 mb-3">{config.urgencyText}</p>}
       {config.showCountdown && <CountdownPreview config={config} />}
       {btnText && (
@@ -1375,7 +1426,7 @@ const SectionPreview = ({ section, product, storeConfig }) => {
     case 'faq': return <FaqPreview config={cfg} />;
     case 'cta': return <CtaPreview config={cfg} design={design} button={button} />;
     case 'custom': return <CustomPreview config={cfg} />;
-    default: return <div className="px-6 py-4 text-sm text-gray-400">Section inconnue</div>;
+    default: return <div className="px-6 py-4 text-sm text-muted-foreground">Section inconnue</div>;
   }
 };
 
@@ -1393,19 +1444,19 @@ const SectionConfigEditor = ({ section, onChange }) => {
     case 'faq': return <FaqEditor config={cfg} onChange={update} />;
     case 'cta': return <CtaEditor config={cfg} onChange={update} />;
     case 'custom': return <CustomEditor config={cfg} onChange={update} />;
-    default: return <p className="text-sm text-gray-400">Aucun éditeur disponible</p>;
+    default: return <p className="text-sm text-muted-foreground">Aucun éditeur disponible</p>;
   }
 };
 
 // ─── Section card (list item) ────────────────────────────────────────────────
 const ConfigSectionCard = ({ section, index, total, onMove, onToggle, isActive, onClick }) => {
-  const meta = SECTION_META[section.id] || { label: section.label, desc: '', icon: Layers, color: 'bg-gray-100 text-gray-700 border-gray-200' };
+  const meta = SECTION_META[section.id] || { label: section.label, desc: '', icon: Layers, color: 'bg-muted text-foreground border-border' };
   const Icon = meta.icon;
 
   return (
     <div
-      className={`group bg-white rounded-xl border-2 transition-all cursor-pointer ${
-        isActive ? 'border-[#0F6B4F] shadow-md' : section.enabled !== false ? 'border-gray-200 hover:border-[#4D9F82]' : 'border-gray-100 opacity-60'
+      className={`group bg-card rounded-xl border-2 transition-all cursor-pointer ${
+        isActive ? 'border-[#0F6B4F] shadow-md' : section.enabled !== false ? 'border-border hover:border-[#4D9F82]' : 'border-border opacity-60'
       }`}
       onClick={onClick}
     >
@@ -1415,21 +1466,21 @@ const ConfigSectionCard = ({ section, index, total, onMove, onToggle, isActive, 
           <Icon className="w-3.5 h-3.5" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 truncate">{meta.label}</p>
-          <p className="text-[11px] text-gray-400 truncate">{meta.desc}</p>
+          <p className="text-sm font-semibold text-foreground truncate">{meta.label}</p>
+          <p className="text-[11px] text-muted-foreground truncate">{meta.desc}</p>
         </div>
         <div className="flex items-center gap-1">
           <button onClick={e => { e.stopPropagation(); onMove(index, -1); }} disabled={index === 0}
-            className="p-1 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition" title="Monter">
-            <ChevronUp className="w-3.5 h-3.5 text-gray-500" />
+            className="p-1 rounded-lg hover:bg-muted disabled:opacity-30 transition" title="Monter">
+            <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
           <button onClick={e => { e.stopPropagation(); onMove(index, 1); }} disabled={index === total - 1}
-            className="p-1 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition" title="Descendre">
-            <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+            className="p-1 rounded-lg hover:bg-muted disabled:opacity-30 transition" title="Descendre">
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
           <button onClick={e => { e.stopPropagation(); onToggle(section.id); }}
-            className="p-1 rounded-lg hover:bg-gray-100 transition" title={section.enabled !== false ? 'Masquer' : 'Afficher'}>
-            {section.enabled !== false ? <Eye className="w-3.5 h-3.5 text-gray-500" /> : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
+            className="p-1 rounded-lg hover:bg-muted transition" title={section.enabled !== false ? 'Masquer' : 'Afficher'}>
+            {section.enabled !== false ? <Eye className="w-3.5 h-3.5 text-muted-foreground" /> : <EyeOff className="w-3.5 h-3.5 text-muted-foreground" />}
           </button>
         </div>
       </div>
@@ -1477,6 +1528,9 @@ const ProductPageBuilder = () => {
   })();
 
   const subdomain = activeStore?.subdomain || activeStore?.storeSettings?.subdomain || '';
+  // Aperçu iframe de la vraie page publique — rechargé à chaque sauvegarde (iframeKey)
+  const [iframeKey, setIframeKey] = useState(0);
+  const previewUrl = subdomain && product ? `/store/${subdomain}/product/${product.slug || id}` : null;
 
   // Load product + store config
   useEffect(() => {
@@ -1566,6 +1620,7 @@ const ProductPageBuilder = () => {
         await storeProductsApi.updateProduct(id, { productPageConfig: updatedProductConfig });
         setProduct((prev) => prev ? { ...prev, productPageConfig: updatedProductConfig } : prev);
         setSaveStatus('saved');
+        setIframeKey(k => k + 1);
         setTimeout(() => setSaveStatus(null), 2000);
       } catch {
         setSaveStatus('error');
@@ -1609,6 +1664,31 @@ const ProductPageBuilder = () => {
       autoSaveConfig(next);
       return next;
     });
+  }, [autoSaveConfig]);
+
+  // Suppression d'une section personnalisée (ccs_…)
+  const handleConfigRemoveSection = useCallback((sectionId) => {
+    if (!window.confirm('Supprimer cette section ? Son contenu sera perdu.')) return;
+    setConfigSections(prev => {
+      const next = prev.filter(s => s.id !== sectionId);
+      autoSaveConfig(next);
+      return next;
+    });
+    setActiveConfigSection(null);
+  }, [autoSaveConfig]);
+
+  // Ajout d'une section personnalisée (vierge ou template) au thème classique
+  const [showAddSection, setShowAddSection] = useState(false);
+  const handleAddCustomSection = useCallback((tpl) => {
+    const id = `ccs_${Date.now()}`;
+    setConfigSections(prev => {
+      const entry = { id, label: tpl?.label || 'Nouvelle section', enabled: true, content: { html: tpl?.html || '' } };
+      const next = tpl?.placement === 'top' ? [entry, ...prev] : [...prev, entry];
+      autoSaveConfig(next);
+      return next;
+    });
+    setShowAddSection(false);
+    setActiveConfigSection(id);
   }, [autoSaveConfig]);
 
   const handleDeliveryChange = useCallback((field, value) => {
@@ -1739,6 +1819,7 @@ const ProductPageBuilder = () => {
       productConfigRef.current = updatedProductConfig;
       setProduct((prev) => prev ? { ...prev, productPageConfig: updatedProductConfig } : prev);
       setSaveStatus('saved');
+      setIframeKey(k => k + 1);
       setTimeout(() => setSaveStatus(null), 3000);
     } catch {
       setSaveStatus('error');
@@ -1760,56 +1841,56 @@ const ProductPageBuilder = () => {
       <div className="p-6 text-center">
         <AlertCircle className="w-10 h-10 text-red-400 mx-auto mb-3" />
         <p className="text-red-600">{error}</p>
-        <button onClick={() => navigate(`${basePath}/products`)} className="mt-4 px-4 py-2 bg-gray-100 rounded-lg text-sm">Retour</button>
+        <button onClick={() => navigate(`${basePath}/products`)} className="mt-4 px-4 py-2 bg-muted rounded-lg text-sm">Retour</button>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full min-h-screen bg-gray-50">
+    <div className="flex flex-col h-full min-h-screen bg-background">
       {/* ─── Top bar ─────────────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
+      <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
         <button onClick={() => navigate(`${basePath}/products/${id}/edit`)}
-          className="p-2 rounded-lg hover:bg-gray-100 transition text-gray-600">
+          className="p-2 rounded-lg hover:bg-muted transition text-muted-foreground">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-[#0F6B4F]" />
-            <span className="text-sm font-bold text-gray-900 truncate">Page Builder</span>
-            {product?.name && <span className="text-xs text-gray-400 truncate hidden sm:block">· {product.name}</span>}
+            <span className="text-sm font-bold text-foreground truncate">Page Builder</span>
+            {product?.name && <span className="text-xs text-muted-foreground truncate hidden sm:block">· {product.name}</span>}
           </div>
         </div>
 
         {/* Builder toggle */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 hidden sm:block">Builder actif</span>
+          <span className="text-xs text-muted-foreground hidden sm:block">Builder actif</span>
           <button onClick={() => handleToggleBuilder(!builderEnabled)}
             className={`relative w-10 h-5 rounded-full transition-colors ${builderEnabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}>
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${builderEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-card rounded-full shadow transition-transform ${builderEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
           </button>
         </div>
 
         {/* Templates */}
         <button onClick={() => setShowTemplates(!showTemplates)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-background transition">
           <Copy className="w-4 h-4" />
           <span className="hidden sm:block">Templates</span>
         </button>
 
         {/* Preview device toggle */}
-        <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+        <div className="flex items-center bg-muted rounded-lg p-0.5">
           <button onClick={() => setPreviewDevice('desktop')}
-            className={`p-1.5 rounded-md transition ${previewDevice === 'desktop' ? 'bg-white shadow text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>
+            className={`p-1.5 rounded-md transition ${previewDevice === 'desktop' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-muted-foreground'}`}>
             <Monitor className="w-4 h-4" />
           </button>
           <button onClick={() => setPreviewDevice('tablet')}
-            className={`p-1.5 rounded-md transition ${previewDevice === 'tablet' ? 'bg-white shadow text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`p-1.5 rounded-md transition ${previewDevice === 'tablet' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-muted-foreground'}`}
             title="Tablette">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" /><line x1="12" y1="18" x2="12" y2="18" /></svg>
           </button>
           <button onClick={() => setPreviewDevice('mobile')}
-            className={`p-1.5 rounded-md transition ${previewDevice === 'mobile' ? 'bg-white shadow text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>
+            className={`p-1.5 rounded-md transition ${previewDevice === 'mobile' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-muted-foreground'}`}>
             <Smartphone className="w-4 h-4" />
           </button>
         </div>
@@ -1827,14 +1908,14 @@ const ProductPageBuilder = () => {
       {/* ─── Templates overlay ───────────────────────────────────────────── */}
       {showTemplates && (
         <div className="fixed inset-0 bg-black/50 z-30 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg">
+            <div className="flex items-center justify-between p-5 border-b border-border">
               <div>
-                <h3 className="font-bold text-gray-900">Templates de page produit</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Prêts en 30 secondes, personnalisables à 100%</p>
+                <h3 className="font-bold text-foreground">Templates de page produit</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Prêts en 30 secondes, personnalisables à 100%</p>
               </div>
-              <button onClick={() => setShowTemplates(false)} className="p-2 hover:bg-gray-100 rounded-lg">
-                <X className="w-5 h-5 text-gray-500" />
+              <button onClick={() => setShowTemplates(false)} className="p-2 hover:bg-muted rounded-lg">
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
             <div className="p-5 grid grid-cols-1 gap-3">
@@ -1843,20 +1924,20 @@ const ProductPageBuilder = () => {
                   className={`flex items-center gap-4 p-4 rounded-xl border-2 text-left hover:shadow-md transition ${tpl.color}`}>
                   <span className="text-3xl">{tpl.emoji}</span>
                   <div>
-                    <p className="font-bold text-gray-900">{tpl.label}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{tpl.sections.length} sections préconfigurées · Personnalisable</p>
+                    <p className="font-bold text-foreground">{tpl.label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{tpl.sections.length} sections préconfigurées · Personnalisable</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 ml-auto" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" />
                 </button>
               ))}
               <button onClick={() => { setSections([]); setBuilderEnabled(true); setShowTemplates(false); }}
-                className="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-gray-200 text-left hover:border-[#4D9F82] hover:bg-green-50 transition">
+                className="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-border text-left hover:border-[#4D9F82] hover:bg-green-50 transition">
                 <span className="text-3xl">⬜</span>
                 <div>
-                  <p className="font-bold text-gray-900">Page vierge</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Construire de zéro avec vos propres sections</p>
+                  <p className="font-bold text-foreground">Page vierge</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Construire de zéro avec vos propres sections</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400 ml-auto" />
+                <ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" />
               </button>
             </div>
           </div>
@@ -1867,29 +1948,39 @@ const ProductPageBuilder = () => {
       <div className="flex flex-1 overflow-hidden">
 
         {/* ── LEFT SIDEBAR (Shopify-style: sections list OR section editor) ── */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden">
+        <div className="w-80 bg-card border-r border-border flex flex-col flex-shrink-0 overflow-hidden">
 
           {activeConfigSection ? (() => {
             /* ── SECTION EDITOR (inline, replaces list) ── */
             const sec = configSections.find(s => s.id === activeConfigSection);
             if (!sec) return null;
-            const meta = SECTION_META[sec.id] || { label: sec.label, desc: '', icon: Layers, color: 'bg-gray-100 text-gray-700 border-gray-200' };
+            const meta = SECTION_META[sec.id] || { label: sec.label || sec.id, desc: '', icon: String(sec.id).startsWith('ccs_') ? Code : Layers, color: 'bg-muted text-foreground border-border' };
             const SectionIcon = meta.icon;
             return (
               <>
                 {/* Back button header */}
-                <div className="flex items-center gap-2 px-3 py-3 border-b border-gray-100 bg-gray-50 flex-shrink-0">
+                <div className="flex items-center gap-2 px-3 py-3 border-b border-border bg-background flex-shrink-0">
                   <button onClick={() => setActiveConfigSection(null)}
-                    className="flex items-center gap-1.5 text-[12px] text-gray-500 hover:text-gray-900 font-medium transition">
+                    className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground font-medium transition">
                     <ChevronLeft className="w-4 h-4" />
                     Sections
                   </button>
                   <span className="text-gray-300 text-sm">·</span>
-                  <span className="text-[12px] font-semibold text-gray-800 truncate flex items-center gap-1.5"><SectionIcon className="w-3.5 h-3.5" /> {meta.label}</span>
-                  <div className="ml-auto">
+                  <span className="text-[12px] font-semibold text-foreground truncate flex items-center gap-1.5"><SectionIcon className="w-3.5 h-3.5" /> {meta.label}</span>
+                  <div className="ml-auto flex items-center gap-1">
+                    <button
+                      type="button"
+                      title="Modifier cette section avec l'IA"
+                      onClick={() => window.dispatchEvent(new CustomEvent('builder-ai:prefill', {
+                        detail: { text: `Modifie la section « ${meta.label} » (id: ${sec.id}) : ` },
+                      }))}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg text-indigo-600 hover:bg-indigo-50 transition text-[11px] font-semibold"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" /> IA
+                    </button>
                     <button onClick={() => handleConfigToggle(sec.id)}
                       className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 ${sec.enabled !== false ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}>
-                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${sec.enabled !== false ? 'translate-x-4' : 'translate-x-0'}`} />
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-card rounded-full shadow transition-transform ${sec.enabled !== false ? 'translate-x-4' : 'translate-x-0'}`} />
                     </button>
                   </div>
                 </div>
@@ -1900,6 +1991,7 @@ const ProductPageBuilder = () => {
                     <SectionContentEditor
                       section={sec}
                       onChange={handleConfigContentChange}
+                      onRemoveSection={handleConfigRemoveSection}
                       product={product}
                     />
                   </div>
@@ -1910,16 +2002,16 @@ const ProductPageBuilder = () => {
             /* ── SECTIONS LIST ── */
             <>
               {/* Tab bar: Sections | Livraison */}
-              <div className="flex border-b border-gray-200 flex-shrink-0">
+              <div className="flex border-b border-border flex-shrink-0">
                 <button
                   onClick={() => setSidebarTab('sections')}
-                  className={`flex-1 text-[12px] font-semibold py-2.5 transition-colors ${sidebarTab === 'sections' ? 'text-[#0F6B4F] border-b-2 border-[#0F6B4F]' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 text-[12px] font-semibold py-2.5 transition-colors ${sidebarTab === 'sections' ? 'text-[#0F6B4F] border-b-2 border-[#0F6B4F]' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Sections
                 </button>
                 <button
                   onClick={() => setSidebarTab('livraison')}
-                  className={`flex-1 flex items-center justify-center gap-1.5 text-[12px] font-semibold py-2.5 transition-colors ${sidebarTab === 'livraison' ? 'text-[#0F6B4F] border-b-2 border-[#0F6B4F]' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 flex items-center justify-center gap-1.5 text-[12px] font-semibold py-2.5 transition-colors ${sidebarTab === 'livraison' ? 'text-[#0F6B4F] border-b-2 border-[#0F6B4F]' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   🚚 Livraison
                 </button>
@@ -1929,7 +2021,7 @@ const ProductPageBuilder = () => {
                 /* Sections list */
                 <div className="flex-1 overflow-y-auto p-2 space-y-1">
                   {configSections.map((section, idx) => {
-                    const meta = SECTION_META[section.id] || { label: section.id, desc: '', icon: Layers, color: 'bg-gray-100 text-gray-700' };
+                    const meta = SECTION_META[section.id] || { label: section.label || section.id, desc: '', icon: String(section.id).startsWith('ccs_') ? Code : Layers, color: 'bg-muted text-foreground' };
                     const SectionIcon = meta.icon;
                     const isEnabled = section.enabled !== false;
                     return (
@@ -1942,31 +2034,31 @@ const ProductPageBuilder = () => {
                         onDrop={e => { e.preventDefault(); e.currentTarget.classList.remove('ring-2', 'ring-[#0F6B4F]'); const fromIdx = parseInt(e.dataTransfer.getData('text/plain'), 10); if (!isNaN(fromIdx) && fromIdx !== idx) handleConfigDragDrop(fromIdx, idx); }}
                         className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-grab active:cursor-grabbing transition-all border ${
                           isEnabled
-                            ? 'border-transparent hover:bg-gray-50 hover:border-gray-200'
-                            : 'border-transparent opacity-50 hover:opacity-70 hover:bg-gray-50'
+                            ? 'border-transparent hover:bg-background hover:border-border'
+                            : 'border-transparent opacity-50 hover:opacity-70 hover:bg-background'
                         }`}
                         onClick={() => setActiveConfigSection(section.id)}
                       >
                         <GripVertical className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
-                        <div className={`w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 ${meta.color.split(' ').slice(0, 2).join(' ')}`}>
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 text-foreground">
                           <SectionIcon className="w-3 h-3" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[12.5px] font-semibold text-gray-800 truncate">{meta.label}</p>
-                          {!isEnabled && <p className="text-[10px] text-gray-400">Masquée</p>}
+                          <p className="text-[12.5px] font-semibold text-foreground truncate">{meta.label}</p>
+                          {!isEnabled && <p className="text-[10px] text-muted-foreground">Masquée</p>}
                         </div>
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={e => { e.stopPropagation(); handleConfigMove(idx, -1); }} disabled={idx === 0}
                             className="p-1 rounded hover:bg-gray-200 disabled:opacity-20">
-                            <ChevronUp className="w-3 h-3 text-gray-500" />
+                            <ChevronUp className="w-3 h-3 text-muted-foreground" />
                           </button>
                           <button onClick={e => { e.stopPropagation(); handleConfigMove(idx, 1); }} disabled={idx === configSections.length - 1}
                             className="p-1 rounded hover:bg-gray-200 disabled:opacity-20">
-                            <ChevronDown className="w-3 h-3 text-gray-500" />
+                            <ChevronDown className="w-3 h-3 text-muted-foreground" />
                           </button>
                           <button onClick={e => { e.stopPropagation(); handleConfigToggle(section.id); }}
                             className="p-1 rounded hover:bg-gray-200">
-                            {isEnabled ? <Eye className="w-3 h-3 text-gray-500" /> : <EyeOff className="w-3 h-3 text-gray-400" />}
+                            {isEnabled ? <Eye className="w-3 h-3 text-muted-foreground" /> : <EyeOff className="w-3 h-3 text-muted-foreground" />}
                           </button>
                         </div>
                         <ChevronRight className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
@@ -1974,23 +2066,79 @@ const ProductPageBuilder = () => {
                     );
                   })}
                 </div>
-              ) : (
+              ) : null}
+
+              {sidebarTab === 'sections' && (
+                <>
+                  {showAddSection && (
+                    <div className="border-t border-border p-2 space-y-1 bg-background flex-shrink-0 max-h-[46vh] overflow-y-auto">
+                      <button
+                        type="button"
+                        onClick={() => handleAddCustomSection(null)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-card border border-border hover:border-[#4D9F82] hover:bg-green-50/50 transition"
+                      >
+                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-foreground flex-shrink-0">
+                          <Code className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[12.5px] font-semibold text-foreground">Section vierge</p>
+                          <p className="text-[10.5px] text-muted-foreground">Code libre (HTML, styles, scripts)</p>
+                        </div>
+                        <Plus className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                      </button>
+                      <p className="px-1 pt-2 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sections prédéfinies</p>
+                      {SECTION_TEMPLATES.map((tpl) => {
+                        const TplIcon = TEMPLATE_ICONS[tpl.icon] || Code;
+                        return (
+                          <button
+                            key={tpl.id}
+                            type="button"
+                            onClick={() => handleAddCustomSection(tpl)}
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left bg-card border border-border hover:border-[#4D9F82] hover:bg-green-50/50 transition"
+                          >
+                            <div className="w-6 h-6 rounded-md flex items-center justify-center text-foreground flex-shrink-0">
+                              <TplIcon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12.5px] font-semibold text-foreground">{tpl.label}</p>
+                              <p className="text-[10.5px] text-muted-foreground truncate">{tpl.desc}{tpl.placement === 'top' ? ' · ajoutée en haut' : ''}</p>
+                            </div>
+                            <Plus className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <div className="p-3 border-t border-border flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddSection(v => !v)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-border text-[12.5px] font-semibold text-[#0F6B4F] hover:border-[#4D9F82] hover:bg-green-50/50 transition"
+                    >
+                      {showAddSection ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                      {showAddSection ? 'Fermer' : 'Ajouter une section'}
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {sidebarTab === 'livraison' && (
                 /* ── LIVRAISON PANEL ── */
                 <div className="flex-1 overflow-y-auto">
                   <div className="p-4 space-y-5">
 
                     {/* Flat shipping toggle */}
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div className="bg-background rounded-xl p-4 border border-border">
                       <div className="flex items-center justify-between mb-1">
                         <div>
-                          <p className="text-[13px] font-semibold text-gray-800">Frais de livraison forfaitaires</p>
-                          <p className="text-[11px] text-gray-500 mt-0.5">Appliquer un montant fixe à toutes les commandes</p>
+                          <p className="text-[13px] font-semibold text-foreground">Frais de livraison forfaitaires</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">Appliquer un montant fixe à toutes les commandes</p>
                         </div>
                         <button
                           onClick={() => handleDeliveryChange('flatShippingEnabled', !deliveryConfig.flatShippingEnabled)}
                           className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${deliveryConfig.flatShippingEnabled ? 'bg-[#0F6B4F]' : 'bg-gray-300'}`}
                         >
-                          <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${deliveryConfig.flatShippingEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                          <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-card rounded-full shadow transition-transform ${deliveryConfig.flatShippingEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
                         </button>
                       </div>
                     </div>
@@ -1999,7 +2147,7 @@ const ProductPageBuilder = () => {
                     {deliveryConfig.flatShippingEnabled && (
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-[12px] font-semibold text-gray-700 mb-1">Frais de livraison (FCFA)</label>
+                          <label className="block text-[12px] font-semibold text-foreground mb-1">Frais de livraison (FCFA)</label>
                           <input
                             type="number"
                             min="0"
@@ -2010,7 +2158,7 @@ const ProductPageBuilder = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-[12px] font-semibold text-gray-700 mb-1">Livraison gratuite à partir de (FCFA)</label>
+                          <label className="block text-[12px] font-semibold text-foreground mb-1">Livraison gratuite à partir de (FCFA)</label>
                           <input
                             type="number"
                             min="0"
@@ -2019,7 +2167,7 @@ const ProductPageBuilder = () => {
                             placeholder="ex: 50000 (laisser vide pour désactiver)"
                             className="w-full px-3 py-2 text-[13px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0F6B4F] focus:border-transparent outline-none"
                           />
-                          <p className="text-[10px] text-gray-400 mt-1">Laisser vide pour ne pas proposer la livraison gratuite</p>
+                          <p className="text-[10px] text-muted-foreground mt-1">Laisser vide pour ne pas proposer la livraison gratuite</p>
                         </div>
 
                         {/* Preview banner */}
@@ -2040,35 +2188,35 @@ const ProductPageBuilder = () => {
                     {/* Zones par pays */}
                     {deliveryConfig.countries && deliveryConfig.countries.length > 0 && (
                       <div>
-                        <p className="text-[12px] font-semibold text-gray-700 mb-2">Zones & tarifs par région</p>
+                        <p className="text-[12px] font-semibold text-foreground mb-2">Zones & tarifs par région</p>
                         <div className="space-y-3">
                           {deliveryConfig.countries.map(country => {
                             const countryZone = deliveryConfig.zones.find(z => z.country === country.code);
                             const areas = countryZone?.areas || [];
                             return (
-                              <div key={country.code} className="border border-gray-200 rounded-xl overflow-hidden">
-                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-200">
+                              <div key={country.code} className="border border-border rounded-xl overflow-hidden">
+                                <div className="flex items-center gap-2 px-3 py-2 bg-background border-b border-border">
                                   <span className="text-base">{country.flag || '🌍'}</span>
-                                  <span className="text-[12px] font-semibold text-gray-800">{country.name}</span>
+                                  <span className="text-[12px] font-semibold text-foreground">{country.name}</span>
                                 </div>
                                 {areas.length > 0 ? (
                                   <div className="divide-y divide-gray-100">
                                     {areas.map((area, areaIdx) => (
                                       <div key={areaIdx} className="flex items-center gap-2 px-3 py-2">
-                                        <span className="text-[11px] text-gray-600 flex-1 truncate">{area.name}</span>
+                                        <span className="text-[11px] text-muted-foreground flex-1 truncate">{area.name}</span>
                                         <input
                                           type="number"
                                           min="0"
                                           value={area.cost != null ? area.cost : ''}
                                           onChange={e => handleZoneCostChange(country.code, areaIdx, e.target.value)}
                                           placeholder="FCFA"
-                                          className="w-24 px-2 py-1 text-[11px] border border-gray-200 rounded-md focus:ring-1 focus:ring-[#0F6B4F] outline-none text-right"
+                                          className="w-24 px-2 py-1 text-[11px] border border-border rounded-md focus:ring-1 focus:ring-[#0F6B4F] outline-none text-right"
                                         />
                                       </div>
                                     ))}
                                   </div>
                                 ) : (
-                                  <p className="text-[11px] text-gray-400 px-3 py-2">Aucune zone configurée</p>
+                                  <p className="text-[11px] text-muted-foreground px-3 py-2">Aucune zone configurée</p>
                                 )}
                               </div>
                             );
@@ -2122,8 +2270,8 @@ const ProductPageBuilder = () => {
 
             if (!product) {
               return (
-                <div className="flex-1 bg-gray-50 flex items-center justify-center">
-                  <div className="text-center text-gray-400">
+                <div className="flex-1 bg-background flex items-center justify-center">
+                  <div className="text-center text-muted-foreground">
                     <div className="text-4xl mb-3">🏪</div>
                     <p className="text-sm font-medium">Aperçu indisponible</p>
                     <p className="text-xs mt-1">Chargement du produit...</p>
@@ -2135,59 +2283,29 @@ const ProductPageBuilder = () => {
             return (
               <div className="flex-1 bg-[#e8eaed] flex flex-col overflow-hidden">
                 {label && (
-                  <div className="flex justify-center pt-2 pb-1 text-xs text-gray-400 font-medium select-none">{label}</div>
+                  <div className="flex justify-center pt-2 pb-1 text-xs text-muted-foreground font-medium select-none">{label}</div>
                 )}
                 <div className="flex-1 flex items-start justify-center overflow-auto p-3 pt-1">
                   <div
-                    className="shadow-xl rounded-t-lg overflow-hidden bg-white"
+                    className="shadow-xl rounded-t-lg overflow-hidden bg-card"
                     style={{ width, maxWidth: '100%', height: previewDevice === 'desktop' ? 'calc(100vh - 120px)' : 'calc(100vh - 140px)' }}
                   >
                     <div className="h-full overflow-y-auto relative">
-                      {/* Custom HTML injected by AI (top banners, etc.) */}
-                      {storeConfig?.customHtml && (
-                        <div dangerouslySetInnerHTML={{ __html: storeConfig.customHtml }} />
-                      )}
-
-                      <StoreProductPagePremium
-                        product={product}
-                        store={activeStore || {}}
-                        productPageConfig={(() => {
-                          const base = mergedConfig || {};
-                          const sp = storeConfig?.premiumPage;
-                          const basePremium = base.premiumPage || {};
-                          const mergedPremium = sp ? {
-                            ...basePremium,
-                            ...sp,
-                            ...(sp.hero ? { hero: { ...(basePremium.hero || {}), ...sp.hero } } : {}),
-                            ...(sp.faq ? { faq: { ...(basePremium.faq || {}), ...sp.faq } } : {}),
-                            ...(sp.problemSection ? { problemSection: { ...(basePremium.problemSection || {}), ...sp.problemSection } } : {}),
-                            ...(sp.mechanismSection ? { mechanismSection: { ...(basePremium.mechanismSection || {}), ...sp.mechanismSection } } : {}),
-                            ...(sp.closingSection ? { closingSection: { ...(basePremium.closingSection || {}), ...sp.closingSection } } : {}),
-                          } : basePremium;
-                          return {
-                            ...base,
-                            premiumPage: mergedPremium,
-                            ...(storeConfig?.customSections ? { customSections: storeConfig.customSections } : {}),
-                            ...(storeConfig?.whatsapp ? { whatsapp: storeConfig.whatsapp } : {}),
-                          };
-                        })()}
-                        subdomain={subdomain}
-                        pixels={[]}
-                      />
-
-                      {/* WhatsApp floating button */}
-                      {storeConfig?.whatsapp?.enabled && (
-                        <div
-                          className="sticky z-[99] flex items-center justify-center w-14 h-14 rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
-                          style={{
-                            backgroundColor: '#25D366',
-                            bottom: '24px',
-                            ...(storeConfig.whatsapp.position === 'bottom-left' ? { left: '24px', marginLeft: '24px' } : { left: 'calc(100% - 80px)' }),
-                          }}
-                        >
-                          <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                          </svg>
+                      {/* Aperçu = vraie page produit publique (respecte le thème choisi :
+                          classique ou premium), rechargée à chaque sauvegarde */}
+                      {previewUrl ? (
+                        <iframe
+                          key={iframeKey}
+                          src={previewUrl}
+                          title="Aperçu de la page produit"
+                          className="w-full h-full border-0 bg-card"
+                        />
+                      ) : (
+                        <div className="h-full flex items-center justify-center text-center text-muted-foreground">
+                          <div>
+                            <p className="text-sm font-medium">Aperçu indisponible</p>
+                            <p className="text-xs mt-1">Sous-domaine de la boutique introuvable</p>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -2197,9 +2315,11 @@ const ProductPageBuilder = () => {
             );
           })()}
         </div>
-      </div>
 
-      <BuilderAIChatWidget
+        {/* Assistant IA — panneau ancré à droite (style Shopify Sidekick) */}
+        <BuilderAIChatWidget
+        variant="docked"
+        dockBarOffset={320}
         productPageConfig={mergedConfig}
         theme={storeConfig?.design || {}}
         productName={product?.name || ''}
@@ -2234,12 +2354,35 @@ const ProductPageBuilder = () => {
             return updated;
           });
           if (patch?.general?.sections) {
-            setConfigSections(patch.general.sections);
+            setConfigSections(prev => {
+              const patchSections = patch.general.sections;
+              // Tableau complet (tous les ids existants présents) → remplacement, l'ordre du patch fait foi.
+              // Patch partiel → fusion par id, les sections inconnues (ex: customCode) sont ajoutées.
+              const coversAll = prev.every(s => patchSections.some(p => p.id === s.id));
+              let next;
+              if (coversAll) {
+                next = patchSections;
+              } else {
+                next = prev.map(s => {
+                  const u = patchSections.find(p => p.id === s.id);
+                  return u ? { ...s, ...u, content: { ...(s.content || {}), ...(u.content || {}) } } : s;
+                });
+                patchSections.forEach(u => {
+                  if (!next.find(s => s.id === u.id)) next.push(u);
+                });
+              }
+              autoSaveConfig(next);
+              return next;
+            });
           } else if (Array.isArray(patch?.sections)) {
-            setConfigSections(prev => prev.map(s => {
-              const update = patch.sections.find(p => p.id === s.id);
-              return update ? { ...s, ...update } : s;
-            }));
+            setConfigSections(prev => {
+              const next = prev.map(s => {
+                const update = patch.sections.find(p => p.id === s.id);
+                return update ? { ...s, ...update, content: { ...(s.content || {}), ...(update.content || {}) } } : s;
+              });
+              autoSaveConfig(next);
+              return next;
+            });
           }
         }}
         onApplyTheme={(themePatch) => {
@@ -2248,7 +2391,8 @@ const ProductPageBuilder = () => {
             design: { ...(prev?.design || {}), ...themePatch },
           }));
         }}
-      />
+        />
+      </div>
     </div>
   );
 };

@@ -96,7 +96,7 @@ const Spark = ({ data = [], color = '#059669', h = 36, w = 88 }) => {
 const KpiCard = ({ label, value, sub, icon: Icon, spark, sparkColor = '#059669', accent = '#059669', accentLight = '#d1fae5', loading = false }) => {
   if (loading) return <SkeletonKpi />;
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3 shadow-sm transition-colors duration-200 hover:border-slate-300">
+    <div className="bg-card rounded-xl border border-slate-200 p-4 flex flex-col gap-3 shadow-sm transition-colors duration-200 hover:border-slate-300">
       <div className="flex items-start justify-between">
         <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 border" style={{ backgroundColor: accentLight, borderColor: accentLight }}>
           {Icon && <Icon className="w-4 h-4" style={{ color: accent }} />}
@@ -209,7 +209,7 @@ const SH = ({ icon: Icon, title, subtitle, color, children }) => (
 );
 
 const MiniStat = ({ label, value, color = '#059669' }) => (
-  <div className="rounded-lg border border-slate-200 bg-white p-3">
+  <div className="rounded-lg border border-slate-200 bg-card p-3">
     <p className="text-xl font-bold" style={{ color }}>{value}</p>
     <p className="text-xs font-medium text-slate-500 mt-1">{label}</p>
   </div>
@@ -231,7 +231,7 @@ const GrowthPill = ({ metric }) => {
 };
 
 const SaaSMetric = ({ label, value, sub, icon: Icon, metric, color = '#0f766e' }) => (
-  <div className="rounded-lg border border-slate-200 bg-white p-4">
+  <div className="rounded-lg border border-slate-200 bg-card p-4">
     <div className="mb-4 flex items-start justify-between gap-3">
       <div className="flex h-9 w-9 items-center justify-center rounded-lg border" style={{ background: `${color}12`, borderColor: `${color}24` }}>
         {Icon && <Icon className="h-4 w-4" style={{ color }} />}
@@ -245,7 +245,7 @@ const SaaSMetric = ({ label, value, sub, icon: Icon, metric, color = '#0f766e' }
 );
 
 const Panel = ({ children, className = '' }) => (
-  <section className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${className}`}>
+  <section className={`rounded-xl border border-slate-200 bg-card p-4 shadow-sm ${className}`}>
     {children}
   </section>
 );
@@ -397,7 +397,9 @@ const SuperAdminDashboard = () => {
   const activeSessionUsers10d = kpis.activeSessionUsers10d ?? kpis.activeSessions10d ?? 0;
   const inactiveSessionUsers10d = kpis.inactiveSessionUsers10d ?? kpis.inactiveSessions10d ?? 0;
   const totalSessionUsers = kpis.totalSessionUsers ?? kpis.totalOpenSessions ?? (activeSessionUsers10d + inactiveSessionUsers10d);
-  const churnRate = kpis.churnRate10d ?? 0;
+  const churnRate = kpis.churnRate30 ?? kpis.churnRate10d ?? 0;
+  const churned30 = kpis.churned30 ?? 0;
+  const eligible30 = kpis.eligible30 ?? 0;
 
   const roleCounts = useMemo(() => {
     const map = {};
@@ -434,7 +436,7 @@ const SuperAdminDashboard = () => {
   // ─── Render ──────────────────────────────────────────────────────────────
 
   const rangeActions = (
-    <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1">
+    <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-card p-1">
       {RANGE_TABS.map(t => (
         <button key={t.value} onClick={() => setRange(t.value)}
           className={`min-h-[36px] rounded-md px-3 text-xs font-semibold transition-colors ${
@@ -467,7 +469,7 @@ const SuperAdminDashboard = () => {
               <AlertCircle className="h-4 w-4" />
               <span className="font-semibold">{tp('Données partielles')}</span>
               {Object.entries(errors).map(([key, msg]) => (
-                <span key={key} className="rounded-md bg-white px-2 py-1 text-xs font-medium text-red-600">
+                <span key={key} className="rounded-md bg-card px-2 py-1 text-xs font-medium text-red-600">
                   {key}: {msg}
                 </span>
               ))}
@@ -495,9 +497,9 @@ const SuperAdminDashboard = () => {
             sparkColor="#2563eb"
           />
           <KpiCard
-            label="Churn comptes"
+            label="Churn marchands 30 j"
             value={`${churnRate}%`}
-            sub={`${inactiveSessionUsers10d.toLocaleString()} comptes sans ouverture +10j`}
+            sub={`${churned30.toLocaleString()} / ${eligible30.toLocaleString()} marchands actifs il y a 30-60 j non revenus`}
             icon={TrendingDown}
             accent="#b45309"
             accentLight="#fef3c7"

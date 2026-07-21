@@ -2,6 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
   "name": "scalornext",
+  "workers_dev": true,
   "compatibility_date": "2025-06-01",
   "compatibility_flags": [
     // API Node.js (requis par @opennextjs/cloudflare)
@@ -18,10 +19,28 @@
       "service": "scalornext"
     }
   ],
+  "routes": [
+    {
+      "pattern": "scalor.net/*",
+      "zone_name": "scalor.net"
+    },
+    {
+      "pattern": "www.scalor.net/*",
+      "zone_name": "scalor.net"
+    }
+  ],
+  "vars": {
+    "NEXTJS_ENV": "production",
+    "NEXT_PUBLIC_APP_ENV": "production",
+    "NEXT_PUBLIC_API_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_BACKEND_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_API_BASE_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_STORE_API_URL": "https://api.scalor.net",
+    "NEXT_PUBLIC_SCALOR_API_URL": "https://api.scalor.net"
+  },
   "r2_buckets": [
     // Décommenter après avoir créé le bucket R2 (cache ISR durable) :
     // { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "scalor-next-cache" }
   ]
-  // Domaines : à rattacher dans le dashboard Cloudflare (Workers → scalor-next → Domains & Routes)
-  // scalor.net, www.scalor.net et le wildcard *.scalor.net (boutiques marchands)
+  // Les sous-domaines API et boutiques restent gérés séparément.
 }

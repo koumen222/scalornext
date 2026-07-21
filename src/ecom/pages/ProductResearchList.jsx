@@ -15,12 +15,12 @@ const fmtF = (n) => `${fmt(n)} F`;
 const STATUS = {
   research:  { label: 'Recherche', cls: 'bg-sky-100 text-sky-700' },
   testing:   { label: 'Test',      cls: 'bg-amber-100 text-amber-700' },
-  validated: { get label() { return tp('Validé'); },    cls: 'bg-primary-100 text-primary-700' },
+  validated: { get label() { return tp('Validé'); },    cls: 'bg-primary-100 text-primary' },
   rejected:  { get label() { return tp('Rejeté'); },    cls: 'bg-red-100 text-red-600' },
 };
 
 const marginColor = (m) =>
-  m >= 60 ? 'text-primary-600' : m >= 40 ? 'text-amber-500' : 'text-red-500';
+  m >= 60 ? 'text-primary' : m >= 40 ? 'text-amber-500' : 'text-red-500';
 
 const Badge = ({ status }) => {
   const s = STATUS[status] || STATUS.research;
@@ -46,19 +46,19 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
       <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />
 
       {/* Panel */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col overflow-hidden">
+      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-card shadow-2xl z-50 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-start gap-3 px-5 py-4 border-b border-gray-100">
+        <div className="flex items-start gap-3 px-5 py-4 border-b border-border">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-gray-900 leading-snug">{product.name}</p>
+            <p className="text-sm font-bold text-foreground leading-snug">{product.name}</p>
             <div className="flex items-center gap-2 mt-1">
               <Badge status={product.status} />
-              <span className="text-[11px] text-gray-400">
+              <span className="text-[11px] text-muted-foreground">
                 {new Date(product.researchDate || product.createdAt).toLocaleDateString('fr-FR')}
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-xl hover:bg-gray-100 text-gray-400 transition flex-shrink-0">
+          <button onClick={onClose} className="p-1.5 rounded-xl hover:bg-muted text-muted-foreground transition flex-shrink-0">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -67,33 +67,33 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
 
           {/* KPIs */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Marge')}</p>
+            <div className="bg-background rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{tp('Marge')}</p>
               <p className={`text-lg font-bold mt-0.5 ${marginColor(m)}`}>{m.toFixed(1)}%</p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Bénéfice')}</p>
-              <p className="text-lg font-bold mt-0.5 text-primary-600">{fmtF(product.profit)}</p>
+            <div className="bg-background rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{tp('Bénéfice')}</p>
+              <p className="text-lg font-bold mt-0.5 text-primary">{fmtF(product.profit)}</p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{tp('Score')}</p>
+            <div className="bg-background rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{tp('Score')}</p>
               <p className="text-lg font-bold mt-0.5 text-amber-500">{product.opportunityScore || 3}/5</p>
             </div>
           </div>
 
           {/* Finances */}
           <div>
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">{tp('Finances')}</p>
+            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2">{tp('Finances')}</p>
             <div className="space-y-1.5">
               {[
-                ['Prix de vente',   fmtF(product.sellingPrice), 'font-bold text-gray-900 text-base'],
+                ['Prix de vente',   fmtF(product.sellingPrice), 'font-bold text-foreground text-base'],
                 ['Sourcing brut',   fmtF(product.sourcingPrice)],
                 ['Frais livraison', fmtF(product.shippingUnitCost)],
                 ['Coût total (COGS)', fmtF(product.cogs)],
                 product.weight ? ['Poids', `${product.weight} kg`] : null,
-              ].filter(Boolean).map(([label, value, cls = 'text-gray-700']) => (
+              ].filter(Boolean).map(([label, value, cls = 'text-foreground']) => (
                 <div key={label} className="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-0">
-                  <span className="text-xs text-gray-500">{label}</span>
+                  <span className="text-xs text-muted-foreground">{label}</span>
                   <span className={`text-sm font-semibold ${cls}`}>{value}</span>
                 </div>
               ))}
@@ -103,20 +103,20 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
           {/* Marché */}
           {(product.demand || product.competition || product.trend) && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">{tp('Marché')}</p>
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2">{tp('Marché')}</p>
               <div className="flex flex-wrap gap-2">
                 {product.demand && (
-                  <span className="px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
+                  <span className="px-2.5 py-1 bg-muted rounded-full text-xs font-medium text-muted-foreground">
                     Demande: {product.demand === 'high' ? 'Élevée' : product.demand === 'low' ? 'Faible' : tp('Moyenne')}
                   </span>
                 )}
                 {product.competition && (
-                  <span className="px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
+                  <span className="px-2.5 py-1 bg-muted rounded-full text-xs font-medium text-muted-foreground">
                     Concurrence: {product.competition === 'high' ? 'Élevée' : product.competition === 'low' ? 'Faible' : tp('Moyenne')}
                   </span>
                 )}
                 {product.trend && (
-                  <span className="px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
+                  <span className="px-2.5 py-1 bg-muted rounded-full text-xs font-medium text-muted-foreground">
                     {product.trend === 'rising' ? '📈 Montante' : product.trend === 'falling' ? '📉 Déclinante' : '➡️ Stable'}
                   </span>
                 )}
@@ -127,7 +127,7 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
           {/* Liens */}
           {(product.creative || product.alibabaLink || product.researchLink || product.websiteUrl) && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">{tp('Sources')}</p>
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2">{tp('Sources')}</p>
               <div className="flex flex-wrap gap-2">
                 <LinkPill href={product.creative} label="Creative" />
                 <LinkPill href={product.alibabaLink} label="Alibaba" />
@@ -142,10 +142,10 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
             <div className="grid grid-cols-2 gap-3">
               {product.pros?.filter(p=>p).length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold text-primary-600 uppercase tracking-widest mb-1.5">{tp('✓ Forces')}</p>
+                  <p className="text-[11px] font-bold text-primary uppercase tracking-widest mb-1.5">{tp('✓ Forces')}</p>
                   <ul className="space-y-1">
                     {product.pros.filter(p=>p).map((p,i) => (
-                      <li key={i} className="text-xs text-gray-600 flex items-start gap-1.5">
+                      <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
                         <span className="text-primary-400 mt-0.5">•</span>{p}
                       </li>
                     ))}
@@ -157,7 +157,7 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
                   <p className="text-[11px] font-bold text-red-500 uppercase tracking-widest mb-1.5">{tp('✗ Faiblesses')}</p>
                   <ul className="space-y-1">
                     {product.cons.filter(c=>c).map((c,i) => (
-                      <li key={i} className="text-xs text-gray-600 flex items-start gap-1.5">
+                      <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
                         <span className="text-red-400 mt-0.5">•</span>{c}
                       </li>
                     ))}
@@ -170,16 +170,16 @@ const DetailPanel = ({ product, onClose, onEdit, onDelete, onPassToTest }) => {
           {/* Notes */}
           {product.notes && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">{tp('Notes')}</p>
-              <p className="text-xs text-gray-600 leading-relaxed bg-gray-50 rounded-xl p-3">{product.notes}</p>
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">{tp('Notes')}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed bg-background rounded-xl p-3">{product.notes}</p>
             </div>
           )}
         </div>
 
         {/* Actions footer */}
-        <div className="px-5 py-4 border-t border-gray-100 flex items-center gap-2">
+        <div className="px-5 py-4 border-t border-border flex items-center gap-2">
           <button onClick={() => onEdit(product._id)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
+            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border rounded-xl text-sm font-semibold text-foreground hover:bg-background transition">
             <Edit className="w-4 h-4" />Modifier
           </button>
           {!['testing','validated'].includes(product.status) && (
@@ -277,32 +277,32 @@ const ProductResearchList = () => {
   const avgMargin      = products.length ? products.reduce((s,p) => s+(p.margin||0),0)/products.length : 0;
 
   if (loading) return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-3">
-        {[...Array(8)].map((_,i) => <div key={i} className="h-14 bg-white rounded-2xl animate-pulse border border-gray-100" />)}
+        {[...Array(8)].map((_,i) => <div key={i} className="h-14 bg-card rounded-2xl animate-pulse border border-border" />)}
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4">
+      <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-base font-bold text-gray-900">{tp('Veille Produits')}</h1>
-            <p className="text-[11px] text-gray-400 mt-0.5">
+            <h1 className="text-base font-bold text-foreground">{tp('Veille Produits')}</h1>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
               {products.length} produit{products.length !== 1 ? 's' : ''} · {researchCount} en recherche · {testingCount} en test · {validatedCount} validés
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowImport(v => !v)}
-              className="p-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition" title={tp('Importer CSV')}>
+              className="p-2 rounded-xl border border-border text-muted-foreground hover:bg-background transition" title={tp('Importer CSV')}>
               <Upload className="w-4 h-4" />
             </button>
             <button onClick={exportCSV}
-              className="p-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition" title={tp('Exporter CSV')}>
+              className="p-2 rounded-xl border border-border text-muted-foreground hover:bg-background transition" title={tp('Exporter CSV')}>
               <Download className="w-4 h-4" />
             </button>
             <button onClick={() => navigate('/ecom/product-finder')}
@@ -319,13 +319,13 @@ const ProductResearchList = () => {
         {/* KPIs */}
         <div className="grid grid-cols-4 gap-2">
           {[
-            { label: 'Total', value: products.length, color: 'text-gray-900' },
+            { label: 'Total', value: products.length, color: 'text-foreground' },
             { label: 'En test', value: testingCount, color: 'text-amber-600' },
-            { get label() { return tp('Validés'); }, value: validatedCount, color: 'text-primary-600' },
+            { get label() { return tp('Validés'); }, value: validatedCount, color: 'text-primary' },
             { label: 'Marge moy.', value: `${avgMargin.toFixed(0)}%`, color: marginColor(avgMargin) },
           ].map(({ label, value, color }) => (
-            <div key={label} className="bg-white rounded-2xl border border-gray-100 p-3 text-center">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{label}</p>
+            <div key={label} className="bg-card rounded-2xl border p-3 text-center">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{label}</p>
               <p className={`text-xl font-bold mt-0.5 ${color}`}>{value}</p>
             </div>
           ))}
@@ -333,7 +333,7 @@ const ProductResearchList = () => {
 
         {/* Import */}
         {showImport && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="bg-card rounded-2xl border p-4">
             <ProductImport onImportSuccess={() => { loadProducts(); setShowImport(false); }} />
           </div>
         )}
@@ -341,14 +341,14 @@ const ProductResearchList = () => {
         {/* Filters */}
         <div className="flex gap-2">
           <label className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
             <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
               placeholder={tp('Rechercher…')}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-white outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] transition"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-xl bg-card outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] transition"
             />
           </label>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] text-gray-600">
+            className="px-3 py-2 text-sm border border-border rounded-xl bg-card outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] text-muted-foreground">
             <option value="">{tp('Tous')}</option>
             <option value="research">{tp('Recherche')}</option>
             <option value="testing">{tp('Test')}</option>
@@ -357,7 +357,7 @@ const ProductResearchList = () => {
           </select>
           <select value={`${sortBy}-${sortOrder}`}
             onChange={e => { const [f,o] = e.target.value.split('-'); setSortBy(f); setSortOrder(o); }}
-            className="px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] text-gray-600">
+            className="px-3 py-2 text-sm border border-border rounded-xl bg-card outline-none focus:ring-2 focus:ring-[#0F6B4F]/20 focus:border-[#0F6B4F] text-muted-foreground">
             <option value="researchDate-desc">{tp('Récents')}</option>
             <option value="researchDate-asc">{tp('Anciens')}</option>
             <option value="margin-desc">{tp('Marge ↓')}</option>
@@ -373,41 +373,41 @@ const ProductResearchList = () => {
 
         {/* List */}
         {products.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 px-6 py-16 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-              <Package className="w-5 h-5 text-gray-400" />
+          <div className="bg-card rounded-2xl border px-6 py-16 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
+              <Package className="w-5 h-5 text-muted-foreground" />
             </div>
-            <p className="text-sm font-semibold text-gray-900">{tp('Aucun produit')}</p>
-            <p className="text-xs text-gray-400 mt-1 mb-5">{tp('Ajoutez votre premier produit de veille')}</p>
+            <p className="text-sm font-semibold text-foreground">{tp('Aucun produit')}</p>
+            <p className="text-xs text-muted-foreground mt-1 mb-5">{tp('Ajoutez votre premier produit de veille')}</p>
             <button onClick={() => navigate('/ecom/product-finder')}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0F6B4F] text-white text-sm font-bold rounded-xl hover:bg-[#0a5740] transition">
               <Plus className="w-4 h-4" />Ajouter un produit
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="bg-card rounded-2xl border overflow-hidden">
             {products.map((p, i) => (
               <button key={p._id} onClick={() => setSelected(p)}
-                className={`w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50/80 transition ${i < products.length-1 ? 'border-b border-gray-100' : ''} ${selected?._id === p._id ? 'bg-[#E6F2ED]/50' : ''}`}>
+                className={`w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-background/80 transition ${i < products.length-1 ? 'border-b border-border' : ''} ${selected?._id === p._id ? 'bg-[#E6F2ED]/50' : ''}`}>
 
                 {/* Image or icon */}
-                <div className="w-9 h-9 rounded-xl bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <div className="w-9 h-9 rounded-xl bg-muted flex-shrink-0 flex items-center justify-center overflow-hidden">
                   {p.imageUrl
                     ? <img src={p.imageUrl} alt="" className="w-9 h-9 object-cover rounded-xl" />
-                    : <Package className="w-4 h-4 text-gray-400" />
+                    : <Package className="w-4 h-4 text-muted-foreground" />
                   }
                 </div>
 
                 {/* Name */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{p.name}</p>
-                  <p className="text-[11px] text-gray-400 mt-0.5">{new Date(p.researchDate || p.createdAt).toLocaleDateString('fr-FR')}</p>
+                  <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{new Date(p.researchDate || p.createdAt).toLocaleDateString('fr-FR')}</p>
                 </div>
 
                 {/* Margin */}
                 <div className="text-right flex-shrink-0">
                   <p className={`text-sm font-bold ${marginColor(p.margin||0)}`}>{(p.margin||0).toFixed(0)}%</p>
-                  <p className="text-[11px] text-gray-400">{fmtF(p.sellingPrice)}</p>
+                  <p className="text-[11px] text-muted-foreground">{fmtF(p.sellingPrice)}</p>
                 </div>
 
                 {/* Badge */}

@@ -21,10 +21,10 @@ const fmtDate = (v) => {
 };
 
 const STATUS_COLORS = {
-  livré: 'bg-primary-100 text-primary-700',
-  livrée: 'bg-primary-100 text-primary-700',
-  livree: 'bg-primary-100 text-primary-700',
-  delivered: 'bg-primary-100 text-primary-700',
+  livré: 'bg-primary-100 text-primary',
+  livrée: 'bg-primary-100 text-primary',
+  livree: 'bg-primary-100 text-primary',
+  delivered: 'bg-primary-100 text-primary',
   confirmé: 'bg-sky-100 text-sky-700',
   confirmed: 'bg-sky-100 text-sky-700',
   annulé: 'bg-red-100 text-red-700',
@@ -121,7 +121,7 @@ function PeriodSection({ label, stats, top, icon: Icon }) {
                       <p className="text-[10px] text-slate-400 truncate">{v.role || 'vendeur'}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-xs font-black text-primary-600">{nFmt.format(v.sold || 0)} ventes</p>
+                      <p className="text-xs font-black text-primary">{nFmt.format(v.sold || 0)} ventes</p>
                       <p className="text-[10px] text-slate-400">{nFmt.format(v.orders || 0)} cmdes</p>
                     </div>
                   </div>
@@ -272,7 +272,7 @@ const SuperAdminBoutiqueStats = () => {
               )}
             </div>
             <div className="flex items-center gap-1.5">
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statsData.workspace?.isActive ? 'bg-primary-500/20 text-primary-300' : 'bg-red-500/20 text-red-300'}`}>
+              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statsData.workspace?.isActive ? 'bg-primary/20 text-primary-300' : 'bg-red-500/20 text-red-300'}`}>
                 {statsData.workspace?.isActive ? 'Active' : tp('Inactive')}
               </span>
             </div>

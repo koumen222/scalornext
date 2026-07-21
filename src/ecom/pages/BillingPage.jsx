@@ -5,6 +5,7 @@ import { getCurrentPlan, createCheckout, getPaymentStatus, getPaymentHistory, ac
 import { Package, Bot, Zap, Clock, CheckCircle2, CalendarDays, CreditCard, Shield, RefreshCw, MessageCircle, AlertTriangle, Lock, Gift, Globe } from 'lucide-react';
 import PaymentModalFrame from '../components/PaymentModalFrame.jsx';
 import { PAYMENT_COUNTRY_CODES } from '../constants/paymentCountryCodes.js';
+import { buildFullPhone } from '../utils/phoneCodes.js';
 import { clearPendingPlanSelection, getPendingPlanSelection } from '../utils/pendingPlanFlow.js';
 import { tp } from '../i18n/platform.js';
 
@@ -44,7 +45,7 @@ const BASE_PLAN_TIERS = [
     gradient: 'from-primary-500 to-teal-600',
     accent: 'emerald',
     ring: 'ring-primary-500/20',
-    btnClass: 'bg-primary-600 hover:bg-primary-700 shadow-primary-500/25',
+    btnClass: 'bg-primary hover:bg-primary-700 shadow-primary-500/25',
     features: [
       { text: 'Commandes illimitées', included: true },
       { text: 'Gestion clients complète', included: true },
@@ -192,7 +193,8 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
   const selectedCode = PAYMENT_COUNTRY_CODES.find(c => c.country === country);
   const dialCode = selectedCode?.code || '+237';
   const flag = selectedCode?.flag || '🌍'; // flags stay as emoji (country flags)
-  const fullPhone = phoneLocal ? `${dialCode}${phoneLocal.replace(/^0+/, '')}` : '';
+  // buildFullPhone préserve le 0 initial des plans qui l'exigent (Gabon : +241 0X…)
+  const fullPhone = phoneLocal ? buildFullPhone(dialCode, phoneLocal) : '';
 
   const finalPrice = appliedPromo ? appliedPromo.finalAmount : plan.price;
   const summaryBeforeValue = appliedPromo
@@ -212,7 +214,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
       : plan.saving
         ? `-${plan.saving}%`
         : null;
-  const inputClassName = 'w-full rounded-[18px] border border-[#D7E3DA] bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-[0_10px_30px_rgba(15,107,79,0.04)] outline-none transition placeholder:text-slate-300 focus:border-[#0F6B4F]/35 focus:ring-4 focus:ring-[#0F6B4F]/10';
+  const inputClassName = 'w-full rounded-[18px] border border-[#D7E3DA] bg-card px-4 py-3.5 text-[15px] text-slate-800 shadow-[0_10px_30px_rgba(15,107,79,0.04)] outline-none transition placeholder:text-slate-300 focus:border-[#0F6B4F]/35 focus:ring-4 focus:ring-[#0F6B4F]/10';
   const labelClassName = 'mb-2 block text-[11px] font-black uppercase tracking-[0.16em] text-[#6A776F]';
 
   async function handleApplyPromo(codeToApply) {
@@ -294,7 +296,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
       }}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid gap-4 rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
+        <div className="grid gap-4 rounded-[24px] border border-[#E2EAE4] bg-card/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
           <div>
             <label className={labelClassName}>{tp('Nom complet')}</label>
             <input
@@ -332,7 +334,7 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
               />
             </div>
             {fullPhone && (
-              <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary-700">
+              <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary">
                 <CheckIcon className="w-3.5 h-3.5" />
                 {fullPhone}
               </p>
@@ -340,22 +342,22 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-[#E2EAE4] bg-white/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
+        <div className="rounded-[24px] border border-[#E2EAE4] bg-card/90 p-4 shadow-[0_16px_40px_rgba(15,107,79,0.05)] sm:p-5">
           <label className={labelClassName}>{tp('Code promo (optionnel)')}</label>
           {appliedPromo ? (
             <div className="flex items-center justify-between rounded-[18px] border border-primary-200 bg-primary-50 p-3.5">
               <div>
-                <p className="flex items-center gap-1.5 text-sm font-bold text-primary-700">
+                <p className="flex items-center gap-1.5 text-sm font-bold text-primary">
                   <CheckIcon className="w-4 h-4" /> {appliedPromo.code}
                 </p>
-                <p className="mt-1 text-xs text-primary-600">
+                <p className="mt-1 text-xs text-primary">
                   -{formatAmount(appliedPromo.discountAmount)} FCFA appliqué
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleRemovePromo}
-                className="text-xs font-semibold text-primary-700 hover:text-primary-900"
+                className="text-xs font-semibold text-primary hover:text-primary-900"
               >
                 {tp('Retirer')}
               </button>
@@ -386,15 +388,15 @@ function CheckoutModal({ plan, tier, onClose, onSuccess, workspaceId, userName, 
 
         {appliedPromo && (
           <div className="space-y-1 rounded-[20px] border border-[#E2EAE4] bg-[#F7FBF8] p-4 text-sm shadow-[0_16px_40px_rgba(15,107,79,0.05)]">
-            <div className="flex justify-between text-gray-500">
+            <div className="flex justify-between text-muted-foreground">
               <span>{tp('Sous-total')}</span>
               <span className="line-through">{formatAmount(plan.price)} FCFA</span>
             </div>
-            <div className="flex justify-between font-medium text-primary-600">
+            <div className="flex justify-between font-medium text-primary">
               <span>Réduction ({appliedPromo.code})</span>
               <span>-{formatAmount(appliedPromo.discountAmount)} FCFA</span>
             </div>
-            <div className="flex justify-between border-t border-[#DDE6DF] pt-2 font-bold text-gray-900">
+            <div className="flex justify-between border-t border-[#DDE6DF] pt-2 font-bold text-foreground">
               <span>{tp('Total')}</span>
               <span>{formatAmount(finalPrice)} FCFA</span>
             </div>
@@ -464,12 +466,12 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
     <div className={`relative flex flex-col h-full transition-all duration-200
       ${isPopular
         ? 'rounded-2xl bg-gradient-to-b from-primary-600 to-primary-700 shadow-2xl shadow-primary-500/30 ring-1 ring-inset ring-white/10'
-        : 'rounded-2xl bg-white border border-gray-200 hover:border-gray-400 hover:shadow-md'
+        : 'rounded-2xl bg-card border border-border hover:border-gray-400 hover:shadow-md'
       }`}>
 
       {/* Top banner */}
       <div className={`rounded-t-2xl px-6 py-2.5 text-center text-[11px] font-black tracking-widest uppercase
-        ${isPopular ? 'bg-primary-500 text-white' : 'bg-gray-50 text-gray-400 border-b border-gray-200'}`}>
+        ${isPopular ? 'bg-primary text-white' : 'bg-background text-muted-foreground border-b border-border'}`}>
         {isPopular ? '⭐  Le plus populaire' : tier.free ? 'Gratuit pour toujours' : `${isAnnual && duration.saving ? `-${duration.saving}% en annuel` : 'Mensuel ou annuel'}`}
       </div>
 
@@ -477,49 +479,49 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
 
         {/* Name */}
         <div className="mb-6">
-          <h3 className={`text-2xl font-black mb-1 ${isPopular ? 'text-white' : 'text-gray-900'}`}>
+          <h3 className={`text-2xl font-black mb-1 ${isPopular ? 'text-white' : 'text-foreground'}`}>
             {tier.name}
           </h3>
-          <p className={`text-sm ${isPopular ? 'text-primary-100' : 'text-gray-500'}`}>{tier.tagline}</p>
+          <p className={`text-sm ${isPopular ? 'text-primary-100' : 'text-muted-foreground'}`}>{tier.tagline}</p>
         </div>
 
         {/* Price block */}
         <div className="mb-6">
           {tier.free ? (
             <>
-              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('À partir de')}</p>
+              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-muted-foreground'}`}>{tp('À partir de')}</p>
               <div className="flex items-end gap-1.5">
-                <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-gray-900'}`}>0</span>
-                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>FCFA</span>
+                <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-foreground'}`}>0</span>
+                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-muted-foreground'}`}>FCFA</span>
               </div>
-              <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('Sans carte bancaire requise')}</p>
+              <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-muted-foreground'}`}>{tp('Sans carte bancaire requise')}</p>
             </>
           ) : (
             <>
-              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('À partir de')}</p>
+              <p className={`text-xs font-semibold mb-1 ${isPopular ? 'text-primary-200' : 'text-muted-foreground'}`}>{tp('À partir de')}</p>
               <div className="flex items-end gap-2">
                 {originalPrice && (
                   <span className={`text-xl font-bold line-through mb-0.5 ${isPopular ? 'text-primary-300' : 'text-gray-300'}`}>
                     {formatAmount(isAnnual ? Math.round(originalPrice / duration.months) : originalPrice)}
                   </span>
                 )}
-                <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-gray-900'}`}>
+                <span className={`text-5xl font-black leading-none ${isPopular ? 'text-white' : 'text-foreground'}`}>
                   {formatAmount(displayPerMonth)}
                 </span>
-                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>{tp('FCFA/mois')}</span>
+                <span className={`text-base font-semibold mb-0.5 ${isPopular ? 'text-primary-200' : 'text-muted-foreground'}`}>{tp('FCFA/mois')}</span>
               </div>
               {isPromoApplied && (
-                <p className={`text-xs font-bold mt-1.5 ${isPopular ? 'text-white' : 'text-primary-600'}`}>
+                <p className={`text-xs font-bold mt-1.5 ${isPopular ? 'text-white' : 'text-primary'}`}>
                   ✨ Code {globalPromoData.code} appliqué
                 </p>
               )}
               {isAnnual && duration.saving && !isPromoApplied && (
-                <p className={`text-xs font-semibold mt-1.5 ${isPopular ? 'text-primary-200' : 'text-primary-600'}`}>
+                <p className={`text-xs font-semibold mt-1.5 ${isPopular ? 'text-primary-200' : 'text-primary'}`}>
                   {formatAmount(displayPrice)} FCFA facturé annuellement
                 </p>
               )}
               {!isAnnual && !isPromoApplied && (
-                <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>
+                <p className={`text-xs mt-1.5 ${isPopular ? 'text-primary-200' : 'text-muted-foreground'}`}>
                   {tp('Facturation mensuelle, sans engagement')}
                 </p>
               )}
@@ -531,12 +533,12 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
         <div className="mb-7">
           {isCurrentPlan ? (
             <div className={`w-full py-3 rounded-xl text-center text-sm font-bold border
-              ${isPopular ? 'bg-white/10 text-white border-white/20' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
+              ${isPopular ? 'bg-card/10 text-white border-white/20' : 'bg-muted text-muted-foreground border-border'}`}>
               {tp('Plan actuel')}
             </div>
           ) : tier.free ? (
             <div className={`w-full py-3 rounded-xl text-center text-sm font-semibold border
-              ${isPopular ? 'bg-white/10 text-white border-white/20' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+              ${isPopular ? 'bg-card/10 text-white border-white/20' : 'bg-muted text-muted-foreground border-border'}`}>
               {tp('Commencer gratuitement')}
             </div>
           ) : (
@@ -544,7 +546,7 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
               onClick={() => onCheckout(duration)}
               className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
                 ${isPopular
-                  ? 'bg-primary-500 text-white hover:bg-primary-400'
+                  ? 'bg-primary text-white hover:bg-primary-400'
                   : 'bg-gray-900 text-white hover:bg-gray-700'}`}>
               Commencer avec {tier.name}
             </button>
@@ -552,18 +554,18 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
         </div>
 
         {/* Divider */}
-        <div className={`h-px mb-5 ${isPopular ? 'bg-white/20' : 'bg-gray-100'}`} />
+        <div className={`h-px mb-5 ${isPopular ? 'bg-card/20' : 'bg-muted'}`} />
 
         {/* Features */}
         <div>
-          <p className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isPopular ? 'text-primary-200' : 'text-gray-400'}`}>
+          <p className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isPopular ? 'text-primary-200' : 'text-muted-foreground'}`}>
             {tp('Fonctionnalités clés')}
           </p>
           <ul className="space-y-3">
             {includedFeatures.map((f, i) => (
               <li key={i} className="flex items-start gap-2.5">
                 <CheckIcon className={`w-4 h-4 flex-shrink-0 mt-0.5 ${isPopular ? 'text-primary-400' : 'text-primary-500'}`} />
-                <span className={`text-[13px] leading-snug ${isPopular ? (f.highlight ? 'text-white font-semibold' : 'text-primary-100') : (f.highlight ? 'text-gray-900 font-semibold' : 'text-gray-600')}`}>
+                <span className={`text-[13px] leading-snug ${isPopular ? (f.highlight ? 'text-white font-semibold' : 'text-primary-100') : (f.highlight ? 'text-foreground font-semibold' : 'text-muted-foreground')}`}>
                   {f.text}
                 </span>
               </li>
@@ -579,11 +581,11 @@ function PlanCard({ tier, isAnnual, onCheckout, currentPlan, isActive, globalPro
 // StatusBadge
 function StatusBadge({ status }) {
   const cfg = {
-    paid:      { get label() { return tp('Payé'); },       cls: 'bg-primary-50 text-primary-700' },
+    paid:      { get label() { return tp('Payé'); },       cls: 'bg-primary-50 text-primary' },
     pending:   { label: 'En attente', cls: 'bg-amber-50 text-amber-700' },
     failure:   { get label() { return tp('Échoué'); },     cls: 'bg-red-50 text-red-700' },
-    'no paid': { get label() { return tp('Non payé'); },   cls: 'bg-gray-100 text-gray-600' },
-  }[status] || { label: status, cls: 'bg-gray-100 text-gray-600' };
+    'no paid': { get label() { return tp('Non payé'); },   cls: 'bg-muted text-muted-foreground' },
+  }[status] || { label: status, cls: 'bg-muted text-muted-foreground' };
   return <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold ${cfg.cls}`}>{cfg.label}</span>;
 }
 
@@ -745,10 +747,10 @@ export default function BillingPage() {
     <div className="min-h-screen bg-[#fafbfc]">
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+      <nav className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/ecom/dashboard" className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition">
+            <Link to="/ecom/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition">
               <ArrowLeftIcon />
               <span className="text-sm font-medium hidden sm:inline">{tp('Retour')}</span>
             </Link>
@@ -759,14 +761,14 @@ export default function BillingPage() {
           </div>
           <div className="flex items-center gap-3">
             {history.length > 0 && (
-              <button onClick={() => setShowHistory(!showHistory)} className="text-xs font-semibold text-gray-500 hover:text-gray-900 transition px-3 py-2 rounded-lg hover:bg-gray-100">
+              <button onClick={() => setShowHistory(!showHistory)} className="text-xs font-semibold text-muted-foreground hover:text-foreground transition px-3 py-2 rounded-lg hover:bg-muted">
                 {tp('Historique')}
               </button>
             )}
             {isActivePaid && (
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-50 border border-primary-200">
-                <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
-                <span className="text-[11px] font-bold text-primary-700">{planTiers.find(t => t.id === currentPlan)?.name || tp('Actif')}</span>
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-[11px] font-bold text-primary">{planTiers.find(t => t.id === currentPlan)?.name || tp('Actif')}</span>
               </div>
             )}
           </div>
@@ -799,7 +801,7 @@ export default function BillingPage() {
             <div className={`relative rounded-2xl overflow-hidden bg-gradient-to-r ${activeTier.gradient} px-5 py-4 text-white shadow-lg mb-8`}>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center p-2 flex-shrink-0">{activeTier.icon}</div>
+                  <div className="w-9 h-9 bg-card/20 rounded-xl flex items-center justify-center p-2 flex-shrink-0">{activeTier.icon}</div>
                   <div className="min-w-0">
                     <h2 className="text-base font-black truncate">{activeTier.name}</h2>
                     <p className="text-white/60 text-[11px]">{isTrial ? `Essai · ${trialDays}j restant${trialDays > 1 ? 's' : ''}` : `Expire ${formatDate(expiryDate)}`}</p>
@@ -807,7 +809,7 @@ export default function BillingPage() {
                 </div>
                 {isTrial ? (
                   <button onClick={() => document.getElementById('upgrade-section')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="px-4 py-1.5 bg-white text-gray-900 font-bold text-xs rounded-lg hover:bg-white/90 transition flex-shrink-0">
+                    className="px-4 py-1.5 bg-card text-foreground font-bold text-xs rounded-lg hover:bg-card/90 transition flex-shrink-0">
                     Choisir un plan →
                   </button>
                 ) : (
@@ -827,11 +829,11 @@ export default function BillingPage() {
                 { label: 'Jours restants', value: String(remainingDays), icon: <CalendarDays className="w-5 h-5 text-slate-500" /> },
                 { label: 'Paiements', value: String(history.length), icon: <CreditCard className="w-5 h-5 text-slate-500" /> },
               ].map(s => (
-                <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+                <div key={s.label} className="bg-card rounded-xl border p-4 flex items-center gap-3">
                   <div>{s.icon}</div>
                   <div>
-                    <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">{s.label}</p>
-                    <p className="text-lg font-black text-gray-900">{s.value}</p>
+                    <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">{s.label}</p>
+                    <p className="text-lg font-black text-foreground">{s.value}</p>
                   </div>
                 </div>
               ))}
@@ -840,25 +842,25 @@ export default function BillingPage() {
             {/* Upgrade section */}
             <div id="upgrade-section" className="pt-6">
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-black text-gray-900">{isTrial ? 'Choisissez votre plan' : tp('Changer de plan')}</h2>
-                <p className="text-gray-500 text-sm mt-2">{isTrial ? 'Votre essai gratuit prend fin bientôt. Choisissez un plan pour continuer.' : 'Passez à un plan supérieur ou changez d\'offre à tout moment.'}</p>
+                <h2 className="text-2xl font-black text-foreground">{isTrial ? 'Choisissez votre plan' : tp('Changer de plan')}</h2>
+                <p className="text-muted-foreground text-sm mt-2">{isTrial ? 'Votre essai gratuit prend fin bientôt. Choisissez un plan pour continuer.' : 'Passez à un plan supérieur ou changez d\'offre à tout moment.'}</p>
               </div>
 
               <div className="flex items-center justify-center gap-3 mb-6">
-                <span className={`text-sm font-semibold transition ${!isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>{tp('Mensuel')}</span>
+                <span className={`text-sm font-semibold transition ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>{tp('Mensuel')}</span>
                 <button onClick={() => setIsAnnual(!isAnnual)}
                   className={`relative w-14 h-7 rounded-full transition-colors ${isAnnual ? 'bg-blue-600' : 'bg-gray-300'}`}>
-                  <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${isAnnual ? 'translate-x-7' : ''}`} />
+                  <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-card rounded-full shadow-md transition-transform ${isAnnual ? 'translate-x-7' : ''}`} />
                 </button>
-                <span className={`text-sm font-semibold transition ${isAnnual ? 'text-gray-900' : 'text-gray-400'}`}>{tp('Annuel')}</span>
-                {isAnnual && <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-full">{tp('Jusqu\'à -25%')}</span>}
+                <span className={`text-sm font-semibold transition ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>{tp('Annuel')}</span>
+                {isAnnual && <span className="text-xs font-bold text-primary bg-primary-50 px-2.5 py-1 rounded-full">{tp('Jusqu\'à -25%')}</span>}
               </div>
 
               {/* Promo code input (global) */}
               <div className="flex flex-col items-center mb-10">
                 <form onSubmit={handleCheckGlobalPromo} className="relative w-full max-w-sm transition-all hover:scale-[1.02]">
                   <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <Gift className="w-4 h-4 text-gray-400" />
+                    <Gift className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <input
                     type="text"
@@ -866,7 +868,7 @@ export default function BillingPage() {
                     onChange={e => setGlobalPromo(e.target.value.toUpperCase())}
                     disabled={globalPromoData !== null}
                     placeholder={tp('Avez-vous un code promo ?')}
-                    className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition shadow-sm uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
+                    className="w-full pl-10 pr-24 py-2.5 bg-card border border-border rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition shadow-sm uppercase text-foreground disabled:opacity-75 disabled:bg-background"
                   />
                   {!globalPromoData ? (
                     <button type="submit" disabled={globalPromoLoading || !globalPromo.trim()}
@@ -875,13 +877,13 @@ export default function BillingPage() {
                     </button>
                   ) : (
                     <button type="button" onClick={handleClearGlobalPromo}
-                      className="absolute inset-y-1 right-1 px-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full text-xs font-bold transition">
+                      className="absolute inset-y-1 right-1 px-4 bg-muted hover:bg-gray-200 text-muted-foreground rounded-full text-xs font-bold transition">
                       {tp('Retirer')}
                     </button>
                   )}
                 </form>
                 {globalPromoError && <p className="text-red-500 text-[11px] font-bold mt-2">{globalPromoError}</p>}
-                {globalPromoData && <p className="text-primary-600 text-[11px] font-bold mt-2">Code {globalPromoData.code} validé !</p>}
+                {globalPromoData && <p className="text-primary text-[11px] font-bold mt-2">Code {globalPromoData.code} validé !</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
@@ -900,14 +902,14 @@ export default function BillingPage() {
             </div>
 
             {/* Full features list */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 mt-10">
-              <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">{tp('Fonctionnalités incluses')}</h3>
+            <div className="bg-card rounded-2xl border p-6 mt-10">
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-4">{tp('Fonctionnalités incluses')}</h3>
               <div className="grid sm:grid-cols-2 gap-2.5">
                 {activeTier.features.map((f, i) => (
-                  <div key={i} className={`flex items-center gap-2.5 text-[13px] ${f.included ? 'text-gray-700' : 'text-gray-300'}`}>
+                  <div key={i} className={`flex items-center gap-2.5 text-[13px] ${f.included ? 'text-foreground' : 'text-gray-300'}`}>
                     {f.included
-                      ? <div className="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0"><CheckIcon className="w-3 h-3 text-primary-600" /></div>
-                      : <div className="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0"><XIcon className="w-3 h-3 text-gray-300" /></div>
+                      ? <div className="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0"><CheckIcon className="w-3 h-3 text-primary" /></div>
+                      : <div className="w-5 h-5 rounded-full bg-background flex items-center justify-center flex-shrink-0"><XIcon className="w-3 h-3 text-gray-300" /></div>
                     }
                     <span className={f.highlight ? 'font-semibold' : ''}>{f.text}</span>
                   </div>
@@ -917,17 +919,17 @@ export default function BillingPage() {
 
             {/* Payment history inline */}
             {history.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 mt-4">
-                <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4">{tp('Derniers paiements')}</h3>
+              <div className="bg-card rounded-2xl border p-6 mt-4">
+                <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-4">{tp('Derniers paiements')}</h3>
                 <div className="space-y-3">
                   {history.slice(0, 3).map(p => (
                     <div key={p._id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
                       <div>
-                        <p className="text-sm font-bold text-gray-900 capitalize">{p.plan} — {p.durationMonths} mois</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{formatDate(p.createdAt)}</p>
+                        <p className="text-sm font-bold text-foreground capitalize">{p.plan} — {p.durationMonths} mois</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{formatDate(p.createdAt)}</p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <p className="text-sm font-black text-gray-900">{formatAmount(p.amount)} FCFA</p>
+                        <p className="text-sm font-black text-foreground">{formatAmount(p.amount)} FCFA</p>
                         <StatusBadge status={p.status} />
                       </div>
                     </div>
@@ -951,17 +953,17 @@ export default function BillingPage() {
       : (
         <>
           {/* Hero — Shopify style: minimal, centered, toggle prominent */}
-          <div className="bg-white border-b border-gray-100">
+          <div className="bg-card border-b border-border">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-14 pb-10 text-center">
 
               {/* Plan actuel banner (connecté + abonné) */}
               {!loading && isActivePaid && (
                 <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-full px-4 py-1.5 mb-6">
-                  <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
-                  <span className="text-xs font-bold text-primary-700">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-xs font-bold text-primary">
                     Plan actuel : {planTiers.find(t => t.id === currentPlan)?.name || currentPlan}
                   </span>
-                  <span className="text-xs text-primary-600 ml-1">{tp('— Actif')}</span>
+                  <span className="text-xs text-primary ml-1">{tp('— Actif')}</span>
                 </div>
               )}
 
@@ -976,34 +978,34 @@ export default function BillingPage() {
               {/* Activer essai */}
               {!loading && !isActivePaid && !isTrial && !trialUsed && (
                 <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-full px-4 py-1.5 mb-6">
-                  <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
-                  <span className="text-xs font-bold text-primary-700">{tp('Essai gratuit 7 jours disponible')}</span>
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-xs font-bold text-primary">{tp('Essai gratuit 7 jours disponible')}</span>
                   <button onClick={handleActivateTrial} disabled={trialLoading}
-                    className="text-xs font-black text-primary-600 hover:text-primary-800 transition disabled:opacity-50 ml-1">
+                    className="text-xs font-black text-primary hover:text-primary-800 transition disabled:opacity-50 ml-1">
                     {trialLoading ? '…' : 'Activer →'}
                   </button>
                 </div>
               )}
 
-              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight mb-4">
+              <h1 className="text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-tight mb-4">
                 Des tarifs simples,<br/>sans surprises
               </h1>
-              <p className="text-gray-500 text-lg max-w-xl mx-auto mb-10">
+              <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-10">
                 Commencez gratuitement. Passez à l'échelle quand vous êtes prêt.
               </p>
 
               {/* Toggle mensuel / annuel — style pill Shopify */}
-              <div className="inline-flex items-center bg-gray-100 rounded-full p-1 gap-1">
+              <div className="inline-flex items-center bg-muted rounded-full p-1 gap-1">
                 <button
                   onClick={() => setIsAnnual(false)}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                   {tp('Mensuel')}
                 </button>
                 <button
                   onClick={() => setIsAnnual(true)}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                   {tp('Annuel')}
-                  <span className="text-[10px] font-black bg-primary-500 text-white px-1.5 py-0.5 rounded-full">-25%</span>
+                  <span className="text-[10px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full">-25%</span>
                 </button>
               </div>
 
@@ -1011,7 +1013,7 @@ export default function BillingPage() {
               <div className="mt-6 flex flex-col items-center">
                 <form onSubmit={handleCheckGlobalPromo} className="relative w-full max-w-xs">
                   <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <Gift className="w-4 h-4 text-gray-400" />
+                    <Gift className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <input
                     type="text"
@@ -1019,7 +1021,7 @@ export default function BillingPage() {
                     onChange={e => setGlobalPromo(e.target.value.toUpperCase())}
                     disabled={globalPromoData !== null}
                     placeholder={tp('Code promo ?')}
-                    className="w-full pl-10 pr-24 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition uppercase text-gray-700 disabled:opacity-75 disabled:bg-gray-50"
+                    className="w-full pl-10 pr-24 py-2.5 bg-card border border-border rounded-full text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition uppercase text-foreground disabled:opacity-75 disabled:bg-background"
                   />
                   {!globalPromoData ? (
                     <button type="submit" disabled={globalPromoLoading || !globalPromo.trim()}
@@ -1028,13 +1030,13 @@ export default function BillingPage() {
                     </button>
                   ) : (
                     <button type="button" onClick={handleClearGlobalPromo}
-                      className="absolute inset-y-1 right-1 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full text-xs font-bold transition">
+                      className="absolute inset-y-1 right-1 px-4 bg-gray-200 hover:bg-gray-300 text-foreground rounded-full text-xs font-bold transition">
                       {tp('Retirer')}
                     </button>
                   )}
                 </form>
                 {globalPromoError && <p className="text-red-500 text-[11px] font-bold mt-2">{globalPromoError}</p>}
-                {globalPromoData && <p className="text-primary-600 text-[11px] font-bold mt-2">✓ Code {globalPromoData.code} appliqué</p>}
+                {globalPromoData && <p className="text-primary text-[11px] font-bold mt-2">✓ Code {globalPromoData.code} appliqué</p>}
               </div>
             </div>
           </div>
@@ -1057,16 +1059,16 @@ export default function BillingPage() {
 
             {/* Comparison table (desktop) */}
             <div className="hidden lg:block mt-20">
-              <h2 className="text-2xl font-black text-gray-900 text-center mb-10">{tp('Comparaison détaillée')}</h2>
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+              <h2 className="text-2xl font-black text-foreground text-center mb-10">{tp('Comparaison détaillée')}</h2>
+              <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-100">
-                      <th className="text-left px-6 py-5 text-gray-500 font-medium w-[40%]">{tp('Fonctionnalité')}</th>
+                    <tr className="border-b border-border">
+                      <th className="text-left px-6 py-5 text-muted-foreground font-medium w-[40%]">{tp('Fonctionnalité')}</th>
                       {planTiers.map(t => (
                         <th key={t.id} className="px-4 py-5 text-center">
-                          <span className="text-base font-black text-gray-900">{t.name}</span>
-                          <p className="text-xs text-gray-400 font-normal mt-0.5">{formatAmount((isAnnual ? (t.durations[1] ?? t.durations[0]) : t.durations[0]).perMonth)} FCFA/mois</p>
+                          <span className="text-base font-black text-foreground">{t.name}</span>
+                          <p className="text-xs text-muted-foreground font-normal mt-0.5">{formatAmount((isAnnual ? (t.durations[1] ?? t.durations[0]) : t.durations[0]).perMonth)} FCFA/mois</p>
                         </th>
                       ))}
                     </tr>
@@ -1085,13 +1087,13 @@ export default function BillingPage() {
                       { label: 'Multi-boutiques', values: [false, false, true] },
                       { label: 'Support', values: ['Standard', 'Prioritaire', '24/7 dédié'] },
                     ].map((row, i) => (
-                      <tr key={i} className="hover:bg-gray-50/50 transition">
-                        <td className="px-6 py-3.5 text-gray-700 font-medium">{row.label}</td>
+                      <tr key={i} className="hover:bg-background/50 transition">
+                        <td className="px-6 py-3.5 text-foreground font-medium">{row.label}</td>
                         {row.values.map((val, j) => (
                           <td key={j} className="px-4 py-3.5 text-center">
                             {val === true ? <CheckIcon className="w-5 h-5 text-primary-500 mx-auto" />
                               : val === false ? <span className="text-gray-300">—</span>
-                              : <span className="text-gray-700 font-semibold text-sm">{val}</span>}
+                              : <span className="text-foreground font-semibold text-sm">{val}</span>}
                           </td>
                         ))}
                       </tr>
@@ -1111,15 +1113,15 @@ export default function BillingPage() {
               ].map(item => (
                 <div key={item.title} className="text-center">
                   <div className="mb-3 flex justify-center">{item.icon}</div>
-                  <h3 className="font-bold text-gray-900 text-sm">{item.title}</h3>
-                  <p className="text-gray-500 text-xs mt-1 leading-relaxed">{item.desc}</p>
+                  <h3 className="font-bold text-foreground text-sm">{item.title}</h3>
+                  <p className="text-muted-foreground text-xs mt-1 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
 
             {/* FAQ */}
             <div className="mt-20 max-w-3xl mx-auto">
-              <h2 className="text-2xl font-black text-gray-900 text-center mb-8">{tp('Questions fréquentes')}</h2>
+              <h2 className="text-2xl font-black text-foreground text-center mb-8">{tp('Questions fréquentes')}</h2>
               <div className="space-y-4">
                 {[
                   { q: 'Puis-je changer de plan à tout moment ?', a: "Oui. Votre plan actuel reste actif jusqu'à expiration, et le nouveau plan prend le relais. Pas de frais de changement." },
@@ -1128,12 +1130,12 @@ export default function BillingPage() {
                   { q: "Qu'est-ce que les crédits de génération de pages IA ?", a: "Avec le plan Scalor IA Pro, vous recevez 10 crédits par mois pour générer des pages produit professionnelles avec l'IA. Chaque crédit = 1 page complète avec images, textes et formulaire." },
                   { q: "Que se passe-t-il quand mon abonnement expire ?", a: 'Vous repassez automatiquement au plan gratuit. Vos données sont conservées et vous pouvez réactiver votre plan à tout moment.' },
                 ].map(({ q, a }) => (
-                  <details key={q} className="group bg-white border border-gray-200 rounded-xl overflow-hidden">
-                    <summary className="flex items-center justify-between px-6 py-4 cursor-pointer select-none hover:bg-gray-50 transition">
-                      <span className="font-semibold text-gray-900 text-sm pr-4">{q}</span>
-                      <span className="text-gray-400 group-open:rotate-45 transition-transform text-xl font-light flex-shrink-0">+</span>
+                  <details key={q} className="group bg-card border border-border rounded-xl overflow-hidden">
+                    <summary className="flex items-center justify-between px-6 py-4 cursor-pointer select-none hover:bg-background transition">
+                      <span className="font-semibold text-foreground text-sm pr-4">{q}</span>
+                      <span className="text-muted-foreground group-open:rotate-45 transition-transform text-xl font-light flex-shrink-0">+</span>
                     </summary>
-                    <div className="px-6 pb-4 text-sm text-gray-600 leading-relaxed">{a}</div>
+                    <div className="px-6 pb-4 text-sm text-muted-foreground leading-relaxed">{a}</div>
                   </details>
                 ))}
               </div>
@@ -1144,10 +1146,10 @@ export default function BillingPage() {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.15),transparent_70%)] pointer-events-none" />
               <div className="relative">
                 <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">{tp('Prêt à scaler votre business ?')}</h2>
-                <p className="text-gray-400 text-base mb-8 max-w-lg mx-auto">{tp('Rejoignez les entrepreneurs qui automatisent leurs ventes avec Scalor. Commencez votre essai gratuit aujourd\'hui.')}</p>
+                <p className="text-muted-foreground text-base mb-8 max-w-lg mx-auto">{tp('Rejoignez les entrepreneurs qui automatisent leurs ventes avec Scalor. Commencez votre essai gratuit aujourd\'hui.')}</p>
                 {!trialUsed && (
                   <button onClick={handleActivateTrial} disabled={trialLoading}
-                    className="px-8 py-4 bg-white text-gray-900 font-black text-sm rounded-xl hover:bg-gray-100 transition shadow-xl disabled:opacity-50">
+                    className="px-8 py-4 bg-card text-foreground font-black text-sm rounded-xl hover:bg-muted transition shadow-xl disabled:opacity-50">
                     {trialLoading ? 'Activation…' : <span className="flex items-center gap-2"><Gift className="w-4 h-4" /> {tp('Commencer l\'essai gratuit — 7 jours')}</span>}
                   </button>
                 )}
@@ -1158,13 +1160,13 @@ export default function BillingPage() {
       )}
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-xs text-gray-400">
+      <footer className="border-t border-border bg-card">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary-500 to-teal-600 flex items-center justify-center">
               <span className="text-white font-black text-[10px]">S</span>
             </div>
-            <span className="font-semibold text-gray-500">Scalor</span>
+            <span className="font-semibold text-muted-foreground">Scalor</span>
             <span>© 2025</span>
           </div>
           <div className="flex items-center gap-4">
@@ -1177,22 +1179,22 @@ export default function BillingPage() {
       {showHistory && (
         <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setShowHistory(false)}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="relative w-full max-w-lg bg-white shadow-2xl overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
-              <h3 className="font-black text-gray-900">{tp('Historique des paiements')}</h3>
-              <button onClick={() => setShowHistory(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition"><XIcon className="w-5 h-5 text-gray-500" /></button>
+          <div className="relative w-full max-w-lg bg-card shadow-2xl overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between z-10">
+              <h3 className="font-black text-foreground">{tp('Historique des paiements')}</h3>
+              <button onClick={() => setShowHistory(false)} className="p-1.5 rounded-lg hover:bg-muted transition"><XIcon className="w-5 h-5 text-muted-foreground" /></button>
             </div>
             <div className="p-6 space-y-3">
               {history.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-12">{tp('Aucun paiement')}</p>
+                <p className="text-sm text-muted-foreground text-center py-12">{tp('Aucun paiement')}</p>
               ) : history.map(p => (
-                <div key={p._id} className="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
+                <div key={p._id} className="bg-background rounded-xl p-4 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold text-gray-900 capitalize">{p.plan} — {p.durationMonths} mois</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{formatDate(p.createdAt)} · {p.paymentMethod || '—'}</p>
+                    <p className="text-sm font-bold text-foreground capitalize">{p.plan} — {p.durationMonths} mois</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{formatDate(p.createdAt)} · {p.paymentMethod || '—'}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-black text-gray-900">{formatAmount(p.amount)} FCFA</p>
+                    <p className="text-sm font-black text-foreground">{formatAmount(p.amount)} FCFA</p>
                     <div className="mt-1"><StatusBadge status={p.status} /></div>
                   </div>
                 </div>
@@ -1219,10 +1221,10 @@ export default function BillingPage() {
       {/* Direct checkout loading overlay */}
       {directCheckoutLoading && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4">
-            <div className="w-12 h-12 border-4 border-gray-200 rounded-full animate-spin mx-auto mb-4" style={{ borderTopColor: '#0F6B4F' }} />
-            <p className="text-sm font-semibold text-gray-900">{tp('Redirection vers le paiement...')}</p>
-            <p className="text-xs text-gray-500 mt-1">{tp('Veuillez patienter')}</p>
+          <div className="bg-card rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4">
+            <div className="w-12 h-12 border-4 border-border rounded-full animate-spin mx-auto mb-4" style={{ borderTopColor: '#0F6B4F' }} />
+            <p className="text-sm font-semibold text-foreground">{tp('Redirection vers le paiement...')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{tp('Veuillez patienter')}</p>
           </div>
         </div>
       )}

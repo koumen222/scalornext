@@ -80,8 +80,8 @@ const DecisionForm = () => {
   return (
     <div className="p-3 sm:p-4 lg:p-6">
       <div className="mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{tp('Nouvelle décision')}</h1>
-        <p className="text-gray-600 mt-2">{tp('Prenez une décision stratégique pour un produit')}</p>
+        <h1 className="text-xl sm:text-3xl font-bold text-foreground">{tp('Nouvelle décision')}</h1>
+        <p className="text-muted-foreground mt-2">{tp('Prenez une décision stratégique pour un produit')}</p>
       </div>
 
       {error && (
@@ -93,7 +93,7 @@ const DecisionForm = () => {
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Produit concerné *
             </label>
             <select
@@ -113,7 +113,7 @@ const DecisionForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Type de décision *
             </label>
             <select
@@ -128,12 +128,12 @@ const DecisionForm = () => {
               <option value="stop">{tp('Arrêter')}</option>
             </select>
             {formData.type && (
-              <p className="mt-1 text-sm text-gray-500">{getTypeDescription()}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{getTypeDescription()}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Priorité *
             </label>
             <select
@@ -150,7 +150,7 @@ const DecisionForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               {tp('Assigné ù')} 
             </label>
             <input
@@ -165,7 +165,7 @@ const DecisionForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Raison de la décision *
           </label>
           <textarea
@@ -180,7 +180,7 @@ const DecisionForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             {tp('Notes supplémentaires')}
           </label>
           <textarea
@@ -197,7 +197,7 @@ const DecisionForm = () => {
         {formData.productId && formData.type && (
           <div className="bg-primary-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-primary-900 mb-2">{tp('Aperçu de la décision')}</h3>
-            <div className="text-sm text-primary-700">
+            <div className="text-sm text-primary">
               <p><strong>{tp('Produit:')}</strong> {products.find(p => p._id === formData.productId)?.name}</p>
               <p><strong>{tp('Action:')}</strong> {formData.type === 'scale' ? 'Scaler le produit' : formData.type === 'stop' ? 'Arrêter le produit' : tp('Continuer le produit')}</p>
               <p><strong>{tp('Priorité:')}</strong> {formData.priority === 'high' ? 'Haute' : formData.priority === 'medium' ? 'Moyenne' : tp('Basse')}</p>
@@ -210,14 +210,14 @@ const DecisionForm = () => {
           <button
             type="button"
             onClick={() => navigate('/ecom/decisions')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 rounded-md text-foreground hover:bg-background"
           >
             {tp('Annuler')}
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
           >
             {loading ? 'Création...' : tp('Créer la décision')}
           </button>

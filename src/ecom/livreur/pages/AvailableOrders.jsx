@@ -53,6 +53,8 @@ export default function AvailableOrders() {
       navigate('/ecom/livreur/deliveries');
     } catch (err) {
       setError(err.response?.data?.message || 'Impossible d\'accepter cette course.');
+      // Course perdue (déjà prise / réservée) → rafraîchir pour retirer l'offre obsolète
+      loadOrders();
     } finally {
       setAssigning(null);
     }
@@ -71,41 +73,41 @@ export default function AvailableOrders() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-10">
+      <div className="bg-card border-b border-border px-4 pt-12 pb-4 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-gray-900">{tp('Courses disponibles')}</h1>
+          <h1 className="text-xl font-bold text-foreground">{tp('Courses disponibles')}</h1>
           <button
             onClick={loadOrders}
-            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center active:scale-95 transition-transform"
+            className="w-9 h-9 rounded-full bg-muted flex items-center justify-center active:scale-95 transition-transform"
           >
-            <RefreshCw size={18} className={`text-gray-500 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw size={18} className={`text-muted-foreground ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
 
         {/* Search */}
         <div className="relative mb-2">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder={tp('Rechercher...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-300"
+            className="w-full pl-9 pr-4 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-300"
           />
         </div>
 
         {/* City filter */}
         <div className="relative">
-          <Filter size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Filter size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder={tp('Filtrer par ville...')}
             value={filterCity}
             onChange={(e) => setFilterCity(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && loadOrders()}
-            className="w-full pl-9 pr-4 py-2 bg-gray-100 rounded-xl text-sm outline-none"
+            className="w-full pl-9 pr-4 py-2 bg-muted rounded-xl text-sm outline-none"
           />
         </div>
       </div>
@@ -126,7 +128,7 @@ export default function AvailableOrders() {
         )}
 
         {/* Count */}
-        <p className="text-xs text-gray-400 mb-3 font-medium uppercase tracking-wide">
+        <p className="text-xs text-muted-foreground mb-3 font-medium uppercase tracking-wide">
           {filtered.length} course{filtered.length !== 1 ? 's' : ''} disponible{filtered.length !== 1 ? 's' : ''}
         </p>
 
@@ -139,8 +141,8 @@ export default function AvailableOrders() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Package size={48} className="text-gray-200 mb-3" />
-            <p className="text-gray-500 font-medium">{tp('Aucune course disponible')}</p>
-            <p className="text-gray-400 text-sm mt-1">{tp('Revenez dans quelques instants')}</p>
+            <p className="text-muted-foreground font-medium">{tp('Aucune course disponible')}</p>
+            <p className="text-muted-foreground text-sm mt-1">{tp('Revenez dans quelques instants')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -173,18 +175,18 @@ function OrderAvailableCard({ order, onAccept, accepting, onView }) {
 
   return (
     <div
-      className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+      className="bg-card rounded-2xl border shadow-sm overflow-hidden"
       onClick={onView}
     >
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div>
-            <span className="text-xs font-mono text-gray-400">{order.orderId}</span>
-            <h3 className="font-semibold text-gray-900 text-base mt-0.5">
+            <span className="text-xs font-mono text-muted-foreground">{order.orderId}</span>
+            <h3 className="font-semibold text-foreground text-base mt-0.5">
               {order.clientName || tp('Client')}
             </h3>
           </div>
-          <div className="flex items-center gap-1 text-gray-400 text-xs">
+          <div className="flex items-center gap-1 text-muted-foreground text-xs">
             <Clock size={12} />
             {timeAgo(order.date || order.createdAt)}
           </div>
@@ -192,22 +194,22 @@ function OrderAvailableCard({ order, onAccept, accepting, onView }) {
 
         <div className="space-y-1.5 mb-4">
           {(order.address || order.city) && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin size={14} className="text-indigo-400 shrink-0" />
               <span className="truncate">{order.address || order.city}</span>
             </div>
           )}
           {order.clientPhone && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Phone size={14} className="text-indigo-400 shrink-0" />
               <span>{order.clientPhone}</span>
             </div>
           )}
           {order.product && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Package size={14} className="text-indigo-400 shrink-0" />
               <span className="truncate">{order.product}</span>
-              {order.quantity && <span className="text-gray-400">x{order.quantity}</span>}
+              {order.quantity && <span className="text-muted-foreground">x{order.quantity}</span>}
             </div>
           )}
         </div>
@@ -222,9 +224,9 @@ function OrderAvailableCard({ order, onAccept, accepting, onView }) {
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onView(); }}
-            className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center active:scale-95 transition-transform"
+            className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center active:scale-95 transition-transform"
           >
-            <ChevronRight size={18} className="text-gray-500" />
+            <ChevronRight size={18} className="text-muted-foreground" />
           </button>
         </div>
       </div>

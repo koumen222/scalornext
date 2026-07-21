@@ -44,23 +44,23 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
     <div className="space-y-6 p-4">
       {/* Colors */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Couleurs')}</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Couleurs')}</h3>
         <div className="space-y-3">
           {colorOptions.map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
-              <span className="text-xs text-gray-600">{label}</span>
+              <span className="text-xs text-muted-foreground">{label}</span>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
                   value={localTheme[key] || '#000000'}
                   onChange={(e) => updateTheme({ [key]: e.target.value })}
-                  className="w-8 h-6 rounded border border-gray-200"
+                  className="w-8 h-6 rounded border border-border"
                 />
                 <input
                   type="text"
                   value={localTheme[key] || ''}
                   onChange={(e) => updateTheme({ [key]: e.target.value })}
-                  className="w-20 px-2 py-1 text-xs font-mono border border-gray-200 rounded"
+                  className="w-20 px-2 py-1 text-xs font-mono border border-border rounded"
                 />
               </div>
             </div>
@@ -70,7 +70,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
 
       {/* Typography */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Police')}</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Police')}</h3>
         <div className="grid grid-cols-2 gap-2">
           {fontOptions.map((font) => (
             <button
@@ -79,7 +79,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
               className={`p-2 text-xs font-medium rounded border transition ${
                 localTheme.font === font.id
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  : 'border-border text-muted-foreground hover:border-gray-300'
               }`}
             >
               {font.name}
@@ -90,7 +90,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
 
       {/* Border Radius */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Arrondis')}</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Arrondis')}</h3>
         <div className="grid grid-cols-3 gap-2">
           {[
             { id: 'none', label: 'Aucun' },
@@ -106,7 +106,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
               className={`p-2 text-xs font-medium rounded border transition ${
                 localTheme.borderRadius === radius.id
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  : 'border-border text-muted-foreground hover:border-gray-300'
               }`}
             >
               {radius.label}
@@ -117,7 +117,7 @@ function ThemeCustomizer({ theme, onThemeUpdate }) {
 
       {/* Live Preview */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">{tp('Aperçu')}</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">{tp('Aperçu')}</h3>
         <div 
           className="p-4 rounded-lg border"
           style={{ 
@@ -160,8 +160,8 @@ function DeviceFrame({ device, subdomain, iframeKey }) {
 
   if (!subdomain) {
     return (
-      <div className="flex-1 bg-gray-100 flex items-center justify-center">
-        <div className="text-center text-gray-400">
+      <div className="flex-1 bg-muted flex items-center justify-center">
+        <div className="text-center text-muted-foreground">
           <div className="text-4xl mb-3">🏪</div>
           <p className="text-sm font-medium">{tp('Aucune boutique configurée')}</p>
           <p className="text-xs mt-1">{tp('Configurez un sous-domaine dans les paramètres')}</p>
@@ -171,23 +171,23 @@ function DeviceFrame({ device, subdomain, iframeKey }) {
   }
 
   return (
-    <div className="flex-1 bg-gray-100 flex flex-col items-center justify-start p-6 overflow-auto">
+    <div className="flex-1 bg-muted flex flex-col items-center justify-start p-6 overflow-auto">
       <div className="text-center mb-4">
-        <span className="text-xs text-gray-500 font-medium">{config.label}</span>
+        <span className="text-xs text-muted-foreground font-medium">{config.label}</span>
       </div>
       
       <div
-        className="bg-white rounded-lg shadow-xl overflow-hidden"
+        className="bg-card rounded-lg shadow-xl overflow-hidden"
         style={{ width: config.width, maxWidth: '100%' }}
       >
         {/* Browser chrome */}
-        <div className="h-8 bg-gray-100 border-b flex items-center px-3 gap-2">
+        <div className="h-8 bg-muted border-b flex items-center px-3 gap-2">
           <div className="flex gap-1">
             <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
             <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
           </div>
-          <div className="flex-1 bg-white rounded px-2 py-0.5 text-xs text-gray-500 font-mono">
+          <div className="flex-1 bg-card rounded px-2 py-0.5 text-xs text-muted-foreground font-mono">
             {window.location.origin}/store/{subdomain}
           </div>
         </div>
@@ -291,10 +291,10 @@ const EnhancedVisualBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-          <p className="text-sm text-gray-500">{tp('Chargement du builder...')}</p>
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">{tp('Chargement du builder...')}</p>
         </div>
       </div>
     );
@@ -302,20 +302,20 @@ const EnhancedVisualBuilder = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col h-screen bg-gray-50">
+      <div className="flex flex-col h-screen bg-background">
         {/* Header */}
-        <header className="flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200 flex-shrink-0 shadow-sm z-10">
+        <header className="flex items-center justify-between h-14 px-4 bg-card border-b border-border flex-shrink-0 shadow-sm z-10">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/ecom/boutique')}
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="hidden sm:inline">{tp('Retour')}</span>
             </button>
             
             <div className="w-px h-6 bg-gray-200" />
-            <h1 className="text-lg font-bold text-gray-900">{tp('Site Builder')}</h1>
+            <h1 className="text-lg font-bold text-foreground">{tp('Site Builder')}</h1>
             
             <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
               isConnected ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-600'
@@ -330,11 +330,11 @@ const EnhancedVisualBuilder = () => {
 
           <div className="flex items-center gap-2">
             {/* Mode switcher: Edit / Preview */}
-            <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+            <div className="flex items-center bg-muted rounded-lg p-0.5">
               <button
                 onClick={() => setActiveTab('builder')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition ${
-                  activeTab !== 'preview' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                  activeTab !== 'preview' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <LayoutGrid className="w-4 h-4" />
@@ -343,7 +343,7 @@ const EnhancedVisualBuilder = () => {
               <button
                 onClick={() => setActiveTab('preview')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition ${
-                  activeTab === 'preview' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                  activeTab === 'preview' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <Eye className="w-4 h-4" />
@@ -352,7 +352,7 @@ const EnhancedVisualBuilder = () => {
             </div>
 
             {activeTab === 'preview' && (
-              <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+              <div className="flex items-center bg-muted rounded-lg p-0.5">
                 {[
                   { id: 'desktop', icon: <Monitor className="w-4 h-4" />, label: 'Bureau' },
                   { id: 'tablet', icon: <Tablet className="w-4 h-4" />, label: 'Tablette' },
@@ -362,7 +362,7 @@ const EnhancedVisualBuilder = () => {
                     key={id}
                     onClick={() => setDevice(id)}
                     className={`p-2 rounded-md transition ${
-                      device === id ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                      device === id ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
                     }`}
                     title={label}
                   >
@@ -376,7 +376,7 @@ const EnhancedVisualBuilder = () => {
 
             <button
               onClick={() => setIframeKey(k => k + 1)}
-              className="p-2 rounded-lg text-gray-500 hover:text-gray-700 transition"
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition"
               title={tp('Rafraîchir l\'aperçu')}
             >
               <RefreshCw className="w-4 h-4" />
@@ -387,7 +387,7 @@ const EnhancedVisualBuilder = () => {
                 href={`https://${subdomain}.scalor.net`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg text-gray-500 hover:text-gray-700 transition"
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition"
                 title={tp('Ouvrir la boutique')}
               >
                 <ExternalLink className="w-4 h-4" />
@@ -414,8 +414,8 @@ const EnhancedVisualBuilder = () => {
           {activeTab !== 'preview' && (
             <>
               {/* Sidebar gauche : onglets Blocs / Thème / Config */}
-              <div className="w-72 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
-                <div className="flex border-b border-gray-200">
+              <div className="w-72 bg-card border-r border-border flex flex-col flex-shrink-0">
+                <div className="flex border-b border-border">
                   {[
                     { id: 'builder', label: 'Blocs',  icon: <LayoutGrid className="w-4 h-4" /> },
                     { id: 'theme',   get label() { return tp('Thème'); },  icon: <Palette className="w-4 h-4" /> },
@@ -427,7 +427,7 @@ const EnhancedVisualBuilder = () => {
                       className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-semibold transition border-b-2 ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600 bg-blue-50'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                          : 'border-transparent text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       {tab.icon}
@@ -444,18 +444,18 @@ const EnhancedVisualBuilder = () => {
                   {activeTab === 'settings' && (
                     <div className="p-4 space-y-4">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">{tp('Sous-domaine')}</label>
+                        <label className="block text-xs font-medium text-foreground mb-1">{tp('Sous-domaine')}</label>
                         <input
                           type="text"
                           value={subdomain}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-background"
                           readOnly
                         />
-                        <p className="text-xs text-gray-500 mt-1">{subdomain}.scalor.net</p>
+                        <p className="text-xs text-muted-foreground mt-1">{subdomain}.scalor.net</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">{tp('Sections')}</label>
-                        <p className="text-sm text-gray-600">
+                        <label className="block text-xs font-medium text-foreground mb-1">{tp('Sections')}</label>
+                        <p className="text-sm text-muted-foreground">
                           {sections.length} section{sections.length !== 1 ? 's' : ''} configurée{sections.length !== 1 ? 's' : ''}
                         </p>
                       </div>

@@ -14,6 +14,9 @@ import { storeMetadata, productMetadata, storePublicBase } from './meta';
 import {
   PublicStorefront,
   StoreAllProducts,
+  StoreCollectionPage,
+  StoreAboutPage,
+  StoreContactPage,
   StoreLegalPage,
   StoreProductPage,
   StoreCheckout,
@@ -55,6 +58,18 @@ export function SiteHomePage() {
 
 export function SiteProductsPage() {
   return <StoreAllProducts />;
+}
+
+export function SiteCollectionPage() {
+  return <StoreCollectionPage />;
+}
+
+export function SiteAboutPage() {
+  return <StoreAboutPage />;
+}
+
+export function SiteContactPage() {
+  return <StoreContactPage />;
 }
 
 export async function productsGenerateMetadata({ params }: { params: SiteParams }): Promise<Metadata> {

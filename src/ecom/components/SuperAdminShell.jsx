@@ -4,7 +4,7 @@ import { Link, useLocation } from '@/lib/router-compat';
 import {
   BarChart3, Users, Building2, Activity, FileText,
   Clock, Bell, MessageSquare, Zap, Settings, RefreshCw,
-  CheckCircle2, AlertCircle, DollarSign, Layers, List, Store, TrendingUp,
+  CheckCircle2, AlertCircle, DollarSign, Layers, List, Store, TrendingUp, Sparkles,
 } from 'lucide-react';
 
 const NAV = [
@@ -15,6 +15,7 @@ const NAV = [
   { to: '/ecom/super-admin/analytics',             label: 'Analytics',    icon: Activity      },
   { to: '/ecom/super-admin/billing',               label: 'Billing',      icon: DollarSign    },
   { to: '/ecom/super-admin/product-page-history',  label: 'Pages IA',     icon: FileText      },
+  { to: '/ecom/super-admin/creative',              label: 'Creative',     icon: Sparkles      },
   { to: '/ecom/super-admin/activity',              get label() { return tp('Activité'); },     icon: Clock         },
   { to: '/ecom/super-admin/boutique-stats',        label: 'Stats Boutique', icon: Store       },
   { to: '/ecom/super-admin/push',                  label: 'Push',         icon: Bell          },
@@ -42,7 +43,7 @@ const SuperAdminShell = ({
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #f0f4f8 0%, #f8fafc 100%)' }}>
       {/* ── Light header ── */}
-      <div className="bg-white border-b border-slate-200 px-4 sm:px-6 pt-5 pb-0 shadow-sm">
+      <div className="bg-card border-b border-slate-200 px-4 sm:px-6 pt-5 pb-0 shadow-sm">
         <div style={{ maxWidth }} className="mx-auto">
 
           {/* Title row */}

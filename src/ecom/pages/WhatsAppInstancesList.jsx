@@ -74,7 +74,7 @@ const WhatsAppInstancesList = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted rounded-md transition"
           >
             <ArrowLeft className="h-4 w-4" />
             {tp('Retour')}
@@ -94,7 +94,7 @@ const WhatsAppInstancesList = () => {
       </div>
 
       <div className="grid gap-6">
-        <div className="bg-white rounded-lg border shadow-sm">
+        <div className="bg-card rounded-lg border shadow-sm">
           <div className="p-6 border-b">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Settings className="h-5 w-5" />
@@ -155,7 +155,7 @@ const WhatsAppInstancesList = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border shadow-sm">
+        <div className="bg-card rounded-lg border shadow-sm">
           <div className="p-6 border-b">
             <h3 className="text-lg font-semibold">{tp('Actions rapides')}</h3>
           </div>
@@ -163,14 +163,14 @@ const WhatsAppInstancesList = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => navigate('/ecom/whatsapp/service')}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-background transition text-sm font-medium"
               >
                 <Settings className="h-4 w-4" />
                 {tp('Configurer une nouvelle instance')}
               </button>
               <button
                 onClick={() => navigate('/ecom/whatsapp-postulation')}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-background transition text-sm font-medium"
               >
                 <Smartphone className="h-4 w-4" />
                 {tp('Postuler pour WhatsApp Business')}

@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react';
+import { PAYMENT_METHOD_META } from '../utils/storePaymentMethods.js';
 import { safeHtml } from '../utils/sanitize';
 import { Link, useLocation, useParams } from '@/lib/router-compat';
 import {
@@ -13,6 +14,7 @@ import { useStoreCart } from '../hooks/useStoreCart';
 import ProductBenefits from '../components/ProductBenefits';
 import ConversionBlocks, { UrgencyBadge } from '../components/ConversionBlocks';
 import ProductTestimonials from '../components/ProductTestimonials';
+import CustomCodeSection from '../components/CustomCodeSection.jsx';
 import { StorefrontHeader, StorefrontFooter } from '../components/StorefrontShared';
 const QuickOrderModal = lazy(() => import('../components/QuickOrderModal'));
 const EmbeddedOrderForm = lazy(() => import('../components/EmbeddedOrderForm'));
@@ -1699,7 +1701,9 @@ const StoreProductPage = () => {
       try {
         const { io } = await import('socket.io-client');
         if (cancelled) return;
-        const socketUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.scalor.net';
+        const socketUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+          || process.env.NEXT_PUBLIC_API_URL
+          || 'https://api.scalor.net';
         socket = io(`${socketUrl}/store-live`, {
           transports: ['websocket', 'polling'],
           reconnection: true,
@@ -1808,21 +1812,26 @@ const StoreProductPage = () => {
 
   const ppTheme = productPC?.theme || productPageConfig?.theme || store?.template || storePC?.theme || 'classic';
   const productPageData = product?._pageData || {};
-  const isPremiumProductPage = (
-    ppTheme === 'premium_product'
-    || ppTheme === 'magazine'
-    || store?.template === 'magazine'
-    || productPC?.pageStyle === 'premium'
-    || productPC?.theme === 'premium_product'
+  // Le thème EXPLICITEMENT choisi (produit > config > boutique) fait autorité.
+  // La simple présence de contenu premium (premiumPage sauvegardé par le builder,
+  // _pageData généré par l'IA…) ne force le rendu premium QUE si aucun thème
+  // explicite n'est configuré — sinon choisir « classique » était sans effet.
+  const hasExplicitTheme = Boolean(productPC?.theme || productPageConfig?.theme || store?.template || storePC?.theme);
+  const premiumContentSignals = (
+    productPC?.pageStyle === 'premium'
     || Boolean(productPC?.premiumPage)
     || productPageConfig?.pageStyle === 'premium'
-    || productPageConfig?.theme === 'premium_product'
     || Boolean(productPageConfig?.premiumPage)
     || productPageData?.pageStyle === 'premium'
     || productPageData?.layout === 'premium_product_page'
     || productPageData?.theme === 'premium_product'
     || Boolean(productPageData?.premium_page)
     || Boolean(productPageData?.premiumPage)
+  );
+  const isPremiumProductPage = (
+    ppTheme === 'premium_product'
+    || ppTheme === 'magazine'
+    || (!hasExplicitTheme && premiumContentSignals)
   );
   const premiumProductPageConfig = isPremiumProductPage ? {
     ...productPageConfig,
@@ -2644,7 +2653,7 @@ const StoreProductPage = () => {
                   <ProductBonusEbook
                     ebook={bonusEbook}
                     accentColor={aiVisualTheme?.primary || 'var(--s-primary)'}
-                    ctaLabel={ppButton.text || product?._pageData?.hero_cta || 'Commander'}
+                    ctaLabel={lm(ppButton.text) || product?._pageData?.hero_cta || t('premium.orderCta')}
                     onOrder={handleBonusOrder}
                   />
                 )}
@@ -2767,7 +2776,11 @@ const StoreProductPage = () => {
                                 <CtaIcon size={18} /> {lm(ppButton.text) || t('cta.orderNow')}
                               </div>
                               <span style={{ fontSize: '12px', opacity: 0.9, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Truck size={10} /> {lm(ppButton.subtext) || t('shipping.codTitle')}
+                                <Truck size={10} /> {(() => {
+                                  const scalorOn = store?.paymentMethods?.scalorPay === true;
+                                  const raw = lm(ppButton.subtext) || (scalorOn ? t('shipping.codOrOnline') : t('shipping.codTitle'));
+                                  return scalorOn && /paiement\s+(à|a)\s+la\s+livraison|cash\s+on\s+delivery|pago\s+contra\s+entrega/i.test(String(raw)) ? t('shipping.codOrOnline') : raw;
+                                })()}
                               </span>
                             </button>
                           )}
@@ -2831,9 +2844,20 @@ const StoreProductPage = () => {
 
                     case 'deliveryInfo':
                       return (
-                        <div key={sectionId} style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
-                          <Truck size={12} color={trustTheme.primary} style={{ flexShrink: 0 }} />
-                          <span style={{ fontSize: 11.5, color: 'var(--s-text2)', fontFamily: 'var(--s-font)' }}>{t('store.deliveryCodLine')}</span>
+                        <div key={sectionId} style={{ marginBottom: 6 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <Truck size={12} color={trustTheme.primary} style={{ flexShrink: 0 }} />
+                            <span style={{ fontSize: 11.5, color: 'var(--s-text2)', fontFamily: 'var(--s-font)' }}>{store?.paymentMethods?.scalorPay === true ? t('store.deliveryCodOnlineLine') : t('store.deliveryCodLine')}</span>
+                          </div>
+                          {store?.paymentMethods?.scalorPay === true && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4, marginTop: 6 }}>
+                              {(PAYMENT_METHOD_META.scalor_pay?.badges || []).map((b) => (
+                                <span key={b.label} style={{ fontSize: 9, fontWeight: 800, padding: '2.5px 7px', borderRadius: 999, backgroundColor: b.bg, color: b.color, letterSpacing: 0.2, whiteSpace: 'nowrap' }}>
+                                  {b.label}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       );
 
@@ -3019,6 +3043,12 @@ const StoreProductPage = () => {
                         : null;
                     }
 
+                    case 'customCode':
+                      return <CustomCodeSection key={sectionId} content={sectionContentMap.customCode || {}} />;
+
+                    // Sections personnalisées ajoutées via le builder (ccs_…) —
+                    // gérées par le default ci-dessous
+
                     case 'upsell':
                     case 'orderBump':
                       // These are rendered inline (not standalone components yet)
@@ -3027,6 +3057,9 @@ const StoreProductPage = () => {
                     // heroSlogan, heroBaseline, testimonials, relatedProducts, stickyOrderBar
                     // are rendered separately (outside this loop)
                     default:
+                      if (String(sectionId).startsWith('ccs_')) {
+                        return <CustomCodeSection key={sectionId} content={sectionContentMap[sectionId] || {}} />;
+                      }
                       return null;
                   }
                 })}
@@ -3127,7 +3160,7 @@ const StoreProductPage = () => {
               disabled={!inStock}
               style={{ ...resolveCtaStyle(inStock, true), whiteSpace: 'nowrap', flexShrink: 0, maxWidth: '55%', fontSize: 'clamp(13px, 3vw, 16px)' }}
             >
-              {ppButton.text || 'Commander'}
+              {lm(ppButton.text) || t('premium.orderCta')}
             </button>
           </div>
         </div>
@@ -3145,6 +3178,7 @@ const StoreProductPage = () => {
             subdomain={subdomain}
             pixels={pixels}
             onClose={() => setShowOrderModal(false)}
+            onRequestOpen={() => setShowOrderModal(true)}
             productPageConfig={productPageConfig}
             selectedVariants={selectedVariants}
           />

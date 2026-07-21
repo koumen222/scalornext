@@ -60,8 +60,8 @@ export default function PushNotificationBanner() {
   if (testSent) {
     return (
       <div className="fixed top-16 inset-x-0 z-40 flex justify-center px-4">
-        <div className="bg-primary-600 text-white rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 max-w-lg w-full animate-slide-down">
-          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="bg-primary text-white rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 max-w-lg w-full animate-slide-down">
+          <div className="w-8 h-8 bg-card/20 rounded-lg flex items-center justify-center flex-shrink-0">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
@@ -80,15 +80,15 @@ export default function PushNotificationBanner() {
 
   return (
     <div className="fixed top-16 inset-x-0 z-40 flex justify-center px-4">
-      <div className="bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 max-w-lg w-full animate-slide-down">
+      <div className="bg-card border border-border rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 max-w-lg w-full animate-slide-down">
         <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
-          <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900">{tp('Activer les notifications')}</p>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-sm font-semibold text-foreground">{tp('Activer les notifications')}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             {tp('Recevez les alertes commandes, stock et équipe en temps réel.')}
           </p>
           {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
@@ -96,7 +96,7 @@ export default function PushNotificationBanner() {
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={handleDismiss}
-            className="text-gray-400 hover:text-gray-600 p-1"
+            className="text-muted-foreground hover:text-muted-foreground p-1"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -105,7 +105,7 @@ export default function PushNotificationBanner() {
           <button
             onClick={handleActivate}
             disabled={activating}
-            className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-lg transition disabled:opacity-50 flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-primary hover:bg-primary-700 text-white text-xs font-semibold rounded-lg transition disabled:opacity-50 flex items-center gap-1.5"
           >
             {activating ? (
               <>

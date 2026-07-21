@@ -59,23 +59,18 @@ function resolveEcomApiBaseUrl() {
     return '/api/ecom';
   }
 
-  // On scalor.net frontend, always target the public API domain first.
-  // This avoids production builds accidentally using a direct Railway URL,
-  // which triggers preflight failures when that hostname is not exposed.
-  if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
-    const normalizedFromApi = normalizeBackendBaseUrl(envApi);
-    if (normalizedFromApi.includes('api.scalor.net')) {
-      return normalizedFromApi;
-    }
-    return 'https://api.scalor.net/api/ecom';
-  }
-
-  // priorité: VITE_API_URL, puis VITE_BACKEND_URL
+  // Une URL explicite gagne toujours, notamment pour staging.scalor.net qui
+  // doit rester isolé de l'API de production.
   const normalizedFromApi = normalizeBackendBaseUrl(envApi);
   if (normalizedFromApi) return normalizedFromApi;
 
   const normalizedFromBackend = normalizeBackendBaseUrl(envBackend);
   if (normalizedFromBackend) return normalizedFromBackend;
+
+  // Fallback historique uniquement lorsqu'aucune URL n'est configurée.
+  if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
+    return 'https://api.scalor.net/api/ecom';
+  }
 
   return 'https://api.scalor.net/api/ecom';
 }
@@ -294,9 +289,16 @@ ecomApi.interceptors.request.use(
         if (!config.data.has('workspaceId')) {
           config.data.append('workspaceId', wsId);
         }
-      } else if (['post', 'put', 'patch'].includes(config.method) && config.data) {
+      } else if (['post', 'put', 'patch'].includes(config.method) && config.data && typeof config.data === 'object') {
         if (!config.data.workspaceId) {
           config.data.workspaceId = wsId;
+        }
+      } else if (['post', 'put', 'patch'].includes(config.method) && typeof config.data === 'string') {
+        // config.data déjà sérialisé (ex: retry après une 1re tentative axios) — on ne peut
+        // PAS écrire une propriété sur une string (crash "Cannot create property workspaceId").
+        // Le workspaceId y est en général déjà ; sinon on ré-injecte proprement.
+        if (!config.data.includes('workspaceId')) {
+          try { const obj = JSON.parse(config.data); obj.workspaceId = wsId; config.data = JSON.stringify(obj); } catch { /* laisser tel quel */ }
         }
       } else if (['post', 'put', 'patch'].includes(config.method) && !config.data) {
         config.data = { workspaceId: wsId };
@@ -571,6 +573,9 @@ export const authApi = {
 
   // Vérifier un code OTP
   verifyOtp: (data) => ecomApi.post('/auth/verify-otp', data),
+
+  // Vérifier la disponibilité d'un sous-domaine (PUBLIC — onboarding boutique)
+  checkSubdomainPublic: (subdomain) => ecomApi.get(`/auth/check-subdomain/${encodeURIComponent(subdomain)}`),
 
   // Connexion / inscription via Google
   googleAuth: (data) => ecomApi.post('/auth/google', data),

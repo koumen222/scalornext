@@ -57,19 +57,19 @@ const ResetPassword = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+          <div className="bg-card rounded-2xl shadow-xl border border-border p-8 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{tp('Lien invalide')}</h1>
-            <p className="text-gray-500 text-sm mb-6">{tp('Ce lien de réinitialisation est invalide ou a expiré.')}</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">{tp('Lien invalide')}</h1>
+            <p className="text-muted-foreground text-sm mb-6">{tp('Ce lien de réinitialisation est invalide ou a expiré.')}</p>
             <div className="space-y-3">
-              <Link to="/ecom/forgot-password" className="block w-full py-2.5 px-4 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition text-sm">
+              <Link to="/ecom/forgot-password" className="block w-full py-2.5 px-4 bg-primary text-white rounded-xl font-medium hover:bg-primary-700 transition text-sm">
                 {tp('Demander un nouveau lien')}
               </Link>
-              <Link to="/ecom/login" className="block w-full py-2.5 px-4 text-primary-600 font-medium hover:text-primary-700 transition text-sm">
+              <Link to="/ecom/login" className="block w-full py-2.5 px-4 text-primary font-medium hover:text-primary transition text-sm">
                 {tp('Retour ù  la connexion')}
               </Link>
             </div>
@@ -83,15 +83,15 @@ const ResetPassword = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+          <div className="bg-card rounded-2xl shadow-xl border border-border p-8 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{tp('Mot de passe réinitialisé')}</h1>
-            <p className="text-gray-500 text-sm mb-6">{tp('Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter.')}</p>
-            <Link to="/ecom/login" className="block w-full py-3 px-4 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition text-sm">
+            <h1 className="text-2xl font-bold text-foreground mb-2">{tp('Mot de passe réinitialisé')}</h1>
+            <p className="text-muted-foreground text-sm mb-6">{tp('Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter.')}</p>
+            <Link to="/ecom/login" className="block w-full py-3 px-4 bg-primary text-white rounded-xl font-semibold hover:bg-primary-700 transition text-sm">
               {tp('Se connecter')}
             </Link>
           </div>
@@ -103,15 +103,15 @@ const ResetPassword = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{tp('Nouveau mot de passe')}</h1>
-            <p className="text-gray-500 text-sm">{tp('Choisissez votre nouveau mot de passe')}</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">{tp('Nouveau mot de passe')}</h1>
+            <p className="text-muted-foreground text-sm">{tp('Choisissez votre nouveau mot de passe')}</p>
           </div>
 
           {error && (
@@ -125,7 +125,7 @@ const ResetPassword = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nouveau mot de passe')}</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Nouveau mot de passe')}</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -140,7 +140,7 @@ const ResetPassword = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -153,7 +153,7 @@ const ResetPassword = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Confirmer le mot de passe')}</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Confirmer le mot de passe')}</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
@@ -178,7 +178,7 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={loading || newPassword !== confirmPassword || newPassword.length < 6}
-              className="w-full py-3 px-4 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+              className="w-full py-3 px-4 bg-primary text-white rounded-xl font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
             >
               {loading ? (
                 <>
@@ -192,7 +192,7 @@ const ResetPassword = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <Link to="/ecom/login" className="text-sm text-primary-600 hover:text-primary-700 font-medium transition">
+            <Link to="/ecom/login" className="text-sm text-primary hover:text-primary font-medium transition">
               {tp('Retour ù  la connexion')}
             </Link>
           </div>

@@ -66,11 +66,11 @@ export default function CloseuseDashboard() {
   const [stats,setStats] = useState({total:0,delivered:0,confirmed:0,pending:0,called:0,cancelled:0,returned:0,unreachable:0,shipped:0,postponed:0,deliveryRate:0,todayDelivered:0,todayTotal:0,prevWeekDelivered:0,prevWeekTotal:0});
 
   if(!user?.workspaceId) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="text-center">
         <div className="text-4xl mb-4">🏢</div>
-        <h2 className="text-lg font-bold text-gray-900 mb-2">{tp('Aucun espace configuré')}</h2>
-        <Link to="/ecom/workspace-setup" className="inline-block px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold">{tp('Créer un espace')}</Link>
+        <h2 className="text-lg font-bold text-foreground mb-2">{tp('Aucun espace configuré')}</h2>
+        <Link to="/ecom/workspace-setup" className="inline-block px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold">{tp('Créer un espace')}</Link>
       </div>
     </div>
   );
@@ -115,10 +115,10 @@ export default function CloseuseDashboard() {
   };
 
   if(loading) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-primary-500 animate-spin"/>
-        <p className="text-sm text-gray-400">{tp('Chargement…')}</p>
+        <div className="w-10 h-10 rounded-full border-4 border-border border-t-primary-500 animate-spin"/>
+        <p className="text-sm text-muted-foreground">{tp('Chargement…')}</p>
       </div>
     </div>
   );
@@ -170,26 +170,26 @@ export default function CloseuseDashboard() {
         {/* ── HEADER ── */}
         <div className="flex items-start justify-between gap-3 mb-6">
           <div>
-            <p className="text-xs text-gray-400 font-medium uppercase tracking-widest mb-1">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mb-1">
               {new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}
             </p>
-            <h1 className="text-2xl font-black text-gray-900">Bonjour {firstName} 👋</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-2xl font-black text-foreground">Bonjour {firstName} 👋</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
               {period==='today'?"Aujourd'hui":period==='week'?'Cette semaine':period==='30days'?'30 derniers jours': tp('Ce mois')}
             </p>
           </div>
           {/* Badge niveau */}
-          <div className="flex flex-col items-center bg-white border border-gray-100 rounded-2xl px-3 py-2 shadow-sm flex-shrink-0">
+          <div className="flex flex-col items-center bg-card border border-border rounded-2xl px-3 py-2 shadow-sm flex-shrink-0">
             <span className="text-2xl">{badge.emoji}</span>
-            <span className="text-[10px] font-bold text-gray-600 mt-0.5">{badge.label}</span>
+            <span className="text-[10px] font-bold text-muted-foreground mt-0.5">{badge.label}</span>
           </div>
         </div>
 
         {/* ── PERIOD TABS ── */}
-        <div className="flex bg-white border border-gray-200 rounded-xl p-1 mb-5 shadow-sm w-fit">
+        <div className="flex bg-card border border-border rounded-xl p-1 mb-5 shadow-sm w-fit">
           {PERIODS.map(p=>(
             <button key={p.k} onClick={()=>setPeriod(p.k)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${period===p.k?'bg-primary-600 text-white shadow':'text-gray-500 hover:text-gray-700'}`}>
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${period===p.k?'bg-primary text-white shadow':'text-muted-foreground hover:text-foreground'}`}>
               {p.l}
             </button>
           ))}
@@ -198,23 +198,23 @@ export default function CloseuseDashboard() {
         {/* ── HERO STATS ROW ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           {/* Commandes */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+          <div className="bg-card rounded-2xl border shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Commandes')}</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">{tp('Commandes')}</span>
               <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
                 <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                 </svg>
               </div>
             </div>
-            <p className="text-3xl font-black text-gray-900 leading-none">{periodOrders.length}</p>
-            <p className="text-xs text-gray-400 mt-1">{periodDel} livrées</p>
+            <p className="text-3xl font-black text-foreground leading-none">{periodOrders.length}</p>
+            <p className="text-xs text-muted-foreground mt-1">{periodDel} livrées</p>
           </div>
 
           {/* Taux */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+          <div className="bg-card rounded-2xl border shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Taux')}</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">{tp('Taux')}</span>
               <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{background:`${rateColor}18`}}>
                 <svg className="w-4 h-4" style={{color:rateColor}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -222,14 +222,14 @@ export default function CloseuseDashboard() {
               </div>
             </div>
             <p className="text-3xl font-black leading-none" style={{color:rateColor}}>{periodRate}%</p>
-            <p className="text-xs text-gray-400 mt-1">objectif {GOAL}%</p>
+            <p className="text-xs text-muted-foreground mt-1">objectif {GOAL}%</p>
           </div>
 
           {/* Commission */}
           <div className="col-span-2 sm:col-span-1 rounded-2xl border shadow-sm p-4 relative overflow-hidden" style={{background:'linear-gradient(135deg,#065f46 0%,#047857 100%)',borderColor:'#047857'}}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-bold text-primary-200 uppercase tracking-wide">{tp('Commission')}</span>
-              <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-card/10 flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
@@ -237,64 +237,64 @@ export default function CloseuseDashboard() {
             </div>
             <p className="text-2xl font-black text-white leading-none">{fmt(totalComm)}</p>
             <p className="text-xs text-primary-300 mt-1">{commLabel}</p>
-            <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-white/5"/>
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-card/5"/>
           </div>
 
           {/* Aujourd'hui */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+          <div className="bg-card rounded-2xl border shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{tp('Aujourd\'hui')}</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">{tp('Aujourd\'hui')}</span>
               <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center">
                 <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
               </div>
             </div>
-            <p className="text-3xl font-black text-gray-900 leading-none">{stats.todayDelivered}</p>
-            <p className="text-xs text-gray-400 mt-1">/ {stats.todayTotal} reçues</p>
+            <p className="text-3xl font-black text-foreground leading-none">{stats.todayDelivered}</p>
+            <p className="text-xs text-muted-foreground mt-1">/ {stats.todayTotal} reçues</p>
           </div>
         </div>
 
         {/* ── OBJECTIF PROGRESS ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+        <div className="bg-card rounded-2xl border shadow-sm p-5 mb-4">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-sm font-bold text-gray-800">{tp('Progression objectif')}</h3>
-              <p className="text-xs text-gray-400">Objectif livraison : {GOAL}%</p>
+              <h3 className="text-sm font-bold text-foreground">{tp('Progression objectif')}</h3>
+              <p className="text-xs text-muted-foreground">Objectif livraison : {GOAL}%</p>
             </div>
             <div className="text-right">
               <p className="text-2xl font-black leading-none" style={{color:rateColor}}>{stats.deliveryRate}%</p>
               {delta!==0&&(
-                <p className={`text-[11px] font-semibold mt-0.5 ${delta>0?'text-primary-600':'text-red-400'}`}>
+                <p className={`text-[11px] font-semibold mt-0.5 ${delta>0?'text-primary':'text-red-400'}`}>
                   {delta>0?'↑':'↓'} {Math.abs(delta)}% vs sem. passée
                 </p>
               )}
             </div>
           </div>
-          <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden mb-1">
+          <div className="relative h-3 bg-muted rounded-full overflow-hidden mb-1">
             <div className="absolute inset-0 h-full rounded-full transition-all duration-700"
               style={{width:`${stats.deliveryRate}%`,background:`linear-gradient(90deg,${rateColor}88,${rateColor})`}}/>
             <div className="absolute top-0 h-full w-0.5 bg-gray-400/60" style={{left:`${GOAL}%`}}/>
           </div>
-          <div className="flex justify-between text-[10px] text-gray-400">
+          <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>0%</span>
-            <span className="font-semibold text-gray-500">🎯 {GOAL}%</span>
+            <span className="font-semibold text-muted-foreground">🎯 {GOAL}%</span>
             <span>100%</span>
           </div>
         </div>
 
         {/* ── SPARKLINE ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+        <div className="bg-card rounded-2xl border shadow-sm p-5 mb-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold text-gray-800">{tp('Activité 7 jours')}</h3>
-            <span className="text-xs text-gray-400">{weekOrders.filter(o=>o.status==='delivered').length} livrées</span>
+            <h3 className="text-sm font-bold text-foreground">{tp('Activité 7 jours')}</h3>
+            <span className="text-xs text-muted-foreground">{weekOrders.filter(o=>o.status==='delivered').length} livrées</span>
           </div>
           <SparkLine data={trend} color="#10B981"/>
           <div className="flex justify-between mt-1.5">
             {trend.map((d,i)=>(
               <div key={i} className="flex flex-col items-center flex-1">
-                <span className={`text-[10px] font-medium capitalize ${d.isToday?'text-primary-600 font-bold':'text-gray-400'}`}>{d.label}</span>
-                <span className={`text-[10px] font-black ${d.isToday?'text-primary-600':'text-gray-500'}`}>{d.total}</span>
+                <span className={`text-[10px] font-medium capitalize ${d.isToday?'text-primary font-bold':'text-muted-foreground'}`}>{d.label}</span>
+                <span className={`text-[10px] font-black ${d.isToday?'text-primary':'text-muted-foreground'}`}>{d.total}</span>
               </div>
             ))}
           </div>
@@ -304,8 +304,8 @@ export default function CloseuseDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
 
           {/* Statuts */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h3 className="text-sm font-bold text-gray-800 mb-4">{tp('Répartition statuts')}</h3>
+          <div className="bg-card rounded-2xl border shadow-sm p-5">
+            <h3 className="text-sm font-bold text-foreground mb-4">{tp('Répartition statuts')}</h3>
             <div className="space-y-2.5">
               {ORDER.filter(s=>(stats[s]||0)>0).map(s=>{
                 const meta=S[s];
@@ -314,24 +314,24 @@ export default function CloseuseDashboard() {
                 return(
                   <div key={s} className="flex items-center gap-2.5">
                     <span className="text-[11px] font-semibold w-20 flex-shrink-0 truncate" style={{color:meta.text}}>{meta.label}</span>
-                    <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                       <div className="h-full rounded-full" style={{width:`${pct}%`,background:meta.color}}/>
                     </div>
-                    <span className="text-xs font-black text-gray-700 w-5 text-right">{count}</span>
+                    <span className="text-xs font-black text-foreground w-5 text-right">{count}</span>
                   </div>
                 );
               })}
               {ORDER.every(s=>!(stats[s]||0))&&(
-                <p className="text-sm text-gray-400 text-center py-4">{tp('Aucune donnée')}</p>
+                <p className="text-sm text-muted-foreground text-center py-4">{tp('Aucune donnée')}</p>
               )}
             </div>
           </div>
 
           {/* Top produits */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h3 className="text-sm font-bold text-gray-800 mb-4">{tp('🏅 Top produits')}</h3>
+          <div className="bg-card rounded-2xl border shadow-sm p-5">
+            <h3 className="text-sm font-bold text-foreground mb-4">{tp('🏅 Top produits')}</h3>
             {topProducts.length===0?(
-              <p className="text-sm text-gray-400 text-center py-4">{tp('Aucune livraison')}</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{tp('Aucune livraison')}</p>
             ):(
               <div className="space-y-3">
                 {topProducts.map(([name,count],i)=>{
@@ -341,12 +341,12 @@ export default function CloseuseDashboard() {
                     <div key={name} className="flex items-center gap-2.5">
                       <span className="text-sm w-5 flex-shrink-0 text-center">{medals[i]}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-700 truncate mb-1">{name}</p>
-                        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full bg-primary-500" style={{width:`${(count/max)*100}%`}}/>
+                        <p className="text-xs font-semibold text-foreground truncate mb-1">{name}</p>
+                        <div className="h-1 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full rounded-full bg-primary" style={{width:`${(count/max)*100}%`}}/>
                         </div>
                       </div>
-                      <span className="text-xs font-black text-primary-600 flex-shrink-0">{count}</span>
+                      <span className="text-xs font-black text-primary flex-shrink-0">{count}</span>
                     </div>
                   );
                 })}
@@ -356,31 +356,31 @@ export default function CloseuseDashboard() {
         </div>
 
         {/* ── COMMANDES RÉCENTES ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+        <div className="bg-card rounded-2xl border shadow-sm p-5 mb-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-gray-800">{tp('Commandes récentes')}</h3>
-            <Link to="/ecom/orders" className="text-xs text-primary-600 font-semibold hover:text-primary-700">{tp('Voir tout →')}</Link>
+            <h3 className="text-sm font-bold text-foreground">{tp('Commandes récentes')}</h3>
+            <Link to="/ecom/orders" className="text-xs text-primary font-semibold hover:text-primary">{tp('Voir tout →')}</Link>
           </div>
           {recentOrders.length===0?(
-            <p className="text-sm text-gray-400 text-center py-6">{tp('Aucune commande')}</p>
+            <p className="text-sm text-muted-foreground text-center py-6">{tp('Aucune commande')}</p>
           ):(
             <div className="space-y-1">
               {recentOrders.map(order=>{
                 const meta=S[order.status]||{bg:'#f8fafc',text:'#475569',label:order.status};
                 return(
-                  <div key={order._id} className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-gray-50 transition-colors">
+                  <div key={order._id} className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-background transition-colors">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
                       style={{background:meta.bg,color:meta.text}}>
                       {(order.clientName||order.clientPhone||'?')[0].toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-gray-900 truncate leading-tight">{order.clientName||order.clientPhone||'—'}</p>
-                      <p className="text-xs text-gray-400 truncate">{order.product||'—'}</p>
+                      <p className="text-sm font-bold text-foreground truncate leading-tight">{order.clientName||order.clientPhone||'—'}</p>
+                      <p className="text-xs text-muted-foreground truncate">{order.product||'—'}</p>
                     </div>
                     <div className="flex flex-col items-end gap-0.5">
                       <span className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
                         style={{background:meta.bg,color:meta.text}}>{meta.label}</span>
-                      {order.price>0&&<span className="text-xs text-gray-400 font-medium">{fmt(order.price)}</span>}
+                      {order.price>0&&<span className="text-xs text-muted-foreground font-medium">{fmt(order.price)}</span>}
                     </div>
                   </div>
                 );
@@ -397,13 +397,13 @@ export default function CloseuseDashboard() {
             {to:'/ecom/reports/new',emoji:'📝',label:'Rapport',sub:'Saisir',color:'#7C3AED'},
           ].map(({to,emoji,label,sub,color})=>(
             <Link key={to} to={to}
-              className="flex flex-col items-center gap-1.5 bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-center">
+              className="flex flex-col items-center gap-1.5 bg-card border border-border rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-center">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-0.5"
                 style={{background:`${color}12`}}>
                 {emoji}
               </div>
-              <p className="text-xs font-bold text-gray-900">{label}</p>
-              <p className="text-[10px] text-gray-400">{sub}</p>
+              <p className="text-xs font-bold text-foreground">{label}</p>
+              <p className="text-[10px] text-muted-foreground">{sub}</p>
             </Link>
           ))}
         </div>

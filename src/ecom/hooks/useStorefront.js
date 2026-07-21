@@ -4,9 +4,11 @@ import axios from 'axios';
 const resolvePublicStoreApiBase = () => {
   const explicitStoreApi = process.env.NEXT_PUBLIC_STORE_API_URL;
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   if (explicitStoreApi) return explicitStoreApi.replace(/\/+$/, '');
   if (backendUrl) return backendUrl.replace(/\/+$/, '');
+  if (apiUrl) return apiUrl.replace(/\/+$/, '');
 
   if (typeof window !== 'undefined' && window.location.hostname.endsWith('scalor.net')) {
     return 'https://api.scalor.net';

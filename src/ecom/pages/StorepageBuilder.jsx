@@ -15,8 +15,16 @@ import {
   RefreshCw, ExternalLink, Plus, GripVertical, EyeOff, Trash2, Copy,
   ChevronLeft, ChevronRight, Image, X, Upload, AlertCircle, Layers,
   Type, Star, HelpCircle, Phone, Layout, Zap, ShoppingBag, AlignLeft,
-  AlignCenter, AlignRight, ChevronDown, ChevronUp, Pencil, Undo2, Redo2, Lock,
+  AlignCenter, AlignRight, ChevronDown, ChevronUp, Pencil, Undo2, Redo2, Lock, Sparkles,
+  ArrowLeftRight, ListOrdered, Megaphone, MessageCircle, Play, Shield, Table, Timer, Truck,
 } from 'lucide-react';
+import { SECTION_TEMPLATES } from '../components/sectionTemplates.js';
+import CustomCodeEditor from '../components/CustomCodeEditor.jsx';
+import AiImagePromptBox from '../components/AiImagePromptBox.jsx';
+import { SectionRenderer, buildStorefrontThemeVars } from './PublicStorefront.jsx';
+import { StorefrontLangContext } from '../i18n/storefront.js';
+import { publicStoreApi } from '../services/storeApi.js';
+import { injectStoreCssVars, applyFont } from '../hooks/useStoreData';
 import { storeManageApi, storeProductsApi } from '../services/storeApi';
 import ecomApi from '../services/ecommApi.js';
 import BuilderAiChat from '../components/BuilderAiChat.jsx';
@@ -338,7 +346,24 @@ const SECTION_TYPES = {
   },
 };
 
-const CATEGORIES = ['Marketing', 'E-commerce', 'Contenu', 'Social Proof', 'Support', 'Layout', 'Avancé'];
+const CATEGORIES = ['Prédéfinies', 'Marketing', 'E-commerce', 'Contenu', 'Social Proof', 'Support', 'Layout', 'Avancé'];
+
+// Icônes lucide des sections prédéfinies (sectionTemplates.js)
+const TEMPLATE_ICONS = {
+  Megaphone, Timer, ArrowLeftRight, Play, Shield, ListOrdered, Table,
+  Star, HelpCircle, Truck, MessageCircle, ImageIcon: Image,
+};
+
+// La homepage publique exécute le JS via config.js (les <script> du HTML ne
+// s'exécutent pas) : on extrait donc les scripts des templates vers js.
+const splitTemplateHtml = (raw = '') => {
+  const scripts = [];
+  const html = String(raw).replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, (_, body) => {
+    if (body.trim()) scripts.push(body.trim());
+    return '';
+  }).trim();
+  return { html, js: scripts.join('\n\n') };
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -394,12 +419,12 @@ function ImageUploader({ value, onChange, label = 'Image', aspectHint = '' }) {
 
   return (
     <div className="space-y-2">
-      {label && <label className="block text-xs font-medium text-gray-700">{label}{aspectHint && <span className="ml-1 text-gray-400">({aspectHint})</span>}</label>}
+      {label && <label className="block text-xs font-medium text-foreground">{label}{aspectHint && <span className="ml-1 text-muted-foreground">({aspectHint})</span>}</label>}
       {value ? (
-        <div className="relative group rounded-lg overflow-hidden border border-gray-200">
+        <div className="relative group rounded-lg overflow-hidden border border-border">
           <MediaPreview src={value} />
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-            <button onClick={() => inputRef.current?.click()} className="px-3 py-1.5 bg-white text-gray-900 text-xs font-medium rounded-lg hover:bg-gray-100">
+            <button onClick={() => inputRef.current?.click()} className="px-3 py-1.5 bg-card text-foreground text-xs font-medium rounded-lg hover:bg-muted">
               <Upload className="w-3 h-3 inline mr-1" />Changer
             </button>
             <button onClick={() => onChange('')} className="px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded-lg hover:bg-red-600">
@@ -411,13 +436,15 @@ function ImageUploader({ value, onChange, label = 'Image', aspectHint = '' }) {
         <button
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-indigo-400 hover:bg-indigo-50/30 transition text-gray-400 hover:text-indigo-600"
+          className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-indigo-400 hover:bg-indigo-50/30 transition text-muted-foreground hover:text-indigo-600"
         >
           {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
           <span className="text-xs font-medium">{uploading ? 'Upload...' : 'Image, GIF ou vidéo'}</span>
         </button>
       )}
       {error && <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
+      {/* Génération / édition par IA (GPT Image) */}
+      <AiImagePromptBox value={value || ''} onGenerated={onChange} aspectRatio="4:3" compact />
       <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
     </div>
   );
@@ -459,16 +486,16 @@ function HeroBgUploader({ value, onChange }) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-xs font-medium text-gray-700">
-        Fond <span className="text-gray-400">(image, GIF ou vidéo — 1920×500 recommandé)</span>
+      <label className="block text-xs font-medium text-foreground">
+        Fond <span className="text-muted-foreground">(image, GIF ou vidéo — 1920×500 recommandé)</span>
       </label>
       {value ? (
-        <div className="relative group rounded-xl overflow-hidden border-2 border-gray-200">
+        <div className="relative group rounded-xl overflow-hidden border-2 border-border">
           <MediaPreview src={value} className="w-full h-36 object-cover" />
           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2">
             <button
               onClick={() => inputRef.current?.click()}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white text-gray-900 text-xs font-bold rounded-lg hover:bg-gray-100 shadow-md"
+              className="flex items-center gap-1.5 px-4 py-2 bg-card text-foreground text-xs font-bold rounded-lg hover:bg-muted shadow-md"
             >
               <Upload className="w-3.5 h-3.5" />Changer
             </button>
@@ -479,7 +506,7 @@ function HeroBgUploader({ value, onChange }) {
               <X className="w-3.5 h-3.5" />Supprimer
             </button>
           </div>
-          <div className="absolute top-2 left-2 bg-primary-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+          <div className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
             {getBuilderMediaType(value) === 'video' ? 'Vidéo chargée' : 'Image chargée'}
           </div>
         </div>
@@ -505,16 +532,18 @@ function HeroBgUploader({ value, onChange }) {
             </>
           ) : (
             <>
-              <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
-                <Image className="w-5 h-5 text-gray-400" />
+              <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+                <Image className="w-5 h-5 text-muted-foreground" />
               </div>
-              <p className="text-xs font-semibold text-gray-600">Cliquez ou glissez ici</p>
-              <p className="text-[11px] text-gray-400">Image, GIF ou vidéo — max 100 Mo</p>
+              <p className="text-xs font-semibold text-muted-foreground">Cliquez ou glissez ici</p>
+              <p className="text-[11px] text-muted-foreground">Image, GIF ou vidéo — max 100 Mo</p>
             </>
           )}
         </div>
       )}
       {error && <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
+      {/* Génération / édition par IA (GPT Image) */}
+      <AiImagePromptBox value={value || ''} onGenerated={onChange} aspectRatio="16:9" />
       <input ref={inputRef} type="file" accept={MEDIA_ACCEPT} className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
     </div>
   );
@@ -533,7 +562,7 @@ function SectionThumb({ section }) {
           {config.overlay && <div className="absolute inset-0 bg-black/30 rounded" />}
           <div className="relative p-3 text-center">
             <p className="text-white font-bold text-xs truncate">{config.title}</p>
-            {config.ctaText && <span className="inline-block mt-1 px-2 py-0.5 bg-white/20 text-white text-[10px] rounded">{config.ctaText}</span>}
+            {config.ctaText && <span className="inline-block mt-1 px-2 py-0.5 bg-card/20 text-white text-[10px] rounded">{config.ctaText}</span>}
           </div>
         </div>
       );
@@ -542,7 +571,7 @@ function SectionThumb({ section }) {
         <div className="p-2" style={{ background: config.backgroundColor || '#fff' }}>
           <p className="text-xs font-semibold mb-1 truncate">{config.title}</p>
           <div className="grid grid-cols-3 gap-1">
-            {[1,2,3].map(i => <div key={i} className="bg-gray-100 rounded h-6" />)}
+            {[1,2,3].map(i => <div key={i} className="bg-muted rounded h-6" />)}
           </div>
         </div>
       );
@@ -551,7 +580,7 @@ function SectionThumb({ section }) {
         <div className="p-2" style={{ background: config.backgroundColor || '#f9fafb' }}>
           <p className="text-xs font-semibold mb-1 truncate">{config.title}</p>
           <div className="flex gap-1">
-            {[1,2].map(i => <div key={i} className="flex-1 bg-white border border-gray-100 rounded p-1"><div className="flex gap-0.5">{[1,2,3,4,5].map(s => <div key={s} className="w-1.5 h-1.5 rounded-full bg-yellow-400" />)}</div></div>)}
+            {[1,2].map(i => <div key={i} className="flex-1 bg-card border border-border rounded p-1"><div className="flex gap-0.5">{[1,2,3,4,5].map(s => <div key={s} className="w-1.5 h-1.5 rounded-full bg-yellow-400" />)}</div></div>)}
           </div>
         </div>
       );
@@ -560,9 +589,9 @@ function SectionThumb({ section }) {
         <div className="p-2" style={{ background: config.backgroundColor || '#fff' }}>
           <p className="text-xs font-semibold mb-1 truncate">{config.title}</p>
           {(config.items || []).slice(0, 2).map((item, i) => (
-            <div key={i} className="flex items-center justify-between border-b border-gray-100 py-0.5">
-              <span className="text-[10px] text-gray-600 truncate">{item.question}</span>
-              <ChevronDown className="w-2.5 h-2.5 text-gray-400 flex-shrink-0 ml-1" />
+            <div key={i} className="flex items-center justify-between border-b border-border py-0.5">
+              <span className="text-[10px] text-muted-foreground truncate">{item.question}</span>
+              <ChevronDown className="w-2.5 h-2.5 text-muted-foreground flex-shrink-0 ml-1" />
             </div>
           ))}
         </div>
@@ -574,12 +603,12 @@ function SectionThumb({ section }) {
         </div>
       );
     case 'spacer':
-      return <div className="bg-gray-100 rounded flex items-center justify-center" style={{ height: Math.min(config.height / 3, 32) }}><span className="text-[10px] text-gray-400">Espacement {config.height}px</span></div>;
+      return <div className="bg-muted rounded flex items-center justify-center" style={{ height: Math.min(config.height / 3, 32) }}><span className="text-[10px] text-muted-foreground">Espacement {config.height}px</span></div>;
     default:
       return (
         <div className="p-2" style={{ background: config.backgroundColor || '#fff' }}>
           <p className="text-xs font-semibold truncate">{config.title || meta?.label}</p>
-          {config.content && <p className="text-[10px] text-gray-500 line-clamp-2 mt-0.5">{config.content}</p>}
+          {config.content && <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5">{config.content}</p>}
           {config.image && <img src={config.image} alt="" className="mt-1 w-full h-10 object-cover rounded" />}
         </div>
       );
@@ -598,51 +627,46 @@ function SectionCard({ section, isSelected, onSelect, onDelete, onDuplicate, onT
     opacity: isDragging ? 0.4 : 1,
   };
 
-  // Ligne compacte façon Shopify : poignée au survol, icône teintée, libellé,
-  // actions révélées au survol — pas de vignette, la préview vit à droite.
+  // Ligne identique au builder de page produit (premium) : poignée au survol,
+  // icône monochrome, libellé, pastille d'état, œil au survol, chevron.
   return (
     <div
       ref={setNodeRef}
       style={style}
       onClick={() => onSelect(section.id)}
-      className={`group relative flex items-center gap-2 pl-1.5 pr-1 py-[7px] rounded-lg cursor-pointer transition-colors select-none ${
+      className={`group flex items-center gap-1.5 px-2 py-2 rounded-lg cursor-pointer border transition select-none ${
         isSelected
-          ? 'bg-indigo-50 ring-1 ring-indigo-200'
-          : 'hover:bg-slate-100/80'
-      } ${isDragging ? 'bg-white shadow-lg ring-1 ring-indigo-200 z-10' : ''}`}
+          ? 'bg-background border-border'
+          : 'border-transparent hover:bg-background hover:border-border'
+      } ${section.visible ? '' : 'opacity-50'} ${isDragging ? 'bg-card shadow-lg border-indigo-200 z-10' : ''}`}
     >
       <div
         {...attributes}
         {...listeners}
-        className={`cursor-grab active:cursor-grabbing p-0.5 rounded text-slate-300 hover:text-slate-500 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+        className="cursor-grab active:cursor-grabbing flex-shrink-0"
         onClick={(e) => e.stopPropagation()}
         title="Glisser pour réordonner"
       >
-        <GripVertical className="w-3.5 h-3.5" />
+        <GripVertical className={`w-3.5 h-3.5 text-gray-300 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
       </div>
-      <div
-        className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5"
-        style={{ background: `${meta?.color || '#64748b'}14`, color: meta?.color || '#64748b' }}
-      >
+      <div className="w-6 h-6 rounded-md flex items-center justify-center text-foreground flex-shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5">
         {meta?.icon || <Layout className="w-3.5 h-3.5" />}
       </div>
-      <span className={`flex-1 min-w-0 truncate text-[12.5px] font-semibold ${
-        isSelected ? 'text-indigo-900' : section.visible ? 'text-slate-700' : 'text-slate-400 line-through decoration-slate-300'
-      }`}>
+      <span className="flex-1 min-w-0 truncate text-[13px] font-semibold text-foreground">
         {meta?.label || section.type}
       </span>
-      {!section.visible && <EyeOff className="w-3 h-3 text-slate-300 flex-shrink-0" />}
       <div className={`flex items-center transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'}`} onClick={(e) => e.stopPropagation()}>
-        <button onClick={() => onToggleVisible(section.id)} className="p-1 rounded-md hover:bg-white text-slate-400 hover:text-slate-700 transition" title={section.visible ? 'Masquer' : 'Afficher'}>
+        <button onClick={() => onToggleVisible(section.id)} className={`p-1 rounded-md hover:bg-gray-200 transition ${section.visible ? 'text-muted-foreground' : 'text-muted-foreground opacity-100'}`} title={section.visible ? 'Masquer' : 'Afficher'}>
           {section.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
         </button>
-        <button onClick={() => onDuplicate(section.id)} className="p-1 rounded-md hover:bg-white text-slate-400 hover:text-slate-700 transition" title="Dupliquer">
+        <button onClick={() => onDuplicate(section.id)} className="p-1 rounded-md hover:bg-gray-200 text-muted-foreground hover:text-foreground transition" title="Dupliquer">
           <Copy className="w-3.5 h-3.5" />
         </button>
-        <button onClick={() => onDelete(section.id)} className="p-1 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-500 transition" title="Supprimer">
+        <button onClick={() => onDelete(section.id)} className="p-1 rounded-md hover:bg-red-50 text-muted-foreground hover:text-red-500 transition" title="Supprimer">
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
+      <ChevronRight className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
     </div>
   );
 }
@@ -652,20 +676,20 @@ function SectionCard({ section, isSelected, onSelect, onDelete, onDuplicate, onT
 function FieldRow({ label, children }) {
   return (
     <div className="space-y-1">
-      <label className="block text-xs font-medium text-gray-700">{label}</label>
+      <label className="block text-xs font-medium text-foreground">{label}</label>
       {children}
     </div>
   );
 }
 
-const inputCls = 'w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 bg-white';
+const inputCls = 'w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 bg-card';
 const textareaCls = `${inputCls} resize-none`;
 
 function AlignPicker({ value, onChange }) {
   return (
     <div className="flex gap-1">
       {[['left', <AlignLeft className="w-3.5 h-3.5" />], ['center', <AlignCenter className="w-3.5 h-3.5" />], ['right', <AlignRight className="w-3.5 h-3.5" />]].map(([v, icon]) => (
-        <button key={v} onClick={() => onChange(v)} className={`flex-1 py-1.5 flex items-center justify-center rounded border text-sm transition ${value === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-500 hover:border-gray-400'}`}>{icon}</button>
+        <button key={v} onClick={() => onChange(v)} className={`flex-1 py-1.5 flex items-center justify-center rounded border text-sm transition ${value === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground hover:border-gray-400'}`}>{icon}</button>
       ))}
     </div>
   );
@@ -675,7 +699,7 @@ function ColorField({ label, value, onChange }) {
   return (
     <FieldRow label={label}>
       <div className="flex gap-2 items-center">
-        <input type="color" value={value || '#000000'} onChange={(e) => onChange(e.target.value)} className="w-9 h-9 rounded border border-gray-200 cursor-pointer p-0.5" />
+        <input type="color" value={value || '#000000'} onChange={(e) => onChange(e.target.value)} className="w-9 h-9 rounded border border-border cursor-pointer p-0.5" />
         <input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} className={`${inputCls} font-mono`} placeholder="#000000" />
       </div>
     </FieldRow>
@@ -694,10 +718,10 @@ function RepeatableEditor({ items = [], onChange, fields, addLabel }) {
   return (
     <div className="space-y-3">
       {items.map((item, idx) => (
-        <div key={idx} className="border border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50">
+        <div key={idx} className="border border-border rounded-lg p-3 space-y-2 bg-background">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-semibold text-gray-600">#{idx + 1}</span>
-            <button onClick={() => removeItem(idx)} className="p-1 rounded hover:bg-red-100 text-gray-400 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
+            <span className="text-xs font-semibold text-muted-foreground">#{idx + 1}</span>
+            <button onClick={() => removeItem(idx)} className="p-1 rounded hover:bg-red-100 text-muted-foreground hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
           </div>
           {fields.map((f) => (
             <FieldRow key={f.key} label={f.label}>
@@ -712,7 +736,7 @@ function RepeatableEditor({ items = [], onChange, fields, addLabel }) {
           ))}
         </div>
       ))}
-      <button onClick={addItem} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs font-medium text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1">
+      <button onClick={addItem} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs font-medium text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center gap-1">
         <Plus className="w-3.5 h-3.5" />{addLabel}
       </button>
     </div>
@@ -742,14 +766,14 @@ function GalleryEditor({ images = [], onChange }) {
     <div className="space-y-2">
       <div className="grid grid-cols-3 gap-2">
         {images.map((img, idx) => (
-          <div key={idx} className="relative group rounded-lg overflow-hidden border border-gray-200">
+          <div key={idx} className="relative group rounded-lg overflow-hidden border border-border">
             <MediaPreview src={img.url || img} className="w-full h-16 object-cover" />
             <button onClick={() => onChange(images.filter((_, i) => i !== idx))} className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
               <X className="w-2.5 h-2.5" />
             </button>
           </div>
         ))}
-        <button onClick={() => inputRef.current?.click()} disabled={uploading} className="h-16 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-indigo-400 hover:bg-indigo-50/30 transition text-gray-400 hover:text-indigo-500">
+        <button onClick={() => inputRef.current?.click()} disabled={uploading} className="h-16 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-indigo-400 hover:bg-indigo-50/30 transition text-muted-foreground hover:text-indigo-500">
           {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
           <span className="text-[10px]">Ajouter</span>
         </button>
@@ -777,7 +801,7 @@ function SectionStyleEditor({ section, onChange }) {
   const codeCls = 'w-full px-3 py-2 text-[12px] leading-relaxed border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-900 text-slate-100 font-mono resize-y placeholder-slate-500';
 
   return (
-    <div className="mt-4 rounded-xl border border-slate-200 bg-white overflow-hidden">
+    <div className="mt-4 rounded-xl border border-slate-200 bg-card overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -823,11 +847,11 @@ function SectionStyleEditor({ section, onChange }) {
           {/* Visibilité par appareil */}
           <FieldRow label="Visibilité">
             <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer">
                 <input type="checkbox" checked={!!st.hideMobile} onChange={(e) => setStyle('hideMobile', e.target.checked)} className="rounded" />
                 Masquer sur mobile
               </label>
-              <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer">
                 <input type="checkbox" checked={!!st.hideDesktop} onChange={(e) => setStyle('hideDesktop', e.target.checked)} className="rounded" />
                 Masquer sur ordinateur
               </label>
@@ -885,11 +909,11 @@ function SectionTypeEditor({ section, onChange }) {
         <div className="space-y-4">
           {/* Background image — first, most impactful */}
           <div className="border-b pb-4 space-y-3">
-            <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">Arrière-plan</p>
+            <p className="text-xs font-bold text-foreground uppercase tracking-wider">Arrière-plan</p>
             <FieldRow label="Type">
               <div className="flex gap-2">
                 {[['color', 'Couleur'], ['image', 'Image']].map(([v, l]) => (
-                  <button key={v} onClick={() => set('backgroundType', v)} className={`flex-1 py-2 text-xs rounded-lg border transition font-semibold ${config.backgroundType === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}>{l}</button>
+                  <button key={v} onClick={() => set('backgroundType', v)} className={`flex-1 py-2 text-xs rounded-lg border transition font-semibold ${config.backgroundType === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground hover:border-gray-400'}`}>{l}</button>
                 ))}
               </div>
             </FieldRow>
@@ -924,10 +948,17 @@ function SectionTypeEditor({ section, onChange }) {
         <div className="space-y-4">
           <FieldRow label="Titre de section"><input type="text" value={config.title || ''} onChange={(e) => set('title', e.target.value)} className={inputCls} /></FieldRow>
           <FieldRow label="Sous-titre"><input type="text" value={config.subtitle || ''} onChange={(e) => set('subtitle', e.target.value)} className={inputCls} /></FieldRow>
-          <FieldRow label="Colonnes">
+          <FieldRow label="Colonnes (ordinateur)">
             <div className="flex gap-2">
               {[2, 3, 4].map((n) => (
-                <button key={n} onClick={() => set('columns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.columns === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{n} col.</button>
+                <button key={n} onClick={() => set('columns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.columns === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground'}`}>{n} col.</button>
+              ))}
+            </div>
+          </FieldRow>
+          <FieldRow label="Colonnes sur mobile">
+            <div className="flex gap-2">
+              {[1, 2, 4].map((n) => (
+                <button key={n} onClick={() => set('mobileColumns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${(config.mobileColumns || 1) === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground'}`}>{n} col.</button>
               ))}
             </div>
           </FieldRow>
@@ -939,7 +970,7 @@ function SectionTypeEditor({ section, onChange }) {
               {[['showPrice', 'Afficher le prix'], ['showAddToCart', 'Bouton commander']].map(([key, label]) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={!!config[key]} onChange={(e) => set(key, e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-indigo-600" />
-                  <span className="text-sm text-gray-700">{label}</span>
+                  <span className="text-sm text-foreground">{label}</span>
                 </label>
               ))}
             </div>
@@ -959,7 +990,7 @@ function SectionTypeEditor({ section, onChange }) {
           <FieldRow label="Espacement intérieur">
             <div className="flex gap-2">
               {[['sm', 'Compact'], ['md', 'Normal'], ['lg', 'Large']].map(([v, l]) => (
-                <button key={v} onClick={() => set('padding', v)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.padding === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{l}</button>
+                <button key={v} onClick={() => set('padding', v)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.padding === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground'}`}>{l}</button>
               ))}
             </div>
           </FieldRow>
@@ -976,7 +1007,7 @@ function SectionTypeEditor({ section, onChange }) {
           <FieldRow label="Disposition">
             <div className="flex gap-2">
               {[['image-left', 'Image gauche'], ['image-right', 'Image droite']].map(([v, l]) => (
-                <button key={v} onClick={() => set('layout', v)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.layout === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{l}</button>
+                <button key={v} onClick={() => set('layout', v)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.layout === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground'}`}>{l}</button>
               ))}
             </div>
           </FieldRow>
@@ -993,7 +1024,7 @@ function SectionTypeEditor({ section, onChange }) {
           <FieldRow label="Colonnes">
             <div className="flex gap-2">
               {[2, 3, 4].map((n) => (
-                <button key={n} onClick={() => set('columns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.columns === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{n}</button>
+                <button key={n} onClick={() => set('columns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.columns === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground'}`}>{n}</button>
               ))}
             </div>
           </FieldRow>
@@ -1011,13 +1042,13 @@ function SectionTypeEditor({ section, onChange }) {
           <FieldRow label="Disposition">
             <div className="flex gap-2">
               {[['grid', 'Grille'], ['carousel', 'Carrousel']].map(([v, l]) => (
-                <button key={v} onClick={() => set('layout', v)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.layout === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{l}</button>
+                <button key={v} onClick={() => set('layout', v)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.layout === v ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground'}`}>{l}</button>
               ))}
             </div>
           </FieldRow>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={!!config.showRating} onChange={(e) => set('showRating', e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-indigo-600" />
-            <span className="text-sm text-gray-700">Afficher les étoiles</span>
+            <span className="text-sm text-foreground">Afficher les étoiles</span>
           </label>
           <ColorField label="Couleur de fond" value={config.backgroundColor} onChange={(v) => set('backgroundColor', v)} />
           <FieldRow label="Témoignages">
@@ -1132,7 +1163,7 @@ function SectionTypeEditor({ section, onChange }) {
           <FieldRow label="Colonnes">
             <div className="flex gap-2">
               {[2, 3, 4].map((n) => (
-                <button key={n} onClick={() => set('columns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.columns === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-600'}`}>{n}</button>
+                <button key={n} onClick={() => set('columns', n)} className={`flex-1 py-2 text-xs rounded border font-medium transition ${config.columns === n ? 'bg-indigo-600 text-white border-indigo-600' : 'border-border text-muted-foreground'}`}>{n}</button>
               ))}
             </div>
           </FieldRow>
@@ -1140,14 +1171,14 @@ function SectionTypeEditor({ section, onChange }) {
           <FieldRow label="Éléments">
             <div className="space-y-3">
               {(config.items || []).map((item, i) => (
-                <div key={i} className="p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2">
+                <div key={i} className="p-3 bg-background rounded-lg border border-border space-y-2">
                   <input type="text" value={item.icon || ''} onChange={(e) => { const items = [...(config.items || [])]; items[i] = { ...items[i], icon: e.target.value }; set('items', items); }} className={inputCls} placeholder="Emoji ou icône" />
                   <input type="text" value={item.title || ''} onChange={(e) => { const items = [...(config.items || [])]; items[i] = { ...items[i], title: e.target.value }; set('items', items); }} className={inputCls} placeholder="Titre" />
                   <input type="text" value={item.text || ''} onChange={(e) => { const items = [...(config.items || [])]; items[i] = { ...items[i], text: e.target.value }; set('items', items); }} className={inputCls} placeholder="Description" />
                   <button onClick={() => { const items = (config.items || []).filter((_, j) => j !== i); set('items', items); }} className="text-xs text-red-500 hover:text-red-700">Supprimer</button>
                 </div>
               ))}
-              <button onClick={() => set('items', [...(config.items || []), { icon: '⭐', title: 'Nouveau', text: '' }])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter un élément</button>
+              <button onClick={() => set('items', [...(config.items || []), { icon: '⭐', title: 'Nouveau', text: '' }])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter un élément</button>
             </div>
           </FieldRow>
         </div>
@@ -1164,10 +1195,10 @@ function SectionTypeEditor({ section, onChange }) {
                 <div key={i} className="flex gap-2 items-center">
                   <input type="text" value={item.icon || ''} onChange={(e) => { const items = [...(config.items || [])]; items[i] = { ...items[i], icon: e.target.value }; set('items', items); }} className={`${inputCls} w-16`} placeholder="🚚" />
                   <input type="text" value={item.text || ''} onChange={(e) => { const items = [...(config.items || [])]; items[i] = { ...items[i], text: e.target.value }; set('items', items); }} className={inputCls} placeholder="Texte" />
-                  <button onClick={() => set('items', (config.items || []).filter((_, j) => j !== i))} className="text-gray-400 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => set('items', (config.items || []).filter((_, j) => j !== i))} className="text-muted-foreground hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
-              <button onClick={() => set('items', [...(config.items || []), { icon: '⭐', text: 'Avantage' }])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter</button>
+              <button onClick={() => set('items', [...(config.items || []), { icon: '⭐', text: 'Avantage' }])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter</button>
             </div>
           </FieldRow>
         </div>
@@ -1203,7 +1234,7 @@ function SectionTypeEditor({ section, onChange }) {
           <FieldRow label="Offres">
             <div className="space-y-3">
               {(config.items || []).map((item, i) => (
-                <div key={i} className="p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2">
+                <div key={i} className="p-3 bg-background rounded-lg border border-border space-y-2">
                   <input type="text" value={item.name || ''} onChange={(e) => { const items = [...(config.items||[])]; items[i]={...items[i],name:e.target.value}; set('items',items); }} className={inputCls} placeholder="Nom de l'offre" />
                   <div className="flex gap-2">
                     <input type="text" value={item.price || ''} onChange={(e) => { const items=[...(config.items||[])]; items[i]={...items[i],price:e.target.value}; set('items',items); }} className={inputCls} placeholder="Prix" />
@@ -1217,7 +1248,7 @@ function SectionTypeEditor({ section, onChange }) {
                   <button onClick={() => set('items',(config.items||[]).filter((_,j)=>j!==i))} className="text-xs text-red-500">Supprimer</button>
                 </div>
               ))}
-              <button onClick={() => set('items',[...(config.items||[]),{name:'Offre',price:'0',currency:'FCFA',period:'/mois',features:[],cta:'Choisir',highlight:false}])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter une offre</button>
+              <button onClick={() => set('items',[...(config.items||[]),{name:'Offre',price:'0',currency:'FCFA',period:'/mois',features:[],cta:'Choisir',highlight:false}])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter une offre</button>
             </div>
           </FieldRow>
         </div>
@@ -1236,10 +1267,10 @@ function SectionTypeEditor({ section, onChange }) {
               {(config.items || []).map((item, i) => (
                 <div key={i} className="flex gap-2 items-center">
                   <input type="text" value={item} onChange={(e) => { const items=[...(config.items||[])]; items[i]=e.target.value; set('items',items); }} className={inputCls} />
-                  <button onClick={() => set('items',(config.items||[]).filter((_,j)=>j!==i))} className="text-gray-400 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => set('items',(config.items||[]).filter((_,j)=>j!==i))} className="text-muted-foreground hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
-              <button onClick={() => set('items',[...(config.items||[]),'Nouveau message'])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter</button>
+              <button onClick={() => set('items',[...(config.items||[]),'Nouveau message'])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs text-muted-foreground hover:border-indigo-400 hover:text-indigo-600 transition">+ Ajouter</button>
             </div>
           </FieldRow>
         </div>
@@ -1325,11 +1356,11 @@ function SectionTypeEditor({ section, onChange }) {
             <GalleryEditor images={config.logos || []} onChange={(imgs) => set('logos', imgs)} />
           </FieldRow>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer">
               <input type="checkbox" checked={config.marquee !== false} onChange={(e) => set('marquee', e.target.checked)} className="rounded" />
               Défilement auto
             </label>
-            <label className="flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer">
               <input type="checkbox" checked={config.grayscale !== false} onChange={(e) => set('grayscale', e.target.checked)} className="rounded" />
               Noir & blanc
             </label>
@@ -1341,28 +1372,41 @@ function SectionTypeEditor({ section, onChange }) {
     case 'custom_code': {
       const codeCls = 'w-full px-3 py-2.5 text-[12px] leading-relaxed border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-900 text-slate-100 font-mono resize-y placeholder-slate-500';
       return (
-        <div className="space-y-4">
-          <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-50 ring-1 ring-amber-200">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] text-amber-800 leading-snug">
-              Section libre type Shopify « Custom Liquid ». Le HTML et le CSS s'affichent dans l'aperçu ; le <b>JS s'exécute uniquement sur la boutique publiée</b>.
-            </p>
-          </div>
-          <FieldRow label="HTML">
-            <textarea rows={8} value={config.html || ''} onChange={(e) => set('html', e.target.value)} className={codeCls} placeholder={'<div>\n  ...\n</div>'} spellCheck={false} />
-          </FieldRow>
-          <FieldRow label="CSS">
-            <textarea rows={6} value={config.css || ''} onChange={(e) => set('css', e.target.value)} className={codeCls} placeholder={'.ma-classe {\n  color: red;\n}'} spellCheck={false} />
-          </FieldRow>
-          <FieldRow label="JavaScript">
-            <textarea rows={5} value={config.js || ''} onChange={(e) => set('js', e.target.value)} className={codeCls} placeholder={"document.querySelector('.ma-classe')..."} spellCheck={false} />
-          </FieldRow>
+        <div className="space-y-3">
+          {/* Éditeur visuel premium : Design / Mise en page / Contenu / Code */}
+          <CustomCodeEditor
+            html={config.html || ''}
+            onChangeHtml={(v) => set('html', v)}
+            style={config._style || {}}
+            onChangeStyle={(st) => set('_style', st)}
+          />
+
+          {/* CSS / JS globaux de la section (exécutés sur la boutique publiée) */}
+          <details className="rounded-lg border border-slate-200 bg-card">
+            <summary className="cursor-pointer select-none px-3 py-2 text-[11.5px] font-bold text-slate-600 hover:text-slate-900">
+              CSS / JavaScript avancés
+            </summary>
+            <div className="space-y-3 border-t border-slate-100 p-3">
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-50 ring-1 ring-amber-200">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-[11px] text-amber-800 leading-snug">
+                  Le CSS s'affiche dans l'aperçu ; le <b>JS s'exécute uniquement sur la boutique publiée</b>.
+                </p>
+              </div>
+              <FieldRow label="CSS">
+                <textarea rows={5} value={config.css || ''} onChange={(e) => set('css', e.target.value)} className={codeCls} placeholder={'.ma-classe {\n  color: red;\n}'} spellCheck={false} />
+              </FieldRow>
+              <FieldRow label="JavaScript">
+                <textarea rows={4} value={config.js || ''} onChange={(e) => set('js', e.target.value)} className={codeCls} placeholder={"document.querySelector('.ma-classe')..."} spellCheck={false} />
+              </FieldRow>
+            </div>
+          </details>
         </div>
       );
     }
 
     default:
-      return <p className="text-sm text-gray-500">Éditeur non disponible pour ce type de section.</p>;
+      return <p className="text-sm text-muted-foreground">Éditeur non disponible pour ce type de section.</p>;
   }
 }
 
@@ -1399,7 +1443,7 @@ function EditableText({ value, onChange, tag: Tag = 'span', className = '', styl
       onClick={handleClick}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
-      className={`${className} ${editing ? 'outline-none ring-2 ring-indigo-400 ring-offset-1 rounded px-1 bg-white/90' : 'cursor-pointer hover:ring-2 hover:ring-indigo-300/50 hover:ring-offset-1 rounded transition-all'}`}
+      className={`${className} ${editing ? 'outline-none ring-2 ring-indigo-400 ring-offset-1 rounded px-1 bg-card/90' : 'cursor-pointer hover:ring-2 hover:ring-indigo-300/50 hover:ring-offset-1 rounded transition-all'}`}
       // ⚠️ h1/p/div doivent rester en block (empilés) — inline-block mettait
       // titre, sous-titre et bouton du hero sur une seule ligne.
       style={{ ...style, minWidth: '20px', display: Tag === 'span' ? 'inline-block' : 'block' }}
@@ -1447,7 +1491,7 @@ function LiveHero({ config, selected, onUpdate }) {
             tag="span"
             value={config.ctaText}
             onChange={(v) => onUpdate('ctaText', v)}
-            className="inline-block px-6 py-3 bg-white font-bold rounded-full text-sm"
+            className="inline-block px-6 py-3 bg-card font-bold rounded-full text-sm"
             style={{ color: config.backgroundColor || '#0F6B4F' }}
           />
         )}
@@ -1462,16 +1506,16 @@ function LiveProducts({ config, selected, onUpdate }) {
   return (
     <div className={`py-12 px-8 ${selected ? 'ring-2 ring-inset ring-indigo-400' : ''}`} style={{ background: config.backgroundColor || '#fff' }}>
       <EditableText tag="h2" value={config.title} onChange={(v) => onUpdate('title', v)} className="text-2xl font-bold text-center mb-2" placeholder="Titre..." />
-      <EditableText tag="p" value={config.subtitle} onChange={(v) => onUpdate('subtitle', v)} className="text-center text-gray-500 mb-8" placeholder="Sous-titre..." />
+      <EditableText tag="p" value={config.subtitle} onChange={(v) => onUpdate('subtitle', v)} className="text-center text-muted-foreground mb-8" placeholder="Sous-titre..." />
       <div className={`grid gap-4`} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className="rounded-xl overflow-hidden border border-gray-100 shadow-sm bg-white">
+          <div key={i} className="rounded-xl overflow-hidden border border-border shadow-sm bg-card">
             <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-40 flex items-center justify-center">
               <ShoppingBag className="w-8 h-8 text-gray-300" />
             </div>
             <div className="p-3">
               <div className="h-3 bg-gray-200 rounded mb-2 w-3/4" />
-              {config.showPrice && <div className="h-3 bg-gray-100 rounded w-1/3" />}
+              {config.showPrice && <div className="h-3 bg-muted rounded w-1/3" />}
               {config.showAddToCart && <div className="mt-3 h-8 bg-indigo-100 rounded-lg" />}
             </div>
           </div>
@@ -1506,7 +1550,7 @@ function LiveImageText({ config, selected, onUpdate }) {
         </div>
         <div className="flex-1">
           <EditableText tag="h2" value={config.title} onChange={(v) => onUpdate('title', v)} className="text-2xl font-bold mb-4" placeholder="Titre..." />
-          <EditableText tag="p" value={config.content} onChange={(v) => onUpdate('content', v)} className="text-gray-600 leading-relaxed" placeholder="Contenu..." />
+          <EditableText tag="p" value={config.content} onChange={(v) => onUpdate('content', v)} className="text-muted-foreground leading-relaxed" placeholder="Contenu..." />
           {config.ctaText && (
             <EditableText tag="span" value={config.ctaText} onChange={(v) => onUpdate('ctaText', v)} className="mt-6 inline-block px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg text-sm" />
           )}
@@ -1544,7 +1588,7 @@ function LiveTestimonials({ config, selected, onUpdate }) {
       <EditableText tag="h2" value={config.title} onChange={(v) => onUpdate('title', v)} className="text-2xl font-bold text-center mb-10" placeholder="Titre..." />
       <div className={`grid gap-5 ${config.layout === 'carousel' ? 'grid-cols-1 max-w-lg mx-auto' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
         {items.map((item, i) => (
-          <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div key={i} className="bg-card rounded-2xl p-6 shadow-sm border border-border">
             {config.showRating && (
               <div className="flex gap-0.5 mb-3">
                 {Array.from({ length: 5 }).map((_, s) => (
@@ -1552,9 +1596,9 @@ function LiveTestimonials({ config, selected, onUpdate }) {
                 ))}
               </div>
             )}
-            <p className="text-gray-700 text-sm leading-relaxed mb-4">"{item.content}"</p>
-            <p className="text-sm font-bold text-gray-900">{item.name}</p>
-            {item.location && <p className="text-xs text-gray-400">{item.location}</p>}
+            <p className="text-foreground text-sm leading-relaxed mb-4">"{item.content}"</p>
+            <p className="text-sm font-bold text-foreground">{item.name}</p>
+            {item.location && <p className="text-xs text-muted-foreground">{item.location}</p>}
           </div>
         ))}
       </div>
@@ -1570,16 +1614,16 @@ function LiveFaq({ config, selected, onUpdate }) {
       <EditableText tag="h2" value={config.title} onChange={(v) => onUpdate('title', v)} className="text-2xl font-bold text-center mb-10" placeholder="Titre..." />
       <div className="max-w-2xl mx-auto space-y-2">
         {items.map((item, i) => (
-          <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
+          <div key={i} className="border border-border rounded-xl overflow-hidden">
             <button
-              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition"
+              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-background transition"
               onClick={() => setOpen(open === i ? null : i)}
             >
-              <span className="text-sm font-semibold text-gray-900">{item.question}</span>
-              {open === i ? <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+              <span className="text-sm font-semibold text-foreground">{item.question}</span>
+              {open === i ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
             </button>
             {open === i && (
-              <div className="px-5 pb-4 text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">{item.answer}</div>
+              <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">{item.answer}</div>
             )}
           </div>
         ))}
@@ -1595,18 +1639,18 @@ function LiveContact({ config, selected, onUpdate }) {
       <EditableText tag="p" value={config.subtitle} onChange={(v) => onUpdate('subtitle', v)} className="opacity-80 mb-8" placeholder="Sous-titre..." />
       <div className="flex flex-wrap justify-center gap-4">
         {config.whatsapp && (
-          <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2 bg-card/10 rounded-xl px-4 py-3">
             <Phone className="w-4 h-4" />
             <span className="text-sm font-medium">{config.whatsapp}</span>
           </div>
         )}
         {config.email && (
-          <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2 bg-card/10 rounded-xl px-4 py-3">
             <span className="text-sm font-medium">{config.email}</span>
           </div>
         )}
         {config.address && (
-          <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2 bg-card/10 rounded-xl px-4 py-3">
             <span className="text-sm font-medium">{config.address}</span>
           </div>
         )}
@@ -1773,13 +1817,13 @@ function LiveSpacer({ config, selected }) {
   );
 }
 
-function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
+function LiveSectionRender({ section, selected, onClick, onFieldUpdate, pubStore, pubProducts }) {
   const { type, config, visible } = section;
   if (!visible) {
     return (
       <div onClick={onClick} className={`relative cursor-pointer opacity-30 hover:opacity-50 transition ${selected ? 'ring-2 ring-inset ring-indigo-400' : ''}`}>
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-100/50">
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium bg-white px-3 py-1.5 rounded-full shadow"><EyeOff className="w-3 h-3" />Section masquée</div>
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-muted/50">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium bg-card px-3 py-1.5 rounded-full shadow"><EyeOff className="w-3 h-3" />Section masquée</div>
         </div>
         <div style={{ pointerEvents: 'none', minHeight: 48, background: '#f3f4f6' }} />
       </div>
@@ -1788,6 +1832,20 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
 
   const props = { config, selected, onUpdate: (key, val) => onFieldUpdate(section.id, key, val) };
   let rendered;
+  // Rendu RÉEL : même moteur que la boutique publiée (SectionRenderer public).
+  // Fallback sur les composants Live* tant que le payload public n'est pas chargé.
+  if (pubStore) {
+    rendered = (
+      <StorefrontLangContext.Provider value={pubStore.language || 'fr'}>
+        <div
+          style={{ ...buildStorefrontThemeVars(pubStore), backgroundColor: 'var(--s-bg)', fontFamily: 'var(--s-font-base, var(--s-font))', color: 'var(--s-text)' }}
+          onClickCapture={(e) => { const a = e.target?.closest?.('a'); if (a) e.preventDefault(); }}
+        >
+          <SectionRenderer section={section} store={pubStore} products={pubProducts} prefix="" />
+        </div>
+      </StorefrontLangContext.Provider>
+    );
+  } else
   switch (type) {
     case 'hero':        rendered = <LiveHero {...props} />; break;
     case 'products':    rendered = <LiveProducts {...props} />; break;
@@ -1805,11 +1863,11 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
     case 'badges':      rendered = <LiveBadges {...props} />; break;
     case 'features':    rendered = <LiveFeatures {...props} />; break;
     default:
-      rendered = <div className="p-6 bg-gray-50 text-sm text-gray-400 text-center">Section : {type}</div>;
+      rendered = <div className="p-6 bg-background text-sm text-muted-foreground text-center">Section : {type}</div>;
   }
 
-  // Surcharges "Apparence & avancé" (espacements, couleurs) — visibles dans le canvas
-  const st = section.config?._style || {};
+  // Surcharges "Apparence & avancé" — le rendu réel les applique déjà (SectionRenderer)
+  const st = pubStore ? {} : (section.config?._style || {});
   const wrapStyle = {
     ...(st.paddingTop != null ? { paddingTop: st.paddingTop } : {}),
     ...(st.paddingBottom != null ? { paddingBottom: st.paddingBottom } : {}),
@@ -1822,7 +1880,7 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
     <div className="relative cursor-pointer group/live">
       <div style={wrapStyle}>{rendered}</div>
       {deviceHidden && (
-        <span className="absolute top-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none inline-flex items-center gap-1 text-[9.5px] font-bold text-slate-600 bg-white/90 backdrop-blur ring-1 ring-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+        <span className="absolute top-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none inline-flex items-center gap-1 text-[9.5px] font-bold text-slate-600 bg-card/90 backdrop-blur ring-1 ring-slate-200 px-2 py-0.5 rounded-full shadow-sm">
           {st.hideMobile && st.hideDesktop ? 'Masquée partout' : st.hideMobile ? 'Masquée sur mobile' : 'Masquée sur ordinateur'}
         </span>
       )}
@@ -1846,7 +1904,7 @@ function LiveSectionRender({ section, selected, onClick, onFieldUpdate }) {
 
 // ─── Sortable wrapper for live preview sections ─────────────────────────────
 
-function SortableLiveSection({ section, selected, onClick, onFieldUpdate }) {
+function SortableLiveSection({ section, selected, onClick, onFieldUpdate, pubStore, pubProducts }) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
   });
@@ -1866,12 +1924,14 @@ function SortableLiveSection({ section, selected, onClick, onFieldUpdate }) {
         selected={selected}
         onClick={onClick}
         onFieldUpdate={onFieldUpdate}
+        pubStore={pubStore}
+        pubProducts={pubProducts}
       />
       {/* Drag handle overlay — uses setActivatorNodeRef */}
       <div
         ref={setActivatorNodeRef}
         {...listeners}
-        className="absolute top-2 left-2 opacity-0 group-hover/sortlive:opacity-100 transition-opacity z-30 cursor-grab active:cursor-grabbing p-1.5 bg-white rounded-lg shadow-md border border-gray-200 text-gray-400 hover:text-gray-700"
+        className="absolute top-2 left-2 opacity-0 group-hover/sortlive:opacity-100 transition-opacity z-30 cursor-grab active:cursor-grabbing p-1.5 bg-card rounded-lg shadow-md border border-border text-muted-foreground hover:text-foreground"
         onClick={(e) => e.stopPropagation()}
       >
         <GripVertical className="w-3.5 h-3.5" />
@@ -1882,13 +1942,13 @@ function SortableLiveSection({ section, selected, onClick, onFieldUpdate }) {
 
 // ─── Add section panel ────────────────────────────────────────────────────────
 
-function AddSectionPanel({ onAdd, onClose }) {
-  const [cat, setCat] = useState('Marketing');
+function AddSectionPanel({ onAdd, onAddTemplate, onClose }) {
+  const [cat, setCat] = useState('Prédéfinies');
 
   const filtered = Object.entries(SECTION_TYPES).filter(([, meta]) => meta.category === cat);
 
   return (
-    <div className="absolute inset-0 bg-white z-20 flex flex-col">
+    <div className="absolute inset-0 bg-card z-20 flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center">
@@ -1905,6 +1965,27 @@ function AddSectionPanel({ onAdd, onClose }) {
         ))}
       </div>
       <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+        {cat === 'Prédéfinies' && SECTION_TEMPLATES.map((tpl) => {
+          const TplIcon = TEMPLATE_ICONS[tpl.icon] || Layout;
+          return (
+            <button
+              key={tpl.id}
+              onClick={() => { onAddTemplate(tpl); onClose(); }}
+              className="w-full flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 hover:shadow-sm transition text-left group"
+            >
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-100 text-slate-600 transition group-hover:scale-105 group-hover:bg-indigo-100 group-hover:text-indigo-600">
+                <TplIcon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[13px] font-bold text-slate-800 group-hover:text-indigo-700">{tpl.label}</p>
+                <p className="text-[11px] text-slate-400 truncate">{tpl.desc}</p>
+              </div>
+              <span className="ml-auto flex-shrink-0 w-6 h-6 rounded-md bg-slate-50 group-hover:bg-indigo-600 flex items-center justify-center transition">
+                <Plus className="w-3.5 h-3.5 text-slate-300 group-hover:text-white" />
+              </span>
+            </button>
+          );
+        })}
         {filtered.map(([type, meta]) => (
           <button
             key={type}
@@ -1950,6 +2031,14 @@ const StorepageBuilder = () => {
     return saved >= 240 && saved <= 560 ? saved : 320;
   });
   const [panelCollapsed, setPanelCollapsed] = useState(false);
+  // Aperçu : 'edit' = canevas interactif (approximation), 'real' = vraie page publiée (iframe)
+  const [previewMode, setPreviewMode] = useState('edit');
+  const [realPreviewKey, setRealPreviewKey] = useState(0);
+  // Payload public de la boutique : le canevas d'édition rend avec le VRAI moteur
+  // (SectionRenderer + variables de thème) pour être identique à la page publiée.
+  const [pubStore, setPubStore] = useState(null);
+  const [pubProducts, setPubProducts] = useState([]);
+
   const [panelResizing, setPanelResizing] = useState(false);
 
   const startPanelResize = useCallback((e) => {
@@ -2057,6 +2146,30 @@ const StorepageBuilder = () => {
   }, [undo, redo]);
 
   const subdomain = activeStore?.subdomain || workspace?.subdomain || '';
+  useEffect(() => {
+    if (!subdomain) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const [storeRes, prodRes] = await Promise.all([
+          publicStoreApi.getStore(subdomain),
+          publicStoreApi.getProducts(subdomain, { limit: 12 }).catch(() => null),
+        ]);
+        if (cancelled) return;
+        const storeData = storeRes?.data?.data || storeRes?.data || null;
+        const prodData = prodRes?.data?.data?.products || prodRes?.data?.products || prodRes?.data?.data || [];
+        if (storeData) {
+          setPubStore(storeData);
+          injectStoreCssVars(storeData);
+          applyFont(storeData.productPageConfig?.design?.fontFamily || storeData.font || 'inter');
+        }
+        setPubProducts(Array.isArray(prodData) ? prodData : []);
+      } catch {
+        // Fallback silencieux : le canevas garde les composants Live* approximatifs
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [subdomain]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -2084,6 +2197,23 @@ const StorepageBuilder = () => {
   // ─ Mutations (all push to history) ─
   const addSection = useCallback((type) => {
     const sec = makeSection(type);
+    setSections((prev) => {
+      pushHistory(prev);
+      return [...prev, sec];
+    });
+    setSelectedId(sec.id);
+    setDirty(true);
+    forceRender((n) => n + 1);
+  }, [pushHistory]);
+
+  const addSectionFromTemplate = useCallback((tpl) => {
+    const { html, js } = splitTemplateHtml(tpl.html);
+    const sec = {
+      id: `sec_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      type: 'custom_code',
+      visible: true,
+      config: { html, css: '', js, _templateId: tpl.id, _label: tpl.label },
+    };
     setSections((prev) => {
       pushHistory(prev);
       return [...prev, sec];
@@ -2316,6 +2446,7 @@ const StorepageBuilder = () => {
       await storeManageApi.updatePages({ sections });
       setSaved(true);
       setDirty(false);
+      setRealPreviewKey((k) => k + 1);
       setTimeout(() => setSaved(false), 3000);
     } catch {
       alert('Erreur lors de la sauvegarde');
@@ -2326,10 +2457,10 @@ const StorepageBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-          <p className="text-sm text-gray-500 font-medium">Chargement...</p>
+          <p className="text-sm text-muted-foreground font-medium">Chargement...</p>
         </div>
       </div>
     );
@@ -2343,10 +2474,10 @@ const StorepageBuilder = () => {
     : 'w-full';
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
+    <div className="flex flex-col h-screen bg-muted overflow-hidden">
 
       {/* ── Top bar ─────────────────────────────────────────────────────────── */}
-      <header className="relative flex items-center justify-between h-14 px-3 bg-white/95 backdrop-blur border-b border-slate-200 flex-shrink-0 z-30">
+      <header className="relative flex items-center justify-between h-14 px-3 bg-card/95 backdrop-blur border-b border-slate-200 flex-shrink-0 z-30">
         {/* Zone gauche : retour + identité + statut */}
         <div className="flex items-center gap-2.5 min-w-0">
           <button onClick={() => navigate(-1)} title="Retour" className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition">
@@ -2380,7 +2511,7 @@ const StorepageBuilder = () => {
               onClick={() => setDevice(id)}
               title={label}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-                device === id ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-800'
+                device === id ? 'bg-card shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               {icon}
@@ -2396,7 +2527,7 @@ const StorepageBuilder = () => {
               onClick={undo}
               disabled={!canUndo}
               title="Annuler (Ctrl+Z)"
-              className={`p-1.5 rounded-lg transition ${canUndo ? 'text-slate-600 hover:bg-white hover:shadow-sm' : 'text-slate-300 cursor-not-allowed'}`}
+              className={`p-1.5 rounded-lg transition ${canUndo ? 'text-slate-600 hover:bg-card hover:shadow-sm' : 'text-slate-300 cursor-not-allowed'}`}
             >
               <Undo2 className="w-4 h-4" />
             </button>
@@ -2404,7 +2535,7 @@ const StorepageBuilder = () => {
               onClick={redo}
               disabled={!canRedo}
               title="Rétablir (Ctrl+Shift+Z)"
-              className={`p-1.5 rounded-lg transition ${canRedo ? 'text-slate-600 hover:bg-white hover:shadow-sm' : 'text-slate-300 cursor-not-allowed'}`}
+              className={`p-1.5 rounded-lg transition ${canRedo ? 'text-slate-600 hover:bg-card hover:shadow-sm' : 'text-slate-300 cursor-not-allowed'}`}
             >
               <Redo2 className="w-4 h-4" />
             </button>
@@ -2441,7 +2572,7 @@ const StorepageBuilder = () => {
 
         {/* ── Rail replié : ré-ouvre le panneau ─────────────────────────────── */}
         {panelCollapsed && (
-          <div className="w-12 bg-white border-r border-slate-200 flex flex-col items-center py-3 gap-2 flex-shrink-0 z-20">
+          <div className="w-12 bg-card border-r border-slate-200 flex flex-col items-center py-3 gap-2 flex-shrink-0 z-20">
             <button
               onClick={() => setPanelCollapsed(false)}
               title="Afficher les sections"
@@ -2465,7 +2596,7 @@ const StorepageBuilder = () => {
 
         {/* ── Left panel: sections list + inline editor ───────────────────── */}
         <div
-          className={`bg-white border-r border-slate-200 flex flex-col flex-shrink-0 relative shadow-[1px_0_0_rgba(15,23,42,0.02)] ${panelResizing ? '' : 'transition-[width,margin] duration-200'}`}
+          className={`bg-card border-r border-slate-200 flex flex-col flex-shrink-0 relative shadow-[1px_0_0_rgba(15,23,42,0.02)] ${panelResizing ? '' : 'transition-[width,margin] duration-200'}`}
           style={{ width: panelCollapsed ? 0 : panelWidth, marginLeft: panelCollapsed ? -1 : 0, overflow: panelCollapsed ? 'hidden' : 'visible' }}
         >
           <div className="flex flex-col h-full overflow-hidden" style={{ minWidth: 240 }}>
@@ -2525,7 +2656,7 @@ const StorepageBuilder = () => {
                           onToggleVisible={toggleVisible}
                         />
                         {selectedId === sec.id && (
-                          <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-1.5">
+                          <div className="rounded-xl border border-slate-200 bg-card shadow-sm overflow-hidden mb-1.5">
                             <div className="h-[3px]" style={{ background: SECTION_TYPES[sec.type]?.color || '#6366f1' }} />
                             <div className="flex items-center justify-between px-3 py-2.5 border-b border-slate-100">
                               <div className="flex items-center gap-2">
@@ -2537,7 +2668,19 @@ const StorepageBuilder = () => {
                                   <p className="text-[9.5px] text-slate-400 font-medium uppercase tracking-wide">Édition</p>
                                 </div>
                               </div>
-                              <button onClick={() => setSelectedId(null)} title="Fermer" className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition"><X className="w-3.5 h-3.5" /></button>
+                              <div className="flex items-center gap-0.5">
+                                <button
+                                  type="button"
+                                  title="Modifier cette section avec l'IA"
+                                  onClick={() => window.dispatchEvent(new CustomEvent('builder-ai:prefill', {
+                                    detail: { text: `Modifie la section « ${SECTION_TYPES[sec.type]?.label || sec.type} » (id: ${sec.id}) : ` },
+                                  }))}
+                                  className="flex items-center gap-1 px-2 py-1 rounded-lg text-indigo-600 hover:bg-indigo-50 transition text-[11px] font-semibold"
+                                >
+                                  <Sparkles className="w-3.5 h-3.5" /> IA
+                                </button>
+                                <button onClick={() => setSelectedId(null)} title="Fermer" className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition"><X className="w-3.5 h-3.5" /></button>
+                              </div>
                             </div>
                             <div className="p-3 bg-slate-50/50">
                               <SectionEditor section={sec} onChange={updateSelected} />
@@ -2553,7 +2696,7 @@ const StorepageBuilder = () => {
           </div>
 
           {/* Add section overlay */}
-          {showAddPanel && <AddSectionPanel onAdd={addSection} onClose={() => setShowAddPanel(false)} />}
+          {showAddPanel && <AddSectionPanel onAdd={addSection} onAddTemplate={addSectionFromTemplate} onClose={() => setShowAddPanel(false)} />}
           </div>
 
           {/* Poignée de redimensionnement — glisser pour élargir/réduire, double-clic pour réinitialiser */}
@@ -2578,15 +2721,37 @@ const StorepageBuilder = () => {
             backgroundSize: '22px 22px',
           }}
         >
-          {/* Badge de largeur du viewport */}
-          <div className={`${iframeContainerCls} flex items-center justify-center mb-2 transition-all duration-300`}>
-            <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-slate-500 bg-white/80 backdrop-blur px-2.5 py-1 rounded-full ring-1 ring-slate-200 shadow-sm tabular-nums">
+          {/* Badge de largeur + bascule Édition / Aperçu réel */}
+          <div className={`${iframeContainerCls} flex items-center justify-center gap-2 mb-2 transition-all duration-300`}>
+            <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-slate-500 bg-card/80 backdrop-blur px-2.5 py-1 rounded-full ring-1 ring-slate-200 shadow-sm tabular-nums">
               {device === 'mobile' ? <Smartphone className="w-3 h-3" /> : device === 'tablet' ? <Tablet className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
               {device === 'mobile' ? '390 px' : device === 'tablet' ? '768 px' : 'Pleine largeur'}
             </span>
+            <div className="inline-flex rounded-full bg-card/80 backdrop-blur ring-1 ring-slate-200 shadow-sm p-0.5">
+              <button
+                type="button"
+                onClick={() => setPreviewMode('edit')}
+                className={`px-2.5 py-0.5 text-[10.5px] font-bold rounded-full transition ${previewMode === 'edit' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                Édition
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPreviewMode('real'); setRealPreviewKey((k) => k + 1); }}
+                title="Rendu exact de la page publiée (recharge après chaque Publier)"
+                className={`px-2.5 py-0.5 text-[10.5px] font-bold rounded-full transition ${previewMode === 'real' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                Aperçu réel
+              </button>
+            </div>
+            {previewMode === 'real' && dirty && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 ring-1 ring-amber-200 px-2 py-0.5 rounded-full">
+                Modifications non publiées
+              </span>
+            )}
           </div>
 
-          <div className={`${iframeContainerCls} bg-white rounded-2xl shadow-2xl shadow-slate-300/60 ring-1 ring-slate-200 overflow-hidden transition-all duration-300`}>
+          <div className={`${iframeContainerCls} bg-card rounded-2xl shadow-2xl shadow-slate-300/60 ring-1 ring-slate-200 overflow-hidden transition-all duration-300`}>
             {/* Browser chrome */}
             <div className="h-9 bg-slate-50 border-b border-slate-200 flex items-center px-3 gap-2.5 flex-shrink-0">
               <div className="flex gap-1.5">
@@ -2594,7 +2759,7 @@ const StorepageBuilder = () => {
                 <div className="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]" />
                 <div className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
               </div>
-              <div className="flex-1 flex items-center gap-1.5 bg-white ring-1 ring-slate-200 rounded-md px-2.5 py-1 text-[11px] text-slate-500 font-medium truncate">
+              <div className="flex-1 flex items-center gap-1.5 bg-card ring-1 ring-slate-200 rounded-md px-2.5 py-1 text-[11px] text-slate-500 font-medium truncate">
                 <Lock className="w-2.5 h-2.5 text-slate-300 flex-shrink-0" />
                 {subdomain ? `${subdomain}.scalor.net` : 'Aperçu en direct'}
               </div>
@@ -2604,15 +2769,24 @@ const StorepageBuilder = () => {
               </span>
             </div>
 
-            {/* Inline rendered sections — click to select, drag to reorder */}
+            {/* Aperçu réel : la vraie homepage publiée, rendu garanti identique */}
+            {previewMode === 'real' ? (
+              <iframe
+                key={realPreviewKey}
+                src={`/store/${subdomain}?_v=${realPreviewKey}`}
+                title="Aperçu réel de la boutique"
+                className="w-full border-0"
+                style={{ height: 'calc(100vh - 210px)', minHeight: 480 }}
+              />
+            ) : (
             <div className="min-h-[400px]">
               {sections.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center px-8">
-                  <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mb-4">
                     <Layers className="w-8 h-8 text-gray-300" />
                   </div>
-                  <p className="text-sm font-semibold text-gray-600">Aucune section</p>
-                  <p className="text-xs text-gray-400 mt-1">Ajoutez des sections pour construire votre page</p>
+                  <p className="text-sm font-semibold text-muted-foreground">Aucune section</p>
+                  <p className="text-xs text-muted-foreground mt-1">Ajoutez des sections pour construire votre page</p>
                 </div>
               ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -2624,29 +2798,34 @@ const StorepageBuilder = () => {
                         selected={selectedId === sec.id}
                         onClick={() => setSelectedId(sec.id)}
                         onFieldUpdate={onFieldUpdate}
+                        pubStore={pubStore}
+                        pubProducts={pubProducts}
                       />
                     ))}
                   </SortableContext>
                 </DndContext>
               )}
             </div>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* ── IA Flottante ──────────────────────────────────────────────────── */}
-      <BuilderAiChat
-        mode="storepage"
-        context={{ sections }}
-        onPatch={({ sectionsPatch }) => {
-          if (sectionsPatch && Array.isArray(sectionsPatch)) {
-            setSections(sectionsPatch);
-            setDirty(true);
-          }
-        }}
-      />
+        {/* ── Assistant IA ancré — colonne à droite, le builder reste visible ── */}
+        <BuilderAiChat
+          mode="storepage"
+          variant="docked"
+          dockBarOffset={panelCollapsed ? 0 : panelWidth}
+          context={{ sections }}
+          onPatch={({ sectionsPatch }) => {
+            if (sectionsPatch && Array.isArray(sectionsPatch)) {
+              setSections(sectionsPatch);
+              setDirty(true);
+            }
+          }}
+        />
+      </div>
       {false /* dead code removed */ && (
-        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
 
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex-shrink-0">
@@ -2654,13 +2833,13 @@ const StorepageBuilder = () => {
               <Sparkles className="h-4 w-4" />
               <span className="text-sm font-bold">Assistant Builder IA</span>
             </div>
-            <button onClick={() => setAiOpen(false)} className="rounded-full p-1 hover:bg-white/20 transition">
+            <button onClick={() => setAiOpen(false)} className="rounded-full p-1 hover:bg-card/20 transition">
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Sélecteur de modèle */}
-          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-100 flex-shrink-0">
+          <div className="flex items-center gap-2 px-3 py-2 bg-background border-b border-border flex-shrink-0">
             {aiModel === 'gpt-5.4' ? (
               <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 text-[#10a37f]" fill="currentColor">
                 <path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0L4.4 14.069a4.504 4.504 0 0 1-2.059-6.173zm16.597 3.855-5.843-3.372 2.02-1.168a.076.076 0 0 1 .072 0l4.42 2.556a4.494 4.494 0 0 1-.676 8.105v-5.678a.795.795 0 0 0-.393-.443zm2.01-3.023-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.419-2.549a4.494 4.494 0 0 1 6.68 4.66zm-12.64 4.135-2.02-1.164a.08.08 0 0 1-.038-.057v-5.57a4.494 4.494 0 0 1 7.375-3.453l-.142.08L8.704 9.93a.795.795 0 0 0-.393.681zm1.097-2.365 2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5Z"/>
@@ -2673,14 +2852,14 @@ const StorepageBuilder = () => {
             <select
               value={aiModel}
               onChange={e => setAiModel(e.target.value)}
-              className="flex-1 text-xs font-semibold text-gray-700 bg-transparent outline-none cursor-pointer"
+              className="flex-1 text-xs font-semibold text-foreground bg-transparent outline-none cursor-pointer"
             >
               <optgroup label="— Claude (Anthropic)">
                 <option value="claude-sonnet">Claude Sonnet — rapide {isProPlan ? '' : '(PRO)'}</option>
                 <option value="claude-opus">Claude Opus — plus puissant {isProPlan ? '' : '(PRO)'}</option>
               </optgroup>
-              <optgroup label="— OpenAI">
-                <option value="gpt-5.4">GPT-5.4 {isProPlan ? '' : '(PRO)'}</option>
+              <optgroup label="— Scalor IA">
+                <option value="gpt-5.4">Scalor IA Créative {isProPlan ? '' : '(PRO)'}</option>
               </optgroup>
             </select>
           </div>
@@ -2717,7 +2896,7 @@ const StorepageBuilder = () => {
                   </div>
                 )}
                 <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap ${
-                  msg.role === 'user' ? 'bg-indigo-600 text-white rounded-br-md' : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                  msg.role === 'user' ? 'bg-indigo-600 text-white rounded-br-md' : 'bg-muted text-foreground rounded-bl-md'
                 }`}>
                   {msg.content}
                   {msg.isProError && (
@@ -2736,9 +2915,9 @@ const StorepageBuilder = () => {
             ))}
             {aiLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2">
+                <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />
-                  <span className="text-xs text-gray-400">Génération en cours...</span>
+                  <span className="text-xs text-muted-foreground">Génération en cours...</span>
                 </div>
               </div>
             )}
@@ -2747,10 +2926,10 @@ const StorepageBuilder = () => {
 
           {/* Médias en attente */}
           {aiMedias.length > 0 && (
-            <div className="px-3 py-2 border-t border-gray-100 bg-gray-50 flex-shrink-0">
+            <div className="px-3 py-2 border-t border-border bg-background flex-shrink-0">
               <div className="flex flex-wrap gap-2">
                 {aiMedias.map((m, i) => (
-                  <div key={i} className="relative group rounded-xl overflow-hidden border border-gray-200 bg-white flex-shrink-0">
+                  <div key={i} className="relative group rounded-xl overflow-hidden border border-border bg-card flex-shrink-0">
                     {m.type === 'image' ? (
                       <img src={m.localUrl} alt={m.name} className="w-14 h-14 object-cover" />
                     ) : (
@@ -2778,12 +2957,12 @@ const StorepageBuilder = () => {
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-gray-400 mt-1.5">Cliquez sur "où ?" pour indiquer l'emplacement de chaque média</p>
+              <p className="text-[10px] text-muted-foreground mt-1.5">Cliquez sur "où ?" pour indiquer l'emplacement de chaque média</p>
             </div>
           )}
 
           {/* Input */}
-          <div className="border-t border-gray-100 px-3 py-3 flex-shrink-0">
+          <div className="border-t border-border px-3 py-3 flex-shrink-0">
             {/* hidden file input */}
             <input
               ref={aiFileRef}
@@ -2793,12 +2972,12 @@ const StorepageBuilder = () => {
               className="hidden"
               onChange={e => { handleAiFileAdd(e.target.files); e.target.value = ''; }}
             />
-            <div className={`flex items-end gap-2 rounded-xl border bg-gray-50 px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-100 transition ${aiRecording ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus-within:border-indigo-400'}`}>
+            <div className={`flex items-end gap-2 rounded-xl border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-100 transition ${aiRecording ? 'border-red-400 ring-2 ring-red-100' : 'border-border focus-within:border-indigo-400'}`}>
               {/* Bouton ajout média */}
               <button
                 type="button"
                 onClick={() => aiFileRef.current?.click()}
-                className="flex-shrink-0 mb-0.5 text-gray-400 hover:text-indigo-500 transition"
+                className="flex-shrink-0 mb-0.5 text-muted-foreground hover:text-indigo-500 transition"
                 title="Joindre image, audio ou vidéo"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -2818,7 +2997,7 @@ const StorepageBuilder = () => {
                 placeholder={aiRecording ? '🔴 Enregistrement vocal...' : 'Décris ce que tu veux créer ou modifier...'}
                 rows={1}
                 style={{ maxHeight: 80 }}
-                className="flex-1 resize-none bg-transparent text-sm text-gray-800 placeholder:text-gray-400 outline-none overflow-y-auto"
+                className="flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none overflow-y-auto"
               />
               {/* Bouton micro */}
               <button
@@ -2828,7 +3007,7 @@ const StorepageBuilder = () => {
                 className={`flex-shrink-0 mb-0.5 rounded-lg p-1.5 transition disabled:opacity-40 ${
                   aiRecording
                     ? 'bg-red-500 text-white animate-pulse'
-                    : 'text-gray-400 hover:text-red-500'
+                    : 'text-muted-foreground hover:text-red-500'
                 }`}
                 title={aiRecording ? 'Arrêter et transcrire' : 'Note vocale'}
               >

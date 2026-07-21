@@ -70,10 +70,10 @@ const CampaignStats = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('📊 Statistiques des Campagnes')}</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{tp('Vue d\'ensemble de l\'activité WhatsApp')}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{tp('📊 Statistiques des Campagnes')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{tp('Vue d\'ensemble de l\'activité WhatsApp')}</p>
         </div>
-        <Link to="/ecom/campaigns" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition flex items-center gap-1">
+        <Link to="/ecom/campaigns" className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition flex items-center gap-1">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/>
           </svg>
@@ -84,7 +84,7 @@ const CampaignStats = () => {
       {/* Vue d'ensemble */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
         {[
-          { label: 'Total campagnes', value: stats.overview.totalCampaigns, icon: '📧', color: 'bg-gray-50 border-gray-200' },
+          { label: 'Total campagnes', value: stats.overview.totalCampaigns, icon: '📧', color: 'bg-background border-border' },
           { get label() { return tp('Envoyées'); }, value: stats.overview.sentCampaigns, icon: '✅', color: 'bg-green-50 border-green-200' },
           { label: 'Brouillons', value: stats.overview.draftCampaigns, icon: '📝', color: 'bg-primary-50 border-primary-200' },
           { get label() { return tp('Programmées'); }, value: stats.overview.scheduledCampaigns, icon: '⏰', color: 'bg-primary-50 border-primary-200' },
@@ -92,28 +92,28 @@ const CampaignStats = () => {
         ].map((s, i) => (
           <div key={i} className={`${s.color} border rounded-xl p-4 text-center`}>
             <div className="text-2xl mb-1">{s.icon}</div>
-            <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-            <p className="text-[10px] text-gray-500 uppercase font-medium mt-0.5">{s.label}</p>
+            <p className="text-2xl font-bold text-foreground">{s.value}</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-medium mt-0.5">{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Statistiques d'envoi */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
+        <div className="bg-card rounded-xl shadow-sm border p-5">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
             </div>
             <div>
-              <p className="text-xs text-gray-500">{tp('Ciblés')}</p>
-              <p className="text-2xl font-bold text-gray-900">{fmtNum(stats.overview.totalTargeted)}</p>
+              <p className="text-xs text-muted-foreground">{tp('Ciblés')}</p>
+              <p className="text-2xl font-bold text-foreground">{fmtNum(stats.overview.totalTargeted)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-5">
+        <div className="bg-card rounded-xl shadow-sm border p-5">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,12 +121,12 @@ const CampaignStats = () => {
               </svg>
             </div>
             <div>
-              <p className="text-xs text-gray-500">{tp('Envoyés')}</p>
+              <p className="text-xs text-muted-foreground">{tp('Envoyés')}</p>
               <p className="text-2xl font-bold text-green-600">{fmtNum(stats.overview.totalSent)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-5">
+        <div className="bg-card rounded-xl shadow-sm border p-5">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@ const CampaignStats = () => {
               </svg>
             </div>
             <div>
-              <p className="text-xs text-gray-500">{tp('Échecs')}</p>
+              <p className="text-xs text-muted-foreground">{tp('Échecs')}</p>
               <p className="text-2xl font-bold text-red-600">{fmtNum(stats.overview.totalFailed)}</p>
             </div>
           </div>
@@ -142,8 +142,8 @@ const CampaignStats = () => {
       </div>
 
       {/* Activité des 7 derniers jours */}
-      <div className="bg-white rounded-xl shadow-sm border p-5 mb-6">
-        <h2 className="text-sm font-semibold text-gray-900 mb-4">{tp('📅 Activité des 7 derniers jours')}</h2>
+      <div className="bg-card rounded-xl shadow-sm border p-5 mb-6">
+        <h2 className="text-sm font-semibold text-foreground mb-4">{tp('📅 Activité des 7 derniers jours')}</h2>
         <div className="space-y-2">
           {stats.recentActivity.activityByDay.reverse().map((day, i) => {
             const total = day.sent + day.failed;
@@ -152,9 +152,9 @@ const CampaignStats = () => {
             const dateLabel = dateObj.toLocaleDateString('fr-FR', { weekday: 'short', day: '2-digit', month: 'short' });
             
             return (
-              <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <div key={i} className="flex items-center gap-3 p-3 bg-background rounded-lg">
                 <div className="min-w-[100px]">
-                  <p className="text-xs font-medium text-gray-700">{dateLabel}</p>
+                  <p className="text-xs font-medium text-foreground">{dateLabel}</p>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -166,9 +166,9 @@ const CampaignStats = () => {
                         ></div>
                       )}
                     </div>
-                    <span className="text-xs font-medium text-gray-600 min-w-[40px] text-right">{successRate}%</span>
+                    <span className="text-xs font-medium text-muted-foreground min-w-[40px] text-right">{successRate}%</span>
                   </div>
-                  <div className="flex items-center gap-3 text-[10px] text-gray-500">
+                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                     <span>{day.campaigns} campagne{day.campaigns > 1 ? 's' : ''}</span>
                     <span className="text-green-600">{day.sent} envoyés</span>
                     {day.failed > 0 && <span className="text-red-500">{day.failed} échecs</span>}
@@ -182,21 +182,21 @@ const CampaignStats = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Campagnes par type */}
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">{tp('📂 Par type de campagne')}</h2>
+        <div className="bg-card rounded-xl shadow-sm border p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-4">{tp('📂 Par type de campagne')}</h2>
           <div className="space-y-2">
             {stats.campaignsByType.length === 0 ? (
-              <p className="text-sm text-gray-400">{tp('Aucune campagne')}</p>
+              <p className="text-sm text-muted-foreground">{tp('Aucune campagne')}</p>
             ) : (
               stats.campaignsByType.map((type, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={i} className="flex items-center justify-between p-3 bg-background rounded-lg">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">{typeLabels[type.type] || type.type}</p>
-                    <p className="text-xs text-gray-500">{type.count} campagne{type.count > 1 ? 's' : ''}</p>
+                    <p className="text-sm font-medium text-foreground">{typeLabels[type.type] || type.type}</p>
+                    <p className="text-xs text-muted-foreground">{type.count} campagne{type.count > 1 ? 's' : ''}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">{type.successRate}%</p>
-                    <p className="text-xs text-gray-500">{type.sent} / {type.sent + type.failed}</p>
+                    <p className="text-sm font-semibold text-foreground">{type.successRate}%</p>
+                    <p className="text-xs text-muted-foreground">{type.sent} / {type.sent + type.failed}</p>
                   </div>
                 </div>
               ))
@@ -205,24 +205,24 @@ const CampaignStats = () => {
         </div>
 
         {/* Top 5 campagnes */}
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">{tp('🏆 Top 5 campagnes')}</h2>
+        <div className="bg-card rounded-xl shadow-sm border p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-4">{tp('🏆 Top 5 campagnes')}</h2>
           <div className="space-y-2">
             {stats.topCampaigns.length === 0 ? (
-              <p className="text-sm text-gray-400">{tp('Aucune campagne envoyée')}</p>
+              <p className="text-sm text-muted-foreground">{tp('Aucune campagne envoyée')}</p>
             ) : (
               stats.topCampaigns.map((campaign, i) => (
-                <div key={campaign._id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div key={campaign._id} className="flex items-center gap-3 p-3 bg-background rounded-lg">
                   <div className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-bold text-primary-600">{i + 1}</span>
+                    <span className="text-xs font-bold text-primary">{i + 1}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{campaign.name}</p>
-                    <p className="text-xs text-gray-500">{fmtDate(campaign.sentAt)}</p>
+                    <p className="text-sm font-medium text-foreground truncate">{campaign.name}</p>
+                    <p className="text-xs text-muted-foreground">{fmtDate(campaign.sentAt)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-green-600">{campaign.sent}</p>
-                    <p className="text-xs text-gray-500">{campaign.successRate}%</p>
+                    <p className="text-xs text-muted-foreground">{campaign.successRate}%</p>
                   </div>
                 </div>
               ))
@@ -232,36 +232,36 @@ const CampaignStats = () => {
       </div>
 
       {/* Dernières campagnes */}
-      <div className="bg-white rounded-xl shadow-sm border p-5 mt-6">
-        <h2 className="text-sm font-semibold text-gray-900 mb-4">{tp('🕐 Dernières campagnes envoyées')}</h2>
+      <div className="bg-card rounded-xl shadow-sm border p-5 mt-6">
+        <h2 className="text-sm font-semibold text-foreground mb-4">{tp('🕐 Dernières campagnes envoyées')}</h2>
         {stats.latestCampaigns.length === 0 ? (
-          <p className="text-sm text-gray-400">{tp('Aucune campagne envoyée')}</p>
+          <p className="text-sm text-muted-foreground">{tp('Aucune campagne envoyée')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-background border-b border-border">
                 <tr>
-                  <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 uppercase">{tp('Campagne')}</th>
-                  <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 uppercase">{tp('Type')}</th>
-                  <th className="text-right px-3 py-2 text-xs font-semibold text-gray-500 uppercase">{tp('Ciblés')}</th>
-                  <th className="text-right px-3 py-2 text-xs font-semibold text-gray-500 uppercase">{tp('Envoyés')}</th>
-                  <th className="text-right px-3 py-2 text-xs font-semibold text-gray-500 uppercase">{tp('Échecs')}</th>
-                  <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 uppercase">{tp('Date')}</th>
+                  <th className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">{tp('Campagne')}</th>
+                  <th className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">{tp('Type')}</th>
+                  <th className="text-right px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">{tp('Ciblés')}</th>
+                  <th className="text-right px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">{tp('Envoyés')}</th>
+                  <th className="text-right px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">{tp('Échecs')}</th>
+                  <th className="text-left px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">{tp('Date')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {stats.latestCampaigns.map(campaign => (
-                  <tr key={campaign._id} className="hover:bg-gray-50">
+                  <tr key={campaign._id} className="hover:bg-background">
                     <td className="px-3 py-2">
-                      <Link to={`/ecom/campaigns/${campaign._id}`} className="font-medium text-gray-900 hover:text-primary-600">
+                      <Link to={`/ecom/campaigns/${campaign._id}`} className="font-medium text-foreground hover:text-primary">
                         {campaign.name}
                       </Link>
                     </td>
-                    <td className="px-3 py-2 text-gray-600 text-xs">{typeLabels[campaign.type] || campaign.type}</td>
-                    <td className="px-3 py-2 text-right text-gray-600">{campaign.targeted}</td>
+                    <td className="px-3 py-2 text-muted-foreground text-xs">{typeLabels[campaign.type] || campaign.type}</td>
+                    <td className="px-3 py-2 text-right text-muted-foreground">{campaign.targeted}</td>
                     <td className="px-3 py-2 text-right text-green-600 font-medium">{campaign.sent}</td>
                     <td className="px-3 py-2 text-right text-red-500">{campaign.failed}</td>
-                    <td className="px-3 py-2 text-gray-500 text-xs">{fmtDate(campaign.sentAt)}</td>
+                    <td className="px-3 py-2 text-muted-foreground text-xs">{fmtDate(campaign.sentAt)}</td>
                   </tr>
                 ))}
               </tbody>

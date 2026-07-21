@@ -53,6 +53,13 @@ function stashState(pathname: string, state: any): void {
   } catch { /* quota / privé — le stash mémoire suffit pour la session courante */ }
 }
 
+function clearState(pathname: string): void {
+  memoryStates.delete(pathname);
+  try {
+    sessionStorage.removeItem(STATE_PREFIX + pathname);
+  } catch { /* noop */ }
+}
+
 function readState(pathname: string): any {
   if (memoryStates.has(pathname)) return memoryStates.get(pathname);
   try {
@@ -95,7 +102,11 @@ export function useNavigate() {
         return;
       }
       const href = toHref(to);
+      // Sémantique React Router : une navigation SANS state remet location.state
+      // à null pour la destination (sinon un ancien stash sessionStorage —
+      // ex. prefill du générateur de produit — resurgit à chaque visite).
       if (options.state !== undefined) stashState(pathnameOf(href), options.state);
+      else clearState(pathnameOf(href));
       if (options.replace) router.replace(href);
       else router.push(href);
     };
@@ -166,6 +177,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link
   const href = toHref(to);
   const handleClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
     if (state !== undefined) stashState(pathnameOf(href), state);
+    else clearState(pathnameOf(href));
     rest.onClick?.(e);
   };
   return (
@@ -216,6 +228,7 @@ export function Navigate({ to, replace = false, state }: { to: To; replace?: boo
   useEffect(() => {
     const href = toHref(to);
     if (state !== undefined) stashState(pathnameOf(href), state);
+    else clearState(pathnameOf(href));
     if (replace) router.replace(href);
     else router.push(href);
     // eslint-disable-next-line react-hooks/exhaustive-deps

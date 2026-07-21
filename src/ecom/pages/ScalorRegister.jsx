@@ -73,7 +73,7 @@ export default function ScalorRegister() {
           <h1 className="text-4xl font-bold text-white">
             <span className="text-green-400">Scalor</span> API
           </h1>
-          <p className="text-gray-400 mt-2">{tp('Créez votre compte développeur')}</p>
+          <p className="text-muted-foreground mt-2">{tp('Créez votre compte développeur')}</p>
         </div>
 
         <div className="bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-700">
@@ -87,7 +87,7 @@ export default function ScalorRegister() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{tp('Nom complet *')}</label>
+              <label className="block text-sm text-muted-foreground mb-1">{tp('Nom complet *')}</label>
               <input
                 type="text" name="name" required
                 value={form.name} onChange={handleChange}
@@ -97,7 +97,7 @@ export default function ScalorRegister() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{tp('Email *')}</label>
+              <label className="block text-sm text-muted-foreground mb-1">{tp('Email *')}</label>
               <input
                 type="email" name="email" required
                 value={form.email} onChange={handleChange}
@@ -107,7 +107,7 @@ export default function ScalorRegister() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{tp('Mot de passe * (min. 8 chars)')}</label>
+              <label className="block text-sm text-muted-foreground mb-1">{tp('Mot de passe * (min. 8 chars)')}</label>
               <input
                 type="password" name="password" required minLength={8}
                 value={form.password} onChange={handleChange}
@@ -117,7 +117,7 @@ export default function ScalorRegister() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{tp('Entreprise')}</label>
+              <label className="block text-sm text-muted-foreground mb-1">{tp('Entreprise')}</label>
               <input
                 type="text" name="company"
                 value={form.company} onChange={handleChange}
@@ -127,7 +127,7 @@ export default function ScalorRegister() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{tp('Téléphone')}</label>
+              <label className="block text-sm text-muted-foreground mb-1">{tp('Téléphone')}</label>
               <input
                 type="tel" name="phone"
                 value={form.phone} onChange={handleChange}
@@ -145,7 +145,7 @@ export default function ScalorRegister() {
             </button>
           </form>
 
-          <p className="text-center text-gray-500 text-sm mt-6">
+          <p className="text-center text-muted-foreground text-sm mt-6">
             Déjà un compte ?{' '}
             <Link to="/scalor/login" className="text-green-400 hover:text-green-300">
               {tp('Se connecter')}
@@ -164,7 +164,7 @@ export default function ScalorRegister() {
             <div key={plan.name} className="bg-gray-800/50 border border-gray-700 rounded-xl p-3 text-center">
               <div className="text-green-400 font-semibold text-sm">{plan.name}</div>
               <div className="text-white font-bold">{plan.price}</div>
-              <div className="text-gray-500 text-xs mt-1">{plan.features}</div>
+              <div className="text-muted-foreground text-xs mt-1">{plan.features}</div>
             </div>
           ))}
         </div>

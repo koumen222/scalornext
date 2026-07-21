@@ -159,7 +159,7 @@ const StoreSetup = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -171,11 +171,11 @@ const StoreSetup = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Store className="w-6 h-6 text-primary-600" />
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <Store className="w-6 h-6 text-primary" />
             {tp('Ma Boutique en Ligne')}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {tp('Configurez votre boutique publique accessible par vos clients')}
           </p>
         </div>
@@ -184,7 +184,7 @@ const StoreSetup = () => {
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-primary-700 bg-primary-50 rounded-lg hover:bg-primary-100 transition"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-primary bg-primary-50 rounded-lg hover:bg-primary-100 transition"
           >
             <ExternalLink className="w-4 h-4" />
             {tp('Voir la boutique')}
@@ -200,29 +200,29 @@ const StoreSetup = () => {
         </div>
       )}
       {success && (
-        <div className="flex items-center gap-2 p-3 bg-primary-50 border border-primary-200 rounded-lg text-primary-700 text-sm">
+        <div className="flex items-center gap-2 p-3 bg-primary-50 border border-primary-200 rounded-lg text-primary text-sm">
           <CheckCircle className="w-4 h-4 flex-shrink-0" />
           {success}
         </div>
       )}
 
       {/* Enable/Disable Store */}
-      <div className="bg-white border border-gray-200 rounded-xl p-5">
+      <div className="bg-card border border-border rounded-xl p-5">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">{tp('Activer la boutique')}</h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h2 className="text-base font-semibold text-foreground">{tp('Activer la boutique')}</h2>
+            <p className="text-sm text-muted-foreground mt-0.5">
               {tp('Rendez votre boutique visible aux clients')}
             </p>
           </div>
           <button
             onClick={() => handleChange('isStoreEnabled', !config.isStoreEnabled)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              config.isStoreEnabled ? 'bg-primary-600' : 'bg-gray-300'
+              config.isStoreEnabled ? 'bg-primary' : 'bg-gray-300'
             }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${
                 config.isStoreEnabled ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
@@ -231,14 +231,14 @@ const StoreSetup = () => {
       </div>
 
       {/* Subdomain */}
-      <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+      <div className="bg-card border border-border rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <Globe className="w-5 h-5 text-primary-600" />
-          <h2 className="text-base font-semibold text-gray-900">{tp('Adresse de la boutique')}</h2>
+          <Globe className="w-5 h-5 text-primary" />
+          <h2 className="text-base font-semibold text-foreground">{tp('Adresse de la boutique')}</h2>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Sous-domaine')}</label>
+          <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Sous-domaine')}</label>
           <div className="space-y-2">
             <div className="flex items-center gap-0">
               <input
@@ -252,7 +252,7 @@ const StoreSetup = () => {
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 maxLength={30}
               />
-              <span className="px-3 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg text-sm text-gray-500">
+              <span className="px-3 py-2 bg-muted border border-l-0 border-gray-300 rounded-r-lg text-sm text-muted-foreground">
                 .scalor.net
               </span>
             </div>
@@ -260,7 +260,7 @@ const StoreSetup = () => {
             <button
               onClick={generateSubdomainFromStoreName}
               disabled={generatingSubdomain || !config.storeName?.trim()}
-              className="w-full px-3 py-2 bg-primary-50 text-primary-700 border border-primary-200 rounded-lg text-sm font-medium hover:bg-primary-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
+              className="w-full px-3 py-2 bg-primary-50 text-primary border border-primary-200 rounded-lg text-sm font-medium hover:bg-primary-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
             >
               {generatingSubdomain ? (
                 <>
@@ -278,10 +278,10 @@ const StoreSetup = () => {
 
           <div className="mt-2 flex items-center gap-2">
             {checkingSubdomain && (
-              <span className="text-xs text-gray-400">{tp('Vérification...')}</span>
+              <span className="text-xs text-muted-foreground">{tp('Vérification...')}</span>
             )}
             {!checkingSubdomain && subdomainAvailable === true && (
-              <span className="text-xs text-primary-600 flex items-center gap-1">
+              <span className="text-xs text-primary flex items-center gap-1">
                 <CheckCircle className="w-3 h-3" /> Disponible
               </span>
             )}
@@ -291,22 +291,22 @@ const StoreSetup = () => {
               </span>
             )}
             {subdomainInput === existingSubdomain && existingSubdomain && (
-              <span className="text-xs text-gray-400">{tp('Votre sous-domaine actuel')}</span>
+              <span className="text-xs text-muted-foreground">{tp('Votre sous-domaine actuel')}</span>
             )}
           </div>
         </div>
       </div>
 
       {/* Store Identity */}
-      <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+      <div className="bg-card border border-border rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <Palette className="w-5 h-5 text-primary-600" />
-          <h2 className="text-base font-semibold text-gray-900">{tp('Identité de la boutique')}</h2>
+          <Palette className="w-5 h-5 text-primary" />
+          <h2 className="text-base font-semibold text-foreground">{tp('Identité de la boutique')}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Nom de la boutique')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Nom de la boutique')}</label>
             <input
               type="text"
               value={config.storeName}
@@ -316,7 +316,7 @@ const StoreSetup = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Devise')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Devise')}</label>
             <select
               value={config.storeCurrency}
               onChange={(e) => handleChange('storeCurrency', e.target.value)}
@@ -336,7 +336,7 @@ const StoreSetup = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Description')}</label>
+          <label className="block text-sm font-medium text-foreground mb-1">{tp('Description')}</label>
           <textarea
             value={config.storeDescription}
             onChange={(e) => handleChange('storeDescription', e.target.value)}
@@ -348,7 +348,7 @@ const StoreSetup = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('URL du logo')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('URL du logo')}</label>
             <input
               type="url"
               value={config.storeLogo}
@@ -358,7 +358,7 @@ const StoreSetup = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('URL de la bannière')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('URL de la bannière')}</label>
             <input
               type="url"
               value={config.storeBanner}
@@ -370,7 +370,7 @@ const StoreSetup = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Couleur du thème')}</label>
+          <label className="block text-sm font-medium text-foreground mb-1">{tp('Couleur du thème')}</label>
           <div className="flex items-center gap-3">
             <input
               type="color"
@@ -378,21 +378,21 @@ const StoreSetup = () => {
               onChange={(e) => handleChange('storeThemeColor', e.target.value)}
               className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer"
             />
-            <span className="text-sm text-gray-500">{config.storeThemeColor}</span>
+            <span className="text-sm text-muted-foreground">{config.storeThemeColor}</span>
           </div>
         </div>
       </div>
 
       {/* Contact */}
-      <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+      <div className="bg-card border border-border rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <Phone className="w-5 h-5 text-primary-600" />
-          <h2 className="text-base font-semibold text-gray-900">{tp('Contact')}</h2>
+          <Phone className="w-5 h-5 text-primary" />
+          <h2 className="text-base font-semibold text-foreground">{tp('Contact')}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{tp('Téléphone')}</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{tp('Téléphone')}</label>
             <input
               type="tel"
               value={config.storePhone}
@@ -402,7 +402,7 @@ const StoreSetup = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
+            <label className="block text-sm font-medium text-foreground mb-1">WhatsApp</label>
             <input
               type="tel"
               value={config.storeWhatsApp}
@@ -419,7 +419,7 @@ const StoreSetup = () => {
         <button
           onClick={handleSaveConfig}
           disabled={saving}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white rounded-lg font-medium text-sm hover:bg-primary-700 disabled:opacity-50 transition"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg font-medium text-sm hover:bg-primary-700 disabled:opacity-50 transition"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           {saving ? 'Sauvegarde...' : tp('Sauvegarder')}

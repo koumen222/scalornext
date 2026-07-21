@@ -7,12 +7,12 @@ import { tp } from '../i18n/platform.js';
 
 // â”€â”€â”€ Status badge colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const STATUS_COLORS = {
-  success: 'bg-primary-50 text-primary-700 border-primary-200',
+  success: 'bg-primary-50 text-primary border-primary-200',
   partial: 'bg-amber-50 text-amber-700 border-amber-200',
   failed: 'bg-red-50 text-red-700 border-red-200',
-  in_progress: 'bg-primary-50 text-primary-700 border-primary-200',
-  pending: 'bg-gray-50 text-gray-500 border-gray-200',
-  cancelled: 'bg-gray-50 text-gray-500 border-gray-200'
+  in_progress: 'bg-primary-50 text-primary border-primary-200',
+  pending: 'bg-background text-muted-foreground border-border',
+  cancelled: 'bg-background text-muted-foreground border-border'
 };
 const STATUS_LABELS = {
   success: 'Succès', partial: 'Partiel', failed: 'Échoué',
@@ -254,13 +254,13 @@ const ImportOrders = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{tp('Importation des commandes')}</h1>
-          <p className="text-sm text-gray-500 mt-1">{tp('Importez vos commandes depuis Google Sheets en quelques étapes')}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{tp('Importation des commandes')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{tp('Importez vos commandes depuis Google Sheets en quelques étapes')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => { setShowHistory(!showHistory); if (!showHistory) fetchHistory(); }}
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-foreground bg-card border border-gray-300 rounded-lg hover:bg-background transition"
           >
             <ClockIcon className="w-4 h-4" />
             {tp('Historique')}
@@ -276,10 +276,10 @@ const ImportOrders = () => {
               <div className="flex flex-col items-center">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                   currentStep > step.num
-                    ? 'bg-primary-500 text-white shadow-sm shadow-primary-200'
+                    ? 'bg-primary text-white shadow-sm shadow-primary-200'
                     : currentStep === step.num
-                    ? 'bg-primary-600 text-white shadow-sm shadow-primary-200 ring-4 ring-primary-100'
-                    : 'bg-gray-100 text-gray-400'
+                    ? 'bg-primary text-white shadow-sm shadow-primary-200 ring-4 ring-primary-100'
+                    : 'bg-muted text-muted-foreground'
                 }`}>
                   {currentStep > step.num ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
@@ -287,7 +287,7 @@ const ImportOrders = () => {
                     <step.icon className="w-5 h-5" />
                   )}
                 </div>
-                <span className={`mt-2 text-xs font-medium ${currentStep >= step.num ? 'text-gray-900' : 'text-gray-400'}`}>
+                <span className={`mt-2 text-xs font-medium ${currentStep >= step.num ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {step.label}
                 </span>
               </div>
@@ -315,13 +315,13 @@ const ImportOrders = () => {
       )}
 
       {/* Step Content */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
         {/* â”€â”€ STEP 1: Source Selection â”€â”€ */}
         {currentStep === 1 && (
           <div className="p-6 sm:p-8">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">{tp('Sélectionnez la source')}</h2>
-              <p className="text-sm text-gray-500 mt-1">{tp('Choisissez un Google Sheet configuré ou entrez un nouveau lien')}</p>
+              <h2 className="text-lg font-semibold text-foreground">{tp('Sélectionnez la source')}</h2>
+              <p className="text-sm text-muted-foreground mt-1">{tp('Choisissez un Google Sheet configuré ou entrez un nouveau lien')}</p>
             </div>
 
             {/* Toggle */}
@@ -329,7 +329,7 @@ const ImportOrders = () => {
               <button
                 onClick={() => setUseManualInput(false)}
                 className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition ${
-                  !useManualInput ? 'bg-primary-50 text-primary-700 border-2 border-primary-200' : 'bg-gray-50 text-gray-600 border-2 border-transparent hover:bg-gray-100'
+                  !useManualInput ? 'bg-primary-50 text-primary border-2 border-primary-200' : 'bg-background text-muted-foreground border-2 border-transparent hover:bg-muted'
                 }`}
               >
                 {tp('Sources configurées')}
@@ -337,7 +337,7 @@ const ImportOrders = () => {
               <button
                 onClick={() => setUseManualInput(true)}
                 className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition ${
-                  useManualInput ? 'bg-primary-50 text-primary-700 border-2 border-primary-200' : 'bg-gray-50 text-gray-600 border-2 border-transparent hover:bg-gray-100'
+                  useManualInput ? 'bg-primary-50 text-primary border-2 border-primary-200' : 'bg-background text-muted-foreground border-2 border-transparent hover:bg-muted'
                 }`}
               >
                 {tp('Nouveau lien')}
@@ -348,11 +348,11 @@ const ImportOrders = () => {
               <div className="space-y-3">
                 {sources.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <LinkIcon className="w-7 h-7 text-gray-400" />
+                    <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <LinkIcon className="w-7 h-7 text-muted-foreground" />
                     </div>
-                    <p className="text-sm text-gray-500 mb-3">{tp('Aucune source configurée')}</p>
-                    <button onClick={() => setUseManualInput(true)} className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                    <p className="text-sm text-muted-foreground mb-3">{tp('Aucune source configurée')}</p>
+                    <button onClick={() => setUseManualInput(true)} className="text-sm text-primary hover:text-primary font-medium">
                       {tp('Ajouter un lien manuellement')}
                     </button>
                   </div>
@@ -363,7 +363,7 @@ const ImportOrders = () => {
                       className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
                         selectedSourceId === source._id
                           ? 'border-primary-400 bg-primary-50/50'
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'
+                          : 'border-border hover:border-gray-300 hover:bg-background/50'
                       }`}
                     >
                       <input
@@ -372,11 +372,11 @@ const ImportOrders = () => {
                         value={source._id}
                         checked={selectedSourceId === source._id}
                         onChange={() => setSelectedSourceId(source._id)}
-                        className="w-4 h-4 text-primary-600"
+                        className="w-4 h-4 text-primary"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900">{source.name}</p>
-                        <p className="text-xs text-gray-500 truncate mt-0.5">
+                        <p className="text-sm font-medium text-foreground">{source.name}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
                           {source.sheetName || tp('Sheet1')}
                           {source.lastSyncAt && (
                             <> · Dernier sync: {new Date(source.lastSyncAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</>
@@ -384,7 +384,7 @@ const ImportOrders = () => {
                         </p>
                       </div>
                       <div className="flex-shrink-0">
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded-md">{tp('Actif')}</span>
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-primary-50 text-primary rounded-md">{tp('Actif')}</span>
                       </div>
                     </label>
                   ))
@@ -393,7 +393,7 @@ const ImportOrders = () => {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom de la source')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Nom de la source')}</label>
                   <input
                     type="text"
                     value={manualSourceName}
@@ -401,10 +401,10 @@ const ImportOrders = () => {
                     placeholder={tp('Ex: Commandes Facebook, Leads Janvier...')}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
                   />
-                  <p className="text-[11px] text-gray-400 mt-1">{tp('Ce nom apparaitra dans la liste des sources sur la page Commandes')}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">{tp('Ce nom apparaitra dans la liste des sources sur la page Commandes')}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('URL ou ID du Google Sheet')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{tp('URL ou ID du Google Sheet')}</label>
                   <input
                     type="text"
                     value={manualSheetId}
@@ -414,7 +414,7 @@ const ImportOrders = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{tp('Nom de l\'onglet')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{tp('Nom de l\'onglet')}</label>
                   <input
                     type="text"
                     value={manualSheetName}
@@ -436,11 +436,11 @@ const ImportOrders = () => {
                 {validationResult.valid ? (
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-primary-800">{tp('Spreadsheet accessible')}</p>
-                      <p className="text-xs text-primary-600 mt-0.5">
+                      <p className="text-xs text-primary mt-0.5">
                         {validationResult.rowCount || 0} lignes · {validationResult.columnCount || 0} colonnes
                         {validationResult.empty && ' · Spreadsheet vide'}
                       </p>
@@ -465,7 +465,7 @@ const ImportOrders = () => {
               <button
                 onClick={handleValidate}
                 disabled={validating || (!useManualInput && !selectedSourceId) || (useManualInput && !manualSheetId.trim())}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm"
               >
                 {validating ? (
                   <><Spinner /> {tp('Vérification...')}</>
@@ -482,10 +482,10 @@ const ImportOrders = () => {
           <div className="p-6 sm:p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">{tp('Aperçu des données')}</h2>
-                <p className="text-sm text-gray-500 mt-1">{tp('Vérifiez que les colonnes sont correctement détectées')}</p>
+                <h2 className="text-lg font-semibold text-foreground">{tp('Aperçu des données')}</h2>
+                <p className="text-sm text-muted-foreground mt-1">{tp('Vérifiez que les colonnes sont correctement détectées')}</p>
               </div>
-              <button onClick={() => setCurrentStep(1)} className="text-sm text-gray-500 hover:text-gray-700 font-medium">
+              <button onClick={() => setCurrentStep(1)} className="text-sm text-muted-foreground hover:text-foreground font-medium">
                 â† Retour
               </button>
             </div>
@@ -493,13 +493,13 @@ const ImportOrders = () => {
             {previewing ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <Spinner size="lg" />
-                <p className="text-sm text-gray-500 mt-4">{tp('Chargement de l\'aperçu...')}</p>
+                <p className="text-sm text-muted-foreground mt-4">{tp('Chargement de l\'aperçu...')}</p>
               </div>
             ) : previewData ? (
               <>
                 {/* Column mapping */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">{tp('Colonnes détectées')}</h3>
+                  <h3 className="text-sm font-medium text-foreground mb-3">{tp('Colonnes détectées')}</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                     {Object.entries(previewData.columnMapping).map(([field, colIdx]) => (
                       <div key={field} className="flex items-center gap-2 px-3 py-2 bg-primary-50 border border-primary-200 rounded-lg">
@@ -513,7 +513,7 @@ const ImportOrders = () => {
                   {previewData.validation?.warnings?.length > 0 && (
                     <div className="mt-3 flex items-start gap-2 p-3 bg-primary-50 rounded-lg border border-primary-100">
                       <svg className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      <p className="text-xs text-primary-700">
+                      <p className="text-xs text-primary">
                         Colonnes non détectées automatiquement : {previewData.validation.warnings.map(w => FIELD_LABELS[w] || w).join(', ')}. L'import fonctionnera quand même avec les colonnes disponibles.
                       </p>
                     </div>
@@ -523,9 +523,9 @@ const ImportOrders = () => {
                 {/* Data preview table */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-gray-700">Aperçu des données ({previewData.totalRows} lignes)</h3>
+                    <h3 className="text-sm font-medium text-foreground">Aperçu des données ({previewData.totalRows} lignes)</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">{tp('Ordre:')}</span>
+                      <span className="text-xs text-muted-foreground">{tp('Ordre:')}</span>
                       <select 
                         value={sheetOrder} 
                         onChange={(e) => { setSheetOrder(e.target.value); handlePreview(); }}
@@ -536,21 +536,21 @@ const ImportOrders = () => {
                       </select>
                     </div>
                   </div>
-                  <div className="border border-gray-200 rounded-xl overflow-hidden">
+                  <div className="border border-border rounded-xl overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-background">
                           <tr>
                             {previewData.headers.slice(0, 8).map((h, i) => (
-                              <th key={i} className="px-3 py-2.5 text-left font-medium text-gray-600 whitespace-nowrap">{h || `Col ${i + 1}`}</th>
+                              <th key={i} className="px-3 py-2.5 text-left font-medium text-muted-foreground whitespace-nowrap">{h || `Col ${i + 1}`}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                           {previewData.preview.map((row, i) => (
-                            <tr key={i} className="hover:bg-gray-50/50">
+                            <tr key={i} className="hover:bg-background/50">
                               {previewData.headers.slice(0, 8).map((h, j) => (
-                                <td key={j} className="px-3 py-2 text-gray-700 max-w-[180px] truncate">{row[h] || '-'}</td>
+                                <td key={j} className="px-3 py-2 text-foreground max-w-[180px] truncate">{row[h] || '-'}</td>
                               ))}
                             </tr>
                           ))}
@@ -559,18 +559,18 @@ const ImportOrders = () => {
                     </div>
                   </div>
                   {previewData.headers.length > 8 && (
-                    <p className="text-xs text-gray-400 mt-2 text-center">+ {previewData.headers.length - 8} colonnes supplémentaires non affichées</p>
+                    <p className="text-xs text-muted-foreground mt-2 text-center">+ {previewData.headers.length - 8} colonnes supplémentaires non affichées</p>
                   )}
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <button onClick={() => setCurrentStep(1)} className="text-sm text-gray-500 hover:text-gray-700 font-medium">
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  <button onClick={() => setCurrentStep(1)} className="text-sm text-muted-foreground hover:text-foreground font-medium">
                     â† Changer de source
                   </button>
                   <button
                     onClick={handleImport}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition shadow-sm"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition shadow-sm"
                   >
                     Lancer l'import <ArrowRightIcon className="w-4 h-4" />
                   </button>
@@ -578,8 +578,8 @@ const ImportOrders = () => {
               </>
             ) : (
               <div className="text-center py-12">
-                <p className="text-sm text-gray-500">{tp('Aucun aperçu disponible')}</p>
-                <button onClick={handlePreview} className="mt-3 text-sm text-primary-600 font-medium hover:text-primary-700">{tp('Réessayer')}</button>
+                <p className="text-sm text-muted-foreground">{tp('Aucun aperçu disponible')}</p>
+                <button onClick={handlePreview} className="mt-3 text-sm text-primary font-medium hover:text-primary">{tp('Réessayer')}</button>
               </div>
             )}
           </div>
@@ -591,33 +591,33 @@ const ImportOrders = () => {
             <div className="flex flex-col items-center justify-center py-8">
               <div className="w-20 h-20 bg-primary-50 rounded-2xl flex items-center justify-center mb-6">
                 <div className="animate-spin">
-                  <svg className="w-10 h-10 text-primary-600" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
               </div>
 
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">{tp('Import en cours')}</h2>
-              <p className="text-sm text-gray-500 mb-8 text-center max-w-sm">
+              <h2 className="text-lg font-semibold text-foreground mb-2">{tp('Import en cours')}</h2>
+              <p className="text-sm text-muted-foreground mb-8 text-center max-w-sm">
                 Veuillez ne pas fermer cette page pendant l'import.
               </p>
 
               {/* Progress bar */}
               <div className="w-full max-w-md">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">{importProgress.percentage}%</span>
+                  <span className="text-sm font-medium text-foreground">{importProgress.percentage}%</span>
                   {importProgress.total > 0 && (
-                    <span className="text-xs text-gray-500">{importProgress.current}/{importProgress.total} lignes</span>
+                    <span className="text-xs text-muted-foreground">{importProgress.current}/{importProgress.total} lignes</span>
                   )}
                 </div>
-                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-primary-600 to-primary-600 rounded-full transition-all duration-700 ease-out"
                     style={{ width: `${importProgress.percentage}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-3 text-center min-h-[20px]">{importProgress.status}</p>
+                <p className="text-xs text-muted-foreground mt-3 text-center min-h-[20px]">{importProgress.status}</p>
               </div>
             </div>
           </div>
@@ -644,14 +644,14 @@ const ImportOrders = () => {
                       <svg className="w-8 h-8 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     )}
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold text-foreground">
                     {importResult.errorCount > 0 && importResult.successCount === 0
                       ? 'Import échoué'
                       : importResult.errorCount > 0
                       ? 'Import partiel'
                       : tp('Import réussi')}
                   </h2>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     {importResult.duration ? `Terminé en ${importResult.duration}s` : ''}
                     {importResult.sourceName && <span className="ml-1">{tp('— Source :')} <strong>{importResult.sourceName}</strong></span>}
                   </p>
@@ -661,7 +661,7 @@ const ImportOrders = () => {
                   <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-4">
                     <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-900">{tp('Erreur')}</h2>
+                  <h2 className="text-lg font-semibold text-foreground">{tp('Erreur')}</h2>
                   <p className="text-sm text-red-600 mt-1">{error}</p>
                 </>
               )}
@@ -683,23 +683,23 @@ const ImportOrders = () => {
             )}
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-6 border-t border-gray-100">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-6 border-t border-border">
               <button
                 onClick={handleRelaunch}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition shadow-sm w-full sm:w-auto justify-center"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition shadow-sm w-full sm:w-auto justify-center"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                 Relancer l'import
               </button>
               <button
                 onClick={() => navigate('/ecom/orders')}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition w-full sm:w-auto justify-center"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-card text-foreground text-sm font-medium rounded-lg border border-gray-300 hover:bg-background transition w-full sm:w-auto justify-center"
               >
                 {tp('Voir les commandes')}
               </button>
               <button
                 onClick={handleReset}
-                className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+                className="text-sm text-muted-foreground hover:text-foreground font-medium"
               >
                 {tp('Nouvel import')}
               </button>
@@ -710,10 +710,10 @@ const ImportOrders = () => {
 
       {/* â”€â”€ Import History Panel â”€â”€ */}
       {showHistory && (
-        <div className="mt-8 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-gray-900">{tp('Historique des imports')}</h3>
-            <button onClick={() => setShowHistory(false)} className="text-gray-400 hover:text-gray-600">
+        <div className="mt-8 bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+            <h3 className="text-base font-semibold text-foreground">{tp('Historique des imports')}</h3>
+            <button onClick={() => setShowHistory(false)} className="text-muted-foreground hover:text-muted-foreground">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -721,29 +721,29 @@ const ImportOrders = () => {
             <div className="flex items-center justify-center py-12"><Spinner /></div>
           ) : history.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-sm text-gray-400">{tp('Aucun historique d\'import')}</p>
+              <p className="text-sm text-muted-foreground">{tp('Aucun historique d\'import')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
               {history.map(imp => (
-                <div key={imp._id} className="px-6 py-4 hover:bg-gray-50/50 transition">
+                <div key={imp._id} className="px-6 py-4 hover:bg-background/50 transition">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md border ${STATUS_COLORS[imp.status]}`}>
                         {STATUS_LABELS[imp.status]}
                       </span>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{imp.sourceName || tp('Import')}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">
+                        <p className="text-sm font-medium text-foreground">{imp.sourceName || tp('Import')}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
                           {new Date(imp.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                           {imp.triggeredBy && <> · par {imp.triggeredBy.name || imp.triggeredBy.email}</>}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
-                        {imp.successCount > 0 && <span className="text-primary-600">+{imp.successCount}</span>}
-                        {imp.updatedCount > 0 && <span className="text-primary-600">â†»{imp.updatedCount}</span>}
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        {imp.successCount > 0 && <span className="text-primary">+{imp.successCount}</span>}
+                        {imp.updatedCount > 0 && <span className="text-primary">â†»{imp.updatedCount}</span>}
                         {imp.errorCount > 0 && <span className="text-red-600">!{imp.errorCount}</span>}
                         {imp.duration > 0 && <span>{imp.duration}s</span>}
                       </div>
@@ -763,8 +763,8 @@ const ImportOrders = () => {
 
 const StatCard = ({ label, value, color, icon }) => {
   const colors = {
-    emerald: 'bg-primary-50 text-primary-700 border-primary-100',
-    blue: 'bg-primary-50 text-primary-700 border-primary-100',
+    emerald: 'bg-primary-50 text-primary border-primary-100',
+    blue: 'bg-primary-50 text-primary border-primary-100',
     amber: 'bg-amber-50 text-amber-700 border-amber-100',
     red: 'bg-red-50 text-red-700 border-red-100'
   };
@@ -785,7 +785,7 @@ const ErrorDetails = ({ errors }) => {
 
   return (
     <div className="mb-6">
-      <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+      <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
         <svg className={`w-4 h-4 transition-transform ${expanded ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
         Détails des erreurs ({errors.length})
       </button>
@@ -797,7 +797,7 @@ const ErrorDetails = ({ errors }) => {
           </div>
         ))}
         {!expanded && errors.length > 3 && (
-          <button onClick={() => setExpanded(true)} className="text-xs text-gray-500 hover:text-gray-700 font-medium">
+          <button onClick={() => setExpanded(true)} className="text-xs text-muted-foreground hover:text-foreground font-medium">
             + {errors.length - 3} autres erreurs
           </button>
         )}
@@ -807,7 +807,7 @@ const ErrorDetails = ({ errors }) => {
 };
 
 const Spinner = ({ size = 'sm' }) => (
-  <svg className={`animate-spin ${size === 'lg' ? 'w-8 h-8' : 'w-4 h-4'} text-primary-600`} fill="none" viewBox="0 0 24 24">
+  <svg className={`animate-spin ${size === 'lg' ? 'w-8 h-8' : 'w-4 h-4'} text-primary`} fill="none" viewBox="0 0 24 24">
     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
   </svg>

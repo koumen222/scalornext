@@ -56,7 +56,7 @@ const STATUS_FLOW = {
   },
   pending: {
     label: 'En attente',
-    color: 'bg-gray-100 text-gray-700',
+    color: 'bg-muted text-foreground',
     icon: '⏳',
     description: 'En attente d\'assignation.',
     actions: [],
@@ -144,10 +144,10 @@ export default function DeliveryDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-500 text-sm">{tp('Chargement...')}</p>
+          <p className="text-muted-foreground text-sm">{tp('Chargement...')}</p>
         </div>
       </div>
     );
@@ -155,9 +155,9 @@ export default function DeliveryDetail() {
 
   if (error && !order) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
         <XCircle size={48} className="text-red-300 mb-3" />
-        <p className="text-gray-600 font-medium">{error}</p>
+        <p className="text-muted-foreground font-medium">{error}</p>
         <button
           onClick={() => navigate(-1)}
           className="mt-4 text-indigo-600 text-sm"
@@ -175,19 +175,19 @@ export default function DeliveryDetail() {
     ['ecom_admin', 'super_admin'].includes(localUser?.role);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-10">
+      <div className="bg-card border-b border-border px-4 pt-12 pb-4 sticky top-0 z-10">
         <div className="flex items-center gap-3 mb-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center active:scale-95"
+            className="w-9 h-9 rounded-full bg-muted flex items-center justify-center active:scale-95"
           >
-            <ArrowLeft size={18} className="text-gray-600" />
+            <ArrowLeft size={18} className="text-muted-foreground" />
           </button>
           <div className="flex-1">
-            <p className="text-xs text-gray-400 font-mono">{order.orderId}</p>
-            <h1 className="text-lg font-bold text-gray-900 leading-tight">{tp('Détail livraison')}</h1>
+            <p className="text-xs text-muted-foreground font-mono">{order.orderId}</p>
+            <h1 className="text-lg font-bold text-foreground leading-tight">{tp('Détail livraison')}</h1>
           </div>
           <Link
             to={`/ecom/livreur/delivery/${id}/map`}
@@ -226,7 +226,7 @@ export default function DeliveryDetail() {
 
         {/* Client info */}
         <InfoCard title={tp('Client')} icon={<User size={16} className="text-indigo-500" />}>
-          <p className="font-semibold text-gray-900">{order.clientName || tp('Non renseigné')}</p>
+          <p className="font-semibold text-foreground">{order.clientName || tp('Non renseigné')}</p>
           {order.clientPhone && (
             <div className="flex items-center gap-2 mt-2">
               <button
@@ -238,7 +238,7 @@ export default function DeliveryDetail() {
               </button>
               <button
                 onClick={copyPhone}
-                className="flex items-center gap-2 flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium active:scale-95 justify-center"
+                className="flex items-center gap-2 flex-1 py-2.5 rounded-xl bg-muted text-foreground text-sm font-medium active:scale-95 justify-center"
               >
                 <Copy size={15} />
                 {copied ? 'Copié !' : tp('Copier')}
@@ -249,14 +249,14 @@ export default function DeliveryDetail() {
 
         {/* Address */}
         <InfoCard title={tp('Adresse de livraison')} icon={<MapPin size={16} className="text-indigo-500" />}>
-          <p className="text-gray-700 text-sm">{order.address || order.city || tp('Non renseignée')}</p>
+          <p className="text-foreground text-sm">{order.address || order.city || tp('Non renseignée')}</p>
           {order.city && order.city !== order.address && (
-            <p className="text-gray-400 text-xs mt-0.5">{order.city}</p>
+            <p className="text-muted-foreground text-xs mt-0.5">{order.city}</p>
           )}
           {(order.address || order.city) && (
             <button
               onClick={openMaps}
-              className="flex items-center gap-2 mt-3 py-2.5 w-full rounded-xl bg-gray-100 text-gray-700 text-sm font-medium active:scale-95 justify-center"
+              className="flex items-center gap-2 mt-3 py-2.5 w-full rounded-xl bg-muted text-foreground text-sm font-medium active:scale-95 justify-center"
             >
               <ExternalLink size={15} />
               {tp('Ouvrir dans Maps')}
@@ -268,9 +268,9 @@ export default function DeliveryDetail() {
         <InfoCard title={tp('Colis')} icon={<Package size={16} className="text-indigo-500" />}>
           {order.product ? (
             <div className="space-y-1">
-              <p className="text-gray-800 font-medium">{order.product}</p>
+              <p className="text-foreground font-medium">{order.product}</p>
               {order.quantity && (
-                <p className="text-gray-500 text-sm">Quantité : {order.quantity}</p>
+                <p className="text-muted-foreground text-sm">Quantité : {order.quantity}</p>
               )}
               {order.price && (
                 <p className="text-indigo-600 font-semibold text-base mt-1">
@@ -279,14 +279,14 @@ export default function DeliveryDetail() {
               )}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">{tp('Non renseigné')}</p>
+            <p className="text-muted-foreground text-sm">{tp('Non renseigné')}</p>
           )}
         </InfoCard>
 
         {/* Notes */}
         {order.notes && (
           <InfoCard title={tp('Notes')} icon={<Clock size={16} className="text-indigo-500" />}>
-            <p className="text-gray-700 text-sm">{order.notes}</p>
+            <p className="text-foreground text-sm">{order.notes}</p>
           </InfoCard>
         )}
 
@@ -294,10 +294,10 @@ export default function DeliveryDetail() {
         {(order.deliveryLocation || order.deliveryTime) && (
           <InfoCard title={tp('Infos livraison')} icon={<Truck size={16} className="text-indigo-500" />}>
             {order.deliveryLocation && (
-              <p className="text-gray-700 text-sm">{order.deliveryLocation}</p>
+              <p className="text-foreground text-sm">{order.deliveryLocation}</p>
             )}
             {order.deliveryTime && (
-              <p className="text-gray-500 text-xs mt-0.5">{order.deliveryTime}</p>
+              <p className="text-muted-foreground text-xs mt-0.5">{order.deliveryTime}</p>
             )}
           </InfoCard>
         )}
@@ -305,7 +305,7 @@ export default function DeliveryDetail() {
         {/* Actions */}
         {isMyOrder && config.actions.length > 0 && (
           <div className="space-y-2 pt-2">
-            <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">{tp('Actions')}</h3>
+            <h3 className="font-semibold text-foreground text-sm uppercase tracking-wide">{tp('Actions')}</h3>
             {config.actions.map((action) => {
               const Icon = action.icon;
               return (
@@ -331,10 +331,10 @@ export default function DeliveryDetail() {
 
 function InfoCard({ title, icon, children }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+    <div className="bg-card rounded-2xl border shadow-sm p-4">
       <div className="flex items-center gap-2 mb-2.5">
         {icon}
-        <h3 className="font-semibold text-gray-700 text-sm">{title}</h3>
+        <h3 className="font-semibold text-foreground text-sm">{title}</h3>
       </div>
       {children}
     </div>

@@ -2,9 +2,10 @@ import React, { useState, useEffect, useMemo, useRef, useContext } from 'react';
 import { safeHtml } from '../utils/sanitize';
 import { ShoppingCart, User, Phone, MapPin, Loader2, CheckCircle, Truck, Plus, Minus, AlertCircle, ChevronDown, Mail, FileText, Hash, Calendar, Clock, Shield, Globe, Star, ShoppingBag, ArrowRight, Check, CreditCard, Rocket, Gift, Sparkles, Zap, Flame, Crown, Gem, Trophy, Lock, BadgeCheck, Tag, Send, Bell, ThumbsUp, Wallet, Package } from 'lucide-react';
 import { publicStoreApi } from '../services/storeApi.js';
+import { PAYMENT_METHOD_META, resolveAvailablePaymentMethods, startScalorPayRedirect } from '../utils/storePaymentMethods.js';
 import defaultConfig from './productSettings/defaultConfig.js';
 import { createMetaEventId, injectPixelScripts, safeFirePixelEvent } from '../utils/pixelTracking';
-import { PHONE_CODES, buildFullPhone, findCountryPhoneOptionByName, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, getPhoneLength } from '../utils/phoneCodes.js';
+import { PHONE_CODES, buildFullPhone, findCountryPhoneOptionByName, getDefaultPhoneCodeFromConfig, getPhoneCodeByCountryName, getPhoneLength, isValidLocalPhoneLength, phoneLengthHint } from '../utils/phoneCodes.js';
 import {
   buildStorefrontOrderWhatsappMessage,
   getPopularCitiesForCountries,
@@ -38,6 +39,11 @@ const isMeaningfulPlaceholder = (value, ignoredPatterns = []) => {
  * Remplace le bouton CTA + popup quand formType === 'embedded'.
  * Même logique que QuickOrderModal, version inline.
  */
+const createCheckoutSessionId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return `checkout_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+};
+
 const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfig }) => {
   // Langue de la boutique (réglage marchand) — chrome uniquement, contenus marchands intacts
   // Langue : prop store.language (payload public) > storeSettings.language (objet admin) > contexte du shell storefront
@@ -52,6 +58,15 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [orderResult, setOrderResult] = useState(null);
+  // Mode de paiement choisi par le client (parmi ceux activés par le marchand).
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const availablePaymentMethods = useMemo(
+    () => resolveAvailablePaymentMethods(store),
+    [store?.paymentMethods], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+  useEffect(() => {
+    if (!availablePaymentMethods.includes(paymentMethod)) setPaymentMethod(availablePaymentMethods[0]);
+  }, [availablePaymentMethods, paymentMethod]);
   const [deliveryZoneOptions, setDeliveryZoneOptions] = useState([]);
   const [countdownSecs, setCountdownSecs] = useState(null);
 
@@ -64,6 +79,30 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
   const formConfig = productPageConfig?.form || {};
   const conversionConfig = productPageConfig?.conversion || {};
   const btnCfg = productPageConfig?.button || {};
+
+  // ── Upsells / Bump / Exit (parité formulaire pop-up) ──
+  const upsellConfig = productPageConfig?.upsells || {};
+  const upsellOffers = (upsellConfig.offers || []).filter(o => o.isActive !== false);
+  const orderBumpConfig = upsellConfig.bump || {};
+  const exitOfferConfig = upsellConfig.exit || {};
+  const [bumpChecked, setBumpChecked] = useState(false);
+  const [upsellStep, setUpsellStep] = useState(-1);
+  const [showExitOffer, setShowExitOffer] = useState(false);
+  const [exitOfferDismissed, setExitOfferDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!exitOfferConfig.isActive || !exitOfferConfig.title) return undefined;
+    // Formulaire intégré : pas de croix de fermeture → seul le déclencheur
+    // « intention de sortie » a du sens ici ('close' seul = désactivé).
+    const exitTrigger = exitOfferConfig.trigger || 'both';
+    if (exitTrigger === 'close') return undefined;
+    const armedAt = Date.now() + (Number(exitOfferConfig.triggerDelay) || 0) * 1000;
+    const onLeave = (e) => {
+      if (!e.relatedTarget && e.clientY <= 0 && Date.now() >= armedAt && !success && !exitOfferDismissed) setShowExitOffer(true);
+    };
+    document.addEventListener('mouseout', onLeave);
+    return () => document.removeEventListener('mouseout', onLeave);
+  }, [exitOfferConfig.isActive, exitOfferConfig.title, exitOfferConfig.trigger, exitOfferConfig.triggerDelay, success, exitOfferDismissed]);
 
   const offerDesign = conversionConfig.offerDesign || null;
   const btnColor = design.formButtonColor || design.ctaButtonColor || design.buttonColor || '#0F6B4F';
@@ -282,7 +321,8 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
   );
   const zoneCost = selectedCityZone?.cost > 0 ? Number(selectedCityZone.cost) : 0;
   const deliveryCost = zoneCost > 0 ? zoneCost : flatCostEffective;
-  const total = subtotal + deliveryCost;
+  const bumpPrice = bumpChecked && orderBumpConfig.isActive && Number(orderBumpConfig.price) > 0 ? Number(orderBumpConfig.price) : 0;
+  const total = subtotal + deliveryCost + bumpPrice;
 
   const set = (field, value) => { setForm(prev => ({ ...prev, [field]: value })); setError(''); };
 
@@ -297,8 +337,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
       }
       if (f.type === 'phone' && val) {
         const digits = val.replace(/[^0-9]/g, '');
-        const expected = getPhoneLength(phoneCode);
-        if (digits.length !== expected) { setError(t('error.phoneInvalid', { n: expected, code: phoneCode })); return; }
+        if (!isValidLocalPhoneLength(phoneCode, digits.length)) { setError(t('error.phoneInvalid', { n: phoneLengthHint(phoneCode), code: phoneCode })); return; }
       }
       if (f.type === 'email' && val) {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)) { setError(t('error.emailInvalid')); return; }
@@ -327,10 +366,13 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
       const finalCity = getFieldValue('city', ['city_select', 'text']);
       const finalAddress = getFieldValue('address', ['address', 'text']);
       const finalNotes = getFieldValue('notes', ['textarea', 'text']);
+      const bumpNote = bumpChecked && orderBumpConfig.title ? `+ ${orderBumpConfig.title}` : '';
+      const combinedNotes = [finalNotes, bumpNote].filter(Boolean).join(' — ');
 
       const fullPhone = buildFullPhone(phoneCode, finalPhone);
       const purchaseEventId = createMetaEventId('purchase');
       const res = await publicStoreApi.placeOrder(subdomain, {
+        checkoutSessionId,
         customerName: finalCustomerName,
         phone: fullPhone,
         phoneCode,
@@ -338,17 +380,29 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
         address: finalAddress,
         city: finalCity,
         country: selectedCountry,
-        notes: finalNotes,
+        notes: combinedNotes,
         deliveryCost: deliveryCost,
         deliveryType: deliveryCost > 0 ? 'livraison' : '',
+        orderBump: bumpPrice > 0 ? { title: orderBumpConfig.title, price: bumpPrice } : undefined,
+        bumpProductIds: bumpChecked ? (orderBumpConfig.upsellProductIds || []) : [],
         deliveryZone: selectedCityZone ? selectedCityZone.city : '',
         callSchedule: form.call_schedule || '',
         products: [{ productId: product._id, quantity: form.quantity, ...offerPriceOverride }],
         channel: 'store',
         metaEventId: purchaseEventId,
         metaSourceUrl: typeof window !== 'undefined' ? window.location.href : '',
+        paymentMethod,
       });
-      setOrderResult(res.data?.data);
+
+      const orderData = res.data?.data;
+
+      // Scalor Pay → redirection vers le paiement en ligne (on quitte la page).
+      if (paymentMethod === 'scalor_pay' && store?.paymentMethods?.scalorPay) {
+        const redirected = await startScalorPayRedirect(subdomain, orderData, { phone: fullPhone });
+        if (redirected) return;
+      }
+
+      setOrderResult(orderData);
       setSuccess(true);
 
       safeFirePixelEvent(pixels, 'Purchase', {
@@ -366,7 +420,111 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
     }
   };
 
+  // ── Capture panier abandonné / lead (avant clic Commander) ──
+  const abandonedSaveRef = useRef({ timer: null, lastHash: '' });
+  const checkoutSessionId = useMemo(() => {
+    if (typeof window === 'undefined' || !subdomain || !product?._id) return '';
+    const key = `scalor_checkout_session:${subdomain}:${product._id}`;
+    try {
+      const existing = window.sessionStorage.getItem(key);
+      if (existing) return existing;
+      const next = createCheckoutSessionId();
+      window.sessionStorage.setItem(key, next);
+      return next;
+    } catch { return ''; }
+  }, [subdomain, product?._id]);
+
+  useEffect(() => {
+    if (submitting || success || !subdomain || !checkoutSessionId || !product?._id) return undefined;
+    const phoneRaw = (form.phone || '').trim();
+    const digits = phoneRaw.replace(/[^0-9]/g, '');
+    if (digits.length < Math.min(6, getPhoneLength(phoneCode))) return undefined;
+    const payload = {
+      checkoutSessionId,
+      customerName: (form.customerName || '').trim(),
+      phone: buildFullPhone(phoneCode, phoneRaw),
+      phoneCode,
+      email: (form.email || '').trim(),
+      address: (form.address || '').trim(),
+      city: (form.city || '').trim(),
+      country: selectedCountry,
+      notes: (form.notes || '').trim(),
+      products: [{ productId: product._id, quantity: form.quantity }],
+      metaSourceUrl: typeof window !== 'undefined' ? window.location.href : '',
+    };
+    const hash = JSON.stringify(payload);
+    if (hash === abandonedSaveRef.current.lastHash) return undefined;
+    clearTimeout(abandonedSaveRef.current.timer);
+    abandonedSaveRef.current.timer = setTimeout(() => {
+      publicStoreApi.saveAbandonedCheckout(subdomain, payload)
+        .then(() => { abandonedSaveRef.current.lastHash = hash; })
+        .catch(() => {});
+    }, 900);
+    return () => clearTimeout(abandonedSaveRef.current.timer);
+  }, [submitting, success, subdomain, checkoutSessionId, form, phoneCode, selectedCountry, product]);
+
   if (!product) return null;
+
+  // ── 1-Click upsells séquentiels (après commande réussie) ──
+  if (success && orderResult && upsellOffers.length > 0 && upsellStep >= 0 && upsellStep < upsellOffers.length) {
+    const offer = upsellOffers[upsellStep];
+    const offerPrice = Number(offer.offerPrice) || 0;
+    const origPrice = Number(offer.originalPrice) || 0;
+    const disc = origPrice > offerPrice && offerPrice > 0 ? Math.round((1 - offerPrice / origPrice) * 100) : 0;
+    const advance = () => setUpsellStep(s => s + 1);
+    const acceptUpsell = () => {
+      const orderId = orderResult?._id || orderResult?.id;
+      if (orderId) {
+        publicStoreApi.acceptUpsell(subdomain, orderId, {
+          title: offer.title,
+          productName: offer.productName,
+          offerPrice: offer.offerPrice,
+          productId: (offer.targetProductIds || [])[0] || product?._id,
+          upsellProductIds: offer.upsellProductIds || [],
+          image: (offer.style && offer.style.image) || '',
+        }).catch(() => {});
+      }
+      advance();
+    };
+    const oSt = offer.style || {};
+    const oAcc = oSt.accentColor || btnColor;
+    const oBg = oSt.bgColor || '#ffffff';
+    const oText = oSt.textColor || '#111827';
+    const oFs = ({ sm: 12, md: 13.5, lg: 16 })[oSt.size] || 13.5;
+    const oBold = oSt.bold === false ? 600 : 800;
+    return (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+        <div style={{ backgroundColor: oBg, borderRadius: design.formBorderRadius || 24, boxShadow: '0 20px 60px rgba(0,0,0,0.25)', width: '100%', maxWidth: 420, overflow: 'hidden' }}>
+          <div style={{ height: 4, backgroundColor: oAcc }} />
+          {oSt.image && <img src={oSt.image} alt="" style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }} />}
+          <div style={{ padding: '24px 24px 28px', textAlign: oSt.align || 'center' }}>
+            {upsellOffers.length > 1 && (
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 16 }}>
+                {upsellOffers.map((_, i) => (
+                  <div key={i} style={{ width: i === upsellStep ? 20 : 7, height: 7, borderRadius: 4, backgroundColor: i === upsellStep ? oAcc : '#E5E7EB', transition: 'all 0.2s' }} />
+                ))}
+              </div>
+            )}
+            <p style={{ fontSize: 11, fontWeight: 700, color: oAcc, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Offre exclusive — 1 clic</p>
+            <h2 style={{ fontSize: oFs + 6, fontWeight: oBold, color: oText, margin: '0 0 8px', lineHeight: 1.3 }}>{offer.title}</h2>
+            {offer.description && <p style={{ fontSize: oFs, color: oText, opacity: 0.7, margin: '0 0 20px', lineHeight: 1.6 }}>{offer.description}</p>}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 20 }}>
+              {offerPrice > 0 && <span style={{ fontSize: 28, fontWeight: 800, color: oAcc }}>{fmt(offerPrice, currency)}</span>}
+              {origPrice > 0 && origPrice !== offerPrice && <span style={{ fontSize: 15, color: '#9CA3AF', textDecoration: 'line-through' }}>{fmt(origPrice, currency)}</span>}
+              {disc > 0 && <span style={{ fontSize: 12, fontWeight: 700, backgroundColor: oAcc + '18', color: oAcc, padding: '3px 8px', borderRadius: 6 }}>-{disc}%</span>}
+            </div>
+            <button onClick={acceptUpsell} style={{ width: '100%', padding: '14px 20px', borderRadius: 14, border: 'none', backgroundColor: oAcc, color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <Check size={16} strokeWidth={2.5} /> Oui, j&apos;ajoute cette offre
+            </button>
+            <button onClick={advance} style={{ background: 'none', border: 'none', color: '#9CA3AF', fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: '4px 0' }}>Non merci, je passe cette offre</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (success && orderResult && upsellOffers.length > 0 && upsellStep === -1) {
+    setTimeout(() => setUpsellStep(0), 0);
+  }
 
   // ── Success state ──
   if (success && orderResult) {
@@ -448,7 +606,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
           )}
 
           {/* Secondary action */}
-          <button onClick={() => { setSuccess(false); setOrderResult(null); setForm({ customerName: '', phone: '', city: '', address: '', notes: '', quantity: 1 }); }}
+          <button onClick={() => { setSuccess(false); setOrderResult(null); setUpsellStep(-1); setBumpChecked(false); setForm({ customerName: '', phone: '', city: '', address: '', notes: '', quantity: 1 }); }}
             style={{ width: '100%', padding: '11px 20px', borderRadius: 14, border: '1.5px solid #E5E7EB', backgroundColor: 'transparent', color: '#6B7280', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>
             {t('success.orderAgain')}
           </button>
@@ -545,7 +703,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
                     <div style={offerDisplayType === 'grid' ? { display: 'grid', gridTemplateColumns: `repeat(${offers.length}, 1fr)`, gap: 6 } : { display: 'flex', flexDirection: 'column', gap: 5 }}>
                       {offers.map((offer, i) => {
                         const offerQty = offer.qty || offer.quantity || 1;
-                        const offerTitle = offer.title || `${offerQty} ${offerQty === 1 ? 'unité' : 'unités'}`;
+                        const offerTitle = lmd(offer.title) || `${offerQty} ${offerQty === 1 ? t('unit.singular') : t('unit.plural')}`;
                         const offerSubtitle = offer.subtitle || offer.digitalProductBonus?.title || '';
                         const displayPrice = offer.price > 0 ? offer.price : (product?.price || 0) * offerQty;
                         const displayCompare = offer.comparePrice > 0 ? offer.comparePrice : 0;
@@ -809,7 +967,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
                 <div key={field.name} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: field.textColor || '#16A34A', padding: '4px 0' }}>
                   <Truck size={13} style={{ color: field.iconColor || field.textColor || '#16A34A' }} />
                   <strong>{field.label || t('shipping.codTitle')}</strong>
-                  <span style={{ color: field.subtextColor || '#6b7280' }}>— {field.shippingNote || t('shipping.payOnReceipt')}</span>
+                  <span style={{ color: field.subtextColor || '#6b7280' }}>— {paymentMethod === 'scalor_pay' ? 'paiement en ligne sécurisé' : (field.shippingNote || t('shipping.payOnReceipt'))}</span>
                 </div>
               );
 
@@ -881,7 +1039,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
               return callScheduleConfig.enabled !== false ? (
                 <div key={field.name} style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 4 }}>
                   <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: textColor }}>
-                    {callScheduleConfig.question || field.label || 'À quel moment souhaitez-vous être appelé ?'}
+                    {lmd(callScheduleConfig.question) || lmd(field.label) || t('form.callWhenQuestion')}
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {(callScheduleConfig.options || []).map((opt, j) => (
@@ -922,7 +1080,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
               return (
                 <div key={field.name} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 10, backgroundColor: field.bgColor || '#F0FDF4', border: `1px solid ${field.borderColor || '#BBF7D0'}` }}>
                   <Shield size={16} style={{ color: field.iconColor || '#16A34A', flexShrink: 0 }} />
-                  <span style={{ fontSize: 12, fontWeight: 600, color: field.textColor || '#15803D' }}>{field.label || 'Paiement sécurisé'}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: field.textColor || '#15803D' }}>{lmd(field.label) || t('store.securePayment')}</span>
                 </div>
               );
 
@@ -930,7 +1088,7 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
               return (
                 <div key={field.name} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 10, backgroundColor: field.bgColor || '#EFF6FF', border: `1px solid ${field.borderColor || '#BFDBFE'}` }}>
                   <CheckCircle size={16} style={{ color: field.iconColor || '#2563EB', flexShrink: 0 }} />
-                  <span style={{ fontSize: 12, fontWeight: 600, color: field.textColor || '#1D4ED8' }}>{field.label || 'Satisfait ou remboursé'}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: field.textColor || '#1D4ED8' }}>{lmd(field.label) || t('form.moneyBack')}</span>
                 </div>
               );
 
@@ -1089,6 +1247,70 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
                 <React.Fragment key={field.name}>
                   {hasCustomAnim && <style>{ANIMATION_CSS}</style>}
                   <style>{`@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}@keyframes glow{from{box-shadow:0 0 5px ${ctaBgColor}60}to{box-shadow:0 0 20px ${ctaBgColor}90}}`}</style>
+                  {orderBumpConfig.isActive && orderBumpConfig.title && (() => {
+                    const bSt = orderBumpConfig.style || {};
+                    const bAcc = bSt.accentColor || effectiveBtnColor;
+                    const bText = bSt.textColor || '#111827';
+                    const bFs = ({ sm: 12, md: 13.5, lg: 16 })[bSt.size] || 13.5;
+                    return (
+                    <div onClick={() => setBumpChecked(v => !v)} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: 12, marginBottom: 10, borderRadius: 12, cursor: 'pointer', border: `2px solid ${bumpChecked ? bAcc : '#E5E7EB'}`, backgroundColor: bumpChecked ? (bSt.bgColor || `${bAcc}0D`) : (bSt.bgColor || '#fff') }}>
+                      <div style={{ width: 20, height: 20, marginTop: 1, flexShrink: 0, borderRadius: 6, border: `2px solid ${bumpChecked ? bAcc : '#D1D5DB'}`, backgroundColor: bumpChecked ? bAcc : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {bumpChecked && <Check size={12} color="#fff" strokeWidth={3} />}
+                      </div>
+                      {bSt.image && <img src={bSt.image} alt="" style={{ width: 40, height: 40, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: bFs, fontWeight: bSt.bold === false ? 600 : 700, color: bText }}>
+                          {orderBumpConfig.title}
+                          {Number(orderBumpConfig.price) > 0 && <span style={{ color: bAcc, marginLeft: 6 }}>+{fmt(Number(orderBumpConfig.price), currency)}</span>}
+                        </div>
+                        {orderBumpConfig.desc && <div style={{ fontSize: 12, color: bText, opacity: 0.65, marginTop: 2 }}>{orderBumpConfig.desc}</div>}
+                      </div>
+                    </div>
+                    );
+                  })()}
+                  {/* ── Mode de paiement (uniquement si plusieurs modes activés) ── */}
+                  {availablePaymentMethods.length > 1 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
+                      {availablePaymentMethods.map((pmId) => {
+                        const opt = PAYMENT_METHOD_META[pmId];
+                        if (!opt) return null;
+                        const active = paymentMethod === pmId;
+                        return (
+                          <div
+                            key={pmId}
+                            onClick={() => setPaymentMethod(pmId)}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px',
+                              borderRadius: 12, cursor: 'pointer',
+                              border: `2px solid ${active ? effectiveBtnColor : inputBorderColor}`,
+                              backgroundColor: active ? effectiveBtnColor + '0D' : inputBgColor,
+                              transition: 'all 0.15s',
+                            }}
+                          >
+                            <span style={{ fontSize: 20 }}>{opt.icon}</span>
+                            <div style={{ flex: 1 }}>
+                              <p style={{ margin: 0, fontSize: 13.5, fontWeight: 700, color: textColor }}>{opt.label}</p>
+                              <p style={{ margin: '2px 0 0', fontSize: 12, color: labelColorResolved }}>{opt.sub}</p>
+                                {Array.isArray(opt.badges) && opt.badges.length > 0 && (
+                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
+                                    {opt.badges.map((b) => (
+                                      <span key={b.label} style={{ fontSize: 9.5, fontWeight: 800, padding: '2.5px 7px', borderRadius: 999, backgroundColor: b.bg, color: b.color, letterSpacing: 0.2, whiteSpace: 'nowrap' }}>
+                                        {b.label}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                            </div>
+                            <span style={{
+                              width: 16, height: 16, borderRadius: '50%', flexShrink: 0,
+                              border: `2px solid ${active ? effectiveBtnColor : '#D1D5DB'}`,
+                              backgroundColor: active ? effectiveBtnColor : 'transparent',
+                            }} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                     <button type="submit" disabled={submitting}
                       className={ctaAnimClass}
@@ -1132,6 +1354,36 @@ const EmbeddedOrderForm = ({ product, subdomain, store, pixels, productPageConfi
           }
         })}
       </form>
+      {showExitOffer && exitOfferConfig.isActive && exitOfferConfig.title && (() => {
+        const eSt = exitOfferConfig.style || {};
+        const eAcc = eSt.accentColor || btnColor;
+        const eBg = eSt.bgColor || '#ffffff';
+        const eText = eSt.textColor || '#6B7280';
+        return (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => { setShowExitOffer(false); setExitOfferDismissed(true); }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: eBg, borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.25)', width: '100%', maxWidth: 400, overflow: 'hidden', position: 'relative' }}>
+            <button onClick={() => { setShowExitOffer(false); setExitOfferDismissed(true); }} style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', fontSize: 22, color: '#9CA3AF', cursor: 'pointer', lineHeight: 1 }}>×</button>
+            <div style={{ backgroundColor: '#111827', padding: '22px 24px', textAlign: 'center' }}>
+              <p style={{ fontSize: 17, fontWeight: eSt.bold === false ? 600 : 800, color: '#fff', margin: 0, lineHeight: 1.3 }}>{exitOfferConfig.title}</p>
+            </div>
+            <div style={{ padding: '20px 24px 24px', textAlign: eSt.align || 'center' }}>
+              {eSt.image && <img src={eSt.image} alt="" style={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 12, marginBottom: 14 }} />}
+              {exitOfferConfig.desc && <p style={{ fontSize: 13.5, color: eText, margin: '0 0 14px', lineHeight: 1.6 }}>{exitOfferConfig.desc}</p>}
+              {(() => {
+                const dt = exitOfferConfig.discountType || 'percent';
+                const dv = exitOfferConfig.discountValue;
+                const label = dt === 'percent' ? (dv ? `${dv}% de remise` : '') : dt === 'fixed' ? (dv ? `${fmt(Number(dv), currency)} offerts` : '') : 'Cadeau offert';
+                return label ? <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: `${eAcc}12`, color: eAcc, fontWeight: 800, fontSize: 15, padding: '8px 14px', borderRadius: 12, marginBottom: 14 }}><Tag size={15} /> {label}</div> : null;
+              })()}
+              {exitOfferConfig.couponCode && (
+                <div style={{ margin: '0 auto 16px', width: 'fit-content', fontFamily: 'monospace', fontSize: 15, color: '#111827', border: '1px dashed #D1D5DB', backgroundColor: '#F9FAFB', padding: '8px 14px', borderRadius: 8 }}>{exitOfferConfig.couponCode}</div>
+              )}
+              <button onClick={() => { setShowExitOffer(false); setExitOfferDismissed(true); }} style={{ width: '100%', padding: '13px 20px', borderRadius: 12, border: 'none', backgroundColor: eAcc, color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>J&apos;en profite</button>
+            </div>
+          </div>
+        </div>
+        );
+      })()}
       </div>
     </div>
   );
