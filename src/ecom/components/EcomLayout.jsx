@@ -275,6 +275,11 @@ const EcomLayoutComponent = ({ children }) => {
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
     },
     {
+      name: t('Sourcing'), shortName: t('Sourcing'), href: '/ecom/sourcing', primary: false,
+      roles: ['ecom_admin', 'ecom_compta'],
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v7m-8-3v10M4 7v10l5 2.5m8.5-1.5 3.5 3.5m-1-6a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+    },
+    {
       name: t('Marketing'), shortName: t('Marketing'), href: '/ecom/campaigns', primary: false,
       roles: ['ecom_admin', 'ecom_closeuse'], requiredPlan: 'starter',
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
@@ -1083,6 +1088,8 @@ const getPageTitle = (pathname, t = (x) => x) => {
   if (pathname.includes('/reports')) return t('Rapports');
   if (pathname.includes('/stock/orders/new')) return t('Nouvelle commande');
   if (pathname.includes('/stock/orders') && pathname.includes('/edit')) return t('Modifier commande');
+  if (pathname.includes('/sourcing/stats')) return t('Statistiques sourcing');
+  if (pathname.includes('/sourcing')) return t('Sourcing');
 
   if (pathname.includes('/transactions/new')) return t('Nouvelle transaction');
   if (pathname.includes('/transactions') && pathname.includes('/edit')) return t('Modifier transaction');
