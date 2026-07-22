@@ -91,7 +91,11 @@ const Login = () => {
       }).catch(() => {});
 
       const u = result.data?.user;
-      if (u && !u.workspaceId && u.role !== 'super_admin') {
+      if (u?.needsProfileInfo) {
+        // Nouveau compte Google : compléter téléphone + canal d'acquisition
+        // avant le funnel boutique.
+        navigate('/ecom/onboarding/profil', { replace: true });
+      } else if (u && !u.workspaceId && u.role !== 'super_admin') {
         navigate('/ecom/workspace-setup');
       } else {
         setShowDevicePopup(true);

@@ -5,6 +5,8 @@ import { authApi, warmUpBackend } from '../services/ecommApi';
 import { getContextualError } from '../utils/errorMessages';
 import { getPendingPlanSelection } from '../utils/pendingPlanFlow.js';
 import { loadGsi, renderGsiButton } from '../utils/googleGsi.js';
+import { COUNTRY_PHONE_OPTIONS } from '../utils/phoneCodes.js';
+import { ACQUISITION_SOURCES } from '../utils/acquisitionSources.js';
 import { tp } from '../i18n/platform.js';
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '559924689181-rpkv8ji3029kvrtsvt3qceusmsh1i4p2.apps.googleusercontent.com';
@@ -29,7 +31,7 @@ const Register = () => {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [formData, setFormData] = useState({ name: '', phone: '', password: '', confirmPassword: '', acceptPrivacy: false });
+  const [formData, setFormData] = useState({ name: '', phoneCode: '+237', phone: '', acquisitionSource: '', password: '', confirmPassword: '', acceptPrivacy: false });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -81,6 +83,11 @@ const Register = () => {
         return { path: '/ecom/billing', options: { state: { selectedPlan: pendingPlanSelection }, replace: true } };
       }
       return { path: '/ecom/workspace-setup', options: { replace: true } };
+    }
+    // Compte Google : téléphone + canal d'acquisition à compléter AVANT le
+    // funnel boutique (l'inscription classique collecte tout dans le form).
+    if (nextUser?.needsProfileInfo) {
+      return { path: '/ecom/onboarding/profil', options: { replace: true } };
     }
     // Boutique obligatoire : après l'inscription, un nouveau compte passe par
     // le WIZARD de création de boutique avant d'accéder au dashboard.
@@ -200,14 +207,24 @@ const Register = () => {
     } finally { setLoading(false); }
   };
 
-  const canSubmit = formData.acceptPrivacy && pwStrength === 4 && formData.password === formData.confirmPassword && formData.name.trim().length >= 2;
+  const phoneDigits = formData.phone.replace(/\D/g, '');
+  const canSubmit = formData.acceptPrivacy && pwStrength === 4 && formData.password === formData.confirmPassword
+    && formData.name.trim().length >= 2 && phoneDigits.length >= 6 && !!formData.acquisitionSource;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit) return;
     setLoading(true); setError('');
     try {
-      const result = await register({ email, password: formData.password, name: formData.name.trim(), phone: formData.phone.trim(), acceptPrivacy: true, affiliateCode: affiliateCode || undefined });
+      const result = await register({
+        email,
+        password: formData.password,
+        name: formData.name.trim(),
+        phone: `${formData.phoneCode} ${formData.phone.trim()}`,
+        acquisitionSource: formData.acquisitionSource,
+        acceptPrivacy: true,
+        affiliateCode: affiliateCode || undefined,
+      });
       const registeredUser = result?.data?.user || { workspaceId: result?.data?.workspace?._id || result?.data?.workspace?.id || null };
       const isFreshSignup = result?.data?.isNewUser === true || /compte créé/i.test(result?.message || '');
       if (isFreshSignup && offerFormationAfterAuth(registeredUser)) return;
@@ -389,12 +406,35 @@ const Register = () => {
                     className="block w-full px-4 py-3 bg-card border border-gray-300 rounded-xl text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-foreground mb-1.5 uppercase tracking-wide">
-                    Téléphone <span className="text-muted-foreground normal-case">{tp('(optionnel)')}</span>
-                  </label>
-                  <input type="tel" placeholder="+237 6XX XXX XXX"
-                    value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                    className="block w-full px-4 py-3 bg-card border border-gray-300 rounded-xl text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
+                  <label className="block text-xs font-medium text-foreground mb-1.5 uppercase tracking-wide">{tp('Téléphone (WhatsApp)')}</label>
+                  <div className="flex items-stretch gap-2">
+                    <select
+                      value={formData.phoneCode}
+                      onChange={e => setFormData(p => ({ ...p, phoneCode: e.target.value }))}
+                      className="w-[118px] flex-shrink-0 px-2 py-3 bg-card border border-gray-300 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition"
+                    >
+                      {COUNTRY_PHONE_OPTIONS.map(opt => (
+                        <option key={`${opt.country}-${opt.code}`} value={opt.code}>{opt.flag} {opt.code}</option>
+                      ))}
+                    </select>
+                    <input type="tel" required inputMode="tel" placeholder="6XX XXX XXX"
+                      value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value.replace(/[^\d\s-]/g, '') }))}
+                      className="block w-full px-4 py-3 bg-card border border-gray-300 rounded-xl text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1.5 uppercase tracking-wide">{tp('Comment avez-vous connu Scalor ?')}</label>
+                  <select
+                    required
+                    value={formData.acquisitionSource}
+                    onChange={e => setFormData(p => ({ ...p, acquisitionSource: e.target.value }))}
+                    className={`block w-full px-4 py-3 bg-card border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition ${formData.acquisitionSource ? 'text-foreground' : 'text-gray-400'}`}
+                  >
+                    <option value="" disabled>{tp('Choisissez une option')}</option>
+                    {ACQUISITION_SOURCES.map(src => (
+                      <option key={src} value={src} className="text-foreground">{src}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-foreground mb-1.5 uppercase tracking-wide">{tp('Mot de passe')}</label>

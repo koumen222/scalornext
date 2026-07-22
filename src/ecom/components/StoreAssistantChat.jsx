@@ -222,10 +222,40 @@ const StoreAssistantChat = ({ storeName = '', mode = 'store', pageTitle = '', wo
     }
   }, [input, loading, messages, storeName, mode, pageTitle, workspaceName, agentOn, images, listening]);
 
+  // ── Masquage automatique quand un modal est ouvert ─────────────────────────
+  // Détection générique (aucun couplage avec chaque modal de l'app) : un
+  // élément plein écran [role="dialog"] ou .fixed.inset-0 visible — hors
+  // éléments du chat lui-même — signifie qu'un modal/overlay est affiché.
+  const [overlayOpen, setOverlayOpen] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    let raf = null;
+    const check = () => {
+      raf = null;
+      let found = false;
+      const nodes = document.querySelectorAll('[role="dialog"], .fixed.inset-0');
+      for (const el of nodes) {
+        if (el.closest('.chat-widget-root')) continue; // le chat lui-même
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) { found = true; break; }
+      }
+      setOverlayOpen(found);
+    };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(check); };
+    check();
+    const mo = new MutationObserver(schedule);
+    mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+    return () => { mo.disconnect(); if (raf) cancelAnimationFrame(raf); };
+  }, []);
+
   const isBackoffice = mode === 'backoffice';
   const suggestions = isBackoffice
     ? (agentOn ? AGENT_SUGGESTIONS : BACKOFFICE_SUGGESTIONS)
     : (agentOn ? STORE_AGENT_SUGGESTIONS : STORE_SUGGESTIONS);
+
+  // Un modal est ouvert : l'assistant s'efface complètement (barre ET panneau)
+  // pour ne jamais recouvrir les boutons d'action du modal.
+  if (overlayOpen) return null;
 
   if (!open) {
     // Barre de chat flottante centrée sur la zone de contenu

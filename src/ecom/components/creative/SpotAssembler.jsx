@@ -11,7 +11,7 @@ import { buildMontageScenes } from './launchToMontage.js';
 //   numérotés avec audience + 3 HOOKS VISIBLES → scripts générés PAR ANGLE à
 //   la demande → script complet par hook (35-50 s, AIDA/PAS, CTA livraison).
 // Deux sorties :
-//   · mode Spot (défaut)      → « Montage auto » / « Ouvrir dans le studio »
+//   · mode Spot (défaut)      → « Ouvrir dans le studio »
 //   · mode UGC (onUseScript)  → « Utiliser ce script » (le créateur vient après)
 // Auto = mêmes réglages, l'IA choisit angle 1 / script 1.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -387,17 +387,10 @@ const SpotAssembler = ({ importedProduct = null, onImport = null, onClearImport 
                                 <Zap size={14} /> {tp('Utiliser ce script')}
                               </button>
                             ) : (
-                              <div className="flex gap-2">
-                                <button type="button" onClick={() => assemble(s, true)}
-                                  title={tp('Génère tous les visuels, les voix et assemble la vidéo automatiquement')}
-                                  className="flex-1 h-10 rounded-xl bg-primary text-white text-[12.5px] font-bold inline-flex items-center justify-center gap-2 hover:bg-primary-700">
-                                  <Zap size={14} /> {tp('Montage auto')}
-                                </button>
-                                <button type="button" onClick={() => assemble(s, false)}
-                                  className="flex-1 h-10 rounded-xl border border-border text-foreground text-[12.5px] font-bold inline-flex items-center justify-center gap-2 hover:bg-background">
-                                  <Clapperboard size={14} /> {tp('Ouvrir dans le studio')}
-                                </button>
-                              </div>
+                              <button type="button" onClick={() => assemble(s, false)}
+                                className="w-full h-10 rounded-xl bg-primary text-white text-[12.5px] font-bold inline-flex items-center justify-center gap-2 hover:bg-primary-700">
+                                <Clapperboard size={14} /> {tp('Ouvrir dans le studio')}
+                              </button>
                             )}
                           </div>
                         )}

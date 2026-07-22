@@ -25,6 +25,12 @@ const StoreOnboarding = () => {
         if (cancelled) return;
         if (freshUser) {
           try { localStorage.setItem('ecomUser', JSON.stringify(freshUser)); } catch { /* noop */ }
+          // Profil incomplet (compte Google) : téléphone + canal d'acquisition
+          // d'abord, la boutique ensuite.
+          if (freshUser.needsProfileInfo) {
+            navigate('/ecom/onboarding/profil', { replace: true });
+            return;
+          }
           if (!needsStoreOnboarding(freshUser)) {
             navigate('/ecom/dashboard', { replace: true });
             return;

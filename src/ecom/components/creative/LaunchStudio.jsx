@@ -665,20 +665,6 @@ const LaunchStudio = ({ importedProduct, onImport, onClearImport, credits, onCre
                                               scenes: buildMontageScenes(script),
                                               images: (images || []).map(im => im?.imageUrl || im?.url).filter(Boolean),
                                               voiceoverUrl: voiceovers[scriptIndex] || '',
-                                              auto: true,
-                                            })}
-                                              title={tp('Génère tous les visuels, les voix et assemble la vidéo automatiquement')}
-                                              className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-[12.5px] font-bold text-white transition-colors hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary/20">
-                                              <Zap size={15} /> {tp('Montage auto')}
-                                            </button>
-                                            <button onClick={() => onSendToMontage({
-                                              productName: subject,
-                                              productImage,
-                                              productContext,
-                                              angleTitle: script.angleTitle || a.title,
-                                              scenes: buildMontageScenes(script),
-                                              images: (images || []).map(im => im?.imageUrl || im?.url).filter(Boolean),
-                                              voiceoverUrl: voiceovers[scriptIndex] || '',
                                             })}
                                               className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-primary/25 bg-primary/10 px-4 text-[12.5px] font-bold text-primary transition-colors hover:bg-primary/12 focus:outline-none focus:ring-4 focus:ring-primary/20">
                                               <Clapperboard size={15} /> {tp('Ouvrir dans le studio')}

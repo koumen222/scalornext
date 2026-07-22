@@ -549,6 +549,8 @@ export const authApi = {
 
   // Obtenir le profil utilisateur
   getProfile: () => ecomApi.get('/auth/me', { _bypassCache: true }),
+  // Complétion du profil post-Google (téléphone + canal d'acquisition).
+  completeProfile: (payload) => ecomApi.post('/auth/complete-profile', payload),
 
   // Enregistrer onboarding
   saveOnboarding: (data) => ecomApi.post('/auth/onboarding', data),

@@ -187,11 +187,8 @@ const LaunchesStudio = ({ onSendToMontage, onNavigate, onOpenInStudio }) => {
                               <div className="flex items-center justify-between gap-2 mb-1.5">
                                 <span className="text-[12.5px] font-semibold text-foreground truncate">{sc.angleTitle || sc.title || `${tp('Script')} ${k + 1}`}{sc.durationSec ? ` · ${sc.durationSec}s` : ''}</span>
                                 <div className="flex items-center gap-1.5 shrink-0">
-                                  <button onClick={(e) => { e.stopPropagation(); sendScript(mergedForSend, sc, k, true); }} title={tp('Montage automatique complet')} className="h-8 px-3 rounded-lg bg-primary text-white text-[12px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700">
-                                    ⚡ {tp('Montage auto')}
-                                  </button>
-                                  <button onClick={(e) => { e.stopPropagation(); sendScript(mergedForSend, sc, k); }} title={tp('Ouvrir dans le studio')} className="h-8 px-2.5 rounded-lg border border-primary/25 bg-primary/10 text-primary text-[12px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/12">
-                                    <Clapperboard size={13} />
+                                  <button onClick={(e) => { e.stopPropagation(); sendScript(mergedForSend, sc, k); }} title={tp('Ouvrir dans le studio')} className="h-8 px-3 rounded-lg bg-primary text-white text-[12px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700">
+                                    <Clapperboard size={13} /> {tp('Ouvrir dans le studio')}
                                   </button>
                                 </div>
                               </div>

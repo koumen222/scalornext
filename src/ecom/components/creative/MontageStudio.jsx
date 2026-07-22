@@ -2,11 +2,89 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Clapperboard, Plus, Trash2, ChevronUp, ChevronDown, Copy, Mic, Upload,
   Music, Wand2, Loader2, Download, Save, X, Play, Type, Images, Film,
-  Volume2, Check, AlertCircle, Sparkles, Maximize2,
+  Volume2, Check, AlertCircle, Sparkles, Maximize2, Zap,
 } from 'lucide-react';
 import creativeApi from '../../services/creativeApi.js';
 import { tp } from '../../i18n/platform.js';
 import { ACCENTS, StudioHeader, Field, ImportProductBar, stripHtml, downloadFile, featureCost, getInsufficientCredits } from './creativeShared.jsx';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Illustration animée « monteur au travail » (overlay du montage automatique) :
+// un monteur devant sa station — timeline qui défile, playhead qui balaie,
+// vumètres qui dansent. SVG pur + keyframes CSS, zéro dépendance.
+// ─────────────────────────────────────────────────────────────────────────────
+const EditorWorkingIllustration = () => (
+  <div aria-hidden="true">
+    <style>{`
+      @keyframes _mst-playhead { 0% { transform: translateX(0); } 100% { transform: translateX(92px); } }
+      @keyframes _mst-eq { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+      @keyframes _mst-nod { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(1.6px); } }
+      @keyframes _mst-hand { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+      @keyframes _mst-clip { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+      @keyframes _mst-glow { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.55; } }
+      ._mst-playhead { animation: _mst-playhead 2.6s linear infinite; }
+      ._mst-eq { transform-box: fill-box; transform-origin: bottom; animation: _mst-eq 0.9s ease-in-out infinite; }
+      ._mst-eq2 { animation-delay: 0.18s; } ._mst-eq3 { animation-delay: 0.36s; } ._mst-eq4 { animation-delay: 0.54s; }
+      ._mst-head { transform-box: fill-box; animation: _mst-nod 2.2s ease-in-out infinite; }
+      ._mst-hand { transform-box: fill-box; animation: _mst-hand 1.4s ease-in-out infinite; }
+      ._mst-clip { animation: _mst-clip 1.6s ease-in-out infinite; }
+      ._mst-glow { animation: _mst-glow 2.8s ease-in-out infinite; }
+    `}</style>
+    <svg width="240" height="150" viewBox="0 0 240 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Halo d'ambiance */}
+      <ellipse className="_mst-glow" cx="120" cy="78" rx="102" ry="58" fill="#0F6B4F" opacity="0.3" />
+      {/* Écran de montage */}
+      <rect x="34" y="18" width="132" height="86" rx="8" fill="#0f172a" />
+      <rect x="38" y="22" width="124" height="78" rx="5" fill="#1e293b" />
+      {/* Preview vidéo */}
+      <rect x="44" y="28" width="66" height="38" rx="3" fill="#0F6B4F" opacity="0.85" />
+      <path d="M68 41l12 6-12 6V41z" fill="#fff" />
+      {/* Vumètres audio */}
+      <g>
+        <rect className="_mst-eq" x="120" y="34" width="6" height="26" rx="2" fill="#34d399" />
+        <rect className="_mst-eq _mst-eq2" x="130" y="34" width="6" height="26" rx="2" fill="#34d399" />
+        <rect className="_mst-eq _mst-eq3" x="140" y="34" width="6" height="26" rx="2" fill="#6ee7b7" />
+        <rect className="_mst-eq _mst-eq4" x="150" y="34" width="6" height="26" rx="2" fill="#a7f3d0" />
+      </g>
+      {/* Timeline : 2 pistes de clips */}
+      <rect x="44" y="72" width="112" height="10" rx="2.5" fill="#0f172a" />
+      <rect x="46" y="74" width="26" height="6" rx="1.5" fill="#38bdf8" />
+      <rect className="_mst-clip" x="75" y="74" width="34" height="6" rx="1.5" fill="#0F6B4F" />
+      <rect x="112" y="74" width="20" height="6" rx="1.5" fill="#f59e0b" />
+      <rect x="135" y="74" width="19" height="6" rx="1.5" fill="#8b5cf6" />
+      <rect x="44" y="86" width="112" height="10" rx="2.5" fill="#0f172a" />
+      <rect x="46" y="88" width="42" height="6" rx="1.5" fill="#34d399" opacity="0.8" />
+      <rect className="_mst-clip" x="92" y="88" width="30" height="6" rx="1.5" fill="#34d399" />
+      {/* Playhead qui balaie la timeline */}
+      <g className="_mst-playhead">
+        <rect x="52" y="68" width="2" height="32" rx="1" fill="#f43f5e" />
+        <circle cx="53" cy="68" r="3" fill="#f43f5e" />
+      </g>
+      {/* Pied de l'écran + bureau */}
+      <rect x="92" y="104" width="16" height="10" rx="2" fill="#334155" />
+      <rect x="20" y="114" width="200" height="8" rx="4" fill="#e2e8f0" />
+      {/* Monteur : tête, corps, bras vers la souris */}
+      <g className="_mst-head">
+        <circle cx="196" cy="52" r="13" fill="#0F6B4F" />
+        <path d="M186 47a13 13 0 0121 4c-3 3-8 4-11 2-4-2-8-4-10-6z" fill="#0a4a37" />
+        {/* Casque audio */}
+        <path d="M184 50a12 12 0 0124 0" stroke="#0f172a" strokeWidth="3" strokeLinecap="round" fill="none" />
+        <rect x="182" y="48" width="5" height="9" rx="2.5" fill="#0f172a" />
+        <rect x="205" y="48" width="5" height="9" rx="2.5" fill="#0f172a" />
+      </g>
+      <path d="M181 114c0-20 6-36 15-46 9 10 15 26 15 46h-30z" fill="#115e45" />
+      {/* Bras + main sur la souris */}
+      <path d="M185 84c-6 6-13 12-22 16l3 6c10-3 18-8 24-14z" fill="#115e45" />
+      <g className="_mst-hand">
+        <ellipse cx="162" cy="107" rx="7" ry="4.5" fill="#0F6B4F" />
+        <ellipse cx="160" cy="109" rx="8" ry="4" fill="#94a3b8" />
+      </g>
+      {/* Tasse de café */}
+      <rect x="222" y="102" width="10" height="12" rx="2" fill="#f59e0b" />
+      <path d="M232 105h4a3 3 0 010 6h-4" stroke="#f59e0b" strokeWidth="2" fill="none" />
+    </svg>
+  </div>
+);
 import { consumeMontageDraft, consumeMontageProject, stashMontageResult, readMontageResult, clearMontageResult } from './montageBridge.js';
 import { TRANSITIONS, CAPTION_STYLES, CAPTION_ANIMS, CAPTION_POSITIONS, CAPTION_FONTS } from './montageStyles.js';
 import ProEditor from './ProEditor.jsx';
@@ -622,6 +700,19 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
   const readyScenes = scenes.filter((s) => s.videoUrl || s.imageUrl);
   const totalDuration = readyScenes.reduce((t, s) => t + (Number(s.durationSec) || 0), 0);
   const canRender = readyScenes.length >= 1 && !rendering;
+  // Des visuels ou des voix manquent encore → le CTA dominant est « Tout générer et monter ».
+  const needsGeneration = scenes.some((s) => (!s.videoUrl && !s.imageUrl) || (!narrationUrl && !s.audioUrl && (s.voiceText || s.subtitleText)));
+
+  // Progression GLOBALE du pipeline auto (affichée dans l'overlay plein écran) :
+  // direction 0-10 % · visuels 10-65 % · voix 65-78 % · assemblage 78-100 %.
+  const overlayPct = (() => {
+    if (autoStep === 'director') return 6;
+    if (autoStep === 'visuals') return Math.round(10 + (autoTotal ? Math.min(autoDone, autoTotal) / autoTotal : 0) * 55);
+    if (autoStep === 'voices') return 70;
+    if (autoStep === 'render') return Math.min(100, Math.round(78 + (progress || 0) * 0.22));
+    if (rendering) return Math.min(100, progress || 0);
+    return 0;
+  })();
 
   // ── Directeur de montage IA : récupération du plan (avec la liste des
   //    musiques, chargée à la volée si besoin) puis application. ──
@@ -1006,8 +1097,20 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
       {/* ── Chargement plein page : pipeline AUTO *et* rendu manuel ── */}
       {(autoStep || rendering) && !resultUrl && (
         <div className="fixed inset-0 z-[65] bg-card/95 backdrop-blur-sm flex flex-col items-center justify-center p-6">
-          <Loader2 size={34} className="animate-spin text-primary" />
-          <p className="mt-4 text-[15px] font-bold text-foreground">{autoStep && autoStep !== 'render' ? tp('Montage automatique en cours…') : tp('Montage en cours…')}</p>
+          <EditorWorkingIllustration />
+          <p className="mt-3 text-[16px] font-bold text-foreground">{autoStep && autoStep !== 'render' ? tp('Montage automatique en cours…') : tp('Montage en cours…')}</p>
+
+          {/* Progression globale du pipeline, avec pourcentage */}
+          <div className="mt-4 w-full max-w-xs">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">{tp('Progression')}</span>
+              <span className="text-[15px] font-black text-primary tabular-nums">{overlayPct}%</span>
+            </div>
+            <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary-700 transition-all duration-700" style={{ width: `${overlayPct}%` }} />
+            </div>
+          </div>
+
           <div className="mt-4 w-full max-w-xs space-y-2 text-[12.5px]">
             {autoStep && (
               <>
@@ -1030,9 +1133,6 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
               {tp('Assemblage de la vidéo')}{autoStep === 'render' || (!autoStep && rendering) ? ` — ${progress}%` : ''}
             </div>
           </div>
-          {(autoStep === 'render' || (!autoStep && rendering)) && (
-            <div className="mt-4 w-full max-w-xs h-2 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} /></div>
-          )}
           <p className="mt-4 text-[11.5px] text-muted-foreground">
             {autoStep && autoStep !== 'render'
               ? tp('Quelques minutes selon le nombre de plans — tu peux laisser cette page ouverte.')
@@ -1417,46 +1517,78 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
           </div>
 
           {/* ── Rendu ── */}
-          <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary to-primary-700 p-4">
+          <div className="rounded-2xl border border-border bg-card shadow-sm p-4 sm:p-5">
             {rendering ? (
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-[12.5px] font-semibold text-foreground">
                   <span className="inline-flex items-center gap-2"><Loader2 size={14} className="animate-spin text-primary" /> {tp('Montage en cours…')}</span>
-                  <span>{progress}%</span>
+                  <span className="text-primary font-bold">{progress}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-card overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} /></div>
+                <div className="h-2 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} /></div>
                 <p className="text-[11px] text-muted-foreground">{tp('Normalisation des clips, voix off, sous-titres puis encodage — patiente une minute.')}</p>
               </div>
             ) : (
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <div className="text-[12.5px] text-muted-foreground">
-                  <span className="font-bold text-foreground">{readyScenes.length}</span>/{scenes.length} {tp('scène(s) prête(s)')} · <span className="font-bold text-foreground">≈ {Math.round(totalDuration)}s</span> · {format}
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] font-semibold text-muted-foreground">{tp('Génération')}</span>
-                  <div className="inline-flex rounded-full border border-border overflow-hidden" title={tp('Mixte : l’IA répartit vidéo/image selon la pertinence de chaque plan. Vidéo : tout en clips IA. Image : tout en images animées (le plus économique).')}>
-                    {[['mixte', tp('Mixte IA')], ['video', tp('Vidéo')], ['image', tp('Image éco')]].map(([id, label]) => (
-                      <button key={id} onClick={() => setGenStrategy(id)}
-                        className={`px-2.5 h-8 text-[11.5px] font-bold transition ${genStrategy === id ? (id === 'image' ? 'bg-primary text-white' : 'bg-primary text-white') : 'bg-card text-muted-foreground hover:bg-background'}`}>
-                        {label}
-                      </button>
-                    ))}
+              <div className="space-y-4">
+                {/* ── Statut + réglages ── */}
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  {/* Progression des scènes */}
+                  <div className="flex items-center gap-3 min-w-[200px]">
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${readyScenes.length === scenes.length && scenes.length > 0 ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                      {readyScenes.length === scenes.length && scenes.length > 0 ? <Check size={19} strokeWidth={2.5} /> : <Film size={18} />}
+                    </div>
+                    <div>
+                      <p className="text-[13.5px] font-bold text-foreground leading-tight">
+                        {readyScenes.length}/{scenes.length} {tp('scènes prêtes')}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <div className="w-24 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${scenes.length ? Math.round((readyScenes.length / scenes.length) * 100) : 0}%` }} />
+                        </div>
+                        <span className="text-[11px] font-medium text-muted-foreground whitespace-nowrap">≈ {Math.round(totalDuration)}s · {format}</span>
+                      </div>
+                    </div>
                   </div>
-                  {scenes.some((s) => !s.videoUrl && !s.imageUrl || (!narrationUrl && !s.audioUrl && (s.voiceText || s.subtitleText))) && (
+
+                  {/* Réglages : stratégie de génération + direction IA */}
+                  <div className="flex items-start gap-5 flex-wrap">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground mb-1.5">{tp('Génération')}</p>
+                      <div className="inline-flex rounded-xl border border-border bg-background p-0.5" title={tp('Mixte : l’IA répartit vidéo/image selon la pertinence de chaque plan. Vidéo : tout en clips IA. Image : tout en images animées (le plus économique).')}>
+                        {[['mixte', tp('Mixte IA')], ['video', tp('Vidéo')], ['image', tp('Image éco')]].map(([id, label]) => (
+                          <button key={id} onClick={() => setGenStrategy(id)}
+                            className={`h-8 px-3 rounded-[10px] text-[11.5px] font-bold transition-all ${genStrategy === id ? 'bg-primary text-white shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground mb-1.5">{tp('Direction IA')}</p>
+                      <button onClick={() => setDirectorOn((v) => !v)} title={tp('L’IA choisit transitions, habillage, musique et accents — sans écraser tes réglages')}
+                        className={`h-8 pl-2.5 pr-1.5 rounded-xl border text-[11.5px] font-bold inline-flex items-center gap-2 transition-colors ${directorOn ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-background text-muted-foreground hover:text-foreground'}`}>
+                        <Sparkles size={13} />
+                        {directorOn ? 'ON' : 'OFF'}
+                        <span className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${directorOn ? 'bg-primary' : 'bg-muted'}`}>
+                          <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform ${directorOn ? 'translate-x-[18px]' : 'translate-x-1'}`} />
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Actions ── */}
+                <div className="flex items-center gap-2.5 flex-wrap border-t border-border pt-4">
+                  {needsGeneration && (
                     <button onClick={() => runAutoMontage(scenes)} disabled={!!autoStep}
                       title={tp('Génère tous les visuels manquants et les voix, applique la direction IA puis assemble — en un clic')}
-                      className="h-11 px-5 rounded-xl bg-gradient-to-r from-primary to-primary-700 text-white text-[13.5px] font-bold inline-flex items-center gap-2 hover:from-primary hover:to-primary-700 disabled:opacity-50 shadow-sm">
-                      ⚡ {tp('Tout générer et monter')}
+                      className="flex-1 min-w-[220px] h-12 rounded-xl bg-gradient-to-r from-primary to-primary-700 text-white text-[13.5px] font-bold inline-flex items-center justify-center gap-2 shadow-md shadow-primary/20 transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed">
+                      <Zap size={16} /> {tp('Tout générer et monter')}
                     </button>
                   )}
-                </div>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setDirectorOn((v) => !v)} title={tp('L’IA choisit transitions, habillage, musique et accents — sans écraser tes réglages')}
-                    className={`h-8 px-2.5 rounded-full border text-[11.5px] font-bold inline-flex items-center gap-1.5 transition ${directorOn ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-card text-muted-foreground'}`}>
-                    <Sparkles size={12} /> {tp('Direction IA')} {directorOn ? 'ON' : 'OFF'}
-                  </button>
                   <button onClick={renderWithDirector} disabled={!canRender}
-                    className="h-11 px-6 rounded-xl bg-primary text-white text-[14px] font-bold inline-flex items-center gap-2 hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm">
+                    className={needsGeneration
+                      ? 'h-12 px-6 rounded-xl border border-primary/30 bg-primary/5 text-primary text-[13.5px] font-bold inline-flex items-center justify-center gap-2 transition hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed'
+                      : 'flex-1 min-w-[220px] h-12 rounded-xl bg-primary text-white text-[14px] font-bold inline-flex items-center justify-center gap-2 shadow-md shadow-primary/20 transition hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed'}>
                     <Play size={16} /> {tp('Monter la vidéo')}
                   </button>
                 </div>
