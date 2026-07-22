@@ -595,7 +595,9 @@ export const authApi = {
   acceptInvite: (data) => ecomApi.post('/auth/accept-invite', data),
 
   // Générer un lien d'invitation
-  generateInvite: () => ecomApi.post('/auth/generate-invite'),
+  // payload optionnel { email, role } : invitation ciblée envoyée par email
+  // (rôle imposé, lien réservé à cette adresse). Sans payload : lien ouvert.
+  generateInvite: (payload = {}) => ecomApi.post('/auth/generate-invite', payload),
 
   // Gestion des sessions
   getSessions: () => ecomApi.get('/auth/sessions'),

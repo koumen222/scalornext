@@ -41,31 +41,51 @@ export function scriptToScenes(text) {
     } else {
       segments.push(s);
     }
-    if (segments.length >= 8) break;
+  }
+  // Au-delà de 8 plans on FUSIONNE les répliques médianes les plus courtes —
+  // jamais de troncature : le hook (début) et surtout le CTA (fin du script,
+  // « Cliquez sur Commander… ») arrivent TOUJOURS au studio.
+  while (segments.length > 8) {
+    let best = 1; let bestLen = Infinity;
+    for (let i = 1; i < segments.length - 2; i += 1) {
+      const len = segments[i].length + segments[i + 1].length;
+      if (len < bestLen) { bestLen = len; best = i; }
+    }
+    segments.splice(best, 2, `${segments[best]} ${segments[best + 1]}`.trim());
   }
   const source = segments.length ? segments : [clean.trim()].filter(Boolean);
   return source.map((seg, i) => {
     const words = seg.split(/\s+/).filter(Boolean).length;
+    const isLast = i === source.length - 1;
+    // Dernière réplique = scène CTA (rôle marqué + flash blanc d'impact juste avant).
+    const isCta = isLast && source.length > 1;
     // Durée = temps de lecture réel (~2,5 mots/s), bornée 5-6 s par plan.
     // Stratégie mixte éco (pas de storyboard IA ici) : hook et plan final en
     // vidéo, un plan intermédiaire sur deux en image animée au montage.
-    const genMode = i === 0 || i === source.length - 1 ? 'video' : (i % 2 ? 'image' : 'video');
+    const genMode = i === 0 || isLast ? 'video' : (i % 2 ? 'image' : 'video');
     // Rythme varié sans storyboard : hook court, plans médians alternés, final posé.
     const est = Math.round(words / 2.5) || 4;
     const durationSec = i === 0 ? Math.max(3, Math.min(4, est))
-      : i === source.length - 1 ? Math.max(5, Math.min(6, est))
+      : isLast ? Math.max(5, Math.min(6, est))
         : Math.max(3, Math.min(5, est));
-    return { voiceText: seg, subtitleText: seg, clipPrompt: seg, genMode, durationSec };
+    return {
+      voiceText: seg, subtitleText: seg, clipPrompt: seg, genMode, durationSec,
+      role: i === 0 ? 'hook' : (isCta ? 'cta' : ''),
+      transitionOut: !isLast && i === source.length - 2 ? 'fadewhite' : '',
+    };
   });
 }
 
 // Storyboard précis : privilégie les plans "scenes" (voix off + description visuelle + drapeau produit).
 export function buildMontageScenes(script) {
-  const sb = Array.isArray(script?.scenes) ? script.scenes.filter((s) => s && (s.voiceover || s.visual)) : [];
+  const all = Array.isArray(script?.scenes) ? script.scenes.filter((s) => s && (s.voiceover || s.visual || s.text)) : [];
+  // Si le storyboard dépasse 10 plans, on garde les 9 premiers + LE DERNIER :
+  // la scène CTA (toujours en fin de script) part systématiquement au studio.
+  const sb = all.length > 10 ? [...all.slice(0, 9), all[all.length - 1]] : all;
   if (sb.length) {
     const roles = sb.map((s) => String(s.role || '').toLowerCase());
-    return sb.slice(0, 10).map((s, i) => {
-      const voice = String(s.voiceover || '').trim();
+    return sb.map((s, i) => {
+      const voice = String(s.voiceover || s.text || '').trim();
       const words = voice.split(/\s+/).filter(Boolean).length || 8;
       return {
         voiceText: voice,

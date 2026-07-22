@@ -22,7 +22,10 @@ const InviteAccept = () => {
     try {
       setLoading(true);
       const res = await authApi.validateInvite(token);
-      setInviteData(res.data);
+      const data = res.data?.data || res.data || null;
+      setInviteData(data);
+      // Rôle imposé par l'admin à la création de l'invitation : pas de choix.
+      if (data?.role) setSelectedRole(data.role);
     } catch (err) {
       setError(err.response?.data?.message || 'Lien d\'invitation invalide ou expiré');
     } finally {
@@ -54,14 +57,16 @@ const InviteAccept = () => {
         }
       }
 
-      // Rediriger vers le dashboard selon le rôle
+      // Rediriger vers le dashboard selon le rôle RÉELLEMENT accordé par le
+      // serveur (l'invitation peut imposer un rôle différent du choix local).
+      const grantedRole = res.data?.data?.role || selectedRole;
       const roleMap = {
         ecom_admin: '/ecom/dashboard/admin',
         ecom_closeuse: '/ecom/dashboard/closeuse',
         ecom_compta: '/ecom/dashboard/compta',
         ecom_livreur: '/ecom/livreur'
       };
-      window.location.href = roleMap[selectedRole] || '/ecom/dashboard';
+      window.location.href = roleMap[grantedRole] || '/ecom/dashboard';
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur lors de l\'acceptation de l\'invitation');
     } finally {
@@ -133,14 +138,23 @@ const InviteAccept = () => {
           {inviteData?.invitedBy && (
             <p className="text-muted-foreground text-xs mt-1">Invité par {inviteData.invitedBy}</p>
           )}
+          {inviteData?.role && (
+            <span className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-primary/15 border border-primary-600/30 text-primary-400 text-xs font-bold">
+              {tp('Rôle attribué :')} {({ ecom_admin: 'Administrateur', ecom_closeuse: 'Closeuse', ecom_compta: 'Comptable', ecom_livreur: 'Livreur' })[inviteData.role] || inviteData.role}
+            </span>
+          )}
         </div>
 
         <div className="bg-[#1A1C22]/70 border border-white/8 rounded-2xl p-6 backdrop-blur-xl shadow-2xl">
           {!isAuthenticated ? (
             <div className="text-center">
-              <p className="text-gray-300 mb-4">{tp('Vous devez d\'abord créer un compte ou vous connecter')}</p>
+              <p className="text-gray-300 mb-4">
+                {inviteData?.invitedEmail
+                  ? `Cette invitation est destinée à ${inviteData.invitedEmail}. Créez votre compte Scalor avec cette adresse (ou connectez-vous) pour rejoindre l'équipe.`
+                  : tp('Vous devez d\'abord créer un compte ou vous connecter')}
+              </p>
               <div className="space-y-3">
-                <button onClick={() => navigate(`/ecom/register?invite=${token}`)}
+                <button onClick={() => navigate(`/ecom/register?invite=${token}${inviteData?.invitedEmail ? `&email=${encodeURIComponent(inviteData.invitedEmail)}` : ''}`)}
                   className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary transition">
                   {tp('Créer un compte')}
                 </button>
@@ -152,18 +166,20 @@ const InviteAccept = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">{tp('Votre rôle')}</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {roles.map(r => (
-                    <button key={r.value} type="button" onClick={() => setSelectedRole(r.value)}
-                      className={`text-left px-3 py-2.5 rounded-xl border text-xs transition ${selectedRole === r.value ? 'border-primary-600/60 bg-primary/10 text-white' : 'border-[#2A2C33] bg-[#1A1C22]/50 text-muted-foreground hover:border-gray-600 hover:text-gray-200'}`}>
-                      <span className="font-semibold block">{r.label}</span>
-                      <span className="opacity-60 text-[10px]">{r.desc}</span>
-                    </button>
-                  ))}
+              {!inviteData?.role && (
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">{tp('Votre rôle')}</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {roles.map(r => (
+                      <button key={r.value} type="button" onClick={() => setSelectedRole(r.value)}
+                        className={`text-left px-3 py-2.5 rounded-xl border text-xs transition ${selectedRole === r.value ? 'border-primary-600/60 bg-primary/10 text-white' : 'border-[#2A2C33] bg-[#1A1C22]/50 text-muted-foreground hover:border-gray-600 hover:text-gray-200'}`}>
+                        <span className="font-semibold block">{r.label}</span>
+                        <span className="opacity-60 text-[10px]">{r.desc}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               <button onClick={handleAcceptInvite} disabled={validating}
                 className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20">
                 {validating ? (

@@ -8,6 +8,30 @@ import { loadGsi, renderGsiButton } from '../utils/googleGsi.js';
 import { COUNTRY_PHONE_OPTIONS } from '../utils/phoneCodes.js';
 import { ACQUISITION_SOURCES } from '../utils/acquisitionSources.js';
 import { tp } from '../i18n/platform.js';
+import { captureAffiliateAttributionFromSearch, getAffiliateAttribution } from '../utils/affiliateAttribution.js';
+
+// Attribution affiliée : params URL (prioritaires, last-click) puis stockage 60j.
+// Retourne { affiliateCode, affiliateLinkCode, affiliateClickId } pour l'API.
+function resolveAffiliateSignupAttribution(search = '') {
+  const params = new URLSearchParams(search || '');
+  const urlCode = String(params.get('aff') || '').trim().toUpperCase();
+  if (urlCode) {
+    return {
+      affiliateCode: urlCode,
+      affiliateLinkCode: String(params.get('aff_link') || '').trim().toUpperCase() || undefined,
+      affiliateClickId: String(params.get('aff_click') || '').trim() || undefined
+    };
+  }
+  const stored = getAffiliateAttribution();
+  if (stored?.affiliateCode) {
+    return {
+      affiliateCode: stored.affiliateCode,
+      affiliateLinkCode: stored.affiliateLinkCode || undefined,
+      affiliateClickId: stored.clickId || undefined
+    };
+  }
+  return { affiliateCode: '', affiliateLinkCode: undefined, affiliateClickId: undefined };
+}
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '559924689181-rpkv8ji3029kvrtsvt3qceusmsh1i4p2.apps.googleusercontent.com';
 const FORMATION_PATH = '/ecom/formation';
@@ -23,13 +47,22 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const joinMode = new URLSearchParams(location.search).get('mode') === 'join';
-  const affiliateCode = new URLSearchParams(location.search).get('aff') || '';
+  // Attribution affiliée : URL en priorité, sinon stockage last-click 60j
+  const affiliateAttribution = resolveAffiliateSignupAttribution(location.search);
+  const affiliateCode = affiliateAttribution.affiliateCode;
   const inviteToken = new URLSearchParams(location.search).get('invite') || '';
+
+  // Persister l'attribution si l'arrivée se fait directement avec ?aff=
+  useEffect(() => {
+    captureAffiliateAttributionFromSearch(location.search);
+  }, [location.search]);
   const { register, googleLogin } = useEcomAuth();
   const pendingPlanSelection = getPendingPlanSelection();
 
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState('');
+  // Invitation ciblée : l'email du destinataire arrive en query (?email=) —
+  // prérempli pour que le compte soit créé avec l'adresse attendue par le lien.
+  const [email, setEmail] = useState(() => new URLSearchParams(location.search).get('email') || '');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [formData, setFormData] = useState({ name: '', phoneCode: '+237', phone: '', acquisitionSource: '', password: '', confirmPassword: '', acceptPrivacy: false });
   const [showPassword, setShowPassword] = useState(false);
@@ -127,7 +160,8 @@ const Register = () => {
 
     setLoading(true); setError('');
     try {
-      const result = await googleLogin(response.credential, affiliateCode || undefined);
+      const attribution = resolveAffiliateSignupAttribution(window.location.search);
+      const result = await googleLogin(response.credential, attribution.affiliateCode || undefined, attribution);
       console.log('\u2705 [Google Auth] Login réussi (Register):', { user: result.data?.user?.email });
       const u = result.data?.user;
       if (result.data?.isNewUser === true && offerFormationAfterAuth(u)) return;
@@ -136,7 +170,7 @@ const Register = () => {
       console.error('\u274c [Google Auth] Erreur:', err);
       setError(getContextualError(err, 'login'));
     } finally { setLoading(false); }
-  }, [affiliateCode, googleLogin, navigateAfterAuth, offerFormationAfterAuth]);
+  }, [googleLogin, navigateAfterAuth, offerFormationAfterAuth]);
 
   // Garde le callback à jour sans relancer l'effet de chargement GSI.
   const googleCallbackRef = useRef(handleGoogleCallback);
@@ -216,6 +250,7 @@ const Register = () => {
     if (!canSubmit) return;
     setLoading(true); setError('');
     try {
+      const signupAttribution = resolveAffiliateSignupAttribution(window.location.search);
       const result = await register({
         email,
         password: formData.password,
@@ -223,7 +258,9 @@ const Register = () => {
         phone: `${formData.phoneCode} ${formData.phone.trim()}`,
         acquisitionSource: formData.acquisitionSource,
         acceptPrivacy: true,
-        affiliateCode: affiliateCode || undefined,
+        affiliateCode: signupAttribution.affiliateCode || undefined,
+        affiliateLinkCode: signupAttribution.affiliateLinkCode,
+        affiliateClickId: signupAttribution.affiliateClickId,
       });
       const registeredUser = result?.data?.user || { workspaceId: result?.data?.workspace?._id || result?.data?.workspace?.id || null };
       const isFreshSignup = result?.data?.isNewUser === true || /compte créé/i.test(result?.message || '');

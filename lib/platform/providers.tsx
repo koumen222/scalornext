@@ -112,6 +112,37 @@ function PageViewTracker() {
   return null;
 }
 
+// ─── Tracking affiliation (programme Scalor) — porté d'App.jsx ──────────────
+// À chaque navigation : capture ?aff=&aff_link=&aff_click= (last-click, 60j)
+// puis envoie une visite référée au backend si une attribution est active.
+// Exclut le portail affilié et l'app interne authentifiée pour ne tracker que
+// le parcours public (landing → inscription).
+
+function AffiliateVisitTracker() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const mod = await import('@/src/ecom/utils/affiliateAttribution.js');
+        if (cancelled) return;
+        mod.captureAffiliateAttributionFromSearch(window.location.search);
+        const path = pathname || '/';
+        const isAffiliatePortal = path.startsWith('/affiliate');
+        const isAuthedApp = path.startsWith('/ecom/') && !!localStorage.getItem('ecomToken')
+          && !['/ecom/register', '/ecom/login', '/ecom/tarifs', '/ecom/pricing', '/ecom/landing'].some((p) => path.startsWith(p));
+        if (!isAffiliatePortal && !isAuthedApp) {
+          mod.trackAffiliateVisit(path);
+        }
+      } catch { /* tracking best-effort */ }
+    })();
+    return () => { cancelled = true; };
+  }, [pathname]);
+
+  return null;
+}
+
 // ─── Composition ────────────────────────────────────────────────────────────
 
 export default function PlatformProviders({ children }: { children: ReactNode }) {
@@ -126,6 +157,10 @@ export default function PlatformProviders({ children }: { children: ReactNode })
                     pour ne pas dégrader le HTML statique des pages SEO */}
                 <Suspense fallback={null}>
                   <PageViewTracker />
+                </Suspense>
+                {/* Attribution + visites référées du programme d'affiliation (fenêtre 60j) */}
+                <Suspense fallback={null}>
+                  <AffiliateVisitTracker />
                 </Suspense>
                 {/* Titres/OG côté client à chaque navigation — iso PlatformPageMeta (App.jsx).
                     Valeurs identiques aux metadata Next des pages publiques. */}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  BarChart, Bar, LineChart, Line,
+  BarChart, Bar, LineChart, Line, Legend,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
 import { affiliateAdminApi } from '../services/affiliateAdminApi.js';
@@ -8,7 +8,17 @@ import { tp } from '../i18n/platform.js';
 
 const fmt = (n) => (n || 0).toLocaleString('fr-FR');
 
-const TABS = ['Aperçu', 'Affiliés', 'Conversions', 'Configuration'];
+const TABS = ['Aperçu', 'Affiliés', 'Conversions', 'Retraits', 'Configuration'];
+
+// Palette funnel validée (CVD-safe) : bleu / ambre / teal
+const FUNNEL_COLORS = { visits: '#2563EB', clicks: '#D97706', signups: '#0D9488' };
+
+const PAYOUT_METHOD_LABELS = {
+  mtn_momo: 'MTN MoMo',
+  orange_money: 'Orange Money',
+  bank: 'Virement',
+  other: 'Autre'
+};
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-700',
@@ -56,6 +66,8 @@ export default function AffiliatesAdmin() {
   const [config, setConfig] = useState(null);
   const [affiliates, setAffiliates] = useState([]);
   const [conversions, setConversions] = useState([]);
+  const [payouts, setPayouts] = useState([]);
+  const [payoutInputs, setPayoutInputs] = useState({});
   const [form, setForm] = useState({ name: '', email: '', password: '', commissionType: 'fixed', commissionValue: 500 });
   const [sortBy, setSortBy] = useState('conversions');
 
@@ -63,16 +75,18 @@ export default function AffiliatesAdmin() {
     setLoading(true);
     setError('');
     try {
-      const [ov, cfg, aff, conv] = await Promise.all([
+      const [ov, cfg, aff, conv, po] = await Promise.all([
         affiliateAdminApi.getOverview(),
         affiliateAdminApi.getConfig(),
         affiliateAdminApi.getAffiliates(),
-        affiliateAdminApi.getConversions({ page: 1, limit: 100 })
+        affiliateAdminApi.getConversions({ page: 1, limit: 100 }),
+        affiliateAdminApi.getPayouts({ page: 1, limit: 100 })
       ]);
       setOverview(ov.data?.data || null);
       setConfig(cfg.data?.data || null);
       setAffiliates(aff.data?.data || []);
       setConversions(conv.data?.data?.items || []);
+      setPayouts(po.data?.data?.items || []);
     } catch (err) {
       setError(err.response?.data?.message || 'Chargement impossible');
     } finally {
@@ -87,11 +101,29 @@ export default function AffiliatesAdmin() {
       await affiliateAdminApi.updateConfig({
         baseCommissionType: config.baseCommissionType,
         baseCommissionValue: Number(config.baseCommissionValue || 0),
-        defaultLandingUrl: config.defaultLandingUrl
+        defaultLandingUrl: config.defaultLandingUrl,
+        signupBonusAmount: Number(config.signupBonusAmount ?? 500),
+        paymentCommissionPercent: Number(config.paymentCommissionPercent ?? 50),
+        attributionWindowDays: Number(config.attributionWindowDays ?? 60),
+        minPayoutAmount: Number(config.minPayoutAmount ?? 5000)
       });
       await load();
     } catch (err) {
       setError(err.response?.data?.message || 'Sauvegarde configuration impossible');
+    }
+  };
+
+  const updatePayout = async (id, status) => {
+    try {
+      const inputs = payoutInputs[id] || {};
+      await affiliateAdminApi.updatePayout(id, {
+        status,
+        paymentReference: inputs.paymentReference || '',
+        adminNote: inputs.adminNote || ''
+      });
+      await load();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Mise à jour retrait impossible');
     }
   };
 
@@ -147,6 +179,7 @@ export default function AffiliatesAdmin() {
 
   const kpis = overview?.kpis || {};
   const clicksByDay = overview?.clicksByDay || [];
+  const funnelByDay = overview?.funnelByDay || clicksByDay;
   const topAffiliates = overview?.topAffiliates || [];
 
   // Bar chart top affiliés : clics si disponibles, sinon conversions
@@ -205,21 +238,23 @@ export default function AffiliatesAdmin() {
                   <KpiCard label="Nouveaux aujourd'hui" value={fmt(kpis.newToday)} color="blue" />
                   <KpiCard label="Clics aujourd'hui" value={fmt(kpis.clicksToday)} color="purple" />
                   <KpiCard label="Clics total" value={fmt(kpis.clicksTotal)} color="slate" />
+                  <KpiCard label="Visites référées" value={fmt(kpis.visitsTotal)} sub="pages vues trackées" color="blue" />
                   <KpiCard label="Conversions aujourd'hui" value={fmt(kpis.conversionsToday)} color="amber" />
                   <KpiCard label="Commissions en attente" value={fmt(kpis.conversionsPending)} sub="conversions" color="rose" />
+                  <KpiCard label="Retraits en attente" value={fmt(kpis.payoutsPendingCount)} sub={`${fmt(kpis.payoutsPendingAmount)} FCFA à payer`} color="rose" />
                 </div>
 
                 {/* Graphiques */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-                  {/* Clics par jour */}
+                  {/* Funnel par jour : visites, clics, inscriptions */}
                   <div className="bg-card border border-border rounded-xl p-4">
-                    <h2 className="text-sm font-semibold text-foreground mb-4">{tp('Clics par jour (30 derniers jours)')}</h2>
-                    {clicksByDay.length === 0 ? (
+                    <h2 className="text-sm font-semibold text-foreground mb-4">{tp('Trafic référé par jour (30 derniers jours)')}</h2>
+                    {funnelByDay.length === 0 ? (
                       <div className="h-48 flex items-center justify-center text-xs text-muted-foreground">{tp('Aucune donnée')}</div>
                     ) : (
                       <ResponsiveContainer width="100%" height={200}>
-                        <LineChart data={clicksByDay} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+                        <LineChart data={funnelByDay} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                           <XAxis
                             dataKey="date"
@@ -232,15 +267,10 @@ export default function AffiliatesAdmin() {
                           />
                           <YAxis tick={{ fontSize: 9, fill: '#9ca3af' }} allowDecimals={false} />
                           <Tooltip content={<CustomTooltip />} />
-                          <Line
-                            type="monotone"
-                            dataKey="clicks"
-                            name="Clics"
-                            stroke="#6366f1"
-                            strokeWidth={2}
-                            dot={false}
-                            activeDot={{ r: 4 }}
-                          />
+                          <Legend wrapperStyle={{ fontSize: 11 }} />
+                          <Line type="monotone" dataKey="visits" name={tp('Visites')} stroke={FUNNEL_COLORS.visits} strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                          <Line type="monotone" dataKey="clicks" name={tp('Clics')} stroke={FUNNEL_COLORS.clicks} strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                          <Line type="monotone" dataKey="signups" name={tp('Inscriptions')} stroke={FUNNEL_COLORS.signups} strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
                         </LineChart>
                       </ResponsiveContainer>
                     )}
@@ -500,6 +530,90 @@ export default function AffiliatesAdmin() {
               </div>
             )}
 
+            {/* ───── ONGLET RETRAITS ───── */}
+            {tab === 'Retraits' && (
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold text-foreground">{tp('Demandes de retrait')} ({payouts.length})</h2>
+                  <p className="text-xs text-muted-foreground">
+                    {tp('En attente :')} <span className="font-bold text-rose-600">{fmt(kpis.payoutsPendingAmount)} FCFA</span> ({fmt(kpis.payoutsPendingCount)})
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {payouts.map((p) => {
+                    const inputs = payoutInputs[p._id] || {};
+                    const aff = p.affiliateId || {};
+                    return (
+                      <div key={p._id} className={`p-4 border rounded-lg text-sm ${p.status === 'pending' ? 'border-amber-300 bg-amber-50/40' : ''}`}>
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div>
+                            <p className="font-semibold text-foreground">
+                              {aff.name || '—'}
+                              {' '}•{' '}
+                              <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{aff.referralCode || ''}</span>
+                            </p>
+                            <p className="text-xs text-muted-foreground">{aff.email || ''}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-foreground">{fmt(p.amount)} FCFA</p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {PAYOUT_METHOD_LABELS[p.method] || p.method}
+                              {p.phoneNumber ? ` — ${p.phoneNumber}` : ''}
+                              {p.accountName ? ` (${p.accountName})` : ''}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted-foreground">
+                          <span>{tp('Demandé le')} {new Date(p.createdAt).toLocaleDateString('fr-FR')}</span>
+                          <span>•</span>
+                          <span>{p.conversionCount || 0} {tp('commissions verrouillées')}</span>
+                          <span>•</span>
+                          <span className={`px-2 py-0.5 rounded-full font-medium ${
+                            p.status === 'pending' ? 'bg-amber-100 text-amber-700' : p.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                          }`}>
+                            {p.status === 'pending' ? tp('En attente') : p.status === 'paid' ? tp('Payé') : tp('Rejeté')}
+                          </span>
+                          {p.paymentReference && <span className="font-mono">{tp('Réf :')} {p.paymentReference}</span>}
+                          {p.adminNote && <span>{tp('Note :')} {p.adminNote}</span>}
+                        </div>
+                        {p.status === 'pending' && (
+                          <div className="flex flex-col sm:flex-row gap-2 mt-3">
+                            <input
+                              value={inputs.paymentReference || ''}
+                              onChange={(e) => setPayoutInputs((prev) => ({ ...prev, [p._id]: { ...prev[p._id], paymentReference: e.target.value } }))}
+                              placeholder={tp('Référence transaction (Momo/virement)')}
+                              className="flex-1 px-3 py-2 border rounded-lg text-xs"
+                            />
+                            <input
+                              value={inputs.adminNote || ''}
+                              onChange={(e) => setPayoutInputs((prev) => ({ ...prev, [p._id]: { ...prev[p._id], adminNote: e.target.value } }))}
+                              placeholder={tp('Note (optionnel)')}
+                              className="flex-1 px-3 py-2 border rounded-lg text-xs"
+                            />
+                            <button
+                              onClick={() => updatePayout(p._id, 'paid')}
+                              className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-xs font-semibold"
+                            >
+                              {tp('Marquer payé')}
+                            </button>
+                            <button
+                              onClick={() => updatePayout(p._id, 'rejected')}
+                              className="px-4 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-semibold"
+                            >
+                              {tp('Rejeter')}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {payouts.length === 0 && (
+                    <p className="text-xs text-muted-foreground text-center py-8">{tp('Aucune demande de retrait.')}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* ───── ONGLET CONFIGURATION ───── */}
             {tab === 'Configuration' && (
               <div className="bg-card border border-border rounded-xl p-4 space-y-3">
@@ -521,12 +635,33 @@ export default function AffiliatesAdmin() {
                     <input value={config?.defaultLandingUrl || ''} onChange={(e) => setConfig((p) => ({ ...p, defaultLandingUrl: e.target.value }))} placeholder="https://..." className="w-full px-3 py-2 border rounded-lg text-sm" />
                   </div>
                 </div>
+
+                <h3 className="text-sm font-semibold text-foreground pt-2">{tp('Programme Scalor (inscriptions & abonnements)')}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">{tp('Bonus inscription (FCFA)')}</label>
+                    <input value={config?.signupBonusAmount ?? 500} onChange={(e) => setConfig((p) => ({ ...p, signupBonusAmount: Number(e.target.value || 0) }))} type="number" className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">{tp('% commission abonnements (à vie)')}</label>
+                    <input value={config?.paymentCommissionPercent ?? 50} onChange={(e) => setConfig((p) => ({ ...p, paymentCommissionPercent: Number(e.target.value || 0) }))} type="number" min="0" max="100" className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">{tp("Fenêtre d'attribution (jours)")}</label>
+                    <input value={config?.attributionWindowDays ?? 60} onChange={(e) => setConfig((p) => ({ ...p, attributionWindowDays: Number(e.target.value || 0) }))} type="number" min="1" className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">{tp('Retrait minimum (FCFA)')}</label>
+                    <input value={config?.minPayoutAmount ?? 5000} onChange={(e) => setConfig((p) => ({ ...p, minPayoutAmount: Number(e.target.value || 0) }))} type="number" min="0" className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  </div>
+                </div>
+
                 <div className="flex items-center gap-3">
                   <button onClick={saveConfig} className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800">
                     {tp('Sauvegarder configuration')}
                   </button>
                   <p className="text-xs text-muted-foreground">
-                    Commission actuelle: {fmt(config?.baseCommissionValue)} {config?.baseCommissionType === 'fixed' ? 'FCFA' : '%'}
+                    {tp('Inscription :')} {fmt(config?.signupBonusAmount ?? 500)} FCFA • {tp('Abonnements :')} {config?.paymentCommissionPercent ?? 50}% • {tp('Attribution :')} {config?.attributionWindowDays ?? 60} j
                   </p>
                 </div>
               </div>

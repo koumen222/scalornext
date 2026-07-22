@@ -342,9 +342,33 @@ const UserManagement = () => {
       setSuccess(tp('Lien généré et copié dans le presse-papier !'));
       loadInvites();
     } catch (err) {
-      setError(getContextualError(err, 'generate_invite'));
+      setError(err?.response?.data?.message || getContextualError(err, 'generate_invite'));
     } finally {
       setGeneratingInvite(false);
+    }
+  };
+
+  // Invitation CIBLÉE par email : la personne reçoit un mail avec le lien —
+  // même sans compte Scalor (le lien la guide vers l'inscription puis
+  // l'ajoute à l'équipe avec le rôle choisi ici).
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState('ecom_closeuse');
+  const [sendingInvite, setSendingInvite] = useState(false);
+  const handleSendEmailInvite = async (e) => {
+    e?.preventDefault?.();
+    const email = inviteEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(tp('Adresse email invalide')); return; }
+    setSendingInvite(true);
+    setError('');
+    try {
+      await authApi.generateInvite({ email, role: inviteRole });
+      setSuccess(`Invitation envoyée à ${email} — valable 7 jours.`);
+      setInviteEmail('');
+      loadInvites();
+    } catch (err) {
+      setError(err?.response?.data?.message || getContextualError(err, 'generate_invite'));
+    } finally {
+      setSendingInvite(false);
     }
   };
 
@@ -640,6 +664,35 @@ const UserManagement = () => {
       {/* ── TAB: INVITATIONS ── */}
       {activeTab === 'invites' && (
         <>
+          {/* Invitation ciblée par email — fonctionne même sans compte Scalor */}
+          <form onSubmit={handleSendEmailInvite} className="bg-card rounded-2xl border border-border p-4 mb-5">
+            <p className="text-sm font-bold text-foreground">{tp('Inviter par email')}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 mb-3">{tp('La personne reçoit un lien par email — même sans compte Scalor, elle pourra en créer un et rejoindre l\'équipe avec le rôle choisi.')}</p>
+            <div className="flex items-stretch gap-2 flex-wrap">
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="collegue@exemple.com"
+                className="flex-1 min-w-[220px] px-3.5 py-2.5 bg-background border border-border rounded-xl text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+              />
+              <select
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value)}
+                className="px-3 py-2.5 bg-background border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+              >
+                <option value="ecom_closeuse">Closeuse</option>
+                <option value="ecom_compta">Comptable</option>
+                <option value="ecom_livreur">Livreur</option>
+                <option value="ecom_admin">Administrateur</option>
+              </select>
+              <button type="submit" disabled={sendingInvite || !inviteEmail.trim()}
+                className="px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition">
+                {sendingInvite ? tp('Envoi…') : tp('Envoyer l\'invitation')}
+              </button>
+            </div>
+          </form>
+
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-3 mb-5">
             {[['Actifs', inviteStats.active || 0, 'text-green-600'], ['Utilisés', inviteStats.used || 0, 'text-muted-foreground'], ['Expirés', inviteStats.expired || 0, 'text-red-500']].map(([label, val, color]) => (
@@ -680,7 +733,15 @@ const UserManagement = () => {
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-600">Actif · {daysUntil(inv.expiresAt)}j restants</span>
                           )}
                           <span className="text-[10px] text-muted-foreground">Créé {timeAgo(inv.createdAt)}</span>
+                          {inv.role && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary">
+                              {({ ecom_admin: 'Admin', ecom_closeuse: 'Closeuse', ecom_compta: 'Comptable', ecom_livreur: 'Livreur' })[inv.role] || inv.role}
+                            </span>
+                          )}
                         </div>
+                        {inv.email && (
+                          <p className="text-xs font-semibold text-foreground truncate">→ {inv.email}</p>
+                        )}
                         <p className="text-xs text-muted-foreground font-mono truncate">{inv.inviteLink}</p>
                         {inv.used && inv.usedBy && (
                           <p className="text-[10px] text-muted-foreground mt-1">Accepté par {inv.usedBy.email || inv.usedBy.name} · {timeAgo(inv.usedAt)}</p>
