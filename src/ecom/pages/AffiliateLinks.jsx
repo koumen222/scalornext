@@ -139,7 +139,7 @@ export default function AffiliateLinks() {
             </button>
           </form>
           <p className="text-xs text-gray-500 mt-3">
-            Astuce : ajoutez <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">?sub=nom_campagne</code> à la fin de votre lien tracké pour segmenter vos campagnes (ex. <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">.../r/LNK123?sub=tiktok_video1</code>). Les clics par campagne apparaissent ci-dessous.
+            Astuce : ajoutez <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">?sub=nom_campagne</code> à la fin de votre lien tracké pour segmenter vos campagnes (ex. <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">scalor.net/LNK123?sub=tiktok_video1</code>). Les clics par campagne apparaissent ci-dessous.
           </p>
         </div>
 

@@ -120,6 +120,7 @@ export default i18n;
 // ─── Dictionnaires en/es — clé = chaîne française exacte ─────────────────────
 
 const en = {
+  'Performance des {days} derniers jours': 'Performance over the last {days} days',
   // Navigation (EcomLayout)
   'Accueil': 'Home',
   'Centre de contrôle': 'Control center',
@@ -361,6 +362,7 @@ const en = {
 };
 
 const es = {
+  'Performance des {days} derniers jours': 'Rendimiento de los últimos {days} días',
   'Accueil': 'Inicio',
   'Centre de contrôle': 'Centro de control',
   'Pilotage': 'Control',

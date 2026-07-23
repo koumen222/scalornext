@@ -151,9 +151,11 @@ export default function AffiliateDashboard() {
     window.open(`https://wa.me/?text=${msg}`, '_blank');
   };
 
-  // Lien principal : URL de tracking /r/ du premier lien actif
+  // Lien principal : le code affilié public résout vers le premier lien actif.
   const mainLink = links.find((l) => l.isActive) || links[0] || null;
-  const referralUrl = mainLink ? affiliateTrackingUrl(mainLink.code) : '';
+  const referralUrl = mainLink
+    ? affiliateTrackingUrl(affiliate?.referralCode || mainLink.code)
+    : '';
 
   const funnel = summary?.funnel || {};
   const balance = summary?.balance || {};

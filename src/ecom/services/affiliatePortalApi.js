@@ -69,14 +69,12 @@ export const affiliatePortalApi = {
   requestPayout: (payload) => affiliateApi.post('/payouts/request', payload)
 };
 
-// URL publique d'un lien affilié (redirection trackée /r/:code).
-// TOUJOURS une URL absolue et correcte pour l'environnement courant :
-//  · dev local → http://localhost:3000/api/affiliate/r/CODE (le proxy Next
-//    /api/* route vers le backend local — lien cliquable ET copiable) ;
-//  · prod → https://api.scalor.net/api/affiliate/r/CODE.
-export function affiliateTrackingUrl(linkCode) {
-  const path = `/api/affiliate/r/${encodeURIComponent(linkCode || '')}`;
-  if (API_BASE) return `${API_BASE}${path}`;
-  if (typeof window !== 'undefined') return `${window.location.origin}${path}`;
-  return `https://api.scalor.net${path}`;
+// URL publique courte d'un code affilié ou d'un lien de campagne.
+// Le middleware Next redirige /SCL… et /LNK… vers l'endpoint de tracking.
+export function affiliateTrackingUrl(trackingCode) {
+  const path = `/${encodeURIComponent(trackingCode || '')}`;
+  if (typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+    return `${window.location.origin}${path}`;
+  }
+  return `https://scalor.net${path}`;
 }

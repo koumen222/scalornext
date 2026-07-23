@@ -20,6 +20,7 @@ const SUBDOMAIN_RE = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/;
 
 // Hôtes plateforme supplémentaires (dev/preview Next)
 const PLATFORM_SUFFIXES = ['.workers.dev', '.pages.dev', '.railway.app', '.railway.internal'];
+const AFFILIATE_SHORT_CODE_RE = /^\/((?:SCL|LNK|AFF)[A-Z0-9]+)\/?$/i;
 
 function isPlatformHost(hostname: string): boolean {
   if (
@@ -85,6 +86,22 @@ export async function middleware(req: NextRequest) {
   const pathname = url.pathname;
 
   const hostname = (req.headers.get('host') || '').split(':')[0].toLowerCase();
+
+  // Liens affiliés publics courts : scalor.net/SCL… ou scalor.net/LNK…
+  // Les paramètres de campagne (?sub=, utm_*) sont transmis au tracker.
+  const affiliateMatch = pathname.match(AFFILIATE_SHORT_CODE_RE);
+  const isAffiliateHost =
+    hostname === 'scalor.net' ||
+    hostname === 'www.scalor.net' ||
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1';
+  if (affiliateMatch && isAffiliateHost) {
+    const trackingUrl = new URL(
+      `https://api.scalor.net/api/affiliate/r/${encodeURIComponent(affiliateMatch[1].toUpperCase())}`
+    );
+    trackingUrl.search = url.search;
+    return NextResponse.redirect(trackingUrl, 307);
+  }
 
   // /sites est un préfixe interne (cible des rewrites host→boutique) — jamais accessible
   // directement. Sur un domaine boutique, le catch-all [...rest] redirige vers l'accueil.
