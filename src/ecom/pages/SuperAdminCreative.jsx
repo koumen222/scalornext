@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   Sparkles, Search, RefreshCw, ExternalLink, Image as ImageIcon,
-  Video, Mic, Type, Film, Loader2, AlertCircle, Gift,
+  Video, Mic, Type, Film, Loader2, AlertCircle, Gift, Download,
 } from 'lucide-react';
 import ecomApi from '../services/ecommApi.js';
 import SuperAdminShell from '../components/SuperAdminShell';
 import { tp } from '../i18n/platform.js';
+import { downloadFile } from '../components/creative/creativeShared.jsx';
 
 const TYPE_META = {
   text: { label: 'Texte', Icon: Type },
@@ -23,6 +24,17 @@ function fmtDate(v) {
       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
     });
   } catch { return '—'; }
+}
+
+function videoFileName(item) {
+  const base = String(item?.title || item?.productName || 'video-finale')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80)
+    .toLowerCase();
+  return `${base || 'video-finale'}.mp4`;
 }
 
 export default function SuperAdminCreative() {
@@ -56,12 +68,13 @@ export default function SuperAdminCreative() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
+  const [downloadingId, setDownloadingId] = useState(null);
 
   const load = useCallback(async (p = 1, q = '') => {
     setLoading(true); setErr('');
     try {
       const r = await ecomApi.get(
-        `/super-admin/creative-generations?page=${p}&limit=24&search=${encodeURIComponent(q)}`
+        `/super-admin/creative-generations?scope=final-videos&page=${p}&limit=24&search=${encodeURIComponent(q)}`
       );
       const d = r?.data || {};
       setItems(Array.isArray(d.items) ? d.items : []);
@@ -77,11 +90,20 @@ export default function SuperAdminCreative() {
   useEffect(() => { load(1, ''); }, [load]);
 
   const onSearch = (e) => { e.preventDefault(); load(1, search.trim()); };
+  const onDownload = async (item) => {
+    if (!item?.mediaUrl || downloadingId) return;
+    setDownloadingId(item.id);
+    try {
+      await downloadFile(item.mediaUrl, videoFileName(item));
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   return (
     <SuperAdminShell
       title={tp('Creative Center')}
-      subtitle={tp('Mode gratuit et toutes les générations')}
+      subtitle={tp('Mode gratuit et vidéos finales générées')}
     >
       <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
 
@@ -123,13 +145,18 @@ export default function SuperAdminCreative() {
           )}
         </div>
 
-        {/* ── Toutes les générations ── */}
+        {/* ── Vidéos finales ── */}
         <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
             <div>
-              <p className="text-base font-bold text-foreground">{tp('Toutes les générations')}</p>
+              <p className="text-base font-bold text-foreground">{tp('Vidéos finales générées')}</p>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {total ? `${total} ${tp('créations, tous utilisateurs')}` : tp('Créations de tous les utilisateurs')}
+                {total
+                  ? `${total} ${tp('vidéos assemblées, tous utilisateurs')}`
+                  : tp('Rendus vidéo de tous les utilisateurs')}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {tp('Les segments intermédiaires et les GIF sont exclus automatiquement.')}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -138,7 +165,7 @@ export default function SuperAdminCreative() {
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder={tp('Rechercher (produit, user…)')}
+                  placeholder={tp('Rechercher (produit, user, espace…)')}
                   className="h-9 w-56 pl-8 pr-3 rounded-xl bg-background border border-border text-[13px] outline-none focus:border-primary/40 transition"
                 />
               </form>
@@ -168,46 +195,72 @@ export default function SuperAdminCreative() {
 
           {!err && !loading && items.length === 0 && (
             <div className="text-center py-16 text-muted-foreground text-sm">
-              {tp('Aucune génération pour le moment.')}
+              {tp('Aucune vidéo finale générée pour le moment.')}
             </div>
           )}
 
           {!err && !loading && items.length > 0 && (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {items.map((it) => {
                   const meta = TYPE_META[it.type] || { label: it.type || '—', Icon: Sparkles };
                   const Icon = meta.Icon;
+                  const downloading = downloadingId === it.id;
+                  const ownerName = it.user?.name || it.user?.email || 'Utilisateur inconnu';
+                  const ownerEmail = it.user?.email && it.user.email !== ownerName ? it.user.email : '';
+                  const ownerWorkspace = it.workspace?.name || it.store?.name || '';
                   return (
                     <div key={it.id} className="group rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-colors">
-                      <div className="relative aspect-square bg-muted flex items-center justify-center overflow-hidden">
-                        {it.thumbnailUrl || it.mediaUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={it.thumbnailUrl || it.mediaUrl} alt={it.title || meta.label} className="w-full h-full object-cover" />
+                      <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+                        {it.mediaUrl ? (
+                          <video
+                            src={it.mediaUrl}
+                            poster={it.thumbnailUrl || undefined}
+                            controls
+                            playsInline
+                            preload="metadata"
+                            className="w-full h-full object-contain bg-black"
+                          />
                         ) : (
                           <Icon size={26} className="text-muted-foreground" />
                         )}
-                        <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-card/90 px-2 py-0.5 text-[10px] font-bold text-foreground border border-border">
-                          <Icon size={11} /> {meta.label}
+                        <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-bold text-white border border-white/15 pointer-events-none">
+                          <Icon size={11} /> {it.type === 'montage' ? tp('Montage final') : tp('Vidéo finale')}
                         </span>
                         {(it.mediaUrl) && (
                           <a href={it.mediaUrl} target="_blank" rel="noopener noreferrer"
-                            className="absolute top-2 right-2 h-6 w-6 inline-flex items-center justify-center rounded-full bg-card/90 border border-border text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary">
+                            aria-label={tp('Ouvrir la vidéo')}
+                            className="absolute top-2 right-2 h-7 w-7 inline-flex items-center justify-center rounded-full bg-black/70 border border-white/15 text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-black/90">
                             <ExternalLink size={12} />
                           </a>
                         )}
                       </div>
-                      <div className="p-2.5">
-                        <p className="text-[12.5px] font-semibold text-foreground truncate">{it.title || it.productName || tp('Sans titre')}</p>
-                        <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                          {(it.user?.name || it.user?.email || '—')}{it.store?.name ? ` · ${it.store.name}` : ''}
-                        </p>
+                      <div className="p-3">
+                        <p className="text-[13px] font-semibold text-foreground truncate">{it.title || it.productName || tp('Vidéo finale')}</p>
+                        <p className="text-[11.5px] font-medium text-foreground/80 truncate mt-1">{ownerName}</p>
+                        {ownerEmail && <p className="text-[10.5px] text-muted-foreground truncate">{ownerEmail}</p>}
+                        {ownerWorkspace && (
+                          <p className="text-[10.5px] text-muted-foreground truncate">
+                            {tp('Espace')} : {ownerWorkspace}
+                          </p>
+                        )}
                         <div className="flex items-center justify-between mt-1.5">
                           <span className="text-[10.5px] text-muted-foreground">{fmtDate(it.createdAt)}</span>
-                          {typeof it.cost === 'number' && (
-                            <span className="text-[10.5px] font-semibold text-primary">{it.cost} {tp('cr.')}</span>
-                          )}
+                          <span className="text-[10.5px] font-semibold text-primary">
+                            {[it.format, it.durationSec ? `${Math.round(it.durationSec)} s` : ''].filter(Boolean).join(' · ') || tp('MP4 final')}
+                          </span>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => onDownload(it)}
+                          disabled={!!downloadingId}
+                          className="mt-3 h-9 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-white text-[12px] font-semibold hover:bg-primary/90 disabled:opacity-50 transition"
+                        >
+                          {downloading
+                            ? <Loader2 size={14} className="animate-spin" />
+                            : <Download size={14} />}
+                          {downloading ? tp('Téléchargement…') : tp('Télécharger la vidéo finale')}
+                        </button>
                       </div>
                     </div>
                   );
