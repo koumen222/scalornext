@@ -27,6 +27,15 @@
     {
       "pattern": "www.scalor.net/*",
       "zone_name": "scalor.net"
+    },
+    // Sous-domaines boutiques (zendo.scalor.net, …) → même Worker : le
+    // middleware lit le Host et réécrit vers /sites/{sub}/…
+    // ⚠️ Ne s'applique qu'aux enregistrements DNS PROXIFIÉS (nuage orange).
+    // api / mail / api-staging doivent rester en « DNS only » (gris) pour
+    // continuer d'atteindre le VPS directement.
+    {
+      "pattern": "*.scalor.net/*",
+      "zone_name": "scalor.net"
     }
   ],
   "vars": {

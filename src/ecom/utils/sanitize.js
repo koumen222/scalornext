@@ -1,9 +1,9 @@
-import DOMPurify from 'dompurify';
+import sanitize from 'sanitize-html';
 
-// ─── Configuration DOMPurify ──────────────────────────────────────────────────
+// ─── Configuration du sanitizer ───────────────────────────────────────────────
 // Autorise les balises HTML basiques pour le contenu riche (descriptions, emails, pages)
 const RICH_CONFIG = {
-  ALLOWED_TAGS: [
+  allowedTags: [
     'p', 'br', 'b', 'i', 'em', 'strong', 'u', 's', 'strike',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
@@ -15,34 +15,44 @@ const RICH_CONFIG = {
     // Les <script> et attributs on* restent supprimés (défaut DOMPurify).
     'iframe', 'video', 'audio', 'source', 'track', 'style', 'button'
   ],
-  ALLOWED_ATTR: [
-    'href', 'src', 'alt', 'title', 'class', 'id', 'style',
-    'target', 'rel', 'width', 'height', 'loading',
-    'colspan', 'rowspan', 'align', 'valign',
-    // Attributs nécessaires aux embeds (YouTube, Vimeo…) et aux médias
-    'allow', 'allowfullscreen', 'frameborder', 'scrolling', 'referrerpolicy',
-    'controls', 'controlslist', 'autoplay', 'muted', 'loop', 'playsinline',
-    'poster', 'preload', 'type', 'srcset', 'sizes', 'media', 'kind', 'srclang', 'label',
-    'aria-label', 'role', 'disabled'
-  ],
-  ALLOW_DATA_ATTR: false,
-  // Forcer rel="noopener noreferrer" sur les liens externes
-  ADD_ATTR: ['rel'],
-  // Sans FORCE_BODY, le parseur HTML remonte les <style> en <head>
-  // et ils sont perdus (seul le body est retourné).
-  FORCE_BODY: true,
+  allowedAttributes: {
+    '*': [
+      'href', 'src', 'alt', 'title', 'class', 'id', 'style',
+      'target', 'rel', 'width', 'height', 'loading',
+      'colspan', 'rowspan', 'align', 'valign',
+      // Attributs nécessaires aux embeds (YouTube, Vimeo…) et aux médias
+      'allow', 'allowfullscreen', 'frameborder', 'scrolling', 'referrerpolicy',
+      'controls', 'controlslist', 'autoplay', 'muted', 'loop', 'playsinline',
+      'poster', 'preload', 'type', 'srcset', 'sizes', 'media', 'kind', 'srclang', 'label',
+      'aria-label', 'role', 'disabled'
+    ],
+  },
+  allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+  allowedSchemesByTag: {
+    img: ['http', 'https', 'data'],
+    source: ['http', 'https', 'data'],
+  },
+  allowProtocolRelative: true,
+  // <style> est volontairement autorisé pour les blocs personnalisés des marchands.
+  // <script> ne figure pas dans allowedTags et reste donc supprimé.
+  allowVulnerableTags: true,
 };
 
 // Config stricte : texte seulement, aucune balise HTML
 const PLAIN_TEXT_CONFIG = {
-  ALLOWED_TAGS: [],
-  ALLOWED_ATTR: [],
+  allowedTags: [],
+  allowedAttributes: {},
 };
 
 // Config pour les pages de boutique (autorise plus de style inline)
 const STOREFRONT_CONFIG = {
   ...RICH_CONFIG,
-  ALLOWED_ATTR: [...RICH_CONFIG.ALLOWED_ATTR, 'data-id', 'data-type', 'data-section'],
+  allowedAttributes: {
+    '*': [
+      ...RICH_CONFIG.allowedAttributes['*'],
+      'data-id', 'data-type', 'data-section',
+    ],
+  },
 };
 
 /**
@@ -52,7 +62,7 @@ const STOREFRONT_CONFIG = {
  */
 export function sanitizeHtml(html) {
   if (!html || typeof html !== 'string') return '';
-  return DOMPurify.sanitize(html, RICH_CONFIG);
+  return sanitize(html, RICH_CONFIG);
 }
 
 /**
@@ -62,7 +72,7 @@ export function sanitizeHtml(html) {
  */
 export function sanitizeText(text) {
   if (!text || typeof text !== 'string') return '';
-  return DOMPurify.sanitize(text, PLAIN_TEXT_CONFIG);
+  return sanitize(text, PLAIN_TEXT_CONFIG);
 }
 
 /**
@@ -72,7 +82,7 @@ export function sanitizeText(text) {
  */
 export function sanitizeStorefront(html) {
   if (!html || typeof html !== 'string') return '';
-  return DOMPurify.sanitize(html, STOREFRONT_CONFIG);
+  return sanitize(html, STOREFRONT_CONFIG);
 }
 
 /**
