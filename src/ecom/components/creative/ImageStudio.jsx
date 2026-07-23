@@ -379,7 +379,7 @@ const ImageStudio = ({ credits, onCreditsChange, onNeedCredits, importedProduct,
           </div>
         </div>
       ) : (
-        <Wizard accent={A} steps={steps} finalLabel={`${tp('Générer')} · ${cost} ${tp('crédit(s)')}`} busyLabel={tp('Génération…')} onFinish={generate} loading={loading} />
+        <Wizard accent={A} steps={steps} finalLabel={tp('Générer')} cost={cost} busyLabel={tp('Génération…')} onFinish={generate} loading={loading} />
       )}
     </div>
   );

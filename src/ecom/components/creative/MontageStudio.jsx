@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import creativeApi from '../../services/creativeApi.js';
 import { tp } from '../../i18n/platform.js';
-import { ACCENTS, StudioHeader, Field, ImportProductBar, stripHtml, downloadFile, featureCost, getInsufficientCredits } from './creativeShared.jsx';
+import { ACCENTS, StudioHeader, Field, ImportProductBar, stripHtml, downloadFile, featureCost, getInsufficientCredits, CostChip } from './creativeShared.jsx';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Illustration animée « monteur au travail » (overlay du montage automatique) :
@@ -1263,7 +1263,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
                         </p>
                         <button onClick={() => generateClip(s.id, '')} disabled={!!s.busy}
                           className="h-9 px-2.5 rounded-lg bg-primary text-white text-[11.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700 disabled:opacity-50 shrink-0">
-                          <Mic size={13} /> {tp('Générer le plan parlant')}
+                          <Mic size={13} /> {tp('Générer le plan parlant')} <CostChip cost={featureCost('video')} />
                         </button>
                       </div>
                     ) : (
@@ -1288,7 +1288,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
                           placeholder={s.showProduct ? tp('Ex. gros plan du produit sur une étagère, lumière du matin…') : tp('Ex. femme souriante qui se réveille reposée dans sa chambre (sans le produit)…')}
                           className="flex-1 rounded-lg border border-border px-2.5 py-1.5 text-[11.5px] outline-none focus:border-primary/40 resize-y" />
                         <button onClick={() => generateClip(s.id, s.clipPrompt)} disabled={!!s.busy || (!s.showProduct && !s.clipPrompt.trim())} title={tp('Générer exactement ce plan')}
-                          className="h-9 px-2.5 rounded-lg bg-primary text-white text-[11.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700 disabled:opacity-50 shrink-0"><Wand2 size={13} /> {tp('Générer ce plan')}</button>
+                          className="h-9 px-2.5 rounded-lg bg-primary text-white text-[11.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700 disabled:opacity-50 shrink-0"><Wand2 size={13} /> {tp('Générer ce plan')} <CostChip cost={featureCost('video')} /></button>
                       </div>
                     </div>
                     )}
@@ -1356,7 +1356,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
               />
               <button onClick={generateFullScene} disabled={aiSceneBusy}
                 className="h-9 px-3 rounded-lg bg-primary text-white text-[12.5px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary-700 disabled:opacity-50">
-                {aiSceneBusy ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />} {tp('Générer une scène')}
+                {aiSceneBusy ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />} {tp('Générer une scène')} <CostChip cost={featureCost('video')} />
               </button>
             </div>
           </div>
@@ -1582,7 +1582,7 @@ const MontageStudio = ({ importedProduct, onImport, onClearImport, credits, onCr
                     <button onClick={() => runAutoMontage(scenes)} disabled={!!autoStep}
                       title={tp('Génère tous les visuels manquants et les voix, applique la direction IA puis assemble — en un clic')}
                       className="flex-1 min-w-[220px] h-12 rounded-xl bg-gradient-to-r from-primary to-primary-700 text-white text-[13.5px] font-bold inline-flex items-center justify-center gap-2 shadow-md shadow-primary/20 transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed">
-                      <Zap size={16} /> {tp('Tout générer et monter')}
+                      <Zap size={16} /> {tp('Tout générer et monter')} <CostChip cost={featureCost('video') * scenes.filter((s) => !s.videoUrl && !s.imageUrl).length + featureCost('montage')} />
                     </button>
                   )}
                   <button onClick={renderWithDirector} disabled={!canRender}

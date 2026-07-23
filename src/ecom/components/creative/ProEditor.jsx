@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import creativeApi from '../../services/creativeApi.js';
 import { tp } from '../../i18n/platform.js';
+import { CostChip, featureCost } from './creativeShared.jsx';
 import { TRANSITIONS, CAPTION_STYLES, CAPTION_ANIMS, CAPTION_POSITIONS, CAPTION_FONTS, ACCENT_SHAPES, accentShape, captionColor, captionFontCss } from './montageStyles.js';
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -764,7 +765,7 @@ export default function ProEditor({
                   </div>
                   <button onClick={() => genSceneContent(selScene.id)} disabled={!!selScene.busy}
                     className={`${btn} h-8 w-full bg-primary/80 hover:bg-primary text-white disabled:opacity-50`}>
-                    {selScene.busy === 'gen' ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />} {tp('Générer ce plan')}
+                    {selScene.busy === 'gen' ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />} {tp('Générer ce plan')} <CostChip cost={featureCost('video')} />
                   </button>
                 </div>
 
@@ -773,7 +774,7 @@ export default function ProEditor({
                   <p className={`${secTitle} mb-1.5`}>{tp('Voix off (texte)')}</p>
                   <textarea value={selScene.voiceText || ''} onChange={(e) => patch(selScene.id, { voiceText: e.target.value })} rows={2} placeholder={tp('Texte dit sur ce plan…')} className="w-full rounded-md bg-card/5 border border-white/10 px-2 py-1.5 text-[12px] outline-none focus:border-primary/30 resize-y" />
                   <div className="flex gap-1.5 mt-1.5">
-                    <button onClick={() => genVoice(selScene.id)} disabled={selScene.busy === 'voice'} className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10`}>{selScene.busy === 'voice' ? <Loader2 size={13} className="animate-spin" /> : <Mic size={13} />} {tp('Générer la voix')}</button>
+                    <button onClick={() => genVoice(selScene.id)} disabled={selScene.busy === 'voice'} className={`${btn} h-8 flex-1 bg-card/5 hover:bg-card/10`}>{selScene.busy === 'voice' ? <Loader2 size={13} className="animate-spin" /> : <Mic size={13} />} {tp('Générer la voix')} <CostChip cost={featureCost('voice')} /></button>
                     <button onClick={() => setPicker({ open: true, type: 'audio', sceneId: selScene.id })} className={`${btn} h-8 px-2.5 bg-card/5 hover:bg-card/10`}>{tp('Galerie')}</button>
                     <label className={`${btn} h-8 px-2.5 bg-card/5 hover:bg-card/10 cursor-pointer`} title={tp('Uploader un fichier audio')}>
                       <Upload size={13} />

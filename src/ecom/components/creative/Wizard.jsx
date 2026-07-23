@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Check, ChevronLeft, ChevronRight, Loader2, Sparkles } from 'lucide-react';
 import { tp } from '../../i18n/platform.js';
-import { ACCENTS } from './creativeShared.jsx';
+import { ACCENTS, CostChip } from './creativeShared.jsx';
 
 /**
  * Assistant à étapes réutilisable pour les studios.
  * steps: [{ title, subtitle?, valid?, content }]
  * onFinish() est appelé sur « Générer » (dernière étape).
  */
-export default function Wizard({ accent = ACCENTS.image, steps = [], finalLabel, busyLabel, onFinish, onBeforeNext, loading = false }) {
+export default function Wizard({ accent = ACCENTS.image, steps = [], finalLabel, busyLabel, onFinish, onBeforeNext, loading = false, cost }) {
   const [step, setStep] = useState(0);
   const last = steps.length - 1;
 
@@ -70,7 +70,7 @@ export default function Wizard({ accent = ACCENTS.image, steps = [], finalLabel,
             {loading
               ? <><Loader2 size={15} className="animate-spin" /> {busyLabel || tp('Traitement…')}</>
               : step === last
-                ? <><Sparkles size={15} /> {finalLabel || tp('Générer')}</>
+                ? <><Sparkles size={15} /> {finalLabel || tp('Générer')} <CostChip cost={cost} /></>
                 : <>{tp('Continuer')} <ChevronRight size={15} /></>}
           </button>
         </div>

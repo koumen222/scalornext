@@ -7,7 +7,7 @@ import {
 import creativeApi from '../../services/creativeApi.js';
 import { buildMontageScenes } from './launchToMontage.js';
 import { tp } from '../../i18n/platform.js';
-import { ACCENTS, StudioHeader, ChoiceChip, ImportProductBar, stripHtml, urlToFile, downloadFile, featureCost, getInsufficientCredits } from './creativeShared.jsx';
+import { ACCENTS, StudioHeader, ChoiceChip, ImportProductBar, stripHtml, urlToFile, downloadFile, featureCost, getInsufficientCredits, CostChip } from './creativeShared.jsx';
 import Wizard from './Wizard.jsx';
 
 const A = ACCENTS.launch;
@@ -1210,7 +1210,7 @@ const LaunchStudio = ({ importedProduct, onImport, onClearImport, credits, onCre
                       </div>
                       <p className="text-[11px] text-muted-foreground mt-1.5">{imageCount} {tp('crédit(s)')} · {tp('Solde')} : {credits ?? '—'}</p>
                     </div>
-                    <button onClick={generateImages} className="h-10 px-4 rounded-xl bg-primary text-white text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-primary-700"><ImageIcon size={15} /> {tp('Générer les affiches')}</button>
+                    <button onClick={generateImages} className="h-10 px-4 rounded-xl bg-primary text-white text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-primary-700"><ImageIcon size={15} /> {tp('Générer les affiches')} <CostChip cost={imageCount * featureCost('image')} /></button>
                   </div>
                 </div>
               ) : null}
@@ -1218,7 +1218,7 @@ const LaunchStudio = ({ importedProduct, onImport, onClearImport, credits, onCre
           )}
         </div>
       ) : (
-        <Wizard accent={A} steps={steps} finalLabel={tp('Lancer la création')} busyLabel={tp('Génération…')} onFinish={startLaunch} loading={loading} />
+        <Wizard accent={A} steps={steps} finalLabel={tp('Lancer la création')} cost={modules.images ? imageCount * featureCost('image') : 0} busyLabel={tp('Génération…')} onFinish={startLaunch} loading={loading} />
       )}
     </div>
   );

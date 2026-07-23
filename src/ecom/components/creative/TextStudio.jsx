@@ -257,7 +257,7 @@ const TextStudio = ({ importedProduct, onImport, onClearImport }) => {
           ))}
         </div>
       ) : (
-        <Wizard accent={A} steps={steps} finalLabel={tp('Générer le contenu')} busyLabel={tp('Génération…')} onFinish={generate} loading={loading} />
+        <Wizard accent={A} steps={steps} finalLabel={tp('Générer le contenu')} cost={0} busyLabel={tp('Génération…')} onFinish={generate} loading={loading} />
       )}
     </div>
   );

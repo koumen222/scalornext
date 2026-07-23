@@ -81,12 +81,24 @@ export function getInsufficientCredits(err) {
   return null;
 }
 
-/** Petit badge « N crédits » à poser sur un bouton Générer (gratuit → rien). */
+/** Coût FCFA compact : 240, 1 200, 12 k. */
+export function fcfaShort(n) {
+  const v = Math.round(Number(n) || 0);
+  if (v >= 10000) return `${Math.round(v / 1000).toLocaleString('fr-FR')} k`;
+  return v.toLocaleString('fr-FR');
+}
+
+/** Badge posé sur un bouton Générer : « ⚡ N · Y FCFA » (0 crédit → « Gratuit »).
+ *  cost = crédits consommés ; le prix FCFA/crédit vient de la grille tarifaire. */
 export function CostChip({ cost, className = '' }) {
-  if (!cost) return null;
+  const pricing = useCreativePricing();
+  if (cost === null || cost === undefined) return null;
+  const base = `inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-white/20 whitespace-nowrap ${className}`;
+  if (!cost) return <span className={base}>{tp('Gratuit')}</span>;
+  const fcfa = cost * (pricing?.pricePerCreditFcfa ?? 80);
   return (
-    <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-white/20 ${className}`}>
-      <Zap size={9} /> {cost}
+    <span className={base}>
+      <Zap size={9} /> {cost} · {fcfaShort(fcfa)} FCFA
     </span>
   );
 }
@@ -133,8 +145,7 @@ export async function downloadFile(url, filename) {
     console.warn('[download] fetch direct bloqué (CORS CDN) — bascule sur le proxy backend');
   }
 
-  // 2) Proxy backend : streame le fichier en Content-Disposition: attachment
-  //    (l'API a le CORS ouvert pour l'app → blob téléchargeable à coup sûr)
+  // 2) Proxy backend : streame le fichier avec Content-Disposition.
   const base = String(ecomApi?.defaults?.baseURL || '/api/ecom').replace(/\/+$/, '');
   const proxyUrl = `${base}/builder-ai/download?src=${encodeURIComponent(url)}&name=${encodeURIComponent(safeName)}`;
   try {
@@ -143,10 +154,10 @@ export async function downloadFile(url, filename) {
     triggerBlobDownload(await res.blob(), safeName);
     return;
   } catch (err) {
-    console.warn(`[download] proxy indisponible (${err?.message || err}) — backend pas à jour/redémarré ? ${proxyUrl}`);
+    console.warn(`[download] proxy indisponible (${err?.message || err}) — ouverture du média`);
   }
 
-  // 3) Dernier recours : ouvrir le média dans un onglet
+  // 3) Dernier recours : ouvrir le média dans un onglet.
   window.open(url, '_blank');
 }
 

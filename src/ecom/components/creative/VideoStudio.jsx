@@ -1200,6 +1200,7 @@ const VideoStudio = ({ importedProduct, onImport, onClearImport, onSendToMontage
         </div>
       ) : (
         <Wizard key={family} accent={A} steps={steps} finalLabel={tp('Générer la vidéo')} busyLabel={tp('Génération en cours…')}
+          cost={ugcScript ? featureCost('video') * (ugcTalk === 'veo' ? splitScriptForTalking(ugcScript) : buildMontageScenes(ugcScript)).length : 0}
           onBeforeNext={() => true /* personnage par bouton ; la vidéo se génère ICI, sans Studio Montage */}
           onFinish={generateUgcVideo} loading={loading} />
       )}
