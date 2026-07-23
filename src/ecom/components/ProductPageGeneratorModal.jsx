@@ -603,10 +603,10 @@ function FinalPagePreview({ product, templateTheme, selectedTemplate }) {
   );
 }
 
+// Étape Produit UNIFIÉE : direction visuelle, source et photos vivent sur un
+// seul écran (plus de sous-étapes à enchaîner).
 const PRODUCT_SUBSTEPS = [
-  { id: 1, label: 'Direction', title: 'Direction visuelle', get description() { return tp('Choisis l\'univers visuel des affiches et visuels générés. Le thème final de la page suivra celui de la boutique.'); }, icon: Layers },
-  { id: 2, label: 'Source', title: 'Source du produit', get description() { return tp('Choisis le mode puis ajoute le lien ou la description à analyser.'); }, icon: Globe },
-  { id: 3, label: 'Photos', title: 'Photos réelles du produit', get description() { return tp('Ajoute les photos réelles qui serviront de base aux visuels générés.'); }, icon: Upload },
+  { id: 1, label: 'Produit', title: 'Produit', get description() { return tp('Type de produit, source à analyser et photos réelles — tout sur un écran.'); }, icon: Layers },
 ];
 
 const COPYWRITING_APPROACHES = [
@@ -754,6 +754,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
   const [step, setStep] = useState(1); // 1: Base info, 2: Copywriting, 3: Advanced (optional)
   const [pageStyle, setPageStyle] = useState(normalizedInitialPageStyle); // 'classic' | 'infographics' | 'hero_page' | 'hero'
   const [productSubstep, setProductSubstep] = useState(1);
+  // « Garde uniquement l'essentiel » : copywriting, visuels et ciblage sont
+  // pré-réglés — repliés derrière un panneau Options avancées.
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [inputMode, setInputMode] = useState('url'); // 'url' ou 'description'
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -1260,15 +1263,9 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
   };
 
   const isCurrentProductSubstepValid = () => {
-    if (productSubstep === 2) {
-      return inputMode === 'url' ? isValidUrl : hasValidDescription;
-    }
-
-    if (productSubstep === 3) {
-      return hasRequiredPhotos;
-    }
-
-    return true;
+    // Écran Produit unifié : source + photos doivent être valides pour passer
+    // au copywriting (mêmes règles que la validation finale de l'étape 1).
+    return isStep1Valid();
   };
 
   const isStep2Valid = () => {
@@ -2376,36 +2373,11 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   {tp('Crée une page produit simple, propre et prête à publier.')}
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {tp('Produit, copywriting, ciblage, puis génération.')}
+                  {tp('Renseigne ton produit, ajuste si besoin, et génère — tout sur un seul écran.')}
                 </p>
               </div>
 
-              {phase === 'input' && (
-                <div className="mt-5 grid gap-2 sm:grid-cols-3">
-                  {visibleSteps.map((s) => (
-                    <div
-                      key={s.num}
-                      className={`rounded-2xl border px-4 py-3 ${
-                        step === s.num
-                          ? 'border-[#96C7B5] bg-[#E6F2ED]'
-                          : step > s.num
-                          ? 'border-border bg-background'
-                          : 'border-border bg-card'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${step >= s.num ? 'bg-[#0F6B4F] text-white' : 'bg-muted text-muted-foreground'}`}>
-                          {step > s.num ? '✓' : s.num}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">{s.label}</p>
-                          <p className="text-xs text-muted-foreground">Etape {s.num}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* Étape unique : plus de stepper — tout le formulaire est sur un écran. */}
             </div>
           ) : (
             <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
@@ -2444,72 +2416,66 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
           {phase === 'input' && (
             <div className="p-6 space-y-5">
 
-              {/* Sélecteur style de page */}
+              {/* Sélecteur style de page — segmenté compact, description du choix
+                  actif sur UNE ligne (au lieu de 3 grandes cartes). */}
               <div className="rounded-2xl border border-border bg-card p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Layers className="h-4 w-4 text-muted-foreground" />
-                  <label className="text-sm font-bold text-foreground">{tp('Style de page')}</label>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Layers className="h-4 w-4 text-muted-foreground" />
+                    <label className="text-sm font-bold text-foreground">{tp('Style de page')}</label>
+                  </div>
+                  <div className="inline-flex rounded-xl border border-border bg-background p-0.5">
+                    {[
+                      { id: 'classic', label: tp('Classique'), onPick: () => { setPageStyle('classic'); setInfographicsTaskResult(null); } },
+                      { id: 'infographics', label: tp('Infographies 9:16'), onPick: () => setPageStyle('infographics') },
+                      { id: 'hero_page', label: tp('Page Complète'), badge: tp('Gratuit'), onPick: () => { setPageStyle('hero_page'); setInfographicsTaskResult(null); } },
+                    ].map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={s.onPick}
+                        className={`relative h-9 px-3.5 rounded-[10px] text-xs font-bold transition-all inline-flex items-center gap-1.5 ${pageStyle === s.id ? 'bg-primary text-white shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                      >
+                        {s.label}
+                        {s.badge && (
+                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase ${pageStyle === s.id ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}>{s.badge}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => { setPageStyle('classic'); setInfographicsTaskResult(null); }}
-                    className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'classic' ? 'border-scalor-green bg-[#E6F2ED]' : 'border-border bg-card hover:border-gray-300'}`}
-                  >
-                    <p className="text-sm font-bold text-foreground">{tp('Classique')}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Hero, bénéfices, avis, FAQ, blocs conversion')}</p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPageStyle('infographics')}
-                    className={`text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'infographics' ? 'border-blue-600 bg-blue-50' : 'border-border bg-card hover:border-gray-300'}`}
-                  >
-                    <p className="text-sm font-bold text-foreground">{tp('Infographies 9:16')}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Pile d\'infographies verticales + formulaire minimal')}</p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setPageStyle('hero_page'); setInfographicsTaskResult(null); }}
-                    className={`relative text-left rounded-xl border-2 px-4 py-3 transition ${pageStyle === 'hero_page' ? 'border-primary-500 bg-primary-50' : 'border-border bg-card hover:border-gray-300'}`}
-                  >
-                    <span className="absolute -top-2 -right-2 text-[10px] font-black bg-primary text-white px-2 py-0.5 rounded-full uppercase tracking-wide">{tp('Gratuit')}</span>
-                    <p className="text-sm font-bold text-foreground">{tp('Page Complète — Image réduite')}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{tp('Page IA complète + hero généré par IA — sans images d\'angles ni GIFs')}</p>
-                  </button>
-                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {pageStyle === 'classic' && tp('Hero, bénéfices, avis, FAQ, blocs conversion')}
+                  {pageStyle === 'infographics' && tp('Pile d\'infographies verticales + formulaire minimal')}
+                  {pageStyle === 'hero_page' && tp('Page IA complète + hero généré par IA — sans images d\'angles ni GIFs')}
+                </p>
 
-                {/* Langue du contenu généré — visible sur tout le wizard (gratuit + pro + infographies) */}
+                {/* Langue — ligne compacte */}
                 {(usesStandardProductGenerator || pageStyle === 'infographics') && (
-                  <div className="mt-4 border-t border-border pt-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <label className="text-sm font-bold text-foreground">{tp('Langue du contenu généré')}</label>
-                          <p className="text-xs text-muted-foreground">{tp('Par défaut : la langue de la boutique. S\'applique à toute la page générée.')}</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        {[
-                          { code: 'fr', get label() { return tp('Français'); }, flag: '🇫🇷' },
-                          { code: 'en', label: 'English', flag: '🇬🇧' },
-                          { code: 'es', get label() { return tp('Español'); }, flag: '🇪🇸' },
-                        ].map((l) => {
-                          const isActive = effectiveLanguageCode === l.code;
-                          return (
-                            <button
-                              key={l.code}
-                              type="button"
-                              onClick={() => setGenLanguage(l.code)}
-                              className={`rounded-xl border px-3 py-2 text-center transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] shadow-sm' : 'border-border bg-card hover:border-[#96C7B5]'}`}
-                            >
-                              <span className="text-sm leading-none">{l.flag}</span>
-                              <span className={`ml-1.5 text-xs font-semibold ${isActive ? 'text-[#0F6B4F]' : 'text-slate-900'}`}>{l.label}</span>
-                              {l.code === storeLanguageCode && <span className="ml-1 text-[10px] text-muted-foreground">{tp('(boutique)')}</span>}
-                            </button>
-                          );
-                        })}
-                      </div>
+                  <div className="mt-3 border-t border-border pt-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-bold text-foreground">{tp('Langue')}</span>
+                    </div>
+                    <div className="flex gap-1.5">
+                      {[
+                        { code: 'fr', get label() { return tp('Français'); }, flag: '🇫🇷' },
+                        { code: 'en', label: 'English', flag: '🇬🇧' },
+                        { code: 'es', get label() { return tp('Español'); }, flag: '🇪🇸' },
+                      ].map((l) => {
+                        const isActive = effectiveLanguageCode === l.code;
+                        return (
+                          <button
+                            key={l.code}
+                            type="button"
+                            onClick={() => setGenLanguage(l.code)}
+                            title={l.code === storeLanguageCode ? tp('Langue de la boutique') : undefined}
+                            className={`rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${isActive ? 'border-[#96C7B5] bg-[#E6F2ED] text-[#0F6B4F]' : 'border-border bg-card text-slate-700 hover:border-[#96C7B5]'}`}
+                          >
+                            {l.flag} {l.label}{l.code === storeLanguageCode ? ' ·' : ''}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -2730,17 +2696,17 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               )}
 
               {/* ÉTAPE 1: Informations produit */}
-              {usesStandardProductGenerator && step === 1 && (
+              {usesStandardProductGenerator && (
                 <>
                   {/* Template de page produit */}
-                  {productSubstep === 1 && (
+                  {(
                   <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
-                    <div className="flex items-center gap-2 mb-1">
+                    {/* Template visuel — chips compactes (la description vit en tooltip) */}
+                    <div className="flex items-center gap-2 mb-2.5">
                       <Layers className="h-4 w-4 text-muted-foreground" />
-                      <label className="text-sm font-semibold text-foreground">{tp('Template visuel')}</label>
+                      <label className="text-sm font-semibold text-foreground">{tp('Type de produit')}</label>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-4">{tp('Choisie le type de produit — chaque template a son propre style d\'images')}</p>
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    <div className="flex flex-wrap gap-1.5">
                       {VISUAL_TEMPLATES.map(t => {
                         const isActive = visualTemplate === t.id;
                         const previewTheme = buildTemplateTheme(t.id);
@@ -2748,96 +2714,58 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                           <button
                             key={t.id}
                             type="button"
+                            title={t.desc}
                             onClick={() => setVisualTemplate(t.id)}
-                            className="group flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-all duration-150"
+                            className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-all"
                             style={isActive
-                              ? { borderColor: previewTheme.primary, backgroundColor: previewTheme.primary }
-                              : { borderColor: '#e5e7eb', backgroundColor: '#fff' }
+                              ? { borderColor: previewTheme.primary, backgroundColor: previewTheme.primary, color: '#fff' }
+                              : { borderColor: '#e5e7eb', backgroundColor: '#fff', color: '#374151' }
                             }
-                            onMouseEnter={!isActive ? (e) => { e.currentTarget.style.borderColor = '#d1d5db'; e.currentTarget.style.backgroundColor = '#f9fafb'; } : undefined}
-                            onMouseLeave={!isActive ? (e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.backgroundColor = '#fff'; } : undefined}
                           >
-                            <div
-                              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                              style={{ backgroundColor: isActive ? 'rgba(255,255,255,0.18)' : `${previewTheme.primary}18` }}
-                            >
-                              <t.icon
-                                className="h-4 w-4"
-                                style={{ color: isActive ? '#fff' : previewTheme.primary }}
-                              />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-xs font-bold leading-tight" style={{ color: isActive ? '#fff' : '#1f2937' }}>{t.label}</p>
-                              <p className="mt-0.5 truncate text-[10px] leading-tight" style={{ color: isActive ? 'rgba(255,255,255,0.6)' : '#9ca3af' }}>{t.desc}</p>
-                            </div>
+                            <t.icon className="h-3.5 w-3.5" style={{ color: isActive ? '#fff' : previewTheme.primary }} />
+                            {t.label}
                           </button>
                         );
                       })}
                     </div>
 
-                    <p className="mt-3 text-[11px] text-muted-foreground">
-                      Le template sert uniquement de point de départ visuel. La page et les visuels restent générés dynamiquement.
-                    </p>
-
-                    {/* Couleur de thème personnalisée */}
-                    <div className="mt-4 rounded-2xl border border-border bg-card p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full border border-border flex-shrink-0" style={{ background: templateTheme.primary }} />
-                          <span className="text-xs font-semibold text-foreground">{tp('Couleur de votre thème')}</span>
-                        </div>
-                        {customPrimaryColor && (
+                    {/* Couleur du thème — une seule ligne */}
+                    <div className="mt-3 border-t border-border pt-3 flex flex-wrap items-center gap-2.5">
+                      <span className="text-xs font-semibold text-foreground">{tp('Couleur')}</span>
+                      <input
+                        type="color"
+                        value={customPrimaryColor || templateTheme.primary}
+                        onChange={e => setCustomPrimaryColor(e.target.value)}
+                        title={tp('Les images générées adoptent cette couleur — fonds, accents, ambiance.')}
+                        className="w-8 h-8 rounded-lg border-2 border-border cursor-pointer p-0.5"
+                        style={{ backgroundColor: customPrimaryColor || templateTheme.primary }}
+                      />
+                      <div className="flex gap-1.5">
+                        {['#0F6B4F','#2563EB','#7C3AED','#DC2626','#D97706','#BE185D','#0891B2','#000000'].map(hex => (
                           <button
+                            key={hex}
                             type="button"
-                            onClick={() => setCustomPrimaryColor(null)}
-                            className="text-[10px] text-muted-foreground hover:text-red-500 transition underline"
-                          >
-                            {tp('Réinitialiser')}
-                          </button>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-muted-foreground mb-3">
-                        Les images générées adopteront automatiquement cette couleur — fonds, accents et ambiance visuelle.
-                      </p>
-                      <div className="flex items-center gap-3">
-                        <div className="relative flex-shrink-0">
-                          <input
-                            type="color"
-                            value={customPrimaryColor || templateTheme.primary}
-                            onChange={e => setCustomPrimaryColor(e.target.value)}
-                            className="w-10 h-10 rounded-xl border-2 border-border cursor-pointer p-0.5"
-                            style={{ backgroundColor: customPrimaryColor || templateTheme.primary }}
+                            title={hex}
+                            onClick={() => setCustomPrimaryColor(hex)}
+                            className="w-6 h-6 rounded-full border-2 transition flex-shrink-0"
+                            style={{
+                              background: hex,
+                              borderColor: customPrimaryColor === hex ? '#374151' : 'transparent',
+                              outline: customPrimaryColor === hex ? '2px solid #374151' : 'none',
+                              outlineOffset: '1px',
+                            }}
                           />
-                        </div>
-                        <input
-                          type="text"
-                          value={customPrimaryColor || templateTheme.primary}
-                          onChange={e => {
-                            const v = e.target.value;
-                            if (/^#[0-9A-Fa-f]{0,6}$/.test(v)) setCustomPrimaryColor(v.length === 7 ? v : null);
-                          }}
-                          placeholder="#000000"
-                          className="flex-1 rounded-xl border border-border px-3 py-2 text-xs font-mono text-foreground focus:outline-none focus:border-gray-400"
-                        />
-                        {/* Palettes rapides */}
-                        <div className="flex gap-1.5 flex-shrink-0">
-                          {['#0F6B4F','#2563EB','#7C3AED','#DC2626','#D97706','#BE185D','#0891B2','#000000'].map(hex => (
-                            <button
-                              key={hex}
-                              type="button"
-                              title={hex}
-                              onClick={() => setCustomPrimaryColor(hex)}
-                              className="w-6 h-6 rounded-full border-2 transition flex-shrink-0"
-                              style={{
-                                background: hex,
-                                borderColor: customPrimaryColor === hex ? '#374151' : 'transparent',
-                                outline: customPrimaryColor === hex ? '2px solid #374151' : 'none',
-                                outlineOffset: '1px',
-                              }}
-                            />
-                          ))}
-                        </div>
+                        ))}
                       </div>
+                      {customPrimaryColor && (
+                        <button
+                          type="button"
+                          onClick={() => setCustomPrimaryColor(null)}
+                          className="text-[10px] text-muted-foreground hover:text-red-500 transition underline"
+                        >
+                          {tp('Réinitialiser')}
+                        </button>
+                      )}
                     </div>
 
                     {visualTemplate === 'fashion' && (
@@ -2964,7 +2892,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   )}
 
                   {/* Source + contenu source */}
-                  {productSubstep === 2 && (
+                  {(
                   <div className="space-y-4 rounded-[30px] border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
                     <div>
                       <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -3046,7 +2974,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
                   )}
 
                   {/* Photo Upload */}
-                  {productSubstep === 3 && (
+                  {(
                   <div className="rounded-[30px] border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
                     <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-foreground">
                       <Upload className="h-4 w-4 text-slate-700" />
@@ -3112,7 +3040,23 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               )}
 
               {/* ÉTAPE 2: Méthode Copywriting (simplifié) */}
-              {usesStandardProductGenerator && step === 2 && (
+              {/* ── Options avancées (repliées par défaut) ───────────────────── */}
+              {usesStandardProductGenerator && (
+                <button
+                  type="button"
+                  onClick={() => setAdvancedOpen(v => !v)}
+                  className="w-full flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3.5 hover:bg-background transition"
+                >
+                  <span className="text-sm font-bold text-foreground">
+                    {tp('Options avancées')}
+                    <span className="ml-2 text-xs font-medium text-muted-foreground">{tp('copywriting, visuels, ciblage — déjà pré-réglés')}</span>
+                  </span>
+                  <svg className={`w-4 h-4 text-muted-foreground transition-transform ${advancedOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              )}
+              {usesStandardProductGenerator && advancedOpen && (
                 <>
                   {/* 3 Méthodes Copywriting */}
                   <div className="rounded-[30px] border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-6">
@@ -3158,7 +3102,7 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               )}
 
               {/* ÉTAPE 3: Paramètres avancés (simplifié) */}
-              {usesStandardProductGenerator && step === 3 && (
+              {usesStandardProductGenerator && advancedOpen && (
                 <>
                   {/* Header */}
                   <div className="text-center space-y-2 mb-4">
@@ -4339,50 +4283,23 @@ const ProductPageGeneratorModal = ({ onClose, onApply, pageMode = false, initial
               <div className={pageMode ? 'flex flex-col gap-3 md:flex-row md:items-center' : 'flex items-center gap-3'}>
                 {pageMode && (
                   <div className="rounded-2xl border border-border bg-background px-4 py-3 text-xs leading-5 text-muted-foreground md:max-w-[340px]">
-                    {step < 3
-                      ? 'Renseigne le produit, définis la méthode puis affine le ciblage avant de lancer la génération.'
-                      : pageStyle === 'hero_page'
-                        ? 'Tout est prêt. La génération est gratuite — page complète + hero IA, sans images d\'angles.'
-                        : 'Tout est prêt. Lance la génération pour produire la page, les visuels et les blocs marketing.'}
+                    {pageStyle === 'hero_page'
+                      ? 'Renseigne le produit et lance — génération gratuite, page complète + hero IA. Copywriting et ciblage sont pré-réglés, ajustables ci-dessus.'
+                      : 'Renseigne le produit et lance la génération. Copywriting et ciblage sont pré-réglés — ajuste-les ci-dessus si besoin.'}
                   </div>
                 )}
-                {(step > 1 || productSubstep > 1) && (
+                {/* Étape unique : un seul bouton — la génération. */}
+                <div className="flex-[2] w-full">
                   <button
                     type="button"
-                    onClick={handlePrevStep}
-                    className={pageMode ? 'min-w-[180px] py-3 border border-border bg-card text-foreground rounded-2xl font-semibold text-sm hover:bg-background transition flex items-center justify-center gap-2' : 'flex-1 py-3 border-2 border-gray-300 text-foreground rounded-xl font-semibold text-sm hover:bg-background transition flex items-center justify-center gap-2'}
+                    onClick={() => handleGenerate()}
+                    disabled={!canGenerate()}
+                    className={`w-full py-3 text-white font-bold text-sm transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg ${pageMode ? 'rounded-2xl bg-[linear-gradient(135deg,#0A5740,#14855F)] hover:brightness-105' : 'bg-scalor-green rounded-xl hover:bg-scalor-green-dark'}`}
                   >
-                    <ArrowLeft className="h-4 w-4" />
-                    {tp('Précédent')}
+                    {(hasNoCredits && pageStyle !== 'hero_page') ? <Zap className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                    {(hasNoCredits && pageStyle !== 'hero_page') ? 'Acheter des crédits' : pageStyle === 'hero_page' ? 'Générer — Gratuit' : tp('Générer ma page produit')}
                   </button>
-                )}
-
-                {step < 3 ? (
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    disabled={step === 1 && !isCurrentProductSubstepValid()}
-                    className={`py-3 text-white font-bold text-sm transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg ${pageMode ? 'rounded-2xl bg-[linear-gradient(135deg,#0A5740,#14855F)] hover:brightness-105' : 'bg-scalor-green rounded-xl hover:bg-scalor-green-dark'} ${step === 1 ? 'w-full' : 'flex-[2]'}`}
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    {step === 1 && (productSubstep < totalProductSubsteps ? 'Suivant' : 'Suivant : Copywriting')}
-                    {step === 2 && 'Suivant : Ciblage'}
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  /* Step 3: Single generation button */
-                  <div className={`${step === 1 ? 'w-full' : 'flex-[2]'}`}>
-                    <button
-                      type="button"
-                      onClick={() => handleGenerate()}
-                      disabled={!canGenerate()}
-                      className={`w-full py-3 text-white font-bold text-sm transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg ${pageMode ? 'rounded-2xl bg-[linear-gradient(135deg,#0A5740,#14855F)] hover:brightness-105' : 'bg-scalor-green rounded-xl hover:bg-scalor-green-dark'}`}
-                    >
-                      {(hasNoCredits && pageStyle !== 'hero_page') ? <Zap className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                      {(hasNoCredits && pageStyle !== 'hero_page') ? 'Acheter des crédits' : pageStyle === 'hero_page' ? 'Générer — Gratuit' : tp('Générer ma page produit')}
-                    </button>
-                  </div>
-                )}
+                </div>
               </div>
             </>
           )}

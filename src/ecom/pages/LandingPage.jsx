@@ -1209,6 +1209,57 @@ const LandingPage = () => {
         })()}
       </section>
 
+      {/* ══ Devenir affilié ══ */}
+      <section id="affiliation" className="py-20 sm:py-28" style={{ background: '#fff', borderTop: '1px solid #e5e7eb' }}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <Reveal>
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide" style={{ background: '#E6F2ED', color: '#0F6B4F' }}>
+                {tp('Programme d\'affiliation')}
+              </span>
+              <h2 className="mt-4 text-3xl sm:text-5xl font-semibold tracking-tight text-foreground">{tp('Gagnez de l\'argent en recommandant Scalor')}</h2>
+              <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
+                {tp('Partagez votre lien personnalisé : chaque inscription et chaque abonnement de vos filleuls vous rapporte — à vie.')}
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <div className="grid gap-4 sm:grid-cols-3 mb-10">
+              {[
+                { big: '50%', label: tp('de commission sur chaque paiement d\'abonnement de vos filleuls, à vie') },
+                { big: '500 F', label: tp('offerts dès l\'inscription de chaque filleul avec votre lien') },
+                { big: '5 000 F', label: tp('seuil de retrait — encaissez vos commissions rapidement') },
+              ].map((c, i) => (
+                <div key={i} className="rounded-2xl p-6 text-center" style={{ background: '#f8fafc', border: '1px solid #e5e7eb' }}>
+                  <p className="text-4xl font-black" style={{ color: '#0F6B4F' }}>{c.big}</p>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.label}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <div className="text-center">
+              <button
+                onClick={() => navigate('/affiliate/register')}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-white text-base font-bold transition hover:brightness-110 shadow-lg"
+                style={{ background: 'linear-gradient(135deg, #0A5740, #14855F)' }}
+              >
+                {tp('Devenir affilié')}
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+              </button>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {tp('Gratuit, sans engagement.')}{' '}
+                <button onClick={() => navigate('/affiliate/login')} className="font-semibold underline underline-offset-2" style={{ color: '#0F6B4F' }}>
+                  {tp('Déjà affilié ? Connectez-vous')}
+                </button>
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ══ FAQ ══ */}
       <section className="py-20 sm:py-28" style={{ background: '#f8fafc', borderTop: '1px solid #e5e7eb' }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6">

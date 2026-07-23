@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from '@/lib/router-compat';
 import {
-  AFFILIATE_API_BASE,
   affiliatePortalApi,
+  affiliateTrackingUrl,
   clearAffiliateToken,
   getAffiliateToken
 } from '../services/affiliatePortalApi.js';
@@ -159,7 +159,7 @@ export default function AffiliateLinks() {
           </div>
           <div className="divide-y divide-gray-100">
             {filtered.map((l) => {
-              const linkUrl = `${AFFILIATE_API_BASE}/api/affiliate/r/${l.code}`;
+              const linkUrl = affiliateTrackingUrl(l.code);
               return (
                 <div key={l._id} className="p-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:bg-gray-50 transition-colors">
                   <div className="flex-1 min-w-0">

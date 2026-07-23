@@ -276,14 +276,81 @@ const VideoStudio = ({ importedProduct, onImport, onClearImport, onSendToMontage
     // recalculée (texte total ÷ scènes) — le débit s'adapte.
     const wanted = ugcSceneCount !== 'auto' ? Math.max(3, Math.min(8, Number(ugcSceneCount))) : null;
     const perSeg = wanted ? Math.max(10, Math.ceil(words(text) / wanted)) : eng.wordsPerSeg;
-    const sentences = text.split(/(?<=[.!?…])\s+/).filter(Boolean);
-    const segs = [];
-    let cur = '';
-    for (const s of sentences) {
-      if (cur && words(cur) + words(s) > perSeg) { segs.push(cur.trim()); cur = s; }
-      else cur = cur ? `${cur} ${s}` : s;
+    // Découpage ÉQUILIBRÉ (anti débit variable) : l'ancien découpage glouton
+    // (« coupe dès que ça déborde ») produisait des répliques de 6 mots à
+    // côté de répliques de 25 — sur des clips de durée FIXE, le modèle parle
+    // alors lentement sur l'une et très vite sur l'autre. Ici : phrases
+    // (affinées à la virgule quand elles sont trop longues) réparties par
+    // programmation dynamique au plus près de la CIBLE mots/segment →
+    // longueurs homogènes = même débit sur toutes les scènes.
+    const rawSentences = text.split(/(?<=[.!?…])\s+/).filter(Boolean);
+    const sentences = rawSentences.flatMap((s) => {
+      if (words(s) <= Math.ceil(perSeg * 0.8)) return [s];
+      // Phrase trop longue pour un segment homogène : sous-coupe aux pauses
+      // naturelles (virgule, point-virgule, tiret) pour affiner la granularité.
+      const parts = s.split(/(?<=[,;:—])\s+/).filter(Boolean);
+      return parts.length > 1 ? parts : [s];
+    });
+    const totalWords = words(text);
+    const nSeg = Math.max(1, Math.min(8, wanted || Math.round(totalWords / perSeg) || 1));
+    // Partitionnement OPTIMAL des phrases en groupes contigus (prog. dynamique,
+    // coût = Σ(mots − cible)²) : variance minimale des longueurs → même débit
+    // sur toutes les scènes. Le nombre de scènes lui-même est optimisé (K−1,
+    // K, K+1 quand il est libre) : on garde la partition la plus homogène.
+    const ws = sentences.map(words);
+    const N = sentences.length;
+    const prefix = [0];
+    for (const w of ws) prefix.push(prefix[prefix.length - 1] + w);
+    const sumW = (i, j) => prefix[j] - prefix[i];
+    const partition = (K) => {
+      const target = totalWords / K;
+      const dp = Array.from({ length: K + 1 }, () => Array(N + 1).fill(Infinity));
+      const cutAt = Array.from({ length: K + 1 }, () => Array(N + 1).fill(0));
+      dp[0][0] = 0;
+      for (let k = 1; k <= K; k += 1) {
+        for (let j = k; j <= N; j += 1) {
+          for (let i = k - 1; i < j; i += 1) {
+            const c = dp[k - 1][i] + (sumW(i, j) - target) ** 2;
+            if (c < dp[k][j]) { dp[k][j] = c; cutAt[k][j] = i; }
+          }
+        }
+      }
+      const out = [];
+      let j = N;
+      for (let k = K; k >= 1; k -= 1) {
+        const i = cutAt[k][j];
+        out.unshift(sentences.slice(i, j).join(' ').trim());
+        j = i;
+      }
+      return out;
+    };
+    const candidates = wanted
+      ? [Math.max(1, Math.min(nSeg, N))]
+      : [...new Set([nSeg - 1, nSeg, nSeg + 1]
+          .map((k) => Math.max(1, Math.min(8, Math.min(k, N))))
+          .filter((k) => k >= 1))];
+    // CONTRAINTE DURE : une réplique doit TENIR dans la durée du clip au tempo
+    // naturel (~2,9 mots/s max) — sinon le modèle accélère ou coupe la phrase.
+    const capacity = Math.ceil(perSeg * 1.25);
+    let segs = null;
+    let bestScore = Infinity;
+    let bestFits = false;
+    for (const K of candidates) {
+      const cand = partition(K);
+      const cw = cand.map(words);
+      const fits = Math.max(...cw) <= capacity;
+      // Score = homogénéité (ratio max/min) + écart au DÉBIT CIBLE du moteur.
+      // Le débit cible pèse plus lourd : le prompt impose déjà un tempo
+      // constant, le découpage doit surtout donner des répliques PRONONÇABLES
+      // à ce tempo dans la durée du clip (ni trop denses, ni trop courtes).
+      const ratio = Math.max(...cw) / Math.max(1, Math.min(...cw));
+      const avg = totalWords / K;
+      const score = 0.6 * ratio + 1.2 * (Math.abs(avg - perSeg) / perSeg);
+      // Une partition qui TIENT dans le clip bat toujours une qui déborde.
+      if ((fits && !bestFits) || (fits === bestFits && score < bestScore)) {
+        bestScore = score; segs = cand; bestFits = fits;
+      }
     }
-    if (cur.trim()) segs.push(cur.trim());
     // Cap : ~45 s de vidéo ET 8 SCÈNES MAXI (règle dure). Fusion douce
     // d'abord (respecte le débit), puis fusion FORCÉE si on dépasse encore 8 —
     // mieux vaut un débit très rapide qu'une vidéo à 10 scènes.

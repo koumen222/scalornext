@@ -1812,11 +1812,12 @@ const StoreProductPage = () => {
 
   const ppTheme = productPC?.theme || productPageConfig?.theme || store?.template || storePC?.theme || 'classic';
   const productPageData = product?._pageData || {};
-  // Le thème EXPLICITEMENT choisi (produit > config > boutique) fait autorité.
-  // La simple présence de contenu premium (premiumPage sauvegardé par le builder,
-  // _pageData généré par l'IA…) ne force le rendu premium QUE si aucun thème
-  // explicite n'est configuré — sinon choisir « classique » était sans effet.
-  const hasExplicitTheme = Boolean(productPC?.theme || productPageConfig?.theme || store?.template || storePC?.theme);
+  // Le thème EXPLICITEMENT choisi AU NIVEAU PRODUIT fait autorité. Le template
+  // de la BOUTIQUE (store.template — toujours renvoyé par l'API, défaut
+  // 'classic') ne compte PAS comme un choix de thème de page produit : il
+  // neutralisait la détection premium et faisait retomber les pages premium
+  // (marquées seulement dans _pageData) sur le rendu normal.
+  const hasExplicitTheme = Boolean(productPC?.theme || productPageConfig?.theme);
   const premiumContentSignals = (
     productPC?.pageStyle === 'premium'
     || Boolean(productPC?.premiumPage)
