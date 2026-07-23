@@ -2,6 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from '@/lib/router-compat';
 import { tp } from '../i18n/platform.js';
 
+/* ════════════════════════════════════════════════════════════════════════════
+   Landing Scalor — refonte complète autour du produit réel :
+   Boutique IA (créateur de site) · Creative Center (textes, affiches, vidéos,
+   voix-off, stratégie Facebook Ads) · Rita agent IA WhatsApp · Commandes COD ·
+   Analytics · Multi-boutiques · Formation · Programme d'affiliation intégré.
+   Ancres conservées : #features #agent-ia #how-it-works #boutique-ia
+   #formation #integrations #affiliation
+   ════════════════════════════════════════════════════════════════════════════ */
+
+const GREEN = '#0F6B4F';
+const GREEN_DARK = '#0a5040';
+
+// ─── Reveal au scroll ────────────────────────────────────────────────────────
 const useReveal = (threshold = 0.12) => {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -9,8 +22,8 @@ const useReveal = (threshold = 0.12) => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.unobserve(el); } },
-      { threshold, rootMargin: '0px 0px -50px 0px' }
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -18,350 +31,905 @@ const useReveal = (threshold = 0.12) => {
   return [ref, visible];
 };
 
-const Reveal = ({ children, className = '', delay = 0 }) => {
+const Reveal = ({ children, className = '', delay = 0, style = {} }) => {
   const [ref, visible] = useReveal();
   return (
-    <div ref={ref} className={className} style={{
-      opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(18px)',
-      transition: `opacity 0.5s cubic-bezier(.16,1,.3,1) ${delay}ms, transform 0.5s cubic-bezier(.16,1,.3,1) ${delay}ms`,
-      willChange: 'opacity, transform',
-    }}>{children}</div>
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        ...style,
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(24px)',
+        transition: `opacity .6s ease ${delay}ms, transform .6s ease ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
   );
 };
 
-/* ─── Support Chat ─── */
-const SupportChat = () => {
-  const [open, setOpen] = useState(false);
-  const [input, setInput] = useState('');
-  const [typing, setTyping] = useState(false);
-  const [unread, setUnread] = useState(1);
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
-  const sessionId = useRef((() => {
-    // Guard SSR (Next) : l'initialiseur s'exécute au rendu serveur ; réévalué au premier rendu client.
-    if (typeof window === 'undefined') return null;
-    const k = 'scalor_support_session';
-    let sid = localStorage.getItem(k);
-    if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10); localStorage.setItem(k, sid); }
-    return sid;
-  })());
-  const apiBase = (() => {
-    const viteApi = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || '';
-    if (viteApi) { const norm = viteApi.replace(/\/$/, ''); return norm.endsWith('/api/ecom') ? norm : norm + '/api/ecom'; }
-    return 'https://api.scalor.net/api/ecom';
-  })();
-  const shownAgentIds = useRef(new Set());
-  const AUTO_REPLIES = [
-    "Merci pour votre message ! Nous allons vous répondre dans les plus brefs délais. 🙏",
-    "Bien reçu ! Notre équipe est disponible du lundi au samedi de 8h à 20h.",
-    "Message reçu ! Rita revient vers vous très bientôt.",
-  ];
-  const [messages, setMessages] = useState([{
-    id: 1, from: 'agent', text: "Bonjour 👋 Bienvenue sur Scalor ! Je suis Rita, du support. Comment puis-je vous aider aujourd'hui ?", time: 'Maintenant', source: 'auto',
-  }]);
-  const pollReplies = useRef(null);
-
-  const pollOnce = async () => {
-    try {
-      const res = await fetch(`${apiBase}/support/session/${sessionId.current}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      const agentMsgs = data?.data?.messages || [];
-      let gotNew = false;
-      agentMsgs.forEach(msg => {
-        const msgId = String(msg.id || msg._id || '');
-        if (msgId && !shownAgentIds.current.has(msgId)) {
-          shownAgentIds.current.add(msgId);
-          const t = new Date(msg.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-          setMessages(prev => [...prev, { id: msgId, from: 'agent', text: msg.text, time: t, source: 'ai', agentName: msg.agentName || 'Rita IA' }]);
-          gotNew = true;
-        }
-      });
-      if (gotNew) setTyping(false);
-    } catch { }
-  };
-
-  useEffect(() => {
-    if (open) {
-      setUnread(0);
-      setTimeout(() => inputRef.current?.focus(), 300);
-      pollOnce();
-      pollReplies.current = setInterval(pollOnce, 4000);
-    } else {
-      if (pollReplies.current) { clearInterval(pollReplies.current); pollReplies.current = null; }
-    }
-    return () => { if (pollReplies.current) clearInterval(pollReplies.current); };
-  }, [open]);
-
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, typing]);
-
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text) return;
-    const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-    setMessages(prev => [...prev, { id: Date.now(), from: 'user', text, time: now, source: 'user' }]);
-    setInput('');
-    setTyping(true);
-    try {
-      await fetch(`${apiBase}/support/message`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: sessionId.current, text }),
-      });
-      // Poll more aggressively after sending to catch IA reply fast
-      setTimeout(pollOnce, 2500);
-      setTimeout(pollOnce, 5000);
-      setTimeout(pollOnce, 8000);
-      // Fallback: stop typing indicator after 12s if no reply
-      setTimeout(() => setTyping(false), 12000);
-    } catch {
-      setTyping(false);
-    }
-  };
-  return (
-    <>
-      <div className="fixed bottom-24 right-5 sm:right-7 z-50 w-[calc(100vw-40px)] sm:w-[370px] transition-all duration-300 origin-bottom-right"
-        style={{ opacity: open ? 1 : 0, transform: open ? 'scale(1) translateY(0)' : 'scale(0.92) translateY(16px)', pointerEvents: open ? 'auto' : 'none' }}>
-        <div className="rounded-2xl overflow-hidden flex flex-col" style={{ height: '480px', background: '#111', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 24px 80px rgba(0,0,0,0.6)' }}>
-          <div className="flex items-center gap-3 px-4 py-3.5" style={{ background: 'linear-gradient(135deg, #05976D, #0d9488)' }}>
-            <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.3)' }}>R</div>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-700 rounded-full" style={{ border: '2px solid #05976D' }} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white leading-tight">{tp('Support Scalor')}</p>
-              <p className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.7)' }}>{tp('Rita · Répond en quelques heures')}</p>
-            </div>
-            <button onClick={() => setOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-xl transition flex-shrink-0" style={{ color: 'rgba(255,255,255,0.7)' }}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" style={{ background: '#0a0a0a' }}>
-            {messages.map(msg => (
-              <div key={msg.id} className={`flex items-end gap-2 ${msg.from === 'user' ? 'flex-row-reverse' : ''}`}>
-                {msg.from === 'agent' && (
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-1" style={{ background: 'linear-gradient(135deg, #05976D, #0d9488)' }}>R</div>
-                )}
-                <div className={`max-w-[78%] flex flex-col gap-1 ${msg.from === 'user' ? 'items-end' : 'items-start'}`}>
-                  <div className="px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed" style={msg.from === 'user' ? { background: '#05976D', color: '#fff', borderBottomRightRadius: 4 } : { background: '#1a1a1a', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.08)', borderBottomLeftRadius: 4 }}>
-                    {msg.text}
-                  </div>
-                  <span className="text-[10px] px-1" style={{ color: 'rgba(255,255,255,0.3)' }}>{msg.time}</span>
-                </div>
-              </div>
-            ))}
-            {typing && (
-              <div className="flex items-end gap-2">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-1" style={{ background: 'linear-gradient(135deg, #05976D, #0d9488)' }}>R</div>
-                <div className="px-4 py-3 rounded-2xl flex items-center gap-1.5" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#6b7280', animationDelay: '0ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#6b7280', animationDelay: '160ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#6b7280', animationDelay: '320ms' }} />
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-          <form onSubmit={sendMessage} className="flex items-center gap-2 px-3 py-3" style={{ background: '#111', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} placeholder={tp('Écrivez un message…')}
-              className="flex-1 text-sm outline-none rounded-xl px-3.5 py-2.5 transition" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#e5e7eb' }} />
-            <button type="submit" disabled={!input.trim()} className="w-9 h-9 rounded-xl flex items-center justify-center transition flex-shrink-0" style={{ background: '#05976D', color: '#fff', opacity: !input.trim() ? 0.4 : 1 }}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-            </button>
-          </form>
-          <div className="text-center py-2" style={{ background: '#111', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>{tp('Propulsé par')} <span style={{ color: '#05976D' }}>Scalor</span></span>
-          </div>
-        </div>
-      </div>
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="fixed bottom-20 lg:bottom-6 right-4 z-50 w-14 h-14 text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
-        style={{ background: open ? '#0a5740' : '#0F6B4F' }}
-        aria-label={tp('Support')}
-      >
-        {open
-          ? <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12"/></svg>
-          : <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-        }
-        {unread > 0 && !open && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">{unread}</span>
-        )}
-      </button>
-    </>
-  );
-};
-
-/* ─── Main Landing ─── */
-const ROTATING_WORDS = ['2× plus de commandes', 'sans panier abandonné', 'avec l\'IA', 'en Afrique', 'sans effort'];
+// ─── Mot rotatif du hero ─────────────────────────────────────────────────────
+const ROTATING_WORDS = ['crée ta boutique', 'crée tes publicités', 'répond à tes clients', 'gère tes commandes', 'vend pour toi'];
 
 const RotatingText = () => {
   const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setIndex(i => (i + 1) % ROTATING_WORDS.length);
-        setVisible(true);
-      }, 350);
-    }, 2400);
-    return () => clearInterval(interval);
+    const id = setInterval(() => setIndex((i) => (i + 1) % ROTATING_WORDS.length), 2200);
+    return () => clearInterval(id);
   }, []);
-
   return (
-    <span style={{
-      display: 'inline-block',
-      color: '#05976D',
-      opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(-12px)',
-      transition: 'opacity 0.35s cubic-bezier(.16,1,.3,1), transform 0.35s cubic-bezier(.16,1,.3,1)',
-      minWidth: 'clamp(120px, 40vw, 260px)',
-    }}>
-      {ROTATING_WORDS[index]}
+    <span className="relative inline-block" style={{ color: GREEN }}>
+      <span key={index} className="inline-block" style={{ animation: 'landing-word-in .45s ease' }}>
+        {ROTATING_WORDS[index]}
+      </span>
+      <style>{`@keyframes landing-word-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </span>
   );
 };
 
+// ─── Widget chat Rita (support) ──────────────────────────────────────────────
+const SupportChat = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="fixed bottom-4 right-4 z-50">
+      {open && (
+        <div className="mb-3 w-[320px] max-w-[calc(100vw-2rem)] rounded-2xl bg-white shadow-2xl border border-gray-200 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 text-white" style={{ background: GREEN }}>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-sm font-bold">R</span>
+            <div className="min-w-0">
+              <p className="text-sm font-bold">Support Scalor</p>
+              <p className="text-[11px] text-white/75">Rita · Répond en quelques heures</p>
+            </div>
+            <button onClick={() => setOpen(false)} aria-label={tp('Fermer')} className="ml-auto text-white/80 hover:text-white text-lg leading-none">×</button>
+          </div>
+          <div className="p-4 space-y-3 bg-gray-50 max-h-72 overflow-y-auto">
+            <div className="flex gap-2">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-[11px] font-bold" style={{ background: GREEN }}>R</span>
+              <div className="rounded-2xl rounded-tl-md bg-white border border-gray-200 px-3 py-2 text-[13px] text-gray-700 leading-snug">
+                {tp('Bonjour 👋 Bienvenue sur Scalor ! Je suis Rita, du support. Comment puis-je vous aider aujourd’hui ?')}
+              </div>
+            </div>
+          </div>
+          <a
+            href="https://chat.whatsapp.com/IH3nEvfeEWrHiAnocwZTwz?mode=gi_t"
+            target="_blank" rel="noreferrer"
+            className="block px-4 py-3 text-center text-[13px] font-bold text-white transition hover:brightness-110"
+            style={{ background: GREEN }}
+          >
+            {tp('Écrire au support sur WhatsApp')}
+          </a>
+        </div>
+      )}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Support Scalor"
+        className="flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition hover:scale-105"
+        style={{ background: GREEN }}
+      >
+        {open
+          ? <span className="text-2xl leading-none">×</span>
+          : <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.84L3 20l1.36-3.64A7.9 7.9 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>}
+      </button>
+    </div>
+  );
+};
+
+// ─── Logos d'outils (simple-icons CDN + repli badge-lettre) ──────────────────
+const TOOL_SLUGS = {
+  Shopify: 'shopify', WooCommerce: 'woocommerce', WhatsApp: 'whatsapp', 'WhatsApp Business': 'whatsapp',
+  'Fiverr (visuels)': 'fiverr', Fiverr: 'fiverr', 'Google Sheets': 'googlesheets',
+  Klaviyo: 'klaviyo', 'Meta Ads': 'meta', Mailchimp: 'mailchimp', TikTok: 'tiktok',
+  'Google Ads': 'googleads', Notion: 'notion',
+  ChatGPT: 'openai', Claude: 'claude',
+};
+
+// Marques absentes de simple-icons (Canva, CapCut…) ou inconnues : favicon
+// officiel du site via le service Google — logo réel, toujours disponible.
+const TOOL_DOMAINS = {
+  'Canva Pro': 'canva.com', Canva: 'canva.com',
+  'CapCut Pro': 'capcut.com', CapCut: 'capcut.com',
+  EasySell: 'easysell.co', Loox: 'loox.app',
+  Shopify: 'shopify.com', WooCommerce: 'woocommerce.com',
+  WhatsApp: 'whatsapp.com', 'WhatsApp Business': 'whatsapp.com',
+  'Fiverr (visuels)': 'fiverr.com', Fiverr: 'fiverr.com',
+  'Google Sheets': 'google.com', Klaviyo: 'klaviyo.com', 'Meta Ads': 'meta.com',
+  Mailchimp: 'mailchimp.com', TikTok: 'tiktok.com', 'Google Ads': 'ads.google.com', Notion: 'notion.so',
+  ChatGPT: 'openai.com', Claude: 'claude.ai',
+};
+
+const ToolLogo = ({ name, size = 16 }) => {
+  // 0 = simple-icons (SVG) → 1 = favicon du site → 2 = badge-lettre
+  const slug = TOOL_SLUGS[name];
+  const domain = TOOL_DOMAINS[name];
+  const [stage, setStage] = useState(slug ? 0 : domain ? 1 : 2);
+
+  if (stage === 0) {
+    return (
+      <img
+        src={`https://cdn.simpleicons.org/${slug}`}
+        alt="" width={size} height={size} loading="lazy"
+        onError={() => setStage(domain ? 1 : 2)}
+        className="shrink-0" style={{ width: size, height: size }}
+      />
+    );
+  }
+  if (stage === 1) {
+    return (
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+        alt="" width={size} height={size} loading="lazy"
+        onError={() => setStage(2)}
+        className="shrink-0 rounded-[3px]" style={{ width: size, height: size }}
+      />
+    );
+  }
+  return (
+    <span
+      className="inline-flex shrink-0 items-center justify-center rounded-md bg-gray-200 font-extrabold text-gray-600"
+      style={{ width: size, height: size, fontSize: size * 0.55 }}
+    >
+      {String(name).charAt(0)}
+    </span>
+  );
+};
+
+// ─── Données ─────────────────────────────────────────────────────────────────
+
+const FEATURES = [
+  {
+    tag: 'Boutique IA', badge: null,
+    title: 'Créateur de boutique IA',
+    vtype: 'store',
+    points: ['Page produit premium générée par IA', 'Formulaire COD, upsells et tunnel inclus', 'En ligne sur ton sous-domaine en 2 minutes'],
+    desc: 'Décris ton produit : l’IA génère ta boutique complète — page produit, visuels, textes, formulaire COD — en moins de 2 minutes.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.35m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72" /></svg>,
+  },
+  {
+    tag: 'Creative Center', badge: 'NOUVEAU',
+    title: 'Studio créatif IA complet',
+    vtype: 'creative',
+    points: ['Affiches et vidéos générées depuis ta photo produit', 'Voix-off naturelle et montage automatique', 'Stratégie Facebook Ads calculée sur tes chiffres'],
+    desc: 'Textes de vente, affiches, vidéos, voix-off, montage et stratégie Facebook Ads calculée — tout ton contenu publicitaire au même endroit.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>,
+  },
+  {
+    tag: 'Rita IA', badge: null,
+    title: 'Agent IA vendeur 24/7',
+    vtype: 'chat', anchor: 'agent-ia',
+    points: ['Répond à tes clients jour et nuit sur WhatsApp', 'Prend les commandes et recommande tes produits', 'Récupère les paniers abandonnés automatiquement'],
+    desc: 'Rita répond à tes clients sur WhatsApp, prend les commandes et recommande tes produits automatiquement. Jour et nuit.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>,
+  },
+  {
+    tag: 'Commandes', badge: null,
+    title: 'Gestion des commandes COD',
+    vtype: 'orders',
+    points: ['Confirme, relance et expédie en un clic', 'Synchronisation Shopify, WooCommerce et boutiques Scalor', 'Suivi du statut jusqu’à la livraison'],
+    desc: 'Confirme, relance et expédie en un clic. Synchronisation automatique depuis Shopify, WooCommerce et tes boutiques Scalor.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>,
+  },
+  {
+    tag: 'WhatsApp', badge: null,
+    title: 'Ventes & relances WhatsApp',
+    vtype: 'whatsapp',
+    points: ['Campagnes marketing en masse', 'Relances automatiques des paniers abandonnés', 'Plus de 90% de taux d’ouverture'],
+    desc: 'Confirmations, relances de paniers abandonnés et campagnes marketing avec plus de 90% de taux d’ouverture.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" /></svg>,
+  },
+  {
+    tag: 'Analytics', badge: null,
+    title: 'Analyses & rapports',
+    vtype: 'analytics',
+    points: ['Bénéfice net réel, livraison, panier moyen', 'Tableaux de bord en temps réel', 'Export de tes rapports en un instant'],
+    desc: 'Taux de livraison, bénéfice net, panier moyen — toutes tes métriques en temps réel, exportables en un instant.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>,
+  },
+  {
+    tag: 'Multi-boutiques', badge: null,
+    title: 'Gère tout depuis un seul endroit',
+    vtype: 'stores',
+    points: ['Toutes tes boutiques dans un seul dashboard', 'Statistiques consolidées multi-boutiques', 'Ajout d’une nouvelle boutique en quelques clics'],
+    desc: 'Connecte Shopify, WooCommerce et tes boutiques Scalor : toutes tes ventes dans un seul tableau de bord unifié.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" /></svg>,
+  },
+  {
+    tag: 'Équipe', badge: null,
+    title: 'Rôles & collaboration',
+    vtype: 'team',
+    points: ['Admins, closeuses, comptables, livreurs', 'Accès et permissions dédiés par rôle', 'Messagerie d’équipe et notifications push'],
+    desc: 'Admins, closeuses, comptables, livreurs : chacun son accès dédié, avec messagerie d’équipe et notifications intégrées.',
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>,
+  },
+];
+
+
+const FORMATION_LESSONS = [
+  'Introduction à Scalor', 'Connecter sa boutique à Scalor', 'Paramétrer sa boutique Scalor',
+  'Les fonctionnalités sur Scalor', 'Créer sa boutique sur Scalor', 'Page produit — Méthode 1',
+  'Formulaire & upsell', 'Automatiser son WhatsApp', 'Gérer les commandes Scalor',
+  'Gestion d’équipe', 'Gérer les rapports', 'Se fixer des objectifs', 'Gestion des finances',
+  'Gestion de Stock', 'Relancer les clients auto.', 'Configurer son agent IA ✦', 'Lancer sa campagne Facebook Ads',
+];
+
+const COUNTRIES = [
+  ['🇨🇮', 'Côte d’Ivoire'], ['🇸🇳', 'Sénégal'], ['🇲🇱', 'Mali'], ['🇧🇫', 'Burkina Faso'],
+  ['🇧🇯', 'Bénin'], ['🇹🇬', 'Togo'], ['🇬🇳', 'Guinée'], ['🇨🇲', 'Cameroun'],
+  ['🇬🇦', 'Gabon'], ['🇨🇬', 'Congo'], ['🇨🇩', 'RD Congo'], ['🇲🇦', 'Maroc'],
+  ['🇩🇿', 'Algérie'], ['🇹🇳', 'Tunisie'], ['🇬🇭', 'Ghana'], ['🇳🇬', 'Nigeria'],
+  ['🇰🇪', 'Kenya'], ['🇹🇿', 'Tanzanie'],
+];
+
+const TESTIMONIALS = [
+  ['Scalor a transformé ma gestion des commandes COD. L’interface est claire et simple. Je me concentre enfin sur la vente.', 'FB', 'Fatima B.', 'E-commerçante, Côte d’Ivoire'],
+  ['Mes closers gèrent leurs commandes sans me déranger. Chacun a son accès, c’est parfait. Je recommande à 100%.', 'AM', 'Aicha M.', 'Dropshippeuse, Sénégal'],
+  ['Mon taux de livraison a augmenté depuis que je track tout sur Scalor. Les stats ne mentent pas.', 'IN', 'Ibrahima N.', 'Vendeur COD, Mali'],
+  ['Le Creative Center m’a fait gagner des heures : affiches, textes et vidéos prêts en quelques minutes.', 'MK', 'Moussa K.', 'Dropshipper, Cameroun'],
+  ['Le support répond vite et comprend nos besoins. Ça change des autres plateformes.', 'MT', 'Mariam T.', 'Boutique en ligne, Burkina'],
+  ['Je gère mes 3 boutiques depuis un seul dashboard. C’est exactement ce dont j’avais besoin pour scaler.', 'YA', 'Youssef A.', 'Multi-boutiques, Maroc'],
+  ['Les relances automatiques WhatsApp m’ont fait récupérer des commandes que j’aurais perdues. Incroyable.', 'KD', 'Kofi D.', 'Vendeur COD, Ghana'],
+  ['Avant Scalor je perdais 2h par jour sur des tâches manuelles. Maintenant tout est automatique.', 'AS', 'Aminata S.', 'Dropshippeuse, Guinée'],
+];
+
+const FAQ = [
+  ['Scalor est-il vraiment gratuit pour commencer ?', 'Oui. Tu crées ta boutique, gères tes commandes et utilises WhatsApp sans carte bancaire. Les plans payants débloquent l’agent IA, les crédits créatifs et les fonctions avancées quand ton business grandit.'],
+  ['Comment fonctionne le paiement à la livraison (COD) ?', 'Tes clients commandent sans payer en ligne : tu confirmes par WhatsApp, tu livres, tu encaisses. Scalor suit chaque étape — confirmation, expédition, livraison — et calcule ton vrai bénéfice.'],
+  ['Que peut faire le Creative Center ?', 'Générer tout ton contenu de vente : angles et scripts, affiches publicitaires, vidéos avec montage et voix-off, traductions, et une stratégie Facebook Ads calculée sur tes chiffres (prix, coûts, taux de livraison).'],
+  ['Rita remplace-t-elle une closeuse ?', 'Rita gère environ 80% des questions répétitives sur WhatsApp, 24h/24 : disponibilité, prix, prise de commande, suivi. Ton équipe se concentre sur les cas qui demandent un humain.'],
+  ['Comment fonctionne le programme d’affiliation ?', 'Chaque compte Scalor a son lien de parrainage (menu Affiliation) : 500 F par inscription et 50% à vie sur chaque abonnement de tes filleuls, retirables par Mobile Money dès 5 000 F.'],
+];
+
+// ─── Visuels fonctionnalités : mini-démos animées en boucle (façon vidéo) ────
+// Contenu calé sur le vrai produit Scalor : statuts de commande réels
+// (Confirmé/Expédié/Livré/Injoignable/Reporté), agent Rita, modules du
+// Creative Center (Affiches, Vidéo, Voix, Montage) + KPIs réels de la
+// stratégie Ads (Marge si livrée, CPA cible, Budget test) et du dashboard
+// (Bénéfice net, Taux de livraison, Panier moyen, ROAS). Devise FCFA.
+
+const FV_KEYFRAMES = `
+@keyframes fv-blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+@keyframes fv-wave { 0%, 100% { transform: scaleY(.4); } 50% { transform: scaleY(1); } }
+@keyframes fv-shimmer { 0% { transform: translateX(-120%); } 100% { transform: translateX(220%); } }
+@keyframes fv-pop-in { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes fv-progress { from { width: 0%; } to { width: 100%; } }
+`;
+
+// Lecture/pause selon la visibilité réelle (la démo ne tourne qu'à l'écran)
+const useLoopInView = (threshold = 0.3) => {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, inView];
+};
+
+// Machine à étapes : 0 → count-1 puis recommence (la timeline de la vidéo)
+const useSceneStep = (count, stepMs, active) => {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    if (!active) return undefined;
+    setStep(0);
+    const id = setInterval(() => setStep((s) => (s + 1) % count), stepMs);
+    return () => clearInterval(id);
+  }, [active, count, stepMs]);
+  return step;
+};
+
+// Élément de scène qui apparaît à partir d'une étape (l'espace reste réservé,
+// donc aucun saut de mise en page pendant la lecture)
+const Pop = ({ show, delay = 0, from = 'up', className = '', style = {}, children }) => {
+  const hidden = from === 'left' ? 'translateX(-14px)' : from === 'right' ? 'translateX(14px)' : 'translateY(10px) scale(.97)';
+  return (
+    <div
+      className={className}
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? 'translate(0) scale(1)' : hidden,
+        transition: `opacity .38s ease ${show ? delay : 0}ms, transform .38s ease ${show ? delay : 0}ms`,
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const TypingDots = () => (
+  <span className="inline-flex items-center gap-1 px-1 py-0.5">
+    {[0, 1, 2].map((i) => (
+      <span key={i} className="h-1.5 w-1.5 rounded-full bg-gray-400" style={{ animation: `fv-blink 1s ease ${i * 0.16}s infinite` }} />
+    ))}
+  </span>
+);
+
+const Shimmer = () => (
+  <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+    <span className="absolute inset-y-0 left-0 w-1/2" style={{ background: 'linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)', animation: 'fv-shimmer 1.1s linear infinite' }} />
+  </span>
+);
+
+// Cadre commun : observer + barre de progression façon lecteur vidéo
+const SceneFrame = ({ steps, stepMs = 1000, render }) => {
+  const [ref, inView] = useLoopInView();
+  const step = useSceneStep(steps, stepMs, inView);
+  return (
+    <div ref={ref} className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      {render(step)}
+      <div className="absolute inset-x-0 bottom-0 h-[3px] bg-gray-100">
+        <div className="h-full rounded-r-full" style={{ background: GREEN, width: 0, animation: inView ? `fv-progress ${steps * stepMs}ms linear infinite` : 'none' }} />
+      </div>
+    </div>
+  );
+};
+
+// 1. Créateur de boutique IA — page produit COD générée depuis un prompt
+const StoreScene = () => (
+  <SceneFrame steps={8} stepMs={1000} render={(s) => (
+    <div>
+      <div className="flex items-center gap-1.5 border-b border-gray-100 bg-gray-50 px-3 py-2">
+        <span className="h-2.5 w-2.5 rounded-full bg-red-300" /><span className="h-2.5 w-2.5 rounded-full bg-amber-300" /><span className="h-2.5 w-2.5 rounded-full bg-green-300" />
+        <span className="ml-2 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-gray-400">zenda.scalor.net</span>
+      </div>
+      <div className="p-4 pb-5">
+        <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] font-bold text-gray-600">
+          <span style={{ color: GREEN }}>✦</span>
+          <span>« Montre connectée, 15 900 F »</span>
+          {s === 0
+            ? <TypingDots />
+            : <span key="ok" className="ml-auto rounded-md px-1.5 py-0.5 text-[9px] font-extrabold text-white" style={{ background: GREEN, animation: 'fv-pop-in .3s ease' }}>IA ✓</span>}
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <Pop show={s >= 1}>
+            <div className="relative aspect-square rounded-xl" style={{ background: 'linear-gradient(135deg,#e8f3ee,#cfe8dd)' }}>
+              {s === 1 && <Shimmer />}
+            </div>
+          </Pop>
+          <div className="space-y-2">
+            <Pop show={s >= 2}><div className="h-3.5 w-11/12 rounded bg-gray-200" /></Pop>
+            <Pop show={s >= 2} delay={90}><div className="h-3.5 w-3/4 rounded bg-gray-100" /></Pop>
+            <Pop show={s >= 3}><div className="flex h-5 w-24 items-center justify-center rounded-md text-[9.5px] font-extrabold text-amber-800" style={{ background: '#fde68a' }}>15 900 F</div></Pop>
+            <Pop show={s >= 4}><div className="rounded-md border border-gray-200 bg-white px-2 py-1 text-[9px] font-bold text-gray-500">Nom · Téléphone · Ville — paiement à la livraison</div></Pop>
+            <Pop show={s >= 5}><div className="flex items-center gap-1 rounded-md bg-gray-50 px-2 py-1 text-[9px] font-bold" style={{ color: GREEN }}>+ Upsell : 2 montres −10%</div></Pop>
+          </div>
+        </div>
+        <Pop show={s >= 5} className="mt-3">
+          <div className="flex h-9 items-center justify-center rounded-xl text-[11px] font-extrabold text-white" style={{ background: GREEN }}>Commander — paiement à la livraison</div>
+        </Pop>
+        <Pop show={s >= 6} className="mt-3">
+          <div className="rounded-xl px-3 py-2 text-center text-[11px] font-extrabold text-white" style={{ background: GREEN }}>✓ En ligne sur ton sous-domaine · formulaire COD + upsells</div>
+        </Pop>
+      </div>
+    </div>
+  )} />
+);
+
+// 2. Creative Center — Affiche, Vidéo, Voix, puis Stratégie Ads (KPIs réels)
+const CreativeScene = () => (
+  <SceneFrame steps={8} stepMs={1050} render={(s) => (
+    <div className="p-4 pb-5">
+      <div className="flex items-center gap-2">
+        <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[10px] font-extrabold text-gray-600">📸 Photo produit</span>
+        <span className="rounded-full px-2.5 py-1 text-[10px] font-extrabold text-white" style={{ background: GREEN }}>{s === 0 ? 'Génération…' : '5 angles · 3 hooks'}</span>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <Pop show={s >= 1}>
+          <div className="relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-xl p-3 text-white" style={{ background: `linear-gradient(160deg,${GREEN},${GREEN_DARK})` }}>
+            {s === 1 && <Shimmer />}
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-white/70">Affiche IA</span>
+            <div>
+              <div className="h-2.5 w-4/5 rounded bg-white/70" />
+              <div className="mt-1.5 h-2.5 w-3/5 rounded bg-white/40" />
+              {s >= 2 && <span key="ready" className="mt-2 inline-block rounded-md bg-white/90 px-1.5 py-0.5 text-[9px] font-extrabold" style={{ color: GREEN, animation: 'fv-pop-in .3s ease' }}>Prête ✓</span>}
+            </div>
+          </div>
+        </Pop>
+        <div className="space-y-3">
+          <Pop show={s >= 3}>
+            <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-gray-900">
+              {s === 3 && <Shimmer />}
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[11px] font-black" style={{ color: GREEN }}>▶</span>
+              <span className="absolute bottom-1.5 left-2 text-[8.5px] font-bold text-white/70">Montage auto</span>
+              <span className="absolute bottom-1.5 right-2 text-[8.5px] font-bold text-white/70">0:18</span>
+            </div>
+          </Pop>
+          <Pop show={s >= 4}>
+            <div className="rounded-xl border border-gray-200 p-2.5">
+              <span className="text-[9px] font-extrabold uppercase tracking-wider text-gray-400">Voix-off</span>
+              <div className="mt-1.5 flex items-end gap-0.5">
+                {[6, 12, 9, 16, 7, 14, 10, 18, 8, 13, 6, 11].map((h, i) => (
+                  <span key={i} className="w-1.5 origin-bottom rounded-full" style={{ height: h, background: GREEN, opacity: 0.45 + (i % 3) * 0.2, animation: s >= 4 ? `fv-wave .9s ease ${i * 0.07}s infinite` : 'none' }} />
+                ))}
+              </div>
+            </div>
+          </Pop>
+        </div>
+      </div>
+      <Pop show={s >= 5} className="mt-3">
+        <div className="rounded-xl border border-gray-200 p-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-extrabold text-gray-600">📊 Stratégie Facebook Ads</span>
+            <span className="rounded-md px-1.5 py-0.5 text-[9px] font-extrabold text-white" style={{ background: GREEN }}>calculée</span>
+          </div>
+          <div className="mt-2 grid grid-cols-3 gap-1.5">
+            {[['Marge si livrée', '7 500 F'], ['CPA cible max', '2 600 F'], ['Budget test', '7 800 F/j']].map(([k, v]) => (
+              <div key={k} className="rounded-lg bg-gray-50 p-1.5 text-center">
+                <p className="text-[7.5px] font-extrabold uppercase tracking-wide text-gray-400">{k}</p>
+                <p className="text-[10.5px] font-extrabold" style={{ color: GREEN }}>{v}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Pop>
+    </div>
+  )} />
+);
+
+// 3. Rita — agent WhatsApp : recommande, rassure, prend la commande, relance
+const ChatScene = () => (
+  <SceneFrame steps={9} stepMs={1000} render={(s) => (
+    <div>
+      <div className="flex items-center gap-2.5 px-4 py-3 text-white" style={{ background: GREEN }}>
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-[12px] font-bold">R</span>
+        <div><p className="text-[12.5px] font-bold leading-none">Rita · Agent IA</p><p className="mt-1 text-[10px] text-white/70">{s === 2 || s === 5 ? 'écrit…' : 'WhatsApp · répond 24/7'}</p></div>
+      </div>
+      <div className="space-y-2 bg-gray-50 p-4 pb-5" style={{ minHeight: 186 }}>
+        <Pop show={s >= 1} from="right" className="ml-auto w-fit max-w-[78%]"><div className="rounded-2xl rounded-br-md bg-gray-200 px-3 py-1.5 text-[12px]">Bonjour, la montre est encore dispo ?</div></Pop>
+        <Pop show={s >= 2} from="left" className="w-fit max-w-[88%]">
+          <div className="rounded-2xl rounded-bl-md border border-gray-200 bg-white px-3 py-1.5 text-[12px]">
+            {s <= 2 ? <TypingDots /> : 'Oui 😊 En stock. Avec le pack 2 montres à −10%, c\'est notre meilleure vente. Je vous réserve laquelle ?'}
+          </div>
+        </Pop>
+        <Pop show={s >= 4} from="right" className="ml-auto w-fit max-w-[78%]"><div className="rounded-2xl rounded-br-md bg-gray-200 px-3 py-1.5 text-[12px]">Le pack, livraison Douala Akwa</div></Pop>
+        <Pop show={s >= 5} from="left" className="w-fit max-w-[88%]">
+          <div className="rounded-2xl rounded-bl-md border border-gray-200 bg-white px-3 py-1.5 text-[12px]">
+            {s <= 5 ? <TypingDots /> : '✅ C\'est noté Aminata ! Livraison demain à Akwa, paiement à la réception.'}
+          </div>
+        </Pop>
+        <Pop show={s >= 7}><div className="mx-auto w-fit rounded-full px-3 py-1 text-[10px] font-extrabold text-white" style={{ background: GREEN }}>Commande #2851 créée automatiquement par Rita</div></Pop>
+      </div>
+    </div>
+  )} />
+);
+
+// 4. Commandes COD — statuts réels ; l'injoignable est relancé puis confirmé
+const OrdersScene = () => {
+  const rows = [
+    ['#2851', 'Aminata · Douala', 'Confirmé', '#e8f3ee', GREEN],
+    ['#2850', 'Paul · Yaoundé', 'Expédié', '#fef3c7', '#b45309'],
+    ['#2849', 'Fatou · Bafoussam', 'Livré', '#e8f3ee', GREEN],
+  ];
+  return (
+    <SceneFrame steps={8} stepMs={1000} render={(s) => (
+      <div className="p-3 pb-4">
+        <div className="flex items-center justify-between px-1.5 pb-2">
+          <span className="text-[11px] font-extrabold text-gray-700">Commandes du jour</span>
+          <span key={s >= 6 ? 'b' : 'a'} className="rounded-md px-1.5 py-0.5 text-[9.5px] font-extrabold text-white" style={{ background: GREEN, animation: 'fv-pop-in .3s ease' }}>{s >= 6 ? '+19' : '+18'}</span>
+        </div>
+        <div className="space-y-1.5">
+          {rows.map(([id, name, st, bg, color], i) => (
+            <Pop key={id} show={s >= i + 1} from="right">
+              <div className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2">
+                <span className="text-[11px] font-bold text-gray-700">{id} <span className="ml-1 font-medium text-gray-400">{name}</span></span>
+                <span className="rounded-full px-2 py-0.5 text-[9.5px] font-extrabold" style={{ background: bg, color }}>{st}</span>
+              </div>
+            </Pop>
+          ))}
+          <Pop show={s >= 4} from="right">
+            <div className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2">
+              <span className="text-[11px] font-bold text-gray-700">#2848 <span className="ml-1 font-medium text-gray-400">Yann · Garoua</span></span>
+              <span key={s >= 5 ? 'ok' : 'todo'} className="rounded-full px-2 py-0.5 text-[9.5px] font-extrabold" style={{ background: s >= 5 ? '#e8f3ee' : '#f3f4f6', color: s >= 5 ? GREEN : '#6b7280', animation: 'fv-pop-in .3s ease' }}>{s >= 5 ? 'Confirmé' : 'Injoignable'}</span>
+            </div>
+          </Pop>
+          <Pop show={s >= 6}>
+            <div className="rounded-xl px-3 py-2 text-[10.5px] font-extrabold" style={{ background: '#e8f3ee', color: GREEN }}>⚡ Relance WhatsApp automatique → commande confirmée</div>
+          </Pop>
+        </div>
+      </div>
+    )} />
+  );
+};
+
+// 5. Relances & diffusions WhatsApp — campagne « Relance injoignables »
+const WhatsappScene = () => (
+  <SceneFrame steps={9} stepMs={1000} render={(s) => {
+    const send = s >= 3 ? 100 : s === 2 ? 70 : s === 1 ? 35 : 0;
+    const sent = s >= 3 ? '2 400' : s === 2 ? '1 680' : s === 1 ? '840' : '0';
+    const stats = [['Ouvertures', 94, 4], ['Réponses', 43, 5], ['Commandes confirmées', 21, 6]];
+    return (
+      <div className="space-y-3 p-4 pb-5">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-extrabold text-gray-700">Campagne « Relance injoignables »</span>
+          <span key={s >= 3 ? 'sent' : s >= 1 ? 'sending' : 'ready'} className={`rounded-full px-2 py-0.5 text-[9.5px] font-extrabold ${s >= 3 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`} style={{ animation: 'fv-pop-in .3s ease' }}>
+            {s >= 3 ? 'Envoyée' : s >= 1 ? 'En cours' : 'Prête'}
+          </span>
+        </div>
+        <div>
+          <div className="flex items-center justify-between text-[10.5px] font-bold text-gray-500"><span>Clients ciblés</span><span style={{ color: GREEN }}>{sent} / 2 400</span></div>
+          <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100"><div className="h-full rounded-full" style={{ width: `${send}%`, background: GREEN, transition: 'width .85s ease' }} /></div>
+        </div>
+        {stats.map(([label, val, at]) => (
+          <div key={label}>
+            <div className="flex items-center justify-between text-[10.5px] font-bold text-gray-500"><span>{label}</span><span style={{ color: GREEN }}>{s >= at ? `${val}%` : '—'}</span></div>
+            <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100"><div className="h-full rounded-full" style={{ width: s >= at ? `${val}%` : '0%', background: GREEN, transition: 'width .85s ease' }} /></div>
+          </div>
+        ))}
+        <Pop show={s >= 7}>
+          <div className="rounded-xl px-3 py-2 text-center text-[11px] font-extrabold" style={{ background: '#e8f3ee', color: GREEN }}>21% des injoignables reconvertis 🎉</div>
+        </Pop>
+      </div>
+    );
+  }} />
+);
+
+// 6. Analyses & rapports — KPIs réels du dashboard (bénéfice net, livraison, ROAS)
+const AnalyticsScene = () => {
+  const bars = [34, 52, 41, 66, 58, 80, 72];
+  return (
+    <SceneFrame steps={7} stepMs={1050} render={(s) => (
+      <div className="p-4 pb-5">
+        <div className="flex items-center gap-2">
+          {[['Bénéfice net', '486 000 F'], ['Taux livraison', '62%'], ['Panier moyen', '12 500 F']].map(([k, v], i) => (
+            <Pop key={k} show delay={i * 110} className="flex-1">
+              <div className="rounded-xl bg-gray-50 p-2">
+                <p className="text-[8.5px] font-extrabold uppercase tracking-wide text-gray-400">{k}</p>
+                <p className="text-[12px] font-extrabold" style={{ color: GREEN }}>{s >= 2 ? v : '…'}</p>
+              </div>
+            </Pop>
+          ))}
+        </div>
+        <div className="mt-3 flex h-24 items-end gap-2">
+          {bars.map((h, i) => (
+            <div key={i} className="flex-1 rounded-t-md" style={{ height: s >= 1 ? `${h}%` : '4%', background: GREEN, opacity: 0.35 + h / 160, transition: `height .7s ease ${i * 90}ms` }} />
+          ))}
+        </div>
+        <Pop show={s >= 3} className="mt-3">
+          <div className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2">
+            <span className="text-[10.5px] font-extrabold text-gray-600">📈 ROAS (retour sur pub)</span>
+            <span className="rounded-md px-1.5 py-0.5 text-[9.5px] font-extrabold text-white" style={{ background: GREEN }}>3,4×</span>
+          </div>
+        </Pop>
+        <Pop show={s >= 4} className="mt-2">
+          <div className="rounded-xl px-3 py-1.5 text-center text-[10.5px] font-extrabold" style={{ background: '#e8f3ee', color: GREEN }}>Rapport exporté ✓</div>
+        </Pop>
+      </div>
+    )} />
+  );
+};
+
+// 7. Multi-boutiques — Shopify, WooCommerce, Scalor consolidés
+const StoresScene = () => (
+  <SceneFrame steps={7} stepMs={1000} render={(s) => (
+    <div className="p-4 pb-5">
+      {[['Boutique Cosmétiques', 'Shopify', '324 000 F'], ['Boutique Gadgets', 'Scalor', '512 000 F'], ['Boutique Mode', 'WooCommerce', '298 000 F']].map(([name, src, ca], i) => (
+        <Pop key={name} show={s >= i} from="right" className="mb-2">
+          <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
+            <span className="flex items-center gap-2 text-[11.5px] font-extrabold text-gray-700">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-[10px] text-white" style={{ background: GREEN, opacity: 1 - i * 0.2 }}>🛍️</span>
+              <span>{name}<span className="ml-1.5 rounded-md bg-gray-100 px-1.5 py-0.5 text-[8.5px] font-extrabold text-gray-500">{src}</span></span>
+            </span>
+            <span className="text-[10.5px] font-extrabold" style={{ color: GREEN }}>{s >= 4 ? ca : '…'}</span>
+          </div>
+        </Pop>
+      ))}
+      <Pop show={s >= 3}>
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-gray-300 p-2.5 text-[10.5px] font-extrabold text-gray-400">+ Connecter une boutique</div>
+      </Pop>
+      <Pop show={s >= 5} className="mt-2">
+        <div className="flex items-center justify-between rounded-xl px-3 py-2 text-[11px] font-extrabold" style={{ background: '#e8f3ee', color: GREEN }}>
+          <span>Ventes consolidées</span><span>1 134 000 F</span>
+        </div>
+      </Pop>
+    </div>
+  )} />
+);
+
+// 8. Équipe — rôles réels (Admin, Closeuse, Comptable, Livreur) + messagerie
+const TeamScene = () => (
+  <SceneFrame steps={7} stepMs={1000} render={(s) => (
+    <div className="p-4 pb-5">
+      <div className="flex -space-x-2">
+        {['A', 'M', 'S', 'K'].map((l, i) => (
+          <Pop key={l} show delay={i * 130}>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white text-[12px] font-extrabold text-white" style={{ background: GREEN, opacity: 1 - i * 0.15 }}>{l}</span>
+          </Pop>
+        ))}
+        <Pop show={s >= 1}><span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-gray-100 text-[11px] font-extrabold text-gray-500">+3</span></Pop>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {['Admin', 'Closeuse', 'Comptable', 'Livreur'].map((r, i) => (
+          <Pop key={r} show={s >= 2} delay={i * 90}>
+            <span className="inline-block rounded-full border border-gray-200 px-2.5 py-1 text-[10px] font-extrabold text-gray-600">{r}</span>
+          </Pop>
+        ))}
+      </div>
+      <Pop show={s >= 3} className="mt-3">
+        <div className="rounded-xl bg-gray-50 px-3 py-2 text-[11px] text-gray-500">{s <= 3 ? <TypingDots /> : '💬 « Commande #2851 confirmée, je passe la récupérer à 14h »'}</div>
+      </Pop>
+      <Pop show={s >= 5} className="mt-2">
+        <div className="rounded-xl px-3 py-1.5 text-[10.5px] font-extrabold" style={{ background: '#e8f3ee', color: GREEN }}>🔔 Notification envoyée au livreur</div>
+      </Pop>
+    </div>
+  )} />
+);
+
+const FeatureVisual = ({ type }) => {
+  if (type === 'store') return <StoreScene />;
+  if (type === 'creative') return <CreativeScene />;
+  if (type === 'chat') return <ChatScene />;
+  if (type === 'orders') return <OrdersScene />;
+  if (type === 'whatsapp') return <WhatsappScene />;
+  if (type === 'analytics') return <AnalyticsScene />;
+  if (type === 'stores') return <StoresScene />;
+  return <TeamScene />;
+};
+
+// ─── Blocs fonctionnalités : alternance gauche/droite (zig-zag) ──────────────
+const FeatureBlock = ({ f, index }) => {
+  const [ref, visible] = useReveal(0.18);
+  const base = 'transition-all duration-700';
+  const reversed = index % 2 === 1; // 1 bloc sur 2 : texte à droite, visuel à gauche (desktop)
+  const txtHidden = reversed ? 'translateX(32px)' : 'translateX(-32px)';
+  const ptHidden = reversed ? 'translateX(20px)' : 'translateX(-20px)';
+  const visHidden = reversed ? 'translateX(-32px) scale(.97)' : 'translateX(32px) scale(.97)';
+  return (
+    <section id={f.anchor} className="scroll-mt-24 px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl">
+        <div ref={ref} className="grid items-center gap-8 lg:grid-cols-2 rounded-2xl border border-gray-200 bg-white shadow-sm px-5 py-10 sm:px-10 sm:py-14">
+          {/* Texte — entre du côté où il est affiché */}
+          <div className={`${base} ${reversed ? 'lg:order-2' : ''}`} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateX(0)' : txtHidden }}>
+            <p className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-wider" style={{ color: GREEN }}>
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg text-white" style={{ background: GREEN }}>{f.icon}</span>
+              {f.tag}
+              {f.badge && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold text-amber-700">{f.badge}</span>}
+            </p>
+            <h3 className="mt-3 text-xl sm:text-3xl font-extrabold tracking-tight leading-tight">{f.title}</h3>
+            <p className="mt-3 text-[14.5px] text-gray-600 leading-relaxed">{f.desc}</p>
+            <div className="mt-4 space-y-2">
+              {(f.points || []).map((pt, j) => (
+                <div key={pt} className={base} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateX(0)' : ptHidden, transitionDelay: `${180 + j * 110}ms` }}>
+                  <div className="flex items-start gap-2.5">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white text-[10px]" style={{ background: GREEN }}>✓</span>
+                    <span className="text-[13.5px] text-gray-700">{pt}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Visuel — entre du côté opposé */}
+          <div className={`${base} ${reversed ? 'lg:order-1' : ''}`} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateX(0) scale(1)' : visHidden, transitionDelay: '120ms' }}>
+            <FeatureVisual type={f.vtype} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const FeatureBlocks = () => (
+  <>
+    <style>{FV_KEYFRAMES}</style>
+    {FEATURES.map((f, i) => <FeatureBlock key={f.title} f={f} index={i} />)}
+  </>
+);
+
+// ─── Section « Nouvelles mises à jour » — vidéo YouTube (façade légère) ──────
+// Façade : on n'affiche que la miniature ; le player YouTube ne se charge qu'au
+// clic (pas de JS/tracking YouTube au chargement de la landing).
+const YT_UPDATE_ID = 'CNQpGzLQdNE';
+
+const YouTubeFacade = ({ id, title }) => {
+  const [playing, setPlaying] = useState(false);
+  const [thumb, setThumb] = useState(`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`);
+  return (
+    <div className="relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-black shadow-lg" style={{ paddingBottom: '56.25%' }}>
+      {playing ? (
+        <iframe
+          className="absolute inset-0 h-full w-full"
+          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`}
+          title={title}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          className="group absolute inset-0 h-full w-full cursor-pointer"
+          aria-label={tp('Lire la vidéo')}
+        >
+          <img
+            src={thumb}
+            onError={() => setThumb(`https://i.ytimg.com/vi/${id}/hqdefault.jpg`)}
+            alt={title}
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+          <span className="absolute inset-0" style={{ background: 'linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.40))' }} />
+          <span className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-xl transition group-hover:scale-110" style={{ background: GREEN }}>
+            <span className="ml-1 h-0 w-0 border-y-[10px] border-l-[16px] border-y-transparent border-l-white" />
+          </span>
+        </button>
+      )}
+    </div>
+  );
+};
+
+// ─── Cadre de section — carte arrondie/bordée, espacement unifié (SaaS pro) ──
+const Section = ({ id, inner = '', className = '', children }) => (
+  <section id={id} className="scroll-mt-24 px-4 sm:px-6">
+    <div className="mx-auto max-w-6xl">
+      <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm px-5 py-10 sm:px-10 sm:py-14 ${className}`}>
+        {inner ? <div className={inner}>{children}</div> : children}
+      </div>
+    </div>
+  </section>
+);
+
+const UpdatesSection = () => (
+  <Section id="updates">
+    <Reveal className="text-center">
+      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white" style={{ background: GREEN }}>
+        ✦ {tp('Nouveau')}
+      </span>
+      <h2 className="mt-4 text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Les nouvelles mises à jour')}</h2>
+      <p className="mx-auto mt-3 max-w-2xl text-[15px] text-gray-600">{tp('Découvre en vidéo les dernières nouveautés de Scalor.')}</p>
+    </Reveal>
+    <Reveal delay={120} className="mt-8">
+      <div className="mx-auto max-w-2xl">
+        <YouTubeFacade id={YT_UPDATE_ID} title={tp('Nouvelles mises à jour Scalor')} />
+      </div>
+    </Reveal>
+    <Reveal delay={200} className="mt-5 text-center">
+      <a href={`https://youtu.be/${YT_UPDATE_ID}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[14px] font-bold hover:underline" style={{ color: GREEN }}>
+        {tp('Regarder sur YouTube')} →
+      </a>
+    </Reveal>
+  </Section>
+);
+
+// ─── Carrousel « Top vendeurs Scalor » ──────────────────────────────────────
+// Données réelles via GET /api/ecom/public/top-stores (CA anonymisé + arrondi).
+// Repli sur des exemples réalistes tant que l'API n'est pas déployée / vide.
+const TOP_SELLERS_FALLBACK = [
+  { rank: 1, seller: 'Aminata K.', flag: '🇨🇲', country: 'Cameroun', revenueLabel: '4,2 M FCFA', orders: 1240 },
+  { rank: 2, seller: 'Ibrahim S.', flag: '🇨🇮', country: "Côte d'Ivoire", revenueLabel: '3,6 M FCFA', orders: 1015 },
+  { rank: 3, seller: 'Fatou D.', flag: '🇸🇳', country: 'Sénégal', revenueLabel: '2,9 M FCFA', orders: 870 },
+  { rank: 4, seller: 'Yao K.', flag: '🇹🇬', country: 'Togo', revenueLabel: '2,4 M FCFA', orders: 760 },
+  { rank: 5, seller: 'Moussa T.', flag: '🇲🇱', country: 'Mali', revenueLabel: '2,1 M FCFA', orders: 690 },
+  { rank: 6, seller: 'Chantal M.', flag: '🇨🇲', country: 'Cameroun', revenueLabel: '1,8 M FCFA', orders: 540 },
+];
+
+const SellerCard = ({ s }) => (
+  <div className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="flex items-center justify-between">
+      <span className="flex h-9 w-9 items-center justify-center rounded-xl text-[13px] font-black text-white" style={{ background: GREEN }}>#{s.rank}</span>
+      <span className="text-2xl leading-none">{s.flag || '🌍'}</span>
+    </div>
+    <p className="mt-3 text-[15px] font-extrabold text-gray-900">{s.seller}</p>
+    <p className="text-[12px] font-semibold text-gray-400">{s.country || 'Scalor'}</p>
+    <div className="mt-4 rounded-xl bg-gray-50 px-3 py-3">
+      <p className="text-[10px] font-extrabold uppercase tracking-wide text-gray-400">{tp('Chiffre d’affaires')}</p>
+      <p className="text-xl font-extrabold" style={{ color: GREEN }}>{s.revenueLabel}</p>
+    </div>
+    {typeof s.orders === 'number' && (
+      <p className="mt-2 text-[12px] font-semibold text-gray-500">{s.orders.toLocaleString('fr-FR')} {tp('commandes')}</p>
+    )}
+  </div>
+);
+
+const TopSellers = () => {
+  const navigate = useNavigate();
+  const trackRef = useRef(null);
+  const [items, setItems] = useState(TOP_SELLERS_FALLBACK);
+
+  // Vraies perfs (best-effort) — remplace le repli si l'API renvoie ≥ 3 boutiques
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { default: ecomApi } = await import('../services/ecommApi.js');
+        const res = await ecomApi.get('/public/top-stores');
+        const list = res?.data?.stores;
+        if (!cancelled && Array.isArray(list) && list.length >= 3) setItems(list);
+      } catch { /* garde le repli */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const scrollByCard = (dir) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector('[data-card]');
+    const step = card ? card.getBoundingClientRect().width + 16 : el.clientWidth * 0.9;
+    let next = el.scrollLeft + dir * step;
+    if (dir > 0 && el.scrollLeft + el.clientWidth >= el.scrollWidth - 8) next = 0;        // boucle → début
+    else if (dir < 0 && el.scrollLeft <= 8) next = el.scrollWidth;                        // boucle → fin
+    el.scrollTo({ left: next, behavior: 'smooth' });
+  };
+
+  // Auto-défilement (pause au survol)
+  useEffect(() => {
+    const el = trackRef.current;
+    let id = setInterval(() => scrollByCard(1), 3500);
+    const pause = () => clearInterval(id);
+    const resume = () => { id = setInterval(() => scrollByCard(1), 3500); };
+    if (el) { el.addEventListener('mouseenter', pause); el.addEventListener('mouseleave', resume); }
+    return () => { clearInterval(id); if (el) { el.removeEventListener('mouseenter', pause); el.removeEventListener('mouseleave', resume); } };
+  }, [items]);
+
+  return (
+    <Section id="top-vendeurs">
+      <style>{`.ts-track::-webkit-scrollbar{display:none}.ts-track{-ms-overflow-style:none;scrollbar-width:none}`}</style>
+      <Reveal className="text-center max-w-2xl mx-auto">
+        <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white" style={{ background: GREEN }}>🏆 {tp('Top vendeurs')}</span>
+        <h2 className="mt-4 text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Ils cartonnent avec Scalor')}</h2>
+        <p className="mt-3 text-[15px] text-gray-600">{tp('Les boutiques qui génèrent le plus de ventes sur Scalor. Chiffres réels, vendeurs anonymisés.')}</p>
+      </Reveal>
+
+      <div className="relative mt-8">
+        <div ref={trackRef} className="ts-track flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2">
+          {items.map((s, i) => (
+            <div key={i} data-card className="w-[85%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%]">
+              <SellerCard s={s} />
+            </div>
+          ))}
+        </div>
+        <button type="button" onClick={() => scrollByCard(-1)} aria-label={tp('Précédent')} className="absolute -left-2 top-[46%] hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-lg text-gray-600 shadow-md transition hover:bg-gray-50 sm:flex">‹</button>
+        <button type="button" onClick={() => scrollByCard(1)} aria-label={tp('Suivant')} className="absolute -right-2 top-[46%] hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-lg text-gray-600 shadow-md transition hover:bg-gray-50 sm:flex">›</button>
+      </div>
+
+      <div className="mt-7 text-center">
+        <button onClick={() => navigate('/ecom/register')} className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-bold text-white transition hover:brightness-110 active:scale-[.99]" style={{ background: GREEN, boxShadow: '0 8px 24px rgba(15,107,79,.25)' }}>
+          {tp('Rejoindre les top vendeurs')} →
+        </button>
+      </div>
+    </Section>
+  );
+};
+
+// ─── Composant principal ─────────────────────────────────────────────────────
 const LandingPage = () => {
   const navigate = useNavigate();
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [openFaq, setOpenFaq] = useState(0);
+  const [showAnnounce, setShowAnnounce] = useState(true);
 
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
-
-  const features = [
-    {
-      tag: 'Commandes',
-      title: 'Gestion des commandes COD',
-      get desc() { return tp('Confirmez, relancez et expédiez vos commandes en un seul clic. Synchronisation automatique depuis Shopify, WooCommerce et plus.'); },
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    },
-    {
-      tag: 'WhatsApp',
-      title: 'Ventes & relances WhatsApp',
-      desc: 'Envoyez des confirmations, relancez les abandons de panier et lancez des campagnes marketing avec +90% de taux d\'ouverture.',
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    },
-    {
-      tag: 'Agent IA',
-      title: 'Agent IA vendeur 24/7',
-      get desc() { return tp('Votre agent intelligent répond aux clients, prend les commandes et recommande des produits automatiquement. Toujours disponible.'); },
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    },
-    {
-      tag: 'Analytics',
-      title: 'Analyses & rapports',
-      get desc() { return tp('Taux de livraison, bénéfice net, panier moyen — toutes vos métriques en temps réel. Exportez en PDF en un instant.'); },
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M3 3v18h18" strokeLinecap="round" strokeLinejoin="round"/><path d="M7 16l4-5 4 3 5-6" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    },
-    {
-      tag: 'Multi-boutiques',
-      title: 'Gérez tout depuis 1 place',
-      get desc() { return tp('Connectez Shopify, WooCommerce et plus. Toutes vos boutiques synchronisées dans un seul tableau de bord unifié.'); },
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v10a2 2 0 002 2h14a2 2 0 002-2V9" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    },
-    {
-      tag: 'Équipe',
-      title: 'Rôles & collaboration',
-      get desc() { return tp('Ajoutez admins, vendeurs, comptables avec des accès dédiés. Messagerie d\'équipe et notifications push intégrées.'); },
-      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zm14 10v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-    },
-  ];
-
-  const stats = [
-    { val: '500+', label: 'Vendeurs actifs' },
-    { val: '15 000+', get label() { return tp('Commandes traitées'); } },
-    { val: '+90%', label: 'Taux d\'ouverture WhatsApp' },
-    { val: '30s', get label() { return tp('Pour créer un compte'); } },
-  ];
-
-  const integrations = [
-    {
-      name: 'Shopify',
-      price: '~47 000 FCFA',
-      color: '#96bf48',
-      icon: (
-        <svg viewBox="0 0 109.5 124.5" className="w-8 h-8">
-          <path fill="#95BF47" d="M95.2 24.2c-.1-.6-.6-1-1.2-1-.5 0-9.9-.2-9.9-.2s-7.8-7.6-8.7-8.4c-.8-.8-2.5-.6-3.1-.4l-4.3 1.3c-1.3-3.7-3.5-7.1-7.4-7.1h-.4C59 6.3 57.3 5 55.7 5c-14 0-20.7 17.5-22.8 26.4l-9.8 3c-3.1.9-3.2 1-3.6 3.9L13 92.1l57.2 10.7 31-6.7L95.2 24.2zM67.5 17.5l-7 2.2c0-.4.1-.8.1-1.3 0-3.8-.5-6.9-1.4-9.3 3.5.4 5.8 4.4 8.3 8.4zM53.7 9.3c1 2.4 1.6 5.7 1.6 10.3v.6l-12.4 3.8c2.4-9.1 6.9-13.5 10.8-14.7zM47.8 6.9c.7 0 1.3.2 1.9.6-4.8 2.2-9.9 7.8-12 18.9l-9.1 2.8C30.8 20.6 37.1 6.9 47.8 6.9z"/>
-          <path fill="#5E8E3E" d="M94 23.2c-.5 0-9.9-.2-9.9-.2s-7.8-7.6-8.7-8.4c-.3-.3-.7-.5-1.1-.5L70.2 103l31-6.7-7.5-72.1c-.1-.6-.6-1-1.2-1h-.5z"/>
-          <path fill="#FFF" d="M55.7 40.5l-3.8 11.4s-3.4-1.8-7.5-1.8c-6.1 0-6.4 3.8-6.4 4.8 0 5.2 13.7 7.2 13.7 19.5 0 9.6-6.1 15.8-14.4 15.8-9.9 0-14.9-6.2-14.9-6.2l2.6-8.7s5.2 4.5 9.6 4.5c2.9 0 4-2.2 4-3.9 0-6.8-11.2-7.1-11.2-18.3 0-9.4 6.7-18.5 20.4-18.5 5.2 0 7.9 1.4 7.9 1.4z"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'WooCommerce',
-      price: '~18 000 FCFA',
-      color: '#7f54b3',
-      icon: (
-        <svg viewBox="0 0 100 60" className="w-10 h-6">
-          <path fill="#7F54B3" d="M9.6 0h80.8C95.7 0 100 4.3 100 9.6v40.8c0 5.3-4.3 9.6-9.6 9.6H9.6C4.3 60 0 55.7 0 50.4V9.6C0 4.3 4.3 0 9.6 0z"/>
-          <path fill="#FFF" d="M5.9 11.1c.7-.9 1.7-1.4 3.1-1.4 2.5 0 3.9 1.6 4 4.8l-1.5 16.3c0 .4-.2.6-.6.6s-.7-.2-.8-.6l-6-14.2-6 14.2c-.2.4-.5.6-.8.6-.4 0-.6-.2-.6-.6L.2 14.5C.3 11.3 1.7 9.7 4.2 9.7c1.4 0 2.4.5 3.1 1.4l4.2 7.8 4.2-7.8zM27.4 9.3c2.8 0 5.2 1 7.2 2.9 2 1.9 3 4.3 3 7.1 0 2.9-1 5.3-2.9 7.3-2 2-4.4 3-7.2 3-2.8 0-5.2-1-7.2-3-2-2-3-4.4-3-7.3 0-2.9 1-5.2 3-7.1 2-1.9 4.3-2.9 7.1-2.9zm0 3c-1.8 0-3.3.6-4.5 1.9-1.2 1.3-1.8 2.8-1.8 4.6 0 1.8.6 3.3 1.9 4.6 1.2 1.3 2.7 1.9 4.4 1.9s3.2-.6 4.4-1.9c1.2-1.3 1.9-2.8 1.9-4.6 0-1.8-.6-3.3-1.9-4.6-1.1-1.3-2.6-1.9-4.4-1.9zM51.7 9.3c2.8 0 5.2 1 7.2 2.9 2 1.9 3 4.3 3 7.1 0 2.9-1 5.3-2.9 7.3-2 2-4.4 3-7.2 3-2.8 0-5.2-1-7.2-3-2-2-3-4.4-3-7.3 0-2.9 1-5.2 3-7.1 2-1.9 4.3-2.9 7.1-2.9zm0 3c-1.8 0-3.3.6-4.5 1.9-1.2 1.3-1.8 2.8-1.8 4.6 0 1.8.6 3.3 1.9 4.6 1.2 1.3 2.7 1.9 4.4 1.9s3.2-.6 4.4-1.9c1.2-1.3 1.9-2.8 1.9-4.6 0-1.8-.6-3.3-1.9-4.6-1.1-1.3-2.6-1.9-4.4-1.9zM76.4 9.7c1.3 0 2.4.4 3.2 1.2.9.8 1.3 1.9 1.3 3.2 0 1.3-.4 2.6-1.3 3.9l-4.8 7.1 5.2.1c.5 0 .8.2.8.6 0 .4-.3.6-.8.6H70c-.5 0-.8-.2-.8-.7 0-.3.1-.5.3-.7l6.4-9.6c.6-.9.9-1.7.9-2.4 0-.6-.2-1-.5-1.4-.3-.4-.8-.6-1.4-.6-.7 0-1.4.2-2 .7-.3.2-.5.3-.7.3-.3 0-.5-.2-.5-.5s.1-.5.4-.8c.8-.7 1.8-1 3.3-1z"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'WhatsApp',
-      price: '~30 000 FCFA',
-      color: '#25d366',
-      icon: (
-        <svg viewBox="0 0 32 32" className="w-8 h-8">
-          <path fill="#25D366" d="M16 0C7.163 0 0 7.163 0 16c0 2.824.737 5.474 2.028 7.776L0 32l8.456-2.012A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0z"/>
-          <path fill="#FFF" d="M23.3 20.7c-.3-.7-1.8-1.4-2.5-1.6-.6-.2-1.1-.1-1.5.2l-.9 1c-.2.2-.5.3-.8.1-1-.5-3.1-2.1-4.3-4.1-.2-.3-.1-.6.1-.8l.7-.9c.3-.4.4-.8.2-1.3L13 11c-.3-.7-.7-1.2-1.3-1.2h-.1c-.7 0-1.5.3-2 .8-.8.9-1 2.1-.6 3.4.6 2.1 2.1 5 5.4 7.3 2.4 1.7 5 2.4 7 1.6.7-.3 1.6-.9 2-1.9.3-.7.2-1.8-.1-2.3z"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'Google Sheets',
-      price: '~7 000 FCFA',
-      color: '#34a853',
-      icon: (
-        <svg viewBox="0 0 48 48" className="w-8 h-8">
-          <path fill="#43A047" d="M37 45H11c-1.7 0-3-1.3-3-3V6c0-1.7 1.3-3 3-3h19l10 10v29c0 1.7-1.3 3-3 3z"/>
-          <path fill="#C8E6C9" d="M40 13H30V3z"/>
-          <path fill="#2E7D32" d="M30 13l10 10V13z"/>
-          <path fill="#FFF" d="M15 23h18v2H15zm0 4h18v2H15zm0 4h12v2H15z"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'EasySell',
-      price: '~12 000 FCFA',
-      color: '#f59e0b',
-      icon: (
-        <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
-          <rect width="32" height="32" rx="8" fill="#F59E0B"/>
-          <path d="M10 16l4 4 8-8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M8 10h16M8 22h10" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'Meta Ads',
-      price: '~300 000 FCFA',
-      color: '#1877f2',
-      icon: (
-        <svg viewBox="0 0 32 32" className="w-8 h-8">
-          <path fill="#1877F2" d="M32 16C32 7.163 24.837 0 16 0S0 7.163 0 16c0 7.986 5.851 14.604 13.5 15.806V20.625H9.438V16H13.5v-3.547c0-4.01 2.389-6.225 6.044-6.225 1.751 0 3.581.313 3.581.313v3.938h-2.018c-1.987 0-2.607 1.233-2.607 2.498V16h4.438l-.709 4.625H18.5v11.181C26.149 30.604 32 23.986 32 16z"/>
-          <path fill="#FFF" d="M22.229 20.625L22.938 16H18.5v-2.983c0-1.265.62-2.498 2.607-2.498h2.018V6.54s-1.83-.312-3.58-.312c-3.655 0-6.045 2.215-6.045 6.225V16H9.438v4.625H13.5v11.181a16.12 16.12 0 005 0V20.625h3.729z"/>
-        </svg>
-      ),
-    },
-
-  ];
+  const Cta = ({ children, onClick, variant = 'primary', className = '' }) => (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-bold transition hover:brightness-110 active:scale-[.99] ${className}`}
+      style={variant === 'primary'
+        ? { background: GREEN, color: '#fff', boxShadow: '0 8px 24px rgba(15,107,79,.25)' }
+        : { background: '#fff', color: '#111827', border: '1px solid #e5e7eb' }}
+    >
+      {children}
+    </button>
+  );
 
   return (
-    <div className="overflow-x-hidden" style={{ background: '#f8fafc', color: '#111827', fontFamily: 'inherit', minHeight: '100vh' }}>
+    <div className="min-h-screen text-gray-900" style={{ background: '#f4f5f7', fontFamily: "'Inter', -apple-system, sans-serif" }}>
+
+      {/* ══ Barre d'annonce — programme d'affiliation ══ */}
+      {showAnnounce && (
+        <div className="fixed top-0 inset-x-0 z-[60] flex h-10 items-center justify-center px-10 text-white" style={{ background: `linear-gradient(90deg,${GREEN},${GREEN_DARK})` }}>
+          <a href="#affiliation" className="flex items-center gap-1.5 text-[12px] sm:text-[13px] font-semibold hover:underline">
+            <span aria-hidden>🎉</span>
+            <span className="sm:hidden">{tp('Affiliation : 50% à vie + 500 F')} →</span>
+            <span className="hidden sm:inline">{tp('Programme d’affiliation : 50% de commission à vie sur chaque filleul + 500 F par inscription · En savoir plus')} →</span>
+          </a>
+          <button onClick={() => setShowAnnounce(false)} aria-label={tp('Fermer')} className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-white/80 transition hover:bg-white/15 hover:text-white">✕</button>
+        </div>
+      )}
 
       {/* ══ NAVBAR — floating pill ══ */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-3">
+      <header className="fixed left-0 right-0 z-50 flex justify-center px-4 pt-3" style={{ top: showAnnounce ? 40 : 0 }}>
         {/* Pill container */}
         <div className="w-full max-w-5xl transition-all duration-300"
           style={{
@@ -449,874 +1017,315 @@ const LandingPage = () => {
         )}
       </header>
 
-      {/* ══ HERO ══ */}
-      <section className="relative flex flex-col items-center justify-center pt-[80px] overflow-hidden" style={{ background: '#fff' }}>
-        {/* Dot grid pattern */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #d1d5db 1px, transparent 1px)', backgroundSize: '28px 28px', opacity: 0.45 }} />
-        {/* Soft green radial glow center */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 20%, rgba(5,151,109,0.13) 0%, transparent 65%)' }} />
-        {/* Green glow top-left */}
-        <div className="absolute pointer-events-none" style={{ top: '-100px', left: '-80px', width: '550px', height: '550px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(5,151,109,0.18) 0%, transparent 65%)', filter: 'blur(60px)' }} />
-        {/* Green glow top-right */}
-        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-80px', width: '450px', height: '450px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(5,151,109,0.13) 0%, transparent 65%)', filter: 'blur(60px)' }} />
-        {/* Green glow bottom-left */}
-        <div className="absolute pointer-events-none" style={{ bottom: '-40px', left: '-60px', width: '380px', height: '380px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(5,151,109,0.10) 0%, transparent 65%)', filter: 'blur(50px)' }} />
-        {/* Green glow bottom-right */}
-        <div className="absolute pointer-events-none" style={{ bottom: '-40px', right: '-80px', width: '480px', height: '480px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(5,151,109,0.15) 0%, transparent 65%)', filter: 'blur(55px)' }} />
+      {/* ── Hero ── */}
+      <section className={`relative overflow-hidden pb-14 ${showAnnounce ? 'pt-[152px] sm:pt-[168px]' : 'pt-28 sm:pt-32'}`} style={{ background: 'linear-gradient(180deg,#f6faf8 0%,#f4f5f7 100%)' }}>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center">
+          <a
+            href="https://chat.whatsapp.com/IH3nEvfeEWrHiAnocwZTwz?mode=gi_t" target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-[12.5px] font-semibold text-gray-600 shadow-sm hover:border-gray-300 transition"
+          >
+            <span className="h-2 w-2 rounded-full" style={{ background: GREEN }} />
+            {tp('Rejoindre +1 000 e-commerçants dans notre groupe')} →
+          </a>
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center z-10 pt-10 sm:pt-14">
-          {/* Badge pill */}
-          <Reveal>
-            <a href="https://chat.whatsapp.com/IH3nEvfeEWrHiAnocwZTwz?mode=gi_t" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[13px] font-semibold mb-6 sm:mb-8 transition-all hover:scale-[1.03] max-w-full"
-              style={{ background: '#f4f4f4', border: '1px solid #e0e0e0', color: '#05976D', textDecoration: 'none' }}>
-              <svg viewBox="0 0 32 32" className="w-4 h-4 flex-shrink-0" style={{ fill: '#25d366' }}><path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.737 5.474 2.028 7.776L0 32l8.456-2.012A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0z"/><path fill="#fff" d="M23.3 20.7c-.3-.7-1.8-1.4-2.5-1.6-.6-.2-1.1-.1-1.5.2l-.9 1c-.2.2-.5.3-.8.1-1-.5-3.1-2.1-4.3-4.1-.2-.3-.1-.6.1-.8l.7-.9c.3-.4.4-.8.2-1.3L13 11c-.3-.7-.7-1.2-1.3-1.2h-.1c-.7 0-1.5.3-2 .8-.8.9-1 2.1-.6 3.4.6 2.1 2.1 5 5.4 7.3 2.4 1.7 5 2.4 7 1.6.7-.3 1.6-.9 2-1.9.3-.7.2-1.8-.1-2.3z"/></svg>
-              Rejoindre +1 000 e-commerçants dans notre groupe
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24" style={{ color: '#05976D' }}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
-            </a>
-          </Reveal>
+          <h1 className="mx-auto mt-6 max-w-3xl text-4xl sm:text-6xl font-extrabold leading-[1.08] tracking-tight">
+            {tp('L’IA qui')} <RotatingText />
+            <br className="hidden sm:block" /> {tp('en Afrique')}
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-[15.5px] sm:text-lg text-gray-600 leading-relaxed">
+            {tp('Scalor génère ta boutique et tout ton contenu de vente par IA — puis pilote commandes, WhatsApp et livraison. Une seule plateforme, pensée pour le COD africain.')}
+          </p>
 
-          {/* Main heading */}
-          <Reveal delay={80}>
-            <h1 className="text-[2rem] sm:text-5xl lg:text-[4.2rem] font-semibold tracking-tight leading-[1.1] mb-5 sm:mb-6 text-foreground">
-              L'IA qui <span style={{ color: '#05976D' }}>{tp('crée et vend')}</span><br />
-              {tp('ton e-commerce en Afrique')}
-            </h1>
-          </Reveal>
-
-          {/* Subtitle */}
-          <Reveal delay={140}>
-            <p className="text-sm sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-2xl mx-auto text-muted-foreground">
-              Scalor génère ta <span className="font-semibold text-foreground">boutique</span> et tes <span className="font-semibold text-foreground">contenus</span> par IA, puis pilote tout ton <span className="font-semibold text-foreground">{tp('processus de vente')}</span> — commandes, WhatsApp, livraison — partout en Afrique.
-            </p>
-          </Reveal>
-
-          {/* CTA buttons */}
-          <Reveal delay={200}>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-              <button onClick={() => navigate('/ecom/register')}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 text-white font-semibold text-[15px] rounded-xl transition-colors active:scale-[0.98]"
-                style={{ background: '#05976D' }}
-                onMouseEnter={e => e.currentTarget.style.background='#04835f'}
-                onMouseLeave={e => e.currentTarget.style.background='#05976D'}>
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-                {tp('Commencer gratuitement')}
-              </button>
-              <button onClick={() => document.getElementById('formation')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 font-semibold text-[15px] rounded-xl transition-all text-foreground"
-                style={{ background: '#fff', border: '1px solid #e5e7eb' }}
-                onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
-                onMouseLeave={e => e.currentTarget.style.background='#fff'}>
-                <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                {tp('Formation')}
-              </button>
-            </div>
-          </Reveal>
-
-          {/* Social proof */}
-          <Reveal delay={240}>
-            <div className="flex items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm flex-wrap text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className={`w-4 h-4 ${i < 4 ? 'text-yellow-400' : 'text-yellow-400/40'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                  ))}
-                </div>
-                <span>{tp('4.5/5 satisfaction')}</span>
-              </div>
-              <span className="w-1 h-1 rounded-full bg-gray-300" />
-              <span>{tp('1 000+ vendeurs actifs')}</span>
-              <span className="w-1 h-1 rounded-full bg-gray-300" />
-              <span>{tp('15 000+ commandes traitées')}</span>
-            </div>
-          </Reveal>
-        </div>
-
-        {/* Dashboard preview */}
-        <div id="dashboard-preview" className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 mt-8 sm:mt-12">
-          <Reveal delay={300}>
-            <div className="relative rounded-t-2xl overflow-hidden"
-              style={{ border: '1px solid #e5e7eb', boxShadow: '0 20px 80px rgba(0,0,0,0.10)' }}>
-              <div className="flex items-center gap-1.5 px-4 py-3" style={{ background: '#f3f4f6', borderBottom: '1px solid #e5e7eb' }}>
-                <span className="w-3 h-3 rounded-full" style={{ background: '#ef4444', opacity: 0.7 }} />
-                <span className="w-3 h-3 rounded-full" style={{ background: '#f59e0b', opacity: 0.7 }} />
-                <span className="w-3 h-3 rounded-full" style={{ background: '#05976D', opacity: 0.7 }} />
-                <div className="ml-4 flex-1 h-6 rounded-md flex items-center px-3" style={{ background: '#fff', border: '1px solid #e5e7eb' }}>
-                  <span className="text-[11px] text-muted-foreground">{tp('app.scalor.pro/dashboard')}</span>
-                </div>
-              </div>
-              <video autoPlay loop muted playsInline preload="auto" className="w-full block">
-                <source src="https://pub-82e66386f67141d6b9e8d7ce71fc30cc.r2.dev/pp.mov" type="video/mp4" />
-              </video>
-            </div>
-            <div className="h-28 -mt-28 relative z-10" style={{ background: 'linear-gradient(to bottom, transparent, #fff)' }} />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ══ LOGOS BAND ══ */}
-      <section className="py-14 sm:py-20 overflow-hidden" style={{ background: '#f8fafc', borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-        <style>{`
-          @keyframes ticker {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-          .ticker-track { animation: ticker 22s linear infinite; }
-          .ticker-track:hover { animation-play-state: paused; }
-        `}</style>
-        <div className="max-w-4xl mx-auto px-4 text-center mb-10">
-          <Reveal>
-            <h3 className="text-2xl sm:text-4xl font-semibold tracking-tight text-foreground mb-3">
-              Vous dépensez beaucoup d'argent sur ces outils…
-            </h3>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-              {tp('Scalor les remplace tous — commandes, WhatsApp, IA, boutique — pour 0 FCFA au démarrage.')}
-            </p>
-          </Reveal>
-        </div>
-
-        {/* Ticker défilant */}
-        <div className="relative w-full" style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)' }}>
-          <div className="flex ticker-track" style={{ width: 'max-content' }}>
-            {[...integrations, ...integrations].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 mx-2 px-3 py-2.5 rounded-xl flex-shrink-0 bg-card border border-border">
-                <span className="flex-shrink-0 opacity-40" style={{ width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
-                </span>
-                <span className="text-sm font-semibold line-through text-muted-foreground">{item.name}</span>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">{item.price}</span>
-              </div>
-            ))}
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Cta onClick={() => navigate('/ecom/register')}>{tp('Commencer gratuitement')} →</Cta>
+            <Cta variant="ghost" onClick={() => navigate('/ecom/formation')}>{tp('Voir la formation')}</Cta>
           </div>
-        </div>
 
-        {/* Comparaison finale */}
-        <div className="max-w-3xl mx-auto px-4 mt-12">
-          <Reveal delay={100}>
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 items-stretch">
-              {/* Colonne outils séparés — le problème */}
-              <div className="sm:col-span-2 rounded-2xl border border-destructive/20 bg-destructive/[0.04] p-5 sm:p-6 flex flex-col gap-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-destructive/10 text-destructive">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                  </div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-destructive">{tp('Avant')}</span>
-                </div>
-                <div>
-                  <p className="text-base font-bold text-foreground">{tp('Outils séparés')}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-1">{tp('Shopify · WhatsApp · Meta Ads · Klaviyo · Loox…')}</p>
-                </div>
-                <div className="mt-auto pt-3 border-t border-destructive/15">
-                  <p className="text-3xl font-semibold text-destructive tabular-nums">~414 000<span className="text-base font-bold"> FCFA</span></p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{tp('par mois · 5 abonnements')}</p>
-                </div>
-              </div>
-
-              {/* Colonne Scalor — la solution (mise en avant) */}
-              <div className="sm:col-span-3 relative rounded-2xl bg-card p-5 sm:p-7 flex flex-col gap-4" style={{ border: '2px solid #05976D', boxShadow: '0 24px 60px -24px rgba(5,151,109,0.45)' }}>
-                <span className="absolute top-4 right-4 text-[11px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: '#05976D' }}>{tp('Recommandé')}</span>
-                <img src="/logo.png" alt="Scalor" className="h-8 object-contain self-start" />
-                <div>
-                  <p className="text-base font-bold text-foreground">{tp('Scalor — tout en un')}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-1">{tp('Commandes · WhatsApp · IA · Analytics · Boutique')}</p>
-                </div>
-                <div className="mt-auto pt-3 flex items-end justify-between gap-3 flex-wrap" style={{ borderTop: '1px solid rgba(5,151,109,0.15)' }}>
-                  <div>
-                    <p className="text-4xl font-semibold tabular-nums" style={{ color: '#05976D' }}>0<span className="text-lg font-bold"> FCFA</span></p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{tp('pour commencer')}</p>
-                  </div>
-                  <button onClick={() => navigate('/ecom/register')} className="px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all active:scale-95" style={{ background: '#05976D' }}>{tp('Commencer gratuitement')}</button>
-                </div>
-              </div>
-            </div>
-
-            {/* Bandeau économies */}
-            <div className="mt-5 flex justify-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ background: 'rgba(5,151,109,0.10)', color: '#05976D' }}>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                {tp('Économise ~414 000 FCFA chaque mois avec Scalor')}
-              </div>
-            </div>
-
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ══ STATS ══ */}
-      <section className="py-20 sm:py-28" style={{ background: '#fff' }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <Reveal>
-            <div className="text-center mb-14">
-              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-4 text-foreground">
-                {tp('Des chiffres qui parlent')}
-              </h2>
-              <p className="text-base sm:text-lg max-w-lg mx-auto text-muted-foreground">
-                {tp('Des vendeurs africains qui scalent leur business avec Scalor chaque jour.')}
-              </p>
-            </div>
-          </Reveal>
-          <Reveal delay={80}>
-            <div className="rounded-2xl overflow-hidden shadow-lg" style={{ border: '1px solid #e5e7eb' }}>
-              <img src="/img/stats-banner.png" alt={tp('Des Africains passent à l\'action avec Scalor')} className="w-full block" />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ══ FEATURES ══ */}
-      <section id="features" className="py-20 sm:py-28 bg-muted/40 border-t border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-14">
-              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold tracking-tight mb-4 text-foreground">
-                Tout ce dont vous avez besoin<br className="hidden sm:block" />
-                <span className="text-muted-foreground"> {tp('pour vendre en Afrique')}</span>
-              </h2>
-              <p className="text-base sm:text-lg max-w-lg mx-auto text-muted-foreground">
-                {tp('Pas de fonctions gadgets. Juste ce qui compte pour vendre en COD.')}
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {features.map((f, i) => (
-              <Reveal key={i} delay={i * 55}>
-                <div className="group p-6 rounded-2xl h-full bg-card border border-border transition-all duration-300 cursor-default hover:-translate-y-1"
-                  onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(5,151,109,0.35)'; e.currentTarget.style.boxShadow='0 18px 44px -18px rgba(5,151,109,0.22)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor=''; e.currentTarget.style.boxShadow='none'; }}>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105" style={{ background: 'rgba(5,151,109,0.10)', color: '#05976D' }}>
-                      {f.icon}
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-muted text-muted-foreground">{f.tag}</span>
-                  </div>
-                  <h3 className="text-[17px] font-bold text-foreground mb-2">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
-                </div>
-              </Reveal>
-            ))}
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12.5px] font-semibold text-gray-500">
+            <span>⭐ 4.5/5 {tp('satisfaction')}</span>
+            <span>1 000+ {tp('vendeurs actifs')}</span>
+            <span>15 000+ {tp('commandes traitées')}</span>
           </div>
+
         </div>
       </section>
 
-      {/* ══ AI AGENT SECTION ══ */}
-      <section id="agent-ia" className="py-20 sm:py-28 relative overflow-hidden" style={{ borderTop: '1px solid #e5e7eb', background: '#fff' }}>
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(34,197,94,0.05) 0%, transparent 70%)' }} />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Chat mock — reste dark pour le réalisme UI */}
-            <Reveal>
-              <div className="relative">
-                <div className="rounded-2xl overflow-hidden p-5" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 24px 60px rgba(0,0,0,0.2)' }}>
-                  <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg, #05976D, #0d9488)' }}>R</div>
-                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-700 rounded-full" style={{ border: '2px solid #111' }} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-white">{tp('Rita — Agent IA')}</p>
-                      <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{tp('En ligne')}</p>
-                    </div>
+      {/* ── Corps en cartes ─ espacement unifié ── */}
+      <div className="space-y-4 sm:space-y-5 pt-4 sm:pt-5 pb-4 sm:pb-5">
+
+      {/* ── Nouvelles mises à jour (vidéo YouTube) ── */}
+      <UpdatesSection />
+
+      {/* ── Scalor tout-en-un ── */}
+      <Section>
+          <Reveal className="text-center">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Vous dépensez beaucoup d’argent sur ces outils…')}</h2>
+            <p className="mt-3 text-[15px] text-gray-600">{tp('Scalor les remplace tous — boutique, contenus, WhatsApp, IA — pour 0 FCFA au démarrage.')}</p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 max-w-4xl mx-auto items-stretch">
+            {/* Avant — outils séparés */}
+            <Reveal className="rounded-3xl border border-gray-200 bg-white p-6 sm:p-7 flex flex-col">
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400">{tp('Avant — outils séparés')}</p>
+              <div className="mt-4 space-y-2">
+                {[
+                  ['Shopify', 'Shopify + apps', tp('boutique')],
+                  ['Canva Pro', 'Canva Pro + CapCut', tp('visuels & vidéos')],
+                  ['Fiverr', 'Fiverr / freelances', tp('affiches & montages')],
+                  ['WhatsApp Business', 'WhatsApp Business + closeuse', tp('réponses clients')],
+                  ['Klaviyo', 'Klaviyo + Google Sheets', tp('relances & suivi')],
+                  ['ChatGPT', 'ChatGPT + Claude', tp('rédaction & assistant IA')],
+                ].map(([logoName, tool, role]) => (
+                  <div key={tool} className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3.5 py-2.5">
+                    <span className="flex items-center gap-2.5 text-[13px] font-bold text-gray-700">
+                      <ToolLogo name={logoName} size={16} />
+                      {tool}
+                    </span>
+                    <span className="text-[11.5px] text-gray-400">{role}</span>
                   </div>
-                  <div className="space-y-3">
-                    {[
-                      { from: 'user', text: 'Salut, où en est ma commande ?' },
-                      { from: 'agent', text: 'Bonjour ! 👋 Votre commande #2847 a été expédiée hier et arrivera demain entre 14h-16h. Je vous envoie le lien de suivi !' },
-                      { from: 'user', text: 'Super merci ! Vous avez d\'autres coloris ?' },
-                      { from: 'agent', text: 'Oui ! 🎨 Ce produit existe en 5 coloris. Je vous envoie le catalogue directement sur WhatsApp — voulez-vous profiter de -15% pour votre prochain achat ?' },
-                    ].map((msg, i) => (
-                      <div key={i} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className="max-w-[80%] px-4 py-2.5 rounded-2xl text-sm"
-                          style={msg.from === 'user'
-                            ? { background: '#05976D', color: '#fff', borderBottomRightRadius: 4 }
-                            : { background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.1)', borderBottomLeftRadius: 4 }}>
-                          {msg.text}
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex items-center gap-2 mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                      <div className="flex-1 h-10 rounded-xl px-4 flex items-center text-sm" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.25)' }}>
-                        Écrivez un message…
-                      </div>
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#05976D' }}>
-                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-            {/* Text */}
-            <Reveal delay={100}>
-              <div>
-                <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight mb-5 text-foreground">
-                  Votre Agent IA WhatsApp,<br />
-                  <span className="text-muted-foreground">{tp('disponible 24h/24')}</span>
-                </h2>
-                <p className="text-base sm:text-lg mb-8 leading-relaxed text-muted-foreground">
-                  Laissez Rita gérer 80% des questions clients sur WhatsApp pendant que vous vous concentrez sur la croissance. Rapide, intelligent, toujours disponible.
-                </p>
-                <div className="space-y-4 mb-8">
-                  {[
-                    'Support client 24/7 automatisé',
-                    'Recommandations produits personnalisées',
-                    'Récupération de paniers abandonnés',
-                    'Compréhension du langage naturel en français',
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#f4f4f4', border: '1px solid #e0e0e0' }}>
-                        <svg className="w-3 h-3" fill="none" stroke="#05976D" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
-                      </div>
-                      <span className="text-sm font-medium text-foreground">{item}</span>
-                    </div>
-                  ))}
-                </div>
-                <button onClick={() => navigate('/ecom/register')}
-                  className="flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-white transition-all"
-                  style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 4px 20px rgba(0,61,50,0.10)' }}
-                  onMouseEnter={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}
-                  onMouseLeave={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}>
-                  {tp('Commencer gratuitement')}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                </button>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ BOUTIQUE IA ══ */}
-      <section id="boutique-ia" className="py-20 sm:py-28 relative overflow-hidden" style={{ background: '#fff', borderTop: '1px solid #e5e7eb' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 100%, rgba(34,197,94,0.06) 0%, transparent 65%)' }} />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-            {/* Texte — gauche */}
-            <Reveal>
-              <div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight mb-5 text-foreground">
-                  Créez votre boutique IA<br />
-                  <span style={{ background: 'linear-gradient(135deg, #05976D 0%, #05976D 60%, #05976D 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                    {tp('sur Scalor')}
-                  </span>
-                </h2>
-                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8">
-                  Décrivez votre produit, l'IA génère votre boutique complète en quelques secondes — page produit, photos, descriptions et tunnel de vente inclus.
-                </p>
-
-                <div className="space-y-4 mb-8">
-                  {[
-                    { num: '01', title: 'Décrivez votre produit', desc: "Dites à l'IA ce que vous vendez en quelques mots." },
-                    { num: '02', title: "L'IA construit tout", desc: "Page produit, visuels, textes de vente et formulaire COD générés." },
-                    { num: '03', title: 'Lancez & vendez', desc: "Partagez le lien, les commandes arrivent dans Scalor." },
-                  ].map((s, i) => (
-                    <div key={i} className="flex items-start gap-4">
-                      <span className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ background: '#f4f4f4', border: '1px solid #e0e0e0', color: '#05976D' }}>{s.num}</span>
-                      <div>
-                        <p className="text-sm font-bold text-foreground">{s.title}</p>
-                        <p className="text-sm text-muted-foreground">{s.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <button onClick={() => navigate('/ecom/register')}
-                  className="inline-flex items-center gap-2.5 px-7 py-3.5 text-white font-bold text-[15px] rounded-xl transition-all active:scale-[0.97]"
-                  style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 8px 32px rgba(0,61,50,0.12)' }}
-                  onMouseEnter={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}
-                  onMouseLeave={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-                  {tp('Créer ma boutique IA gratuitement')}
-                </button>
-                <p className="mt-3 text-sm text-muted-foreground">{tp('Aucune carte bancaire · Prêt en moins de 2 minutes')}</p>
-              </div>
-            </Reveal>
-
-            {/* Vidéo — droite */}
-            <Reveal delay={100}>
-              <div className="relative flex items-center justify-center">
-                <div className="relative rounded-2xl overflow-hidden w-full"
-                  style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.12)', border: '1px solid #e5e7eb' }}>
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="auto"
-                    className="w-full block"
-                    style={{ borderRadius: '16px', minHeight: 'clamp(300px, 60vw, 600px)', maxHeight: '1100px', objectFit: 'cover' }}
-                  >
-                    <source src="https://pub-82e66386f67141d6b9e8d7ce71fc30cc.r2.dev/motion.mov" type="video/mp4" />
-                  </video>
-                </div>
-              </div>
-            </Reveal>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ══ INTÉGRATIONS ══ */}
-      <section id="integrations" className="py-20 sm:py-28" style={{ background: '#f8fafc', borderTop: '1px solid #e5e7eb' }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight mb-4 text-foreground">
-                {tp('Connectez vos outils à Scalor')}
-              </h2>
-              <p className="text-base text-muted-foreground max-w-lg mx-auto">
-                {tp('Tous vos outils préférés, synchronisés en un seul endroit.')}
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {[
-              { name: 'Shopify', icon: integrations.find(x => x.name === 'Shopify')?.icon },
-              { name: 'WooCommerce', icon: integrations.find(x => x.name === 'WooCommerce')?.icon },
-              { name: 'WhatsApp', icon: integrations.find(x => x.name === 'WhatsApp')?.icon },
-              { name: 'Meta Ads', icon: integrations.find(x => x.name === 'Meta Ads')?.icon },
-              { name: 'Google Sheets', icon: integrations.find(x => x.name === 'Google Sheets')?.icon },
-              { name: 'EasySell', icon: integrations.find(x => x.name === 'EasySell')?.icon },
-              {
-                name: 'Loox',
-                icon: (
-                  <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
-                    <rect width="32" height="32" rx="8" fill="#FF5733"/>
-                    <circle cx="16" cy="14" r="5" fill="#fff"/>
-                    <path d="M9 24c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M16 11l.6 1.8h1.9l-1.5 1.1.6 1.8L16 14.6l-1.6 1.1.6-1.8-1.5-1.1h1.9z" fill="#FF5733"/>
-                  </svg>
-                ),
-              },
-              {
-                name: 'Klaviyo',
-                icon: (
-                  <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
-                    <rect width="32" height="32" rx="8" fill="#1A1A1A"/>
-                    <path d="M9 8h4v10l6-10h4l-6 9.5 6.5 6.5H19l-6-6V24H9V8z" fill="#fff"/>
-                  </svg>
-                ),
-              },
-              {
-                name: 'Mailchimp',
-                icon: (
-                  <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
-                    <rect width="32" height="32" rx="8" fill="#FFE01B"/>
-                    <path d="M22.5 17.5c.3-.6.5-1.3.5-2 0-3-2.7-5.5-6-5.5s-6 2.5-6 5.5c0 .7.1 1.4.4 2-.3.3-.4.7-.4 1 0 1.1.9 2 2 2 .4 0 .8-.1 1.1-.3.8.4 1.8.6 2.9.6s2.1-.2 2.9-.6c.3.2.7.3 1.1.3 1.1 0 2-.9 2-2 0-.4-.1-.7-.5-1z" fill="#241C15"/>
-                    <circle cx="13.5" cy="16" r="1" fill="#FFE01B"/>
-                    <circle cx="18.5" cy="16" r="1" fill="#FFE01B"/>
-                  </svg>
-                ),
-              },
-              {
-                name: 'TikTok',
-                icon: (
-                  <svg viewBox="0 0 32 32" className="w-8 h-8">
-                    <rect width="32" height="32" rx="8" fill="#010101"/>
-                    <path fill="#FFF" d="M21.5 6h-3.3v13.5c0 1.5-1.2 2.8-2.7 2.8s-2.7-1.2-2.7-2.8 1.2-2.8 2.7-2.8c.3 0 .5 0 .8.1v-3.4c-.3 0-.5-.1-.8-.1-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6V12.3c1.1.8 2.5 1.3 4 1.3v-3.3c-2.2 0-4-1.9-4-4.3z"/>
-                  </svg>
-                ),
-              },
-              {
-                name: 'Google Ads',
-                icon: (
-                  <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
-                    <rect width="32" height="32" rx="8" fill="#fff" stroke="#e5e7eb"/>
-                    <path d="M7 22l5.5-9.5 3.5 6L19 13l6 9H7z" fill="none"/>
-                    <circle cx="8.5" cy="22" r="3" fill="#FBBC04"/>
-                    <circle cx="23.5" cy="22" r="3" fill="#34A853"/>
-                    <path d="M8.5 22L16 9l7.5 13" stroke="#4285F4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                  </svg>
-                ),
-              },
-              {
-                name: 'Notion',
-                icon: (
-                  <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
-                    <rect width="32" height="32" rx="8" fill="#fff" stroke="#e5e7eb"/>
-                    <path d="M10 8h8l6 6v12H10V8z" fill="#1A1A1A" opacity=".08"/>
-                    <path d="M10 8h8l6 6v12H10V8z" stroke="#1A1A1A" strokeWidth="1.5" strokeLinejoin="round"/>
-                    <path d="M18 8v6h6" stroke="#1A1A1A" strokeWidth="1.5" strokeLinejoin="round"/>
-                    <path d="M13 16h8M13 19h6M13 22h4" stroke="#1A1A1A" strokeWidth="1.2" strokeLinecap="round"/>
-                  </svg>
-                ),
-              },
-            ].map((item, i) => (
-              <Reveal key={i} delay={i * 40}>
-                <div className="flex flex-col items-center justify-center gap-2.5 py-5 px-3 rounded-2xl transition-all cursor-default bg-card"
-                  style={{ border: '1px solid #e5e7eb' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor='#e0e0e0'; e.currentTarget.style.boxShadow='0 4px 20px rgba(0,61,50,0.08)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor='#e5e7eb'; e.currentTarget.style.boxShadow='none'; }}>
-                  {item.icon}
-                  <span className="text-xs font-semibold text-foreground text-center">{item.name}</span>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ FORMATION ══ */}
-      <section id="formation" className="py-20 sm:py-28" style={{ background: '#f8fafc', borderTop: '1px solid #e5e7eb' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
-
-          {/* Header */}
-          <Reveal>
-            <div className="text-center mb-14">
-              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-3 text-foreground">
-                Maîtrisez Scalor <span style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{tp('en 17 leçons')}</span>
-              </h2>
-              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-                Un module complet offert — de la prise en main jusqu'à l'agent IA.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-8 items-start">
-
-            {/* Liste des leçons */}
-            <Reveal>
-              <div className="rounded-2xl overflow-hidden bg-card" style={{ border: '1px solid #e5e7eb', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
-                {/* Header module */}
-                <div className="px-5 py-4 flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', borderBottom: '1px solid #e5e7eb' }}>
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center font-semibold text-sm text-white flex-shrink-0" style={{ background: 'rgba(255,255,255,0.2)' }}>7</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'rgba(255,255,255,0.7)' }}>{tp('Module 7 · 17 leçons')}</p>
-                    <p className="text-sm font-bold text-white">{tp('Prise en main de Scalor')}</p>
-                  </div>
-                  {/* Progress bar */}
-                  <div className="hidden sm:flex flex-col items-end gap-1">
-                    <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.6)' }}>0 / 17</span>
-                    <div className="w-24 h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.2)' }}>
-                      <div className="h-full rounded-full w-0" style={{ background: '#fff' }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Lessons — 2 colonnes */}
-                <div className="grid grid-cols-1 sm:grid-cols-2">
-                  {[
-                    { n: '7.1', t: 'Introduction à Scalor' },
-                    { n: '7.2', t: 'Connecter sa boutique à Scalor' },
-                    { n: '7.3', t: 'Paramétrer sa boutique Scalor' },
-                    { n: '7.4', t: 'Les fonctionnalités sur Scalor' },
-                    { n: '7.5', t: 'Créer sa boutique sur Scalor' },
-                    { n: '7.6', t: 'Page produit — Méthode 1' },
-                    { n: '7.7', t: 'Formulaire & upsell' },
-                    { n: '7.8', t: 'Automatiser son WhatsApp' },
-                    { n: '7.9', t: 'Gérer les commandes Scalor' },
-                    { n: '7.10', t: "Gestion d'équipe" },
-                    { n: '7.11', t: 'Gérer les rapports' },
-                    { n: '7.12', t: 'Se fixer des objectifs' },
-                    { n: '7.13', t: 'Gestion des finances' },
-                    { n: '7.14', t: 'Gestion de Stock' },
-                    { n: '7.15', t: 'Relancer les clients auto.' },
-                    { n: '7.16', t: 'Configurer son agent IA ✦' },
-                    { n: '7.17', t: 'Lancer sa campagne Facebook Ads' },
-                  ].map((l, i) => (
-                    <div key={i} className="flex items-center gap-3 px-4 py-3 transition-colors"
-                      style={{ borderBottom: i < 16 ? '1px solid #f3f4f6' : 'none' }}
-                      onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
-                      onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-                      <div className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style={{ border: '1.5px solid #e5e7eb' }}>
-                        <svg className="w-2.5 h-2.5" fill="none" stroke="#d1d5db" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-[10px] font-bold mr-1.5" style={{ color: '#05976D' }}>{l.n}</span>
-                        <span className="text-sm" style={{ color: l.n === '7.16' ? '#05976D' : '#374151', fontWeight: l.n === '7.16' ? 600 : 400 }}>{l.t}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-
-            {/* Panneau droite */}
-            <Reveal delay={100}>
-              <div className="lg:sticky lg:top-24 space-y-4">
-                <img
-                  src="/img/formation-offerte.png"
-                  alt="Formation offerte — Valeur ~49 000 FCFA — Incluse gratuitement dans votre compte Scalor"
-                  className="w-full rounded-2xl"
-                  style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.10)' }}
-                />
-                <button onClick={() => navigate('/ecom/formation')}
-                  className="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 font-bold text-white rounded-xl transition-all active:scale-[0.97] text-sm"
-                  style={{ background: 'linear-gradient(135deg, #05976D, #04795a)', boxShadow: '0 8px 24px rgba(0,61,50,0.12)' }}>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-                  {tp('Accéder gratuitement')}
-                </button>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ DISPONIBLE EN AFRIQUE ══ */}
-      <section className="py-20 sm:py-28" style={{ background: '#fff', borderTop: '1px solid #e5e7eb' }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground mb-3">
-                Disponible partout <span style={{ color: '#05976D' }}>{tp('en Afrique')}</span>
-              </h2>
-              <p className="text-base text-muted-foreground max-w-xl mx-auto">
-                Scalor est conçu pour les marchés africains — paiement à la livraison, WhatsApp, et logistique locale.
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal delay={60}>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-              {[
-                { flag: '🇨🇮', name: "Côte d'Ivoire" },
-                { flag: '🇸🇳', name: 'Sénégal' },
-                { flag: '🇲🇱', name: 'Mali' },
-                { flag: '🇧🇫', name: 'Burkina Faso' },
-                { flag: '🇧🇯', name: 'Bénin' },
-                { flag: '🇹🇬', name: 'Togo' },
-                { flag: '🇬🇳', name: 'Guinée' },
-                { flag: '🇨🇲', name: 'Cameroun' },
-                { flag: '🇬🇦', name: 'Gabon' },
-                { flag: '🇨🇬', name: 'Congo' },
-                { flag: '🇨🇩', name: 'RD Congo' },
-                { flag: '🇲🇦', name: 'Maroc' },
-                { flag: '🇩🇿', name: 'Algérie' },
-                { flag: '🇹🇳', name: 'Tunisie' },
-                { flag: '🇬🇭', name: 'Ghana' },
-                { flag: '🇳🇬', name: 'Nigeria' },
-                { flag: '🇰🇪', name: 'Kenya' },
-                { flag: '🇹🇿', name: 'Tanzanie' },
-              ].map((c) => (
-                <div
-                  key={c.name}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border bg-card hover:border-primary-200 hover:shadow-sm transition-all"
-                >
-                  <span style={{ fontSize: '32px', lineHeight: 1 }}>{c.flag}</span>
-                  <span className="text-xs font-medium text-muted-foreground text-center leading-tight">{c.name}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-
-          <Reveal delay={100}>
-            <div className="mt-10 text-center">
-              <p className="text-xs text-muted-foreground">{tp('Et bien d\'autres pays en cours d\'intégration…')}</p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ══ VIDEO ══ */}
-      <section data-tutorial-section className="py-20 sm:py-28" style={{ background: '#fff', borderTop: '1px solid #e5e7eb' }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight mb-4 text-foreground">
-                Prenez Scalor en main en{' '}
-                <span style={{ color: '#ef4444' }}>{tp('15 minutes')}</span>
-              </h2>
-              <p className="text-base sm:text-lg max-w-2xl mx-auto text-muted-foreground">
-                Du premier produit à l'envoi de campagnes WhatsApp — cette vidéo couvre tout.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal delay={80}>
-            <div className="rounded-2xl overflow-hidden mb-8" style={{ border: '1px solid #e5e7eb', boxShadow: '0 8px 40px rgba(0,0,0,0.08)' }}>
-              <div className="relative aspect-video bg-muted">
-                <iframe src="https://www.youtube.com/embed/405eKEysE0Q?rel=0&modestbranding=1&playsinline=1" title={tp('Tutoriel Complet Scalor')}
-                  className="w-full h-full" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={140}>
-            <div className="text-center">
-              <a href="https://youtu.be/405eKEysE0Q" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-xl transition"
-                style={{ background: '#ef4444', color: '#fff', boxShadow: '0 4px 16px rgba(239,68,68,0.10)' }}>
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                {tp('Regarder sur YouTube')}
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ══ TÉMOIGNAGES ══ */}
-      <section className="py-20 sm:py-28 overflow-hidden" style={{ background: '#fff', borderTop: '1px solid #e5e7eb' }}>
-        <style>{`
-          @keyframes scroll-left  { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-          @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-          .testi-left  { animation: scroll-left  28s linear infinite; }
-          .testi-right { animation: scroll-right 28s linear infinite; }
-          .testi-left:hover, .testi-right:hover { animation-play-state: paused; }
-        `}</style>
-
-        <Reveal>
-          <div className="text-center mb-14 px-4">
-            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-foreground mb-4">{tp('Ils ont choisi Scalor')}</h2>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-lg mx-auto">{tp('Découvrez les avis de ceux qui utilisent Scalor au quotidien.')}</p>
-          </div>
-        </Reveal>
-
-        {(() => {
-          const allTestis = [
-            { text: "Scalor a transformé ma gestion des commandes COD. L'interface est claire et simple. Je me concentre enfin sur la vente.", name: 'Fatima B.', role: "E-commerçante, Côte d'Ivoire", initials: 'FB', color: '#fbbf24' },
-            { text: "Mes closers gèrent leurs commandes sans me déranger. Chacun a son accès, c'est parfait. Je recommande à 100%.", name: 'Aicha M.', role: 'Dropshippeuse, Sénégal', initials: 'AM', color: '#f472b6' },
-            { text: "Mon taux de livraison a augmenté depuis que je track tout sur Scalor. Les stats ne mentent pas.", name: 'Ibrahima N.', role: 'Vendeur COD, Mali', initials: 'IN', color: '#60a5fa' },
-            { text: "Scalor IA m'a fait gagner des heures sur mes fiches produits. Plus besoin de rédiger manuellement.", name: 'Moussa K.', role: 'Dropshipper, Cameroun', initials: 'MK', color: '#34d399' },
-            { text: "Le support répond vite et comprend nos besoins. Ça change des autres plateformes.", name: 'Mariam T.', role: 'Boutique en ligne, Burkina', initials: 'MT', color: '#a78bfa' },
-            { text: "Je gère mes 3 boutiques depuis un seul dashboard. C'est exactement ce dont j'avais besoin pour scaler.", name: 'Youssef A.', role: 'Multi-boutiques, Maroc', initials: 'YA', color: '#fb923c' },
-            { text: "Les relances automatiques WhatsApp m'ont fait récupérer des commandes que j'aurais perdues. Incroyable.", name: 'Kofi D.', role: 'Vendeur COD, Ghana', initials: 'KD', color: '#05976D' },
-            { text: "Avant Scalor je perdais 2h par jour sur des tâches manuelles. Maintenant tout est automatique.", name: 'Aminata S.', role: 'Dropshippeuse, Guinée', initials: 'AS', color: '#f87171' },
-          ];
-          const row1 = allTestis.slice(0, 4);
-          const row2 = allTestis.slice(4);
-
-          const Card = ({ t }) => (
-            <div className="flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl p-5 mx-3" style={{ background: '#f8fafc', border: '1px solid #e5e7eb' }}>
-              <div className="flex gap-1 mb-3">
-                {[...Array(5)].map((_, j) => (
-                  <svg key={j} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 ))}
               </div>
-              <p className="text-sm text-foreground leading-relaxed mb-4">"{t.text}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0" style={{ background: t.color }}>{t.initials}</div>
+              <div className="mt-auto pt-5">
+                <p className="text-3xl font-extrabold text-red-500">~440 000 FCFA</p>
+                <p className="text-[12.5px] text-gray-500">{tp('par mois · 7 abonnements et prestataires à coordonner')}</p>
+              </div>
+            </Reveal>
+
+            {/* Scalor — tout en un */}
+            <Reveal delay={120}>
+            <div className="h-full rounded-3xl p-6 sm:p-7 text-white flex flex-col shadow-xl" style={{ background: `linear-gradient(140deg,${GREEN} 0%,${GREEN_DARK} 100%)` }}>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-white/70">Scalor — {tp('tout en un')}</p>
+              <div className="mt-4 space-y-2">
+                {[
+                  tp('Boutique IA générée en 2 minutes'),
+                  tp('Creative Center : affiches, vidéos, voix-off'),
+                  tp('Rita — agent IA WhatsApp 24h/24'),
+                  tp('Commandes COD, stock et livraison'),
+                  tp('Analytics : bénéfice net en temps réel'),
+                  tp('Agent IA Scalor intégré : rédige, analyse, assiste'),
+                ].map((li) => (
+                  <div key={li} className="flex items-center gap-2.5 rounded-xl bg-white/10 px-3.5 py-2.5">
+                    <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-black" style={{ color: GREEN }}>✓</span>
+                    <span className="text-[13px] font-semibold text-white">{li}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 flex items-end justify-between gap-3 flex-wrap">
                 <div>
-                  <p className="text-sm font-bold text-foreground">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.role}</p>
+                  <p className="text-3xl font-extrabold">0 FCFA</p>
+                  <p className="text-[12.5px] text-white/75">{tp('pour commencer · sans carte bancaire')}</p>
                 </div>
-              </div>
-            </div>
-          );
-
-          return (
-            <div className="space-y-4">
-              {/* Row 1 — scroll left */}
-              <div className="flex overflow-hidden">
-                <div className="flex testi-left" style={{ width: 'max-content' }}>
-                  {[...row1, ...row1].map((t, i) => <Card key={i} t={t} />)}
-                </div>
-              </div>
-              {/* Row 2 — scroll right */}
-              <div className="flex overflow-hidden">
-                <div className="flex testi-right" style={{ width: 'max-content' }}>
-                  {[...row2, ...row2].map((t, i) => <Card key={i} t={t} />)}
-                </div>
-              </div>
-            </div>
-          );
-        })()}
-      </section>
-
-      {/* ══ Devenir affilié ══ */}
-      <section id="affiliation" className="py-20 sm:py-28" style={{ background: '#fff', borderTop: '1px solid #e5e7eb' }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <Reveal>
-            <div className="text-center mb-12">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide" style={{ background: '#E6F2ED', color: '#0F6B4F' }}>
-                {tp('Programme d\'affiliation')}
-              </span>
-              <h2 className="mt-4 text-3xl sm:text-5xl font-semibold tracking-tight text-foreground">{tp('Gagnez de l\'argent en recommandant Scalor')}</h2>
-              <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-                {tp('Partagez votre lien personnalisé : chaque inscription et chaque abonnement de vos filleuls vous rapporte — à vie.')}
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal>
-            <div className="grid gap-4 sm:grid-cols-3 mb-10">
-              {[
-                { big: '50%', label: tp('de commission sur chaque paiement d\'abonnement de vos filleuls, à vie') },
-                { big: '500 F', label: tp('offerts dès l\'inscription de chaque filleul avec votre lien') },
-                { big: '5 000 F', label: tp('seuil de retrait — encaissez vos commissions rapidement') },
-              ].map((c, i) => (
-                <div key={i} className="rounded-2xl p-6 text-center" style={{ background: '#f8fafc', border: '1px solid #e5e7eb' }}>
-                  <p className="text-4xl font-black" style={{ color: '#0F6B4F' }}>{c.big}</p>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.label}</p>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-
-          <Reveal>
-            <div className="text-center">
-              <button
-                onClick={() => navigate('/affiliate/register')}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-white text-base font-bold transition hover:brightness-110 shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #0A5740, #14855F)' }}
-              >
-                {tp('Devenir affilié')}
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-              </button>
-              <p className="mt-3 text-sm text-muted-foreground">
-                {tp('Gratuit, sans engagement.')}{' '}
-                <button onClick={() => navigate('/affiliate/login')} className="font-semibold underline underline-offset-2" style={{ color: '#0F6B4F' }}>
-                  {tp('Déjà affilié ? Connectez-vous')}
+                <button onClick={() => navigate('/ecom/register')} className="rounded-xl bg-white px-5 py-2.5 text-[13.5px] font-extrabold transition hover:brightness-95" style={{ color: GREEN }}>
+                  {tp('Commencer gratuitement')} →
                 </button>
-              </p>
+              </div>
             </div>
-          </Reveal>
-        </div>
-      </section>
+            </Reveal>
+          </div>
 
-      {/* ══ FAQ ══ */}
-      <section className="py-20 sm:py-28" style={{ background: '#f8fafc', borderTop: '1px solid #e5e7eb' }}>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-foreground">{tp('Questions fréquentes')}</h2>
-            </div>
+          <Reveal delay={200} className="mt-6 text-center">
+            <p className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-[13px] font-bold text-gray-700">
+              💸 {tp('Économise ~440 000 FCFA chaque mois avec Scalor')}
+            </p>
           </Reveal>
-          <div className="space-y-3">
+      </Section>
+
+      {/* ── Features ── */}
+      <Section id="features">
+          <Reveal className="text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Tout ce qu’il faut pour vendre en Afrique')}</h2>
+            <p className="mt-3 text-[15px] text-gray-600">{tp('Pas de fonctions gadgets. Juste ce qui compte pour créer, promouvoir et livrer en COD.')}</p>
+          </Reveal>
+      </Section>
+      <FeatureBlocks />
+
+      {/* ── Top vendeurs (carrousel) ── */}
+      <TopSellers />
+
+      {/* ── Boutique IA ── */}
+      <Section id="boutique-ia">
+          <Reveal className="text-center max-w-2xl mx-auto">
+            <p className="text-[11px] font-extrabold uppercase tracking-wider" style={{ color: GREEN }}>{tp('Créateur de site')}</p>
+            <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Crée ta boutique IA sur Scalor')}</h2>
+            <p className="mt-3 text-[15px] text-gray-600 leading-relaxed">
+              {tp('Décris ton produit : l’IA génère ta boutique complète en quelques secondes — page produit premium, photos, descriptions, formulaire COD et tunnel de vente inclus.')}
+            </p>
+          </Reveal>
+
+          <div id="how-it-works" className="mt-10 grid gap-4 sm:grid-cols-3">
             {[
-              { q: "C'est vraiment gratuit ?", a: "Oui. Tu peux créer ton compte, ajouter tes produits et commencer à gérer tes commandes sans payer. On a un plan gratuit permanent." },
-              { q: "J'ai besoin de compétences techniques ?", a: "Aucune. Si tu sais utiliser WhatsApp, tu sais utiliser Scalor. Tout est pensé pour être simple." },
-              { q: "Ça marche avec Shopify ?", a: "Oui. Scalor se connecte à Shopify, WooCommerce et d'autres plateformes. La synchronisation des commandes est automatique." },
-              { q: "Je peux gérer plusieurs boutiques ?", a: "Absolument. Tu peux connecter et gérer autant de boutiques que tu veux depuis un seul tableau de bord." },
-              { q: "Mes données sont en sécurité ?", a: "Oui. Chiffrement de bout en bout, authentification sécurisée, et conformité RGPD. Tes données restent les tiennes." },
-              { q: "Comment fonctionne le WhatsApp intégré ?", a: "Tu peux envoyer des confirmations de commande, des relances et des campagnes marketing directement depuis Scalor via WhatsApp." },
-            ].map((item, i) => (
-              <Reveal key={i} delay={i * 40}>
-                <details className="group rounded-xl overflow-hidden bg-card" style={{ border: '1px solid #e5e7eb' }}>
-                  <summary className="flex items-center justify-between cursor-pointer px-5 sm:px-6 py-4 text-sm font-semibold text-foreground transition select-none hover:bg-background">
-                    {item.q}
-                    <svg className="w-4 h-4 group-open:rotate-180 transition-transform flex-shrink-0 ml-3 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                  </summary>
-                  <div className="px-5 sm:px-6 pb-4 text-sm leading-relaxed text-muted-foreground">{item.a}</div>
-                </details>
+              ['01', tp('Décris ton produit'), tp('Dis à l’IA ce que tu vends en quelques mots, ou importe depuis Shopify / WooCommerce.')],
+              ['02', tp('L’IA construit tout'), tp('Page produit premium, visuels, textes de vente, upsells et formulaire COD générés.')],
+              ['03', tp('Lance & vends'), tp('Ta boutique est en ligne sur ton sous-domaine — les commandes arrivent dans Scalor.')],
+            ].map(([num, title, desc], i) => (
+              <Reveal key={num} delay={i * 90} className="relative rounded-2xl border border-gray-200 bg-white p-6">
+                <span className="text-3xl font-extrabold" style={{ color: `${GREEN}22` }}>{num}</span>
+                <h3 className="mt-2 text-[15.5px] font-extrabold">{title}</h3>
+                <p className="mt-1.5 text-[13.5px] text-gray-500 leading-relaxed">{desc}</p>
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ══ CTA FINAL ══ */}
-      <section className="py-20 sm:py-28 relative overflow-hidden" style={{ background: '#f4f4f4', borderTop: '1px solid #e0e0e0' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(34,197,94,0.08) 0%, transparent 70%)' }} />
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <Reveal delay={150} className="mt-8 text-center">
+            <Cta onClick={() => navigate('/ecom/register')}>{tp('Créer ma boutique IA gratuitement')} →</Cta>
+            <p className="mt-2.5 text-[12.5px] text-gray-500">{tp('Aucune carte bancaire · Prêt en moins de 2 minutes')}</p>
+          </Reveal>
+      </Section>
+
+      {/* ── Intégrations ── */}
+      <Section id="integrations" inner="text-center">
           <Reveal>
-            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-5 text-foreground">
-              Prêt à scaler<br />
-              <span style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{tp('votre e-commerce ?')}</span>
-            </h2>
-            <p className="text-base sm:text-xl mb-10 text-muted-foreground">
-              Rejoignez 1 000+ vendeurs qui utilisent Scalor pour structurer et scaler leur business.
+            <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight">{tp('Connecte tes outils à Scalor')}</h2>
+            <p className="mt-2 text-[14px] text-gray-600">{tp('Tous tes outils préférés, synchronisés en un seul endroit.')}</p>
+          </Reveal>
+          <Reveal delay={100} className="mt-7 flex flex-wrap justify-center gap-2">
+            {['Shopify', 'WooCommerce', 'WhatsApp', 'Meta Ads', 'Google Sheets', 'EasySell', 'Loox', 'Klaviyo', 'Mailchimp', 'TikTok', 'Google Ads', 'Notion'].map((n) => (
+              <span key={n} className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-[13px] font-bold text-gray-600">
+                <ToolLogo name={n} size={16} />
+                {n}
+              </span>
+            ))}
+          </Reveal>
+      </Section>
+
+      {/* ── Formation ── */}
+      <Section id="formation" inner="grid gap-10 lg:grid-cols-2 items-center">
+          <Reveal>
+            <p className="text-[11px] font-extrabold uppercase tracking-wider" style={{ color: GREEN }}>{tp('Formation offerte')}</p>
+            <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Maîtrise Scalor en 17 leçons')}</h2>
+            <p className="mt-4 text-[15px] text-gray-600 leading-relaxed">
+              {tp('Un module complet inclus gratuitement dans ton compte — de la prise en main jusqu’à l’agent IA et ta première campagne Facebook Ads. Accès à vie.')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={() => navigate('/ecom/register')}
-                className="flex items-center justify-center gap-2 px-8 py-4 text-white font-bold text-base rounded-xl transition-all active:scale-[0.97]"
-                style={{ background: 'linear-gradient(135deg, #05976D, #05976D)', boxShadow: '0 8px 32px rgba(0,61,50,0.12)' }}
-                onMouseEnter={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}
-                onMouseLeave={e => e.currentTarget.style.background='linear-gradient(135deg, #05976D, #05976D)'}>
-                {tp('Commencer gratuitement')}
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Cta onClick={() => navigate('/ecom/formation')}>{tp('Accéder gratuitement')} →</Cta>
+              <Cta variant="ghost" onClick={() => window.open('https://youtu.be/405eKEysE0Q', '_blank')}>▶ {tp('Voir la vidéo de prise en main')}</Cta>
+            </div>
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-[13px] font-extrabold">{tp('Module 7 · Prise en main de Scalor')}</p>
+                <span className="rounded-full px-2.5 py-1 text-[10.5px] font-extrabold text-white" style={{ background: GREEN }}>17 {tp('leçons')}</span>
+              </div>
+              <div className="mt-3 max-h-64 overflow-y-auto pr-1 space-y-1">
+                {FORMATION_LESSONS.map((lesson, i) => (
+                  <div key={lesson} className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[12.5px] text-gray-600 hover:bg-gray-50">
+                    <span className="w-8 shrink-0 font-mono text-[11px] text-gray-400">7.{i + 1}</span>
+                    {lesson}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+      </Section>
+
+      {/* ── Pays ── */}
+      <Section inner="text-center">
+          <Reveal>
+            <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight">{tp('Disponible partout en Afrique')}</h2>
+            <p className="mt-2 text-[14px] text-gray-600">{tp('Paiement à la livraison, WhatsApp et logistique locale — Scalor est conçu pour les marchés africains.')}</p>
+          </Reveal>
+          <Reveal delay={100} className="mt-7 flex flex-wrap justify-center gap-2">
+            {COUNTRIES.map(([flag, name]) => (
+              <span key={name} className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-[12.5px] font-semibold text-gray-600">
+                <span>{flag}</span>{name}
+              </span>
+            ))}
+          </Reveal>
+          <p className="mt-4 text-[12.5px] text-gray-400">{tp('Et bien d’autres pays en cours d’intégration…')}</p>
+      </Section>
+
+      {/* ── Témoignages ── */}
+      <Section>
+          <Reveal className="text-center">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Ils ont choisi Scalor')}</h2>
+            <p className="mt-2 text-[14px] text-gray-600">{tp('Les avis de ceux qui utilisent Scalor au quotidien.')}</p>
+          </Reveal>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {TESTIMONIALS.map(([quote, initials, name, role], i) => (
+              <Reveal key={name} delay={i * 50} className="rounded-2xl border border-gray-200 bg-white p-5">
+                <p className="text-[13px] text-gray-600 leading-relaxed">“{quote}”</p>
+                <div className="mt-4 flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-extrabold text-white" style={{ background: GREEN }}>{initials}</span>
+                  <div>
+                    <p className="text-[12.5px] font-extrabold">{name}</p>
+                    <p className="text-[11px] text-gray-400">{role}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+      </Section>
+
+      {/* ── Affiliation ── */}
+      <Section id="affiliation" inner="text-center">
+          <Reveal>
+            <p className="text-[11px] font-extrabold uppercase tracking-wider" style={{ color: GREEN }}>{tp('Programme d’affiliation')}</p>
+            <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Gagne de l’argent en recommandant Scalor')}</h2>
+            <p className="mx-auto mt-3 max-w-xl text-[15px] text-gray-600 leading-relaxed">
+              {tp('Ton lien de parrainage est intégré à ton compte Scalor (menu Affiliation). Chaque inscription et chaque abonnement de tes filleuls te rapporte — à vie.')}
+            </p>
+          </Reveal>
+          <div className="mt-9 grid gap-4 sm:grid-cols-3">
+            {[
+              ['50%', tp('de commission sur chaque paiement d’abonnement de tes filleuls, à vie')],
+              ['500 F', tp('offerts dès l’inscription de chaque filleul avec ton lien')],
+              ['5 000 F', tp('seuil de retrait — encaisse par Mobile Money rapidement')],
+            ].map(([big, small], i) => (
+              <Reveal key={big} delay={i * 80} className="rounded-2xl border border-gray-200 bg-white p-6">
+                <p className="text-3xl font-extrabold" style={{ color: GREEN }}>{big}</p>
+                <p className="mt-2 text-[13px] text-gray-500 leading-relaxed">{small}</p>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={200} className="mt-8">
+            <Cta onClick={() => navigate('/ecom/register')}>{tp('Devenir affilié')} →</Cta>
+            <p className="mt-2.5 text-[12.5px] text-gray-500">
+              {tp('Gratuit, sans engagement. Déjà membre ?')}{' '}
+              <button onClick={() => navigate('/ecom/login')} className="font-bold underline" style={{ color: GREEN }}>{tp('Connecte-toi')}</button>
+            </p>
+          </Reveal>
+      </Section>
+
+      {/* ── FAQ ── */}
+      <Section inner="mx-auto max-w-3xl">
+          <Reveal className="text-center">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{tp('Questions fréquentes')}</h2>
+          </Reveal>
+          <div className="mt-8 space-y-2.5">
+            {FAQ.map(([q, a], i) => (
+              <Reveal key={q} delay={i * 40}>
+                <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
+                    aria-expanded={openFaq === i}
+                    className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left text-[14.5px] font-extrabold hover:bg-gray-50 transition"
+                  >
+                    {q}
+                    <span className="text-gray-400 transition-transform" style={{ transform: openFaq === i ? 'rotate(45deg)' : 'none' }}>+</span>
+                  </button>
+                  {openFaq === i && <p className="px-5 pb-4 text-[13.5px] text-gray-600 leading-relaxed">{a}</p>}
+                </div>
+              </Reveal>
+            ))}
+          </div>
+      </Section>
+
+      </div>
+
+      {/* ── CTA final ── */}
+      <section className="py-20 sm:py-28 text-center text-white" style={{ background: `linear-gradient(135deg,${GREEN},${GREEN_DARK})` }}>
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <Reveal>
+            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">{tp('Prêt à scaler ton e-commerce ?')}</h2>
+            <p className="mx-auto mt-4 max-w-xl text-[15px] text-white/80">
+              {tp('Rejoins 1 000+ vendeurs qui créent, promeuvent et vendent avec Scalor — boutique, contenus et WhatsApp inclus.')}
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button onClick={() => navigate('/ecom/register')} className="rounded-xl bg-white px-7 py-3.5 text-[15px] font-extrabold transition hover:brightness-95" style={{ color: GREEN }}>
+                {tp('Commencer gratuitement')} →
               </button>
-              <button onClick={() => navigate('/ecom/login')}
-                className="flex items-center justify-center gap-2 px-8 py-4 font-semibold text-base rounded-xl transition-all text-foreground"
-                style={{ background: '#fff', border: '1px solid #d1d5db' }}
-                onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
-                onMouseLeave={e => e.currentTarget.style.background='#fff'}>
+              <button onClick={() => navigate('/ecom/login')} className="rounded-xl border border-white/30 px-7 py-3.5 text-[15px] font-extrabold text-white transition hover:bg-white/10">
                 {tp('Se connecter')}
               </button>
             </div>
@@ -1324,69 +1333,42 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ══ FOOTER ══ */}
-      <footer className="py-14 sm:py-16" style={{ background: '#fff', borderTop: '1px solid #e5e7eb' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 md:gap-10 mb-10 sm:mb-14">
-            <div className="col-span-2 md:col-span-1">
-              <button onClick={() => navigate('/')} className="flex items-center gap-2 mb-4">
-                <img src="/logo.png" alt="Scalor" className="h-8 object-contain" />
-              </button>
-              <p className="text-sm leading-relaxed max-w-[220px] text-muted-foreground">
-                Le système d'exploitation du e-commerce africain.
-              </p>
-            </div>
-            {[
-              {
-                title: 'PRODUIT',
-                links: [
-                  { get label() { return tp('Fonctionnalités'); }, href: '#features' },
-                  { get label() { return tp('Comment ça marche'); }, href: '#how-it-works' },
-                  { label: 'Tarifs', onClick: () => navigate('/ecom/tarifs') },
-                  { label: 'Agent IA', href: '#features' },
-                ],
-              },
-              {
-                title: 'BOUTIQUE IA',
-                links: [
-                  { get label() { return tp('Créer ma boutique'); }, href: '#boutique-ia' },
-                  { label: 'Page produit IA', href: '#boutique-ia' },
-                  { label: 'Commandes COD', href: '#boutique-ia' },
-                  { label: 'Relances WhatsApp', href: '#boutique-ia' },
-                ],
-              },
-              {
-                title: 'RESSOURCES',
-                links: [
-                  { label: 'Support', href: 'mailto:contact@safitech.shop' },
-                  { label: 'Contact', href: 'mailto:contact@safitech.shop' },
-                ],
-              },
-              {
-                title: 'LÉGAL',
-                links: [
-                  { get label() { return tp('Confidentialité'); }, onClick: () => navigate('/ecom/privacy') },
-                  { label: 'Conditions', onClick: () => navigate('/ecom/terms') },
-                ],
-              },
-            ].map((col, ci) => (
-              <div key={ci}>
-                <h4 className="text-[10px] font-bold uppercase tracking-[2.5px] mb-5 text-muted-foreground">{col.title}</h4>
-                <div className="space-y-3">
-                  {col.links.map((link, li) => (
-                    link.onClick
-                      ? <button key={li} onClick={link.onClick} className="block text-sm transition text-left text-muted-foreground hover:text-foreground">{link.label}</button>
-                      : <a key={li} href={link.href} className="block text-sm transition text-muted-foreground hover:text-foreground">{link.label}</a>
-                  ))}
-                </div>
+      {/* ── Footer ── */}
+      <footer className="py-14" style={{ background: '#0F1115' }}>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2 text-lg font-extrabold text-white">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg text-white text-sm" style={{ background: GREEN }}>S</span>
+                Scalor
               </div>
-            ))}
+              <p className="mt-3 max-w-xs text-[13px] text-gray-400 leading-relaxed">{tp('Le système d’exploitation du e-commerce africain.')}</p>
+            </div>
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-gray-500">{tp('Produit')}</p>
+              <div className="mt-3 space-y-2 text-[13px] text-gray-400">
+                <a href="#features" className="block hover:text-white transition">{tp('Fonctionnalités')}</a>
+                <a href="#agent-ia" className="block hover:text-white transition">Rita IA</a>
+                <button onClick={() => navigate('/ecom/tarifs')} className="block hover:text-white transition">{tp('Tarifs')}</button>
+              </div>
+            </div>
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-gray-500">{tp('Ressources')}</p>
+              <div className="mt-3 space-y-2 text-[13px] text-gray-400">
+                <button onClick={() => navigate('/ecom/formation')} className="block hover:text-white transition">{tp('Formation')}</button>
+                <a href="#affiliation" className="block hover:text-white transition">{tp('Affiliation')}</a>
+                <a href="mailto:contact@safitech.shop" className="block hover:text-white transition">{tp('Contact')}</a>
+              </div>
+            </div>
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-gray-500">{tp('Légal')}</p>
+              <div className="mt-3 space-y-2 text-[13px] text-gray-400">
+                <button onClick={() => navigate('/ecom/privacy')} className="block hover:text-white transition">{tp('Confidentialité')}</button>
+                <button onClick={() => navigate('/ecom/terms')} className="block hover:text-white transition">{tp('Conditions')}</button>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8" style={{ borderTop: '1px solid #e5e7eb' }}>
-            <span className="text-xs text-muted-foreground">
-              &copy; {new Date().getFullYear()} SCALOR by Safitech. Tous droits réservés.
-            </span>
-          </div>
+          <p className="mt-10 border-t border-white/10 pt-6 text-[12px] text-gray-500">© 2026 SCALOR by Safitech. {tp('Tous droits réservés.')}</p>
         </div>
       </footer>
 

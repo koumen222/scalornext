@@ -121,6 +121,9 @@ export default i18n;
 
 const en = {
   'Performance des {days} derniers jours': 'Performance over the last {days} days',
+  'Partage ton lien : {bonus} FCFA par inscription + {percent}% à vie sur chaque abonnement de tes filleuls.': 'Share your link: {bonus} FCFA per signup + {percent}% for life on every subscription from your referrals.',
+  'Ton lien de parrainage (tracké — visites, clics et conversions attribués {days} jours)': 'Your referral link (tracked — visits, clicks and conversions attributed for {days} days)',
+  'Encore {amount} FCFA avant de pouvoir retirer.': '{amount} FCFA remaining before you can withdraw.',
   // Navigation (EcomLayout)
   'Accueil': 'Home',
   'Centre de contrôle': 'Control center',
@@ -363,6 +366,9 @@ const en = {
 
 const es = {
   'Performance des {days} derniers jours': 'Rendimiento de los últimos {days} días',
+  'Partage ton lien : {bonus} FCFA par inscription + {percent}% à vie sur chaque abonnement de tes filleuls.': 'Comparte tu enlace: {bonus} FCFA por registro + {percent}% de por vida en cada suscripción de tus referidos.',
+  'Ton lien de parrainage (tracké — visites, clics et conversions attribués {days} jours)': 'Tu enlace de referido (seguimiento de visitas, clics y conversiones durante {days} días)',
+  'Encore {amount} FCFA avant de pouvoir retirer.': 'Faltan {amount} FCFA para poder retirar.',
   'Accueil': 'Inicio',
   'Centre de contrôle': 'Centro de control',
   'Pilotage': 'Control',

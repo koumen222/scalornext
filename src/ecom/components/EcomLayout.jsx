@@ -304,6 +304,11 @@ const EcomLayoutComponent = ({ children }) => {
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
     },
     {
+      name: t('Affiliation'), shortName: t('Affiliation'), href: '/ecom/affiliation', primary: false,
+      roles: ['ecom_admin'],
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+    },
+    {
       name: t('Formation'), shortName: t('Formation'), href: '/ecom/formation', primary: false,
       roles: ['ecom_admin', 'ecom_closeuse', 'ecom_compta'],
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
@@ -1109,6 +1114,7 @@ const getPageTitle = (pathname, t = (x) => x) => {
   if (pathname.includes('/whatsapp/service')) return t('Service Messagerie');
   if (pathname.includes('/whatsapp/connexion')) return t('Service Messagerie');
 
+  if (pathname.includes('/affiliation')) return t('Affiliation');
   if (pathname.includes('/campaigns')) return t('Marketing');
   if (pathname.includes('/super-admin/mail-server')) return t('Serveur mail');
   if (pathname.includes('/super-admin/billing')) return t('Suivi Facturation');

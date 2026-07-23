@@ -1,13 +1,8 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-import { Suspense } from 'react';
-import { PageLoader } from '@/lib/dashboard/guards';
-import Page from '@/src/ecom/pages/AffiliateConversions.jsx';
-
-export default function Wrapper() {
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <Page />
-    </Suspense>
-  );
+// L'affiliation est intégrée au compte Scalor (sidebar → Affiliation).
+// L'ancien portail affilié séparé est retiré ; cette URL redirige pour
+// préserver les liens et favoris existants.
+export default function Page() {
+  redirect('/ecom/affiliation');
 }

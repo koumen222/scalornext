@@ -1,13 +1,8 @@
-import { Suspense } from 'react';
-import { AffiliateLogin } from '@/lib/platform/clients';
-import { platformMetadata } from '@/lib/platform/meta';
+import { redirect } from 'next/navigation';
 
-export const metadata = platformMetadata('Connexion affilié — Scalor');
-
+// L'affiliation est intégrée au compte Scalor (sidebar → Affiliation).
+// L'ancien portail affilié séparé est retiré ; cette URL redirige pour
+// préserver les liens et favoris existants.
 export default function Page() {
-  return (
-    <Suspense fallback={null}>
-      <AffiliateLogin />
-    </Suspense>
-  );
+  redirect('/ecom/affiliation');
 }
