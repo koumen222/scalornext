@@ -52,6 +52,18 @@ textarea {
   touch-action: manipulation;
 }
 
+/* Barres scrollables sans scrollbar visible (onglets Creative Center, etc.)
+   Classe utilisée par le code (.no-scrollbar) mais jamais définie jusqu'ici. */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* 🆕 Optimisations Mobile */
 /* Safe areas pour les mobiles modernes (iPhone X+, Dynamic Island) */
 .safe-area-top {

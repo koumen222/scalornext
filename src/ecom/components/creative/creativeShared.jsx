@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Loader2, X, Sparkles, CheckCircle, Wallet, CreditCard, Zap, Store, Package } from 'lucide-react';
 import creativeApi, { CREATIVE_PROVIDERS } from '../../services/creativeApi.js';
+import ecomApi from '../../services/ecommApi.js';
 import { tp } from '../../i18n/platform.js';
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -109,20 +110,44 @@ export function InsufficientCreditsNotice({ required, credits, onRecharge, class
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+function triggerBlobDownload(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
 export async function downloadFile(url, filename) {
+  const safeName = (filename || 'creative').replace(/\s+/g, '-').toLowerCase();
+
+  // 1) Fetch direct (même origine ou CDN avec CORS ouvert)
   try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = (filename || 'creative').replace(/\s+/g, '-').toLowerCase();
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    triggerBlobDownload(await res.blob(), safeName);
+    return;
   } catch {
-    window.open(url, '_blank');
+    console.warn('[download] fetch direct bloqué (CORS CDN) — bascule sur le proxy backend');
   }
+
+  // 2) Proxy backend : streame le fichier en Content-Disposition: attachment
+  //    (l'API a le CORS ouvert pour l'app → blob téléchargeable à coup sûr)
+  const base = String(ecomApi?.defaults?.baseURL || '/api/ecom').replace(/\/+$/, '');
+  const proxyUrl = `${base}/builder-ai/download?src=${encodeURIComponent(url)}&name=${encodeURIComponent(safeName)}`;
+  try {
+    const res = await fetch(proxyUrl, { mode: 'cors' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    triggerBlobDownload(await res.blob(), safeName);
+    return;
+  } catch (err) {
+    console.warn(`[download] proxy indisponible (${err?.message || err}) — backend pas à jour/redémarré ? ${proxyUrl}`);
+  }
+
+  // 3) Dernier recours : ouvrir le média dans un onglet
+  window.open(url, '_blank');
 }
 
 export function formatDate(iso) {

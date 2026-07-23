@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from '@/lib/router-compat';
-import { Package, Plus, Search, Edit, Trash2, Eye, EyeOff, ChevronLeft, ChevronRight, Loader2, AlertCircle, Image, Sparkles, ExternalLink, Zap, Layers, Copy, Download, Upload, Crown, FileText, Laptop } from 'lucide-react';
+import { Package, Plus, Search, Edit, Trash2, Eye, EyeOff, ChevronLeft, ChevronRight, Loader2, AlertCircle, Image, Sparkles, ExternalLink, Zap, Layers, Copy, Download, Upload, Crown, FileText, Laptop, MoreHorizontal } from 'lucide-react';
 import { storeProductsApi, storeManageApi } from '../services/storeApi.js';
 import ecomApi from '../services/ecommApi.js';
 import { formatMoney } from '../utils/currency.js';
@@ -74,6 +74,8 @@ const StoreProductsList = () => {
   const [stockSaving, setStockSaving] = useState(false);
   const [csvBusy, setCsvBusy] = useState(false);
   const [digitalProductLoading, setDigitalProductLoading] = useState(null);
+  // Mobile : actions secondaires repliées derrière un bouton « Plus » (1 seul ouvert)
+  const [mobileMoreFor, setMobileMoreFor] = useState(null);
   const [digitalProductTarget, setDigitalProductTarget] = useState(null);
   const [digitalProductError, setDigitalProductError] = useState('');
   const [digitalProductResult, setDigitalProductResult] = useState(null);
@@ -1739,7 +1741,8 @@ const StoreProductsList = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                {/* Essentiel : publier, modifier, voir — le reste derrière « Plus » */}
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleTogglePublish(product)}
                     className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium ${product.isPublished ? 'bg-primary-50 text-primary' : 'bg-muted text-muted-foreground'}`}
@@ -1747,6 +1750,31 @@ const StoreProductsList = () => {
                     {product.isPublished ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                     {product.isPublished ? 'Dépublier' : tp('Publier')}
                   </button>
+                  <button onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="inline-flex items-center gap-1.5 rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary">
+                    <Edit className="h-3.5 w-3.5" />
+                    {tp('Modifier')}
+                  </button>
+                  <button
+                    onClick={() => handleViewProduct(product, 'prod')}
+                    disabled={!storeSubdomain || !product.slug}
+                    className="rounded-xl bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 disabled:opacity-40"
+                  >
+                    {tp('Voir')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileMoreFor(mobileMoreFor === product._id ? null : product._id)}
+                    aria-expanded={mobileMoreFor === product._id}
+                    aria-label={tp('Plus d’actions')}
+                    className={`ml-auto inline-flex items-center gap-1 rounded-xl px-3 py-2 text-xs font-medium transition-colors ${mobileMoreFor === product._id ? 'bg-foreground text-background' : 'bg-muted text-muted-foreground'}`}
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                    {tp('Plus')}
+                  </button>
+                </div>
+
+                {mobileMoreFor === product._id && (
+                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/70 p-2">
                   {showLocalPreview && (
                   <button
                     onClick={() => handleViewProduct(product, 'local')}
@@ -1757,13 +1785,6 @@ const StoreProductsList = () => {
                     {tp('Voir (local)')}
                   </button>
                   )}
-                  <button
-                    onClick={() => handleViewProduct(product, 'prod')}
-                    disabled={!storeSubdomain || !product.slug}
-                    className="rounded-xl bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 disabled:opacity-40"
-                  >
-                    {tp('Voir en ligne')}
-                  </button>
                   <button onClick={() => {
                     const isPremium = isPremiumStore
                       || product.productPageConfig?.pageStyle === 'premium'
@@ -1784,9 +1805,9 @@ const StoreProductsList = () => {
                   </button>
                   <button onClick={() => handleDuplicate(product)} className="rounded-xl bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">{tp('Copier')}</button>
                   <button onClick={() => handleExportSingleProductCsv(product)} className="rounded-xl bg-muted px-3 py-2 text-xs font-medium text-foreground">{tp('Exporter CSV')}</button>
-                  <button onClick={() => navigate(`${basePath}/products/${product._id}/edit`)} className="rounded-xl bg-primary-50 px-3 py-2 text-xs font-medium text-primary">{tp('Modifier')}</button>
                   <button onClick={() => handleDelete(product._id)} className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{tp('Supprimer')}</button>
                 </div>
+                )}
               </div>
             )})}
           </div>

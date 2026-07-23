@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from '@/lib/router-compat';
 import {
   LayoutDashboard, Wand2, Image as ImageIcon, Video, Images, Settings,
@@ -51,6 +51,11 @@ function normalizeTab(t) {
 const CreativeCenter = ({ initialTab = 'overview' }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState(() => normalizeTab(searchParams?.get?.('tab')) || normalizeTab(initialTab) || 'overview');
+  // Onglet actif toujours visible dans la barre mobile scrollable
+  const activeTabRef = useRef(null);
+  useEffect(() => {
+    activeTabRef.current?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }, [tab]);
   const { credits, setCredits, refresh } = useCreativeCredits();
   const [buyOpen, setBuyOpen] = useState(false);
   const [buyPack, setBuyPack] = useState(null);
@@ -181,12 +186,13 @@ const CreativeCenter = ({ initialTab = 'overview' }) => {
             </div>
             <Link to="/ecom/dashboard" className="text-[11px] text-muted-foreground hover:text-muted-foreground flex items-center gap-1"><ChevronLeft size={13} /> Scalor</Link>
           </div>
-          <div className="px-3 pb-2 flex gap-1.5 overflow-x-auto no-scrollbar">
+          <div className="px-3 pb-2 flex flex-nowrap gap-1.5 overflow-x-auto no-scrollbar snap-x overscroll-x-contain">
             {ALL_ITEMS.map(item => {
               const active = tab === item.id; const Icon = item.icon;
               return (
                 <button key={item.id} onClick={() => changeTab(item.id)}
-                  className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12.5px] font-semibold whitespace-nowrap transition-colors ${active ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
+                  ref={active ? activeTabRef : undefined}
+                  className={`shrink-0 snap-start inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12.5px] font-semibold whitespace-nowrap transition-colors ${active ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
                   <Icon size={14} className={active ? 'text-white' : 'text-muted-foreground'} />
                   {item.label}
                 </button>
