@@ -112,8 +112,8 @@ export function resolveProductPageTheme({
 } = {}) {
   const previewTheme = previewConfig?.theme || null;
   const inheritedStoreTheme = (
-    storeConfig?.theme
-    || (storeTemplateExplicit ? storeTemplate : null)
+    (storeTemplateExplicit ? storeTemplate : null)
+    || storeConfig?.theme
   );
   const productTheme = productConfig?.theme || null;
 
