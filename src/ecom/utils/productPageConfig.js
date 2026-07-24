@@ -102,6 +102,29 @@ export function buildMergedProductPageConfig(storeConfig, productConfig) {
   };
 }
 
+export function resolveProductPageTheme({
+  storeTemplate,
+  storeTemplateExplicit = false,
+  storeConfig,
+  productConfig,
+  previewConfig,
+  fallback = 'classic',
+} = {}) {
+  const previewTheme = previewConfig?.theme || null;
+  const inheritedStoreTheme = (
+    storeConfig?.theme
+    || (storeTemplateExplicit ? storeTemplate : null)
+  );
+  const productTheme = productConfig?.theme || null;
+
+  return {
+    // A live editor preview remains the highest-priority override. Once saved,
+    // the explicitly selected store theme is inherited by every product.
+    theme: previewTheme || inheritedStoreTheme || productTheme || storeTemplate || fallback,
+    hasExplicitTheme: Boolean(previewTheme || inheritedStoreTheme || productTheme),
+  };
+}
+
 export function buildProductOnlyPageConfig(existingProductConfig, sections) {
   const product = cloneOrFallback(existingProductConfig, {});
 

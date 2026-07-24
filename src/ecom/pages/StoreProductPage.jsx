@@ -29,7 +29,7 @@ import { preloadStoreCheckoutRoute, preloadStoreProductRoute } from '../utils/ro
 import { getIconComponent, getAnimationClass as getButtonAnimationClass, ANIMATION_CSS as BUTTON_ANIMATION_CSS } from '../components/productSettings/buttonRuntime.jsx';
 import defaultConfig from '../components/productSettings/defaultConfig';
 import { formatMoney } from '../utils/currency.js';
-import { buildMergedProductPageConfig } from '../utils/productPageConfig.js';
+import { buildMergedProductPageConfig, resolveProductPageTheme } from '../utils/productPageConfig.js';
 import { captureAffiliateAttributionFromSearch } from '../utils/affiliateAttribution.js';
 import { getDefaultTestimonials } from '../utils/countryTestimonials.js';
 
@@ -1810,14 +1810,20 @@ const StoreProductPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store?.productPageConfig, product?.productPageConfig, livePageConfig, product?.quantityOffers, product?.quantityOfferDesign]);
 
-  const ppTheme = productPC?.theme || productPageConfig?.theme || store?.template || storePC?.theme || 'classic';
+  const {
+    theme: ppTheme,
+    hasExplicitTheme,
+  } = resolveProductPageTheme({
+    storeTemplate: store?.template,
+    storeTemplateExplicit: store?.templateExplicit === true,
+    storeConfig: storePC,
+    productConfig: productPC,
+    previewConfig: previewPC,
+  });
   const productPageData = product?._pageData || {};
-  // Le thème EXPLICITEMENT choisi AU NIVEAU PRODUIT fait autorité. Le template
-  // de la BOUTIQUE (store.template — toujours renvoyé par l'API, défaut
-  // 'classic') ne compte PAS comme un choix de thème de page produit : il
-  // neutralisait la détection premium et faisait retomber les pages premium
-  // (marquées seulement dans _pageData) sur le rendu normal.
-  const hasExplicitTheme = Boolean(productPC?.theme || productPageConfig?.theme);
+  // L'API distingue désormais un thème réellement choisi par le marchand du
+  // fallback "classic". Un choix global s'applique ainsi à tous les produits,
+  // sans neutraliser les pages premium générées quand aucun thème n'a été choisi.
   const premiumContentSignals = (
     productPC?.pageStyle === 'premium'
     || Boolean(productPC?.premiumPage)
